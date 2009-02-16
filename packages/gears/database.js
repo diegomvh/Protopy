@@ -83,7 +83,9 @@ var Cursor = Class('Cursor', {
     fetchone: function(){
         try {
             return this.next();
-        } catch (e if e instanceof StopIteration) { return null };
+        } catch (stop) { 
+            return null 
+        };
     },
 
     fetchmany: function(chunk_size) {
@@ -94,8 +96,9 @@ var Cursor = Class('Cursor', {
             for (var i = 0; i < chunk_size; i++){
                 result.push(this.next());
             }
-        } catch (e if e instanceof StopIteration) {};
-        return result;
+        } catch (stop) {
+            return result;
+        };
     },
 
     fetchall: function(){

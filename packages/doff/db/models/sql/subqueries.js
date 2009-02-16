@@ -32,16 +32,16 @@ var DeleteQuery = Class('DeleteQuery', Query, {
      */
     delete_batch_related: function(pk_list) {
         var cls = this.model;
-        for (related in cls._meta.get_all_related_many_to_many_objects()) {
-            for (offset in array($R(0, pk_list.length))) {
+        for each (related in cls._meta.get_all_related_many_to_many_objects()) {
+            for each (var offset in range(0, pk_list.length)) {
                     var where = this.where_class();
                     where.add([null, related.field.m2m_reverse_name(), related.field, 'in', pk_list.slice(offset, offset + GET_ITERATOR_CHUNK_SIZE)], AND);
                     this.do_query(related.field.m2m_db_table(), where);
             }
         }
-        for (f in cls._meta.many_to_many) {
+        for each (f in cls._meta.many_to_many) {
             var w1 = this.where_class();
-            for (offset in array($R(0, pk_list.length))) {
+            for each (offset in range(0, pk_list.length)) {
                 var where = this.where_class();
                 where.add([null, f.m2m_column_name(), f, 'in', pk_list.slice(offset, offset + GET_ITERATOR_CHUNK_SIZE)], AND);
                 if (w1)
@@ -59,7 +59,7 @@ var DeleteQuery = Class('DeleteQuery', Query, {
         */
     delete_batch: function(pk_list) {
 
-        for (offset in array($R(0, pk_list.length))) {
+        for each (offset in range(0, pk_list.length)) {
             var where = this.where_class();
             var field = this.model._meta.pk;
             where.add([None, field.column, field, 'in', pk_list.slice(offset, offset + GET_ITERATOR_CHUNK_SIZE)], AND);
@@ -88,7 +88,7 @@ var InsertQuery = Class('InsertQuery', Query, {
         // going to be column names (so we can avoid the extra overhead).
         var qn = this.connection.ops.quote_name;
         var result = ['INSERT INTO %s'.subs(qn(this.model._meta.db_table))];
-        result.push('(%s)'.subs([qn(c) for (c in this.columns)].join(', ')));
+        result.push('(%s)'.subs([qn(c) for each (c in this.columns)].join(', ')));
         result.push('VALUES (%s)'.subs(this.values.join(', ')));
         return [result.join(' '), this.params];
     },
@@ -110,8 +110,8 @@ var InsertQuery = Class('InsertQuery', Query, {
         */
     insert_values: function(insert_values, raw_values) {
         var placeholders = [], values = [];
-        for ([field, val] in insert_values) {
-            if (field['get_placeholder'])
+        for each (var [field, val] in insert_values) {
+            if (isfunction(field['get_placeholder']))
                 // Some fields (e.g. geo fields) need special munging before
                 // they can be inserted.
                 placeholders.push(field.get_placeholder(val));
@@ -182,7 +182,7 @@ var UpdateQuery = Class('UpdateQuery', Query, {
         var cursor = $super(result_type);
         var rows = cursor.rowcount;
         delete cursor;
-        for (query in this.get_related_updates())
+        for each (var query in this.get_related_updates())
             query.execute_sql(result_type);
         return rows;
     },
@@ -196,13 +196,13 @@ var UpdateQuery = Class('UpdateQuery', Query, {
         if (!this.values)
             return ['', []];
         var table = this.tables[0];
-        var qn = self.quote_name_unless_alias;
+        var qn = this.quote_name_unless_alias.bind(this);
         var result = ['UPDATE %s'.subs(qn(table))];
         result.push('SET');
         var values = [], update_params = [];
-        for (var element in this.values) {
+        for each (var element in this.values) {
             var [name, val, placeholder] = element;
-            if (val) {
+            if (bool(val)) {
                 values.push('%s = %s'.subs(qn(name), placeholder));
                 update_params.push(val);
             } else {
@@ -211,7 +211,7 @@ var UpdateQuery = Class('UpdateQuery', Query, {
         }
         result.push(values.join(', '));
         var [where, params] = this.where.as_sql();
-        if (where)
+        if (bool(where))
             result.push('WHERE %s'.subs(where));
         return [result.join(' '), array(update_params.concat(params))];
     },
@@ -230,7 +230,7 @@ var UpdateQuery = Class('UpdateQuery', Query, {
         this.clear_ordering(true);
         $super();
         var count = this.count_active_tables();
-        if (!this.related_updates && count == 1)
+        if (!bool(this.related_updates) && count == 1)
             return;
 
         // We need to use a sub-select in the where clause to filter on things
@@ -242,7 +242,7 @@ var UpdateQuery = Class('UpdateQuery', Query, {
         if (query.alias_refcount[first_table] == 1) {
             // We can remove one table from the inner query.
             query.unref_alias(first_table);
-            for (i in array($R(1, query.tables.length))) {
+            for each (var i in range(1, query.tables.length)) {
                 var table = query.tables[i];
                 if (query.alias_refcount[table])
                     break;
@@ -264,7 +264,7 @@ var UpdateQuery = Class('UpdateQuery', Query, {
             // don't want them to change), or the db backend doesn't support
             // selecting from the updating table (e.g. MySQL).
             var idents = [];
-            for (rows in query.execute_sql(MULTI))
+            for each (rows in query.execute_sql(MULTI))
                 idents = idents.concat([r[0] for (r in rows)]);
             this.add_filter(['pk__in', idents]);
             this.related_ids = idents;
@@ -272,7 +272,7 @@ var UpdateQuery = Class('UpdateQuery', Query, {
             // The fast path. Filters and updates in one query.
             this.add_filter(['pk__in', query]);
         }
-        for (alias in this.tables.slice(1))
+        for each (alias in this.tables.slice(1))
             this.alias_refcount[alias] = 0;
     },
 
@@ -283,7 +283,7 @@ var UpdateQuery = Class('UpdateQuery', Query, {
         This is used by the QuerySet.delete_objects() method.
         */
     clear_related: function(related_field, pk_list) {
-        for (offset in array($R(0, pk_list.length))) {
+        for each (offset in range(0, pk_list.length)) {
             this.where = this.where_class();
             var f = this.model._meta.pk;
             this.where.add([null, f.column, f, 'in', pk_list.slice(offset, offset + GET_ITERATOR_CHUNK_SIZE)], AND);
@@ -315,7 +315,7 @@ var UpdateQuery = Class('UpdateQuery', Query, {
         */
     add_update_fields: function(values_seq) {
         var Model = $L('doff.db.models.base', ['Model']);
-        for (var element in values_seq) {
+        for each (var element in values_seq) {
             var [field, model, val] = element;
             if (field.rel && val instanceof Model)
                 val = val.pk;
@@ -353,10 +353,10 @@ var UpdateQuery = Class('UpdateQuery', Query, {
         the current query but will only update a single table.
         */
     get_related_updates: function() {
-        if (!this.related_updates)
+        if (!bool(this.related_updates))
             return [];
         var result = [];
-        for ([model, values] in this.related_updates.iteritems()) {
+        for (var [model, values] in this.related_updates.iteritems()) {
             var query = new UpdateQuery(model, this.connection);
             query.values = values;
             if (this.related_ids)
@@ -387,8 +387,8 @@ var DateQuery = Class('DateQuery', Query, {
         }
 
         var offset = this.extra_select.length;
-        for (rows in this.execute_sql(MULTI)) {
-            for (row in rows) {
+        for each (rows in this.execute_sql(MULTI)) {
+            for each (var row in rows) {
                 var date = row[offset];
                 if (resolve_columns)
                     date = this.resolve_columns(row, fields)[offset];

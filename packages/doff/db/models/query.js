@@ -52,15 +52,15 @@ var CollectedObjects = Class('CollectedObjects', {
         return retval;
     },
 
-    contains: function(key) {
-        return key in this.data;
+    __contains__: function(key) {
+        return include(this.data, key);
     },
 
-    get: function(key) {
-        return this.data[key];
+    __getitem__: function(key) {
+        return this.data[key]
     },
 
-    empty: function() {
+    __nonzero__: function() {
         return bool(keys(this.data));
     },
 
@@ -254,7 +254,7 @@ var QuerySet = Class('QuerySet', {
         var max_depth = this.query.max_depth
         var extra_select = this.query.extra_select.keys()
         var index_start = extra_select.length
-        for (var row in this.query.results_iter()) {
+        for each (var row in this.query.results_iter()) {
             if (fill_cache)
                 [obj, none] = get_cached_row(this.model, row, index_start, max_depth, requested);
             else
@@ -594,12 +594,12 @@ var QuerySet = Class('QuerySet', {
         num = num || ITER_CHUNK_SIZE;
         if (this._iter)
             try {
-                Protopy.log('begin _fill_cache');
+                print('begin _fill_cache');
                 for (i = 0; i < num; i++)
                     this._result_cache.push(this._iter.next());
-                Protopy.log('end _fill_cache, elements %s'.subs(this._result_cache.length));
+                print('end _fill_cache, elements %s'.subs(this._result_cache.length));
             } catch (stop) {
-                Protopy.log('end _fill_cache, elements %s'.subs(this._result_cache.length));
+                print('end _fill_cache, elements %s'.subs(this._result_cache.length));
                 this._iter = null;
             }
     },
@@ -653,7 +653,7 @@ var ValuesQuerySet = Class('ValuesQuerySet', QuerySet, {
         if (!this.extra_names && this.field_names.length != this.model._meta.fields.length)
             this.query.trim_extra_select(this.extra_names);
         var names = keys(this.query.extra_select).concat(this.field_names);
-        for (row in this.query.results_iter()) {
+        for each (var row in this.query.results_iter()) {
             var ret = create(zip(names, row));
             yield ret;
         }
@@ -714,17 +714,17 @@ var ValuesListQuerySet = Class('ValuesListQuerySet', ValuesQuerySet, {
     iterator: function() {
         this.query.trim_extra_select(this.extra_names);
         if ((this.flat) && (this._fields.length == 1))
-            for (var row in this.query.results_iter())
+            for each (var row in this.query.results_iter())
                 yield row[0];
         else if (!this.query.extra_select)
-            for (var row in this.query.results_iter())
+            for each (var row in this.query.results_iter())
                 yield row;
         else
             // When extra(select=...) is involved, the extra cols come are
             // always at the start of the row, so we need to reorder the fields
             // to match the order in this._fields.
             names = Objects.keys(this.query.extra_select) + this.field_names;
-            for (var row in this.query.results_iter()) {
+            for each (var row in this.query.results_iter()) {
                 data = create(names.zip(row));
                 var ret = [data[f] for (f in this._fields)];
                 yield ret;

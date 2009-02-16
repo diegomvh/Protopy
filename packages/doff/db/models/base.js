@@ -323,7 +323,7 @@ var Model = Class('Model', {
         manager = cls._default_manager;
         if (pk_set) {
             // Determine whether a record with the primary key already exists.
-            if ((force_update || (!force_insert && manager.filter({'pk':pk_val}).extra({'a': 1}).values('a').order_by()))) {
+            if ((force_update || (!force_insert && bool(manager.filter({'pk':pk_val}).extra({'a': 1}).values('a').order_by())))) {
                 // It does already exist, so do an UPDATE.
                 if (force_update || non_pks) {
                     values = [[f, null, f.get_db_prep_save(raw && this[f.attname] || f.pre_save(this, false))] for each (f in non_pks)];

@@ -163,8 +163,8 @@ var Query = Class('Query', {
         * Returns an iterator over the results from executing this query.
         */
     results_iter: function() {
-        for (var rows in this.execute_sql(MULTI))
-            for (var row in rows)
+        for each (var rows in this.execute_sql(MULTI))
+            for each (var row in rows)
                 yield row;
     },
     
@@ -420,7 +420,7 @@ var Query = Class('Query', {
             result = result.concat(cols);
             aliases.update(new_aliases);
         }
-        for (var [table, col] in this.related_select_cols) {
+        for each (var [table, col] in this.related_select_cols) {
             r = '%s.%s'.subs(qn(table), qn(col));
             if (with_aliases && include(col_aliases, col)) {
                 c_alias = 'Col%s'.subs(col_aliases.length);
@@ -460,7 +460,7 @@ var Query = Class('Query', {
         qn = this.quote_name_unless_alias.bind(this);
         qn2 = this.connection.ops.quote_name;
         aliases = new Set();
-        for (var [field, model] in opts.get_fields_with_model()) {
+        for each (var [field, model] in opts.get_fields_with_model()) {
             model = model || 'None';
             var alias = seen.get(model);
             if (!alias) {
@@ -505,7 +505,7 @@ var Query = Class('Query', {
         var qn = this.quote_name_unless_alias.bind(this);
         var qn2 = this.connection.ops.quote_name;
         var first = true;
-        for (alias in this.tables) {
+        for each (alias in this.tables) {
             if (!this.alias_refcount[alias])
                 continue;
             try {
@@ -1721,7 +1721,7 @@ var Query = Class('Query', {
         */
     execute_sql: function(result_type) {
 
-        var result_type = isundefined(result_type)?MULTI:result_type;
+        result_type = isundefined(result_type)?MULTI:result_type;
         var sql = null, params = null;
         try {
             [sql, params] = this.as_sql();

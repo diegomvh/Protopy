@@ -436,7 +436,15 @@
         //'property': function(){ throw new NotImplementedError();},
         'print': function print() { if (console && console.log) console.log.apply(console, arguments);},
         'quit': function(){ throw new NotImplementedError();},
-        'range': function(){ throw new NotImplementedError();},
+        'range': function xrange(start, stop, step){
+            var rstep = step || 1;
+            var rstop = isundefined(stop)? start : stop;
+            var rstart = isundefined(stop)? 0 : start;
+            var ret = [];
+            for (var i = rstart; i < rstop; i += rstep)
+                ret.push(i);
+            return ret;
+        },
         'raw_input': function(){ throw new NotImplementedError();},
         'reduce': function(){ throw new NotImplementedError();},
         'reload': function(){ throw new NotImplementedError();},
@@ -482,7 +490,13 @@
                 }, []);
         },
         'vars': function(){ throw new NotImplementedError();},
-        'xrange': function(){ throw new NotImplementedError();},
+        'xrange': function xrange(start, stop, step){
+            var xstep = step || 1;
+            var xstop = isundefined(stop)? start : stop;
+            var xstart = isundefined(stop)? 0 : start;
+            for (var i = xstart; i < xstop; i += xstep)
+                yield i;
+        },
         'zip': function(){
             var args = array(arguments);
             
@@ -623,7 +637,7 @@
                 for each (var [key, value] in object)
                     this.set(key, value);
             } else if (object instanceof Object){
-                for each (var key in object)
+                for (var key in object)
                     this.set(key, object[key]);
             }
         },
