@@ -27,6 +27,10 @@ var Set = Class('Set', {
         return true;
     },
 
+    __copy__: function(){
+        return this.copy();
+    },
+
     __deepcopy__: function(){
         return new Set(this.elements.__deepcopy__());
     },

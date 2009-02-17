@@ -3,9 +3,9 @@
     <type>org.netbeans.modules.python.project</type>
     <configuration>
         <data xmlns="http://nbpython.dev.java.net/ns/php-project/1">
-            <name>protopy</name>
+            <name>tesis</name>
             <sources>
-                <root id="protopy.dir"/>
+                <root id="src.tesis.dir"/>
             </sources>
             <tests/>
         </data>

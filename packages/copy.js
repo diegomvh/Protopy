@@ -4,19 +4,33 @@ _copy_dispatch['Array'] = function _copy_array(x) {
     return x.map(function(value) {return value});
 }
 
-_copy_dispatch['object'] = function _copy_array(object) {
+_copy_dispatch['object'] = function _copy_object(object) {
     return extend({}, object);
 }
 
-function copy(x) {
-    if (isfunction(x['__copy__']))
-        return x.__copy__(x);
+_copy_dispatch['Instance'] = function _copy_instancey(object) {
+    if (isfunction(object['__copy__']))
+        return object.__copy__();
+    var obj = Class(object.__name__);
+    obj = new obj();
+    obj.constructor = object.constructor;
+    obj.__proto__ = object.__proto__;
+    return obj;
+}
 
+_copy_dispatch['string'] = function _copy_instancey(object) {
+    return str(object);
+}
+
+function copy(x) {
     var cls = type(x);
 
     var copier = _copy_dispatch[cls];
     if (copier)
         return copier(x);
+
+    if (isfunction(x['__copy__']))
+        return x.__copy__(x);
 
     throw new Exception("copy operation on %s".subs(cls));
 }
@@ -24,10 +38,6 @@ function copy(x) {
 copy.__doc__ = "Shallow copy operation on arbitrary Protopy objects.";
 
 function _copy_class(x) {
-    return x.copy();
-}
-
-function _copy_instance(x) {
     return x.copy();
 }
 

@@ -375,7 +375,7 @@
         'int': function(){ throw new NotImplementedError();},
         'intern': function(){ throw new NotImplementedError();},
         'isclass': function isclass(object) { return bool(object) && isfunction(object) && 'superclass' in object && 'subclasses' in object; },
-        'isinstance': function isinstance(object){ return bool(object) && isfunction(object.__class__) && object instanceof object.__class__; },
+        'isinstance': function isinstance(object){ return isfunction(object.__class__) && object instanceof object.__class__; },
         'isfunction': function isFunction(object) { return typeof object == "function"; },
         'isstring': function(object) { return typeof object == "string"; },
         'isnumber': function(object) { return typeof object == "number"; },

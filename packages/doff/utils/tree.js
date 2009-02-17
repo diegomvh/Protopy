@@ -13,7 +13,11 @@ var Node = Class('Node', {
 
     //Deep copy
     __deepcopy__: function() {
-        return this._new_instance(deepcopy(this.children), this.connector, this.negated);
+        var obj = new Node(null, this.connector, this.negated);
+        obj.__proto__ = this.constructor.prototype;
+        obj.children = deepcopy(this.children);
+        obj.subtree_parents = deepcopy(this.subtree_parents);
+        return obj;
     },
 
     __str__: function(){

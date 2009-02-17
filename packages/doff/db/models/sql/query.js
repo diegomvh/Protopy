@@ -1077,7 +1077,7 @@ var Query = Class('Query', {
             } else { alias = root_alias };
 
             dedupe = !isundefined(opts.duplicate_targets[f.column]);
-            if (dupe_set || dedupe) {
+            if (bool(dupe_set) || dedupe) {
                 avoid.update(this.dupe_avoidance.get([id(opts), f.column], []));
                 if (dedupe)
                     dupe_set.add([opts, f.column]);
@@ -1259,7 +1259,7 @@ var Query = Class('Query', {
         }
         if (can_reuse) { can_reuse.update(join_list) }
         if (process_extras) {
-            for (filter in extra_filters) {
+            for each (var filter in extra_filters) {
                 this.add_filter(filter, null, negate, null, can_reuse, false);
             }
         }
@@ -1350,18 +1350,18 @@ var Query = Class('Query', {
             var orig_opts = opts;
             var dupe_col = direct && field.column || field.field.column;
             var dedupe = !isundefined(opts.duplicate_targets[dupe_col]);
-            if (dupe_set || dedupe) {}
+            if (bool(dupe_set) || dedupe) {
                 if (dedupe)
                     dupe_set.add([opts, dupe_col]);
                 exclusions.update(this.dupe_avoidance.get([id(opts), dupe_col], []));
-
+            }
             if (process_extras && !isundefined(field['extra_filters'])) {
                 extra_filters = extra_filters.concat(field.extra_filters(names, pos, negate));
             }
             if (direct) {
                 if (m2m) {
                     // Many-to-many field defined on the current model.
-                    if (cached_data) {
+                    if (bool(cached_data)) {
                         [table1, from_col1, to_col1, table2, from_col2, to_col2, opts, target] = cached_data;
                     } else {
                         var table1 = field.m2m_db_table();
@@ -1382,7 +1382,7 @@ var Query = Class('Query', {
                     } else {
                         //join(connection, always_create, exclusions, promote, outer_if_first, nullable, reuse)
                         alias = this.join([int_alias, table2, from_col2, to_col2], dupe_multis, exclusions, null, null, true, can_reuse);
-                        joins.push([int_alias, alias]);
+                        joins = joins.concat([int_alias, alias]);
                     }
                 } else if (field.rel) {
                     // One-to-one or many-to-one field

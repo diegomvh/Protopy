@@ -1,3 +1,4 @@
+$D('doff.db.models.related');
 
 var BoundRelatedObject = Class({
     __init__: function(related_object, field_mapping, original){
