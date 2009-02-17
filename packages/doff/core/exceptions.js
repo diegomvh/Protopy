@@ -9,9 +9,6 @@ var FieldError = Class('FieldError', Exception);
 var ValidationError = Class('ValidationError', Exception);
 var FullResultSet = Class('FullResultSet', Exception);
 var EmptyResultSet = Class('EmptyResultSet', Exception);
-var VariableDoesNotExist = Class('VariableDoesNotExist', Exception);
-var TemplateSyntaxError = Class('TemplateSyntaxError', Exception);
-var TemplateDoesNotExist = Class('TemplateDoesNotExist', Exception);
 
 $P({    'ObjectDoesNotExist': ObjectDoesNotExist,
         'MultipleObjectsReturned': MultipleObjectsReturned,
@@ -23,7 +20,4 @@ $P({    'ObjectDoesNotExist': ObjectDoesNotExist,
         'FieldError': FieldError,
         'ValidationError': ValidationError,
         'FullResultSet': FullResultSet,
-        'EmptyResultSet': EmptyResultSet,
-        'VariableDoesNotExist': VariableDoesNotExist,
-        'TemplateSyntaxError': TemplateSyntaxError,
-        'TemplateDoesNotExist': TemplateDoesNotExist });
+        'EmptyResultSet': EmptyResultSet });

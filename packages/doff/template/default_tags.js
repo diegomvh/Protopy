@@ -1,7 +1,3 @@
-//from django.template import TemplateSyntaxError, VariableDoesNotExist, BLOCK_TAG_START, BLOCK_TAG_END, VARIABLE_TAG_START, VARIABLE_TAG_END, SINGLE_BRACE_START, SINGLE_BRACE_END, COMMENT_TAG_START, COMMENT_TAG_END
-//from django.template import get_library, Library, InvalidTemplateLibrary
-
-//$L('doff.template.library');
 $L('doff.template', 'Node', 'Variable', 'NodeList', 'Template');
 $L('doff.template', 'TemplateSyntaxError', 'VariableDoesNotExist');
 $L('doff.template', 'get_library', 'Library', 'InvalidTemplateLibrary');

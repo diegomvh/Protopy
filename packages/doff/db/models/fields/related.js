@@ -7,6 +7,8 @@ $L('doff.db.models.related', 'RelatedObject');
 $L('doff.db.models.query', 'QuerySet');
 $L('doff.db.models.query_utils', 'QueryWrapper');
 $L('doff.core.exceptions', 'ValidationError');
+$L('doff.utils.set', 'Set');
+$L('doff.db.transaction');
 
 var RECURSIVE_RELATIONSHIP_CONSTANT = 'this';
 var pending_lookups = {};
@@ -373,9 +375,9 @@ function create_many_related_manager(superclass, through) {
                 new_ids = new Set();
                 for each (var obj in objs) {
                     if (obj instanceof this.model)
-                    new_ids.add(obj._get_pk_val());
+                        new_ids.add(obj._get_pk_val());
                     else
-                    new_ids.add(obj);
+                        new_ids.add(obj);
             }
             // Add the newly created or already existing objects to the join table.
             // First find out which items are already added, to avoid adding them twice
@@ -443,7 +445,7 @@ function create_many_related_manager(superclass, through) {
 	    remove: function() {
                 var [objs, kwargs] = ManyRelatedManager.prototype.remove.extra_arguments(arguments);
                 var args = [this.source_col_name, this.target_col_name].concat(objs);
-                this._remove_items.apply(this, objs);
+                this._remove_items.apply(this, args);
     
                 // If this is a symmetrical m2m relation to self, remove the mirror entry in the m2m table
                 if (this.symmetrical)  {

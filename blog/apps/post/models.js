@@ -8,7 +8,7 @@ var Tag = Class('Tag', models.Model, {
 
 var Post = Class('Post', models.Model, {
     slug: new models.SlugField('Slug', {'primary_key':true}),
-    assoc_tags: new models.ManyToManyField(Tag),
+    tags: new models.ManyToManyField(Tag),
     title: new models.CharField('Title', {'max_length':30}),
     date: new models.DateTimeField('Date'),
     //image: new model.ImageField('Attach Image', upload_to='postimgs', blank=True)

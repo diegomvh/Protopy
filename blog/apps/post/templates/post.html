@@ -1,0 +1,5 @@
+{% for post in posts %}
+    <h1>{{ post.title }}</h1>{{ post.date }}
+    <p>{{ post.body }}</p>
+    <p>{% for tag in post.tags.all %}{{ tag.title }}{% endfor %}</p>
+{% endfor %}

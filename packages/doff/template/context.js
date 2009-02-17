@@ -8,6 +8,14 @@ var Context = Class('Context', {
         this.autoescape = autoescape || true;
     },
 
+    __getitem__: function(key) {
+        var _dict = null;
+        for (var i = 0; _dict = this.dicts[i]; i++)
+            if (key in _dict)
+                return _dict[key];
+        throw new KeyError(key);
+    },
+
     push: function() {
         var _dict = {};
         this.dicts = [_dict].concat(this.dicts);

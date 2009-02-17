@@ -1,6 +1,3 @@
-//from django.template.context import Context, RequestContext, ContextPopException
-//$L('doff.template.library');
-$L('doff.core.exceptions', 'VariableDoesNotExist', 'TemplateSyntaxError');
 $L('doff.template.context', 'Context', 'ContextPopException');
 
 var libraries = {};
@@ -342,7 +339,7 @@ var filter_re = /("(?:[^"\\]*(?:\\.[^"\\]*)*)"|'(?:[^'\\]*(?:\\.[^'\\]*)*)'|[^\s
 var FilterExpression = Class('FilterExpression', {
     __init__: function(token, parser) {
         /* if (!filter_re.test(token))
-            throw new exceptions.TemplateSyntaxError("Could not parse the remainder: '%s'".subs(token)) */
+            throw new TemplateSyntaxError("Could not parse the remainder: '%s'".subs(token)) */
         this.token = token;
         var split_re = /\|(\S+)/;
         var tokens = token.split(split_re),
@@ -421,13 +418,17 @@ var Variable = Class({
 
     _resolve_lookup: function(context) {
         var current = context;
+        var geted = null;
         for each (var bit in this.lookups) {
             try {
                 // Si tienen get lo uso antes que []
-                if (isfunction(current['get']))
-                    current = current.get(bit);
+                if (isfunction(current['__getitem__']))
+                    geted = current.__getitem__(bit);
                 else
-                    current = current[bit];
+                    geted = current[bit];
+                if (isfunction(geted))
+                    geted = geted.bind(current);
+                current = geted;
             } catch (e) {
                 throw new VariableDoesNotExist("Failed lookup for key [%s] in %s".subs(bit, current))
             }

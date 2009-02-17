@@ -65,11 +65,13 @@ var Set = Class('Set', {
     },
 
     update:  function(set){
-        this.elements = unique(this.elements.concat(set.elements));
+        var elements = isarray(set)? set : set.elements;
+        this.elements = unique(this.elements.concat(elements));
     },
 
     union:  function(set){
-        return new Set(this.elements.concat(set.elements));
+        var elements = isarray(set)? set : set.elements;
+        return new Set(this.elements.concat(elements));
     },
 
     intersection: function(set){

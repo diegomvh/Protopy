@@ -1,12 +1,22 @@
+$D('Wrapper for loading templates from "template" directories in INSTALLED_APPS packages.');
 $L('doff.template', 'TemplateDoesNotExist');
+$L('doff.core.exceptions', 'ImproperlyConfigured');
 $L('doff.conf', 'settings');
 
-function get_template_sources(template_name, template_dirs) {
+// It won't change, so convert it to a tuple to save memory.
+var app_template_dirs = [];
 
+// At compile time, cache the directories to search.
+for each (var app in settings.INSTALLED_APPS) {
+    var file = app.split('.').join('/');
+    var template_dir = file + '/templates/';
+    app_template_dirs.push(template_dir);
+}
+
+function get_template_sources(template_name, template_dirs) {
     var paths = [];
     if (!template_dirs)
-        template_dirs = settings.TEMPLATE_DIRS;
-
+        template_dirs = app_template_dirs;
     for each (var template_dir in template_dirs)
         paths.push(template_dir + template_name);
     return paths;

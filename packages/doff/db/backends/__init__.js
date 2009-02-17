@@ -118,21 +118,19 @@ var BaseDatabaseOperations = Class('BaseDatabaseOperations', {
     value_to_db_date: function(value) {
         if (!value)
             return null;
-        //TODO: formato de fechas
-        return datetime_safe.new_date(value).strftime('%Y-%m-%d')
+        return '%s-%s-%s'.subs(value.getFullYear(), value.getMonth() + 1, value.getDate());
     },
 
     value_to_db_datetime: function(value) {
         if (!value)
             return null;
-        //TODO: FORMATO DE FECHAS
-        return unicode(value);
+        return str(value);
     },
 
     value_to_db_time: function(value) {
         if (!value)
             return null;
-        return value;
+        return '%s:%s:%s.%s'.subs(value.getHours(), value.getMinutes(), value.getSeconds(), value.getMilliseconds());
     },
 
     value_to_db_decimal: function(value, max_digits, decimal_places) {
