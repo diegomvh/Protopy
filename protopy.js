@@ -426,7 +426,7 @@
         'mult': function mult(array, value) {
             var result = [];
             for (var i = 0; i < value; i++)
-                result = result.concat(arrcharCodeAtay);
+                result = result.concat(array);
             return result;
         },
         'oct': function(){ throw new NotImplementedError();},
