@@ -32,7 +32,7 @@ function set_tags_by_title(post, tag_title){
 
 function show_posts(){
     var t = loader.get_template('post.html');
-    document.write(t.render(new Context({posts:Post.objects.all()})));
+    document.write(t.render(new Context({posts:Post.objects.all().order_by('title')})));
     document.close();
 }
 

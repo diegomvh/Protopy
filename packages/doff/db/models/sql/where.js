@@ -163,7 +163,7 @@ var WhereNode = Class('WhereNode', Node, {
             else if (child instanceof Node)
                 this.relabel_aliases(change_map, child);
             else
-                if (include(change_map, child[0]))
+                if (child[0] in change_map)
                     node.children[index] = [change_map[child[0]]].concat(child.slice(1, child.length));
         }
     }

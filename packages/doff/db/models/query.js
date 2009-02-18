@@ -154,10 +154,8 @@ var QuerySet = Class('QuerySet', {
                 yield ret;
                 pos = pos + 1;
             }
-            if (this._iter == null) {
-                print('se termino');
+            if (this._iter == null)
                 throw StopIteration;
-            }
             if (this._result_cache.length <= pos)
                 this._fill_cache();
         }
@@ -557,9 +555,9 @@ var QuerySet = Class('QuerySet', {
     },
 
      /* Returns a new QuerySet instance with the ordering changed. */
-    order_by: function(field_names) {
+    order_by: function() {
         var [field_names, kwargs] = QuerySet.prototype.order_by.extra_arguments(arguments);
-        if (!this.query.can_filter()) throw " Assert Cannot reorder a query once a slice has been taken.";
+        assert(this.query.can_filter(), "Assert Cannot reorder a query once a slice has been taken.");
         var obj = this._clone();
         obj.query.clear_ordering();
         obj.query.add_ordering.apply(obj.query, field_names);
@@ -613,12 +611,9 @@ var QuerySet = Class('QuerySet', {
         num = num || ITER_CHUNK_SIZE;
         if (this._iter != null)
             try {
-                print('begin _fill_cache');
                 for (i = 0; i < num; i++)
                     this._result_cache.push(this._iter.next());
-                print('end _fill_cache by elements %s'.subs(this._result_cache.length));
             } catch (stop if stop == StopIteration) {
-                print('end _fill_cache by %s elements %s'.subs(stop, this._result_cache.length));
                 this._iter = null;
             }
     },

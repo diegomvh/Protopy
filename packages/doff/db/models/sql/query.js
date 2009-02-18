@@ -583,12 +583,12 @@ var Query = Class('Query', {
         so this should be run *before* get_from_clause().
         */
     get_ordering: function () {
-        if (this.extra_order_by)
+        if (bool(this.extra_order_by))
             ordering = this.extra_order_by;
         else if (!this.default_ordering)
             ordering = this.order_by;
         else
-            ordering = this.order_by || this.model._meta.ordering;
+            ordering = bool(this.order_by)? this.order_by: this.model._meta.ordering;
         var qn = this.quote_name_unless_alias.bind(this);
         var qn2 = this.connection.ops.quote_name;
         var distinct = this.distinct;
@@ -620,7 +620,7 @@ var Query = Class('Query', {
                 result.push('%s %s'.subs(field, order));
                 continue;
             }
-            if ('.' in field) {
+            if (include(field, '.')) {
                 // This came in through an extra(order_by=...) addition. Pass it
                 // on verbatim.
                 var [col, order] = get_order_dir(field, asc);
@@ -637,7 +637,7 @@ var Query = Class('Query', {
                 // find_ordering_name(name, opts, alias, default_order, already_seen)
                 for each (var element in this.find_ordering_name(field, this.model._meta, null, asc)) {
                     var [table, col, order] = element;
-                    if (!([table, col] in processed_pairs)) {
+                    if (!(include(processed_pairs, [table, col]))) {
                         elt = '%s.%s'.subs(qn(table), qn2(col));
                         processed_pairs.add([table, col]);
                         if (distinct && !(elt in select_aliases))
@@ -1555,7 +1555,8 @@ var Query = Class('Query', {
         var [ordering, kwargs] = Query.prototype.add_ordering.extra_arguments(arguments);
         var errors = [];
         for each (var item in ordering)
-            if (!ORDER_PATTERN.match(item))
+            var m = item.match(ORDER_PATTERN);
+            if (!bool(m) || m[0] != item)
                 errors.push(item);
         if (bool(errors))
             throw new FieldError('Invalid order_by arguments: %s'.subs(errors));
