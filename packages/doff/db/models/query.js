@@ -6,6 +6,7 @@ $L('doff.db.models.fields', 'DateField');
 $L('doff.db.models.query_utils', 'Q', 'select_related_descend');
 $L('doff.db.models.signals');
 $L('doff.db.models.sql');
+$L('doff.db.transaction');
 $L('copy', 'copy');
 
 var CHUNK_SIZE = 100;
@@ -312,14 +313,13 @@ var QuerySet = Class('QuerySet', {
 
         var [args, kwargs] = QuerySet.prototype.get_or_create.extra_arguments(arguments);
         assert (kwargs, 'get_or_create() must be passed at least one keyword argument')
-        defaults = kwargs['defaults'] || {};
+        var defaults = kwargs['defaults'] || {};
         try {
             return [this.get(kwargs), false];
         } catch (e if e instanceof this.model.DoesNotExist) {
             try {
-                params = dict([(k, v) for ([k, v] in kwargs.items()) if (k.indefOf('__') == -1)]);
-                params.update(defaults);
-                obj = new this.model(params);
+                extend(kwargs, defaults);
+                var obj = new this.model(kwargs);
                 sid = transaction.savepoint();
                 obj.save(true, null);
                 transaction.savepoint_commit(sid);
