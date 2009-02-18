@@ -1,3 +1,5 @@
+$D('doff.utils.set');
+
 var Set = Class('Set', {
     __init__: function(elements){
         var elements = elements || [];
@@ -36,8 +38,8 @@ var Set = Class('Set', {
     },
 
     __iter__: function() {
-	for each (var element in this.elements)
-	    yield element;
+        for each (var element in this.elements)
+    	    yield element;
     },
 
     add: function(element) {

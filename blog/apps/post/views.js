@@ -11,22 +11,23 @@ function syncdb(){
 }
 
 function add_tag(title, description){
-    var [obj, crated] = Tag.objects.get_or_create({'title':title, 'slug':slugify(title), 'description': description});
+    var [obj, crated] = Tag.objects.get_or_create({'slug':slugify(title), 'defaults': {'title':title, 'description': description}});
     return obj;
 }
 
 function add_post(title, body, tags){
-    var [obj, created] = Post.objects.get_or_create({'title':title, 'slug':slugify(title), 'body':body, 'date': new Date()});
-    for each (var tag in tags) obj.tags_set.add(tag);
+    var [obj, created] = Post.objects.get_or_create({'slug':slugify(title), 'defaults': {'title':title, 'slug':slugify(title), 'body':body, 'date': new Date()}});
+    for each (var tag in tags) obj.tags.add(tag);
     return obj;
 }
 
 function set_tags_by_title(post, tag_title){
     tag_title = isarray(tag_title)? tag_title : [tag_title];
+    var tags = []
     for each (var title in tag_title) {
-	var tag = Tag.objects.get({'title':title});
-	post.tags_set.add(tag);
+        tags.push(Tag.objects.get({'title':title}));
     }
+    post.tags.add.apply(post.tags,tags);
 }
 
 function show_posts(){

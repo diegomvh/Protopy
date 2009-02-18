@@ -43,7 +43,7 @@ var Cursor = Class('Cursor', {
             this.__defineGetter__('rowsAffected', function(){ return this.connection.rowsAffected; });
             this.lastResulSet = null;
     },
-    
+
     close: function(){
         try {
             this.connection.close();

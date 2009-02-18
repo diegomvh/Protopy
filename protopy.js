@@ -407,6 +407,7 @@
         'array': function array(iterable) {
             if (!iterable) return [];
             if (iterable.to_array) return iterable.to_array();
+            if (isfunction(iterable['__iterator__'])) return [e for each (e in iterable)];
             if (isfunction(iterable['next'])) {
                 var ret = [];
                 try {

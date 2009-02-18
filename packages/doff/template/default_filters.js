@@ -5,10 +5,7 @@ function capitalize(value){ return value.capitalize(); };
 register.filter(capitalize);
 
 function join(value, arg) {
-    var data = value;
-    if (isarray(value))
-        data = value.join(arg);
-    return data;
+    return array(value).join(arg);
 }
 register.filter(join);
 

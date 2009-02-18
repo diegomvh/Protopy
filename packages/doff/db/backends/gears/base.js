@@ -108,7 +108,7 @@ var GearsCursorWrapper = Class('GearsCursorWrapper', database.Cursor, {
     execute: function($super, query, params) {
         params = params || [];
         try {
-            print(query, params);
+            print('Query: ', query); print('Params: ', params);
             var query = this.convert_query(query, params.length);
             $super(query, params);
         }
@@ -128,7 +128,12 @@ var GearsCursorWrapper = Class('GearsCursorWrapper', database.Cursor, {
 
     convert_query: function(query, num_params){
         return query.subs(mult(["?"], num_params));
-    },
+    }
+/*
+    __iter__: function() {
+        yield this.next();
+    }
+*/
 });
 
 function _sqlite_extract(lookup_type, dt) {

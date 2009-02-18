@@ -230,7 +230,7 @@ register.tag("ifnotequal", ifnotequal);
 
         var bits = $w(token.contents);
         bits.shift();
-        if (bool(bits))
+        if (!bool(bits))
             throw new TemplateSyntaxError("'if' statement requires at least one argument")
 
         var bitstr = bits.join(' ');
@@ -249,7 +249,7 @@ register.tag("ifnotequal", ifnotequal);
             if (include(boolpair, ' ')){
                 var not = null, boolvar = null;
                 try {
-                    [not, boolvar] = boolpair.split();
+                    [not, boolvar] = boolpair.split(' ');
                 } catch (e if e instanceof VariableDoesNotExist) {
                     throw new TemplateSyntaxError, "'if' statement improperly formatted";
                 }
@@ -266,7 +266,7 @@ register.tag("ifnotequal", ifnotequal);
             var nodelist_false = parser.parse(['endif']);
             parser.delete_first_token();
         } else {
-            nodelist_false = NodeList();
+            nodelist_false = new NodeList();
         }
         return new IfNode(boolvars, nodelist_true, nodelist_false, link_type);
     }

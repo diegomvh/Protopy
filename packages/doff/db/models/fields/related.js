@@ -372,23 +372,23 @@ function create_many_related_manager(superclass, through) {
             // If there aren't any objects, there is nothing to do.
             if (bool(objs)) {
                 // Check that all the objects are of the right type
-                new_ids = new Set();
+                var new_ids = new Set();
                 for each (var obj in objs) {
                     if (obj instanceof this.model)
                         new_ids.add(obj._get_pk_val());
                     else
                         new_ids.add(obj);
-            }
-            // Add the newly created or already existing objects to the join table.
-            // First find out which items are already added, to avoid adding them twice
-            cursor = connection.cursor();
-            cursor.execute("SELECT %s FROM %s WHERE %s = %%s AND %s IN (%s)".subs( target_col_name, this.join_table, source_col_name, target_col_name, mult(['%s'], new_ids.elements.length).join(",")), [this._pk_val].concat(new_ids.elements));
-            existing_ids = new Set([row[0] for (row in cursor.fetchall())]);
+                }
+                // Add the newly created or already existing objects to the join table.
+                // First find out which items are already added, to avoid adding them twice
+                var cursor = connection.cursor();
+                cursor.execute("SELECT %s FROM %s WHERE %s = %%s AND %s IN (%s)".subs( target_col_name, this.join_table, source_col_name, target_col_name, mult(['%s'], new_ids.elements.length).join(",")), [this._pk_val].concat(new_ids.elements));
+                var existing_ids = new Set([row[0] for each (row in cursor.fetchall())]);
 
-            // Add the ones that aren't there already
-            for each (obj_id in (new_ids.difference(existing_ids)))
-                cursor.execute("INSERT INTO %s (%s, %s) VALUES (%%s, %%s)".subs(this.join_table, source_col_name, target_col_name), [this._pk_val, obj_id]);
-            transaction.commit_unless_managed();
+                // Add the ones that aren't there already
+                for (var obj_id in (new_ids.difference(existing_ids)))
+                    cursor.execute("INSERT INTO %s (%s, %s) VALUES (%%s, %%s)".subs(this.join_table, source_col_name, target_col_name), [this._pk_val, obj_id]);
+                transaction.commit_unless_managed();
             }
         },
 

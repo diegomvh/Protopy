@@ -285,8 +285,8 @@ var QuerySet = Class('QuerySet', {
      */
     get: function() {
         var [args, kwargs] = QuerySet.prototype.get.extra_arguments(arguments);
-        clone = this.filter.apply(this, args.concat(kwargs));
-        num = clone.length;
+        var clone = this.filter.apply(this, args.concat(kwargs));
+        var num = clone.length;
         if (num == 1)
             return clone._result_cache[0];
         if (num == 0)
@@ -312,8 +312,9 @@ var QuerySet = Class('QuerySet', {
     get_or_create: function(kwargs) {
 
         var [args, kwargs] = QuerySet.prototype.get_or_create.extra_arguments(arguments);
-        assert (kwargs, 'get_or_create() must be passed at least one keyword argument')
+        assert (bool(kwargs), 'get_or_create() must be passed at least one keyword argument')
         var defaults = kwargs['defaults'] || {};
+        delete kwargs['defaults'];
         try {
             return [this.get(kwargs), false];
         } catch (e if e instanceof this.model.DoesNotExist) {

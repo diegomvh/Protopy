@@ -1,3 +1,4 @@
+$D('doff.template');
 $L('doff.template.context', 'Context', 'ContextPopException');
 
 var libraries = {};
