@@ -4,7 +4,7 @@ if (__name__ == '__main__') {
     sys.path['blog'] = '/blog/';
     settings = '/blog/settings.js';
     $L('blog.apps.post.views');
-    views.syncdb();
+    /*views.syncdb();
     for each (var tag in tags)
         views.add_tag(tag, 'Un tag para ' + tag);
     var p1 = views.add_post('Lanzamientos de Ubuntu hasta el 2015', 'Desde la actual versión con soporte extendido Ubuntu 8.04 "LTS" hasta la lejana Ubuntu 11.04, este calendario de los ciclos de lanzamiento de esta distribución muestra qué podemos esparar de ella hasta el 2015. En el calendario se hace evidente también la diferencia fundamental entre una versión "LTS" y otra standard.');
@@ -12,6 +12,6 @@ if (__name__ == '__main__') {
     var p3 = views.add_post('CodePlex crece más del 100% en el 2008', 'En el 2006 Microsoft presentó CodePlex, su propio sitio para alojar proyectos Open Source, o como lo llamamos en aquel momento, "el SourceForge de Microsoft". Recientemente CodePlex publicó su resumen para el 2008 comparando algunos números de su comunidad con los del año anterior, de donde se desprenden datos muy alentadores:<ol><li>Visitas: 119% de incremento.</li><li>Nuevos proyectos: 113% de incremento.</li><li>Nuevos usuarios registrados: 72% de incremento.</li></ol>\nTodas las estadísticas son positivas, demostrando que muchos desarrolladores no están evitando los servicios gratuitos de CodePlex sólo porque son de Microsoft.');
     views.set_tags_by_title(p1, ['Linux', 'Ubuntu', 'Debian']);
     views.set_tags_by_title(p2, ['Gentoo', 'Geek']);
-    views.set_tags_by_title(p3, ['Microsoft', 'El Lado Oscuro', 'Dinero Todopoderoso', 'Windows']);
+    views.set_tags_by_title(p3, ['Microsoft', 'El Lado Oscuro', 'Dinero Todopoderoso', 'Windows']);*/
     views.show_posts();
 }

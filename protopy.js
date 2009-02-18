@@ -553,7 +553,6 @@
         'RuntimeError':  new Error(),
         'RuntimeWarning':  new Error(),
         'StandardError':  new Error(),
-        'StopIteration':  new Error(),
         'SyntaxError':  new Error(),
         'SyntaxWarning':  new Error(),
         'SystemError':  new Error(),

@@ -154,8 +154,10 @@ var QuerySet = Class('QuerySet', {
                 yield ret;
                 pos = pos + 1;
             }
-            if (!this._iter)
-                throw StopIteration
+            if (this._iter == null) {
+                print('se termino');
+                throw StopIteration;
+            }
             if (this._result_cache.length <= pos)
                 this._fill_cache();
         }
@@ -172,6 +174,22 @@ var QuerySet = Class('QuerySet', {
             return false;
         }
         return true;
+    },
+
+    __iter__ : function() {
+        if (this._result_cache == null) {
+            this._iter = this.iterator();
+            this._result_cache = [];
+        }
+        if (this._iter != null)
+            return this._result_iter();
+        // Python's list iterator is better than our version when we're just
+        // iterating over the cache.
+        function array_iter(array) {
+            for each (var element in array)
+                yield element;
+        }
+        return array_iter(this._result_cache);
     },
 
     //I whish __getitem__ , but
@@ -593,14 +611,14 @@ var QuerySet = Class('QuerySet', {
      */
     _fill_cache: function(num) {
         num = num || ITER_CHUNK_SIZE;
-        if (this._iter)
+        if (this._iter != null)
             try {
                 print('begin _fill_cache');
                 for (i = 0; i < num; i++)
                     this._result_cache.push(this._iter.next());
-                print('end _fill_cache, elements %s'.subs(this._result_cache.length));
-            } catch (stop) {
-                print('end _fill_cache, elements %s'.subs(this._result_cache.length));
+                print('end _fill_cache by elements %s'.subs(this._result_cache.length));
+            } catch (stop if stop == StopIteration) {
+                print('end _fill_cache by %s elements %s'.subs(stop, this._result_cache.length));
                 this._iter = null;
             }
     },
@@ -622,18 +640,6 @@ var QuerySet = Class('QuerySet', {
     _merge_sanity_check: function(other) {
     }
 });
-
-QuerySet.prototype.__iterator__ = function() {
-    if (!this._result_cache) {
-        this._iter = this.iterator();
-        this._result_cache = [];
-    }
-    if (this._iter)
-        return this._result_iter();
-    // Python's list iterator is better than our version when we're just
-    // iterating over the cache.
-    return Iterator(this._result_cache);
-};
 
 QuerySet.prototype.del.alters_data = true;
 QuerySet.prototype.update.alters_data = true;

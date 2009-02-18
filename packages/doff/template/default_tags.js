@@ -54,7 +54,7 @@ var ForNode = Class('ForNode', Node,{
                 values = [];
             }
             if (!values) values = [];
-            if (!values['length'])
+            if (!isarray(values))
                 values = array(values);
             var len_values = values.length;
             var unpack = this.loopvars.length > 1;
