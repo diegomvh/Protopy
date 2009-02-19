@@ -360,7 +360,13 @@
         'filter': function filter(func, sequence){ 
 
         },
-        'float': function(){ throw new NotImplementedError();},
+        'float': function float(value) {
+            if (!isstring(value) || isnumber(value)) throw new TypeError('Argument must be a string or a number');
+            var number = Number(value);
+            if (isNaN(number))
+                throw new ValueError('Invalid literal');
+            return number;
+        },
         'frozenset': function(){ throw new NotImplementedError();},
         'flatten': function flatten(array) { 
             return array.reduce(function(a,b) { return a.concat(b); }, []); 
@@ -382,7 +388,13 @@
             if (isfunction(object['__contains__'])) return object.__contains__(element);
             return object.indexOf(element) > -1;
         },
-        'int': function(){ throw new NotImplementedError();},
+        'int': function int(value) {
+            if (!isstring(value) || isnumber(value)) throw new TypeError('Argument must be a string or a number');
+            var number = Math.floor(value);
+            if (isNaN(number))
+                throw new ValueError('Invalid literal');
+            return number;
+        },
         'intern': function(){ throw new NotImplementedError();},
         'isclass': function isclass(object) { return bool(object) && isfunction(object) && 'superclass' in object && 'subclasses' in object; },
         'isinstance': function isinstance(object){
@@ -395,9 +407,11 @@
         'isundefined': function(object) { return typeof object == "undefined"; },
         'isarray': function(object) { return object != null && typeof object == "object" && 'splice' in object && 'join' in object; },
         'issubclass': function(){ throw new NotImplementedError();},
-        'isdict': function isdict() { return false},
+        'isdict': function isdict() { return false },
         'iter': function(){ throw new NotImplementedError();},
-        'keys': function keys(object){ return [e for (e in object)]; },
+        'keys': function keys(object){ 
+            return [e for (e in object)];
+        },
         'len': function len(object) {
             switch (typeof(object)) {
                 case 'undefined': throw new TypeError("object of type 'undefined' has no len()");
@@ -473,10 +487,11 @@
         'slice': function(){ throw new NotImplementedError();},
         'sorted': function(){ throw new NotImplementedError();},
         'staticmethod': function(){ throw new NotImplementedError();},
-        'str': function str(object){ return String(object) },
+        'str': function str(object) {
+            return String(object)
+        },
         'sum': function(){ throw new NotImplementedError();},
         'super': function(){ throw new NotImplementedError();},
-        'tuple': function(){ throw new NotImplementedError();},
         'type': function type(object){
             if (isarray(object)) return 'Array';
             if (isclass(object)) return 'Class';

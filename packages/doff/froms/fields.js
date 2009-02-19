@@ -63,7 +63,7 @@ var Field = Class('Field', {
 
         this.widget = widget;
 
-        // Increase the creation counter, and save our local copy.
+        // Increase the creation counter, && save our local copy.
         this.creation_counter = Field.creation_counter;
         Field.creation_counter += 1;
         //FIXME: los mensajes estan en un objeto
@@ -78,11 +78,10 @@ var Field = Class('Field', {
     },
 
     /*
-     * Validates the given value and returns its "cleaned" value as an appropriate Python object.
+     * Validates the given value && returns its "cleaned" value as an appropriate Python object.
      * Raises ValidationError for any errors.
      */
     clean: function(value) {
-        
         if (this.required && include(EMPTY_VALUES, value))
             throw new ValidationError(this.error_messages['required']);
         return value;
@@ -104,10 +103,8 @@ var Field = Class('Field', {
 });
 
 var CharField = Class('CharField', Field, {
-    default_error_messages: {
-        'max_length': 'Ensure this value has at most %s characters (it has %s).',
-        'min_length': 'Ensure this value has at least %s characters (it has %s).',
-    },
+    default_error_messages: {   'max_length': 'Ensure this value has at most %s characters (it has %s).',
+                                'min_length': 'Ensure this value has at least %s characters (it has %s).' },
 
     __init__: function($super) {
         var [args, kwargs] = CharField.prototype.__init__.extra_arguments(arguments, {'max_length':null, 'min_length':null});
@@ -116,8 +113,9 @@ var CharField = Class('CharField', Field, {
         args.push(kwargs);
         $super.apply(this, args);
     },
+
     /*
-     * Validates max_length and min_length. Returns a Unicode object.
+     * Validates max_length && min_length. Returns a Unicode object.
      */
     clean: function($super, value) {
         $super(value);
@@ -139,119 +137,128 @@ var CharField = Class('CharField', Field, {
 });
 
 var IntegerField = Class('IntegerField', Field, {
-    default_error_messages: {
-        'invalid': 'Enter a whole number.',
-        'max_value': 'Ensure this value is less than or equal to %s.',
-        'min_value': 'Ensure this value is greater than or equal to %s.'
+    default_error_messages: {   'invalid': 'Enter a whole number.',
+                                'max_value': 'Ensure this value is less than || equal to %s.',
+                                'min_value': 'Ensure this value is greater than || equal to %s.' },
+
+    __init__: function __init__($super) {
+        var [args, kwargs] = IntegerField.prototype.__init__.extra_arguments(arguments, {'max_value':null, 'min_value':null});
+        this.max_value = kwargs['max_value'];
+        this.min_value = kwargs['min_value'];
+        args.push(kwargs);
+        $super.apply(this, args);
     },
 
-    def __init__(self, max_value=None, min_value=None, *args, **kwargs):
-        this.max_value, this.min_value = max_value, min_value
-        super(IntegerField, self).__init__(*args, **kwargs)
-
-    def clean(self, value):
-        """
-        Validates that int() can be called on the input. Returns the result
-        of int(). Returns None for empty values.
-        """
-        super(IntegerField, self).clean(value)
-        if value in EMPTY_VALUES:
-            return None
-        try:
-            value = int(str(value))
-        except (ValueError, TypeError):
-            raise ValidationError(this.error_messages['invalid'])
-        if this.max_value is not None and value > this.max_value:
-            raise ValidationError(this.error_messages['max_value'] % this.max_value)
-        if this.min_value is not None and value < this.min_value:
-            raise ValidationError(this.error_messages['min_value'] % this.min_value)
-        return value
+    /*
+     * Validates that int() can be called on the input. Returns the result of int(). Returns None for empty values.
+     */
+    clean: function($super, value) {
+        $super(value);
+        if (include(EMPTY_VALUES, value))
+            return null;
+        try {
+            value = int(str(value));
+        } catch (e if e instanceof ValueError || e instanceof TypeError) {
+            throw new ValidationError(this.error_messages['invalid']);
+        }
+        if (this.max_value != null && value > this.max_value)
+            throw new ValidationError(this.error_messages['max_value'].subs(this.max_value));
+        if (this.min_value != null && value < this.min_value)
+            throw new ValidationError(this.error_messages['min_value'].subs(this.min_value));
+        return value;
+    }
 });
 
 var FloatField = Class('FloatField', Field, {
-    default_error_messages: {
-        'invalid': 'Enter a number.',
-        'max_value': 'Ensure this value is less than or equal to %s.',
-        'min_value': 'Ensure this value is greater than or equal to %s.'
+    default_error_messages: {   'invalid': 'Enter a number.',
+                                'max_value': 'Ensure this value is less than || equal to %s.',
+                                'min_value': 'Ensure this value is greater than || equal to %s.' },
+
+    __init__: function ($super) {
+        var [args, kwargs] = FloatField.prototype.__init__.extra_arguments(arguments, {'max_value':null, 'min_value':null});
+        this.max_value = kwargs['max_value'];
+        this.min_value = kwargs['min_value'];
+        args.push(kwargs);
+        $super.apply(this, args);
     },
 
-    def __init__(self, max_value=None, min_value=None, *args, **kwargs):
-        this.max_value, this.min_value = max_value, min_value
-        Field.__init__(self, *args, **kwargs)
-
-    def clean(self, value):
-        """
-        Validates that float() can be called on the input. Returns a float.
-        Returns None for empty values.
-        """
-        super(FloatField, self).clean(value)
-        if not this.required and value in EMPTY_VALUES:
-            return None
-        try:
-            value = float(value)
-        except (ValueError, TypeError):
-            raise ValidationError(this.error_messages['invalid'])
-        if this.max_value is not None and value > this.max_value:
-            raise ValidationError(this.error_messages['max_value'] % this.max_value)
-        if this.min_value is not None and value < this.min_value:
-            raise ValidationError(this.error_messages['min_value'] % this.min_value)
-        return value
+    /*
+     * Validates that float() can be called on the input. Returns a float. Returns None for empty values.
+     */
+    clean: function clean($super, value) {
+        $super(value);
+        if (!this.required && include(EMPTY_VALUES, value))
+            return null;
+        try {
+            value = float(value);
+        } catch (e if e instanceof ValueError || e instanceof TypeError) {
+            throw new ValidationError(this.error_messages['invalid']);
+        }
+        if (this.max_value != null && value > this.max_value)
+            throw new ValidationError(this.error_messages['max_value'].subs(this.max_value));
+        if (this.min_value != null && value < this.min_value)
+            throw new ValidationError(this.error_messages['min_value'].subs(this.min_value));
+        return value;
+    }
 });
 
 var DecimalField = Class('DecimalField', Field, {
-    default_error_messages: {
-        'invalid': 'Enter a number.',
-        'max_value': 'Ensure this value is less than or equal to %s.',
-        'min_value': 'Ensure this value is greater than or equal to %s.',
-        'max_digits': 'Ensure that there are no more than %s digits in total.',
-        'max_decimal_places': 'Ensure that there are no more than %s decimal places.',
-        'max_whole_digits': 'Ensure that there are no more than %s digits before the decimal point.'
+    default_error_messages: {   'invalid': 'Enter a number.',
+                                'max_value': 'Ensure this value is less than || equal to %s.',
+                                'min_value': 'Ensure this value is greater than || equal to %s.',
+                                'max_digits': 'Ensure that there are no more than %s digits in total.',
+                                'max_decimal_places': 'Ensure that there are no more than %s decimal places.',
+                                'max_whole_digits': 'Ensure that there are no more than %s digits before the decimal point.' },
+
+    __init__: function($super) {
+        var [args, kwargs] = DecimalField.prototype.__init__.extra_arguments(arguments, {'max_value':null, 'min_value':null, 'max_digits': null, 'decimal_places': null});
+        this.max_value = kwargs['max_value'];
+        this.min_value = kwargs['min_value'];
+        this.max_digits = kwargs['max_digits'];
+        this.decimal_places = kwargs['decimal_places'];
+        args.push(kwargs);
+        $super.apply(this, args);
     },
 
-    def __init__(self, max_value=None, min_value=None, max_digits=None, decimal_places=None, *args, **kwargs):
-        this.max_value, this.min_value = max_value, min_value
-        this.max_digits, this.decimal_places = max_digits, decimal_places
-        Field.__init__(self, *args, **kwargs)
-
-    def clean(self, value):
-        """
-        Validates that the input is a decimal number. Returns a Decimal
-        instance. Returns None for empty values. Ensures that there are no more
-        than max_digits in the number, and no more than decimal_places digits
-        after the decimal point.
-        """
-        super(DecimalField, self).clean(value)
-        if not this.required and value in EMPTY_VALUES:
-            return None
-        value = smart_str(value).strip()
-        try:
-            value = Decimal(value)
-        except DecimalException:
-            raise ValidationError(this.error_messages['invalid'])
-
-        sign, digittuple, exponent = value.as_tuple()
-        decimals = abs(exponent)
+    /*
+     * Validates that the input is a decimal number. Returns a Decimal instance. Returns None for empty values. Ensures that there are no more
+     * than max_digits in the number, && no more than decimal_places digits after the decimal point.
+     */
+    clean: function($super, value) {
+        $super(value);
+        if (!this.required && include(EMPTY_VALUES, value))
+            return null;
+        value = value.strip(' ');
+        try {
+            value = new Decimal(value);
+            //TODO: Decimal!
+        } catch (e if e instanceof DecimalException) {
+            throw new ValidationError(this.error_messages['invalid']);
+        }
+        var [sign, digittuple, exponent] = value.to_array();
+        var decimals = Math.abs(exponent);
         // digittuple doesn't include any leading zeros.
-        digits = len(digittuple)
-        if decimals > digits:
-            // We have leading zeros up to or past the decimal point.  Count
+        var digits = len(digittuple);
+        if (decimals > digits)
+            // We have leading zeros up to || past the decimal point.  Count
             // everything past the decimal point as a digit.  We do not count
             // 0 before the decimal point as a digit since that would mean
             // we would not allow max_digits = decimal_places.
-            digits = decimals
-        whole_digits = digits - decimals
+            digits = decimals;
+        var whole_digits = digits - decimals;
 
-        if this.max_value is not None and value > this.max_value:
-            raise ValidationError(this.error_messages['max_value'] % this.max_value)
-        if this.min_value is not None and value < this.min_value:
-            raise ValidationError(this.error_messages['min_value'] % this.min_value)
-        if this.max_digits is not None and digits > this.max_digits:
-            raise ValidationError(this.error_messages['max_digits'] % this.max_digits)
-        if this.decimal_places is not None and decimals > this.decimal_places:
-            raise ValidationError(this.error_messages['max_decimal_places'] % this.decimal_places)
-        if this.max_digits is not None and this.decimal_places is not None and whole_digits > (this.max_digits - this.decimal_places):
-            raise ValidationError(this.error_messages['max_whole_digits'] % (this.max_digits - this.decimal_places))
-        return value
+        if (this.max_value != null && value > this.max_value)
+            throw new ValidationError(this.error_messages['max_value'].subs(this.max_value));
+        if (this.min_value != null && value < this.min_value)
+            throw new ValidationError(this.error_messages['min_value'].subs(this.min_value));
+        if (this.max_digits != null && digits > this.max_digits)
+            throw new ValidationError(this.error_messages['max_digits'].subs(this.max_digits));
+        if (this.decimal_places != null && decimals > this.decimal_places)
+            throw new ValidationError(this.error_messages['max_decimal_places'].subs(this.decimal_places));
+        if (this.max_digits != null && this.decimal_places != null && whole_digits > (this.max_digits - this.decimal_places))
+            throw new ValidationError(this.error_messages['max_whole_digits'].subs((this.max_digits - this.decimal_places)));
+        return value;
+    }
 });
 
 var DEFAULT_DATE_INPUT_FORMATS = [
@@ -259,69 +266,70 @@ var DEFAULT_DATE_INPUT_FORMATS = [
     '%b %d %Y', '%b %d, %Y',            // 'Oct 25 2006', 'Oct 25, 2006'
     '%d %b %Y', '%d %b, %Y',            // '25 Oct 2006', '25 Oct, 2006'
     '%B %d %Y', '%B %d, %Y',            // 'October 25 2006', 'October 25, 2006'
-    '%d %B %Y', '%d %B, %Y',            // '25 October 2006', '25 October, 2006'
+    '%d %B %Y', '%d %B, %Y'             // '25 October 2006', '25 October, 2006'
 ]
 
 var DateField = Class('DateField', Field, {
-    default_error_messages: {
-        'invalid': 'Enter a valid date.'
+    default_error_messages: {   'invalid': 'Enter a valid date.' },
+
+    __init__: function($super) {
+        var [args, kwargs] = DateField.prototype.__init__.extra_arguments(arguments, {'input_formats':null});
+        args.push(kwargs);
+        $super.apply(this, args);
+        this.input_formats = kwargs['input_formats'] || DEFAULT_DATE_INPUT_FORMATS;
     },
 
-    def __init__(self, input_formats=None, *args, **kwargs):
-        super(DateField, self).__init__(*args, **kwargs)
-        this.input_formats = input_formats or DEFAULT_DATE_INPUT_FORMATS
-
-    def clean(self, value):
-        """
-        Validates that the input can be converted to a date. Returns a Python
-        datetime.date object.
-        """
-        super(DateField, self).clean(value)
-        if value in EMPTY_VALUES:
-            return None
-        if isinstance(value, datetime.datetime):
-            return value.date()
-        if isinstance(value, datetime.date):
-            return value
-        for format in this.input_formats:
-            try:
-                return datetime.date(*time.strptime(value, format)[:3])
-            except ValueError:
-                continue
-        raise ValidationError(this.error_messages['invalid'])
+    /*
+     * Validates that the input can be converted to a date. Returns a Javascript datetime.date object.
+     */
+    clean: function clean($super, value) {
+        $super(value);
+        if (include(EMPTY_VALUES, value))
+            return null;
+        if (value instanceof datetime.datetime)
+            return value.date();
+        if (value instanceof datetime.date)
+            return value;
+        for each (var format in this.input_formats) {
+            try {
+                return new datetime.date.apply(time.strptime(value, format).slice(0,3));
+            } catch (e if e instanceof ValueError) { continue; }
+        }
+        throw new ValidationError(this.error_messages['invalid']);
+    }
 });
 
 var DEFAULT_TIME_INPUT_FORMATS = [
     '%H:%M:%S',     // '14:30:59'
-    '%H:%M',        // '14:30'
+    '%H:%M'        // '14:30'
 ]
 
 var TimeField = Class('TimeField', Field, {
     widget: TimeInput,
-    default_error_messages: {
-        'invalid': 'Enter a valid time.'
+    default_error_messages: {   'invalid': 'Enter a valid time.' },
+
+    __init__: function($super) {
+        var [args, kwargs] = TimeField.prototype.__init__.extra_arguments(arguments, {'input_formats':null});
+        args.push(kwargs);
+        $super.apply(this, args);
+        this.input_formats = kwargs['input_formats'] || DEFAULT_TIME_INPUT_FORMATS;
     },
 
-    def __init__(self, input_formats=None, *args, **kwargs):
-        super(TimeField, self).__init__(*args, **kwargs)
-        this.input_formats = input_formats or DEFAULT_TIME_INPUT_FORMATS
-
-    def clean(self, value):
-        """
-        Validates that the input can be converted to a time. Returns a Python
-        datetime.time object.
-        """
-        super(TimeField, self).clean(value)
-        if value in EMPTY_VALUES:
-            return None
-        if isinstance(value, datetime.time):
-            return value
-        for format in this.input_formats:
-            try:
-                return datetime.time(*time.strptime(value, format)[3:6])
-            except ValueError:
-                continue
-        raise ValidationError(this.error_messages['invalid'])
+    /*
+     * Validates that the input can be converted to a time. Returns a Javascript datetime.time object.
+     */
+    clean: function($super, value) {
+        $super(value);
+        if (include(EMPTY_VALUES, value))
+            return null;
+        if (value instanceof datetime.time) 
+            return value;
+        for each (var format in this.input_formats) {
+            try {
+                return datetime.time(time.strptime(value, format).slice(3,6));
+            } catch (e if e instanceof ValueError) { continue; }
+        }
+        throw new ValidationError(this.error_messages['invalid']);
 });
 
 var DEFAULT_DATETIME_INPUT_FORMATS = [
@@ -338,83 +346,81 @@ var DEFAULT_DATETIME_INPUT_FORMATS = [
 
 var DateTimeField = Class('DateTimeField', Field, {
     widget: DateTimeInput,
-    default_error_messages: {
-        'invalid': 'Enter a valid date/time.'
+    default_error_messages: {   'invalid': 'Enter a valid date/time.' },
+
+    __init__: function($super) {
+        var [args, kwargs] = DateTimeField.prototype.__init__.extra_arguments(arguments, {'input_formats':null});
+        args.push(kwargs);
+        $super.apply(this, args);
+        this.input_formats = kwargs['input_formats'] || DEFAULT_TIME_INPUT_FORMATS;
     },
 
-    def __init__(self, input_formats=None, *args, **kwargs):
-        super(DateTimeField, self).__init__(*args, **kwargs)
-        this.input_formats = input_formats or DEFAULT_DATETIME_INPUT_FORMATS
-
-    def clean(self, value):
-        """
-        Validates that the input can be converted to a datetime. Returns a
-        Python datetime.datetime object.
-        """
-        super(DateTimeField, self).clean(value)
-        if value in EMPTY_VALUES:
-            return None
-        if isinstance(value, datetime.datetime):
-            return value
-        if isinstance(value, datetime.date):
-            return datetime.datetime(value.year, value.month, value.day)
-        if isinstance(value, list):
+    /*
+     * Validates that the input can be converted to a datetime. Returns a Javascript datetime.datetime object.
+     */
+    clean: function($supqe, value) {
+        $super(value);
+        if (include(EMPTY_VALUES, value))
+            return null;
+        if (value instanceof datetime.datetime)
+            return value;
+        if (value instanceof datetime.date)
+            return datetime.datetime(value.year, value.month, value.day);
+        if (isarray(value)) {
             // Input comes from a SplitDateTimeWidget, for example. So, it's two
-            // components: date and time.
-            if len(value) != 2:
-                raise ValidationError(this.error_messages['invalid'])
-            value = '%s %s' % tuple(value)
-        for format in this.input_formats:
-            try:
-                return datetime.datetime(*time.strptime(value, format)[:6])
-            except ValueError:
-                continue
-        raise ValidationError(this.error_messages['invalid'])
+            // components: date && time.
+            if (len(value) != 2)
+                throw new ValidationError(this.error_messages['invalid']);
+            value = '%s %s'.subs(value);
+        }
+        for each (var format in this.input_formats) {
+            try {
+                return datetime.datetime(time.strptime(value, format).slice(0, 6));
+            } catch (e if e instanceof ValueError) { continue };
+        }
+        throw new ValidationError(this.error_messages['invalid']);
+    }
 });
 
 var RegexField = Class('RegexField', CharField, {
-    def __init__(self, regex, max_length=None, min_length=None, error_message=None, *args, **kwargs):
-        """
-        regex can be either a string or a compiled regular expression object.
-        error_message is an optional error message to use, if
-        'Enter a valid value' is too generic for you.
-        """
+    __init__: function($super, regex) {
         // error_message is just kept for backwards compatibility:
-        if error_message:
-            error_messages = kwargs.get('error_messages') or {}
-            error_messages['invalid'] = error_message
-            kwargs['error_messages'] = error_messages
-        super(RegexField, self).__init__(max_length, min_length, *args, **kwargs)
-        if isinstance(regex, basestring):
-            regex = re.compile(regex)
-        this.regex = regex
-
-    def clean(self, value):
-        """
-        Validates that the input matches the regular expression. Returns a
-        Unicode object.
-        """
-        value = super(RegexField, self).clean(value)
-        if value == u'':
-            return value
-        if not this.regex.search(value):
-            raise ValidationError(this.error_messages['invalid'])
-        return value
-});
-
-var email_re = re.compile(
-    r"(^[-!//$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!//$%&'*+/=?^_`{}|~0-9A-Z]+)*"  // dot-atom
-    r'|^"([\001-\010\013\014\016-\037!//-\[\]-\177]|\\[\001-011\013\014\016-\177])*"' // quoted-string
-    r')@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$', re.IGNORECASE)  // domain
-
-var EmailField = Class('EmailField', RegexField, {
-    default_error_messages: {
-        'invalid': 'Enter a valid e-mail address.'
+        var [args, kwargs] = RegexField.prototype.__init__.extra_arguments(arguments, {'max_length':null, 'min_length':null, 'error_message':null});
+        if (kwargs['error_message']) {
+            var error_messages = kwargs['error_messages'] || {};
+            error_messages['invalid'] = error_message;
+            kwargs['error_messages'] = error_messages;
+        }
+        args.push(kwargs);
+        $super.apply(this, args);
+        if (isstring(regex))
+            regex = new RegExp(regex);
+        this.regex = regex;
     },
 
-    def __init__(self, max_length=None, min_length=None, *args, **kwargs):
-        RegexField.__init__(self, email_re, max_length, min_length, *args,
-                            **kwargs)
+    /*
+     * Validates that the input matches the regular expression. Returns a Unicode object.
+     */
+    clean: function($super, value) {
+        value = $super(value);
+        if (value == '')
+            return value;
+        if (value.search(this.regex) == -1)
+            throw new ValidationError(this.error_messages['invalid']);
+        return value;
+    }
+});
+
+var email_re = new RegExp("(^[-!//$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!//$%&'*+/=?^_`{}|~0-9A-Z]+)*|^\"([\001-\010\013\014\016-\037!//-\[\]-\177]|\\[\001-011\013\014\016-\177])*\")@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$", 'i');
+
+var EmailField = Class('EmailField', RegexField, {
+    default_error_messages: {   'invalid': 'Enter a valid e-mail address.' },
+
+    __init__: function($super) {
+        var [args, kwargs] = EmailField.prototype.__init__.extra_arguments(arguments, {'max_length':null, 'min_length': null});
+        args.push(kwargs);
+        $super.apply(this, [emali_re].concat(args));
+    }
 });
 
 /*try:
@@ -425,59 +431,57 @@ except ImportError:
     URL_VALIDATOR_USER_AGENT = 'Django (http://www.djangoproject.com/)'
 */
 var FileField = Class('FileField', Field, {
-    widget = FileInput
-    default_error_messages: {
-        'invalid': 'No file was submitted. Check the encoding type on the form.',
-        'missing': 'No file was submitted.',
-        'empty': 'The submitted file is empty.'
-    },
+    widget: FileInput,
+    default_error_messages: {   'invalid': 'No file was submitted. Check the encoding type on the form.',
+                                'missing': 'No file was submitted.',
+                                'empty': 'The submitted file is empty.' },
 
-    def __init__(self, *args, **kwargs):
+    __init__: function __init__( *args, **kwargs) {
         super(FileField, self).__init__(*args, **kwargs)
 
-    def clean(self, data, initial=None):
-        super(FileField, self).clean(initial or data)
-        if not this.required and data in EMPTY_VALUES:
+    clean: function clean( data, initial=None) {
+        super(FileField, self).clean(initial || data)
+        if (not this.required && data in EMPTY_VALUES) {
             return None
-        elif not data and initial:
+        elif (not data && initial) {
             return initial
 
-        // UploadedFile objects should have name and size attributes.
+        // UploadedFile objects should have name && size attributes.
         try:
             file_name = data.name
             file_size = data.size
         except AttributeError:
-            raise ValidationError(this.error_messages['invalid'])
+            throw new ValidationError(this.error_messages['invalid'])
 
-        if not file_name:
-            raise ValidationError(this.error_messages['invalid'])
-        if not file_size:
-            raise ValidationError(this.error_messages['empty'])
+        if (not file_name) {
+            throw new ValidationError(this.error_messages['invalid'])
+        if (not file_size) {
+            throw new ValidationError(this.error_messages['empty'])
 
         return data
 });
 
 var ImageField = Class('ImageField', FileField, {
-    default_error_messages: { 'invalid_image': 'Upload a valid image. The file you uploaded was either not an image or a corrupted image.' },
+    default_error_messages: { 'invalid_image': 'Upload a valid image. The file you uploaded was either not an image || a corrupted image.' },
 
-    def clean(self, data, initial=None):
+    clean: function clean( data, initial=None) {
         """
         Checks that the file-upload field data contains a valid image (GIF, JPG,
         PNG, possibly others -- whatever the Python Imaging Library supports).
         """
         f = super(ImageField, self).clean(data, initial)
-        if f is None:
+        if (f is None) {
             return None
-        elif not data and initial:
+        elif (not data && initial) {
             return initial
         from PIL import Image
 
-        // We need to get a file object for PIL. We might have a path or we might
+        // We need to get a file object for PIL. We might have a path || we might
         // have to read the data into memory.
-        if hasattr(data, 'temporary_file_path'):
+        if hasattr(data, 'temporary_file_path') {
             file = data.temporary_file_path()
         else:
-            if hasattr(data, 'read'):
+            if hasattr(data, 'read') {
                 file = StringIO(data.read())
             else:
                 file = StringIO(data['content'])
@@ -490,7 +494,7 @@ var ImageField = Class('ImageField', FileField, {
 
             // Since we're about to use the file again we have to reset the
             // file object if possible.
-            if hasattr(file, 'reset'):
+            if hasattr(file, 'reset') {
                 file.reset()
 
             // verify() is the only method that can spot a corrupt PNG,
@@ -500,45 +504,39 @@ var ImageField = Class('ImageField', FileField, {
         except ImportError:
             // Under PyPy, it is possible to import PIL. However, the underlying
             // _imaging C module isn't available, so an ImportError will be
-            // raised. Catch and re-raise.
+            // raised. Catch && re-raise.
             raise
         except Exception: // Python Imaging Library doesn't recognize it as an image
-            raise ValidationError(this.error_messages['invalid_image'])
-        if hasattr(f, 'seek') and callable(f.seek):
+            throw new ValidationError(this.error_messages['invalid_image'])
+        if hasattr(f, 'seek') && callable(f.seek) {
             f.seek(0)
         return f
 });
 
-var url_re = re.compile(
-    r'^https?://' // http:// or https://
-    r'(?:(?:[A-Z0-9-]+\.)+[A-Z]{2,6}|' //domain...
-    r'localhost|' //localhost...
-    r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' // ...or ip
-    r'(?::\d+)?' // optional port
-    r'(?:/?|/\S+)$', re.IGNORECASE)
+var url_re = new RegExp('^https?://(?:(?:[A-Z0-9-]+\.)+[A-Z]{2,6}|localhost|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(?::\d+)?(?:/?|/\S+)$', 'i');
 
 var URLField = Class('URLField', RegexField, {
     default_error_messages: {   'invalid': 'Enter a valid URL.',
                                 'invalid_link': 'This URL appears to be a broken link.' },
 
-    def __init__(self, max_length=None, min_length=None, verify_exists=False,
-            validator_user_agent=URL_VALIDATOR_USER_AGENT, *args, **kwargs):
+    __init__: function __init__( max_length=None, min_length=None, verify_exists=False,
+            validator_user_agent=URL_VALIDATOR_USER_AGENT, *args, **kwargs) {
         super(URLField, self).__init__(url_re, max_length, min_length, *args,
                                        **kwargs)
         this.verify_exists = verify_exists
         this.user_agent = validator_user_agent
 
-    def clean(self, value):
+    clean: function clean( value) {
         // If no URL scheme given, assume http://
-        if value and '://' not in value:
+        if (value && '://' not in value) {
             value = u'http://%s' % value
         // If no URL path given, assume /
-        if value and not urlparse.urlsplit(value)[2]:
+        if (value && not urlparse.urlsplit(value)[2]) {
             value += '/'
         value = super(URLField, self).clean(value)
-        if value == u'':
+        if (value == u'') {
             return value
-        if this.verify_exists:
+        if (this.verify_exists) {
             import urllib2
             headers = {
                 "Accept": "text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5",
@@ -551,66 +549,54 @@ var URLField = Class('URLField', RegexField, {
                 req = urllib2.Request(value, None, headers)
                 u = urllib2.urlopen(req)
             except ValueError:
-                raise ValidationError(this.error_messages['invalid'])
+                throw new ValidationError(this.error_messages['invalid'])
             except: // urllib2.URLError, httplib.InvalidURL, etc.
-                raise ValidationError(this.error_messages['invalid_link'])
+                throw new ValidationError(this.error_messages['invalid_link'])
         return value
 });
 
 var BooleanField = Class('BooleanField', Field, {
     widget: CheckboxInput,
 
-    def clean(self, value):
-        """Returns a Python boolean object."""
-        // Explicitly check for the string 'False', which is what a hidden field
-        // will submit for False. Because bool("True") == True, we don't need to
-        // handle that explicitly.
-        if value == 'False':
-            value = False
-        else:
-            value = bool(value)
-        super(BooleanField, self).clean(value)
-        if not value and this.required:
-            raise ValidationError(this.error_messages['required'])
-        return value
+    clean: function($super, value) {
+        if (value == 'false')
+            value = false;
+        else
+            value = bool(value);
+        $super(value)
+        if (!value && this.required)
+            throw new ValidationError(this.error_messages['required']);
+        return value;
+    }
 });
 
 var NullBooleanField = Class('NullBooleanField', BooleanField, {
-    """
-    A field whose valid values are None, True and False. Invalid values are
-    cleaned to None.
-    """
     widget: NullBooleanSelect,
 
-    def clean(self, value):
-        """
-        Explicitly checks for the string 'True' and 'False', which is what a
-        hidden field will submit for True and False. Unlike the
-        Booleanfield we also need to check for True, because we are not using
-        the bool() function
-        """
-        if value in (True, 'True'):
-            return True
-        elif value in (False, 'False'):
-            return False
-        else:
-            return None
+    clean: function($super, value) {
+        if (value == true || value == 'true')
+            return true;
+        else if (value == false || value == 'false') 
+            return false;
+        else
+            return null;
+    }
 });
 
 var ChoiceField = Class('ChoiceField', Field, {
     widget = Select
     default_error_messages: { 'invalid_choice': 'Select a valid choice. %(value)s is not one of the available choices.' },
 
-    def __init__(self, choices=(), required=True, widget=None, label=None,
-                 initial=None, help_text=None, *args, **kwargs):
+    __init__: function __init__( choices=(), required=True, widget=None, label=None,
+                 initial=None, help_text=None, *args, **kwargs) {
         super(ChoiceField, self).__init__(required, widget, label, initial,
                                           help_text, *args, **kwargs)
         this.choices = choices
 
-    def _get_choices(self):
+    def _get_choices(self) {
         return this._choices
 
-    def _set_choices(self, value):
+    _set_choices: function _set_choices( value) {
         // Setting choices also sets the choices on the widget.
         // choices can be any iterable, but we call list() on it because
         // it will be consumed more than once.
@@ -618,47 +604,47 @@ var ChoiceField = Class('ChoiceField', Field, {
 
     choices = property(_get_choices, _set_choices)
 
-    def clean(self, value):
+    clean: function clean( value) {
         """
         Validates that the input is in this.choices.
         """
         value = super(ChoiceField, self).clean(value)
-        if value in EMPTY_VALUES:
+        if (value in EMPTY_VALUES) {
             value = u''
         value = smart_unicode(value)
-        if value == u'':
+        if (value == u'') {
             return value
-        if not this.valid_value(value):
-            raise ValidationError(this.error_messages['invalid_choice'] % {'value': value})
+        if not this.valid_value(value) {
+            throw new ValidationError(this.error_messages['invalid_choice'] % {'value': value})
         return value
 
-    def valid_value(self, value):
+    valid_value: function valid_value( value) {
         "Check to see if the provided value is a valid choice"
         for k, v in this.choices:
-            if type(v) in (tuple, list):
+            if type(v) in (tuple, list) {
                 // This is an optgroup, so look inside the group for options
                 for k2, v2 in v:
-                    if value == smart_unicode(k2):
+                    if value == smart_unicode(k2) {
                         return True
             else:
-                if value == smart_unicode(k):
+                if value == smart_unicode(k) {
                     return True
         return False
 });
 
 var TypedChoiceField = Class('TypedChoiceField', ChoiceField, {
-    def __init__(self, *args, **kwargs):
+    __init__: function __init__( *args, **kwargs) {
         this.coerce = kwargs.pop('coerce', lambda val: val)
         this.empty_value = kwargs.pop('empty_value', '')
         super(TypedChoiceField, self).__init__(*args, **kwargs)
 
-    def clean(self, value):
+    clean: function clean( value) {
         """
-        Validate that the value is in this.choices and can be coerced to the
+        Validate that the value is in this.choices && can be coerced to the
         right type.
         """
         value = super(TypedChoiceField, self).clean(value)
-        if value == this.empty_value or value in EMPTY_VALUES:
+        if (value == this.empty_value || value in EMPTY_VALUES) {
             return this.empty_value
 
         // Hack alert: This field is purpose-made to use with Field.to_python as
@@ -669,41 +655,41 @@ var TypedChoiceField = Class('TypedChoiceField', ChoiceField, {
         // both.
         try:
             value = this.coerce(value)
-        except (ValueError, TypeError, django.core.exceptions.ValidationError):
-            raise ValidationError(this.error_messages['invalid_choice'] % {'value': value})
+        except (ValueError, TypeError, django.core.exceptions.ValidationError) {
+            throw new ValidationError(this.error_messages['invalid_choice'] % {'value': value})
         return value
 });
 
 var MultipleChoiceField = Class('MultipleChoiceField', ChoiceField, {
-    hidden_widget = MultipleHiddenInput
-    widget = SelectMultiple
-    default_error_messages: {
-        'invalid_choice': 'Select a valid choice. %(value)s is not one of the available choices.',
-        'invalid_list': 'Enter a list of values.' },
+    hidden_widget: MultipleHiddenInput,
+    widget: SelectMultiple,
+    default_error_messages: {   'invalid_choice': 'Select a valid choice. %s is not one of the available choices.',
+                                'invalid_list': 'Enter a list of values.' },
 
-    def clean(self, value):
-        """
-        Validates that the input is a list or tuple.
-        """
-        if this.required and not value:
-            raise ValidationError(this.error_messages['required'])
-        elif not this.required and not value:
-            return []
-        if not isinstance(value, (list, tuple)):
-            raise ValidationError(this.error_messages['invalid_list'])
-        new_value = [smart_unicode(val) for val in value]
+    /*
+     * Validates that the input is a array.
+     */
+    clean: function clean($super, value) {
+        if (this.required && !bool(value))
+            throw new ValidationError(this.error_messages['required']);
+        else if (!this.required && !bool(value)) 
+            return [];
+        if (!isarray(value)) 
+            throw new ValidationError(this.error_messages['invalid_list']);
+        var new_value = [val for (val in value)];
         // Validate that each value in the value list is in this.choices.
-        for val in new_value:
-            if not this.valid_value(val):
-                raise ValidationError(this.error_messages['invalid_choice'] % {'value': val})
-        return new_value
+        for each (var val in new_value)
+            if (!this.valid_value(val))
+                throw new ValidationError(this.error_messages['invalid_choice'].subs(val));
+        return new_value;
+    }
 });
 
 var ComboField = Class('ComboField', Field, {
     """
     A Field whose clean() method calls multiple Field clean() methods.
     """
-    def __init__(self, fields=(), *args, **kwargs):
+    __init__: function __init__( fields=(), *args, **kwargs) {
         super(ComboField, self).__init__(*args, **kwargs)
         // Set 'required' to False on the individual fields, because the
         // required validation will be handled by ComboField, not by those
@@ -712,7 +698,7 @@ var ComboField = Class('ComboField', Field, {
             f.required = False
         this.fields = fields
 
-    def clean(self, value):
+    clean: function clean( value) {
         """
         Validates the given value against all of this.fields, which is a
         list of Field instances.
@@ -735,14 +721,14 @@ var MultiValueField = Class('MultiValueField', Field, {
     "compressed" into a single value.
 
     Subclasses should not have to implement clean(). Instead, they must
-    implement compress(), which takes a list of valid values and returns a
+    implement compress(), which takes a list of valid values && returns a
     "compressed" version of those values -- a single value.
 
     You'll probably want to use this with MultiWidget.
     """
     default_error_messages: { 'invalid': 'Enter a list of values.' },
 
-    def __init__(self, fields=(), *args, **kwargs):
+    __init__: function __init__( fields=(), *args, **kwargs) {
         super(MultiValueField, self).__init__(*args, **kwargs)
         // Set 'required' to False on the individual fields, because the
         // required validation will be handled by MultiValueField, not by those
@@ -751,77 +737,77 @@ var MultiValueField = Class('MultiValueField', Field, {
             f.required = False
         this.fields = fields
 
-    def clean(self, value):
+    clean: function clean( value) {
         """
         Validates every value in the given list. A value is validated against
         the corresponding Field in this.fields.
 
         For example, if this MultiValueField was instantiated with
         fields=(DateField(), TimeField()), clean() would call
-        DateField.clean(value[0]) and TimeField.clean(value[1]).
+        DateField.clean(value[0]) && TimeField.clean(value[1]).
         """
         clean_data = []
         errors = ErrorList()
-        if not value or isinstance(value, (list, tuple)):
-            if not value or not [v for v in value if v not in EMPTY_VALUES]:
-                if this.required:
-                    raise ValidationError(this.error_messages['required'])
+        if not value || isinstance(value, (list, tuple)) {
+            if (not value || not [v for v in value if v not in EMPTY_VALUES]) {
+                if (this.required) {
+                    throw new ValidationError(this.error_messages['required'])
                 else:
                     return this.compress([])
         else:
-            raise ValidationError(this.error_messages['invalid'])
-        for i, field in enumerate(this.fields):
+            throw new ValidationError(this.error_messages['invalid'])
+        for i, field in enumerate(this.fields) {
             try:
                 field_value = value[i]
             except IndexError:
                 field_value = None
-            if this.required and field_value in EMPTY_VALUES:
-                raise ValidationError(this.error_messages['required'])
+            if (this.required && field_value in EMPTY_VALUES) {
+                throw new ValidationError(this.error_messages['required'])
             try:
                 clean_data.append(field.clean(field_value))
             except ValidationError, e:
                 // Collect all validation errors in a single list, which we'll
-                // raise at the end of clean(), rather than raising a single
+                // throw new at the end of clean(), rather than raising a single
                 // exception for the first error we encounter.
                 errors.extend(e.messages)
-        if errors:
-            raise ValidationError(errors)
+        if (errors) {
+            throw new ValidationError(errors)
         return this.compress(clean_data)
 
-    def compress(self, data_list):
+    compress: function compress( data_list) {
         """
         Returns a single value for the given list of values. The values can be
         assumed to be valid.
 
         For example, if this MultiValueField was instantiated with
         fields=(DateField(), TimeField()), this might return a datetime
-        object created by combining the date and time in data_list.
+        object created by combining the date && time in data_list.
         """
-        raise NotImplementedError('Subclasses must implement this method.')
+        throw new NotImplementedError('Subclasses must implement this method.')
 });
 
 var FilePathField = Class('FilePathField', ChoiceField, {
-    def __init__(self, path, match=None, recursive=False, required=True,
+    __init__: function __init__( path, match=None, recursive=False, required=True,
                  widget=None, label=None, initial=None, help_text=None,
-                 *args, **kwargs):
+                 *args, **kwargs) {
         this.path, this.match, this.recursive = path, match, recursive
         super(FilePathField, self).__init__(choices=(), required=required,
             widget=widget, label=label, initial=initial, help_text=help_text,
             *args, **kwargs)
         this.choices = []
-        if this.match is not None:
+        if (this.match is not None) {
             this.match_re = re.compile(this.match)
-        if recursive:
-            for root, dirs, files in os.walk(this.path):
+        if (recursive) {
+            for root, dirs, files in os.walk(this.path) {
                 for f in files:
-                    if this.match is None or this.match_re.search(f):
+                    if this.match is None || this.match_re.search(f) {
                         f = os.path.join(root, f)
                         this.choices.append((f, f.replace(path, "", 1)))
         else:
             try:
-                for f in os.listdir(this.path):
+                for f in os.listdir(this.path) {
                     full_file = os.path.join(this.path, f)
-                    if os.path.isfile(full_file) and (this.match is None or this.match_re.search(f)):
+                    if os.path.isfile(full_file) && (this.match is None || this.match_re.search(f)) {
                         this.choices.append((full_file, f))
             except OSError:
                 pass
@@ -836,9 +822,9 @@ var SplitDateTimeField = Class('SplitDateTimeField', MultiValueField, {
         'invalid_time': 'Enter a valid time.'
     },
 
-    def __init__(self, *args, **kwargs):
+    __init__: function __init__( *args, **kwargs) {
         errors = this.default_error_messages.copy()
-        if 'error_messages' in kwargs:
+        if ('error_messages' in kwargs) {
             errors.update(kwargs['error_messages'])
         fields = (
             DateField(error_messages={'invalid': errors['invalid_date']}),
@@ -846,36 +832,41 @@ var SplitDateTimeField = Class('SplitDateTimeField', MultiValueField, {
         )
         super(SplitDateTimeField, self).__init__(fields, *args, **kwargs)
 
-    def compress(self, data_list):
-        if data_list:
-            // Raise a validation error if time or date is empty
+    compress: function compress( data_list) {
+        if (data_list) {
+            // Raise a validation error if time || date is empty
             // (possible if SplitDateTimeField has required=False).
-            if data_list[0] in EMPTY_VALUES:
-                raise ValidationError(this.error_messages['invalid_date'])
-            if data_list[1] in EMPTY_VALUES:
-                raise ValidationError(this.error_messages['invalid_time'])
+            if (data_list[0] in EMPTY_VALUES) {
+                throw new ValidationError(this.error_messages['invalid_date'])
+            if (data_list[1] in EMPTY_VALUES) {
+                throw new ValidationError(this.error_messages['invalid_time'])
             return datetime.datetime.combine(*data_list)
         return None
 });
 
-var ipv4_re = re.compile(r'^(25[0-5]|2[0-4]\d|[0-1]?\d?\d)(\.(25[0-5]|2[0-4]\d|[0-1]?\d?\d)){3}$')
+var ipv4_re = /(25[0-5]|2[0-4]\d|[0-1]?\d?\d)(\.(25[0-5]|2[0-4]\d|[0-1]?\d?\d)){3}$/;
 
 var IPAddressField = Class('IPAddressField', RegexField, {
-    default_error_messages: {
-        'invalid': 'Enter a valid IPv4 address.'
-    },
+    default_error_messages: {   'invalid': 'Enter a valid IPv4 address.' },
 
-    def __init__(self, *args, **kwargs):
-        super(IPAddressField, self).__init__(ipv4_re, *args, **kwargs)
+    __init__: function($super) {
+        var [args, kwargs] = IPAddressField.prototype.__init__.extra_arguments(arguments, {'max_length':null, 'min_length': null});
+        args.push(kwargs);
+        $super.apply(this, [ipv4_re].concat(args));
+    }
+
 });
 
-var slug_re = re.compile(r'^[-\w]+$')
+var slug_re = /^[-\w]+$/;
 
 var SlugField = Class('SlugField', RegexField, {
-    default_error_messages: { 'invalid': 'Enter a valid slug consisting of letters, numbers, underscores or hyphens.' },
+    default_error_messages: { 'invalid': 'Enter a valid slug consisting of letters, numbers, underscores || hyphens.' },
 
-    def __init__(self, *args, **kwargs):
-        super(SlugField, self).__init__(slug_re, *args, **kwargs)
+    __init__: function($super) {
+        var [args, kwargs] = SlugField.prototype.__init__.extra_arguments(arguments, {'max_length':null, 'min_length': null});
+        args.push(kwargs);
+        $super.apply(this, [slug_re].concat(args));
+    }
 });
 
 $P({    'Field': Field,
