@@ -1,4 +1,7 @@
+syntax: glob
+.pydevproject
+.project
 
 syntax: regexp
-^nbproject$
+^nbproject
 ^.*~$
