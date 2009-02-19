@@ -1,6 +1,6 @@
 $D("doff.db.models.query");
 
-$L('doff.utils.set', 'Set');
+$L('sets', 'Set');
 $L('doff.db', 'connection', 'IntegrityError');
 $L('doff.db.models.fields', 'DateField');
 $L('doff.db.models.query_utils', 'Q', 'select_related_descend');

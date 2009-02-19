@@ -1,4 +1,4 @@
-$L('doff.utils.set', 'Set');
+$L('sets', 'Set');
 $L('doff.utils.hash', 'hash');
 /**
     * This class encapsulates all backend-specific differences that pertain to

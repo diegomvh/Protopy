@@ -7,7 +7,7 @@ $L('doff.db.models.related', 'RelatedObject');
 $L('doff.db.models.query', 'QuerySet');
 $L('doff.db.models.query_utils', 'QueryWrapper');
 $L('doff.core.exceptions', 'ValidationError');
-$L('doff.utils.set', 'Set');
+$L('sets', 'Set');
 $L('doff.db.transaction');
 
 var RECURSIVE_RELATIONSHIP_CONSTANT = 'this';

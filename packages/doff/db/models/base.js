@@ -8,7 +8,7 @@ $L("doff.db.models.sql");
 $L("doff.db.models.signals");
 $L("doff.db.models.manager");
 $L("doff.db.models.options", 'Options');
-$L("doff.utils.set", 'Set');
+$L("sets", 'Set');
 $L("doff.db.models.loading", 'register_models', 'get_model');
 
 var subclass_exception = function(name, parent, module) {
@@ -143,7 +143,7 @@ var ModelBase = {
     },
 
     add_to_class: function(name, value) {
-        if (value['contribute_to_class'])
+        if (value && value['contribute_to_class'])
             value.contribute_to_class(this, name);
         else
             this.add_method(name, value);

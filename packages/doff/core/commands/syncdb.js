@@ -1,5 +1,5 @@
 $D("doff.core.management.commands.syncdb");
-$L('doff.utils.set', 'Set');
+$L('sets', 'Set');
 
 function execute() {
     $L('doff.db', 'connection');

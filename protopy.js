@@ -3,34 +3,43 @@
     //--------------------------------------- Class definition --------------------------------------//
     
     function __class__() {
-        var name = null, module = this['__name__'], doc = null, metaclass = {}, source = {}, parent = null, properties = array(arguments);
-    
+        var name = null, 
+            module = this['__name__'],
+            metaclass = {},
+            static = {},
+            proto = {},
+            parent = null,
+            properties = array(arguments);
+
         // Name
         if (isstring(properties[0]))
             name = properties.shift();
         else name = 'klass';
-    
+        
+        //Paren
         if (isfunction(properties[0]))
             parent = properties.shift();
-    
-        for (var i = 0; i < properties.length; i++)
-            __extend__(true, source, properties[i]);
-
-        if (parent && parent['__metaclass__'] && source['__metaclass__'])
-            metaclass = __extend__(true, parent['__metaclass__'], source['__metaclass__']);
-        else if (parent)
-            metaclass = parent['__metaclass__'] || source['__metaclass__'] || null;
-        else
-            metaclass = source['__metaclass__'] || null;
-
-        if (source['__doc__']) {
-            doc = source['__doc__'];
+        
+        //Methods
+        if (properties.length >= 3) throw new TypeError('Invalid arguments');
+        if (properties.length == 2) {
+            static = properties.shift();
+            proto = properties.shift();
+        } else if (properties.length == 1) {
+            proto = properties.shift();
         }
 
-        // I'm ready for bild de class
+        //Metaclass
+        if (parent && parent['__metaclass__'] && proto['__metaclass__'])
+            metaclass = __extend__(true, parent['__metaclass__'], proto['__metaclass__']);
+        else if (parent)
+            metaclass = parent['__metaclass__'] || proto['__metaclass__'] || null;
+        else
+            metaclass = proto['__metaclass__'] || null;
+
+        // I'm ready for build de class
         var klass = eval('(function ' + name + '() { this.__init__.apply(this, arguments); })');
 
-        __extend__(true, klass, __class__.methods);
         klass.superclass = parent;
         klass.subclasses = [];
 
@@ -39,22 +48,23 @@
             subclass.prototype = parent.prototype;
             klass.prototype = new subclass;
             parent.subclasses.push(klass);
+            delete klass.prototype.__iterator__;
         }
 
         if (metaclass) {
             __extend__(true, klass, metaclass);
             klass['__metaclass__'] = metaclass;
         }
-
-        klass['__name__'] = klass.name;
-        klass['__module__'] = module;
-        klass.prototype['__name__'] = klass.name;
-        klass.prototype['__module__'] = module;
-    
+        
+        var data = {'__name__': klass.name, '__module__': module};
+        data['__doc__'] = static['__doc__'] || proto['__doc__'];
+        __extend__(true, klass, __class__.methods, static, data);
+        __extend__(true, proto, data);
+        
         if (isfunction(klass.__new__))
-            klass = klass.__new__(name, parent, source);
+            klass = klass.__new__(name, parent, proto);
         else
-            klass.add_methods(source);
+            klass.add_methods(proto);
 
         // init method
         if (!klass.prototype.__init__)
@@ -271,7 +281,8 @@
         '__name__': '__main__',
         '__doc__': "Welcome to protopy"
         }, '__doc__': "Welcome to protopy" });
-   
+    __extend__(true, window, __modules__['__main__']);
+
     __modules__['__builtin__'] = new module('__builtin__','built-in', {
         '$P': __publish__,
         '$L': __load__,
@@ -283,9 +294,6 @@
             return string ? string.split(/\s+/) : [];
         },
         'extend': function extend() {return __extend__.apply(this, [false].concat(array(arguments)));},
-        'False': false,
-        'None': null,
-        'True': true,
         'abs': function(){ throw new NotImplementedError();},
         'all': function all(){ throw new NotImplementedError();},
         'any': function any(){ throw new NotImplementedError();},
@@ -317,7 +325,9 @@
         },
         'buffer': function(){ throw new NotImplementedError();},
         'callable': function(){ throw new NotImplementedError();},
-        'chr': function(Num){ return String.fromCharCode(Num); },
+        'chr': function chr(number){ 
+            if (!isnumber(number)) throw new TypeError('An integer is required');
+            return String.fromCharCode(number); },
         'classmethod': function(){ throw new NotImplementedError();},
         'Class': __class__,
         'cmp': function(){ throw new NotImplementedError();},
@@ -348,21 +358,21 @@
         },
         'file': function(){ throw new NotImplementedError();},
         'filter': function filter(func, sequence){ 
-        
+
         },
         'float': function(){ throw new NotImplementedError();},
         'frozenset': function(){ throw new NotImplementedError();},
-        'flatten': function flatten(array) { return array.reduce(function(a,b) { return a.concat(b); }, []); },
+        'flatten': function flatten(array) { 
+            return array.reduce(function(a,b) { return a.concat(b); }, []); 
+        },
         'getattr': function(){ throw new NotImplementedError();},
         'globals': function globals(){ return __modules__['__main__']; },
         'hasattr': function(){ throw new NotImplementedError();},
         'hash': function(){ throw new NotImplementedError();},
         'help': function help(module){ 
-            if (module && module['__doc__']) {
-                console.log(module['__doc__']);
-            } else {
-                console.log(__modules__[this['__name__']]['__doc__']);
-            }
+            if (isundefined(module)) 
+                print(__modules__[this['__name__']]['__doc__']);
+            print(module['__doc__']);
          },
         'hex': function(){ throw new NotImplementedError();},
         'id': id,
@@ -375,7 +385,10 @@
         'int': function(){ throw new NotImplementedError();},
         'intern': function(){ throw new NotImplementedError();},
         'isclass': function isclass(object) { return bool(object) && isfunction(object) && 'superclass' in object && 'subclasses' in object; },
-        'isinstance': function isinstance(object){ return isfunction(object.__class__) && object instanceof object.__class__; },
+        'isinstance': function isinstance(object){
+            //TODO hacerlo com oen python para que soporte arrgelos y pueda determinas si es instancia de una clase en particular
+            return isfunction(object.__class__) && object instanceof object.__class__;
+        },
         'isfunction': function isFunction(object) { return typeof object == "function"; },
         'isstring': function(object) { return typeof object == "string"; },
         'isnumber': function(object) { return typeof object == "number"; },
@@ -435,7 +448,10 @@
         'ord': function(Ascii){ return Ascii.charCodeAt(0); },
         'pow': function(){ throw new NotImplementedError();},
         //'property': function(){ throw new NotImplementedError();},
-        'print': function print() { if (console && console.log) console.log.apply(console, arguments);},
+        'print': function print() {
+            if (!isundefined(window.console) && !isundefined(window.console.log))
+                console.log.apply(console, arguments);
+        },
         'quit': function(){ throw new NotImplementedError();},
         'range': function xrange(start, stop, step){
             var rstep = step || 1;
@@ -589,9 +605,6 @@
 
     __modules__['posix'] = new module('posix', 'built-in', {});
 
-    //Preparar el hambiente de ejecucion
-    //__extend__(__modules__['__builtin__'], __modules__['exceptions']);
-    __extend__(true, window, __modules__['__main__']);
 })();
 
 (function(){

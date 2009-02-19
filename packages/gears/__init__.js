@@ -1,7 +1,7 @@
-if (google && google.gears) {
+if (!isundefined(window.google) && !isundefined(window.google.gears)) {
     return;
 }
-
+print('*Do not* define any objects if Gears is not installed. This mimics the behavior of Gears defining the objects in the future.');
 var factory = null;
 if (typeof GearsFactory != 'undefined') {
     factory = new GearsFactory();
@@ -25,15 +25,16 @@ if (typeof GearsFactory != 'undefined') {
   }
 
 if (!factory) {
-    print('*Do not* define any objects if Gears is not installed. This mimics the behavior of Gears defining the objects in the future.');
-    return;
+    alert('Please install gears');
+    window.location = 'http://gears.google.com/';
 }
 
-if (isundefined(google)) {
+if (isundefined(window.google)) {
     var google = {};
 }
 
 if (!google.gears) {
     google.gears = {factory: factory};
 }
+
 $B({'google': google});

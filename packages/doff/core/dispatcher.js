@@ -1,4 +1,4 @@
-$L('doff.utils.set', 'Set');
+$L('sets', 'Set');
 
 var Signal = Class('Signal', {
     __init__: function(name, scope) {

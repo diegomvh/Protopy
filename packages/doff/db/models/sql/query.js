@@ -9,7 +9,7 @@ $L('doff.db.models.query_utils', 'select_related_descend');
 $L('doff.db.models.sql.datastructures', 'Count', 'EmptyResultSet', 'Empty', 'MultiJoin');
 $L('doff.db.models.sql.where', 'WhereNode', 'EverythingNode', 'AND', 'OR');
 $L('doff.core.exceptions', 'FieldError');
-$L('doff.utils.set', 'Set');
+$L('sets', 'Set');
 $L('doff.db.models.sql.constants', '*');
 $L('copy', 'copy', 'deepcopy');
                     

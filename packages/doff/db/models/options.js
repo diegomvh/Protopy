@@ -7,7 +7,7 @@ $L('doff.db.models.fields', 'AutoField', 'FieldDoesNotExist');
 $L('doff.db.models.fields.proxy', 'OrderWrt');
 $L('doff.db.models.loading', 'get_models', 'app_cache_ready');
 
-$L('doff.utils.set', 'Set');
+$L('sets', 'Set');
 $L('doff.utils.datastructures', 'SortedDict');
 
 // Calculate the verbose_name by converting from InitialCaps to "lowercase with spaces".
