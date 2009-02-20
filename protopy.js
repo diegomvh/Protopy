@@ -14,7 +14,7 @@
         // Name
         if (isstring(properties[0]))
             name = properties.shift();
-        else name = 'klass';
+        else name = 'Class';
         
         //Paren
         if (isfunction(properties[0]))
@@ -37,53 +37,53 @@
         else
             metaclass = proto['__metaclass__'] || null;
 
-        // I'm ready for build de class
-        var klass = eval('(function ' + name + '() { this.__init__.apply(this, arguments); })');
+        //I'm ready for build de class
+        var Class = function Class() { this.__init__.apply(this, arguments); };
 
-        klass.superclass = parent;
-        klass.subclasses = [];
+        Class.superclass = parent;
+        Class.subclasses = [];
 
         if (parent) {
             var subclass = function() { };
             subclass.prototype = parent.prototype;
-            klass.prototype = new subclass;
-            parent.subclasses.push(klass);
-            delete klass.prototype.__iterator__;
+            Class.prototype = new subclass;
+            parent.subclasses.push(Class);
+            delete Class.prototype.__iterator__;
         }
 
         if (metaclass) {
-            __extend__(true, klass, metaclass);
-            klass['__metaclass__'] = metaclass;
+            __extend__(true, Class, metaclass);
+            Class['__metaclass__'] = metaclass;
         }
         
-        var data = {'__name__': klass.name, '__module__': module};
+        var data = {'__name__': name, '__module__': module};
         data['__doc__'] = static['__doc__'] || proto['__doc__'];
-        __extend__(true, klass, __class__.methods, static, data);
+        __extend__(true, Class, __class__.methods, static, data);
         __extend__(true, proto, data);
         
-        if (isfunction(klass.__new__))
-            klass = klass.__new__(name, parent, proto);
+        if (isfunction(Class.__new__))
+            Class = Class.__new__(name, parent, proto);
         else
-            klass.add_methods(proto);
+            Class.add_methods(proto);
 
         // init method
-        if (!klass.prototype.__init__)
-            klass.prototype.__init__ = Protopy.emptyfunction;
+        if (!Class.prototype.__init__)
+            Class.prototype.__init__ = Protopy.emptyfunction;
 
         // str method
-        if (klass.prototype.__str__) {
-            klass.prototype.toString = klass.prototype.__str__;
+        if (Class.prototype.__str__) {
+            Class.prototype.toString = Class.prototype.__str__;
         }
         
         // iterator method
-        if (klass.prototype.__iter__) {
-            klass.prototype.__iterator__ = klass.prototype.__iter__;
+        if (Class.prototype.__iter__) {
+            Class.prototype.__iterator__ = Class.prototype.__iter__;
         }
         
-        klass.prototype.constructor = klass;
-        klass.prototype.__class__ = klass;
+        Class.prototype.constructor = Class;
+        Class.prototype.__class__ = Class;
 
-        return klass;
+        return Class;
     }
     
     __class__.methods = {
@@ -488,15 +488,13 @@
         'sorted': function(){ throw new NotImplementedError();},
         'staticmethod': function(){ throw new NotImplementedError();},
         'str': function str(object) {
+            if (!isundefined(object['__str__'])) return object.__str__();
             return String(object)
         },
         'sum': function(){ throw new NotImplementedError();},
         'super': function(){ throw new NotImplementedError();},
-        'type': function type(object){
-            if (isarray(object)) return 'Array';
-            if (isclass(object)) return 'Class';
-            if (isinstance(object)) return 'Instance';
-            return typeof(object);
+        'type': function type(object) {
+            return object.constructor;
         },
         'toquerypair': function toquerypair(key, value) {
             if (isundefined(value)) return key;
@@ -531,7 +529,7 @@
         },
         'zip': function(){
             var args = array(arguments);
-            
+
             var collections = args.map(array);
             var array1 = collections.shift();
             return array1.map( function(value, index) { 
@@ -893,17 +891,16 @@ extend(String.prototype, {
     return String(this);
   },
 
+  //% operator like python
   subs: function() {
-    var pattern = flatten(array(arguments));
-    //escapeando los %%
-    var tmp = this.gsub(/%%/, function(match){ return '<ESC %%>'; });
-    var str = tmp.gsub(/%s/, function(match){
-        if (pattern.length == 0)
-            return match[0];
-        else
-            return pattern.shift();
-        });
-    return str.gsub(/<ESC %%>/, function(match){ return '%'; });
+    var args = flatten(array(arguments));
+    //%% escaped
+    var string = this.gsub(/%%/, function(match){ return '<ESC%%>'; });
+    if (args[0] && args[0].constructor == Object)
+        string = new Template(string, args[1]).evaluate(args[0]);
+    else
+        string = string.gsub(/%s/, function(match) { return (args.length != 0)? str(args.shift()) : match[0]; });
+    return string.gsub(/<ESC%%>/, function(match){ return '%'; });
   },
 
   truncate: function(length, truncation) {
@@ -1057,10 +1054,6 @@ extend(String.prototype, {
 
   blank: function() {
     return /^\s*$/.test(this);
-  },
-
-  interpolate: function(object, pattern) {
-    return new Template(this, pattern).evaluate(object);
   }
 });
 
@@ -1084,9 +1077,13 @@ String.prototype.escape_HTML.div.appendChild(String.prototype.escape_HTML.text);
 //--------------------------------------- More builtins -----------------------------------------//
 (function(){
 //--------------------------------------- Template -----------------------------------------//
-var Template = Class({
+var Template = Class('Template', {
+    //Static
+    Pattern: /(^|.|\r|\n)(%\((.+?)\))s/,
+},{
+    //Prototype
   __init__: function(template, pattern) {
-    this.template = template.toString();
+    this.template = str(template);
     this.pattern = pattern || Template.Pattern;
   },
 
@@ -1117,7 +1114,6 @@ var Template = Class({
     });
   }
 });
-Template.Pattern = /(^|.|\r|\n)(#\{(.*?)\})/;
 
 //--------------------------------------- Try ----------------------------------------------//
 
