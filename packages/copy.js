@@ -26,10 +26,10 @@ _copy_dispatch[Object] = function _copy_Object(object) {
     return extend({}, object);
 }
 
-_copy_dispatch[new Class()] = function _copy_Instance(object) {
-    if (isfunction(object['__copy__']))
-        return object.__copy__();
-    delete object.__iterator__;
+_copy_dispatch['Instance'] = function _copy_Instance(object) {
+    if (isfunction(object['__iter__'])) {
+        delete object.__iterator__;
+    }
     var obj = new object.constructor();
     for (var p in object) {
         var lg = object.__lookupGetter__(p);
@@ -40,19 +40,14 @@ _copy_dispatch[new Class()] = function _copy_Instance(object) {
             if (isfunction(ls))
                 obj.__defineSetter__(p, ls);
         } else {
-            obj[p] = copy(object[p]);
+            obj[p] = object[p];
         }
     }
 
     if (isfunction(object['__iter__'])) {
         object.__iterator__ = object.__iter__;
     }
-    //FIXME para los defined geter y los defined seter
     return obj;
-}
-
-_copy_dispatch[String] = function _copy_instance(object) {
-    return str(object);
 }
 
 function copy(x) {
@@ -64,7 +59,8 @@ function copy(x) {
     var copier = _copy_dispatch[cls];
     if (copier)
         return copier(x);
-
+    
+    if (x instanceof cls) return _copy_dispatch['Instance'](x);
     return x;
 }
 
