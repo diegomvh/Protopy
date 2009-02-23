@@ -1,13 +1,13 @@
 $L('doff.utils.tree', 'Node');
 $L('copy', 'copy', 'deepcopy');
 
-var QueryWrapper = Class({
+var QueryWrapper = type({
     __init__: function(sql, params){
         this.data = [sql, params];
     }
 });
 
-var Q = Class('Q', Node, {
+var Q = type('Q', Node, {
     AND: 'AND',
     OR: 'OR',
     default_connector: 'AND',

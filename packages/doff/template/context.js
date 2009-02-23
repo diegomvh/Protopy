@@ -1,6 +1,6 @@
-var ContextPopException = Class('ContextPopException', Exception);
+var ContextPopException = type('ContextPopException', Exception);
 
-var Context = Class('Context', {
+var Context = type('Context', {
     __doc__: 'Context for the template rendering\npush the context, pop the context, get elements and set elements',
     __init__: function(_dict, autoescape) {
         _dict = _dict || {};

@@ -19,7 +19,7 @@ var DEFAULT_NAMES = ['verbose_name', 'db_table', 'ordering', 'unique_together', 
                     'order_with_respect_to', 'app_label', 'db_tablespace',
                     'abstracto'];
 
-var Options = Class({
+var Options = type({
     __init__: function(meta, app_label) {
         this.local_fields = [];
         this.local_many_to_many = [];
@@ -131,7 +131,7 @@ var Options = Class({
         var collections = {};
         for each (column in this.duplicate_targets) {
             var target = this.duplicate_targets[column];
-            if (isundefined(collections[target]))
+            if (!collections[target])
                 collections[target] = new Set();
             collections[target].add(column);
         }
@@ -197,7 +197,7 @@ var Options = Class({
         * this instance (not a copy).
         */
     _fields: function() {
-        if (isundefined(this._field_name_cache))
+        if (!this._field_name_cache)
             this._fill_fields_cache();
         return this._field_name_cache;
     },
@@ -208,7 +208,7 @@ var Options = Class({
         * constructing queries so that we know which model a field belongs to.
         */
     get_fields_with_model: function() {
-        if (isundefined(this._field_cache))
+        if (!this._field_cache)
             this._fill_fields_cache();
         return this._field_cache;
     },
@@ -230,7 +230,7 @@ var Options = Class({
     },
 
     _many_to_many: function() {
-        if (isundefined(this._m2m_cache))
+        if (!this._m2m_cache)
             this._fill_m2m_cache();
         return this._m2m_cache.keys();
     },
@@ -239,7 +239,7 @@ var Options = Class({
         * The many-to-many version of get_fields_with_model().
         */
     get_m2m_with_model: function() {
-        if (isundefined(this._m2m_cache))
+        if (!this._m2m_cache)
             this._fill_m2m_cache();
         return this._m2m_cache.items();
     },
@@ -284,7 +284,7 @@ var Options = Class({
         */
     get_field_by_name: function(name) {
         var field = null;
-        if (isundefined(this._name_map)) {
+        if (!this._name_map) {
             var cache = this.init_name_map();
             field = cache[name];
         } else {
@@ -334,7 +334,7 @@ var Options = Class({
     },
 
     get_all_related_objects: function(local_only) {
-        if (isundefined(this._related_objects_cache))
+        if (!this._related_objects_cache)
             this._fill_related_objects_cache();
         if (local_only)
             return [k for each ([k, v] in this._related_objects_cache.items()) if (!v)]
@@ -345,7 +345,7 @@ var Options = Class({
         * Returns a list of (related-object, model) pairs. Similar to get_fields_with_model().
         */
     get_all_related_objects_with_model: function() {
-        if (isundefined(this._related_objects_cache))
+        if (!this._related_objects_cache)
             this._fill_related_objects_cache();
         return this._related_objects_cache.items();
     },

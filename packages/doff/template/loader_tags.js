@@ -3,7 +3,7 @@ $L('doff.template.loader', 'get_template', 'get_template_from_string', 'find_tem
     
 var register = new Library();
 
-var BlockNode = Class('BlockNode', Node, {
+var BlockNode = type('BlockNode', Node, {
     __init__: function(name, nodelist, parent){
         this.name = name;
         this.nodelist = nodelist;
@@ -33,7 +33,7 @@ var BlockNode = Class('BlockNode', Node, {
     }
 });
 
-var ExtendsNode = Class('ExtendsNode', Node, {
+var ExtendsNode = type('ExtendsNode', Node, {
     must_be_first: true,
     __init__: function(nodelist, parent_name, parent_name_expr, template_dirs){
         this.nodelist = nodelist;
@@ -104,7 +104,7 @@ var ExtendsNode = Class('ExtendsNode', Node, {
 
 });
 
-var ConstantIncludeNode = Class('ConstantIncludeNode', Node, {
+var ConstantIncludeNode = type('ConstantIncludeNode', Node, {
     __init__: function(template_path){
         try {
             var t = loader.get_template(template_path);
@@ -122,7 +122,7 @@ var ConstantIncludeNode = Class('ConstantIncludeNode', Node, {
     }
 });
 
-var IncludeNode = Class('IncludeNode', Node, {
+var IncludeNode = type('IncludeNode', Node, {
     __init__: function(template_name){
         this.template_name = new Variable(template_name);
     },

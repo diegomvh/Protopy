@@ -1,7 +1,7 @@
 $D('A class for storing a tree graph. Primarily used for filter constructs in the ORM.');
 $L('copy', 'deepcopy')
 
-var Node = Class('Node', {
+var Node = type('Node', {
     default_connector: "DEFAULT",
     __init__: function(children, connector, negated){
         this.children = children || [];

@@ -16,7 +16,7 @@ $L('copy', 'copy', 'deepcopy');
 /*
  * A single SQL query
  */
-var Query = Class('Query', {
+var Query = type('Query', {
     INNER: 'INNER JOIN',
     LOUTER: 'LEFT OUTER JOIN',
     alias_prefix: 'T',
@@ -546,7 +546,7 @@ var Query = Class('Query', {
         for each (var col in this.group_by)
             if (isarray(col))
                 result.push('%s.%s'.subs(qn(col[0]), qn(col[1])));
-            else if (isfunction(col['as_sql']))
+            else if (callable(col['as_sql']))
                 result.push(col.as_sql(qn));
             else
                 result.push(new String(col));
@@ -563,7 +563,7 @@ var Query = Class('Query', {
         var result = [];
         var params = [];
         for each (elt in this.having)
-            if (isfunction(elt['as_sql'])) {
+            if (callable(elt['as_sql'])) {
                 var [sql, params] = elt.as_sql();
                 result.push(sql);
                 params = params.concat(params);
@@ -995,7 +995,7 @@ var Query = Class('Query', {
             join_type = this.INNER;
         join = [table, alias, join_type, lhs, lhs_col, col, nullable];
         this.alias_map[alias] = join;
-        if (!isundefined(this.join_map[t_ident]))
+        if (this.join_map[t_ident])
             this.join_map[t_ident] = this.join_map[t_ident].concat([alias]);
         else
             this.join_map[t_ident] = [alias];
@@ -1065,7 +1065,7 @@ var Query = Class('Query', {
                 alias = root_alias;
                 for (int_model in opts.get_base_chain(model))
                     var lhs_col = int_opts.parents[int_model].column;
-                    dedupe = !isundefined(opts.duplicate_targets[lhs_col]);
+                    dedupe = bool(opts.duplicate_targets[lhs_col]);
                     if (dedupe)
                         avoid.update(this.dupe_avoidance.get([id(opts), lhs_col], []));
                         dupe_set.add([opts, lhs_col]);
@@ -1076,7 +1076,7 @@ var Query = Class('Query', {
                         this.update_dupe_avoidance(dupe_opts, dupe_col, alias);
             } else { alias = root_alias };
 
-            dedupe = !isundefined(opts.duplicate_targets[f.column]);
+            dedupe = bool(opts.duplicate_targets[f.column]);
             if (bool(dupe_set) || dedupe) {
                 avoid.update(this.dupe_avoidance.get([id(opts), f.column], []));
                 if (dedupe)
@@ -1139,7 +1139,7 @@ var Query = Class('Query', {
             throw new FieldError("Cannot parse keyword query %r".subs(arg));
 
         // Work out the lookup type and remove it from 'parts', if necessary.
-        if (parts.length == 1 || isundefined(this.query_terms[parts[parts.length - 1]]))
+        if (parts.length == 1 || bool(this.query_terms[parts[parts.length - 1]]))
             var lookup_type = 'exact';
         else
             var lookup_type = parts.pop();
@@ -1156,7 +1156,7 @@ var Query = Class('Query', {
             lookup_type = 'isnull';
             value = true;
         }
-        else if (isfunction(value)) { value = value(); }
+        else if (callable(value)) { value = value(); }
 
         var opts = this.get_meta();
         var alias = this.get_initial_alias();
@@ -1332,7 +1332,7 @@ var Query = Class('Query', {
                 // The field lives on a base class of the current model.
                 for each (var int_model in opts.get_base_chain(model)) {
                     lhs_col = opts.parents[int_model].column;
-                    dedupe = !isundefined(opts.duplicate_targets[lhs_col]);
+                    dedupe = bool(opts.duplicate_targets[lhs_col]);
                     if (dedupe) {
                         exclusions.update(this.dupe_avoidance.get([id(opts), lhs_col], []));
                         dupe_set.add([opts, lhs_col]);
@@ -1349,13 +1349,13 @@ var Query = Class('Query', {
             var cached_data = opts._join_cache[name];
             var orig_opts = opts;
             var dupe_col = direct && field.column || field.field.column;
-            var dedupe = !isundefined(opts.duplicate_targets[dupe_col]);
+            var dedupe = bool(opts.duplicate_targets[dupe_col]);
             if (bool(dupe_set) || dedupe) {
                 if (dedupe)
                     dupe_set.add([opts, dupe_col]);
                 exclusions.update(this.dupe_avoidance.get([id(opts), dupe_col], []));
             }
-            if (process_extras && !isundefined(field['extra_filters'])) {
+            if (process_extras && field['extra_filters']) {
                 extra_filters = extra_filters.concat(field.extra_filters(names, pos, negate));
             }
             if (direct) {
@@ -1722,7 +1722,7 @@ var Query = Class('Query', {
         */
     execute_sql: function(result_type) {
 
-        result_type = isundefined(result_type)?MULTI:result_type;
+        result_type = (result_type == undefined)?MULTI:result_type;
         var sql = null, params = null;
         try {
             [sql, params] = this.as_sql();

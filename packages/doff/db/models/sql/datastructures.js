@@ -1,20 +1,20 @@
-var EmptyResultSet = Class('EmptyResultSet', Exception);
-var FullResultSet = Class('FullResultSet', Exception);
+var EmptyResultSet = type('EmptyResultSet', Exception);
+var FullResultSet = type('FullResultSet', Exception);
 
 /*
     * Used by join construction code to indicate the point at which a
     * multi-valued join was attempted (if the caller wants to treat that
     * exceptionally).
     */
-var MultiJoin = Class('MultiJoin', Exception, {
+var MultiJoin = type('MultiJoin', Exception, {
     __init__: function(level) {
         this.level = level;
     }
 });
 
-var Empty = Class('Empty');
+var Empty = type('Empty');
 
-var RawValue = Class('RawValue', {
+var RawValue = type('RawValue', {
     __init__: function(value) {
         this.value = value;
     }
@@ -23,7 +23,7 @@ var RawValue = Class('RawValue', {
 /*
     * Base class for all aggregate-related classes (min, max, avg, count, sum).
     */
-var Aggregate = Class('Aggregate', {
+var Aggregate = type('Aggregate', {
     /*
         * Relabel the column alias, if necessary. Must be implemented by
         * subclasses.
@@ -46,7 +46,7 @@ var Aggregate = Class('Aggregate', {
 /*
     * Perform a count on the given column.
     */
-var Count = Class('Count', Aggregate, {
+var Count = type('Count', Aggregate, {
 
     /*
         * Set the column to count on (defaults to '*') and set whether the count
@@ -64,7 +64,7 @@ var Count = Class('Count', Aggregate, {
     },
 
     as_sql: function(quote_func) {
-        if (isundefined(quote_func))
+        if (!quote_func)
             quote_func = function (x) {return x};
         if (isarray(this.col))
             col = ['%s.%s'.subs([quote_func(c) for (c in this.col)])];
@@ -82,7 +82,7 @@ var Count = Class('Count', Aggregate, {
 /*
     * Add a date selection column.
     */
-var Date = Class('Date', {
+var Date = type('Date', {
 
     __init__: function(col, lookup_type, date_sql_func){
         this.col = col;
@@ -97,7 +97,7 @@ var Date = Class('Date', {
     },
 
     as_sql: function(quote_func) {
-        if (isundefined(quote_func))
+        if (!quote_func)
             quote_func = function (x) {return x};
         if (isarray(this.col))
             col = ['%s.%s'.subs([quote_func(c) for (c in this.col)])];

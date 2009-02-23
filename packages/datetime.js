@@ -1,5 +1,5 @@
 function date(year, month, day) {
-    if (isundefined(year) || isundefined(month) || isundefined(day)) throw new TypeError('Function takes exactly 3 arguments');
+    if (!year || !month || !day) throw new TypeError('Function takes exactly 3 arguments');
     this.year = year;
     this.month = month;
     this.day = day;
@@ -9,7 +9,7 @@ extend(date.prototype, {
 });
 
 function time(hour, minute, second, microsecond, tzinfo) {
-    if (isundefined(hour)) throw new TypeError('Function takes exactly 1 argument');
+    if (!hour) throw new TypeError('Function takes exactly 1 argument');
     this.hour = hour;
     this.minute = minute;
     this.second = second;

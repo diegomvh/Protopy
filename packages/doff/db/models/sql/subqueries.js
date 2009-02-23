@@ -4,7 +4,7 @@ $L('doff.db.models.sql.query', 'Query');
  * Delete queries are done through this class, since they are more constrained
  * than general queries.
  */
-var DeleteQuery = Class('DeleteQuery', Query, {
+var DeleteQuery = type('DeleteQuery', Query, {
     /*
      * Creates the SQL for this query. Returns the SQL string and list of
      * parameters.
@@ -68,7 +68,7 @@ var DeleteQuery = Class('DeleteQuery', Query, {
     }
     });
 
-var InsertQuery = Class('InsertQuery', Query, {
+var InsertQuery = type('InsertQuery', Query, {
             __init__: function($super, model, connection){
                     $super(model, connection);
                     this.columns = [];
@@ -111,7 +111,7 @@ var InsertQuery = Class('InsertQuery', Query, {
     insert_values: function(insert_values, raw_values) {
         var placeholders = [], values = [];
         for each (var [field, val] in insert_values) {
-            if (isfunction(field['get_placeholder']))
+            if (callable(field['get_placeholder']))
                 // Some fields (e.g. geo fields) need special munging before
                 // they can be inserted.
                 placeholders.push(field.get_placeholder(val));
@@ -134,7 +134,7 @@ var InsertQuery = Class('InsertQuery', Query, {
     * multiple distinct columns and turn it into SQL that can be used on a
     * variety of backends (it requires a select in the FROM clause).
     */
-var CountQuery = Class('CountQuery', Query, {
+var CountQuery = type('CountQuery', Query, {
     get_from_clause: function() {
         var [result, params] = this._query.as_sql();
         return [['(%s) A1'.subs(result)], params];
@@ -149,7 +149,7 @@ var CountQuery = Class('CountQuery', Query, {
 /*
     * Represents an "update" SQL query.
     */
-var UpdateQuery = Class('UpdateQuery', Query, {
+var UpdateQuery = type('UpdateQuery', Query, {
     __init__: function($super, model, connection) {
         $super(model, connection);
         this._setup_query();
@@ -163,7 +163,7 @@ var UpdateQuery = Class('UpdateQuery', Query, {
     _setup_query: function() {
         this.values = [];
         this.related_ids = null;
-        if (isundefined(this['related_updates']));
+        if (!this['related_updates']);
             this.related_updates = {};
     },
 
@@ -372,12 +372,12 @@ var UpdateQuery = Class('UpdateQuery', Query, {
     * date field. This requires some special handling when converting the results
     *  back to Python objects, so we put it in a separate class.
     */
-var DateQuery = Class('DateQuery', Query, {
+var DateQuery = type('DateQuery', Query, {
         /*
         * Returns an iterator over the results from executing this query.
         */
     results_iter: function() {
-        var resolve_columns = !isundefined(this['resolve_columns']);
+        var resolve_columns = bool(this['resolve_columns']);
         if (resolve_columns) {
             var DateTimeField = $L('doff.db.models.fields', ['DateTimeField']);
             var fields = [DateTimeField()];

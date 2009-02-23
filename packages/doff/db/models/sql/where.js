@@ -8,7 +8,7 @@ $L('doff.db.models.query_utils', 'QueryWrapper');
 var AND = 'AND',
     OR = 'OR';
 
-var WhereNode = Class('WhereNode', Node, {
+var WhereNode = type('WhereNode', Node, {
 
     default_connector: AND,
 
@@ -169,7 +169,7 @@ var WhereNode = Class('WhereNode', Node, {
     }
 });
 
-var EverythingNode = Class('EverythingNode', {
+var EverythingNode = type('EverythingNode', {
 
     as_sql: function(qn){
         throw new FullResultSet();
@@ -180,7 +180,7 @@ var EverythingNode = Class('EverythingNode', {
     }
 });
 
-var NothingNode = Class('NothingNode', {
+var NothingNode = type('NothingNode', {
 
     as_sql: function(qn){
         throw new EmptyResultSet();

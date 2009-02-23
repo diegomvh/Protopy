@@ -5,7 +5,7 @@ $L('doff.template.context', 'Context');
 
 var register = new Library();
 
-var AutoEscapeControlNode = Class('AutoEscapeControlNode', Node,{
+var AutoEscapeControlNode = type('AutoEscapeControlNode', Node,{
     __init__: function(setting, nodelist) {
         this.setting = setting;
         this.nodelist = nodelist;
@@ -20,11 +20,11 @@ var AutoEscapeControlNode = Class('AutoEscapeControlNode', Node,{
     }
 });
 
-var CommentNode = Class('CommentNode', Node,{
+var CommentNode = type('CommentNode', Node,{
     render: function(context) { return "";}
 });
 
-var ForNode = Class('ForNode', Node,{
+var ForNode = type('ForNode', Node,{
     __init__: function(loopvars, sequence, is_reversed, nodelist_loop){
         this.loopvars = loopvars;
         this.sequence = sequence;
@@ -88,7 +88,7 @@ var ForNode = Class('ForNode', Node,{
         }
     });
 
-    var IfEqualNode = Class('IfEqualNode', Node, {
+    var IfEqualNode = type('IfEqualNode', Node, {
         __init__: function(var1, var2, nodelist_true, nodelist_false, negate){
             this.var1 = new Variable(var1);
             this.var2 = new Variable(var2);
@@ -118,7 +118,7 @@ var ForNode = Class('ForNode', Node,{
         }
     });
 
-    var IfNode = Class('IfNode', Node, {
+    var IfNode = type('IfNode', Node, {
         __init__: function(bool_exprs, nodelist_true, nodelist_false, link_type){
             this.bool_exprs = bool_exprs;
             this.nodelist_true = nodelist_true;

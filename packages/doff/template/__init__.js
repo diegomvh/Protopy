@@ -26,30 +26,33 @@ var tag_re = new RegExp('(%s.*?%s|%s.*?%s|%s.*?%s)'.subs(BLOCK_TAG_START, BLOCK_
                                       VARIABLE_TAG_START, VARIABLE_TAG_END,
                                       COMMENT_TAG_START, COMMENT_TAG_END));
 
-var TemplateSyntaxError = Class('TemplateSyntaxError', Exception);
+var TemplateSyntaxError = type('TemplateSyntaxError', Exception);
 
-var TemplateDoesNotExist = Class('TemplateDoesNotExist', Exception);
+var TemplateDoesNotExist = type('TemplateDoesNotExist', Exception);
 
-var TemplateEncodingError = Class('TemplateEncodingError', Exception);
+var TemplateEncodingError = type('TemplateEncodingError', Exception);
 
-var VariableDoesNotExist = Class('VariableDoesNotExist', Exception);
+var VariableDoesNotExist = type('VariableDoesNotExist', Exception);
 
-var InvalidTemplateLibrary = Class('InvalidTemplateLibrary', Exception);
+var InvalidTemplateLibrary = type('InvalidTemplateLibrary', Exception);
 
-var Origin = Class('Origin', {
+var Origin = type('Origin', {
     __init__: function(name) { this.name = name; },
     __str__: function() { return this.name; },
     reload: function() { throw new NotImplementedError(); }
 });
 
-var StringOrigin = Class('StringOrigin', Origin, {
-    __init__: function($super, source) { $super(UNKNOWN_SOURCE); this.source = source; },
+var StringOrigin = type('StringOrigin', Origin, {
+    __init__: function(source) { 
+        super(Origin, this).__init__(UNKNOWN_SOURCE);
+        this.source = source;
+    },
     __str__: function() { return this.name},
     reload: function() { return this.source }
 });
 
 /* ------------------ Nodos ----------------- */
-var Node = Class('Node', {
+var Node = type('Node', {
     must_be_first: false,
     render: function(context) {},
 
@@ -65,7 +68,7 @@ var Node = Class('Node', {
     }
 });
 
-var NodeList = Class('NodeList', {
+var NodeList = type('NodeList', {
     contains_nontext: false,
 
     __init__: function() {
@@ -109,7 +112,7 @@ var NodeList = Class('NodeList', {
   }
 });
 
-var TextNode = Class('TextNode', Node, {
+var TextNode = type('TextNode', Node, {
     __init__: function(s) {
         this.s = s;
     },
@@ -117,7 +120,7 @@ var TextNode = Class('TextNode', Node, {
     render: function(context) { return this.s;}
 });
 
-var VariableNode = Class('VariableNode', Node, {
+var VariableNode = type('VariableNode', Node, {
     __init__: function(filter_expression) {
         this.filter_expression = filter_expression;
     },
@@ -134,7 +137,7 @@ function compile_string(template_string){
     return parser.parse();
 };
 
-var Template = Class('Template', {
+var Template = type('Template', {
     __init__: function(template) {
         this.nodelist = compile_string(template);
     },
@@ -150,7 +153,7 @@ var Template = Class('Template', {
     }
 });
 
-var Token = Class('Token', {
+var Token = type('Token', {
     __init__: function(token_type, contents) {
         this.token_type = token_type;
         this.contents = contents;
@@ -166,7 +169,7 @@ var Token = Class('Token', {
     }
 });
 
-var Lexer = Class('Lexer', {
+var Lexer = type('Lexer', {
     __init__: function(template_string) {
         this.template_string = template_string;
     },
@@ -196,7 +199,7 @@ var Lexer = Class('Lexer', {
     }
 });
 
-var Parser = Class('Parser', {
+var Parser = type('Parser', {
     __init__: function(tokens) {
         this.tokens = tokens;
         this.tags = {};
@@ -337,7 +340,7 @@ var Parser = Class('Parser', {
 });
 
 var filter_re = /("(?:[^"\\]*(?:\\.[^"\\]*)*)"|'(?:[^'\\]*(?:\\.[^'\\]*)*)'|[^\s]+)/g;
-var FilterExpression = Class('FilterExpression', {
+var FilterExpression = type('FilterExpression', {
     __init__: function(token, parser) {
         /* if (!filter_re.test(token))
             throw new TemplateSyntaxError("Could not parse the remainder: '%s'".subs(token)) */
@@ -393,7 +396,7 @@ var FilterExpression = Class('FilterExpression', {
 });
 
 
-var Variable = Class({
+var Variable = type('Variable', {
     __init__: function(value) {
         this.value = value;
         this.literal = null;
@@ -423,34 +426,34 @@ var Variable = Class({
         for each (var bit in this.lookups) {
             try {
                 // Si tienen get lo uso antes que []
-                if (isfunction(current['__getitem__']))
+                if (callable(current['__getitem__']))
                     geted = current.__getitem__(bit);
                 else
                     geted = current[bit];
-                if (isfunction(geted))
+                if (callable(geted))
                     geted = geted.bind(current);
                 current = geted;
             } catch (e) {
                 throw new VariableDoesNotExist("Failed lookup for key [%s] in %s".subs(bit, current))
             }
         }
-        if (isfunction(current))
+        if (callable(current))
             current = current();
         return current;
     }
 });
 
-var Library = Class('Library', {
+var Library = type('Library', {
     __init__: function() {
         this.filters = {};
         this.tags = {};
     },
 
     tag: function(name, compile_function){
-        if (isfunction(name)){
+        if (callable(name)){
             this.tags[name.name] = name;
             return name;
-        } else if (name != null && isfunction(compile_function)) {
+        } else if (name != null && callable(compile_function)) {
             this.tags[name] = compile_function;
             return compile_function;
         } else
@@ -458,10 +461,10 @@ var Library = Class('Library', {
     },
 
     filter: function(name, filter_func) {
-        if (isfunction(name)){
+        if (callable(name)){
             this.filters[name.name] = name;
             return name;
-        } else if (name != null && isfunction(filter_func)) {
+        } else if (name != null && callable(filter_func)) {
             this.filters[name] = filter_func;
             return filter_func;
         } else

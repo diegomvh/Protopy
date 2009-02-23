@@ -7,68 +7,70 @@ $L('doff.core.exceptions', 'ValidationError');
 //from django.utils.itercompat import tee
 //from django.utils import datetime_safe
 
-var NOT_PROVIDED = Class('NOT_PROVIDED', Exception);
+var NOT_PROVIDED = type('NOT_PROVIDED', Exception);
 
 // The values to use for "blank" in SelectFields. Will be appended to the start of most "choices" lists.
 var BLANK_CHOICE_DASH = [["", "---------"]];
 var BLANK_CHOICE_NONE = [["", "None"]];
 
-var FieldDoesNotExist = Class('FieldDoesNotExist', Exception);
+var FieldDoesNotExist = type('FieldDoesNotExist', Exception);
 
-var Field = Class('Field', {
+var Field = type('Field', {
+    creation_counter: 0,
+    auto_creation_counter: -1
+},{
     empty_strings_allowed: true,
     __init__: function() {
 
-	var [args, kwargs] = Field.prototype.__init__.extra_arguments(arguments, {'verbose_name':null, 'name':null, 'primary_key':false,
-	    'max_length':null, 'unique':false, 'blank':false, 'none':false, 'null':false,
-	    'db_index':false, 'rel':null, 'default_value':NOT_PROVIDED, 'editable':true,
-	    'serialize':true, 'unique_for_date':null, 'unique_for_month':null,
-	    'unique_for_year':null, 'choices':[], 'help_text':'', 'db_column':null,
-	    'db_tablespace':settings.DEFAULT_INDEX_TABLESPACE, 'auto_created':false});
+        arguments = new Arguments(arguments, {'verbose_name':null, 'name':null, 'primary_key':false,
+            'max_length':null, 'unique':false, 'blank':false, 'none':false, 'null':false,
+            'db_index':false, 'rel':null, 'default_value':NOT_PROVIDED, 'editable':true,
+            'serialize':true, 'unique_for_date':null, 'unique_for_month':null,
+            'unique_for_year':null, 'choices':[], 'help_text':'', 'db_column':null,
+            'db_tablespace':settings.DEFAULT_INDEX_TABLESPACE, 'auto_created':false});
+        var args = arguments.args;
+        var kwargs = arguments.kwargs;
 
-	this.name = kwargs['name'];
-	this.verbose_name = (args.length == 1)? args[0] : kwargs['verbose_name'];
-	this.primary_key = kwargs['primary_key'];
-	this.max_length = kwargs['max_length']
-	this._unique = kwargs['unique'];
-	this.blank = kwargs['blank'];
-	this.none = kwargs['none'] || kwargs['null']; // :) sorry
+        this.name = kwargs['name'];
+        this.verbose_name = (args.length == 1)? args[0] : kwargs['verbose_name'];
+        this.primary_key = kwargs['primary_key'];
+        this.max_length = kwargs['max_length']
+        this._unique = kwargs['unique'];
+        this.blank = kwargs['blank'];
+        this.none = kwargs['none'] || kwargs['null']; // :) sorry
 
-	if (this.empty_strings_allowed && connection.features.interprets_empty_strings_as_nulls)
-	    this.none = true;
-	this.rel = kwargs['rel'];
-	this.default_value = kwargs['default_value'];
-	this.editable = kwargs['editable'];
-	this.serialize = kwargs['serialize'];
-	this.unique_for_date = kwargs['unique_for_date'];
-	this.unique_for_month = kwargs['unique_for_month'];
-	this.unique_for_year = kwargs['unique_for_year'];
-	this._choices = kwargs['choices'];
-	this.help_text = kwargs['help_text'];
-	this.db_column = kwargs['db_column'];
-	this.db_tablespace = kwargs['db_tablespace'];
-	this.auto_created = kwargs['auto_created'];
+        if (this.empty_strings_allowed && connection.features.interprets_empty_strings_as_nulls)
+            this.none = true;
+        this.rel = kwargs['rel'];
+        this.default_value = kwargs['default_value'];
+        this.editable = kwargs['editable'];
+        this.serialize = kwargs['serialize'];
+        this.unique_for_date = kwargs['unique_for_date'];
+        this.unique_for_month = kwargs['unique_for_month'];
+        this.unique_for_year = kwargs['unique_for_year'];
+        this._choices = kwargs['choices'];
+        this.help_text = kwargs['help_text'];
+        this.db_column = kwargs['db_column'];
+        this.db_tablespace = kwargs['db_tablespace'];
+        this.auto_created = kwargs['auto_created'];
 
-	// Set db_index to True if the field has a relationship and doesn't explicitly set db_index.
-	this.db_index = kwargs['db_index'];
+        // Set db_index to True if the field has a relationship and doesn't explicitly set db_index.
+        this.db_index = kwargs['db_index'];
 
-	// Adjust the appropriate creation counter, and save our local copy.
-	if (kwargs['auto_created']) {
-	    this.creation_counter = Field.auto_creation_counter;
-	    Field.auto_creation_counter -= 1;
-	} else {
-	    this.creation_counter = Field.creation_counter;
-	    Field.creation_counter += 1;
-	}
+        // Adjust the appropriate creation counter, and save our local copy.
+        if (kwargs['auto_created']) {
+            this.creation_counter = Field.auto_creation_counter;
+            Field.auto_creation_counter -= 1;
+        } else {
+            this.creation_counter = Field.creation_counter;
+            Field.creation_counter += 1;
+        }
 
-	this.__defineGetter__('unique', this._get_unique);
-	this.__defineGetter__('choices', this._get_choices);
-	this.__defineGetter__('flatchoices', this._get_flatchoices);
     },
 
     __cmp__: function(other){
-	// This is needed because bisect does not take a comparison function.
-	return this.creation_counter - other.creation_counter;
+        // This is needed because bisect does not take a comparison function.
+        return this.creation_counter - other.creation_counter;
     },
 
     __deepcopy__: function() {
@@ -79,7 +81,7 @@ var Field = Class('Field', {
     },
 
     copy: function () {
-	return Class(this.__name__, this.prototype);
+        return type(this.__name__, this.prototype);
     },
 
     /*
@@ -99,7 +101,7 @@ var Field = Class('Field', {
             return ret.subs(this.max_length);
     },
 
-    _get_unique: function() {
+    get unique() {
         return this._unique || this.primary_key;
     },
 
@@ -152,19 +154,19 @@ var Field = Class('Field', {
 	* Used by the default implementations of ``get_db_prep_save``and `get_db_prep_lookup```
 	*/
     get_db_prep_value: function(value) {
-	return value;
+        return value;
     },
 
     /*
 	* Returns field's value prepared for saving into a database.
 	*/
     get_db_prep_save: function(value) {
-	return this.get_db_prep_value(value);
+        return this.get_db_prep_value(value);
     },
 
     get_db_prep_lookup: function(lookup_type, value){
 	/* Returns field's value prepared for database lookup. */
-	if (!isundefined(value['as_sql'])) {
+	if (callable(value['as_sql'])) {
 	    var [sql, params] = value.as_sql();
 	    return new QueryWrapper('(%s)'.subs(sql), params);
 	}
@@ -203,7 +205,7 @@ var Field = Class('Field', {
 	* Returns a boolean of whether this field has a default value.
 	*/
     has_default: function() {
-	return this.default_value != NOT_PROVIDED;
+        return this.default_value != NOT_PROVIDED;
     },
 
     /*
@@ -211,7 +213,7 @@ var Field = Class('Field', {
 	*/
     get_default: function() {
 	if (this.has_default()) {
-	    if (isfunction(this.default_value))
+	    if (callable(this.default_value))
 		return self.default_value();
 	    return this.default_value;
 	}
@@ -221,46 +223,46 @@ var Field = Class('Field', {
     },
 
     get_validator_unique_lookup_type: function() {
-	return '%s__exact'.subs(this.name);
+        return '%s__exact'.subs(this.name);
     },
 
     /*
 	* Returns choices with a default blank choices included, for use as SelectField choices for this field.
 	*/
     get_choices: function(include_blank, blank_choice) {
-	include_blank = include_blank || true;
-	blank_choice = blank_choice || BLANK_CHOICE_DASH;
-	var first_choice = include_blank && blank_choice || [];
-	if (bool(this.choices))
-	    return first_choice.concat(this.choices);
-	var rel_model = this.rel.to;
-        //FIXME: no suele andar muy bien esto de indexar con una invocacion
-	if (this.rel['get_related_field'])
-	    lst = [x[this.rel.get_related_field().attname, x] for (x in rel_model._default_manager.complex_filter(this.rel.limit_choices_to))];
-	else
-	    lst = [[x._get_pk_val(), x] for (x in rel_model._default_manager.complex_filter(this.rel.limit_choices_to))];
-	return first_choice.concat(lst);
-    },
+        include_blank = include_blank || true;
+        blank_choice = blank_choice || BLANK_CHOICE_DASH;
+        var first_choice = include_blank && blank_choice || [];
+        if (bool(this.choices))
+            return first_choice.concat(this.choices);
+        var rel_model = this.rel.to;
+            //FIXME: no suele andar muy bien esto de indexar con una invocacion
+        if (this.rel['get_related_field'])
+            lst = [x[this.rel.get_related_field().attname, x] for (x in rel_model._default_manager.complex_filter(this.rel.limit_choices_to))];
+        else
+            lst = [[x._get_pk_val(), x] for (x in rel_model._default_manager.complex_filter(this.rel.limit_choices_to))];
+        return first_choice.concat(lst);
+        },
 
-    get_choices_default: function() {
-	return this.get_choices();
+        get_choices_default: function() {
+        return this.get_choices();
     },
 
     /*
      * Returns flattened choices with a default blank choice included.
      */
     get_flatchoices: function(include_blank, blank_choice) {
-	include_blank = include_blank || true;
-	blank_choice = blank_choice || BLANK_CHOICE_DASH;
-	var first_choice = include_blank && blank_choice || [];
-	return first_choice.concat(this.flatchoices);
+        include_blank = include_blank || true;
+        blank_choice = blank_choice || BLANK_CHOICE_DASH;
+        var first_choice = include_blank && blank_choice || [];
+        return first_choice.concat(this.flatchoices);
     },
 
     _get_val_from_obj: function(object) {
-	if (object)
-	    return object[this.attname];
-	else
-	    return this.get_default();
+        if (object)
+            return object[this.attname];
+        else
+            return this.get_default();
     },
 
     /*
@@ -268,38 +270,38 @@ var Field = Class('Field', {
      * This is used by the serialization framework.
      */
     value_to_string: function(object) {
-	return new String(this._get_val_from_obj(object));
+        return new String(this._get_val_from_obj(object));
     },
 
     bind: function(fieldmapping, original, bound_field_class) {
-	return bound_field_class(this, fieldmapping, original);
+        return bound_field_class(this, fieldmapping, original);
     },
 
-    _get_choices: function() {
-	if (this._choices['next']) {
-	    var [choices, _choices] = tee(this._choices);
-	    this._choices = _choices;
-	    return choices;
-	} else {
-	    return this._choices;
-	}
+    get choices() {
+        if (this._choices['next']) {
+            var [choices, _choices] = tee(this._choices);
+            this._choices = _choices;
+            return choices;
+        } else {
+            return this._choices;
+        }
     },
 
     /*
 	* Flattened version of choices tuple.
 	*/
-    _get_flatchoices: function() {
-	var flat = [];
-	for ([choice, value] in this.choices)
-	    if (isarray(value))
-		flat.concat(value);
-	    else
-		flat.push([choice, value])
-	return flat;
+    get flatchoices() {
+        var flat = [];
+        for ([choice, value] in this.choices)
+            if (isarray(value))
+            flat.concat(value);
+            else
+            flat.push([choice, value])
+        return flat;
     },
 
     save_form_data: function(instance, data) {
-	instance[this.name] = data;
+        instance[this.name] = data;
     },
 
     /* TODO: Forms
@@ -333,42 +335,38 @@ var Field = Class('Field', {
 	* Returns the value of this field in the given model instance.
 	*/
     value_from_object: function(object) {
-	return object[this.attname];
+        return object[this.attname];
     }
 });
 
-Field.creation_counter = 0;
-Field.auto_creation_counter = -1;
-
-var AutoField = Class('AutoField', Field, {
+var AutoField = type('AutoField', Field, {
     empty_strings_allowed: false,
-    __init__: function($super) {
-	var [args, kwargs] = AutoField.prototype.__init__.extra_arguments(arguments);
-	assert (!isundefined(kwargs['primary_key']), "%ss must have primary_key = true.".subs(this.constructor.__name__));
-	kwargs['blank'] = true;
-	args.push(kwargs);
-	$super.apply(this, args);
+    __init__: function() {
+        arguments = new Arguments(arguments);
+        assert (bool(arguments.kwargs['primary_key']), "%ss must have primary_key = true.".subs(type(this).__name__));
+        arguments.kwargs['blank'] = true;
+        super(Field, this).__init__(arguments);
     },
 
     to_javascript: function(value) {
-	if (!value)
-	    return value;
-	var n = Number(value);
-	if (isNaN(n))
-	    throw new ValidationError("This value must be an integer.");
+        if (!value)
+            return value;
+        var n = Number(value);
+        if (isNaN(n))
+            throw new ValidationError("This value must be an integer.");
     },
 
     get_db_prep_value: function(value) {
-	if (!value)
-	    return null;
-	return Number(value) || null;
+        if (!value)
+            return null;
+        return Number(value) || null;
     },
 
-    contribute_to_class: function($super, cls, name) {
-	assert (!cls._meta.has_auto_field, "A model can't have more than one AutoField.");
-	$super(cls, name);
-	cls._meta.has_auto_field = true;
-	cls._meta.auto_field = this;
+    contribute_to_class: function(cls, name) {
+        assert (!cls._meta.has_auto_field, "A model can't have more than one AutoField.");
+        super(Field, this).contribute_to_class(cls, name);
+        cls._meta.has_auto_field = true;
+        cls._meta.auto_field = this;
     }
     /* TODO: forms
     def formfield(self, **kwargs):
@@ -376,37 +374,36 @@ var AutoField = Class('AutoField', Field, {
 	*/
 });
 
-var BooleanField = Class('BooleanField', Field, {
-    __init__: function($super) {
-	var [args, kwargs] = BooleanField.prototype.__init__.extra_arguments(arguments);
-	kwargs['blank'] = true;
-	if (isundefined(kwargs['default_value']) && isundefined(kwargs['none']));
-	    kwargs['default_value'] = false;
-	args.push(kwargs);
-	$super.apply(this, args);
+var BooleanField = type('BooleanField', Field, {
+    __init__: function() {
+        arguments = new Arguments(arguments);
+        arguments.kwargs['blank'] = true;
+        if (bool(kwargs['default_value']) && bool(kwargs['none']));
+            arguments.kwargs['default_value'] = false;
+        super(Field, this).__init__(arguments);
     },
 
     to_javascript: function(value) {
-	if (value == false || value == true) return value;
-	if (include(['t', 'true', '1'], value)) return true;
-	if (include(['f', 'false', '0'], value)) return false;
-	throw new ValidationError("This value must be either True or False.");
+        if (value == false || value == true) return value;
+        if (include(['t', 'true', '1'], value)) return true;
+        if (include(['f', 'false', '0'], value)) return false;
+        throw new ValidationError("This value must be either True or False.");
     },
 
-    get_db_prep_lookup: function($super, lookup_type, value) {
-	// Special-case handling for filters coming from a web request (e.g. the
-	// admin interface). Only works for scalar values (not lists). If you're
-	// passing in a list, you might as well make things the right type when
-	// constructing the list.
-	if (include(['1', '0'], value));
-	    value = bool(Number(value));
-	return $super(lookup_type, value);
+    get_db_prep_lookup: function(lookup_type, value) {
+        // Special-case handling for filters coming from a web request (e.g. the
+        // admin interface). Only works for scalar values (not lists). If you're
+        // passing in a list, you might as well make things the right type when
+        // constructing the list.
+        if (include(['1', '0'], value));
+            value = bool(Number(value));
+        return super(Field, this).get_db_prep_lookup(lookup_type, value);
     },
 
     get_db_prep_value: function(value) {
-	if (!value)
-	    return null;
-	return bool(value);
+        if (!value)
+            return null;
+        return bool(value);
     }
     /* TODO: forms
     def formfield(self, **kwargs):
@@ -416,23 +413,22 @@ var BooleanField = Class('BooleanField', Field, {
 	*/
 });
 
-var CharField = Class('CharField', Field, {
-	__init__: function($super) {
-	var [args, kwargs] = CharField.prototype.__init__.extra_arguments(arguments);
-	kwargs['max_length'] = kwargs['max_length'] || 100;
-	args.push(kwargs);
-	$super.apply(this, args);
+var CharField = type('CharField', Field, {
+	__init__: function() {
+        arguments = new Arguments(arguments);
+        arguments.kwargs['max_length'] = arguments.kwargs['max_length'] || 100;
+        super(Field, this).__init__(arguments);
     },
 
     to_javascript: function(value) {
-	if (isstring(value))
-	    return value;
-	if (!value)
-	    if (this.none)
-		return value;
-	    else
-		throw new ValidationError("This field cannot be null.");
-	return value;
+        if (isstring(value))
+            return value;
+        if (!value)
+            if (this.none)
+            return value;
+            else
+            throw new ValidationError("This field cannot be null.");
+        return value;
     }
     /*
     def formfield(self, **kwargs):
@@ -445,7 +441,7 @@ var CharField = Class('CharField', Field, {
 var ansi_date_re = /^\d{4}-\d{1,2}-\d{1,2}$/;
 var ansi_time_re = /^(0[1-9]|1\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
 
-var DateField = Class('DateField', Field, {
+var DateField = type('DateField', Field, {
     empty_strings_allowed: false,
     __init__: function($super) {
 	var [args, kwargs] = DateField.prototype.__init__.extra_arguments(arguments, {'verbose_name':null, 'name':null, 'auto_now':false, 'auto_now_add':false});
@@ -513,7 +509,7 @@ var DateField = Class('DateField', Field, {
 
     value_to_string: function(obj) {
 	var val = this._get_val_from_obj(obj);
-	if (val == null || isundefined(val)) {
+	if (bool(val)) {
 	    var data = '';
 	} else {
 	    //TODO: pasar la fecha a cadena
@@ -529,7 +525,7 @@ var DateField = Class('DateField', Field, {
 	*/
 });
 
-var DateTimeField = Class('DateTimeField', DateField, {
+var DateTimeField = type('DateTimeField', DateField, {
 
     to_javascript: function(value) {
 	if (!value)
@@ -593,7 +589,7 @@ var DateTimeField = Class('DateTimeField', DateField, {
     */
 });
 
-var DecimalField = Class('DecimalField', Field, {
+var DecimalField = type('DecimalField', Field, {
     empty_strings_allowed: false,
     __init__: function($super) {
 	var [args, kwargs] = DecimalField.prototype.__init__.extra_arguments(arguments, {'verbose_name':null, 'name':null, 'max_digits':null, 'decimal_places':null});
@@ -640,7 +636,7 @@ var DecimalField = Class('DecimalField', Field, {
     */
 });
 
-var EmailField = Class('EmailField', CharField, {
+var EmailField = type('EmailField', CharField, {
     __init__: function($super) {
 	var [args, kwargs] = EmailField.prototype.__init__.extra_arguments(arguments);
 	kwargs['max_length'] = kwargs['max_length'] || 75;
@@ -655,7 +651,7 @@ var EmailField = Class('EmailField', CharField, {
 */
 });
 
-var FilePathField = Class('FilePathField', Field, {
+var FilePathField = type('FilePathField', Field, {
     __init__: function($super) {
 	var [args, kwargs] = FilePathField.prototype.__init__.extra_arguments(arguments, {'verbose_name':null, 'name':null, 'path':'', 'match':null, 'recursive':false});
 	this.path = kwargs['path'];
@@ -678,7 +674,7 @@ var FilePathField = Class('FilePathField', Field, {
     */
 });
 
-var FloatField = Class('FloatField', Field, {
+var FloatField = type('FloatField', Field, {
     empty_strings_allowed: false,
 
     get_db_prep_value: function(value) {
@@ -695,7 +691,7 @@ var FloatField = Class('FloatField', Field, {
 */
 });
 
-var IntegerField = Class('IntegerField', Field, {
+var IntegerField = type('IntegerField', Field, {
     empty_strings_allowed: false,
     get_db_prep_value: function(value) {
 	if (!value)
@@ -720,7 +716,7 @@ var IntegerField = Class('IntegerField', Field, {
 */
 });
 
-var IPAddressField = Class('IPAddressField', Field, {
+var IPAddressField = type('IPAddressField', Field, {
     empty_strings_allowed: false,
     __init__: function($super) {
 	var [args, kwargs] = IPAddressField.prototype.__init__.extra_arguments(arguments);
@@ -737,7 +733,7 @@ var IPAddressField = Class('IPAddressField', Field, {
 */
 });
 
-var NullBooleanField = Class('NullBooleanField', Field, {
+var NullBooleanField = type('NullBooleanField', Field, {
     empty_strings_allowed: false,
     __init__: function($super) {
 	var [args, kwargs] = NullBooleanField.prototype.__init__.extra_arguments(arguments);
@@ -781,7 +777,7 @@ var NullBooleanField = Class('NullBooleanField', Field, {
 */
 });
 
-var PositiveIntegerField = Class('PositiveIntegerField', IntegerField, {
+var PositiveIntegerField = type('PositiveIntegerField', IntegerField, {
 /*
     def formfield(self, **kwargs):
 	defaults = {'min_value': 0}
@@ -790,7 +786,7 @@ var PositiveIntegerField = Class('PositiveIntegerField', IntegerField, {
 */
 });
 
-var PositiveSmallIntegerField = Class('PositiveSmallIntegerField', IntegerField, {
+var PositiveSmallIntegerField = type('PositiveSmallIntegerField', IntegerField, {
 
 /*
     def formfield(self, **kwargs):
@@ -800,12 +796,12 @@ var PositiveSmallIntegerField = Class('PositiveSmallIntegerField', IntegerField,
 */
 });
 
-var SlugField = Class('SlugField', CharField, {
+var SlugField = type('SlugField', CharField, {
     __init__: function($super) {
 	var [args, kwargs] = SlugField.prototype.__init__.extra_arguments(arguments);
 	kwargs['max_length'] = kwargs['max_length'] || 50;
 	// Set db_index=True unless it's been set manually.
-	if (isundefined(kwargs['db_index']))
+	if (!kwargs['db_index'])
 	    kwargs['db_index'] = true;
 	args.push(kwargs);
 	$super.apply(this, args);
@@ -819,9 +815,9 @@ var SlugField = Class('SlugField', CharField, {
 	*/
 });
 
-var SmallIntegerField = Class('SmallIntegerField', IntegerField, {});
+var SmallIntegerField = type('SmallIntegerField', IntegerField, {});
 
-var TextField = Class('TextField', Field, {
+var TextField = type('TextField', Field, {
     /*
     def formfield(self, **kwargs):
 	defaults = {'widget': forms.Textarea}
@@ -829,7 +825,7 @@ var TextField = Class('TextField', Field, {
 	return super(TextField, self).formfield(**defaults)
     */
 });
-var TimeField = Class('TimeField', Field, {
+var TimeField = type('TimeField', Field, {
     empty_strings_allowed: false,
     __init__: function($super) {
 	var [args, kwargs] = TimeField.prototype.__init__.extra_arguments(arguments, {verbose_name:null, name:null, auto_now:false, auto_now_add:false});
@@ -907,7 +903,7 @@ var TimeField = Class('TimeField', Field, {
 */
 });
 
-var URLField = Class('URLField', CharField, {
+var URLField = type('URLField', CharField, {
     __init__: function($super) {
 	var [args, kwargs] = URLField.prototype.__init__.extra_arguments(arguments, {'verbose_name':null, 'name':null, 'verify_exists':true});
 	kwargs['max_length'] = kwargs['max_length'] || 200;
@@ -923,7 +919,7 @@ var URLField = Class('URLField', CharField, {
 	*/
 });
 
-var XMLField = Class('XMLField', TextField, {
+var XMLField = type('XMLField', TextField, {
     __init__: function($super) {
 	var [args, kwargs] = XMLField.prototype.__init__.extra_arguments(arguments, {'verbose_name':null, 'name':null, 'schema_path':null});
 	this.schema_path = kwargs['schema_path'];

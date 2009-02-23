@@ -1210,7 +1210,7 @@ document.viewport = {
  * part of YUI-Ext version 0.40, distributed under the terms of an MIT-style
  * license.  Please see http://www.yui-ext.com/ for more information. */
 
-var Selector = Class({
+var Selector = type({
   initialize: function(expression) {
     this.expression = expression.strip();
 
@@ -2189,7 +2189,7 @@ Form.Element.Serializers = {
 
 /*--------------------------------------------------------------------------*/
 
-Abstract.TimedObserver = Class(PeriodicalExecuter, {
+Abstract.TimedObserver = type(PeriodicalExecuter, {
   initialize: function($super, element, frequency, callback) {
     $super(callback, frequency);
     this.element   = $(element);
@@ -2206,13 +2206,13 @@ Abstract.TimedObserver = Class(PeriodicalExecuter, {
   }
 });
 
-Form.Element.Observer = Class(Abstract.TimedObserver, {
+Form.Element.Observer = type(Abstract.TimedObserver, {
   getValue: function() {
     return Form.Element.getValue(this.element);
   }
 });
 
-Form.Observer = Class(Abstract.TimedObserver, {
+Form.Observer = type(Abstract.TimedObserver, {
   getValue: function() {
     return Form.serialize(this.element);
   }
@@ -2220,7 +2220,7 @@ Form.Observer = Class(Abstract.TimedObserver, {
 
 /*--------------------------------------------------------------------------*/
 
-Abstract.EventObserver = Class({
+Abstract.EventObserver = type({
   initialize: function(element, callback) {
     this.element  = $(element);
     this.callback = callback;
@@ -2259,13 +2259,13 @@ Abstract.EventObserver = Class({
   }
 });
 
-Form.Element.EventObserver = Class(Abstract.EventObserver, {
+Form.Element.EventObserver = type(Abstract.EventObserver, {
   getValue: function() {
     return Form.Element.getValue(this.element);
   }
 });
 
-Form.EventObserver = Class(Abstract.EventObserver, {
+Form.EventObserver = type(Abstract.EventObserver, {
   getValue: function() {
     return Form.serialize(this.element);
   }
@@ -2770,7 +2770,7 @@ if (!document.getElementsByClassName) document.getElementsByClassName = function
 
 /*--------------------------------------------------------------------------*/
 
-Element.ClassNames = Class();
+Element.ClassNames = type();
 Element.ClassNames.prototype = {
   initialize: function(element) {
     this.element = $(element);

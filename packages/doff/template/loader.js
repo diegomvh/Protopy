@@ -2,9 +2,9 @@ $L('doff.core.exceptions', 'ImproperlyConfigured'),
 $L('doff.template', 'Origin', 'Template', 'Context', 'TemplateDoesNotExist', 'add_to_builtins');
 $L('doff.conf', 'settings');
         
-var LoaderOrigin = Class(Origin, {
-    __init__: function($super, display_name, loader, name, dirs) {
-        $super(display_name);
+var LoaderOrigin = type('LoaderOrigin', Origin, {
+    __init__: function(display_name, loader, name, dirs) {
+        super(Origin, this).__init__(display_name);
         this.loader = loader;
         this.loadname = name;
         this.dirs = dirs;

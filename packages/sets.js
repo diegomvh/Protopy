@@ -1,14 +1,17 @@
 $D('sets');
 
-var Set = Class('Set', {
+var Set = type('Set', {
     __init__: function(elements){
         var elements = elements || [];
-        if (!isarray(elements))
+        if (type(elements) != Array)
             throw new TypeError(elements + ' object is not array');
         this.elements = unique(elements);
-        this.__defineGetter__('length', function(){ return this.elements.length});
     },
 
+    get length(){
+        return this.elements.length;
+    },
+    
     __contains__: function(element){
         return include(this.elements, element);
     },
@@ -67,12 +70,12 @@ var Set = Class('Set', {
     },
 
     update:  function(set){
-        var elements = isarray(set)? set : set.elements;
+        var elements = (type(set) == Array)? set : set.elements;
         this.elements = unique(this.elements.concat(elements));
     },
 
     union:  function(set){
-        var elements = isarray(set)? set : set.elements;
+        var elements = (type(set) == Array)? set : set.elements;
         return new Set(this.elements.concat(elements));
     },
 

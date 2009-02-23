@@ -1,6 +1,6 @@
 $L('doff.db.backends.creation', 'BaseDatabaseCreation');
 
-var DatabaseCreation = Class('DatabaseCreation', BaseDatabaseCreation, {
+var DatabaseCreation = type('DatabaseCreation', BaseDatabaseCreation, {
     data_types: {
         'AutoField':                    'integer',
         'BooleanField':                 'bool',

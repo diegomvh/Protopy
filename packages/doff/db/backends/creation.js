@@ -6,7 +6,7 @@ $L('doff.utils.hash', 'hash');
     * Fields, the SQL used to create and destroy tables, and the creation and
     * destruction of test databases.
     */
-var BaseDatabaseCreation = Class({
+var BaseDatabaseCreation = type('BaseDatabaseCreation', {
     data_types: {},
 
     __init__: function(connection){

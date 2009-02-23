@@ -7,7 +7,7 @@ $L('doff.utils.datastructures', 'SortedDict');
     * A cache that stores installed applications and their models. Used to
     * provide reverse-relations and for app introspection (e.g. admin).
     */
-var AppCache = Class('AppCache', {
+var AppCache = type('AppCache', {
     __init__: function() {
         this.app_store = new SortedDict();
 

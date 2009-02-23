@@ -12,7 +12,7 @@ $L('copy', 'copy');
 var CHUNK_SIZE = 100;
 var ITER_CHUNK_SIZE = CHUNK_SIZE;
 
-var CyclicDependency = Class('CyclicDependency', Exception);
+var CyclicDependency = type('CyclicDependency', Exception);
 
 /*
  * A container that stores keys and lists of values along with remembering the
@@ -20,7 +20,7 @@ var CyclicDependency = Class('CyclicDependency', Exception);
  * This is used for the database object deletion routines so that we can
  * calculate the 'leaf' objects which should be deleted first.
  */
-var CollectedObjects = Class('CollectedObjects', {
+var CollectedObjects = type('CollectedObjects', {
     __init__: function() {
         this.data = {};
         this.children = {};
@@ -40,13 +40,13 @@ var CollectedObjects = Class('CollectedObjects', {
      */
     add: function(model, pk, obj, parent_model, nullable) {
         nullable = nullable || false;
-        if (isundefined(this.data[model]))
+        if (!this.data[model])
             this.data[model] = new Hash();
         var d = this.data[model];
         var retval = pk in d;
         d[pk] = obj
         if (parent_model && !nullable) {
-            if (isundefined(this.children[parent_model]))
+            if (!this.children[parent_model])
                 this.children[parent_model] = [];
             this.children[parent_model].push(model);
         }
@@ -118,7 +118,7 @@ var CollectedObjects = Class('CollectedObjects', {
 /*
  * Represents a lazy database lookup for a set of objects.
  */
-var QuerySet = Class('QuerySet', {
+var QuerySet = type('QuerySet', {
 
     __init__: function(model, query) {
         this.model = model || null;
@@ -640,7 +640,7 @@ QuerySet.prototype.del.alters_data = true;
 QuerySet.prototype.update.alters_data = true;
 QuerySet.prototype._update.alters_data = true;
 
-var ValuesQuerySet = Class('ValuesQuerySet', QuerySet, {
+var ValuesQuerySet = type('ValuesQuerySet', QuerySet, {
     __init__: function($super) {
         var [args, kwargs] = ValuesQuerySet.prototype.__init__.extra_arguments(arguments);
         args.push(kwargs);
@@ -712,7 +712,7 @@ var ValuesQuerySet = Class('ValuesQuerySet', QuerySet, {
     }
 });
 
-var ValuesListQuerySet = Class('ValuesListQuerySet', ValuesQuerySet, {
+var ValuesListQuerySet = type('ValuesListQuerySet', ValuesQuerySet, {
     iterator: function() {
         this.query.trim_extra_select(this.extra_names);
         if ((this.flat) && (this._fields.length == 1))
@@ -741,7 +741,7 @@ var ValuesListQuerySet = Class('ValuesListQuerySet', ValuesQuerySet, {
     }
 });
 
-var DateQuerySet = Class('DateQuerySet', QuerySet, {
+var DateQuerySet = type('DateQuerySet', QuerySet, {
     iterator: function() {
         return this.query.results_iter();
     },
@@ -772,7 +772,7 @@ var DateQuerySet = Class('DateQuerySet', QuerySet, {
     }
 });
 
-var EmptyQuerySet = Class('EmptyQuerySet', QuerySet, {
+var EmptyQuerySet = type('EmptyQuerySet', QuerySet, {
     __init__: function($super, model, query) {
         $super(model, query);
         this._result_cache = [];

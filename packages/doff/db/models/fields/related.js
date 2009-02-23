@@ -33,7 +33,7 @@ function add_lazy_relation(cls, field, relation, operation){
     else {
         var key = app_label + model_name;
 	var value = [cls, field, operation];
-	if (isundefined(pending_lookups[key]))
+	if (!pending_lookups[key])
 	    pending_lookups[key] = [];
 	pending_lookups[key].push(value);
     }
@@ -50,7 +50,7 @@ function do_pending_lookups(payload) {
 
 signals.class_prepared.connect(do_pending_lookups);
 
-var RelatedField = Class('RelatedField', Field, {
+var RelatedField = type('RelatedField', Field, {
     contribute_to_class: function($super, cls, name) {
         $super(cls, name);
 
@@ -103,7 +103,7 @@ var RelatedField = Class('RelatedField', Field, {
             return v;
         };
 
-        if (!isundefined(value['as_sql'])) {
+        if (callable(value['as_sql'])) {
             var [sql, params] = value.as_sql();
             return new QueryWrapper(['(%s)'.subs(sql)], params);
         }
@@ -122,7 +122,7 @@ var RelatedField = Class('RelatedField', Field, {
     }
 });
 
-var SingleRelatedObjectDescriptor = Class('SingleRelatedObjectDescriptor', {
+var SingleRelatedObjectDescriptor = type('SingleRelatedObjectDescriptor', {
     __init__: function(related){
         this.related = related;
         this.cache_name = '_%s_cache'.subs(related.get_accessor_name());
@@ -163,7 +163,7 @@ var SingleRelatedObjectDescriptor = Class('SingleRelatedObjectDescriptor', {
     }
 });
 
-var ReverseSingleRelatedObjectDescriptor = Class('ReverseSingleRelatedObjectDescriptor', {
+var ReverseSingleRelatedObjectDescriptor = type('ReverseSingleRelatedObjectDescriptor', {
     __init__: function(field_with_rel) {
         this.field = field_with_rel;
     },
@@ -191,7 +191,7 @@ var ReverseSingleRelatedObjectDescriptor = Class('ReverseSingleRelatedObjectDesc
             params[key] = val;
             var rel_mgr = this.field.rel.to._default_manager;
             var rel_obj = null;
-            if (!isundefined(rel_mgr['use_for_related_fields']))
+            if (rel_mgr['use_for_related_fields'])
                 rel_obj = rel_mgr.get(params);
             else
                 rel_obj = new QuerySet(this.field.rel.to).get(params);
@@ -220,7 +220,7 @@ var ReverseSingleRelatedObjectDescriptor = Class('ReverseSingleRelatedObjectDesc
     }
 });
 
-var ForeignRelatedObjectsDescriptor = Class('ForeignRelatedObjectsDescriptor', {
+var ForeignRelatedObjectsDescriptor = type('ForeignRelatedObjectsDescriptor', {
 
     __init__: function(related){
         this.related = related;
@@ -234,7 +234,7 @@ var ForeignRelatedObjectsDescriptor = Class('ForeignRelatedObjectsDescriptor', {
         rel_model = this.related.model;
         superclass = this.related.model._default_manager.constructor;
 
-        var RelatedManager = Class('RelatedManager', superclass, {
+        var RelatedManager = type('RelatedManager', superclass, {
             get_query_set: function($super){
                 return $super().filter(this.core_filters);
             },
@@ -316,7 +316,7 @@ var ForeignRelatedObjectsDescriptor = Class('ForeignRelatedObjectsDescriptor', {
     */
 function create_many_related_manager(superclass, through) {
     through = through || false;
-    var ManyRelatedManager = Class('ManyRelatedManager', superclass, {
+    var ManyRelatedManager = type('ManyRelatedManager', superclass, {
 	__init__: function($super, model, core_filters, instance, symmetrical, join_table, source_col_name, target_col_name) {
 	    $super();
 	    this.core_filters = core_filters || null;
@@ -460,7 +460,7 @@ function create_many_related_manager(superclass, through) {
     return ManyRelatedManager;
 }
 
-var ManyRelatedObjectsDescriptor = Class('ManyRelatedObjectsDescriptor', {
+var ManyRelatedObjectsDescriptor = type('ManyRelatedObjectsDescriptor', {
     // This class provides the functionality that makes the related-object
     // managers available as attributes on a model class, for fields that have
     // multiple "remote" values and have a ManyToManyField pointed at them by
@@ -513,7 +513,7 @@ var ManyRelatedObjectsDescriptor = Class('ManyRelatedObjectsDescriptor', {
     }
 });
 
-var ReverseManyRelatedObjectsDescriptor = Class('ReverseManyRelatedObjectsDescriptor', {
+var ReverseManyRelatedObjectsDescriptor = type('ReverseManyRelatedObjectsDescriptor', {
     // This class provides the functionality that makes the related-object
     // managers available as attributes on a model class, for fields that have
     // multiple "remote" values and have a ManyToManyField defined in their
@@ -566,13 +566,13 @@ var ReverseManyRelatedObjectsDescriptor = Class('ReverseManyRelatedObjectsDescri
     }
 });
 
-var ManyToOneRel = Class('ManyToOneRel', {
+var ManyToOneRel = type('ManyToOneRel', {
 
     __init__: function (to, field_name) {
         var [args, kwargs] = ManyToOneRel.prototype.__init__.extra_arguments(arguments, {'related_name': null, 'limit_choices_to': {}, 'lookup_overrides': {}, 'parent_link': false});
 
-        if (isundefined(to._meta))
-            assert (isstring(to), "'to' must be either a model, a model name or the string %r".subs(RECURSIVE_RELATIONSHIP_CONSTANT));
+        if (!to._meta)
+            assert (type(to) == String, "'to' must be either a model, a model name or the string %r".subs(RECURSIVE_RELATIONSHIP_CONSTANT));
         this.to = to;
         this.field_name = field_name;
         //TODO: ver que pasa con esto de mandarle como salamanca al piano
@@ -596,7 +596,7 @@ var ManyToOneRel = Class('ManyToOneRel', {
     }
 });
 
-var OneToOneRel = Class('OneToOneRel', ManyToOneRel, {
+var OneToOneRel = type('OneToOneRel', ManyToOneRel, {
     __init__: function($super, to, field_name) {
         var [args, kwargs] = OneToOneRel.prototype.__init__.extra_arguments(arguments, {'related_name': null, 'limit_choices_to': null, 'lookup_overrides': null, 'parent_link': false});
 
@@ -605,7 +605,7 @@ var OneToOneRel = Class('OneToOneRel', ManyToOneRel, {
     }
 });
 
-var ManyToManyRel = Class('ManyToManyRel', {
+var ManyToManyRel = type('ManyToManyRel', {
     __init__: function(to) {
         this.to = to;
         var [args, kwargs] = ManyToManyRel.prototype.__init__.extra_arguments(arguments, {'related_name':null, 'limit_choices_to':{}, 'symmetrical':true, 'through': null});
@@ -619,7 +619,7 @@ var ManyToManyRel = Class('ManyToManyRel', {
     }
 });
 
-var ForeignKey = Class('ForeignKey', RelatedField, {
+var ForeignKey = type('ForeignKey', RelatedField, {
     empty_strings_allowed:false,
     __init__: function($super, to) {
         var [args, kwargs] = ForeignKey.prototype.__init__.extra_arguments(arguments, {'to_field':null, 'rel_class':ManyToOneRel, 'verbose_name': null});
@@ -659,7 +659,7 @@ var ForeignKey = Class('ForeignKey', RelatedField, {
     },
 
     get_db_prep_save: function(value) {
-        if (value == '' || value == null || isundefined(value))
+        if (bool(value))
             return null;
         else
             return this.rel.get_related_field().get_db_prep_save(value);
@@ -730,7 +730,7 @@ var ForeignKey = Class('ForeignKey', RelatedField, {
     }
 });
 
-var OneToOneField = Class('OneToOneField', ForeignKey, {
+var OneToOneField = type('OneToOneField', ForeignKey, {
     __init__: function($super, to, to_field) {
 	//TODO: ver argumentos
 	var [args, kwargs] = OneToOneField.prototype.__init__.extra_arguments(arguments);
@@ -756,7 +756,7 @@ var OneToOneField = Class('OneToOneField', ForeignKey, {
     }
 });
 
-var ManyToManyField = Class('ManyToManyField', RelatedField, {
+var ManyToManyField = type('ManyToManyField', RelatedField, {
     __init__: function($super, to) {
 
 	var [args, kwargs] = ManyToManyField.prototype.__init__.extra_arguments(arguments, {'verbose_name': null});

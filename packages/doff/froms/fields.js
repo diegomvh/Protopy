@@ -33,7 +33,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile as UploadedFile
 var EMPTY_VALUES = [null, ''];
 
 
-var Field = Class('Field', {
+var Field = type('Field', {
     //Static
     creation_counter: 0
     },{
@@ -102,7 +102,7 @@ var Field = Class('Field', {
     }
 });
 
-var CharField = Class('CharField', Field, {
+var CharField = type('CharField', Field, {
     default_error_messages: {   'max_length': 'Ensure this value has at most %s characters (it has %s).',
                                 'min_length': 'Ensure this value has at least %s characters (it has %s).' },
 
@@ -136,7 +136,7 @@ var CharField = Class('CharField', Field, {
     }
 });
 
-var IntegerField = Class('IntegerField', Field, {
+var IntegerField = type('IntegerField', Field, {
     default_error_messages: {   'invalid': 'Enter a whole number.',
                                 'max_value': 'Ensure this value is less than || equal to %s.',
                                 'min_value': 'Ensure this value is greater than || equal to %s.' },
@@ -169,7 +169,7 @@ var IntegerField = Class('IntegerField', Field, {
     }
 });
 
-var FloatField = Class('FloatField', Field, {
+var FloatField = type('FloatField', Field, {
     default_error_messages: {   'invalid': 'Enter a number.',
                                 'max_value': 'Ensure this value is less than || equal to %s.',
                                 'min_value': 'Ensure this value is greater than || equal to %s.' },
@@ -202,7 +202,7 @@ var FloatField = Class('FloatField', Field, {
     }
 });
 
-var DecimalField = Class('DecimalField', Field, {
+var DecimalField = type('DecimalField', Field, {
     default_error_messages: {   'invalid': 'Enter a number.',
                                 'max_value': 'Ensure this value is less than || equal to %s.',
                                 'min_value': 'Ensure this value is greater than || equal to %s.',
@@ -269,7 +269,7 @@ var DEFAULT_DATE_INPUT_FORMATS = [
     '%d %B %Y', '%d %B, %Y'             // '25 October 2006', '25 October, 2006'
 ]
 
-var DateField = Class('DateField', Field, {
+var DateField = type('DateField', Field, {
     default_error_messages: {   'invalid': 'Enter a valid date.' },
 
     __init__: function($super) {
@@ -304,7 +304,7 @@ var DEFAULT_TIME_INPUT_FORMATS = [
     '%H:%M'        // '14:30'
 ]
 
-var TimeField = Class('TimeField', Field, {
+var TimeField = type('TimeField', Field, {
     widget: TimeInput,
     default_error_messages: {   'invalid': 'Enter a valid time.' },
 
@@ -344,7 +344,7 @@ var DEFAULT_DATETIME_INPUT_FORMATS = [
     '%m/%d/%y',              // '10/25/06'
 ]
 
-var DateTimeField = Class('DateTimeField', Field, {
+var DateTimeField = type('DateTimeField', Field, {
     widget: DateTimeInput,
     default_error_messages: {   'invalid': 'Enter a valid date/time.' },
 
@@ -382,7 +382,7 @@ var DateTimeField = Class('DateTimeField', Field, {
     }
 });
 
-var RegexField = Class('RegexField', CharField, {
+var RegexField = type('RegexField', CharField, {
     __init__: function($super, regex) {
         // error_message is just kept for backwards compatibility:
         var [args, kwargs] = RegexField.prototype.__init__.extra_arguments(arguments, {'max_length':null, 'min_length':null, 'error_message':null});
@@ -413,7 +413,7 @@ var RegexField = Class('RegexField', CharField, {
 
 var email_re = new RegExp("(^[-!//$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!//$%&'*+/=?^_`{}|~0-9A-Z]+)*|^\"([\001-\010\013\014\016-\037!//-\[\]-\177]|\\[\001-011\013\014\016-\177])*\")@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$", 'i');
 
-var EmailField = Class('EmailField', RegexField, {
+var EmailField = type('EmailField', RegexField, {
     default_error_messages: {   'invalid': 'Enter a valid e-mail address.' },
 
     __init__: function($super) {
@@ -430,7 +430,7 @@ except ImportError:
     // It's OK if Django settings aren't configured.
     URL_VALIDATOR_USER_AGENT = 'Django (http://www.djangoproject.com/)'
 */
-var FileField = Class('FileField', Field, {
+var FileField = type('FileField', Field, {
     widget: FileInput,
     default_error_messages: {   'invalid': 'No file was submitted. Check the encoding type on the form.',
                                 'missing': 'No file was submitted.',
@@ -461,7 +461,7 @@ var FileField = Class('FileField', Field, {
         return data
 });
 
-var ImageField = Class('ImageField', FileField, {
+var ImageField = type('ImageField', FileField, {
     default_error_messages: { 'invalid_image': 'Upload a valid image. The file you uploaded was either not an image || a corrupted image.' },
 
     clean: function clean( data, initial=None) {
@@ -515,7 +515,7 @@ var ImageField = Class('ImageField', FileField, {
 
 var url_re = new RegExp('^https?://(?:(?:[A-Z0-9-]+\.)+[A-Z]{2,6}|localhost|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(?::\d+)?(?:/?|/\S+)$', 'i');
 
-var URLField = Class('URLField', RegexField, {
+var URLField = type('URLField', RegexField, {
     default_error_messages: {   'invalid': 'Enter a valid URL.',
                                 'invalid_link': 'This URL appears to be a broken link.' },
 
@@ -555,7 +555,7 @@ var URLField = Class('URLField', RegexField, {
         return value
 });
 
-var BooleanField = Class('BooleanField', Field, {
+var BooleanField = type('BooleanField', Field, {
     widget: CheckboxInput,
 
     clean: function($super, value) {
@@ -570,7 +570,7 @@ var BooleanField = Class('BooleanField', Field, {
     }
 });
 
-var NullBooleanField = Class('NullBooleanField', BooleanField, {
+var NullBooleanField = type('NullBooleanField', BooleanField, {
     widget: NullBooleanSelect,
 
     clean: function($super, value) {
@@ -583,7 +583,7 @@ var NullBooleanField = Class('NullBooleanField', BooleanField, {
     }
 });
 
-var ChoiceField = Class('ChoiceField', Field, {
+var ChoiceField = type('ChoiceField', Field, {
     widget = Select
     default_error_messages: { 'invalid_choice': 'Select a valid choice. %(value)s is not one of the available choices.' },
 
@@ -632,7 +632,7 @@ var ChoiceField = Class('ChoiceField', Field, {
         return False
 });
 
-var TypedChoiceField = Class('TypedChoiceField', ChoiceField, {
+var TypedChoiceField = type('TypedChoiceField', ChoiceField, {
     __init__: function __init__( *args, **kwargs) {
         this.coerce = kwargs.pop('coerce', lambda val: val)
         this.empty_value = kwargs.pop('empty_value', '')
@@ -660,7 +660,7 @@ var TypedChoiceField = Class('TypedChoiceField', ChoiceField, {
         return value
 });
 
-var MultipleChoiceField = Class('MultipleChoiceField', ChoiceField, {
+var MultipleChoiceField = type('MultipleChoiceField', ChoiceField, {
     hidden_widget: MultipleHiddenInput,
     widget: SelectMultiple,
     default_error_messages: {   'invalid_choice': 'Select a valid choice. %s is not one of the available choices.',
@@ -685,7 +685,7 @@ var MultipleChoiceField = Class('MultipleChoiceField', ChoiceField, {
     }
 });
 
-var ComboField = Class('ComboField', Field, {
+var ComboField = type('ComboField', Field, {
     """
     A Field whose clean() method calls multiple Field clean() methods.
     """
@@ -709,7 +709,7 @@ var ComboField = Class('ComboField', Field, {
         return value
 });
 
-var MultiValueField = Class('MultiValueField', Field, {
+var MultiValueField = type('MultiValueField', Field, {
     """
     A Field that aggregates the logic of multiple Fields.
 
@@ -786,7 +786,7 @@ var MultiValueField = Class('MultiValueField', Field, {
         throw new NotImplementedError('Subclasses must implement this method.')
 });
 
-var FilePathField = Class('FilePathField', ChoiceField, {
+var FilePathField = type('FilePathField', ChoiceField, {
     __init__: function __init__( path, match=None, recursive=False, required=True,
                  widget=None, label=None, initial=None, help_text=None,
                  *args, **kwargs) {
@@ -814,7 +814,7 @@ var FilePathField = Class('FilePathField', ChoiceField, {
         this.widget.choices = this.choices
 });
 
-var SplitDateTimeField = Class('SplitDateTimeField', MultiValueField, {
+var SplitDateTimeField = type('SplitDateTimeField', MultiValueField, {
     widget: SplitDateTimeWidget,
     hidden_widget: SplitHiddenDateTimeWidget,
     default_error_messages: {
@@ -846,7 +846,7 @@ var SplitDateTimeField = Class('SplitDateTimeField', MultiValueField, {
 
 var ipv4_re = /(25[0-5]|2[0-4]\d|[0-1]?\d?\d)(\.(25[0-5]|2[0-4]\d|[0-1]?\d?\d)){3}$/;
 
-var IPAddressField = Class('IPAddressField', RegexField, {
+var IPAddressField = type('IPAddressField', RegexField, {
     default_error_messages: {   'invalid': 'Enter a valid IPv4 address.' },
 
     __init__: function($super) {
@@ -859,7 +859,7 @@ var IPAddressField = Class('IPAddressField', RegexField, {
 
 var slug_re = /^[-\w]+$/;
 
-var SlugField = Class('SlugField', RegexField, {
+var SlugField = type('SlugField', RegexField, {
     default_error_messages: { 'invalid': 'Enter a valid slug consisting of letters, numbers, underscores || hyphens.' },
 
     __init__: function($super) {

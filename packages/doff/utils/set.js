@@ -1,6 +1,6 @@
 $D('doff.utils.set');
 
-var Set = Class('Set', {
+var Set = type('Set', {
     __init__: function(elements){
         var elements = elements || [];
         if (!isarray(elements))

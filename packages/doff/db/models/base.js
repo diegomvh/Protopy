@@ -12,14 +12,13 @@ $L("sets", 'Set');
 $L("doff.db.models.loading", 'register_models', 'get_model');
 
 var subclass_exception = function(name, parent, module) {
-    var klass = Class(name, parent, {});
+    var klass = type(name, parent, {});
     klass.__module__ = module;
     klass.prototype.__module__ = module;
     return klass;
 }
-
-//Metaclass for all models.
-var ModelBase = {
+    
+var Model = type('Model', {
     __new__: function(name, base, attrs) {
         if (name == 'Model' && !base) {
             // estoy creando el modelo,
@@ -34,10 +33,10 @@ var ModelBase = {
         var base_meta = base['_meta'];
 
         var app_label = meta['app_label'];
-        if (isundefined(app_label)) {
+        if (!app_label) {
             app_label = module.split('.').slice(-2)[0];
         }
-        
+
         this.add_to_class('_meta', new Options(meta, app_label));
 
         if (!abstracto) {
@@ -71,7 +70,7 @@ var ModelBase = {
         // Do the appropriate setup for any model parents.
         var o2o_map = dict([[f.rel.to, f] for (f in this._meta.local_fields) if (f instanceof OneToOneField)]);
         if (base && base['_meta']) {
-            
+
             // All the fields of any type declared on this model
             var new_fields = this._meta.local_fields.concat(this._meta.local_many_to_many).concat(this._meta.virtual_fields);
             var field_names = new Set([f.name for each (f in new_fields)]);
@@ -151,7 +150,7 @@ var ModelBase = {
 
     /* Creates some methods once self._meta has been populated. */
     _prepare: function() {
-    
+
         var opts = this._meta;
         opts._prepare(this);
 
@@ -169,11 +168,8 @@ var ModelBase = {
 
         signals.class_prepared.send({'sender': this});
     }
-    
-};
-    
-var Model = Class('Model', {
-        __metaclass__: ModelBase,
+
+},{
     __init__: function() {
         var [args, kwargs] = this.__init__.extra_arguments(arguments);
         signals.pre_init.send({'sender':this.constructor, 'args':args, 'kwargs':kwargs});

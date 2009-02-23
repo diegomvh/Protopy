@@ -17,7 +17,7 @@ function ensure_default_manager(payload) {
 
 signals.class_prepared.connect(ensure_default_manager);
 
-var Manager = Class('Manager', {
+var Manager = type('Manager', {
         __init__: function(){
         this._set_creation_counter();
         this.model = null;
@@ -212,7 +212,7 @@ var Manager = Class('Manager', {
     });
 Manager.creation_counter = 0;
 
-var ManagerDescriptor = Class('ManagerDescriptor', {
+var ManagerDescriptor = type('ManagerDescriptor', {
     __init__: function(manager){
         this.manager = manager;
     },
@@ -224,7 +224,7 @@ var ManagerDescriptor = Class('ManagerDescriptor', {
     }
 });
 
-var EmptyManager = Class('EmptyManager', Manager, {
+var EmptyManager = type('EmptyManager', Manager, {
     get_query_set: function(){
         return this.get_empty_query_set();
     }

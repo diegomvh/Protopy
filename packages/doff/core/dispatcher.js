@@ -1,6 +1,6 @@
 $L('sets', 'Set');
 
-var Signal = Class('Signal', {
+var Signal = type('Signal', {
     __init__: function(name, scope) {
         this.name = name;
         this.scope = scope;

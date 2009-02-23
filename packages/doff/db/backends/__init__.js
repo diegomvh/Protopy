@@ -3,7 +3,7 @@ $L('sets', 'Set');
 /*
  * Represents a database connection.
  */
-var BaseDatabaseWrapper = Class('BaseDatabaseWrapper', {
+var BaseDatabaseWrapper = type('BaseDatabaseWrapper', {
 
     ops: null,
     __init__: function(settings){
@@ -34,7 +34,7 @@ var BaseDatabaseWrapper = Class('BaseDatabaseWrapper', {
     }
 });
 
-var BaseDatabaseFeatures = Class('BaseDatabaseFeatures', {
+var BaseDatabaseFeatures = type('BaseDatabaseFeatures', {
     
     needs_datetime_string_cast: true,
     uses_custom_query_class: false,
@@ -51,7 +51,7 @@ var BaseDatabaseFeatures = Class('BaseDatabaseFeatures', {
     * This class encapsulates all backend-specific differences, such as the way
     * a backend performs ordering or calculates the ID of a recently-inserted row.
     */
-var BaseDatabaseOperations = Class('BaseDatabaseOperations', {
+var BaseDatabaseOperations = type('BaseDatabaseOperations', {
 
     autoinc_sql: function(table, column) { return null; },
 
@@ -151,14 +151,14 @@ var BaseDatabaseOperations = Class('BaseDatabaseOperations', {
     }
 });
 
-var BaseDatabaseValidation = Class('BaseDatabaseValidation', {
+var BaseDatabaseValidation = type('BaseDatabaseValidation', {
     validate_field: function(errors, opts, f) {}
 });
 
     /*
     * This class encapsulates all backend-specific introspection utilities
     */
-var BaseDatabaseIntrospection = Class('BaseDatabaseIntrospection', {
+var BaseDatabaseIntrospection = type('BaseDatabaseIntrospection', {
     data_types_reverse: {},
     __init__: function(connection) {
         this.connection = connection;

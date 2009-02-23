@@ -3,7 +3,7 @@ if (__name__ == '__main__') {
     $L('sys');
     sys.path['blog'] = '/blog/';
     settings = '/blog/settings.js';
-    $L('blog.apps.post.views');
+    /*$L('blog.apps.post.views');
     views.syncdb();
     for each (var tag in tags)
         views.add_tag(tag, 'Un tag para ' + tag);
@@ -39,5 +39,5 @@ if (__name__ == '__main__') {
     views.set_tags_by_title(p3, ['Microsoft', 'El Lado Oscuro', 'Dinero Todopoderoso', 'Windows']);
     views.set_tags_by_title(p4, ['KDE']);
     views.set_tags_by_title(p5, ['KDE', 'Linus Torvalds']);
-    views.show_posts();
+    views.show_posts();*/
 }

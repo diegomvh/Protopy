@@ -1,4 +1,4 @@
-if (!isundefined(window.google) && !isundefined(window.google.gears)) {
+if (window.google && window.google.gears) {
     return;
 }
 print('*Do not* define any objects if Gears is not installed. This mimics the behavior of Gears defining the objects in the future.');
@@ -29,7 +29,7 @@ if (!factory) {
     window.location = 'http://gears.google.com/';
 }
 
-if (isundefined(window.google)) {
+if (!window.google) {
     var google = {};
 }
 

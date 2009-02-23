@@ -1,8 +1,8 @@
 $D("doff.utils.datastructures");
 
-var SortedDict = Class('SortedDict', Dict, {
-    __init__: function($super, object){
-        $super(object);
+var SortedDict = type('SortedDict', Dict, {
+    __init__: function(object){
+        super(Dict, this).__init__(object);
         this.keyOrder = values(this._key);
     },
     
@@ -16,14 +16,14 @@ var SortedDict = Class('SortedDict', Dict, {
         }
     },
 
-    set: function($super, key, value) {
+    set: function(key, value) {
         this.keyOrder.push(key);
-        return $super(key, value);
+        return super(Dict, this).set(key, value);
     },
 
-    unset: function($super, key) {
+    unset: function(key) {
         this.keyOrder.without(key);
-        return $super(key);
+        return super(Dict, this).unset(key);
     },
 
     /* 

@@ -18,7 +18,7 @@ database.register_converter("TIMESTAMP", util.typecast_timestamp);
 database.register_converter("decimal", util.typecast_decimal);
 //database.register_adapter(decimal.Decimal, util.rev_typecast_decimal);
 
-var DatabaseOperations = Class('DatabaseOperations', BaseDatabaseOperations, {
+var DatabaseOperations = type('DatabaseOperations', BaseDatabaseOperations, {
     //TODO: le faltan cosas
     autoinc_sql: function(table, column){
         return null;
@@ -49,12 +49,12 @@ var DatabaseOperations = Class('DatabaseOperations', BaseDatabaseOperations, {
     }
 });
 
-var DatabaseFeatures = Class('DatabaseFeatures', BaseDatabaseFeatures, {
+var DatabaseFeatures = type('DatabaseFeatures', BaseDatabaseFeatures, {
     can_use_chunked_reads: false,
     can_read_columns_name: true
 });
 
-var DatabaseWrapper = Class(BaseDatabaseWrapper, {
+var DatabaseWrapper = type('DatabaseWrapper', BaseDatabaseWrapper, {
 
     operators: {
         'exact': '= %s',
@@ -73,8 +73,8 @@ var DatabaseWrapper = Class(BaseDatabaseWrapper, {
         'iendswith': "LIKE %s ESCAPE '\\'"
     },
 
-    __init__: function($super, settings){
-        $super(settings);
+    __init__: function(settings){
+        super(BaseDatabaseWrapper, this).__init__(settings);
         this.features = new DatabaseFeatures();
         this.ops = new DatabaseOperations();
         this.creation = new DatabaseCreation(this);
@@ -104,24 +104,24 @@ var DatabaseWrapper = Class(BaseDatabaseWrapper, {
     }
 });
 
-var GearsCursorWrapper = Class('GearsCursorWrapper', database.Cursor, {
-    execute: function($super, query, params) {
+var GearsCursorWrapper = type('GearsCursorWrapper', database.Cursor, {
+    execute: function(query, params) {
         params = params || [];
         try {
             print('Query: ', query); print('Params: ', params);
             var query = this.convert_query(query, params.length);
-            $super(query, params);
+            super(database.Cursor, this).execute(query, params);
         }
         catch(e) {
             throw new Error(e.message);
         }
     },
 
-    executemany: function($super, query, param_list) {
+    executemany: function(query, param_list) {
         try {
             var query = this.convert_query(query, param_list[0].length);
             for each (var params in param_list)
-                $super(query, params);
+                super(database.Cursor, this).executemany(query, params);
         } catch (e) {}
         return null;
     },

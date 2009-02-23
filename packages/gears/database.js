@@ -15,7 +15,7 @@ function connect(options) {
     return new Connection(options);
 }
 
-var Connection = Class('Connection', {
+var Connection = type('Connection', {
     __init__: function(options) {
         this.database = options['database'];
         this.detect_types = options['detect_types'];
@@ -36,7 +36,7 @@ var Connection = Class('Connection', {
     }
 });
 
-var Cursor = Class('Cursor', {
+var Cursor = type('Cursor', {
     __init__: function(connection){
             this.connection = connection;
             this.__defineGetter__('lastrowid', function(){ return this.connection.lastInsertRowId; });
@@ -127,5 +127,5 @@ $P({    'connect': connect,
         'register_converter': register_converter,
         'register_adapter': register_adapter,
         'Cursor': Cursor,
-        'DatabaseError': Class('DatabaseError'),
-        'IntegrityError': Class('IntegrityError')  });
+        'DatabaseError': type('DatabaseError'),
+        'IntegrityError': type('IntegrityError')  });

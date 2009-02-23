@@ -27,31 +27,31 @@ _copy_dispatch[Object] = function _copy_Object(object) {
 }
 
 _copy_dispatch['Instance'] = function _copy_Instance(object) {
-    if (isfunction(object['__iter__'])) {
+    if (callable(object['__iter__'])) {
         delete object.__iterator__;
     }
     var obj = new object.constructor();
     for (var p in object) {
         var lg = object.__lookupGetter__(p);
         var ls = object.__lookupSetter__(p);
-        if (isfunction(lg) || isfunction(ls)) {
-            if (isfunction(lg))
+        if (callable(lg) || callable(ls)) {
+            if (callable(lg))
                 obj.__defineGetter__(p, lg);
-            if (isfunction(ls))
+            if (callable(ls))
                 obj.__defineSetter__(p, ls);
         } else {
             obj[p] = object[p];
         }
     }
 
-    if (isfunction(object['__iter__'])) {
+    if (callable(object['__iter__'])) {
         object.__iterator__ = object.__iter__;
     }
     return obj;
 }
 
 function copy(x) {
-    if (isfunction(x['__copy__']))
+    if (callable(x['__copy__']))
         return x.__copy__(x);
 
     var cls = type(x);
@@ -103,7 +103,7 @@ _deepcopy_dispatch[Number] = function _deepcopy_array(object) {
 }
 
 function deepcopy(x) {
-    if (isfunction(x['__deepcopy__']))
+    if (callable(x['__deepcopy__']))
         return x.__deepcopy__(x);
     
     var cls = type(x);

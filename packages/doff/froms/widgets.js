@@ -31,7 +31,7 @@ __all__ = (
 
 MEDIA_TYPES = ['css','js'];
 
-var Media = Class('Media', {});
+var Media = type('Media', {});
 class Media(StrAndUnicode):
     def __init__(self, media=None, **kwargs):
         if media:
@@ -121,7 +121,7 @@ def media_property(cls):
             return base
     return property(_media)
 
-var Media = Class('Media', {});
+var Media = type('Media', {});
 class MediaDefiningClass(type):
     "Metaclass for classes that can have media definitions"
     def __new__(cls, name, bases, attrs):
@@ -131,7 +131,7 @@ class MediaDefiningClass(type):
             new_class.media = media_property(new_class)
         return new_class
 
-var Media = Class('Media', {});
+var Media = type('Media', {});
 class Widget(object):
     __metaclass__ = MediaDefiningClass
     is_hidden = False          # Determines whether this corresponds to an <input type="hidden">.
@@ -204,7 +204,7 @@ class Widget(object):
         return id_
     id_for_label = classmethod(id_for_label)
 
-var Media = Class('Media', {});
+var Media = type('Media', {});
 class Input(Widget):
     """
     Base class for all <input> widgets (except type='checkbox' and
@@ -220,11 +220,11 @@ class Input(Widget):
             final_attrs['value'] = force_unicode(value)
         return mark_safe(u'<input%s />' % flatatt(final_attrs))
 
-var Media = Class('Media', {});
+var Media = type('Media', {});
 class TextInput(Input):
     input_type = 'text'
 
-var Media = Class('Media', {});
+var Media = type('Media', {});
 class PasswordInput(Input):
     input_type = 'password'
 
@@ -236,12 +236,12 @@ class PasswordInput(Input):
         if not self.render_value: value=None
         return super(PasswordInput, self).render(name, value, attrs)
 
-var Media = Class('Media', {});
+var Media = type('Media', {});
 class HiddenInput(Input):
     input_type = 'hidden'
     is_hidden = True
     
-var Media = Class('Media', {});
+var Media = type('Media', {});
 class MultipleHiddenInput(HiddenInput):
     """
     A widget that handles <input type="hidden"> for fields that have a list
@@ -264,7 +264,7 @@ class MultipleHiddenInput(HiddenInput):
             return data.getlist(name)
         return data.get(name, None)
 
-var Media = Class('Media', {});
+var Media = type('Media', {});
 class FileInput(Input):
     input_type = 'file'
     needs_multipart_form = True
@@ -281,7 +281,7 @@ class FileInput(Input):
             return False
         return True
 
-var Media = Class('Media', {});
+var Media = type('Media', {});
 class Textarea(Widget):
     def __init__(self, attrs=None):
         # The 'rows' and 'cols' attributes are required for HTML correctness.
@@ -296,7 +296,7 @@ class Textarea(Widget):
         return mark_safe(u'<textarea%s>%s</textarea>' % (flatatt(final_attrs),
                 conditional_escape(force_unicode(value))))
 
-var Media = Class('Media', {});
+var Media = type('Media', {});
 class DateTimeInput(Input):
     input_type = 'text'
     format = '%Y-%m-%d %H:%M:%S'     # '2006-10-25 14:30:59'
@@ -314,7 +314,7 @@ class DateTimeInput(Input):
             value = value.strftime(self.format)
         return super(DateTimeInput, self).render(name, value, attrs)
 
-var Media = Class('Media', {});
+var Media = type('Media', {});
 class TimeInput(Input):
     input_type = 'text'
 
@@ -325,7 +325,7 @@ class TimeInput(Input):
             value = value.replace(microsecond=0)
         return super(TimeInput, self).render(name, value, attrs)
 
-var Media = Class('Media', {});
+var Media = type('Media', {});
 class CheckboxInput(Widget):
     def __init__(self, attrs=None, check_test=bool):
         super(CheckboxInput, self).__init__(attrs)
@@ -358,7 +358,7 @@ class CheckboxInput(Widget):
         # same thing as False.
         return bool(initial) != bool(data)
 
-var Media = Class('Media', {});
+var Media = type('Media', {});
 class Select(Widget):
     def __init__(self, attrs=None, choices=()):
         super(Select, self).__init__(attrs)
@@ -397,7 +397,7 @@ class Select(Widget):
                 output.append(render_option(option_value, option_label))
         return u'\n'.join(output)
 
-var Media = Class('Media', {});
+var Media = type('Media', {});
 class NullBooleanSelect(Select):
     """
     A Select Widget intended to be used with NullBooleanField.
@@ -422,7 +422,7 @@ class NullBooleanSelect(Select):
         # same thing as False.
         return bool(initial) != bool(data)
 
-var Media = Class('Media', {});
+var Media = type('Media', {});
 class SelectMultiple(Select):
     def render(self, name, value, attrs=None, choices=()):
         if value is None: value = []
@@ -451,7 +451,7 @@ class SelectMultiple(Select):
                 return True
         return False
 
-var Media = Class('Media', {});
+var Media = type('Media', {});
 class RadioInput(StrAndUnicode):
     """
     An object used by RadioFieldRenderer that represents a single
@@ -484,7 +484,7 @@ class RadioInput(StrAndUnicode):
             final_attrs['checked'] = 'checked'
         return mark_safe(u'<input%s />' % flatatt(final_attrs))
 
-var Media = Class('Media', {});
+var Media = type('Media', {});
 class RadioFieldRenderer(StrAndUnicode):
     """
     An object used by RadioSelect to enable customization of radio widgets.
@@ -510,7 +510,7 @@ class RadioFieldRenderer(StrAndUnicode):
         return mark_safe(u'<ul>\n%s\n</ul>' % u'\n'.join([u'<li>%s</li>'
                 % force_unicode(w) for w in self]))
 
-var Media = Class('Media', {});
+var Media = type('Media', {});
 class RadioSelect(Select):
     renderer = RadioFieldRenderer
 
@@ -542,7 +542,7 @@ class RadioSelect(Select):
         return id_
     id_for_label = classmethod(id_for_label)
 
-var Media = Class('Media', {});
+var Media = type('Media', {});
 class CheckboxSelectMultiple(SelectMultiple):
     def render(self, name, value, attrs=None, choices=()):
         if value is None: value = []
@@ -575,7 +575,7 @@ class CheckboxSelectMultiple(SelectMultiple):
         return id_
     id_for_label = classmethod(id_for_label)
 
-var Media = Class('Media', {});
+var Media = type('Media', {});
 class MultiWidget(Widget):
     """
     A widget that is composed of multiple widgets.
@@ -672,7 +672,7 @@ class MultiWidget(Widget):
         return media
     media = property(_get_media)
 
-var Media = Class('Media', {});
+var Media = type('Media', {});
 class SplitDateTimeWidget(MultiWidget):
     """
     A Widget that splits datetime input into two <input type="text"> boxes.
@@ -686,7 +686,7 @@ class SplitDateTimeWidget(MultiWidget):
             return [value.date(), value.time().replace(microsecond=0)]
         return [None, None]
 
-var Media = Class('Media', {});
+var Media = type('Media', {});
 class SplitHiddenDateTimeWidget(SplitDateTimeWidget):
     """
     A Widget that splits datetime input into two <input type="hidden"> inputs.

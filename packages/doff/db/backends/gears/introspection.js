@@ -21,7 +21,7 @@ var data_types_reverse = {
         'time': 'TimeField',
     };
 
-var DatabaseIntrospection = Class('DatabaseIntrospection', BaseDatabaseIntrospection, {
+var DatabaseIntrospection = type('DatabaseIntrospection', BaseDatabaseIntrospection, {
 
     /*
      * Returns a list of table names in the current database.
