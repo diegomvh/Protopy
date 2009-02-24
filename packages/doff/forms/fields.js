@@ -1,5 +1,4 @@
-$D('doff.forms.fields\n\
-Field classes.');
+$D('doff.forms.fields, Field classes.');
 
 $L('copy');
 /*import os
@@ -36,7 +35,7 @@ var EMPTY_VALUES = [null, ''];
 var Field = type('Field', {
     //Static
     creation_counter: 0
-    },{
+},{
     //Prototype
     widget: TextInput, // Default widget to use when rendering this type of Field.
     hidden_widget: HiddenInput, // Default widget to use when rendering this as "hidden".
@@ -45,7 +44,8 @@ var Field = type('Field', {
 
     __init__: function() {
 
-        var [args, kwargs] = Field.prototype.__init__.extra_arguments(arguments, {'required':true, 'widget':null, 'label':null, 'initial':null, 'help_text':'', 'error_messages':null, 'show_hidden_initial':false});
+        arguments = new Arguments(arguments, {'required':true, 'widget':null, 'label':null, 'initial':null, 'help_text':'', 'error_messages':null, 'show_hidden_initial':false});
+        var kwargs = arguments.kwargs;
 
         this.required = kwargs['required'];
         this.label = ['label'];
@@ -106,19 +106,18 @@ var CharField = type('CharField', Field, {
     default_error_messages: {   'max_length': 'Ensure this value has at most %s characters (it has %s).',
                                 'min_length': 'Ensure this value has at least %s characters (it has %s).' },
 
-    __init__: function($super) {
-        var [args, kwargs] = CharField.prototype.__init__.extra_arguments(arguments, {'max_length':null, 'min_length':null});
-        this.max_length = kwargs['max_length'];
-        this.min_length = kwargs['min_length'];
-        args.push(kwargs);
-        $super.apply(this, args);
+    __init__: function() {
+        arguments = new Arguments(arguments, {'max_length':null, 'min_length':null});
+        this.max_length = arguments.kwargs['max_length'];
+        this.min_length = arguments.kwargs['min_length'];
+        super(Field, this).__init__(arguments);
     },
 
     /*
      * Validates max_length && min_length. Returns a Unicode object.
      */
-    clean: function($super, value) {
-        $super(value);
+    clean: function(value) {
+        super(Field, this).clean(value);
         if (include(EMPTY_VALUES, value))
             return '';
         var value_length = len(value)
@@ -141,19 +140,18 @@ var IntegerField = type('IntegerField', Field, {
                                 'max_value': 'Ensure this value is less than || equal to %s.',
                                 'min_value': 'Ensure this value is greater than || equal to %s.' },
 
-    __init__: function __init__($super) {
-        var [args, kwargs] = IntegerField.prototype.__init__.extra_arguments(arguments, {'max_value':null, 'min_value':null});
-        this.max_value = kwargs['max_value'];
-        this.min_value = kwargs['min_value'];
-        args.push(kwargs);
-        $super.apply(this, args);
+    __init__: function __init__() {
+        arguments = new Arguments(arguments, {'max_value':null, 'min_value':null});
+        this.max_value = arguments.kwargs['max_value'];
+        this.min_value = arguments.kwargs['min_value'];
+        super(Field, this).__init__(arguments);
     },
 
     /*
      * Validates that int() can be called on the input. Returns the result of int(). Returns None for empty values.
      */
-    clean: function($super, value) {
-        $super(value);
+    clean: function(value) {
+        super(Field, this).clean(value);
         if (include(EMPTY_VALUES, value))
             return null;
         try {
@@ -174,19 +172,18 @@ var FloatField = type('FloatField', Field, {
                                 'max_value': 'Ensure this value is less than || equal to %s.',
                                 'min_value': 'Ensure this value is greater than || equal to %s.' },
 
-    __init__: function ($super) {
-        var [args, kwargs] = FloatField.prototype.__init__.extra_arguments(arguments, {'max_value':null, 'min_value':null});
-        this.max_value = kwargs['max_value'];
-        this.min_value = kwargs['min_value'];
-        args.push(kwargs);
-        $super.apply(this, args);
+    __init__: function () {
+        arguments = new Arguments(arguments, {'max_value':null, 'min_value':null});
+        this.max_value = arguments.kwargs['max_value'];
+        this.min_value = arguments.kwargs['min_value'];
+        super(Field, this).__init__(arguments);
     },
 
     /*
      * Validates that float() can be called on the input. Returns a float. Returns None for empty values.
      */
-    clean: function clean($super, value) {
-        $super(value);
+    clean: function clean(value) {
+        super(Field, this).clean(value);
         if (!this.required && include(EMPTY_VALUES, value))
             return null;
         try {
@@ -210,22 +207,21 @@ var DecimalField = type('DecimalField', Field, {
                                 'max_decimal_places': 'Ensure that there are no more than %s decimal places.',
                                 'max_whole_digits': 'Ensure that there are no more than %s digits before the decimal point.' },
 
-    __init__: function($super) {
-        var [args, kwargs] = DecimalField.prototype.__init__.extra_arguments(arguments, {'max_value':null, 'min_value':null, 'max_digits': null, 'decimal_places': null});
-        this.max_value = kwargs['max_value'];
-        this.min_value = kwargs['min_value'];
-        this.max_digits = kwargs['max_digits'];
-        this.decimal_places = kwargs['decimal_places'];
-        args.push(kwargs);
-        $super.apply(this, args);
+    __init__: function() {
+        arguments = new Arguments(arguments, {'max_value':null, 'min_value':null, 'max_digits': null, 'decimal_places': null});
+        this.max_value = arguments.kwargs['max_value'];
+        this.min_value = arguments.kwargs['min_value'];
+        this.max_digits = arguments.kwargs['max_digits'];
+        this.decimal_places = arguments.kwargs['decimal_places'];
+        super(Field, this).__init__(arguments);
     },
 
     /*
      * Validates that the input is a decimal number. Returns a Decimal instance. Returns None for empty values. Ensures that there are no more
      * than max_digits in the number, && no more than decimal_places digits after the decimal point.
      */
-    clean: function($super, value) {
-        $super(value);
+    clean: function(value) {
+        super(Field, this).clean(value);
         if (!this.required && include(EMPTY_VALUES, value))
             return null;
         value = value.strip(' ');
@@ -261,29 +257,26 @@ var DecimalField = type('DecimalField', Field, {
     }
 });
 
-var DEFAULT_DATE_INPUT_FORMATS = [
-    '%Y-%m-%d', '%m/%d/%Y', '%m/%d/%y', // '2006-10-25', '10/25/2006', '10/25/06'
-    '%b %d %Y', '%b %d, %Y',            // 'Oct 25 2006', 'Oct 25, 2006'
-    '%d %b %Y', '%d %b, %Y',            // '25 Oct 2006', '25 Oct, 2006'
-    '%B %d %Y', '%B %d, %Y',            // 'October 25 2006', 'October 25, 2006'
-    '%d %B %Y', '%d %B, %Y'             // '25 October 2006', '25 October, 2006'
-]
+var DEFAULT_DATE_INPUT_FORMATS = [  '%Y-%m-%d', '%m/%d/%Y', '%m/%d/%y', // '2006-10-25', '10/25/2006', '10/25/06'
+                                    '%b %d %Y', '%b %d, %Y',            // 'Oct 25 2006', 'Oct 25, 2006'
+                                    '%d %b %Y', '%d %b, %Y',            // '25 Oct 2006', '25 Oct, 2006'
+                                    '%B %d %Y', '%B %d, %Y',            // 'October 25 2006', 'October 25, 2006'
+                                    '%d %B %Y', '%d %B, %Y' ]             // '25 October 2006', '25 October, 2006'
 
 var DateField = type('DateField', Field, {
     default_error_messages: {   'invalid': 'Enter a valid date.' },
 
-    __init__: function($super) {
-        var [args, kwargs] = DateField.prototype.__init__.extra_arguments(arguments, {'input_formats':null});
-        args.push(kwargs);
-        $super.apply(this, args);
-        this.input_formats = kwargs['input_formats'] || DEFAULT_DATE_INPUT_FORMATS;
+    __init__: function() {
+        arguments = new Arguments(arguments, {'input_formats':null});
+        super(Field, this).__init__(arguments);
+        this.input_formats = arguments.kwargs['input_formats'] || DEFAULT_DATE_INPUT_FORMATS;
     },
 
     /*
      * Validates that the input can be converted to a date. Returns a Javascript datetime.date object.
      */
-    clean: function clean($super, value) {
-        $super(value);
+    clean: function clean(value) {
+        super(Field, this).clean(value);
         if (include(EMPTY_VALUES, value))
             return null;
         if (value instanceof datetime.datetime)
@@ -299,27 +292,24 @@ var DateField = type('DateField', Field, {
     }
 });
 
-var DEFAULT_TIME_INPUT_FORMATS = [
-    '%H:%M:%S',     // '14:30:59'
-    '%H:%M'        // '14:30'
-]
+var DEFAULT_TIME_INPUT_FORMATS = [  '%H:%M:%S',     // '14:30:59'
+                                    '%H:%M' ]        // '14:30'
 
 var TimeField = type('TimeField', Field, {
     widget: TimeInput,
     default_error_messages: {   'invalid': 'Enter a valid time.' },
 
-    __init__: function($super) {
-        var [args, kwargs] = TimeField.prototype.__init__.extra_arguments(arguments, {'input_formats':null});
-        args.push(kwargs);
-        $super.apply(this, args);
-        this.input_formats = kwargs['input_formats'] || DEFAULT_TIME_INPUT_FORMATS;
+    __init__: function() {
+        arguments = new Arguments(arguments, {'input_formats':null});
+        super(Field, this).__init__(arguments);
+        this.input_formats = arguments.kwargs['input_formats'] || DEFAULT_TIME_INPUT_FORMATS;
     },
 
     /*
      * Validates that the input can be converted to a time. Returns a Javascript datetime.time object.
      */
-    clean: function($super, value) {
-        $super(value);
+    clean: function(value) {
+        super(Field, this).clean(value);
         if (include(EMPTY_VALUES, value))
             return null;
         if (value instanceof datetime.time) 
@@ -330,43 +320,41 @@ var TimeField = type('TimeField', Field, {
             } catch (e if e instanceof ValueError) { continue; }
         }
         throw new ValidationError(this.error_messages['invalid']);
+    }
 });
 
-var DEFAULT_DATETIME_INPUT_FORMATS = [
-    '%Y-%m-%d %H:%M:%S',     // '2006-10-25 14:30:59'
-    '%Y-%m-%d %H:%M',        // '2006-10-25 14:30'
-    '%Y-%m-%d',              // '2006-10-25'
-    '%m/%d/%Y %H:%M:%S',     // '10/25/2006 14:30:59'
-    '%m/%d/%Y %H:%M',        // '10/25/2006 14:30'
-    '%m/%d/%Y',              // '10/25/2006'
-    '%m/%d/%y %H:%M:%S',     // '10/25/06 14:30:59'
-    '%m/%d/%y %H:%M',        // '10/25/06 14:30'
-    '%m/%d/%y',              // '10/25/06'
-]
+var DEFAULT_DATETIME_INPUT_FORMATS = [  '%Y-%m-%d %H:%M:%S',     // '2006-10-25 14:30:59'
+                                        '%Y-%m-%d %H:%M',        // '2006-10-25 14:30'
+                                        '%Y-%m-%d',              // '2006-10-25'
+                                        '%m/%d/%Y %H:%M:%S',     // '10/25/2006 14:30:59'
+                                        '%m/%d/%Y %H:%M',        // '10/25/2006 14:30'
+                                        '%m/%d/%Y',              // '10/25/2006'
+                                        '%m/%d/%y %H:%M:%S',     // '10/25/06 14:30:59'
+                                        '%m/%d/%y %H:%M',        // '10/25/06 14:30'
+                                        '%m/%d/%y' ]              // '10/25/06'
 
 var DateTimeField = type('DateTimeField', Field, {
     widget: DateTimeInput,
     default_error_messages: {   'invalid': 'Enter a valid date/time.' },
 
-    __init__: function($super) {
-        var [args, kwargs] = DateTimeField.prototype.__init__.extra_arguments(arguments, {'input_formats':null});
-        args.push(kwargs);
-        $super.apply(this, args);
-        this.input_formats = kwargs['input_formats'] || DEFAULT_TIME_INPUT_FORMATS;
+    __init__: function() {
+        arguments = new Arguments(arguments, {'input_formats':null});
+        super(Field, this).__init__(arguments);
+        this.input_formats = arguments.kwargs['input_formats'] || DEFAULT_TIME_INPUT_FORMATS;
     },
 
     /*
      * Validates that the input can be converted to a datetime. Returns a Javascript datetime.datetime object.
      */
-    clean: function($supqe, value) {
-        $super(value);
+    clean: function(value) {
+        super(Field, this).clean(value);
         if (include(EMPTY_VALUES, value))
             return null;
         if (value instanceof datetime.datetime)
             return value;
         if (value instanceof datetime.date)
             return datetime.datetime(value.year, value.month, value.day);
-        if (isarray(value)) {
+        if (isinstance(value, Array)) {
             // Input comes from a SplitDateTimeWidget, for example. So, it's two
             // components: date && time.
             if (len(value) != 2)
@@ -383,17 +371,16 @@ var DateTimeField = type('DateTimeField', Field, {
 });
 
 var RegexField = type('RegexField', CharField, {
-    __init__: function($super, regex) {
+    __init__: function(regex) {
         // error_message is just kept for backwards compatibility:
-        var [args, kwargs] = RegexField.prototype.__init__.extra_arguments(arguments, {'max_length':null, 'min_length':null, 'error_message':null});
-        if (kwargs['error_message']) {
-            var error_messages = kwargs['error_messages'] || {};
+        arguments = new Arguments(arguments, {'max_length':null, 'min_length':null, 'error_message':null});
+        if (arguments.kwargs['error_message']) {
+            var error_messages = arguments.kwargs['error_messages'] || {};
             error_messages['invalid'] = error_message;
-            kwargs['error_messages'] = error_messages;
+            arguments.kwargs['error_messages'] = error_messages;
         }
-        args.push(kwargs);
-        $super.apply(this, args);
-        if (isstring(regex))
+        super(CharField, this).__init__(arguments);
+        if (type(regex) == String)
             regex = new RegExp(regex);
         this.regex = regex;
     },
@@ -401,8 +388,8 @@ var RegexField = type('RegexField', CharField, {
     /*
      * Validates that the input matches the regular expression. Returns a Unicode object.
      */
-    clean: function($super, value) {
-        value = $super(value);
+    clean: function(value) {
+        value = super(CharField, this).clean(value);
         if (value == '')
             return value;
         if (value.search(this.regex) == -1)
@@ -416,10 +403,9 @@ var email_re = new RegExp("(^[-!//$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!//$%&'*+/=?^_`{}
 var EmailField = type('EmailField', RegexField, {
     default_error_messages: {   'invalid': 'Enter a valid e-mail address.' },
 
-    __init__: function($super) {
-        var [args, kwargs] = EmailField.prototype.__init__.extra_arguments(arguments, {'max_length':null, 'min_length': null});
-        args.push(kwargs);
-        $super.apply(this, [emali_re].concat(args));
+    __init__: function() {
+        argument = new Arguments(arguments, {'max_length':null, 'min_length': null});
+        super(RegexField, this).__init__(emali_re, arguments);
     }
 });
 
@@ -436,45 +422,51 @@ var FileField = type('FileField', Field, {
                                 'missing': 'No file was submitted.',
                                 'empty': 'The submitted file is empty.' },
 
-    __init__: function __init__( *args, **kwargs) {
-        super(FileField, self).__init__(*args, **kwargs)
+    __init__: function __init__() {
+        arguments = new Arguments(arguments);
+        super(Field, self).__init__(arguments);
+    },
 
-    clean: function clean( data, initial=None) {
-        super(FileField, self).clean(initial || data)
-        if (not this.required && data in EMPTY_VALUES) {
-            return None
-        elif (not data && initial) {
-            return initial
+    clean: function clean(data, initial) {
+        super(Field, this).clean(initial || data);
+        if (!this.required && include(EMPTY_VALUES, data)) 
+            return null;
+        else if (!data && initial)
+            return initial;
 
         // UploadedFile objects should have name && size attributes.
-        try:
-            file_name = data.name
-            file_size = data.size
-        except AttributeError:
-            throw new ValidationError(this.error_messages['invalid'])
+        try {
+            var file_name = data.name;
+            var file_size = data.size;
+        } catch (e if e instanceof AttributeError) {
+            throw new ValidationError(this.error_messages['invalid']);
+        }
 
-        if (not file_name) {
-            throw new ValidationError(this.error_messages['invalid'])
-        if (not file_size) {
-            throw new ValidationError(this.error_messages['empty'])
+        if (!file_name)
+            throw new ValidationError(this.error_messages['invalid']);
+        if (!file_size)
+            throw new ValidationError(this.error_messages['empty']);
 
-        return data
+        return data;
+    }
 });
 
 var ImageField = type('ImageField', FileField, {
     default_error_messages: { 'invalid_image': 'Upload a valid image. The file you uploaded was either not an image || a corrupted image.' },
-
-    clean: function clean( data, initial=None) {
-        """
-        Checks that the file-upload field data contains a valid image (GIF, JPG,
-        PNG, possibly others -- whatever the Python Imaging Library supports).
-        """
-        f = super(ImageField, self).clean(data, initial)
-        if (f is None) {
-            return None
-        elif (not data && initial) {
-            return initial
-        from PIL import Image
+    
+    /* 
+     * Checks that the file-upload field data contains a valid image (GIF, JPG,
+     * PNG, possibly others -- whatever the Python Imaging Library supports).
+     */
+    clean: function clean( data, initial) {
+        f = super(FileField, this).clean(data, initial);
+        if (!f)
+            return null;
+        else if (!data && initial)
+            return initial;
+        //TODO: Validar imagenes
+        /*
+            from PIL import Image
 
         // We need to get a file object for PIL. We might have a path || we might
         // have to read the data into memory.
@@ -510,7 +502,8 @@ var ImageField = type('ImageField', FileField, {
             throw new ValidationError(this.error_messages['invalid_image'])
         if hasattr(f, 'seek') && callable(f.seek) {
             f.seek(0)
-        return f
+        return f*/
+    }
 });
 
 var url_re = new RegExp('^https?://(?:(?:[A-Z0-9-]+\.)+[A-Z]{2,6}|localhost|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(?::\d+)?(?:/?|/\S+)$', 'i');
@@ -519,51 +512,36 @@ var URLField = type('URLField', RegexField, {
     default_error_messages: {   'invalid': 'Enter a valid URL.',
                                 'invalid_link': 'This URL appears to be a broken link.' },
 
-    __init__: function __init__( max_length=None, min_length=None, verify_exists=False,
-            validator_user_agent=URL_VALIDATOR_USER_AGENT, *args, **kwargs) {
-        super(URLField, self).__init__(url_re, max_length, min_length, *args,
-                                       **kwargs)
-        this.verify_exists = verify_exists
-        this.user_agent = validator_user_agent
+    __init__: function __init__() {
+        arguments = new Arguments(arguments, {'max_length':null, 'min_length':null, 'verify_exists':false, 'validator_user_agent':URL_VALIDATOR_USER_AGENT});
+        super(RegexField, this).__init__(url_re, arguments);
+        this.verify_exists = arguments.kwargs['verify_exists'];
+        this.user_agent = arguments.kwargs['validator_user_agent'];
+    },
 
     clean: function clean( value) {
         // If no URL scheme given, assume http://
-        if (value && '://' not in value) {
-            value = u'http://%s' % value
+        if (value && !include(value, '://'))
+            value = 'http://%s'.subs(value);
         // If no URL path given, assume /
-        if (value && not urlparse.urlsplit(value)[2]) {
-            value += '/'
-        value = super(URLField, self).clean(value)
-        if (value == u'') {
-            return value
-        if (this.verify_exists) {
-            import urllib2
-            headers = {
-                "Accept": "text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5",
-                "Accept-Language": "en-us,en;q=0.5",
-                "Accept-Charset": "ISO-8859-1,utf-8;q=0.7,*;q=0.7",
-                "Connection": "close",
-                "User-Agent": this.user_agent,
-            }
-            try:
-                req = urllib2.Request(value, None, headers)
-                u = urllib2.urlopen(req)
-            except ValueError:
-                throw new ValidationError(this.error_messages['invalid'])
-            except: // urllib2.URLError, httplib.InvalidURL, etc.
-                throw new ValidationError(this.error_messages['invalid_link'])
-        return value
+        if (value && !urlparse.urlsplit(value)[2])
+            value += '/';
+        value = super(RegexField, this).clean(value);
+        if (value == '')
+            return value;
+        return value;
+    }
 });
 
 var BooleanField = type('BooleanField', Field, {
     widget: CheckboxInput,
 
-    clean: function($super, value) {
+    clean: function(value) {
         if (value == 'false')
             value = false;
         else
             value = bool(value);
-        $super(value)
+        super(Field, this).clean(value);
         if (!value && this.required)
             throw new ValidationError(this.error_messages['required']);
         return value;
@@ -573,7 +551,7 @@ var BooleanField = type('BooleanField', Field, {
 var NullBooleanField = type('NullBooleanField', BooleanField, {
     widget: NullBooleanSelect,
 
-    clean: function($super, value) {
+    clean: function(value) {
         if (value == true || value == 'true')
             return true;
         else if (value == false || value == 'false') 
@@ -584,68 +562,66 @@ var NullBooleanField = type('NullBooleanField', BooleanField, {
 });
 
 var ChoiceField = type('ChoiceField', Field, {
-    widget = Select
+    widget: Select,
     default_error_messages: { 'invalid_choice': 'Select a valid choice. %(value)s is not one of the available choices.' },
 
-    __init__: function __init__( choices=(), required=True, widget=None, label=None,
-                 initial=None, help_text=None, *args, **kwargs) {
-        super(ChoiceField, self).__init__(required, widget, label, initial,
-                                          help_text, *args, **kwargs)
-        this.choices = choices
+    __init__: function __init__() {
+        arguments = new Arguments(arguments, {'choices':[], 'required':true, 'widget':null, 'label':null, 'initial':null, 'help_text':null});
+        super(Field, this).__init__(arguments);
+        this._choices = arguments.kwargs['choices'];
+    },
+    /*
+    get choices() {
+        return this._choises;
+    },
+    
+    set choices(value) {
+        this._choices = this.widget.choices = array(value);
+    },
+    */
+    /* Validates that the input is in this.choices. */
+    clean: function clean(value) {
+        value = super(Field, this).clean(value);
+        if (include(EMPTY_VALUES, value))
+            value = '';
+        if (value == '')
+            return value;
+        if (!this.valid_value(value))
+            throw new ValidationError(this.error_messages['invalid_choice'].subs({'value': value}));
+        return value;
+    },
 
-    def _get_choices(self) {
-        return this._choices
-
-    _set_choices: function _set_choices( value) {
-        // Setting choices also sets the choices on the widget.
-        // choices can be any iterable, but we call list() on it because
-        // it will be consumed more than once.
-        this._choices = this.widget.choices = list(value)
-
-    choices = property(_get_choices, _set_choices)
-
-    clean: function clean( value) {
-        """
-        Validates that the input is in this.choices.
-        """
-        value = super(ChoiceField, self).clean(value)
-        if (value in EMPTY_VALUES) {
-            value = u''
-        value = smart_unicode(value)
-        if (value == u'') {
-            return value
-        if not this.valid_value(value) {
-            throw new ValidationError(this.error_messages['invalid_choice'] % {'value': value})
-        return value
-
+    /* Check to see if the provided value is a valid choice */
     valid_value: function valid_value( value) {
-        "Check to see if the provided value is a valid choice"
-        for k, v in this.choices:
-            if type(v) in (tuple, list) {
+        for each (var [k, v] in this.choices)
+            if (isinstance(v, Array)) {
                 // This is an optgroup, so look inside the group for options
-                for k2, v2 in v:
-                    if value == smart_unicode(k2) {
-                        return True
-            else:
-                if value == smart_unicode(k) {
-                    return True
-        return False
+                for each (var [k2, v2] in v)
+                    if (value == k2)
+                        return true;
+            } else {
+                if (value == k)
+                    return true;
+            }
+        return false;
+    }
 });
 
 var TypedChoiceField = type('TypedChoiceField', ChoiceField, {
-    __init__: function __init__( *args, **kwargs) {
-        this.coerce = kwargs.pop('coerce', lambda val: val)
-        this.empty_value = kwargs.pop('empty_value', '')
-        super(TypedChoiceField, self).__init__(*args, **kwargs)
+    __init__: function __init__() {
+        arguments = new Arguments(arguments);
+        this.coerce = arguments.kwargs['coerce'] || function(val) {return val};
+        this.empty_value = arguments.kwargs['empty_value'] || '';
+        super(ChoiceField, this).__init__(arguments);
+    },
 
-    clean: function clean( value) {
-        """
-        Validate that the value is in this.choices && can be coerced to the
-        right type.
-        """
-        value = super(TypedChoiceField, self).clean(value)
-        if (value == this.empty_value || value in EMPTY_VALUES) {
-            return this.empty_value
+    /* 
+     * Validate that the value is in this.choices && can be coerced to the right type.
+     */
+    clean: function clean(value) {
+        value = super(ChoiceField, this).clean(value);
+        if (value == this.empty_value || include(EMPTY_VALUES, value))
+            return this.empty_value;
 
         // Hack alert: This field is purpose-made to use with Field.to_python as
         // a coercion function so that ModelForms with choices work. However,
@@ -653,11 +629,13 @@ var TypedChoiceField = type('TypedChoiceField', ChoiceField, {
         // django.core.exceptions.ValidationError, which is a *different*
         // exception than django.forms.util.ValidationError. So we need to catch
         // both.
-        try:
-            value = this.coerce(value)
-        except (ValueError, TypeError, django.core.exceptions.ValidationError) {
-            throw new ValidationError(this.error_messages['invalid_choice'] % {'value': value})
-        return value
+        try {
+            value = this.coerce(value);
+        } catch (e if e instanceof ValueError || TypeError || ValidationError) {
+            throw new ValidationError(this.error_messages['invalid_choice'].subs({'value': value}));
+        }
+        return value;
+    }
 });
 
 var MultipleChoiceField = type('MultipleChoiceField', ChoiceField, {
@@ -669,12 +647,12 @@ var MultipleChoiceField = type('MultipleChoiceField', ChoiceField, {
     /*
      * Validates that the input is a array.
      */
-    clean: function clean($super, value) {
+    clean: function clean(value) {
         if (this.required && !bool(value))
             throw new ValidationError(this.error_messages['required']);
         else if (!this.required && !bool(value)) 
             return [];
-        if (!isarray(value)) 
+        if (!isinstance(value, Array)) 
             throw new ValidationError(this.error_messages['invalid_list']);
         var new_value = [val for (val in value)];
         // Validate that each value in the value list is in this.choices.
@@ -685,32 +663,35 @@ var MultipleChoiceField = type('MultipleChoiceField', ChoiceField, {
     }
 });
 
+/* 
+ * A Field whose clean() method calls multiple Field clean() methods.
+ */
 var ComboField = type('ComboField', Field, {
-    """
-    A Field whose clean() method calls multiple Field clean() methods.
-    """
-    __init__: function __init__( fields=(), *args, **kwargs) {
-        super(ComboField, self).__init__(*args, **kwargs)
+    __init__: function __init__() {
+        arguments = new Arguments(arguments, {'fields': []});
+        super(Field, self).__init__(arguments);
         // Set 'required' to False on the individual fields, because the
         // required validation will be handled by ComboField, not by those
         // individual fields.
-        for f in fields:
-            f.required = False
-        this.fields = fields
-
+        var fields = arguments.kwargs['fields'];
+        for each (var f in fields)
+            f.required = false
+        this.fields = fields;
+    },
+    
+    /* 
+     * Validates the given value against all of this.fields, which is a list of Field instances.
+     */
     clean: function clean( value) {
-        """
-        Validates the given value against all of this.fields, which is a
-        list of Field instances.
-        """
-        super(ComboField, self).clean(value)
-        for field in this.fields:
-            value = field.clean(value)
-        return value
+        super(Field, this).clean(value);
+        for each (var field in this.fields)
+            value = field.clean(value);
+        return value;
+    }
 });
 
 var MultiValueField = type('MultiValueField', Field, {
-    """
+    /*
     A Field that aggregates the logic of multiple Fields.
 
     Its clean() method takes a "decompressed" list of values, which are then
@@ -725,79 +706,88 @@ var MultiValueField = type('MultiValueField', Field, {
     "compressed" version of those values -- a single value.
 
     You'll probably want to use this with MultiWidget.
-    """
+    */
     default_error_messages: { 'invalid': 'Enter a list of values.' },
 
-    __init__: function __init__( fields=(), *args, **kwargs) {
-        super(MultiValueField, self).__init__(*args, **kwargs)
+    __init__: function __init__() {
+        arguments = new Arguments(arguments, {'fields': []});
+        super(Field, this).__init__(arguments);
         // Set 'required' to False on the individual fields, because the
         // required validation will be handled by MultiValueField, not by those
         // individual fields.
-        for f in fields:
-            f.required = False
-        this.fields = fields
+        var fields = arguments.kwargs['fields'];
+        for each (var f in fields)
+            f.required = false;
+        this.fields = fields;
+    },
 
-    clean: function clean( value) {
-        """
-        Validates every value in the given list. A value is validated against
-        the corresponding Field in this.fields.
-
-        For example, if this MultiValueField was instantiated with
-        fields=(DateField(), TimeField()), clean() would call
-        DateField.clean(value[0]) && TimeField.clean(value[1]).
-        """
-        clean_data = []
-        errors = ErrorList()
-        if not value || isinstance(value, (list, tuple)) {
-            if (not value || not [v for v in value if v not in EMPTY_VALUES]) {
-                if (this.required) {
-                    throw new ValidationError(this.error_messages['required'])
-                else:
-                    return this.compress([])
-        else:
-            throw new ValidationError(this.error_messages['invalid'])
-        for i, field in enumerate(this.fields) {
-            try:
-                field_value = value[i]
-            except IndexError:
-                field_value = None
-            if (this.required && field_value in EMPTY_VALUES) {
-                throw new ValidationError(this.error_messages['required'])
-            try:
-                clean_data.append(field.clean(field_value))
-            except ValidationError, e:
+    /*
+     * Validates every value in the given list. A value is validated against
+     * the corresponding Field in this.fields.
+     * For example, if this MultiValueField was instantiated with
+     * fields=(DateField(), TimeField()), clean() would call
+     * DateField.clean(value[0]) && TimeField.clean(value[1]).
+     */
+    clean: function clean(value) {
+        var clean_data = [];
+        var errors = new ErrorList();
+        if (!value || isinstance(value, Array)) {
+            if (!value || !bool([v for each (v in value) (if !include(EMPTY_VALUES, v))])) {
+                if (this.required)
+                    throw new ValidationError(this.error_messages['required']);
+                else
+                    return this.compress([]);
+            }
+        } else { 
+            throw new ValidationError(this.error_messages['invalid']);
+        }
+        for each (var [i, field] in Iterator(this.fields)) {
+            try {
+                var field_value = value[i];
+            } catch (e if e instanceof IndexError) {
+                var field_value = null;
+            }
+            if (this.required && include(EMPTY_VALUES, field_value))
+                throw new ValidationError(this.error_messages['required']);
+            try {
+                clean_data.push(field.clean(field_value));
+            } catch (e if e instanceof ValidationError) {
                 // Collect all validation errors in a single list, which we'll
                 // throw new at the end of clean(), rather than raising a single
                 // exception for the first error we encounter.
-                errors.extend(e.messages)
-        if (errors) {
-            throw new ValidationError(errors)
-        return this.compress(clean_data)
-
-    compress: function compress( data_list) {
-        """
-        Returns a single value for the given list of values. The values can be
-        assumed to be valid.
-
-        For example, if this MultiValueField was instantiated with
-        fields=(DateField(), TimeField()), this might return a datetime
-        object created by combining the date && time in data_list.
-        """
-        throw new NotImplementedError('Subclasses must implement this method.')
+                errors = errors.concat(e.messages);
+            }
+        }
+        if (errors)
+            throw new ValidationError(errors);
+        return this.compress(clean_data);
+    },
+    
+    /*
+     * Returns a single value for the given list of values. The values can be
+     * assumed to be valid.
+     * For example, if this MultiValueField was instantiated with
+     * fields=(DateField(), TimeField()), this might return a datetime
+     * object created by combining the date && time in data_list.
+     */
+    compress: function compress(data_list) {
+        throw new NotImplementedError('Subclasses must implement this method.');
+    }
 });
 
 var FilePathField = type('FilePathField', ChoiceField, {
-    __init__: function __init__( path, match=None, recursive=False, required=True,
-                 widget=None, label=None, initial=None, help_text=None,
-                 *args, **kwargs) {
-        this.path, this.match, this.recursive = path, match, recursive
-        super(FilePathField, self).__init__(choices=(), required=required,
-            widget=widget, label=label, initial=initial, help_text=help_text,
-            *args, **kwargs)
-        this.choices = []
-        if (this.match is not None) {
-            this.match_re = re.compile(this.match)
-        if (recursive) {
+    __init__: function __init__(path) {
+        arguments = new Arguments(argument, {'match':null, 'recursive':false, 'required':true, 'widget':null, 'label':null, 'initial':null, 'help_text':null});
+        this.path = path;
+        this.match = arguments.kwargs['match'];
+        this.recursive = arguments.kwargs['recursive'];
+        arguments.kwargs['choices'] = [];
+        super(FilePathField, this).__init__(arguments);
+        this.choices = [];
+        if (this.match)
+            this.match_re = new RegExp(this.match);
+        //TODO: ver donde cuernos guardamos los archivos
+        /*if (this.recursive) {
             for root, dirs, files in os.walk(this.path) {
                 for f in files:
                     if this.match is None || this.match_re.search(f) {
@@ -810,38 +800,39 @@ var FilePathField = type('FilePathField', ChoiceField, {
                     if os.path.isfile(full_file) && (this.match is None || this.match_re.search(f)) {
                         this.choices.append((full_file, f))
             except OSError:
-                pass
-        this.widget.choices = this.choices
+                pass*/
+        this.widget.choices = this.choices;
+    }
 });
 
 var SplitDateTimeField = type('SplitDateTimeField', MultiValueField, {
     widget: SplitDateTimeWidget,
     hidden_widget: SplitHiddenDateTimeWidget,
-    default_error_messages: {
-        'invalid_date': 'Enter a valid date.',
-        'invalid_time': 'Enter a valid time.'
+    default_error_messages: {   'invalid_date': 'Enter a valid date.',
+                                'invalid_time': 'Enter a valid time.' },
+
+    __init__: function __init__() {
+        arguments = new Arguments(arguments, {'max_length':null, 'min_length': null});
+        var errors = copy(default_error_messages);
+        if ('error_messages' in arguments.kwargs)
+            extend(errors, arguments.kwargs['error_messages']);
+        fields = [  new DateField({'error_messages':{'invalid': errors['invalid_date']}}),
+                    new TimeField({'error_messages':{'invalid': errors['invalid_time']}}) ]
+        super(SplitDateTimeField, this).__init__(fields, arguments);
     },
 
-    __init__: function __init__( *args, **kwargs) {
-        errors = this.default_error_messages.copy()
-        if ('error_messages' in kwargs) {
-            errors.update(kwargs['error_messages'])
-        fields = (
-            DateField(error_messages={'invalid': errors['invalid_date']}),
-            TimeField(error_messages={'invalid': errors['invalid_time']}),
-        )
-        super(SplitDateTimeField, self).__init__(fields, *args, **kwargs)
-
-    compress: function compress( data_list) {
+    compress: function compress(data_list) {
         if (data_list) {
             // Raise a validation error if time || date is empty
             // (possible if SplitDateTimeField has required=False).
-            if (data_list[0] in EMPTY_VALUES) {
-                throw new ValidationError(this.error_messages['invalid_date'])
-            if (data_list[1] in EMPTY_VALUES) {
-                throw new ValidationError(this.error_messages['invalid_time'])
-            return datetime.datetime.combine(*data_list)
-        return None
+            if (include(EMPTY_VALUES, data_list[0]))
+                throw new ValidationError(this.error_messages['invalid_date']);
+            if (include(EMPTY_VALUES, data_list[1]))
+                throw new ValidationError(this.error_messages['invalid_time']);
+            return datetime.datetime.combine(data_list);
+        }
+        return null;
+    }
 });
 
 var ipv4_re = /(25[0-5]|2[0-4]\d|[0-1]?\d?\d)(\.(25[0-5]|2[0-4]\d|[0-1]?\d?\d)){3}$/;
@@ -849,10 +840,9 @@ var ipv4_re = /(25[0-5]|2[0-4]\d|[0-1]?\d?\d)(\.(25[0-5]|2[0-4]\d|[0-1]?\d?\d)){
 var IPAddressField = type('IPAddressField', RegexField, {
     default_error_messages: {   'invalid': 'Enter a valid IPv4 address.' },
 
-    __init__: function($super) {
-        var [args, kwargs] = IPAddressField.prototype.__init__.extra_arguments(arguments, {'max_length':null, 'min_length': null});
-        args.push(kwargs);
-        $super.apply(this, [ipv4_re].concat(args));
+    __init__: function() {
+        arguments = new Arguments(arguments, {'max_length':null, 'min_length': null});
+        super(RegexField, this).__init__(ipv4_re, arguments);
     }
 
 });
@@ -862,10 +852,9 @@ var slug_re = /^[-\w]+$/;
 var SlugField = type('SlugField', RegexField, {
     default_error_messages: { 'invalid': 'Enter a valid slug consisting of letters, numbers, underscores || hyphens.' },
 
-    __init__: function($super) {
-        var [args, kwargs] = SlugField.prototype.__init__.extra_arguments(arguments, {'max_length':null, 'min_length': null});
-        args.push(kwargs);
-        $super.apply(this, [slug_re].concat(args));
+    __init__: function() {
+        arguments = new Arguments(arguments, {'max_length':null, 'min_length': null});
+        super(RegexField, this).__init__(slug_re, arguments);
     }
 });
 
