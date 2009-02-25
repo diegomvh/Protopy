@@ -302,19 +302,31 @@
 
 // More builtins functions and types
 (function(){
-    function super(type, object) {
-	//TODO: Validar que sea una instancia a subclase del tipo dado
-    //TODO: soportar distintos tipos incluso el mismo tipo de la base que le pase el primero de __bases__
-	var obj = {};
-	var base = (object.constructor == Function)? type : type.prototype;
-	var object = object;
-	obj.__noSuchMethod__ = function(name, args) {
-	    if (args[args.length - 1] && args[args.length - 1] instanceof Arguments)
-            return base[name].apply(object, args.slice(0, -1).concat(args[args.length -1].argskwargs));
-        else
-            return base[name].apply(object, args);
-	};
-	return obj;
+    function super(_type, _object) {
+        //TODO: Validar que sea una instancia a subclase del tipo dado
+        //TODO: soportar distintos tipos incluso el mismo tipo de la base que le pase el primero de __bases__
+        var obj = {};
+        if (type(_object) == Function) {
+            if (_type && issubclass(_object, _type))
+                var base = _type.__base__;
+            else if (!_type)
+                var base = window.object;
+            else
+                var base = _type;
+        } else {
+            if (isinstance(_object, _type))
+                var base = _type.prototype;
+            else
+                throw new TypeError('Nonno');
+        }
+        var object = _object;
+        obj.__noSuchMethod__ = function(name, args) {
+            if (args[args.length - 1] && args[args.length - 1] instanceof Arguments)
+                return base[name].apply(_object, args.slice(0, -1).concat(args[args.length -1].argskwargs));
+            else
+                return base[name].apply(_object, args);
+        };
+        return obj;
     }
 
     function isinstance(object, type) {
@@ -422,6 +434,23 @@
         return h;
     }
 
+    function id(value) {
+        if (!value)
+            return 'null';
+        if (type(value) == Number || type(value) == String)
+            return value;
+        else if (type(value) == Array)
+            return value.reduce(function(x, y) {return "" + id(x) + id(y)});
+        else if (!value['__hash__']) {
+            value['__hash__'] = id.next();
+        }
+        return value['__hash__'];
+    };
+
+    id.current = 0;
+    id.next = function () { return id.current += 1; };
+    id.__doc__ = "I'm sorry";
+
     //Populate builtin
     $B({
         'super': super,
@@ -429,6 +458,7 @@
         'issubclass': issubclass,
         'Arguments': Arguments,
         'hash': hash,
+        'id': id,
         'assert': function assert( test, text ) {
             if ( test === false )
                 throw new AssertionError( text );
@@ -553,8 +583,8 @@
             return ret;
         },
         'str': function str(object) {
-            if (callable(object['__str__'])) return object.__str__();
-            return String(object)
+            if (object && callable(object['__str__'])) return object.__str__();
+            return String(object);
         },
         'values': function values(obj){ 
             return [e for each (e in obj)]
@@ -676,9 +706,10 @@
 	    //%% escaped
 	    var string = this.gsub(/%%/, function(match){ return '<ESC%%>'; });
 	    if (args[0] && type(args[0]) == Object)
-		string = new Template(string, args[1]).evaluate(args[0]);
+            string = new Template(string, args[1]).evaluate(args[0]);
 	    else
-		string = string.gsub(/%s/, function(match) { return (args.length != 0)? str(args.shift()) : match[0]; });
+            string = string.gsub(/%s/, function(match) { 
+                return (args.length != 0)? str(args.shift()) : match[0]; });
 	    return string.gsub(/<ESC%%>/, function(match){ return '%'; });
 	},
 
@@ -1241,10 +1272,10 @@
             if (object instanceof Dict) {
                 this._value = extend({}, object._value);
                 this._key = extend({}, object._key);
-            } else if (isfunction(object['next'])) {
+            } else if (callable(object['next'])) {
                 for each (var [key, value] in object)
                     this.set(key, value);
-            } else if (isarray(object) && type(object[0]) == Array) {
+            } else if (type(object) == Array && type(object[0]) == Array) {
                 for each (var [key, value] in object)
                     this.set(key, value);
             } else if (object instanceof Object){

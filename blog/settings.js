@@ -1,6 +1,6 @@
 {
 'DATABASE_ENGINE': 'gears',
-'DATABASE_NAME': 'blog.db',
+'DATABASE_NAME': 'blodg.db',
 'DATABASE_USER': '',
 'DATABASE_PASSWORD': '',
 'DATABASE_HOST': '',

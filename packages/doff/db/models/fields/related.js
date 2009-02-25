@@ -128,7 +128,7 @@ var SingleRelatedObjectDescriptor = type('SingleRelatedObjectDescriptor', {
     },
 
     '__get__': function __get__(instance, instance_type) {
-        if (!isinstance(instance))
+        if (!isinstance(instance, instance_type))
             throw new AttributeError("%s must be accessed via instance".subs(this.related.opts.object_name));
 
         var ret = instance[this.cache_name];
@@ -143,8 +143,8 @@ var SingleRelatedObjectDescriptor = type('SingleRelatedObjectDescriptor', {
         return ret;
     },
 
-    '__set__': function __set__(instance, value) {
-        if (!isinstance(instance))
+    '__set__': function __set__(instance, instance_type, value) {
+        if (!isinstance(instance, instance_type))
             throw new AttributeError("%s must be accessed via instance".subs(this.related.opts.object_name));
 
         if ((!value) && this.related.field.none == false)
@@ -168,7 +168,7 @@ var ReverseSingleRelatedObjectDescriptor = type('ReverseSingleRelatedObjectDescr
     },
 
     '__get__': function __get__(instance, instance_type) {
-        if (!isinstance(instance))
+        if (!isinstance(instance, instance_type))
             throw new AttributeError("%s must be accessed via instance".subs(this.field.name));
         var cache_name = this.field.get_cache_name();
 
@@ -200,8 +200,8 @@ var ReverseSingleRelatedObjectDescriptor = type('ReverseSingleRelatedObjectDescr
         return ret;
     },
     
-    '__set__': function __set__(instance, value) {
-        if (!isinstance(instance))
+    '__set__': function __set__(instance, instance_type, value) {
+        if (!isinstance(instance, instance_type))
             throw new AttributeError("%s must be accessed via instance".subs(this.field.name));
 
         if (!value && this.field.none == false)
@@ -226,7 +226,7 @@ var ForeignRelatedObjectsDescriptor = type('ForeignRelatedObjectsDescriptor', {
     },
 
     '__get__': function __get__(instance, instance_type) {
-        if (!isinstance(instance))
+        if (!isinstance(instance, instance_type))
             throw new AttributeError("Manager must be accessed via instance");
 
         rel_field = this.related.field;
@@ -296,8 +296,8 @@ var ForeignRelatedObjectsDescriptor = type('ForeignRelatedObjectsDescriptor', {
         return manager;
     },
 
-    '__set__': function __set__(instance, value) {
-        if (!isinstance(instance))
+    '__set__': function __set__(instance, instance_type, value) {
+        if (!isinstance(instance, instance_type))
             throw new AttributeError("Manager must be accessed via instance");
 
         var manager = this.__get__(instance);
@@ -469,7 +469,7 @@ var ManyRelatedObjectsDescriptor = type('ManyRelatedObjectsDescriptor', {
     },
 
     '__get__': function __get__(instance, instance_type) {
-        if (!isinstance(instance))
+        if (!isinstance(instance, instance_type))
             throw new AttributeError("Manager must be accessed via instance");
 
         // Dynamically create a class that subclasses the related
@@ -496,8 +496,8 @@ var ManyRelatedObjectsDescriptor = type('ManyRelatedObjectsDescriptor', {
         return manager;
     },
 
-    '__set__': function __set__(instance, value) {
-        if (!isinstance(instance))
+    '__set__': function __set__(instance, instance_type, value) {
+        if (!isinstance(instance, instance_type))
             throw new AttributeError("Manager must be accessed via instance");
 
         through = this.related.field.rel['through'];
@@ -522,7 +522,7 @@ var ReverseManyRelatedObjectsDescriptor = type('ReverseManyRelatedObjectsDescrip
     },
 
     '__get__': function __get__(instance, instance_type) {
-        if (!isinstance(instance))
+        if (!isinstance(instance, instance_type))
             throw new AttributeError("Manager must be accessed via instance");
 
         // Dynamically create a class that subclasses the related
@@ -549,8 +549,8 @@ var ReverseManyRelatedObjectsDescriptor = type('ReverseManyRelatedObjectsDescrip
         return manager;
     },
 
-    '__set__': function __set__(instance, value) {
-        if (!isinstance(instance))
+    '__set__': function __set__(instance, instance_type, value) {
+        if (!isinstance(instance, instance_type))
             throw new AttributeError("Manager must be accessed via instance");
 
         var through = this.field.rel['through'];
@@ -626,7 +626,7 @@ var ForeignKey = type('ForeignKey', RelatedField, {
             to_field = arguments.kwargs['to_field'] || to._meta.pk.name;
         }
 
-        kwargs['rel'] = new rel_class(to, to_field, arguments.kwargs);
+        arguments.kwargs['rel'] = new rel_class(to, to_field, arguments.kwargs);
         super(RelatedField, this).__init__(arguments.kwargs);
 
         this.db_index = true;
@@ -679,8 +679,8 @@ var ForeignKey = type('ForeignKey', RelatedField, {
 	var frod = new ReverseSingleRelatedObjectDescriptor(this);
 	var attr = this.name;
 	cls.prototype.__defineGetter__(attr, function(){ return frod.__get__(this, this.constructor); });
-	cls.prototype.__defineSetter__(attr, function(value){ return frod.__set__(this, value); });
-	if (isstring(this.rel.to))
+	cls.prototype.__defineSetter__(attr, function(value){ return frod.__set__(this, this.constructor, value); });
+	if (type(this.rel.to) == String)
 	    target = this.rel.to;
 	else
 	    target = this.rel.to._meta.db_table
@@ -693,7 +693,7 @@ var ForeignKey = type('ForeignKey', RelatedField, {
         var frod = new ForeignRelatedObjectsDescriptor(related);
         var attr = related.get_accessor_name();
         cls.prototype.__defineGetter__(attr, function(){ return frod.__get__(this, this.constructor); });
-        cls.prototype.__defineSetter__(attr, function(value){ return frod.__set__(this, value); });
+        cls.prototype.__defineSetter__(attr, function(value){ return frod.__set__(this, this.constructor, value); });
         //cls[related.get_accessor_name()] = new ForeignRelatedObjectsDescriptor(related);
     },
 
@@ -735,7 +735,7 @@ var OneToOneField = type('OneToOneField', ForeignKey, {
         var srod = new SingleRelatedObjectDescriptor(this);
         var attr = related.get_accessor_name();
         cls.prototype.__defineGetter__(attr, function(){ return srod.__get__(this, this.constructor); });
-        cls.prototype.__defineSetter__(attr, function(value){ return srod.__set__(this, value); });
+        cls.prototype.__defineSetter__(attr, function(value){ return srod.__set__(this, this.constructor, value); });
         if (!cls._meta.one_to_one_field)
             cls._meta.one_to_one_field = this;
     },
@@ -759,7 +759,7 @@ var ManyToManyField = type('ManyToManyField', RelatedField, {
         } catch (e if e instanceof AttributeError ) {
             assert(type(to) == String, "%s is invalid. First parameter to ForeignKey must be either a model, a model name, or the string %s".subs(to, RECURSIVE_RELATIONSHIP_CONSTANT));
         }
-        kwargs['rel'] = new ManyToManyRel(to, arguments.kwargs);
+        arguments.kwargs['rel'] = new ManyToManyRel(to, arguments.kwargs);
 
         this.db_table = arguments.kwargs['db_table'] || null;
 
@@ -902,43 +902,43 @@ var ManyToManyField = type('ManyToManyField', RelatedField, {
     },
 
     'contribute_to_class': function contribute_to_class(cls, name) {
-	// To support multiple relations to self, it's useful to have a non-None
-	// related name on symmetrical relations for internal reasons. The
-	// concept doesn't make a lot of sense externally ("you want me to
-	// specify *what* on my non-reversible relation?!"), so we set it up
-	// automatically. The funky name reduces the chance of an accidental
-	// clash.
-	if (this.rel.symmetrical && this.rel.to == "this" && !this.rel.related_name)
-	    this.rel.related_name = "%s_rel_+".subs(name);
+        // To support multiple relations to self, it's useful to have a non-None
+        // related name on symmetrical relations for internal reasons. The
+        // concept doesn't make a lot of sense externally ("you want me to
+        // specify *what* on my non-reversible relation?!"), so we set it up
+        // automatically. The funky name reduces the chance of an accidental
+        // clash.
+        if (this.rel.symmetrical && this.rel.to == "this" && !this.rel.related_name)
+            this.rel.related_name = "%s_rel_+".subs(name);
 
-	super(RelatedField, this).contribute_to_class(cls, name);
-	// Add the descriptor for the m2m relation
-	var rmrod = new ReverseManyRelatedObjectsDescriptor(this);
-	var attr = this.name;
-	cls.prototype.__defineGetter__(attr, function(){ return rmrod.__get__(this, this.constructor); });
-	cls.prototype.__defineSetter__(attr, function(value){ return rmrod.__set__(this, value); });
+        super(RelatedField, this).contribute_to_class(cls, name);
+        // Add the descriptor for the m2m relation
+        var rmrod = new ReverseManyRelatedObjectsDescriptor(this);
+        var attr = this.name;
+        cls.prototype.__defineGetter__(attr, function(){ return rmrod.__get__(this, this.constructor); });
+        cls.prototype.__defineSetter__(attr, function(value){ return rmrod.__set__(this, this.constructor, value); });
 
-	// Set up the accessor for the m2m table name for the relation
-	this.m2m_db_table = this._get_m2m_db_table.curry(cls._meta);
+        // Set up the accessor for the m2m table name for the relation
+        this.m2m_db_table = this._get_m2m_db_table.curry(cls._meta);
 
-	// Populate some necessary rel arguments so that cross-app relations
-	// work correctly.
-	if (isstring(this.rel.through)) {
-	    function resolve_through_model(field, model, cls) {
-		field.rel.through_model = model;
-	    }
-	    add_lazy_relation(cls, this, this.rel.through, resolve_through_model);
-	}
-	else if (this.rel.through) {
-	    this.rel.through_model = this.rel.through;
-	    this.rel.through = this.rel.through._meta.object_name;
-	}
+        // Populate some necessary rel arguments so that cross-app relations
+        // work correctly.
+        if (this.rel.through && type(this.rel.through) == String) {
+            function resolve_through_model(field, model, cls) {
+            field.rel.through_model = model;
+            }
+            add_lazy_relation(cls, this, this.rel.through, resolve_through_model);
+        }
+        else if (this.rel.through) {
+            this.rel.through_model = this.rel.through;
+            this.rel.through = this.rel.through._meta.object_name;
+        }
 
-	if (isstring(this.rel.to))
-	    target = this.rel.to;
-	else
-	    target = this.rel.to._meta.db_table;
-	cls._meta.duplicate_targets[this.column] = [target, "m2m"]
+        if (this.rel.to && type(this.rel.to) == String)
+            target = this.rel.to;
+        else
+            target = this.rel.to._meta.db_table;
+        cls._meta.duplicate_targets[this.column] = [target, "m2m"]
     },
 
     'contribute_to_related_class': function contribute_to_related_class(cls, related) {
@@ -949,7 +949,7 @@ var ManyToManyField = type('ManyToManyField', RelatedField, {
             var mrod = new ManyRelatedObjectsDescriptor(related);
             var attr = related.get_accessor_name();
             cls.prototype.__defineGetter__(attr, function(){ return mrod.__get__(this, this.constructor); });
-            cls.prototype.__defineSetter__(attr, function(value){ return mrod.__set__(this, value); });
+            cls.prototype.__defineSetter__(attr, function(value){ return mrod.__set__(this, this.constructor, value); });
         }
 
         // Set up the accessors for the column names on the m2m table

@@ -1,7 +1,7 @@
 $L('doff.utils.tree', 'Node');
 $L('copy', 'copy', 'deepcopy');
 
-var QueryWrapper = type({
+var QueryWrapper = type('QueryWrapper', {
     '__init__': function __init__(sql, params){
         this.data = [sql, params];
     }
@@ -14,7 +14,8 @@ var Q = type('Q', Node, {
 
     '__init__': function __init__() {
         arguments = new Arguments(arguments);
-        super(Node, this).__init__(arguments.args.concat(zip(keys(arguments.kwargs), values(arguments.kwargs))));
+        var args = (arguments.args && arguments.args[0] && type(arguments.args[0]) == Array)? arguments.args[0] : arguments.args;
+        super(Node, this).__init__(args.concat(zip(keys(arguments.kwargs), values(arguments.kwargs))));
     },
 
     '_combine': function _combine(other, conn){

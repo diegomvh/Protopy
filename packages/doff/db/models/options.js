@@ -360,7 +360,7 @@ var Options = type('Options', {
             }
         for each (klass in get_models())
             for each (f in klass._meta.local_fields)
-                if (f.rel && !isstring(f.rel.to) && this == f.rel.to._meta)
+                if (f.rel && type(f.rel.to) != String && this == f.rel.to._meta)
                     cache.set(new RelatedObject(f.rel.to, klass, f), null);
         this._related_objects_cache = cache;
     },
@@ -399,7 +399,7 @@ var Options = type('Options', {
         }
         for each (klass in get_models())
             for each (f in klass._meta.local_many_to_many)
-                if (f.rel && !isstring(f.rel.to) && this == f.rel.to._meta)
+                if (f.rel && type(f.rel.to) != String && this == f.rel.to._meta)
                     cache.set(new RelatedObject(f.rel.to, klass, f), null);
         if (app_cache_ready())
             this._related_many_to_many_cache = cache;

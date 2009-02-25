@@ -327,7 +327,7 @@ var QuerySet = type('QuerySet', {
         Returns a tuple of (object, created), where created is a boolean
         specifying whether an object was created.
     */
-    'get_or_create': function get_or_create(kwargs) {
+    'get_or_create': function get_or_create() {
         arguments = new Arguments(arguments);
         var kwargs = arguments.kwargs;
         assert (bool(kwargs), 'get_or_create() must be passed at least one keyword argument')
@@ -485,7 +485,7 @@ var QuerySet = type('QuerySet', {
      */
     'filter': function filter() {
         arguments = new Arguments(arguments);
-        return this._filter_or_exclude(false, arguments.args, arguments.kwargs);
+        return this._filter_or_exclude.apply(this, [false].concat(arguments.argskwargs));
     },
 
     /*
@@ -493,18 +493,19 @@ var QuerySet = type('QuerySet', {
      */
     'exclude': function exclude(){
         arguments = new Arguments(arguments);
-        return this._filter_or_exclude(true, arguments.args, arguments.kwargs);
+        return this._filter_or_exclude.apply(this, [true].concat(arguments.argskwargs));
     },
 
-    '_filter_or_exclude': function _filter_or_exclude(negate, args, kwargs) {
-        if (bool(args) || bool(keys(kwargs)))
+    '_filter_or_exclude': function _filter_or_exclude(negate) {
+        arguments = new Arguments(arguments);
+        if (bool(arguments.args) || bool(keys(arguments.kwargs)))
             if (!this.query.can_filter())
                 throw new Exception("Cannot filter a query once a slice has been taken.");
         var clone = this._clone();
         if (negate)
-            clone.query.add_q(new Q(args, kwargs).invert());
+            clone.query.add_q(new Q(arguments.args, arguments.kwargs).invert());
         else
-            clone.query.add_q(new Q(args, kwargs));
+            clone.query.add_q(new Q(arguments.args, arguments.kwargs));
         return clone;
     },
 

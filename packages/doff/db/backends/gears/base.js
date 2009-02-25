@@ -93,7 +93,7 @@ var DatabaseWrapper = type('DatabaseWrapper', BaseDatabaseWrapper, {
                 'detect_types': settings.PARSE_DECLTYPES | settings.PARSE_COLNAMES,
                 'factory': GearsCursorWrapper
             }
-            extend(args, this.options);
+            extend(args, this.options || {});
             this.connection = database.connect(args);
             // Register extract, date_trunc, and regexp functions.
             this.connection.create_function("django_extract", 2, _sqlite_extract);

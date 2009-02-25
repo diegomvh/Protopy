@@ -109,7 +109,14 @@ var Cursor = type('Cursor', {
 
     'fetchall': function fetchall(){
         if (!this.lastResulSet.isValidRow() || this.lastResulSet.fieldCount() == 0) return [];
-        return array(this);
+        var result = [];
+        var result = [];
+        try {
+            while (true)
+                result.push(this.next());
+        } catch (stop) {
+            return result;
+        };
     },
 
     'next': function next() {

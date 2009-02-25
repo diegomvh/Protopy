@@ -610,7 +610,7 @@ var Query = type('Query', {
                 result.push(this.connection.ops.random_function_sql());
                 continue;
             }
-            if (isnumber(field)) {
+            if (type(field) == Number) {
                 if (field < 0) {
                     order = desc;
                     field = -field;
@@ -993,8 +993,8 @@ var Query = type('Query', {
             join_type = this.LOUTER;
         else
             join_type = this.INNER;
-        join = [table, alias, join_type, lhs, lhs_col, col, nullable];
-        this.alias_map[alias] = join;
+        _join = [table, alias, join_type, lhs, lhs_col, col, nullable];
+        this.alias_map[alias] = _join;
         if (this.join_map[t_ident])
             this.join_map[t_ident] = this.join_map[t_ident].concat([alias]);
         else
@@ -1220,11 +1220,11 @@ var Query = type('Query', {
             table_it.next();
             table_promote = false;
             join_promote = false;
-            for (join in join_it) {
+            for (var _join in join_it) {
                 table = table_it.next();
-                if (join == table && this.alias_refcount[join] > 1) { continue; }
-                join_promote = this.promote_alias(join);
-                if (table != join) { table_promote = this.promote_alias(table); }
+                if (_join == table && this.alias_refcount[_join] > 1) { continue; }
+                join_promote = this.promote_alias(_join);
+                if (table != _join) { table_promote = this.promote_alias(table); }
                 break;
             }
             this.promote_alias_chain(join_it, join_promote);
@@ -1555,10 +1555,11 @@ var Query = type('Query', {
         arguments = new Arguments(arguments);
         var ordering = arguments.args;
         var errors = [];
-        for each (var item in ordering)
+        for each (var item in ordering) {
             var m = item.match(ORDER_PATTERN);
             if (!bool(m) || m[0] != item)
                 errors.push(item);
+        }
         if (bool(errors))
             throw new FieldError('Invalid order_by arguments: %s'.subs(errors));
         if (bool(ordering))

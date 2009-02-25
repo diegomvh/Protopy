@@ -11,24 +11,26 @@ $L("doff.db.models.options", 'Options');
 $L("doff.db.models.loading", 'register_models', 'get_model');
 
 var subclass_exception = function(name, parent, module) {
-    var klass = type(name, parent, {});
-    klass.__module__ = module;
+    var klass = type(name, parent);
     klass.prototype.__module__ = module;
     return klass;
 }
     
 var Model = type('Model', {
-    '__new__': function __new__(name, base, attrs) {
-        if (name == 'Model' && base[0] == object ) {
+    '__new__': function __new__(name, bases, attrs) {
+        if (name == 'Model' && bases[0] == object ) {
             // estoy creando el modelo,
-            return super(object, this).__new__(name, base, attrs);
+            return super(Model, this).__new__(name, bases, attrs);
             }
         // Create the class.
         var module = this.__module__;
+        attrs['__module__'] = module;
+        super(Model, this).__new__(name, bases, attrs);
+        
         var attr_meta = attrs['Meta'] || new Object();
         var abstracto = attr_meta['abstracto'] || false;
         var meta = attr_meta;
-        var base_meta = base['_meta'];
+        var base_meta = this.prototype['_meta'];
 
         var app_label = meta['app_label'];
         if (!app_label) {
@@ -67,57 +69,59 @@ var Model = type('Model', {
 
         // Do the appropriate setup for any model parents.
         var o2o_map = new Dict([[f.rel.to, f] for (f in this._meta.local_fields) if (f instanceof OneToOneField)]);
-        if (base && base['_meta']) {
+        for each (var base in bases) {
+            if (base['_meta']) {
 
-            // All the fields of any type declared on this model
-            var new_fields = this._meta.local_fields.concat(this._meta.local_many_to_many).concat(this._meta.virtual_fields);
-            var field_names = new Set([f.name for each (f in new_fields)]);
+                // All the fields of any type declared on this model
+                var new_fields = this._meta.local_fields.concat(this._meta.local_many_to_many).concat(this._meta.virtual_fields);
+                var field_names = new Set([f.name for each (f in new_fields)]);
 
-            if (!base._meta.abstracto) {
-                // Concrete classes...
-                if (include(o2o_map, base)) {
-                    var field = o2o_map.get(base);
-                    field.primary_key = true;
-                    this._meta.setup_pk(field);
+                if (!base._meta.abstracto) {
+                    // Concrete classes...
+                    if (include(o2o_map, base)) {
+                        var field = o2o_map.get(base);
+                        field.primary_key = true;
+                        this._meta.setup_pk(field);
+                    } else {
+                        var attr_name = '%s_ptr'.subs(base._meta.module_name);
+                        var field = new OneToOneField(base, null ,{'name':attr_name, 'auto_created':true, 'parent_link':true})
+                        this.add_to_class(attr_name, field);
+                    }
+                    //TODO: parents no va porque la herencia es simple debe ser solo parent
+                    this._meta.parents.set(base, field);
                 } else {
-                    var attr_name = '%s_ptr'.subs(base._meta.module_name);
-                    var field = new OneToOneField(base, null ,{'name':attr_name, 'auto_created':true, 'parent_link':true})
-                    this.add_to_class(attr_name, field);
-                }
-                //TODO: parents no va porque la herencia es simple debe ser solo parent
-                this._meta.parents.set(base, field);
-            } else {
-                // .. and abstract ones.
+                    // .. and abstract ones.
 
-                // Check for clashes between locally declared fields and those
-                // on the ABC.
-                var parent_fields = base._meta.local_fields.concat(base._meta.local_many_to_many);
-                for each (var field in parent_fields) {
-                    if (include(field_names, field.name))
+                    // Check for clashes between locally declared fields and those
+                    // on the ABC.
+                    var parent_fields = base._meta.local_fields.concat(base._meta.local_many_to_many);
+                    for each (var field in parent_fields) {
+                        if (include(field_names, field.name))
+                            throw new FieldError('Local field %s in class %s clashes with field of similar name from abstract base class %s'.subs(field.name, name, base.__name__));
+                        this.add_to_class(field.name, deepcopy(field));
+                    }
+                    // Pass any non-abstract parent classes onto child.
+                    this._meta.parents.update(base._meta.parents);
+                }
+                // Inherit managers from the abstract base classes.
+                var base_managers = base._meta.abstract_managers;
+                base_managers.sort();
+                for each (var element in base_managers) {
+                    var [none, mgr_name, manager] = element;
+                    var val = this[mgr_name];
+                    //TODO: la copia de los manager
+                    if (!val || val == manager) {
+                        var new_manager = manager._copy_to_model(this);
+                        this.add_to_class(mgr_name, new_manager);
+                    }
+                }
+
+                // Inherit virtual fields (like GenericForeignKey) from the parent class
+                for each (var field in base._meta.virtual_fields) {
+                    if (base._meta.abstracto && include(field_names, field.name))
                         throw new FieldError('Local field %s in class %s clashes with field of similar name from abstract base class %s'.subs(field.name, name, base.__name__));
                     this.add_to_class(field.name, deepcopy(field));
                 }
-                // Pass any non-abstract parent classes onto child.
-                this._meta.parents.update(base._meta.parents);
-            }
-            // Inherit managers from the abstract base classes.
-            var base_managers = base._meta.abstract_managers;
-            base_managers.sort();
-            for each (var element in base_managers) {
-                var [none, mgr_name, manager] = element;
-                var val = this[mgr_name];
-                //TODO: la copia de los manager
-                if (!val || val == manager) {
-                    var new_manager = manager._copy_to_model(this);
-                    this.add_to_class(mgr_name, new_manager);
-                }
-            }
-
-            // Inherit virtual fields (like GenericForeignKey) from the parent class
-            for each (var field in base._meta.virtual_fields) {
-                if (base._meta.abstracto && include(field_names, field.name))
-                    throw new FieldError('Local field %s in class %s clashes with field of similar name from abstract base class %s'.subs(field.name, name, base.__name__));
-                this.add_to_class(field.name, deepcopy(field));
             }
         }
         if (abstracto) {

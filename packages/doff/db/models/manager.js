@@ -200,7 +200,7 @@ var ManagerDescriptor = type('ManagerDescriptor', {
     },
     
     '__get__': function __get__(instance, type){
-        if (!isclass(instance))
+        if (!isinstance(instance, type))
             throw new AttributeError("Manager isn't accessible via %s instances".subs(type.__name__));
         return this.manager;
     }
