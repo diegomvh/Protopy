@@ -49,9 +49,9 @@ function do_pending_lookups(payload) {
 
 signals.class_prepared.connect(do_pending_lookups);
 
-var RelatedField = type('RelatedField', Field, {
-    'contribute_to_class': function contribute_to_class($super, cls, name) {
-        $super(cls, name);
+var RelatedField = type('RelatedField', Field,  {
+    'contribute_to_class': function contribute_to_class(cls, name) {
+        super(Field, this).contribute_to_class(cls, name);
 
         this.related_query_name = this._get_related_query_name.curry(cls._meta);
 
@@ -234,8 +234,8 @@ var ForeignRelatedObjectsDescriptor = type('ForeignRelatedObjectsDescriptor', {
         superclass = this.related.model._default_manager.constructor;
 
         var RelatedManager = type('RelatedManager', superclass, {
-            'get_query_set': function get_query_set($super){
-                return $super().filter(this.core_filters);
+            'get_query_set': function get_query_set(){
+                return super(superclass, this).get_query_set().filter(this.core_filters);
             },
 
             'add': function add(objs){
@@ -245,16 +245,16 @@ var ForeignRelatedObjectsDescriptor = type('ForeignRelatedObjectsDescriptor', {
                 }
             },
 
-            'create': function create($super, kwargs) {
+            'create': function create(kwargs) {
                 var key = rel_field.name;
                 kwargs[key] = instance;
-                return $super(kwargs);
+                return super(superclass, this).create(kwargs);
             },
 
-            'get_or_create': function get_or_create($super, kwargs) {
+            'get_or_create': function get_or_create(kwargs) {
                 var key = rel_field.name;
                 kwargs[key] = instance;
-                return $super(kwargs);
+                return super(superclass, this).get_or_create(kwargs);
             }
         });
         RelatedManager.prototype.add.alters_data = true;
@@ -262,9 +262,8 @@ var ForeignRelatedObjectsDescriptor = type('ForeignRelatedObjectsDescriptor', {
         RelatedManager.prototype.get_or_create.alters_data = true;
 
         if (rel_field.none) {
-            RelatedManager.add_methods({
-            'remove': function remove(objs) {
-                        var key = rel_field.rel.get_related_field().attname;
+            RelatedManager.prototype['remove'] = function remove(objs) {
+                var key = rel_field.rel.get_related_field().attname;
                 var val = instance[key];
                 for each (var obj in objs) {
                 if (obj[rel_field.attname] == val){
@@ -275,15 +274,14 @@ var ForeignRelatedObjectsDescriptor = type('ForeignRelatedObjectsDescriptor', {
                     throw new rel_field.rel.to.DoesNotExist("%s is not related to %r.".subs(obj, instance));
                 }
                 }
-            },
+            }
 
-            'clear': function clear() {
+            RelatedManager.prototype['clear'] = function clear() {
                 for (obj in this.all()) {
                 obj[rel_field.name] = null;
                 obj.save();
                 }
             }
-            });
             RelatedManager.prototype.remove.alters_data = true
             RelatedManager.prototype.clear.alters_data = true;
         }
@@ -316,8 +314,8 @@ var ForeignRelatedObjectsDescriptor = type('ForeignRelatedObjectsDescriptor', {
 function create_many_related_manager(superclass, through) {
     through = through || false;
     var ManyRelatedManager = type('ManyRelatedManager', superclass, {
-	'__init__': function __init__($super, model, core_filters, instance, symmetrical, join_table, source_col_name, target_col_name) {
-	    $super();
+	'__init__': function __init__(model, core_filters, instance, symmetrical, join_table, source_col_name, target_col_name) {
+	    super(superclass, this).__init__();
 	    this.core_filters = core_filters || null;
 	    this.model = model || null;
 	    this.symmetrical = symmetrical || null;
@@ -331,8 +329,8 @@ function create_many_related_manager(superclass, through) {
 		throw new ValueError("%s instance needs to have a primary key value before a many-to-many relationship can be used." .subs(instance.constructor.__name__));
 	},
 
-        'get_query_set': function get_query_set($super) {
-            return $super()._next_is_sticky().filter(this.core_filters);
+        'get_query_set': function get_query_set() {
+            return super(superclass, this).get_query_set()._next_is_sticky().filter(this.core_filters);
         },
 
         'clear': function clear() {
@@ -342,18 +340,18 @@ function create_many_related_manager(superclass, through) {
             this._clear_items(this.target_col_name);
         },
 
-        'create': function create($super, kwargs) {
+        'create': function create(kwargs) {
             // This check needs to be done here, since we can't later remove this
             // from the method lookup table, as we do with add and remove.
             if (through)
             throw new AttributeError("Cannot use create() on a ManyToManyField which specifies an intermediary model. Use %s's Manager instead.".subs(through));
-            new_obj = $super(kwargs);
+            new_obj = super(superclass, this).create(kwargs);
             this.add(new_obj);
             return new_obj;
         },
 
-        'get_or_create': function get_or_create($super, kwargs) {
-            var [obj, created] = $super(kwargs);
+        'get_or_create': function get_or_create(kwargs) {
+            var [obj, created] = super(superclass, this).get_or_create(kwargs);
             // We only need to add() if created because if we got an object back
             // from get() then the relationship already exists.
             if (created)
@@ -367,7 +365,8 @@ function create_many_related_manager(superclass, through) {
             // target_col_name: the PK colname in join_table for the target object
             // objs - objects to add. Either object instances, or primary keys of object instances.
 
-            var [objs, kwargs] = ManyRelatedManager.prototype._add_items.extra_arguments(arguments);
+            arguments = new Arguments(arguments);
+            var objs = arguments.args;
             // If there aren't any objects, there is nothing to do.
             if (bool(objs)) {
                 // Check that all the objects are of the right type
@@ -396,7 +395,8 @@ function create_many_related_manager(superclass, through) {
             // target_col_name: the PK colname in join_table for the target object
             // objs - objects to remove
 
-            var [objs, kwargs] = ManyRelatedManager.prototype._remove_items.extra_arguments(arguments);
+            arguments = new Arguments(arguments);
+            var objs = arguments.args;
             // If there aren't any objects, there is nothing to do.
             if (bool(objs)) {
             // Check that all the objects are of the right type
@@ -428,34 +428,32 @@ function create_many_related_manager(superclass, through) {
     // If the ManyToMany relation has an intermediary model,
     // the add and remove methods do not exist.
     if (!through) {
-	ManyRelatedManager.add_methods({
-            'add': function add() {
-                var [objs, kwargs] = ManyRelatedManager.prototype.add.extra_arguments(arguments);
-                var args = [this.source_col_name, this.target_col_name].concat(objs);
-                this._add_items.apply(this, args);
-    
-                // If this is a symmetrical m2m relation to self, add the mirror entry in the m2m table
-                if (this.symmetrical) {
-                    var args = [this.target_col_name, this.source_col_name].concat(objs);
-                    this._add_items.apply(this, args);
-                }
-            },
+        ManyRelatedManager.prototype['add'] = function add() {
+            arguments = new Arguments(arguments);
+            var args = [this.source_col_name, this.target_col_name].concat(arguments.args);
+            this._add_items.apply(this, args);
 
-	    'remove': function remove() {
-                var [objs, kwargs] = ManyRelatedManager.prototype.remove.extra_arguments(arguments);
-                var args = [this.source_col_name, this.target_col_name].concat(objs);
+            // If this is a symmetrical m2m relation to self, add the mirror entry in the m2m table
+            if (this.symmetrical) {
+                args = [this.target_col_name, this.source_col_name].concat(arguments.args);
+                this._add_items.apply(this, args);
+            }
+        }
+
+	    ManyRelatedManager.prototype['remove'] = function remove() {
+            arguments = new Arguments(arguments);
+            var args = [this.source_col_name, this.target_col_name].concat(arguments.args);
+            this._remove_items.apply(this, args);
+
+            // If this is a symmetrical m2m relation to self, remove the mirror entry in the m2m table
+            if (this.symmetrical)  {
+                args = [this.target_col_name, this.source_col_name].concat(arguments.args);
                 this._remove_items.apply(this, args);
-    
-                // If this is a symmetrical m2m relation to self, remove the mirror entry in the m2m table
-                if (this.symmetrical)  {
-                    var args = [this.target_col_name, this.source_col_name].concat(objs);
-                    this._remove_items.apply(this, args);
-                }
-	   }
-        });
+            }
+        }
+        ManyRelatedManager.prototype.add.alters_data = true;
+        ManyRelatedManager.prototype.remove.alters_data = true;
     }
-    ManyRelatedManager.prototype.add.alters_data = true;
-    ManyRelatedManager.prototype.remove.alters_data = true;
     return ManyRelatedManager;
 }
 
@@ -568,19 +566,16 @@ var ReverseManyRelatedObjectsDescriptor = type('ReverseManyRelatedObjectsDescrip
 var ManyToOneRel = type('ManyToOneRel', {
 
     '__init__': function __init__(to, field_name) {
-        var [args, kwargs] = ManyToOneRel.prototype.__init__.extra_arguments(arguments, {'related_name': null, 'limit_choices_to': {}, 'lookup_overrides': {}, 'parent_link': false});
+        arguments = new Arguments(arguments, {'related_name': null, 'limit_choices_to': {}, 'lookup_overrides': {}, 'parent_link': false});
 
         if (!to._meta)
             assert (type(to) == String, "'to' must be either a model, a model name or the string %r".subs(RECURSIVE_RELATIONSHIP_CONSTANT));
         this.to = to;
         this.field_name = field_name;
-        //TODO: ver que pasa con esto de mandarle como salamanca al piano
-        extend(this, kwargs);
-        //en lugar de
-        //this.related_name = kwargs['related_name'];
-        //this.limit_choices_to = kwargs['limit_choices_to'];
-        //this.lookup_overrides = kwargs['lookup_overrides'];
-        //this.parent_link = kwargs['parent_link'];
+        this.related_name = arguments.kwargs['related_name'];
+        this.limit_choices_to = arguments.kwargs['limit_choices_to'];
+        this.lookup_overrides = arguments.kwargs['lookup_overrides'];
+        this.parent_link = arguments.kwargs['parent_link'];
         this.multiple = true;
     },
 
@@ -596,10 +591,10 @@ var ManyToOneRel = type('ManyToOneRel', {
 });
 
 var OneToOneRel = type('OneToOneRel', ManyToOneRel, {
-    '__init__': function __init__($super, to, field_name) {
-        var [args, kwargs] = OneToOneRel.prototype.__init__.extra_arguments(arguments, {'related_name': null, 'limit_choices_to': null, 'lookup_overrides': null, 'parent_link': false});
+    '__init__': function __init__(to, field_name) {
+        arguments = new Arguments(arguments, {'related_name': null, 'limit_choices_to': null, 'lookup_overrides': null, 'parent_link': false});
 
-        $super(to, field_name, kwargs);
+        super(ManyToOneRel, this).__init__(to, field_name, arguments.kwargs);
         this.multiple = false;
     }
 });
@@ -607,22 +602,20 @@ var OneToOneRel = type('OneToOneRel', ManyToOneRel, {
 var ManyToManyRel = type('ManyToManyRel', {
     '__init__': function __init__(to) {
         this.to = to;
-        var [args, kwargs] = ManyToManyRel.prototype.__init__.extra_arguments(arguments, {'related_name':null, 'limit_choices_to':{}, 'symmetrical':true, 'through': null});
-
-        extend(this, kwargs);
-        this.related_name = kwargs['related_name'];
-        this.limit_choices_to = kwargs['limit_choices_to'];
-        this.symmetrical = kwargs['symmetrical'];
-        this.through = kwargs['through'];
+        arguments = new Arguments(arguments, {'related_name':null, 'limit_choices_to':{}, 'symmetrical':true, 'through': null});
+        this.related_name = arguments.kwargs['related_name'];
+        this.limit_choices_to = arguments.kwargs['limit_choices_to'];
+        this.symmetrical = arguments.kwargs['symmetrical'];
+        this.through = arguments.kwargs['through'];
         this.multiple = true;
     }
 });
 
 var ForeignKey = type('ForeignKey', RelatedField, {
     empty_strings_allowed:false,
-    '__init__': function __init__($super, to) {
-        var [args, kwargs] = ForeignKey.prototype.__init__.extra_arguments(arguments, {'to_field':null, 'rel_class':ManyToOneRel, 'verbose_name': null});
-        var to_field = null, rel_class = kwargs['rel_class'];
+    '__init__': function __init__(to) {
+        arguments = new Arguments(arguments, {'to_field':null, 'rel_class':ManyToOneRel, 'verbose_name': null});
+        var to_field = null, rel_class = arguments.kwargs['rel_class'];
 
         try {
             to_name = to._meta.object_name.toLowerCase();
@@ -630,11 +623,11 @@ var ForeignKey = type('ForeignKey', RelatedField, {
             assert(type(to) == String, "%s is invalid. First parameter to ForeignKey must be either a model, a model name, or the string %s".subs(to, RECURSIVE_RELATIONSHIP_CONSTANT));
         } finally {
             assert (!to._meta.abstracto, "cannot define a relation with abstract class %s".subs(to._meta.object_name));
-            to_field = kwargs['to_field'] || to._meta.pk.name;
+            to_field = arguments.kwargs['to_field'] || to._meta.pk.name;
         }
 
-        kwargs['rel'] = new rel_class(to, to_field, kwargs);
-        $super(kwargs);
+        kwargs['rel'] = new rel_class(to, to_field, arguments.kwargs);
+        super(RelatedField, this).__init__(arguments.kwargs);
 
         this.db_index = true;
         },
@@ -650,8 +643,8 @@ var ForeignKey = type('ForeignKey', RelatedField, {
     /*
 	* Here we check if the default value is an object and return the to_field if so.
 	*/
-    'get_default': function get_default($super) {
-        var field_default = $super();
+    'get_default': function get_default() {
+        var field_default = super(RelatedField, this).get_default();
         if (field_default instanceof this.rel.to)
             return field_default[this.rel.get_related_field().attname];
         return field_default;
@@ -679,10 +672,10 @@ var ForeignKey = type('ForeignKey', RelatedField, {
 	return this.value_to_string(obj);
     },
 
-    'contribute_to_class': function contribute_to_class($super, cls, name) {
+    'contribute_to_class': function contribute_to_class(cls, name) {
 	//TODO: aca esta la parte chancha grosa de los __set__ y los __get__
 	// a la clase le mando el objeto luego en la instanciacion hago los enlaces
-	$super(cls, name);
+	super(RelatedField, this).contribute_to_class(cls, name);
 	var frod = new ReverseSingleRelatedObjectDescriptor(this);
 	var attr = this.name;
 	cls.prototype.__defineGetter__(attr, function(){ return frod.__get__(this, this.constructor); });
@@ -704,15 +697,15 @@ var ForeignKey = type('ForeignKey', RelatedField, {
         //cls[related.get_accessor_name()] = new ForeignRelatedObjectsDescriptor(related);
     },
 
-    'formfield': function formfield($super) {
-        var [args, kwargs] = ForeignKey.prototype.formfield.extra_arguments(arguments);
+    'formfield': function formfield() {
+        arguments = new Arguments(arguments)
         var defaults = {
             'form_class': forms.ModelChoiceField,
             'queryset': this.rel.to._default_manager.complex_filter(this.rel.limit_choices_to),
             'to_field_name': this.rel.field_name
         }
-        extend(defaults, kwargs);
-        return $super(defaults);
+        extend(defaults, arguments.kwargs);
+        return super(RelatedField, this).formfield(defaults);
     },
 
     'db_type': function db_type() {
@@ -730,11 +723,11 @@ var ForeignKey = type('ForeignKey', RelatedField, {
 });
 
 var OneToOneField = type('OneToOneField', ForeignKey, {
-    '__init__': function __init__($super, to, to_field) {
+    '__init__': function __init__(to, to_field) {
 	//TODO: ver argumentos
-	var [args, kwargs] = OneToOneField.prototype.__init__.extra_arguments(arguments);
-	kwargs['unique'] = true;
-	$super(to, to_field, OneToOneRel, kwargs);
+    arguments = new Arguments(arguments);
+	arguments.kwargs['unique'] = true;
+	super(ForeignKey, this).__init__(to, to_field, OneToOneRel, arguments.kwargs);
     },
 
     'contribute_to_related_class': function contribute_to_related_class(cls, related) {
@@ -747,44 +740,44 @@ var OneToOneField = type('OneToOneField', ForeignKey, {
             cls._meta.one_to_one_field = this;
     },
 
-    'formfield': function formfield($super) {
-        var [args, kwargs] = OneToOneField.prototype.formfield.extra_arguments(arguments);
+    'formfield': function formfield() {
+        arguments = new Arguments(arguments);
         if (this.rel.parent_link)
             return null;
-        return $super(kwargs);
+        return super(ForeignKey, this).formfield(arguments.kwargs);
     }
 });
 
 var ManyToManyField = type('ManyToManyField', RelatedField, {
-    '__init__': function __init__($super, to) {
+    '__init__': function __init__(to) {
 
-	var [args, kwargs] = ManyToManyField.prototype.__init__.extra_arguments(arguments, {'verbose_name': null});
-	var to_field = null, rel_class = kwargs['rel_class'];
+        arguments = new Arguments(arguments, {'verbose_name': null});
+        var to_field = null, rel_class = arguments.kwargs['rel_class'];
 
-	try {
-	    assert (!to._meta.abstracto, "cannot define a relation with abstract class %s".subs(to._meta.object_name));
-	} catch (e if e instanceof AttributeError ) {
-	    assert(type(to) == String, "%s is invalid. First parameter to ForeignKey must be either a model, a model name, or the string %s".subs(to, RECURSIVE_RELATIONSHIP_CONSTANT));
-	}
-	kwargs['rel'] = new ManyToManyRel(to, kwargs);
+        try {
+            assert (!to._meta.abstracto, "cannot define a relation with abstract class %s".subs(to._meta.object_name));
+        } catch (e if e instanceof AttributeError ) {
+            assert(type(to) == String, "%s is invalid. First parameter to ForeignKey must be either a model, a model name, or the string %s".subs(to, RECURSIVE_RELATIONSHIP_CONSTANT));
+        }
+        kwargs['rel'] = new ManyToManyRel(to, arguments.kwargs);
 
-	this.db_table = kwargs['db_table'] || null;
+        this.db_table = arguments.kwargs['db_table'] || null;
 
-	if (kwargs['rel'].through) {
-	    this.creates_table = false;
-	    assert (!this.db_table, "Cannot specify a db_table if an intermediary model is used.");
-	} else {
-	    this.creates_table = true;
-	}
+        if (arguments.kwargs['rel'].through) {
+            this.creates_table = false;
+            assert (!this.db_table, "Cannot specify a db_table if an intermediary model is used.");
+        } else {
+            this.creates_table = true;
+        }
 
-	$super(kwargs);
+        super(RelatedField, this).__init__(arguments.kwargs);
 
-	msg = 'Hold down "Control", or "Command" on a Mac, to select more than one.';
-	this.help_text = this.help_text + ' ' + msg;
+        msg = 'Hold down "Control", or "Command" on a Mac, to select more than one.';
+        this.help_text = this.help_text + ' ' + msg;
     },
 
-    'get_choices_default': function get_choices_default($super) {
-	return $super();
+    'get_choices_default': function get_choices_default() {
+        return super(RelatedField, this).get_choices_default();
     },
 
     /*
@@ -908,7 +901,7 @@ var ManyToManyField = type('ManyToManyField', RelatedField, {
 	return data;
     },
 
-    'contribute_to_class': function contribute_to_class($super, cls, name) {
+    'contribute_to_class': function contribute_to_class(cls, name) {
 	// To support multiple relations to self, it's useful to have a non-None
 	// related name on symmetrical relations for internal reasons. The
 	// concept doesn't make a lot of sense externally ("you want me to
@@ -918,7 +911,7 @@ var ManyToManyField = type('ManyToManyField', RelatedField, {
 	if (this.rel.symmetrical && this.rel.to == "this" && !this.rel.related_name)
 	    this.rel.related_name = "%s_rel_+".subs(name);
 
-	$super(cls, name);
+	super(RelatedField, this).contribute_to_class(cls, name);
 	// Add the descriptor for the m2m relation
 	var rmrod = new ReverseManyRelatedObjectsDescriptor(this);
 	var attr = this.name;
@@ -977,15 +970,15 @@ var ManyToManyField = type('ManyToManyField', RelatedField, {
         instance[this.attname] = data;
     },
 
-    'formfield': function formfield($super) {
-        var [args, kwargs] = ManyToManyField.prototype.formfield.extra_arguments(arguments);
-        var defaults = {'form_class': forms.ModelMultipleChoiceField, 'queryset': this.rel.to._default_manager.complex_filter(self.rel.limit_choices_to)}
-        extend(defaults, kwargs);
+    'formfield': function formfield() {
+        arguments = new Arguments(arguments);
+        var defaults = {'form_class': forms.ModelMultipleChoiceField, 'queryset': this.rel.to._default_manager.complex_filter(this.rel.limit_choices_to)};
+        extend(defaults, arguments.kwargs);
         // If initial is passed in, it's a list of related objects, but the
         // MultipleChoiceField takes a list of IDs.
         if (defaults['initial'])
             defaults['initial'] = [i._get_pk_val() for each (i in defaults['initial'])];
-        return $super(defaults);
+        return super(RelatedField, this).formfield(defaults);
     },
 
     'db_type': function db_type() {

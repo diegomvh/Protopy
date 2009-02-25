@@ -8,7 +8,6 @@ $L("doff.db.models.sql");
 $L("doff.db.models.signals");
 $L("doff.db.models.manager");
 $L("doff.db.models.options", 'Options');
-$L("sets", 'Set');
 $L("doff.db.models.loading", 'register_models', 'get_model');
 
 var subclass_exception = function(name, parent, module) {
@@ -20,10 +19,9 @@ var subclass_exception = function(name, parent, module) {
     
 var Model = type('Model', {
     '__new__': function __new__(name, base, attrs) {
-        if (name == 'Model' && !base) {
+        if (name == 'Model' && base[0] == object ) {
             // estoy creando el modelo,
-            this.add_methods(attrs);
-            return this;
+            return super(object, this).__new__(name, base, attrs);
             }
         // Create the class.
         var module = this.__module__;
@@ -145,7 +143,7 @@ var Model = type('Model', {
         if (value && value['contribute_to_class'])
             value.contribute_to_class(this, name);
         else
-            this.add_method(name, value);
+            this.prototype[name] = value;
     },
 
     /* Creates some methods once self._meta has been populated. */
@@ -171,7 +169,9 @@ var Model = type('Model', {
 
 },{
     '__init__': function __init__() {
-        var [args, kwargs] = this.__init__.extra_arguments(arguments);
+        arguments = new Arguments(arguments);
+        var args = arguments.args;
+        var kwargs = arguments.kwargs;
         signals.pre_init.send({'sender':this.constructor, 'args':args, 'kwargs':kwargs});
         // There is a rather weird disparity here; if kwargs, it's set, then args
         // overrides it. It should be one or the other; don't duplicate the work
@@ -428,16 +428,16 @@ var Model = type('Model', {
     },
 
     '_get_next_or_previous_by_FIELD': function _get_next_or_previous_by_FIELD(field, is_next) {
-        var [args, kwargs] = this._get_next_or_previous_by_FIELD.extra_arguments(arguments);
-        op = is_next && 'gt' || 'lt';
-        order = !is_next && '-' || '';
-        param = this[field.attname];
+        arguments = new Arguments(arguments);
+        var op = is_next && 'gt' || 'lt';
+        var order = !is_next && '-' || '';
+        var param = this[field.attname];
         var key = '%s__%s'.subs(field.name, op);
-        q = new Q({key: param});
+        var q = new Q({key: param});
         key2 = 'pk__%s'.subs(op);
         var key2 = field.name;
         q = q.or(Q({key2: param, key: this.pk}));
-        qs = this.constructor._default_manager.filter(kwargs).filter(q).order_by('%s%s'.subs(order, field.name), '%spk'.subs(order));
+        qs = this.constructor._default_manager.filter(arguments.kwargs).filter(q).order_by('%s%s'.subs(order, field.name), '%spk'.subs(order));
         try {
             return qs.get(0);
         } catch (e if e instanceof IndexError) {

@@ -110,7 +110,9 @@ var Query = type('Query', {
         */
     'clone': function clone(klass) {
 
-        var [args, kwargs] = Query.prototype.clone.extra_arguments(arguments);
+        arguments = new Arguments(arguments);
+        var args = arguments.args;
+        var kwargs = arguments.kwargs;
         var obj = new Empty();
         klass = klass || this.constructor;
         obj.__proto__ = klass.prototype;
@@ -426,8 +428,7 @@ var Query = type('Query', {
                 result.push('%s AS %s'.subs(r, c_alias));
                 aliases.add(c_alias);
                 col_aliases.add(c_alias);
-            }
-            else {
+            } else {
                 result.push(r);
                 aliases.add(r);
                 col_aliases.add(col);
@@ -485,7 +486,7 @@ var Query = type('Query', {
             }
         }
         if (as_pairs)
-            return [result, null]
+            return [result, null];
         return [result, aliases];
     },
 
@@ -1551,7 +1552,8 @@ var Query = type('Query', {
         */
     'add_ordering': function add_ordering() {
 
-        var [ordering, kwargs] = Query.prototype.add_ordering.extra_arguments(arguments);
+        arguments = new Arguments(arguments);
+        var ordering = arguments.args;
         var errors = [];
         for each (var item in ordering)
             var m = item.match(ORDER_PATTERN);

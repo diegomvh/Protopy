@@ -190,7 +190,7 @@ var QuerySet = type('QuerySet', {
 
     get length() {
         return len(this);
-    }
+    },
     
     //I whish __getitem__ , but
     /*
@@ -302,8 +302,8 @@ var QuerySet = type('QuerySet', {
      * keyword arguments.
      */
     'get': function get() {
-        var [args, kwargs] = QuerySet.prototype.get.extra_arguments(arguments);
-        var clone = this.filter.apply(this, args.concat(kwargs));
+        arguments = new Arguments(arguments);
+        var clone = this.filter.apply(this, arguments.argskwargs);
         var num = clone.length;
         if (num == 1)
             return clone._result_cache[0];
@@ -328,8 +328,8 @@ var QuerySet = type('QuerySet', {
         specifying whether an object was created.
     */
     'get_or_create': function get_or_create(kwargs) {
-
-        var [args, kwargs] = QuerySet.prototype.get_or_create.extra_arguments(arguments);
+        arguments = new Arguments(arguments);
+        var kwargs = arguments.kwargs;
         assert (bool(kwargs), 'get_or_create() must be passed at least one keyword argument')
         var defaults = kwargs['defaults'] || {};
         delete kwargs['defaults'];
@@ -437,15 +437,17 @@ var QuerySet = type('QuerySet', {
     // PUBLIC METHODS THAT RETURN A QUERYSET SUBCLASS
 
     'values': function values() {
-        var [fields, kwargs] = QuerySet.prototype.values.extra_arguments(arguments);
+        arguments = new Arguments(arguments);
+        var fields = arguments.args;
         return this._clone(ValuesQuerySet, true, {'_fields': fields});
     },
 
     'values_list': function values_list() {
-        var [fields, kwargs] = QuerySet.prototype.values_list.extra_arguments(arguments);
-        var flat = kwargs['flat'] || false;
-        if (bool(keys(kwargs)))
-            throw new TypeError('Unexpected keyword arguments to values_list: %s'.subs(keys(kwargs)));
+        arguments = new Arguments(arguments);
+        var fields = arguments.args;
+        var flat = arguments.kwargs['flat'] || false;
+        if (bool(arguments.kwargs))
+            throw new TypeError('Unexpected keyword arguments to values_list: %s'.subs(keys(arguments.kwargs)));
         if (flat && fields.length > 1)
             throw new TypeError("'flat' is not valid when values_list is called with more than one field.");
         return this._clone(ValuesListQuerySet, true, {'flat':flat, '_fields':fields});
@@ -482,16 +484,16 @@ var QuerySet = type('QuerySet', {
      * Returns a new QuerySet instance with the args ANDed to the existing set.
      */
     'filter': function filter() {
-        var [args, kwargs] = QuerySet.prototype.filter.extra_arguments(arguments);
-        return this._filter_or_exclude(false, args, kwargs);
+        arguments = new Arguments(arguments);
+        return this._filter_or_exclude(false, arguments.args, arguments.kwargs);
     },
 
     /*
      * Returns a new QuerySet instance with NOT (args) ANDed to the existing set.
      */
     'exclude': function exclude(){
-        var [args, kwargs] = QuerySet.prototype.exclude.extra_arguments(arguments);
-        return this._filter_or_exclude(true, args, kwargs);
+        arguments = new Arguments(arguments);
+        return this._filter_or_exclude(true, arguments.args, arguments.kwargs);
     },
 
     '_filter_or_exclude': function _filter_or_exclude(negate, args, kwargs) {
@@ -514,13 +516,13 @@ var QuerySet = type('QuerySet', {
      * and usually it will be more natural to use other methods.
      */
     'complex_filter': function complex_filter(filter_obj) {
-        if ((isinstance(filter_obj, Q) || callable(filter_obj['add_to_query'])) {
+        if (isinstance(filter_obj, Q) || callable(filter_obj['add_to_query'])) {
             clone = this._clone();
             clone.query.add_q(filter_obj);
             return clone;
-        }
-        else
+        } else {
             return this._filter_or_exclude(null, [], filter_obj);
+        }
     },
 
     /*
@@ -529,8 +531,9 @@ var QuerySet = type('QuerySet', {
      * related objects are included in the selection.
      */
     'select_related': function select_related() {
-
-        var [fields, kwargs] = QuerySet.prototype.select_related.extra_arguments(arguments);
+        arguments = new Arguments(arguments);
+        var fields = arguments.args;
+        var kwargs = arguments.kwargs;
         var depth = kwargs['depth'] || 0;
         delete kwargs['depth'];
         if (bool(keys(kwargs)))
@@ -558,7 +561,9 @@ var QuerySet = type('QuerySet', {
 
      /* Returns a new QuerySet instance with the ordering changed. */
     'order_by': function order_by() {
-        var [field_names, kwargs] = QuerySet.prototype.order_by.extra_arguments(arguments);
+        arguments = new Arguments(arguments);
+        var field_names = arguments.args;
+        var kwargs = arguments.kwargs;
         assert(this.query.can_filter(), "Assert Cannot reorder a query once a slice has been taken.");
         var obj = this._clone();
         obj.query.clear_ordering();
@@ -643,10 +648,9 @@ QuerySet.prototype.update.alters_data = true;
 QuerySet.prototype._update.alters_data = true;
 
 var ValuesQuerySet = type('ValuesQuerySet', QuerySet, {
-    '__init__': function __init__($super) {
-        var [args, kwargs] = ValuesQuerySet.prototype.__init__.extra_arguments(arguments);
-        args.push(kwargs);
-        $super.apply(this, args);
+    '__init__': function __init__() {
+        arguments = new Arguments(arguments);
+        super(QuerySet, this).__init__(arguments);
         this.query.select_related = false;
 
         // QuerySet.clone() will also set up the _fields attribute with the
@@ -696,8 +700,8 @@ var ValuesQuerySet = type('ValuesQuerySet', QuerySet, {
     /*
      * Cloning a ValuesQuerySet preserves the current fields.
      */
-    '_clone': function _clone($super, klass, setup, extra) {
-        var c = $super(klass, setup, extra);
+    '_clone': function _clone(klass, setup, extra) {
+        var c = super(QuerySet, this)._clone(klass, setup, extra);
         c._fields = copy(this._fields);
         c.field_names = this.field_names;
         c.extra_names = this.extra_names;
@@ -706,8 +710,8 @@ var ValuesQuerySet = type('ValuesQuerySet', QuerySet, {
         return c;
     },
 
-    '_merge_sanity_check': function _merge_sanity_check($super, other) {
-        $super._merge_sanity_check(other)
+    '_merge_sanity_check': function _merge_sanity_check(other) {
+        super(QuerySet, this)._merge_sanity_check(other);
         if (new Set(this.extra_names).ne(new Set(other.extra_names)) ||
             new Set(this.field_names).ne(new Set(other.field_names)))
             throw new TypeError("Merging '%s' classes must involve the same values in each case.".subs(this.__class__.__name__));
@@ -735,9 +739,9 @@ var ValuesListQuerySet = type('ValuesListQuerySet', ValuesQuerySet, {
             }
     },
 
-    '_clone': function _clone($super) {
-        var [args, kwargs] = ValuesListQuerySet.prototype.filter.extra_arguments(arguments);
-        clone = $super.apply(this, args.push(kwargs));
+    '_clone': function _clone() {
+        arguments = new Arguments(arguments);
+        clone = super(ValuesQuerySet, this)._clone(arguments);
         clone.flat = this.flat;
         return clone;
     }
@@ -755,7 +759,7 @@ var DateQuerySet = type('DateQuerySet', QuerySet, {
      */
     '_setup_query': function _setup_query() {
 
-        this.query = this.query.clone(sql.DateQuery, { 'setup': true});
+        this.query = this.query.clone(sql.DateQuery, {'setup': true});
         this.query.select = [];
         var field = this.model._meta.get_field(this._field_name, false);
         if (!isinstance(field, DateField)) throw "Assert %s isn't a DateField.".subs(field.name);
@@ -764,8 +768,8 @@ var DateQuerySet = type('DateQuerySet', QuerySet, {
             this.query.add_filter(['%s__isnull'.subs(field.name), false])
     },
 
-    '_clone': function _clone($super, klass, setup, extra) {
-        var c = $super(klass, false, extra);
+    '_clone': function _clone(klass, setup, extra) {
+        var c = super(QuerySet, this)._clone(klass, false, extra);
         c._field_name = this._field_name;
         c._kind = this._kind;
         if (setup && c['_setup_query'])
@@ -775,8 +779,8 @@ var DateQuerySet = type('DateQuerySet', QuerySet, {
 });
 
 var EmptyQuerySet = type('EmptyQuerySet', QuerySet, {
-    '__init__': function __init__($super, model, query) {
-        $super(model, query);
+    '__init__': function __init__(model, query) {
+        super(QuerySet, this).__init__(model, query);
         this._result_cache = [];
     },
 
@@ -794,8 +798,8 @@ var EmptyQuerySet = type('EmptyQuerySet', QuerySet, {
 
     'del': function del() {},
 
-    '_clone': function _clone($super, klass, setup, extra) {
-        var c = $super(klass, setup, extra);
+    '_clone': function _clone(klass, setup, extra) {
+        var c = super(QuerySet, this)._clone(klass, setup, extra);
         c._result_cache = [];
         return c;
     },

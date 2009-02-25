@@ -10,16 +10,16 @@
 	    var back_iter = object['__iterator__'];
 	    delete object['__iterator__'];
 	    for (var name in object) {
-		if (safe || name.search(/^__.*__$/) == -1) {
-		    var getter = object.__lookupGetter__(name);
-		    var setter = object.__lookupSetter__(name);
-		    if (getter)
-			destiny.__defineGetter__(name, getter);
-		    if (setter)
-			destiny.__defineSetter__(name, setter);
-		    if (getter || setter) continue;
-		    destiny[name] = object[name];
-		}
+            if (safe || name.search(/^__.*__$/) == -1) {
+                var getter = object.__lookupGetter__(name);
+                var setter = object.__lookupSetter__(name);
+                if (getter)
+                    destiny.__defineGetter__(name, getter);
+                if (setter)
+                    destiny.__defineSetter__(name, setter);
+                if (getter || setter) continue;
+                destiny[name] = object[name];
+            }
 	    }
 	    if (back_iter) object['__iterator__'] = back_iter;
 	}
@@ -40,7 +40,7 @@
     
     //Add simbols to builtins
     function __builtin__(object) {
-	__extend__(false, __modules__['__builtin__'], object);
+        __extend__(false, __modules__['__builtin__'], object);
         __extend__(false, __modules__['__main__']['__builtins__'], object);
         __extend__(false, window, object);
     }
@@ -165,26 +165,28 @@
     //For the Class
     object.__class__ = type;
     object.__new__ = function __new__(name, bases, attrs) {
-	//Herencia
-	var superbase = function() {};
-	superbase.prototype = {};
-	for each (var base in bases.reverse()) {
-	    __extend__(true, superbase.prototype, base.prototype);
-	}
-	this.prototype.__proto__ = superbase.prototype;
-	
-	for (var name in attrs)
-	    __extend__(true, this.prototype, attrs);
-	
-	// Decorate javascript
-	this.prototype.toString = this.prototype.__str__;
-	if (this.prototype.__iter__)
-	    this.prototype.__iterator__ = this.prototype.__iter__;
-	this.prototype.constructor = this;
-	this.prototype.__class__ = this;
+        //Herencia
+        var superbase = function() {};
+        superbase.prototype = {};
+        for each (var base in bases.reverse()) {
+            __extend__(true, superbase.prototype, base.prototype);
+        }
+        this.prototype.__proto__ = superbase.prototype;
+
+        for (var name in attrs)
+            __extend__(true, this.prototype, attrs);
+
+        // Decorate javascript
+        this.prototype.toString = this.prototype.__str__;
+        if (this.prototype.__iter__)
+            this.prototype.__iterator__ = this.prototype.__iter__;
+        this.prototype.constructor = this;
+        this.prototype.__class__ = this;
     };
+    object.__base__ = null;
     object.__bases__ = [];
     object.__subclasses__ = [];
+    object.__static__ = {};
     object.__doc__ = "";
 
     //For de Instance
@@ -194,13 +196,12 @@
     object.prototype.__str__ = function __str__(){ return this.__module__ + '.' + this.__name__ };
 
     // Type constructor
-    function type() {
-	var args = Array.prototype.slice.call(arguments);
-	if (args.length < 1) 
-	    throw new TypeError('Invalid arguments');
-	if (!(args[0] instanceof String) && args.length == 1) 
-	    return args[0].constructor;
-	else var name = args.shift();
+    function type(name) {
+    if (name == undefined || name == null)
+        throw new TypeError('Invalid arguments');
+	var args = Array.prototype.slice.call(arguments).slice(1);
+	if (name && args.length == 0)
+	    return name.constructor;
 	if (args[0] instanceof Array && args[0][0] != undefined)
 	    var bases = args.shift();
 	else if (!(args[0] instanceof Array) && args[0] instanceof Function)
@@ -215,28 +216,31 @@
 	} else if (args.length == 0) {
 	    var classAttrs = {};
 	    var instanceAttrs = {};
-	} else new TypeError('Invalid arguments');
+    } else new TypeError('Invalid arguments');
 
 	var new_type = eval('(function ' + name + '() { this.__init__.apply(this, arguments); })');
-	
-	//Decorando los atributos 
+
+	//Jerarquia
+    new_type.__base__ = bases[0];
+	new_type.__bases__ = bases;
+	new_type.__subclasses__ = [];
+    new_type.__static__ = __extend__(true, {}, classAttrs);
+	for each (var base in bases.reverse()) {
+	    base.__subclasses__.push(new_type);
+        __extend__(true, new_type, base.__static__);
+        new_type.__new__ = base.__new__;
+    }
+
+    //Decorando los atributos
 	classAttrs['__name__'] = instanceAttrs['__name__'] = name;
 	classAttrs['__module__'] = instanceAttrs['__module__'] = this['__name__'];
 
-	//Jerarquia
-	new_type.__bases__ = bases;
-	new_type.__subclasses__ = [];
-	for each (var base in bases.reverse()) {
-	    base.__subclasses__.push(new_type);
-	    new_type.__new__ = base.__new__;
-	}
-	
 	//Construyendo el tipo
 	for (var name in classAttrs)
 	    __extend__(true, new_type, classAttrs);
 
 	//Constructor de instancia
-	new_type.__new__(name, bases, instanceAttrs);
+	new_type.__new__(new_type.__name__, new_type.__bases__, instanceAttrs);
 	return new_type;
     }
 
@@ -300,6 +304,7 @@
 (function(){
     function super(type, object) {
 	//TODO: Validar que sea una instancia a subclase del tipo dado
+    //TODO: soportar distintos tipos incluso el mismo tipo de la base que le pase el primero de __bases__
 	var obj = {};
 	var base = (object.constructor == Function)? type : type.prototype;
 	var object = object;

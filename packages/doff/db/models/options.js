@@ -18,7 +18,7 @@ var DEFAULT_NAMES = ['verbose_name', 'db_table', 'ordering', 'unique_together', 
                     'order_with_respect_to', 'app_label', 'db_tablespace',
                     'abstracto'];
 
-var Options = type({
+var Options = type('Options', {
     '__init__': function __init__(meta, app_label) {
         this.local_fields = [];
         this.local_many_to_many = [];
@@ -51,8 +51,8 @@ var Options = type({
     },
     
     'contribute_to_class': function contribute_to_class(cls, name) {
-        var connection = $L('doff.db', ['connection']);
-        var truncate_name = $L('doff.db.backends.util', ['truncate_name']);
+        var connection = $L('doff.db', 'connection');
+        var truncate_name = $L('doff.db.backends.util', 'truncate_name');
         
         cls._meta = this;
         this.installed = include(settings.INSTALLED_APPS, cls.__module__.replace(/\.models$/, ''));
@@ -82,7 +82,7 @@ var Options = type({
             // tuple of two strings. Normalize it to a tuple of tuples, so that
             // calling code can uniformly expect that.
             var ut = meta_attrs['unique_together'] || this['unique_together'];
-            if (ut && type(ut[0]) == Array)
+            if (bool(ut) && type(ut[0]) == Array)
                 ut = [ut];
             this['unique_together'] = ut;
 

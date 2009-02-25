@@ -3,7 +3,8 @@ $D("doff.db.models.manager");
 $L('doff.db.models.query', 'QuerySet', 'EmptyQuerySet', 'insert_query');
 $L('doff.db.models.signals');
 $L('doff.db.models.fields', 'FieldDoesNotExist');
-    	
+$L('copy', 'copy');
+
 function ensure_default_manager(payload) {
     var cls = payload['sender'];
     if (!cls['_default_manager'] && !cls._meta.abstracto) {
@@ -42,7 +43,7 @@ var Manager = type('Manager', {
     '_copy_to_model': function _copy_to_model(model){
         //assert issubclass(model, this.model)
         //TODO: Hacer un assert en javascript
-        var mgr = copy.copy(this);
+        var mgr = copy(this);
         mgr._set_creation_counter();
         mgr.model = model;
         mgr._inherited = true;
@@ -72,139 +73,120 @@ var Manager = type('Manager', {
     },
 
     'dates': function dates(){
-        var [args, kwargs] = Manager.prototype.dates.extra_arguments(arguments);
-        args.push(kwargs);
+        arguments = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.dates.apply(qs, args);
+        return qs.dates.apply(qs, arguments.argskwargs);
     },
     
     'distinct': function distinct(){
-        var [args, kwargs] = Manager.prototype.distinct.extra_arguments(arguments);
-        args.push(kwargs);
+        arguments = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.distinct.apply(qs, args);
+        return qs.distinct.apply(qs, arguments.argskwargs);
     },
 
     'extra': function extra(){
-        var [args, kwargs] = Manager.prototype.extra.extra_arguments(arguments);
-        args.push(kwargs);
+        arguments = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.extra.apply(qs, args);
+        return qs.extra.apply(qs, arguments.argskwargs);
     },
 
     'get': function get(){
-        var [args, kwargs] = Manager.prototype.get.extra_arguments(arguments);
-        args.push(kwargs);
+        arguments = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.get.apply(qs, args);
+        return qs.get.apply(qs, arguments.argskwargs);
     },
 
     'get_or_create': function get_or_create(){
-        var [args, kwargs] = Manager.prototype.get_or_create.extra_arguments(arguments);
-        args.push(kwargs);
+        arguments = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.get_or_create.apply(qs, args);
+        return qs.get_or_create.apply(qs, arguments.argskwargs);
     },
 
     'create': function create(){
-        var [args, kwargs] = Manager.prototype.create.extra_arguments(arguments);
-        args.push(kwargs);
+        arguments = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.create.apply(qs, args);
+        return qs.create.apply(qs, arguments.argskwargs);
     },
 
     'filter': function filter(){
-        var [args, kwargs] = Manager.prototype.filter.extra_arguments(arguments);
-        args.push(kwargs);
+        arguments = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.filter.apply(qs, args);
+        return qs.filter.apply(qs, arguments.argskwargs);
     },
 
     'complex_filter': function complex_filter(){
-        var [args, kwargs] = Manager.prototype.complex_filter.extra_arguments(arguments);
-        args.push(kwargs);
+        arguments = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.complex_filter.apply(qs, args);
+        return qs.complex_filter.apply(qs, arguments.argskwargs);
     },
 
     'exclude': function exclude(){
-        var [args, kwargs] = Manager.prototype.exclude.extra_arguments(arguments);
-        args.push(kwargs);
+        arguments = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.exclude.apply(qs, args);
+        return qs.exclude.apply(qs, arguments.argskwargs);
     },
 
     'in_bulk': function in_bulk(){
-        var [args, kwargs] = Manager.prototype.in_bulk.extra_arguments(arguments);
-        args.push(kwargs);
+        arguments = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.in_bulk.apply(qs, args);
+        return qs.in_bulk.apply(qs, arguments.argskwargs);
     },
 
     'iterator': function iterator(){
-        var [args, kwargs] = Manager.prototype.iterator.extra_arguments(arguments);
-        args.push(kwargs);
+        arguments = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.iterator.apply(qs, args);
+        return qs.iterator.apply(qs, arguments.argskwargs);
     },
 
     'latest': function latest(){
-        var [args, kwargs] = Manager.prototype.latest.extra_arguments(arguments);
-        args.push(kwargs);
+        arguments = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.latest.apply(qs, args);
+        return qs.latest.apply(qs, arguments.argskwargs);
     },
 
     'order_by': function order_by(){
-        var [args, kwargs] = Manager.prototype.order_by.extra_arguments(arguments);
-        args.push(kwargs);
+        arguments = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.order_by.apply(qs, args);
+        return qs.order_by.apply(qs, arguments.argskwargs);
     },
 
     'select_related': function select_related(){
-        var [args, kwargs] = Manager.prototype.select_related.extra_arguments(arguments);
-        args.push(kwargs);
+        arguments = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.select_related.apply(qs, args);
+        return qs.select_related.apply(qs, arguments.argskwargs);
     },
 
     'values': function values(){
-        var [args, kwargs] = Manager.prototype.values.extra_arguments(arguments);
-        args.push(kwargs);
+        arguments = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.values.apply(qs, args);
+        return qs.values.apply(qs, arguments.argskwargs);
     },
 
     'values_list': function values_list() {
-        var [args, kwargs] = Manager.prototype.values_list.extra_arguments(arguments);
-        args.push(kwargs);
+        arguments = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.values_list.apply(qs, args);
+        return qs.values_list.apply(qs, arguments.argskwargs);
     },
     
     'update': function update() {
-        var [args, kwargs] = Manager.prototype.update.extra_arguments(arguments);
-        args.push(kwargs);
+        arguments = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.update.apply(qs, args);
+        return qs.update.apply(qs, arguments.argskwargs);
     },
 
     'reverse': function reverse(){
-        var [args, kwargs] = Manager.prototype.reverse.extra_arguments(arguments);
-        args.push(kwargs);
+        arguments = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.reverse.apply(qs, args);
+        return qs.reverse.apply(qs, arguments.argskwargs);
     },
 
     '_insert': function _insert(values) {
-        var [args, kwargs] = Manager.prototype._insert.extra_arguments(arguments);
-        args.push(kwargs);
-        return insert_query(this.model, values, kwargs['return_id'], kwargs['raw_values']);
+        arguments = new Arguments(arguments);
+        return insert_query(this.model, values, arguments.kwargs['return_id'], arguments.kwargs['raw_values']);
     },
 
     '_update': function _update(values){
-        var [args, kwargs] = Manager.prototype._update.extra_arguments(arguments);
+        arguments = new Arguments(arguments);
         args.push(kwargs);
         var qs = this.get_query_set();
         return qs._update.apply(qs, args);
