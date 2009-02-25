@@ -4,7 +4,7 @@ new Ajax.Request(window.settings, {
         asynchronous : false,
         evalJS: false,
         onSuccess: function(transport) {
-            code = '({' + transport.responseText + '});';
+            code = '(' + transport.responseText + ');';
             var project = eval(code);
             extend(glb_settings, project);
         },

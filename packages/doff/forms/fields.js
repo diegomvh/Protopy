@@ -1,6 +1,9 @@
 $D('doff.forms.fields, Field classes.');
 
 $L('copy');
+$L('doff.forms.util', 'ErrorList', 'ValidationError');
+$L('doff.forms.widgets', 'TextInput', 'PasswordInput', 'HiddenInput', 'MultipleHiddenInput', 'FileInput', 'CheckboxInput', 'Select', 'NullBooleanSelect', 'SelectMultiple', 'DateTimeInput', 'TimeInput', 'SplitDateTimeWidget', 'SplitHiddenDateTimeWidget');
+
 /*import os
 import re
 import time
@@ -24,8 +27,6 @@ import django.core.exceptions
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import smart_unicode, smart_str
 
-from util import ErrorList, ValidationError
-from widgets import TextInput, PasswordInput, HiddenInput, MultipleHiddenInput, FileInput, CheckboxInput, Select, NullBooleanSelect, SelectMultiple, DateTimeInput, TimeInput, SplitDateTimeWidget, SplitHiddenDateTimeWidget
 from django.core.files.uploadedfile import SimpleUploadedFile as UploadedFile
 */
 // These values, if given to to_javascript(), will trigger the this.required check.
@@ -53,7 +54,7 @@ var Field = type('Field', {
         this.show_hidden_initial = kwargs['show_hidden_initial'];
         this.help_text = kwargs['help_text'];
         var widget = kwargs['widget'] || this.widget;
-        if (isclass(widget))
+        if (isinstance(widget))
             widget = new widget();
 
         // Hook into this.widget_attrs() for any Field-specific HTML attributes.
@@ -364,7 +365,7 @@ var DateTimeField = type('DateTimeField', Field, {
         for each (var format in this.input_formats) {
             try {
                 return datetime.datetime(time.strptime(value, format).slice(0, 6));
-            } catch (e if e instanceof ValueError) { continue };
+            } catch (e if e instanceof ValueError) { continue }
         }
         throw new ValidationError(this.error_messages['invalid']);
     }
@@ -458,7 +459,7 @@ var ImageField = type('ImageField', FileField, {
      * Checks that the file-upload field data contains a valid image (GIF, JPG,
      * PNG, possibly others -- whatever the Python Imaging Library supports).
      */
-    clean: function clean( data, initial) {
+    clean: function clean(data, initial) {
         f = super(FileField, this).clean(data, initial);
         if (!f)
             return null;
@@ -502,7 +503,8 @@ var ImageField = type('ImageField', FileField, {
             throw new ValidationError(this.error_messages['invalid_image'])
         if hasattr(f, 'seek') && callable(f.seek) {
             f.seek(0)
-        return f*/
+        */
+        return f;
     }
 });
 
@@ -593,16 +595,16 @@ var ChoiceField = type('ChoiceField', Field, {
 
     /* Check to see if the provided value is a valid choice */
     valid_value: function valid_value( value) {
-        for each (var [k, v] in this.choices)
+        for each (var [k, v] in this.choices) {
             if (isinstance(v, Array)) {
                 // This is an optgroup, so look inside the group for options
-                for each (var [k2, v2] in v)
-                    if (value == k2)
-                        return true;
+                for each (var [k2, v2] in v) {
+                    if (value == k2) return true;
+                }
             } else {
-                if (value == k)
-                    return true;
+                if (value == k) return true;
             }
+        }
         return false;
     }
 });
@@ -732,7 +734,7 @@ var MultiValueField = type('MultiValueField', Field, {
         var clean_data = [];
         var errors = new ErrorList();
         if (!value || isinstance(value, Array)) {
-            if (!value || !bool([v for each (v in value) (if !include(EMPTY_VALUES, v))])) {
+            if (!value || !bool([v for each (v in value) if (!include(EMPTY_VALUES, v))])) {
                 if (this.required)
                     throw new ValidationError(this.error_messages['required']);
                 else

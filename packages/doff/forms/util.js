@@ -1,68 +1,71 @@
-from django.utils.html import conditional_escape
-from django.utils.encoding import smart_unicode, StrAndUnicode, force_unicode
-from django.utils.safestring import mark_safe
+/* 
+ * Convert a dictionary of attributes to a single string.
+ * The returned string will contain a leading space followed by key="value",
+ * XML-style pairs.  It is assumed that the keys do not need to be XML-escaped.
+ * If the passed dictionary is empty, then return an empty string.
+ */
+var Dict = type('Dict', {});
+function flatatt(attrs) {
+    return [' %s="%s"'.subs(k, v) for each ([k, v] in zip(keys(attrs), values(attrs)))].join('');
+}
 
-def flatatt(attrs):
-    """
-    Convert a dictionary of attributes to a single string.
-    The returned string will contain a leading space followed by key="value",
-    XML-style pairs.  It is assumed that the keys do not need to be XML-escaped.
-    If the passed dictionary is empty, then return an empty string.
-    """
-    return u''.join([u' %s="%s"' % (k, conditional_escape(v)) for k, v in attrs.items()])
+/*
+ * A collection of errors that knows how to display itself in various formats.
+ * The dictionary keys are the field names, and the values are the errors.
+ */
+var ErrorDict = ('ErrorDict', Dict, {
+    '__str__': function __str__() {
+        return this.as_ul();
+    },
 
-class ErrorDict(dict, StrAndUnicode):
-    """
-    A collection of errors that knows how to display itself in various formats.
+    'as_ul': function as_ul() {
+        return '<ul class="errorlist">%s</ul>'.subs(['<li>%s%s</li>'.subs(k, v) for each ([k, v] in this.items())].join(''));
+    },
 
-    The dictionary keys are the field names, and the values are the errors.
-    """
-    def __unicode__(self):
-        return self.as_ul()
+    'as_text': function as_text() {
+        return ['* %s\n%s'.subs(k, ['  * %s'.subs(i) for (i in v)].join('\n')) for each ([k, v] in this.items())].join('\n');
+    }
+});
 
-    def as_ul(self):
-        if not self: return u''
-        return mark_safe(u'<ul class="errorlist">%s</ul>'
-                % ''.join([u'<li>%s%s</li>' % (k, force_unicode(v))
-                    for k, v in self.items()]))
+/*
+ * A collection of errors that knows how to display itself in various formats.
+ */
+var ErrorList = ('ErrorList', {
+    '__str__': function __str__() {
+        return this.as_ul();
+   },
 
-    def as_text(self):
-        return u'\n'.join([u'* %s\n%s' % (k, u'\n'.join([u'  * %s' % force_unicode(i) for i in v])) for k, v in self.items()])
+    'as_ul': function as_ul() {
+        return '<ul class="errorlist">%s</ul>'.subs(['<li>%s</li>'.subs(e) for each (e in this.errors)].join(''));
+   },
 
-class ErrorList(list, StrAndUnicode):
-    """
-    A collection of errors that knows how to display itself in various formats.
-    """
-    def __unicode__(self):
-        return self.as_ul()
+    'as_text': function as_text() {
+        return ['* %s'.subs(e) for each (e in this.errors)].join('\n');
+    },
+    
+    '__repr__': function repr() {
+        return repr([e for each (e in this.errors)]);
+    }
+});
+/*
+ * ValidationError can be passed any object that can be printed (usually a string) or a list of objects.
+ */
+var ValidationError = type('ValidationError', Exception, {
+    '__init__': function __init__(message) {
+        if (isinstance(message, Array))
+            this.messages = new ErrorList(message);
+        else
+            this.messages = new ErrorList([message]);
+    },
+    
+    '__str__': function __str__() {
+        return repr(this.messages);
+    }
+});
 
-    def as_ul(self):
-        if not self: return u''
-        return mark_safe(u'<ul class="errorlist">%s</ul>'
-                % ''.join([u'<li>%s</li>' % conditional_escape(force_unicode(e)) for e in self]))
-
-    def as_text(self):
-        if not self: return u''
-        return u'\n'.join([u'* %s' % force_unicode(e) for e in self])
-
-    def __repr__(self):
-        return repr([force_unicode(e) for e in self])
-
-class ValidationError(Exception):
-    def __init__(self, message):
-        """
-        ValidationError can be passed any object that can be printed (usually
-        a string) or a list of objects.
-        """
-        if isinstance(message, list):
-            self.messages = ErrorList([smart_unicode(msg) for msg in message])
-        else:
-            message = smart_unicode(message)
-            self.messages = ErrorList([message])
-
-    def __str__(self):
-        # This is needed because, without a __str__(), printing an exception
-        # instance would result in this:
-        # AttributeError: ValidationError instance has no attribute 'args'
-        # See http://www.python.org/doc/current/tut/node10.html#handling
-        return repr(self.messages)
+$P({
+    'flatatt': flatatt,
+    'ErrorDict': ErrorDict,
+    'ErrorList': ErrorList,
+    'ValidationError': ValidationError
+})

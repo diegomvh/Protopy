@@ -1,4 +1,4 @@
-
+{
 'DATABASE_ENGINE': 'gears',
 'DATABASE_NAME': 'blog.db',
 'DATABASE_USER': '',
@@ -14,3 +14,4 @@
             'doff.template.loaders.app_remote.load_template_source',
             //'doff.template.loaders.filesystem.load_template_source',
         ]
+}

@@ -1,7 +1,5 @@
-"""
-HTML Widget classes
-"""
-
+$D('HTML Widget classes');
+/*
 try:
     set
 except NameError:
@@ -20,16 +18,8 @@ from datetime import time
 from util import flatatt
 from urlparse import urljoin
 
-__all__ = (
-    'Media', 'MediaDefiningClass', 'Widget', 'TextInput', 'PasswordInput',
-    'HiddenInput', 'MultipleHiddenInput',
-    'FileInput', 'DateTimeInput', 'TimeInput', 'Textarea', 'CheckboxInput',
-    'Select', 'NullBooleanSelect', 'SelectMultiple', 'RadioSelect',
-    'CheckboxSelectMultiple', 'MultiWidget',
-    'SplitDateTimeWidget',
-)
 
-MEDIA_TYPES = ['css','js'];
+var MEDIA_TYPES = ['css','js'];
 
 var Media = type('Media', {});
 class Media(StrAndUnicode):
@@ -121,21 +111,17 @@ def media_property(cls):
             return base
     return property(_media)
 
-var Media = type('Media', {});
-class MediaDefiningClass(type):
-    "Metaclass for classes that can have media definitions"
-    def __new__(cls, name, bases, attrs):
-        new_class = super(MediaDefiningClass, cls).__new__(cls, name, bases,
-                                                           attrs)
-        if 'media' not in attrs:
-            new_class.media = media_property(new_class)
-        return new_class
-
-var Media = type('Media', {});
-class Widget(object):
-    __metaclass__ = MediaDefiningClass
-    is_hidden = False          # Determines whether this corresponds to an <input type="hidden">.
-    needs_multipart_form = False # Determines does this widget need multipart-encrypted form
+var Widget = type('Widget', {
+    //Static
+    '__new__': function __new__(name, bases, attrs) {
+        var new_class = super(object, cls).__new__(name, bases, attrs);
+        if (!('media' in attrs))
+            new_class.media = media_property(new_class);
+        return new_class;
+    }
+}, {
+    is_hidden: false,          // Determines whether this corresponds to an <input type="hidden">.
+    needs_multipart_form: false // Determines does this widget need multipart-encrypted form
 
     def __init__(self, attrs=None):
         if attrs is not None:
@@ -203,6 +189,7 @@ class Widget(object):
         """
         return id_
     id_for_label = classmethod(id_for_label)
+});
 
 var Media = type('Media', {});
 class Input(Widget):
@@ -686,11 +673,55 @@ class SplitDateTimeWidget(MultiWidget):
             return [value.date(), value.time().replace(microsecond=0)]
         return [None, None]
 
-var Media = type('Media', {});
-class SplitHiddenDateTimeWidget(SplitDateTimeWidget):
-    """
-    A Widget that splits datetime input into two <input type="hidden"> inputs.
-    """
-    def __init__(self, attrs=None):
-        widgets = (HiddenInput(attrs=attrs), HiddenInput(attrs=attrs))
-        super(SplitDateTimeWidget, self).__init__(widgets, attrs)
+/*
+ * A Widget that splits datetime input into two <input type="hidden"> inputs.
+ 
+var SplitHiddenDateTimeWidget = type('SplitHiddenDateTimeWidget', SplitDateTimeWidget, {
+    '__init__': function __init__(attrs){
+        var widgets = [new HiddenInput({'attrs':attrs}), new HiddenInput({'attrs':attrs})];
+        super(SplitDateTimeWidget, this).__init__(widgets, attrs);
+    }
+});
+*/
+
+var Moc = type('Moc', [object], {});
+var Media = Moc;
+var MediaDefiningClass = Moc;
+var Widget = Moc;
+var TextInput = Moc;
+var PasswordInput = Moc;
+var HiddenInput = Moc;
+var MultipleHiddenInput = Moc;
+var FileInput = Moc;
+var DateTimeInput = Moc;
+var TimeInput = Moc;
+var Textarea = Moc;
+var CheckboxInput = Moc;
+var Select = Moc;
+var NullBooleanSelect = Moc;
+var SelectMultiple = Moc;
+var RadioSelect = Moc;
+var CheckboxSelectMultiple = Moc;
+var MultiWidget = Moc;
+var SplitDateTimeWidget = Moc;
+
+$P({    'Media': Media,
+        'MediaDefiningClass': MediaDefiningClass,
+        'Widget': Widget,
+        'TextInput': TextInput,
+        'PasswordInput': PasswordInput,
+        'HiddenInput': HiddenInput,
+        'MultipleHiddenInput': MultipleHiddenInput,
+        'FileInput': FileInput,
+        'DateTimeInput': DateTimeInput,
+        'TimeInput': TimeInput,
+        'Textarea': Textarea,
+        'CheckboxInput': CheckboxInput,
+        'Select': Select,
+        'NullBooleanSelect': NullBooleanSelect,
+        'SelectMultiple': SelectMultiple,
+        'RadioSelect': RadioSelect,
+        'CheckboxSelectMultiple': CheckboxSelectMultiple,
+        'MultiWidget': MultiWidget,
+        'SplitDateTimeWidget': SplitDateTimeWidget
+});

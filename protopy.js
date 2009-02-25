@@ -346,7 +346,7 @@
 	}
     }
 
-    //Arguments wraped and whit esteroids
+    //Arguments wraped, whit esteroids
     var Arguments = type('Arguments', [object], {
         '__init__': function __init__(args, def) {
             this.func = args.callee;
@@ -434,11 +434,18 @@
             }
             throw new TypeError("object of type '" + typeof(object) + "' has no bool()");
         },
-	'callable': function callable(object) {return object && type(object) == Function;},
+	'callable': function callable(object) {
+	    return object && type(object) == Function;
+	},
         'chr': function chr(number){ 
-            if (!isnumber(number)) throw new TypeError('An integer is required');
-            return String.fromCharCode(number); },
-        'bisect': function bisect(array, element) {
+            if (type(number) != Number) throw new TypeError('An integer is required');
+            return String.fromCharCode(number); 
+	},
+        'ord': function(ascii) { 
+	    if (type(number) != String) throw new TypeError('An string is required');
+	    return ascii.charCodeAt(0); 
+	},
+	'bisect': function bisect(array, element) {
             var i = 0;
             for (var length = array.length; i < length; i++)
                 if (array[i].__cmp__(element) > 0) return i;
@@ -483,9 +490,6 @@
                 throw new ValueError('Invalid literal');
             return number;
         },
-        'keys': function keys(object){ 
-            return [e for (e in object)];
-        },
         'len': function len(object) {
             switch (typeof(object)) {
                 case 'undefined': throw new TypeError("object of type 'undefined' has no len()");
@@ -506,15 +510,7 @@
         },
         'array': function array(iterable) {
             if (!iterable) return [];
-            if (iterable.to_array) return iterable.to_array();
             if (callable(iterable['__iterator__'])) return [e for each (e in iterable)];
-            if (callable(iterable['next'])) {
-                var ret = [];
-                try {
-                    while (true) ret.push(iterable.next());
-                } catch (stop) {}
-                return ret;
-            }
             var length = iterable.length || 0, results = new Array(length);
             while (length--) results[length] = iterable[length];
             return results;
@@ -525,9 +521,8 @@
                 result = result.concat(array);
             return result;
         },
-        'ord': function(Ascii){ return Ascii.charCodeAt(0); },
         'print': function print() {
-            if (window.console != undefined && window.console.log != undefined)
+            if (window.console && window.console.log)
                 console.log.apply(console, arguments);
         },
         'range': function xrange(start, stop, step){
@@ -540,10 +535,15 @@
             return ret;
         },
         'str': function str(object) {
-            if (object['__str__'] != undefined) return object.__str__();
+            if (callable(object['__str__'])) return object.__str__();
             return String(object)
         },
-        'values': function keys(obj){ return [e for each (e in obj)] },
+        'values': function values(obj){ 
+	    return [e for each (e in obj)] 
+	},
+	'keys': function keys(object){ 
+            return [e for (e in object)];
+        },
         'unique': function unique(sorted) {
             return sorted.reduce(function(array, value) {
                 if (!include(array, value))
