@@ -6,12 +6,12 @@ $L('doff.template.context', 'Context');
 var register = new Library();
 
 var AutoEscapeControlNode = type('AutoEscapeControlNode', Node,{
-    __init__: function(setting, nodelist) {
+    '__init__': function __init__(setting, nodelist) {
         this.setting = setting;
         this.nodelist = nodelist;
     },
     
-    render: function(context) {
+    'render': function render(context) {
         var old_setting = context.autoescape;
         context.autoescape = this.setting;
         var output = this.nodelist.render(context);
@@ -21,26 +21,26 @@ var AutoEscapeControlNode = type('AutoEscapeControlNode', Node,{
 });
 
 var CommentNode = type('CommentNode', Node,{
-    render: function(context) { return "";}
+    'render': function render(context) { return "";}
 });
 
 var ForNode = type('ForNode', Node,{
-    __init__: function(loopvars, sequence, is_reversed, nodelist_loop){
+    '__init__': function __init__(loopvars, sequence, is_reversed, nodelist_loop){
         this.loopvars = loopvars;
         this.sequence = sequence;
         this.is_reversed = is_reversed;
         this.nodelist_loop = nodelist_loop;
     },
 
-    get_nodes_by_type: function(nodetype) {
+    'get_nodes_by_type': function get_nodes_by_type(nodetype) {
         var nodes = [];
-        if (this instanceof nodetype)
+        if (isinstance(this, nodetype))
             nodes.push(this);
         nodes = nodes.concat(this.nodelist_loop.get_nodes_by_type(nodetype));
         return nodes;
     },
 
-        render: function(context) {
+        'render': function render(context) {
             var nodelist = new NodeList(),
                 parentloop = null,
                 values = null;
@@ -54,7 +54,7 @@ var ForNode = type('ForNode', Node,{
                 values = [];
             }
             if (!values) values = [];
-            if (!isarray(values))
+            if (type(values) != Array)
                 values = array(values);
             var len_values = values.length;
             var unpack = this.loopvars.length > 1;
@@ -89,7 +89,7 @@ var ForNode = type('ForNode', Node,{
     });
 
     var IfEqualNode = type('IfEqualNode', Node, {
-        __init__: function(var1, var2, nodelist_true, nodelist_false, negate){
+        '__init__': function __init__(var1, var2, nodelist_true, nodelist_false, negate){
             this.var1 = new Variable(var1);
             this.var2 = new Variable(var2);
             this.nodelist_true = nodelist_true;
@@ -97,7 +97,7 @@ var ForNode = type('ForNode', Node,{
             this.negate = negate;
         },
 
-        render: function(context){
+        'render': function render(context){
             var val1 = null,
                 val2 = null;
             try {
@@ -119,23 +119,23 @@ var ForNode = type('ForNode', Node,{
     });
 
     var IfNode = type('IfNode', Node, {
-        __init__: function(bool_exprs, nodelist_true, nodelist_false, link_type){
+        '__init__': function __init__(bool_exprs, nodelist_true, nodelist_false, link_type){
             this.bool_exprs = bool_exprs;
             this.nodelist_true = nodelist_true;
             this.nodelist_false = nodelist_false;
             this.link_type = link_type;
         },
 
-        get_nodes_by_type: function(nodetype){
+        'get_nodes_by_type': function get_nodes_by_type(nodetype){
             var nodes = [];
-            if (this instanceof nodetype)
+            if (isinstance(this, nodetype))
                 nodes.push(this);
             nodes = nodes.concat(this.nodelist_true.get_nodes_by_type(nodetype));
             nodes = nodes.concat(this.nodelist_false.get_nodes_by_type(nodetype));
             return nodes;
         },
 
-        render: function(context){
+        'render': function render(context){
             var value = null,
                 ifnot = null,
                 bool_expr = null;
@@ -228,7 +228,7 @@ register.tag("ifnotequal", ifnotequal);
 
         var link_type = null;
 
-        var bits = $w(token.contents);
+        var bits = token.contents.split(/\s+/);
         bits.shift();
         if (!bool(bits))
             throw new TemplateSyntaxError("'if' statement requires at least one argument")

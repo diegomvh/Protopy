@@ -19,7 +19,7 @@ var subclass_exception = function(name, parent, module) {
 }
     
 var Model = type('Model', {
-    __new__: function(name, base, attrs) {
+    '__new__': function __new__(name, base, attrs) {
         if (name == 'Model' && !base) {
             // estoy creando el modelo,
             this.add_methods(attrs);
@@ -68,7 +68,7 @@ var Model = type('Model', {
             this.add_to_class(obj_name, attrs[obj_name]);
 
         // Do the appropriate setup for any model parents.
-        var o2o_map = dict([[f.rel.to, f] for (f in this._meta.local_fields) if (f instanceof OneToOneField)]);
+        var o2o_map = new Dict([[f.rel.to, f] for (f in this._meta.local_fields) if (f instanceof OneToOneField)]);
         if (base && base['_meta']) {
 
             // All the fields of any type declared on this model
@@ -141,7 +141,7 @@ var Model = type('Model', {
         return get_model(this._meta.app_label, name, false);
     },
 
-    add_to_class: function(name, value) {
+    'add_to_class': function add_to_class(name, value) {
         if (value && value['contribute_to_class'])
             value.contribute_to_class(this, name);
         else
@@ -149,7 +149,7 @@ var Model = type('Model', {
     },
 
     /* Creates some methods once self._meta has been populated. */
-    _prepare: function() {
+    '_prepare': function _prepare() {
 
         var opts = this._meta;
         opts._prepare(this);
@@ -170,7 +170,7 @@ var Model = type('Model', {
     }
 
 },{
-    __init__: function() {
+    '__init__': function __init__() {
         var [args, kwargs] = this.__init__.extra_arguments(arguments);
         signals.pre_init.send({'sender':this.constructor, 'args':args, 'kwargs':kwargs});
         // There is a rather weird disparity here; if kwargs, it's set, then args
@@ -230,34 +230,39 @@ var Model = type('Model', {
             }
         }
         
-        this.__defineGetter__('pk', this._get_pk_val);
-        this.__defineSetter__('pk', this._set_pk_val);
-
         signals.post_init.send({'sender':this.constructor, 'instance':this});
     },
 
-    __str__: function() {
+    '__str__': function __str__() {
         return '%s object'.subs(this.constructor.__name__);
     },
 
-    __eq__: function(other) {
+    '__eq__': function __eq__(other) {
         return (other instanceof this.constructor) && this._get_pk_val() == other._get_pk_val()
     },
 
-    __ne__: function(other) {
+    '__ne__': function __ne__(other) {
         return !this.__eq__(other);
     },
 
-    _get_pk_val: function(meta) {
+    '_get_pk_val': function _get_pk_val(meta) {
         if (!meta)
             meta = this._meta;
         return this[meta.pk.attname] || null;
     },
 
-    _set_pk_val: function(value) {
+    get pk() {
+        return this._get_pk_val();
+    },
+
+    '_set_pk_val': function _set_pk_val(value) {
         return this[this._meta.pk.attname] = value;
     },
 
+    set pk(value) {
+        this._set_pk_val(value);
+    },
+    
     /*
         * Saves the current instance. Override this in a subclass if you want to
         control the saving process.
@@ -266,7 +271,7 @@ var Model = type('Model', {
         that the "save" must be an SQL insert or update (or equivalent for
         non-SQL backends), respectively. Normally, they should not be set.
         */
-    save: function(force_insert, force_update) {
+    'save': function save(force_insert, force_update) {
         var force_insert = force_insert || false;
         var force_update = force_update || false;
         if (force_insert && force_update)
@@ -280,7 +285,7 @@ var Model = type('Model', {
         need for overrides of save() to pass around internal-only parameters
         ('raw' and 'cls').
         */
-    save_base: function(raw, cls, force_insert, force_update) {
+    'save_base': function save_base(raw, cls, force_insert, force_update) {
         
         assert (!(force_insert && force_update));
         var cls = cls || null;
@@ -371,7 +376,7 @@ var Model = type('Model', {
             [(model_class, {pk_val: obj, pk_val: obj, ...}),
                 (model_class, {pk_val: obj, pk_val: obj, ...}), ...]
         */
-    _collect_sub_objects: function(seen_objs, parent, nullable) {
+    '_collect_sub_objects': function _collect_sub_objects(seen_objs, parent, nullable) {
         pk_val = this._get_pk_val();
         if (seen_objs.add(this.constructor, pk_val, this, parent || null, nullable || false))
             return;
@@ -406,7 +411,7 @@ var Model = type('Model', {
         }
     },
 
-    del: function() {
+    'del': function del() {
         assert (this._get_pk_val(), "%s object can't be deleted because its %s attribute is set to None.".subs(this._meta.object_name, this._meta.pk.attname));
 
         // Find all the objects than need to be deleted.
@@ -417,12 +422,12 @@ var Model = type('Model', {
         delete_objects(seen_objs);
     },
 
-    _get_FIELD_display: function(field) {
+    '_get_FIELD_display': function _get_FIELD_display(field) {
         value = this[field.attname];
-        return str(dict(field.flatchoices).get(value, value));
+        return str(new Dict(field.flatchoices).get(value, value));
     },
 
-    _get_next_or_previous_by_FIELD: function(field, is_next) {
+    '_get_next_or_previous_by_FIELD': function _get_next_or_previous_by_FIELD(field, is_next) {
         var [args, kwargs] = this._get_next_or_previous_by_FIELD.extra_arguments(arguments);
         op = is_next && 'gt' || 'lt';
         order = !is_next && '-' || '';
@@ -440,7 +445,7 @@ var Model = type('Model', {
         }
     },
 
-    _get_next_or_previous_in_order: function(is_next) {
+    '_get_next_or_previous_in_order': function _get_next_or_previous_in_order(is_next) {
         cachename = "__%s_order_cache".subs(is_next);
         if (!this[cachename]) {
             qn = connection.ops.quote_name;

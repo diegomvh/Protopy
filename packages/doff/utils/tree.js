@@ -3,16 +3,15 @@ $L('copy', 'deepcopy')
 
 var Node = type('Node', {
     default_connector: "DEFAULT",
-    __init__: function(children, connector, negated){
+    '__init__': function __init__(children, connector, negated){
         this.children = children || [];
         this.connector = connector || this.default_connector;
         this.subtree_parents = [];
         this.negated = negated || false;
-        this.__defineGetter__('length', function(){ return this.children.length; });
     },
 
     //Deep copy
-    __deepcopy__: function() {
+    '__deepcopy__': function __deepcopy__() {
         var obj = new Node(null, this.connector, this.negated);
         obj.__proto__ = this.constructor.prototype;
         obj.children = deepcopy(this.children);
@@ -20,7 +19,7 @@ var Node = type('Node', {
         return obj;
     },
 
-    __str__: function(){
+    '__str__': function __str__(){
         var results = [];
         for each (var child in this.children)
             results.push(new String(child));
@@ -30,12 +29,28 @@ var Node = type('Node', {
             return '(%s: %s)'.subs(this.connector, results.join(', '));
     },
 
+    '__len__': function __len__(){
+        return this.children.length;
+    },
+    
+    '__nonzero__': function __nonzero__(){
+        return this.children.length != 0;
+    },
+
+    '__contains__': function __contains__(other) {
+        return this.children.indexOf(other) > -1;
+    },
+
+    get length(){
+        return this.__len__();
+    },
+
     //Shallow copy
-    copy: function() {
+    'copy': function copy() {
         return this._new_instance(this.children, this.connector, this.negated);
     },
 
-    _new_instance: function(children, connector, negated) {
+    '_new_instance': function _new_instance(children, connector, negated) {
         var children = children || null;
         var connector = connector || null;
         var negated = negated || false;
@@ -44,21 +59,13 @@ var Node = type('Node', {
         return obj;
     },
 
-    __nonzero__: function(){
-        return this.children.length != 0;
-    },
-
-    __contains__: function(other) {
-        return this.children.indexOf(other) > -1;
-    },
-
-    add: function(node, conn_type){
+    'add': function add(node, conn_type){
       if (include(this, node) && conn_type == this.connector)
           return;
       if (this.children.length < 2)
           this.connector = conn_type;
       if (this.connector == conn_type) {
-          if (node instanceof Node && (node.connector == conn_type || node.length == 1))
+          if (isinstance(node, Node) && (node.connector == conn_type || node.length == 1))
             this.children = this.children.concat(node.children);
           else
             this.children.push(node);
@@ -69,12 +76,12 @@ var Node = type('Node', {
       }
     },
 
-    negate: function(){
+    'negate': function negate(){
         this.children = [this._new_instance(this.children, this.connector, !this.negated)];
         this.connector = this.default_connector;
     },
 
-    start_subtree: function(conn_type){
+    'start_subtree': function start_subtree(conn_type){
         if (this.children.length == 1)
             this.connector = conn_type;
         else if (this.connector != conn_type) {
@@ -89,7 +96,7 @@ var Node = type('Node', {
         this.children = [];
     },
 
-    end_subtree: function() {
+    'end_subtree': function end_subtree() {
         var obj = this.subtree_parents.pop();
         var node = this.constructor(this.children, this.connector);
         this.connector = obj.connector;

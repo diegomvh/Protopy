@@ -3,7 +3,7 @@ $L('doff.template', 'Origin', 'Template', 'Context', 'TemplateDoesNotExist', 'ad
 $L('doff.conf', 'settings');
         
 var LoaderOrigin = type('LoaderOrigin', Origin, {
-    __init__: function(display_name, loader, name, dirs) {
+    '__init__': function __init__(display_name, loader, name, dirs) {
         super(Origin, this).__init__(display_name);
         this.loader = loader;
         this.loadname = name;
@@ -11,7 +11,7 @@ var LoaderOrigin = type('LoaderOrigin', Origin, {
 
     },
     
-    reload: function() {
+    'reload': function reload() {
         return this.loader(this.loadname, this.dirs)[0]; }
 });
 

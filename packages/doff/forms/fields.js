@@ -43,7 +43,7 @@ var Field = type('Field', {
     default_error_messages: {   'required': 'This field is required.',
                                 'invalid': 'Enter a valid value.' },
 
-    __init__: function() {
+    '__init__': function __init__() {
 
         arguments = new Arguments(arguments, {'required':true, 'widget':null, 'label':null, 'initial':null, 'help_text':'', 'error_messages':null, 'show_hidden_initial':false});
         var kwargs = arguments.kwargs;
@@ -82,7 +82,7 @@ var Field = type('Field', {
      * Validates the given value && returns its "cleaned" value as an appropriate Python object.
      * Raises ValidationError for any errors.
      */
-    clean: function(value) {
+    'clean': function clean(value) {
         if (this.required && include(EMPTY_VALUES, value))
             throw new ValidationError(this.error_messages['required']);
         return value;
@@ -92,11 +92,11 @@ var Field = type('Field', {
      * Given a Widget instance (*not* a Widget class), returns a dictionary of
      * any HTML attributes that should be added to the Widget, based on this Field.
      */
-    widget_attrs: function(widget) {
+    'widget_attrs': function widget_attrs(widget) {
         return {};
     },
 
-    __deepcopy__: function() {
+    '__deepcopy__': function __deepcopy__() {
         var result = copy.copy(this);
         result.widget = copy.deepcopy(this.widget);
         return result;
@@ -107,7 +107,7 @@ var CharField = type('CharField', Field, {
     default_error_messages: {   'max_length': 'Ensure this value has at most %s characters (it has %s).',
                                 'min_length': 'Ensure this value has at least %s characters (it has %s).' },
 
-    __init__: function() {
+    '__init__': function __init__() {
         arguments = new Arguments(arguments, {'max_length':null, 'min_length':null});
         this.max_length = arguments.kwargs['max_length'];
         this.min_length = arguments.kwargs['min_length'];
@@ -117,7 +117,7 @@ var CharField = type('CharField', Field, {
     /*
      * Validates max_length && min_length. Returns a Unicode object.
      */
-    clean: function(value) {
+    'clean': function clean(value) {
         super(Field, this).clean(value);
         if (include(EMPTY_VALUES, value))
             return '';
@@ -129,7 +129,7 @@ var CharField = type('CharField', Field, {
         return value;
     },
 
-    widget_attrs: function(widget) {
+    'widget_attrs': function widget_attrs(widget) {
         if (this.max_length != null && isinstance(widget, [TextInput, PasswordInput]))
             // The HTML attribute is maxlength, not max_length.
             return {'maxlength': str(this.max_length)};
@@ -151,7 +151,7 @@ var IntegerField = type('IntegerField', Field, {
     /*
      * Validates that int() can be called on the input. Returns the result of int(). Returns None for empty values.
      */
-    clean: function(value) {
+    'clean': function clean(value) {
         super(Field, this).clean(value);
         if (include(EMPTY_VALUES, value))
             return null;
@@ -173,7 +173,7 @@ var FloatField = type('FloatField', Field, {
                                 'max_value': 'Ensure this value is less than || equal to %s.',
                                 'min_value': 'Ensure this value is greater than || equal to %s.' },
 
-    __init__: function () {
+    '__init__': function __init__() {
         arguments = new Arguments(arguments, {'max_value':null, 'min_value':null});
         this.max_value = arguments.kwargs['max_value'];
         this.min_value = arguments.kwargs['min_value'];
@@ -208,7 +208,7 @@ var DecimalField = type('DecimalField', Field, {
                                 'max_decimal_places': 'Ensure that there are no more than %s decimal places.',
                                 'max_whole_digits': 'Ensure that there are no more than %s digits before the decimal point.' },
 
-    __init__: function() {
+    '__init__': function __init__() {
         arguments = new Arguments(arguments, {'max_value':null, 'min_value':null, 'max_digits': null, 'decimal_places': null});
         this.max_value = arguments.kwargs['max_value'];
         this.min_value = arguments.kwargs['min_value'];
@@ -221,7 +221,7 @@ var DecimalField = type('DecimalField', Field, {
      * Validates that the input is a decimal number. Returns a Decimal instance. Returns None for empty values. Ensures that there are no more
      * than max_digits in the number, && no more than decimal_places digits after the decimal point.
      */
-    clean: function(value) {
+    'clean': function clean(value) {
         super(Field, this).clean(value);
         if (!this.required && include(EMPTY_VALUES, value))
             return null;
@@ -267,7 +267,7 @@ var DEFAULT_DATE_INPUT_FORMATS = [  '%Y-%m-%d', '%m/%d/%Y', '%m/%d/%y', // '2006
 var DateField = type('DateField', Field, {
     default_error_messages: {   'invalid': 'Enter a valid date.' },
 
-    __init__: function() {
+    '__init__': function __init__() {
         arguments = new Arguments(arguments, {'input_formats':null});
         super(Field, this).__init__(arguments);
         this.input_formats = arguments.kwargs['input_formats'] || DEFAULT_DATE_INPUT_FORMATS;
@@ -300,7 +300,7 @@ var TimeField = type('TimeField', Field, {
     widget: TimeInput,
     default_error_messages: {   'invalid': 'Enter a valid time.' },
 
-    __init__: function() {
+    '__init__': function __init__() {
         arguments = new Arguments(arguments, {'input_formats':null});
         super(Field, this).__init__(arguments);
         this.input_formats = arguments.kwargs['input_formats'] || DEFAULT_TIME_INPUT_FORMATS;
@@ -309,7 +309,7 @@ var TimeField = type('TimeField', Field, {
     /*
      * Validates that the input can be converted to a time. Returns a Javascript datetime.time object.
      */
-    clean: function(value) {
+    'clean': function clean(value) {
         super(Field, this).clean(value);
         if (include(EMPTY_VALUES, value))
             return null;
@@ -338,7 +338,7 @@ var DateTimeField = type('DateTimeField', Field, {
     widget: DateTimeInput,
     default_error_messages: {   'invalid': 'Enter a valid date/time.' },
 
-    __init__: function() {
+    '__init__': function __init__() {
         arguments = new Arguments(arguments, {'input_formats':null});
         super(Field, this).__init__(arguments);
         this.input_formats = arguments.kwargs['input_formats'] || DEFAULT_TIME_INPUT_FORMATS;
@@ -347,7 +347,7 @@ var DateTimeField = type('DateTimeField', Field, {
     /*
      * Validates that the input can be converted to a datetime. Returns a Javascript datetime.datetime object.
      */
-    clean: function(value) {
+    'clean': function clean(value) {
         super(Field, this).clean(value);
         if (include(EMPTY_VALUES, value))
             return null;
@@ -372,7 +372,7 @@ var DateTimeField = type('DateTimeField', Field, {
 });
 
 var RegexField = type('RegexField', CharField, {
-    __init__: function(regex) {
+    '__init__': function __init__(regex) {
         // error_message is just kept for backwards compatibility:
         arguments = new Arguments(arguments, {'max_length':null, 'min_length':null, 'error_message':null});
         if (arguments.kwargs['error_message']) {
@@ -389,7 +389,7 @@ var RegexField = type('RegexField', CharField, {
     /*
      * Validates that the input matches the regular expression. Returns a Unicode object.
      */
-    clean: function(value) {
+    'clean': function clean(value) {
         value = super(CharField, this).clean(value);
         if (value == '')
             return value;
@@ -404,7 +404,7 @@ var email_re = new RegExp("(^[-!//$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!//$%&'*+/=?^_`{}
 var EmailField = type('EmailField', RegexField, {
     default_error_messages: {   'invalid': 'Enter a valid e-mail address.' },
 
-    __init__: function() {
+    '__init__': function __init__() {
         argument = new Arguments(arguments, {'max_length':null, 'min_length': null});
         super(RegexField, this).__init__(emali_re, arguments);
     }
@@ -538,7 +538,7 @@ var URLField = type('URLField', RegexField, {
 var BooleanField = type('BooleanField', Field, {
     widget: CheckboxInput,
 
-    clean: function(value) {
+    'clean': function clean(value) {
         if (value == 'false')
             value = false;
         else
@@ -553,7 +553,7 @@ var BooleanField = type('BooleanField', Field, {
 var NullBooleanField = type('NullBooleanField', BooleanField, {
     widget: NullBooleanSelect,
 
-    clean: function(value) {
+    'clean': function clean(value) {
         if (value == true || value == 'true')
             return true;
         else if (value == false || value == 'false') 
@@ -842,7 +842,7 @@ var ipv4_re = /(25[0-5]|2[0-4]\d|[0-1]?\d?\d)(\.(25[0-5]|2[0-4]\d|[0-1]?\d?\d)){
 var IPAddressField = type('IPAddressField', RegexField, {
     default_error_messages: {   'invalid': 'Enter a valid IPv4 address.' },
 
-    __init__: function() {
+    '__init__': function __init__() {
         arguments = new Arguments(arguments, {'max_length':null, 'min_length': null});
         super(RegexField, this).__init__(ipv4_re, arguments);
     }
@@ -854,7 +854,7 @@ var slug_re = /^[-\w]+$/;
 var SlugField = type('SlugField', RegexField, {
     default_error_messages: { 'invalid': 'Enter a valid slug consisting of letters, numbers, underscores || hyphens.' },
 
-    __init__: function() {
+    '__init__': function __init__() {
         arguments = new Arguments(arguments, {'max_length':null, 'min_length': null});
         super(RegexField, this).__init__(slug_re, arguments);
     }

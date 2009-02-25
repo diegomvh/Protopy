@@ -1,12 +1,12 @@
 $D("doff.utils.datastructures");
 
 var SortedDict = type('SortedDict', Dict, {
-    __init__: function(object){
+    '__init__': function __init__(object){
         super(Dict, this).__init__(object);
         this.keyOrder = values(this._key);
     },
     
-    __iter__: function() {
+    '__iter__': function __iter__() {
         for each (var key in this.keyOrder) {
             var value = this.get(key);
             var pair = [key, value];
@@ -16,12 +16,12 @@ var SortedDict = type('SortedDict', Dict, {
         }
     },
 
-    set: function(key, value) {
+    'set': function set(key, value) {
         this.keyOrder.push(key);
         return super(Dict, this).set(key, value);
     },
 
-    unset: function(key) {
+    'unset': function unset(key) {
         this.keyOrder.without(key);
         return super(Dict, this).unset(key);
     },
@@ -29,7 +29,7 @@ var SortedDict = type('SortedDict', Dict, {
     /* 
         * Returns the value of the item at the given zero-based index.
         */
-    value_for_index: function(index) {
+    'value_for_index': function value_for_index(index) {
         return this.get(this.keyOrder[index]);
     }
 });

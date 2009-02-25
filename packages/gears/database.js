@@ -16,15 +16,15 @@ function connect(options) {
 }
 
 var Connection = type('Connection', {
-    __init__: function(options) {
+    '__init__': function __init__(options) {
         this.database = options['database'];
         this.detect_types = options['detect_types'];
         this.factory = options['factory'] || Cursor;
     },
 
-    create_function: function() {},
+    'create_function': function create_function() {},
     
-    cursor: function() {
+    'cursor': function cursor() {
         try {
             var connection = google.gears.factory.create('beta.database');
             connection.open(this.database);
@@ -37,14 +37,20 @@ var Connection = type('Connection', {
 });
 
 var Cursor = type('Cursor', {
-    __init__: function(connection){
+    '__init__': function __init__(connection){
             this.connection = connection;
-            this.__defineGetter__('lastrowid', function(){ return this.connection.lastInsertRowId; });
-            this.__defineGetter__('rowsAffected', function(){ return this.connection.rowsAffected; });
             this.lastResulSet = null;
     },
 
-    close: function(){
+    get lastrowid(){
+        return this.connection.lastInsertRowId;
+    },
+
+    get rowsAffected(){
+        return this.connection.rowsAffected;
+    },
+
+    'close': function close(){
         try {
             this.connection.close();
         }
@@ -53,7 +59,7 @@ var Cursor = type('Cursor', {
         }
     },
 
-    remove: function(){
+    'remove': function remove(){
         try {
             this.connection.remove();
         }
@@ -62,7 +68,7 @@ var Cursor = type('Cursor', {
         }
     },
     
-    execute: function(query, params){
+    'execute': function execute(query, params){
         params = params || [];
         try {
             this.lastResulSet = this.connection.execute(query, params);
@@ -72,7 +78,7 @@ var Cursor = type('Cursor', {
         }
     },
 
-    executemany: function(query, param_list) {
+    'executemany': function executemany(query, param_list) {
         try {
             for each (var params in param_list)
                 this.connection.execute(query, params);
@@ -80,7 +86,7 @@ var Cursor = type('Cursor', {
         return null;
     },
 
-    fetchone: function(){
+    'fetchone': function fetchone(){
         try {
             return this.next();
         } catch (stop) { 
@@ -88,7 +94,7 @@ var Cursor = type('Cursor', {
         };
     },
 
-    fetchmany: function(chunk_size) {
+    'fetchmany': function fetchmany(chunk_size) {
         if (!chunk_size) return this.fetchone();
         if (!this.lastResulSet.isValidRow() || this.lastResulSet.fieldCount() == 0) return [];
         var result = [];
@@ -101,12 +107,12 @@ var Cursor = type('Cursor', {
         };
     },
 
-    fetchall: function(){
+    'fetchall': function fetchall(){
         if (!this.lastResulSet.isValidRow() || this.lastResulSet.fieldCount() == 0) return [];
         return array(this);
     },
 
-    next: function() {
+    'next': function next() {
         //FIXME: or not :) can return objects multi asoc
         if (this.lastResulSet == null)
             throw StopIteration;

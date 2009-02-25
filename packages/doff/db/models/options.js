@@ -7,7 +7,6 @@ $L('doff.db.models.fields', 'AutoField', 'FieldDoesNotExist');
 $L('doff.db.models.fields.proxy', 'OrderWrt');
 $L('doff.db.models.loading', 'get_models', 'app_cache_ready');
 
-$L('sets', 'Set');
 $L('doff.utils.datastructures', 'SortedDict');
 
 // Calculate the verbose_name by converting from InitialCaps to "lowercase with spaces".
@@ -20,7 +19,7 @@ var DEFAULT_NAMES = ['verbose_name', 'db_table', 'ordering', 'unique_together', 
                     'abstracto'];
 
 var Options = type({
-    __init__: function(meta, app_label) {
+    '__init__': function __init__(meta, app_label) {
         this.local_fields = [];
         this.local_many_to_many = [];
         this.virtual_fields = [];
@@ -45,12 +44,13 @@ var Options = type({
         // Managers that have been inherited from abstract base classes. These are passed onto any children.
         this.abstract_managers = [];
 
-        this.__defineGetter__('fields', this._fields);
-        this.__defineGetter__('verbose_name_raw', this._verbose_name_raw);
-        this.__defineGetter__('many_to_many', this._many_to_many);
+    },
+
+    '__str__': function __str__() {
+        return "%s.%s".subs(this.app_label, this.module_name);
     },
     
-    contribute_to_class: function(cls, name) {
+    'contribute_to_class': function contribute_to_class(cls, name) {
         var connection = $L('doff.db', ['connection']);
         var truncate_name = $L('doff.db.backends.util', ['truncate_name']);
         
@@ -82,7 +82,7 @@ var Options = type({
             // tuple of two strings. Normalize it to a tuple of tuples, so that
             // calling code can uniformly expect that.
             var ut = meta_attrs['unique_together'] || this['unique_together'];
-            if (ut && isarray(ut[0]))
+            if (ut && type(ut[0]) == Array)
                 ut = [ut];
             this['unique_together'] = ut;
 
@@ -103,7 +103,7 @@ var Options = type({
         cls.prototype._meta = this;
     },
 
-    _prepare: function(model) {
+    '_prepare': function _prepare(model) {
         if (this.order_with_respect_to) {
             this.order_with_respect_to = this.get_field(this.order_with_respect_to);
             this.ordering = ['_order'];
@@ -144,7 +144,7 @@ var Options = type({
         }
     },
 
-    add_field: function(field) {
+    'add_field': function add_field(field) {
         // Insert the given field in the order in which it was created, using
         // the "creation_counter" attribute of the field.
         // Move many-to-many related fields from self.fields into
@@ -167,26 +167,22 @@ var Options = type({
             delete self._name_map;
     },
 
-    add_virtual_field: function(field) {
+    'add_virtual_field': function add_virtual_field(field) {
         this.virtual_fields.push(field);
     },
 
-    setup_pk: function(field) {
+    'setup_pk': function setup_pk(field) {
         if (!this.pk && field.primary_key) {
             this.pk = field;
             field.serialize = false;
         }
     },
 
-    toString: function() {
-        return "%s.%s".subs(this.app_label, this.module_name);
-    },
-
     /*
         * There are a few places where the untranslated verbose name is needed
         * (so that we get the same value regardless of currently active locale).
         */
-    _verbose_name_raw: function() {
+    get verbose_name_raw() {
         return this.verbose_name;
     },
 
@@ -196,7 +192,7 @@ var Options = type({
         * Callers are not permitted to modify this list, since it's a reference
         * this instance (not a copy).
         */
-    _fields: function() {
+    get fields() {
         if (!this._field_name_cache)
             this._fill_fields_cache();
         return this._field_name_cache;
@@ -207,13 +203,13 @@ var Options = type({
         * element is None for fields on the current model. Mostly of use when
         * constructing queries so that we know which model a field belongs to.
         */
-    get_fields_with_model: function() {
+    'get_fields_with_model': function get_fields_with_model() {
         if (!this._field_cache)
             this._fill_fields_cache();
         return this._field_cache;
     },
 
-    _fill_fields_cache: function() {
+    '_fill_fields_cache': function _fill_fields_cache() {
         var cache = [];
         for each (parent in this.parents.keys()) {
             for each (var [field, model] in parent._meta.get_fields_with_model()) {
@@ -229,7 +225,7 @@ var Options = type({
         this._field_name_cache = [x for each ([x, y] in cache)];
     },
 
-    _many_to_many: function() {
+    get many_to_many() {
         if (!this._m2m_cache)
             this._fill_m2m_cache();
         return this._m2m_cache.keys();
@@ -238,13 +234,13 @@ var Options = type({
     /*
         * The many-to-many version of get_fields_with_model().
         */
-    get_m2m_with_model: function() {
+    'get_m2m_with_model': function get_m2m_with_model() {
         if (!this._m2m_cache)
             this._fill_m2m_cache();
         return this._m2m_cache.items();
     },
 
-    _fill_m2m_cache: function() {
+    '_fill_m2m_cache': function _fill_m2m_cache() {
         var cache = new SortedDict();
         for each (parent in this.parents.keys()) {
             for each (var [field, model] in parent._meta.get_m2m_with_model()) {
@@ -262,7 +258,7 @@ var Options = type({
     /*
         * Returns the requested field by name. Raises FieldDoesNotExist on error.
         */
-    get_field: function(name, many_to_many) {
+    'get_field': function get_field(name, many_to_many) {
         var many_to_many = many_to_many || true;
         var to_search = many_to_many && (this.fields.concat(this.many_to_many)) || this.fields;
         for each (f in to_search)
@@ -282,7 +278,7 @@ var Options = type({
 
         Uses a cache internally, so after the first access, this is very fast.
         */
-    get_field_by_name: function(name) {
+    'get_field_by_name': function get_field_by_name(name) {
         var field = null;
         if (!this._name_map) {
             var cache = this.init_name_map();
@@ -301,7 +297,7 @@ var Options = type({
         debugging output (a list of choices), so any internal-only field names
         are not included.
         */
-    get_all_field_names: function() {
+    'get_all_field_names': function get_all_field_names() {
         var cache = this._name_map;
         if (!cache)
             cache = this.init_name_map();
@@ -314,7 +310,7 @@ var Options = type({
     /*
         * Initialises the field name -> field object mapping.
         */
-    init_name_map: function() {
+    'init_name_map': function init_name_map() {
         var cache = {};
         // We intentionally handle related m2m objects first so that symmetrical
         // m2m accessor names can be overridden, if necessary.
@@ -333,7 +329,7 @@ var Options = type({
         return cache;
     },
 
-    get_all_related_objects: function(local_only) {
+    'get_all_related_objects': function get_all_related_objects(local_only) {
         if (!this._related_objects_cache)
             this._fill_related_objects_cache();
         if (local_only)
@@ -344,13 +340,13 @@ var Options = type({
     /*
         * Returns a list of (related-object, model) pairs. Similar to get_fields_with_model().
         */
-    get_all_related_objects_with_model: function() {
+    'get_all_related_objects_with_model': function get_all_related_objects_with_model() {
         if (!this._related_objects_cache)
             this._fill_related_objects_cache();
         return this._related_objects_cache.items();
     },
 
-    _fill_related_objects_cache: function() {
+    '_fill_related_objects_cache': function _fill_related_objects_cache() {
         var cache = new SortedDict();
         var parent_list = this.get_parent_list();
         for each (parent in this.parents)
@@ -369,7 +365,7 @@ var Options = type({
         this._related_objects_cache = cache;
     },
 
-    get_all_related_many_to_many_objects: function(local_only) {
+    'get_all_related_many_to_many_objects': function get_all_related_many_to_many_objects(local_only) {
         var cache = this._related_many_to_many_cache;
         if (!cache)
             cache = this._fill_related_many_to_many_cache();
@@ -381,14 +377,14 @@ var Options = type({
     /*
         * Returns a list of (related-m2m-object, model) pairs. Similar to get_fields_with_model().
         */
-    get_all_related_m2m_objects_with_model: function() {
+    'get_all_related_m2m_objects_with_model': function get_all_related_m2m_objects_with_model() {
         var cache = this._related_many_to_many_cache;
         if (!cache)
             cache = this._fill_related_many_to_many_cache();
         return cache.items();
     },
 
-    _fill_related_many_to_many_cache: function() {
+    '_fill_related_many_to_many_cache': function _fill_related_many_to_many_cache() {
         var cache = new SortedDict();
         var parent_list = this.get_parent_list();
         for each (parent in this.parents) {
@@ -415,7 +411,7 @@ var Options = type({
         to most distant ancestor). This has to handle the case were 'model' is
         a granparent or even more distant relation.
         */
-    get_base_chain: function(model) {
+    'get_base_chain': function get_base_chain(model) {
         if (bool(this.parents))
             return;
         if (include(this.parents, model))
@@ -432,7 +428,7 @@ var Options = type({
         * Returns a list of all the ancestor of this model as a list. Useful for
         * determining if something is an ancestor, regardless of lineage.
         */
-    get_parent_list: function() {
+    'get_parent_list': function get_parent_list() {
         var result = new Set();
         for each (parent in this.parents) {
             result.add(parent);
@@ -444,7 +440,7 @@ var Options = type({
     /*
         * Returns a list of Options objects that are ordered with respect to this object.
         */
-    get_ordered_objects: function() {
+    'get_ordered_objects': function get_ordered_objects() {
         
         if (!this['_ordered_objects']) {
             var objects = [];

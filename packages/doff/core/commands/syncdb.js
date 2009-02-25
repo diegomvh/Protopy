@@ -1,5 +1,4 @@
 $D("doff.core.management.commands.syncdb");
-$L('sets', 'Set');
 
 function execute() {
     $L('doff.db', 'connection');
@@ -17,7 +16,7 @@ function execute() {
     var tables = connection.introspection.table_names();
     var seen_models = connection.introspection.installed_models(tables);
     var created_models = new Set();
-    var pending_references = dict();
+    var pending_references = new Dict();
 
     // Create the tables for each model
     for each (var app in models.get_apps()) {

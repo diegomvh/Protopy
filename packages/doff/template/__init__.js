@@ -37,30 +37,30 @@ var VariableDoesNotExist = type('VariableDoesNotExist', Exception);
 var InvalidTemplateLibrary = type('InvalidTemplateLibrary', Exception);
 
 var Origin = type('Origin', {
-    __init__: function(name) { this.name = name; },
-    __str__: function() { return this.name; },
-    reload: function() { throw new NotImplementedError(); }
+    '__init__': function __init__(name) { this.name = name; },
+    '__str__': function __str__() { return this.name; },
+    'reload': function reload() { throw new NotImplementedError(); }
 });
 
 var StringOrigin = type('StringOrigin', Origin, {
-    __init__: function(source) { 
+    '__init__': function __init__(source) {
         super(Origin, this).__init__(UNKNOWN_SOURCE);
         this.source = source;
     },
-    __str__: function() { return this.name},
-    reload: function() { return this.source }
+    '__str__': function __str__() { return this.name},
+    'reload': function reload() { return this.source }
 });
 
 /* ------------------ Nodos ----------------- */
 var Node = type('Node', {
     must_be_first: false,
-    render: function(context) {},
+    'render': function render(context) {},
 
-    __iter__: function() { yield this; },
+    '__iter__': function __iter__() { yield this; },
 
-    get_nodes_by_type: function(nodetype){
+    'get_nodes_by_type': function get_nodes_by_type(nodetype){
         var nodes = [];
-        if (this instanceof nodetype)
+        if (isinstance(this, nodetype))
             nodes.push(this);
         if (this['nodelist'])
             nodes = nodes.concat(this.nodelist.get_nodes_by_type(nodetype));
@@ -71,27 +71,27 @@ var Node = type('Node', {
 var NodeList = type('NodeList', {
     contains_nontext: false,
 
-    __init__: function() {
+    '__init__': function __init__() {
         this.nodes = [];
     },
 
-    __iter__: function() {
+    '__iter__': function __iter__() {
         for each (var node in this.nodes)
             yield node;
     },
     
-    push: function(node){
+    'push': function push(node){
         this.nodes.push(node);
     },
 
-    pop: function(){
+    'pop': function pop(){
         return this.nodes.pop();
     },
 
-    render: function(context){
+    'render': function render(context){
       var bits = [];
       for each (var node in this.nodes) {
-          if (node instanceof Node)
+          if (isinstance(node, Node))
               bits.push(this.render_node(node, context))
           else
               bits.push(node);
@@ -99,11 +99,11 @@ var NodeList = type('NodeList', {
       return bits.join('');
   },
 
-  render_node: function(node, context){
+  'render_node': function render_node(node, context){
       return node.render(context);
   },
 
-  get_nodes_by_type: function(nodetype){
+  'get_nodes_by_type': function get_nodes_by_type(nodetype){
       var nodes = [];
       for each (var node in this.nodes) {
           nodes = nodes.concat(node.get_nodes_by_type(nodetype));
@@ -113,19 +113,19 @@ var NodeList = type('NodeList', {
 });
 
 var TextNode = type('TextNode', Node, {
-    __init__: function(s) {
+    '__init__': function __init__(s) {
         this.s = s;
     },
 
-    render: function(context) { return this.s;}
+    'render': function render(context) { return this.s;}
 });
 
 var VariableNode = type('VariableNode', Node, {
-    __init__: function(filter_expression) {
+    '__init__': function __init__(filter_expression) {
         this.filter_expression = filter_expression;
     },
 
-    render: function(context) {
+    'render': function render(context) {
         return this.filter_expression.resolve(context);
     }
 });
@@ -138,43 +138,43 @@ function compile_string(template_string){
 };
 
 var Template = type('Template', {
-    __init__: function(template) {
+    '__init__': function __init__(template) {
         this.nodelist = compile_string(template);
     },
 
-    __iter__: function() {
+    '__iter__': function __iter__() {
         for each (var node in this.nodelist)
             for each (var subnode in node)
                 yield subnode;
     },
 
-    render: function(context) {
+    'render': function render(context) {
         return this.nodelist.render(context);
     }
 });
 
 var Token = type('Token', {
-    __init__: function(token_type, contents) {
+    '__init__': function __init__(token_type, contents) {
         this.token_type = token_type;
         this.contents = contents;
     },
 
-    __str__: function() {
+    '__str__': function __str__() {
         return '<%s token: "%s...">'.subs({TOKEN_TEXT: 'Text', TOKEN_VAR: 'Var', TOKEN_BLOCK: 'Block', TOKEN_COMMENT: 'Comment'}[this.token_type], this.contents.substr(0, 20).replace('\n', ''));
     },
 
-    split_contents: function(){
-        var bits = $w(this.contents);
+    'split_contents': function split_contents(){
+        var bits = this.contents.split(/\s+/);
         return bits;
     }
 });
 
 var Lexer = type('Lexer', {
-    __init__: function(template_string) {
+    '__init__': function __init__(template_string) {
         this.template_string = template_string;
     },
 
-    tokenize: function() {
+    'tokenize': function tokenize() {
         var in_tag = false;
         var result = [];
         for each (var bit in this.template_string.split(tag_re)) {
@@ -185,7 +185,7 @@ var Lexer = type('Lexer', {
         return result;
     },
 
-    create_token: function(token_string, in_tag){
+    'create_token': function create_token(token_string, in_tag){
         if (in_tag){
             if (token_string.starts_with(VARIABLE_TAG_START))
                 token = new Token(TOKEN_VAR, token_string.substring(VARIABLE_TAG_START.length, token_string.length - VARIABLE_TAG_END.length).strip());
@@ -200,7 +200,7 @@ var Lexer = type('Lexer', {
 });
 
 var Parser = type('Parser', {
-    __init__: function(tokens) {
+    '__init__': function __init__(tokens) {
         this.tokens = tokens;
         this.tags = {};
         this.filters = {};
@@ -208,7 +208,7 @@ var Parser = type('Parser', {
             this.add_library(lib);
     },
 
-    parse: function(parse_until){
+    'parse': function parse(parse_until){
         parse_until = parse_until || [];
         var nodelist = this.create_nodelist();
         while (bool(this.tokens)){
@@ -230,7 +230,7 @@ var Parser = type('Parser', {
                     compiled_func = null,
                     compiled_result = null;
                 try{
-                    command = $w(token.contents)[0];
+                    command = token.contents.split(/\s+/)[0];
                 } catch(e){
                     this.empty_block_tag(token);
                 }
@@ -254,82 +254,82 @@ var Parser = type('Parser', {
         return nodelist;
     },
 
-    next_token: function(){
+    'next_token': function next_token(){
         return this.tokens.shift();
     },
 
-    extend_nodelist: function(nodelist, node, token){
+    'extend_nodelist': function extend_nodelist(nodelist, node, token){
         if (node.must_be_first && nodelist)
             if (nodelist.contains_nontext)
                 throw new AttributeError();
-        if ((nodelist instanceof NodeList) && !(node instanceof TextNode))
+        if ((isinstance(nodelist, NodeList)) && !(isinstance(node, TextNode)))
             nodelist.contains_nontext = true;
         nodelist.push(node);
     },
 
-    create_variable_node: function(filter_expression){
+    'create_variable_node': function create_variable_node(filter_expression){
         return new VariableNode(filter_expression);
     },
 
-    create_nodelist: function(){
+    'create_nodelist': function create_nodelist(){
         return new NodeList();
     },
 
-    enter_command: function(command, token){},
+    'enter_command': function enter_command(command, token){},
 
-    exit_command: function(){},
+    'exit_command': function exit_command(){},
 
-    delete_first_token: function(){
+    'delete_first_token': function delete_first_token(){
         this.tokens.shift();
     },
 
-    add_library: function(lib){
+    'add_library': function add_library(lib){
         extend(this.tags, lib.tags);
         extend(this.filters, lib.filters);
     },
 
-    error: function(token, msg) {
+    'error': function error(token, msg) {
         return new TemplateSyntaxError(msg);
     },
 
-    invalid_block_tag: function(token, command){
+    'invalid_block_tag': function invalid_block_tag(token, command){
         throw this.error(token, "Invalid block tag: '%s'".subs(command));
     },
 
-    prepend_token: function(token){
+    'prepend_token': function prepend_token(token){
         this.tokens = [token].concat(this.tokens);
     },
 
-    compile_function_error: function(token, e){},
+    'compile_function_error': function compile_function_error(token, e){},
 
-    compile_filter: function(token){
+    'compile_filter': function compile_filter(token){
         return new FilterExpression(token, this);
     },
 
-    find_filter: function(filter_name) {
+    'find_filter': function find_filter(filter_name) {
         if (this.filters[filter_name])
             return this.filters[filter_name];
         else
             throw new TemplateSyntaxError("Invalid filter: '%s'".subs(filter_name));
     },
 
-    empty_variable: function(token) {
+    'empty_variable': function empty_variable(token) {
         throw this.error(token, "Empty variable tag");
     },
 
-    empty_block_tag: function(token) {
+    'empty_block_tag': function empty_block_tag(token) {
         throw this.error(token, "Empty block tag");
     },
 
-    invalid_block_tag: function(token, command) {
+    'invalid_block_tag': function invalid_block_tag(token, command) {
         throw this.error(token, "Invalid block tag: '%s'".subs(command));
     },
 
-    unclosed_block_tag: function(parse_until) {
+    'unclosed_block_tag': function unclosed_block_tag(parse_until) {
         throw this.error(null, "Unclosed tags: %s ".subs(parse_until.join(', ')));
     },
 
-    skip_past: function(endtag) {
+    'skip_past': function skip_past(endtag) {
         while (bool(this.tokens)) {
             var token = this.next_token();
             if (token.token_type == TOKEN_BLOCK && token.contents == endtag)
@@ -341,7 +341,7 @@ var Parser = type('Parser', {
 
 var filter_re = /("(?:[^"\\]*(?:\\.[^"\\]*)*)"|'(?:[^'\\]*(?:\\.[^'\\]*)*)'|[^\s]+)/g;
 var FilterExpression = type('FilterExpression', {
-    __init__: function(token, parser) {
+    '__init__': function __init__(token, parser) {
         /* if (!filter_re.test(token))
             throw new TemplateSyntaxError("Could not parse the remainder: '%s'".subs(token)) */
         this.token = token;
@@ -366,11 +366,11 @@ var FilterExpression = type('FilterExpression', {
         this.value = new Variable(value);
     },
     
-    __str__: function() {
+    '__str__': function __str__() {
         return this.token;
     },
 
-    resolve: function(context, ignore_failures){
+    'resolve': function resolve(context, ignore_failures){
         var ignore_failures = ignore_failures || false;
         var obj = null;
         try {
@@ -390,14 +390,14 @@ var FilterExpression = type('FilterExpression', {
         return obj;
     },
 
-    args_check: function(name, func, provided) {
+    'args_check': function args_check(name, func, provided) {
         return true;
     }
 });
 
 
 var Variable = type('Variable', {
-    __init__: function(value) {
+    '__init__': function __init__(value) {
         this.value = value;
         this.literal = null;
         this.lookups = null;
@@ -413,14 +413,14 @@ var Variable = type('Variable', {
         }
     },
 
-    resolve: function(context){
+    'resolve': function resolve(context){
         if (this.lookups)
             return this._resolve_lookup(context);
         else
             return this.literal;
     },
 
-    _resolve_lookup: function(context) {
+    '_resolve_lookup': function _resolve_lookup(context) {
         var current = context;
         var geted = null;
         for each (var bit in this.lookups) {
@@ -444,12 +444,12 @@ var Variable = type('Variable', {
 });
 
 var Library = type('Library', {
-    __init__: function() {
+    '__init__': function __init__() {
         this.filters = {};
         this.tags = {};
     },
 
-    tag: function(name, compile_function){
+    'tag': function tag(name, compile_function){
         if (callable(name)){
             this.tags[name.name] = name;
             return name;
@@ -460,7 +460,7 @@ var Library = type('Library', {
             throw new InvalidTemplateLibrary("Unsupported arguments to Library.tag: (%s, %s)".subs(name, compile_function));
     },
 
-    filter: function(name, filter_func) {
+    'filter': function filter(name, filter_func) {
         if (callable(name)){
             this.filters[name.name] = name;
             return name;

@@ -24,11 +24,11 @@ var DatabaseCreation = type('DatabaseCreation', BaseDatabaseCreation, {
         'TimeField':                    'time'
     },
 
-    sql_for_pending_references: function(model, pending_references){
+    'sql_for_pending_references': function sql_for_pending_references(model, pending_references){
         return [];
     },
 
-    sql_remove_table_constraints: function(model, references_to_delete){
+    'sql_remove_table_constraints': function sql_remove_table_constraints(model, references_to_delete){
         return [];
     }
 });

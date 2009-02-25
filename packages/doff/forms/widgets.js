@@ -146,7 +146,7 @@ var Widget = type('Widget', {
 
     def build_attrs(self, extra_attrs=None, **kwargs):
         "Helper function for building an attribute dictionary."
-        attrs = dict(self.attrs, **kwargs)
+        attrs = new Dict(self.attrs, **kwargs)
         if extra_attrs:
             attrs.update(extra_attrs)
         return attrs
@@ -243,7 +243,7 @@ class MultipleHiddenInput(HiddenInput):
         if value is None: value = []
         final_attrs = self.build_attrs(attrs, type=self.input_type, name=name)
         return mark_safe(u'\n'.join([(u'<input%s />' %
-            flatatt(dict(value=force_unicode(v), **final_attrs)))
+            flatatt(new Dict(value=force_unicode(v), **final_attrs)))
             for v in value]))
 
     def value_from_datadict(self, data, files, name):
@@ -466,7 +466,7 @@ class RadioInput(StrAndUnicode):
     def tag(self):
         if 'id' in self.attrs:
             self.attrs['id'] = '%s_%s' % (self.attrs['id'], self.index)
-        final_attrs = dict(self.attrs, type='radio', name=self.name, value=self.choice_value)
+        final_attrs = new Dict(self.attrs, type='radio', name=self.name, value=self.choice_value)
         if self.is_checked():
             final_attrs['checked'] = 'checked'
         return mark_safe(u'<input%s />' % flatatt(final_attrs))
@@ -542,7 +542,7 @@ class CheckboxSelectMultiple(SelectMultiple):
             # If an ID attribute was given, add a numeric index as a suffix,
             # so that the checkboxes don't all have the same ID attribute.
             if has_id:
-                final_attrs = dict(final_attrs, id='%s_%s' % (attrs['id'], i))
+                final_attrs = new Dict(final_attrs, id='%s_%s' % (attrs['id'], i))
                 label_for = u' for="%s"' % final_attrs['id']
             else:
                 label_for = ''
@@ -608,7 +608,7 @@ class MultiWidget(Widget):
             except IndexError:
                 widget_value = None
             if id_:
-                final_attrs = dict(final_attrs, id='%s_%s' % (id_, i))
+                final_attrs = new Dict(final_attrs, id='%s_%s' % (id_, i))
             output.append(widget.render(name + '_%s' % i, widget_value, final_attrs))
         return mark_safe(self.format_output(output))
 

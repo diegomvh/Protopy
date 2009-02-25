@@ -1,7 +1,6 @@
-$L('sets', 'Set');
 
 var Signal = type('Signal', {
-    __init__: function(name, scope) {
+    '__init__': function __init__(name, scope) {
         this.name = name;
         this.scope = scope;
         this.allEvents = null;
@@ -12,7 +11,7 @@ var Signal = type('Signal', {
      * @param {Function} handler
      * @param {Boolean} asynchFlag [optional] Defaults to false if omitted. Indicates whether to execute {handler} asynchronously (true) or not (false).
      */
-    connect: function(handler) {
+    'connect': function connect(handler) {
         //create a custom object containing the handler method and the asynch flag
     if (this.allEvents == null)
         this.allEvents = [];
@@ -28,7 +27,7 @@ var Signal = type('Signal', {
      * Removes a single handler
      * @param {Function} handler A reference to the handler function to un-register from the event
      */
-    disconnect: function(handler) {
+    'disconnect': function disconnect(handler) {
         if (this.allEvents != null)
         this.allEvents = this.allEvents.reject(function(obj) { return obj.method == handler; });
     },
@@ -36,7 +35,7 @@ var Signal = type('Signal', {
     /**
      * Removes all handlers
      */
-    clear: function() {
+    'clear': function clear() {
         this.allEvents = null;
     },
 
@@ -44,7 +43,7 @@ var Signal = type('Signal', {
      * Fires the event {eventName}, resulting in all registered handlers to be executed.
      * @params {Object} args [optional] Any object, will be passed into the handler function as the only argument
      */
-    send: function() {
+    'send': function send() {
         if (this.allEvents != null) {
             var len = this.allEvents.length; //optimization
             for (var i = 0; i < len; i++) {

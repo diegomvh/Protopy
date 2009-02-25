@@ -21,10 +21,10 @@ function load_template_source(template_name, template_dirs) {
         /* Levantar los templates */
         new Ajax.Request(path, {
             asynchronous : false,
-            onSuccess: function(transport) {
+            'onSuccess': function onSuccess(transport) {
                 template = (transport.responseText);
             },
-            onFailure: function(){
+            'onFailure': function onFailure(){
                 tried.push(path);
             }
         });

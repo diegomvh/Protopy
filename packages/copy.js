@@ -27,26 +27,8 @@ _copy_dispatch[Object] = function _copy_Object(object) {
 }
 
 _copy_dispatch['Instance'] = function _copy_Instance(object) {
-    if (callable(object['__iter__'])) {
-        delete object.__iterator__;
-    }
-    var obj = new object.constructor();
-    for (var p in object) {
-        var lg = object.__lookupGetter__(p);
-        var ls = object.__lookupSetter__(p);
-        if (callable(lg) || callable(ls)) {
-            if (callable(lg))
-                obj.__defineGetter__(p, lg);
-            if (callable(ls))
-                obj.__defineSetter__(p, ls);
-        } else {
-            obj[p] = object[p];
-        }
-    }
-
-    if (callable(object['__iter__'])) {
-        object.__iterator__ = object.__iter__;
-    }
+    var obj = new type('Empty', {});
+    extend(obj, object);
     return obj;
 }
 

@@ -8,7 +8,7 @@ $L('doff.utils.datastructures', 'SortedDict');
     * provide reverse-relations and for app introspection (e.g. admin).
     */
 var AppCache = type('AppCache', {
-    __init__: function() {
+    '__init__': function __init__() {
         this.app_store = new SortedDict();
 
         // Mapping of app_labels to a dictionary of model names to model code.
@@ -29,7 +29,7 @@ var AppCache = type('AppCache', {
         * sense that every caller will see the same state upon return, and if the
         * cache is already initialised, it does no work.
         */
-    _populate: function() {
+    '_populate': function _populate() {
 
         if (this.loaded)
             return
@@ -48,7 +48,7 @@ var AppCache = type('AppCache', {
     /*
         * Loads the app with the provided fully qualified name, and returns the model module.
         */
-    load_app: function(app_name, can_postpone) {
+    'load_app': function load_app(app_name, can_postpone) {
         this.handled[app_name] = null;
         this.nesting_level = this.nesting_level + 1;
         var mod = $L(app_name + '.models');
@@ -71,14 +71,14 @@ var AppCache = type('AppCache', {
         * Useful for code that wants to cache the results of get_models() for
         * themselves once it is safe to do so.
         */
-    app_cache_ready: function() {
+    'app_cache_ready': function app_cache_ready() {
         return this.loaded;
     },
 
     /*
         * Returns a list of all installed modules that contain models.
         */
-    get_apps: function() {
+    'get_apps': function get_apps() {
         this._populate();
 
         // Ensure the returned list is always in the same order (with new apps
@@ -93,7 +93,7 @@ var AppCache = type('AppCache', {
         * Returns the module containing the models for the given app_label. If
         * the app has no models in it and 'emptyOK' is True, returns None.
         */
-    get_app: function(app_label) {
+    'get_app': function get_app(app_label) {
         this._populate()
         for each (var app_name in settings.INSTALLED_APPS) {
             mod = this.load_app(app_name, False)
@@ -106,7 +106,7 @@ var AppCache = type('AppCache', {
         /*
         * Returns the map of known problems with the INSTALLED_APPS.
         */
-    get_app_errors: function() {
+    'get_app_errors': function get_app_errors() {
         this._populate();
         return this.app_errors;
     },
@@ -115,7 +115,7 @@ var AppCache = type('AppCache', {
         * Given a module containing models, returns a list of the models.
         * Otherwise returns a list of all installed models.
         */
-    get_models: function(app_mod) {
+    'get_models': function get_models(app_mod) {
         this._populate();
         if (app_mod) {
             return this.app_models.get(app_mod.__name__.split('.').slice(-2)[0], new SortedDict()).values()
@@ -131,7 +131,7 @@ var AppCache = type('AppCache', {
         * Returns the model matching the given app_label and case-insensitive model_name.
         * Returns None if no model is found.
         */
-    get_model: function(app_label, model_name, seed_cache) {
+    'get_model': function get_model(app_label, model_name, seed_cache) {
     
         if (seed_cache)
             this._populate();
@@ -141,8 +141,8 @@ var AppCache = type('AppCache', {
     /*
         * Register a set of models as belonging to an app.
         */
-    register_models: function(app_label, models) {
-        var models = (isarray(models))?models:[models];
+    'register_models': function register_models(app_label, models) {
+        var models = (type(models) == Array)?models:[models];
         for each (var model in models) {
             // Store as 'name: model' pair in a dictionary
             // in the app_models dictionary

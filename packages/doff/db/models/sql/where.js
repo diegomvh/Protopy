@@ -2,7 +2,7 @@ $D("doff.db.models.sql.where");
 $L('doff.utils.tree', 'Node');
 $L('doff.db.models.fields', 'Field');
 $L('doff.db', 'connection');
-$L('doff.db.models.sql.datastructures', 'EmptyResultSet', 'FullResultSet]');
+$L('doff.db.models.sql.datastructures', 'EmptyResultSet', 'FullResultSet');
 $L('doff.db.models.query_utils', 'QueryWrapper');
         
 var AND = 'AND',
@@ -13,9 +13,9 @@ var WhereNode = type('WhereNode', Node, {
     default_connector: AND,
 
     /* Los datos vienen en un objeto */
-    add: function($super, data, connector) {
-        if (!isarray(data)) {
-            $super(data, connector);
+    'add': function add(data, connector) {
+        if (type(data) != Array) {
+            super(Node, this).add(data, connector);
             return;
         }
 
@@ -32,7 +32,7 @@ var WhereNode = type('WhereNode', Node, {
                 db_type = null;
             }
         } catch (e) {
-            $super(new NothingNode(), connector);
+            super(Node, this).add(new NothingNode(), connector);
         }
 
         var annotation = null;
@@ -41,15 +41,15 @@ var WhereNode = type('WhereNode', Node, {
         else
             annotation = new bool(value);
 
-        $super([alias, column, db_type, lookup_type, annotation, params], connector);
+        super(Node, this).add([alias, column, db_type, lookup_type, annotation, params], connector);
     },
     
-    __str__: function(){
+    '__str__': function __str__(){
         var q = this.as_sql();
         return q[0].subs(q[1]);
     },
             
-    as_sql: function(qn){
+    'as_sql': function as_sql(qn){
 
         if (!qn)
             var qn = connection.ops.quote_name.bind(connection.ops);
@@ -105,7 +105,7 @@ var WhereNode = type('WhereNode', Node, {
         return [sql_string, result_params];
     },
 
-    make_atom: function(child, qn) {
+    'make_atom': function make_atom(child, qn) {
         var lhs = null, cast_sql = null, extra = null;
         var [table_alias, name, db_type, lookup_type, value_annot, params] = child;
             
@@ -153,7 +153,7 @@ var WhereNode = type('WhereNode', Node, {
         throw new TypeError('Invalid lookup_type: ' + lookup_type);
     },
 
-    relabel_aliases: function (change_map, node) {
+    'relabel_aliases': function relabel_aliases(change_map, node) {
     
         if (!node)
             node = this;
@@ -171,22 +171,22 @@ var WhereNode = type('WhereNode', Node, {
 
 var EverythingNode = type('EverythingNode', {
 
-    as_sql: function(qn){
+    'as_sql': function as_sql(qn){
         throw new FullResultSet();
     },
 
-    relabel_aliases: function(change_map, node){
+    'relabel_aliases': function relabel_aliases(change_map, node){
         return;
     }
 });
 
 var NothingNode = type('NothingNode', {
 
-    as_sql: function(qn){
+    'as_sql': function as_sql(qn){
         throw new EmptyResultSet();
     },
 
-    relabel_aliases: function(change_map, node){
+    'relabel_aliases': function relabel_aliases(change_map, node){
         return;
     }
 });

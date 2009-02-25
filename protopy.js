@@ -80,25 +80,25 @@
             new Ajax.Request(file, {
                 asynchronous : false,
                 evalJS: false,
-                onSuccess: function(transport) {
+                'onSuccess': function onSuccess(transport) {
                     code = '(function(){ ' + transport.responseText + '});';
                 },
                 onException: function (obj, exception){
                     throw exception;
                 },
-                onFailure: function(){
+                'onFailure': function onFailure(){
                     file = base + names.join("/") + "/__init__.js";
                     new Ajax.Request(file, {
                         asynchronous : false,
                         evalJS: false,
-                        onSuccess: function(transport) {
+                        'onSuccess': function onSuccess(transport) {
                             code = '(function(){' + transport.responseText + '});';
                             path = base + names.join("/");
                         },
                         onException: function (obj, exception){
                             throw exception;
                         },
-                        onFailure: function(){
+                        'onFailure': function onFailure(){
                             throw new LoadError();
                         }
                     });
@@ -163,7 +163,7 @@
     function object() { throw 'The wormhole stop here. Please, is just javascript not python :)'; };
 
     //For the Class
-    object.__type__ = type;
+    object.__class__ = type;
     object.__new__ = function __new__(name, bases, attrs) {
 	//Herencia
 	var superbase = function() {};
@@ -180,9 +180,8 @@
 	this.prototype.toString = this.prototype.__str__;
 	if (this.prototype.__iter__)
 	    this.prototype.__iterator__ = this.prototype.__iter__;
-	this.prototype.__noSuchMethod__ = function(name, args) { throw new AttributeError(this.__name__ + ' object has no attribute ' + name); };
 	this.prototype.constructor = this;
-	this.prototype.__type__ = this;
+	this.prototype.__class__ = this;
     };
     object.__bases__ = [];
     object.__subclasses__ = [];
@@ -208,21 +207,21 @@
 	    var bases = [args.shift()];
 	else var bases = [object];
 	if (args[0] instanceof Object && args.length == 2) {
-	    var typeAttrs = args.shift();
+	    var classAttrs = args.shift();
 	    var instanceAttrs = args.shift();
 	} else if (args.length == 1) {
-	    var typeAttrs = {};
+	    var classAttrs = {};
 	    var instanceAttrs = args.shift();
 	} else if (args.length == 0) {
-	    var typeAttrs = {};
+	    var classAttrs = {};
 	    var instanceAttrs = {};
 	} else new TypeError('Invalid arguments');
 
 	var new_type = eval('(function ' + name + '() { this.__init__.apply(this, arguments); })');
 	
 	//Decorando los atributos 
-	typeAttrs['__name__'] = instanceAttrs['__name__'] = name;
-	typeAttrs['__module__'] = instanceAttrs['__module__'] = this['__name__'];
+	classAttrs['__name__'] = instanceAttrs['__name__'] = name;
+	classAttrs['__module__'] = instanceAttrs['__module__'] = this['__name__'];
 
 	//Jerarquia
 	new_type.__bases__ = bases;
@@ -233,11 +232,8 @@
 	}
 	
 	//Construyendo el tipo
-	new_type.__new__ = new_type.__new__ || object.__new__;
-	for (var name in typeAttrs)
-	    __extend__(true, new_type, typeAttrs);
-
-	new_type.__noSuchMethod__ = function(name, args) { throw new AttributeError(this.__name__ + ' type has no attribute ' + name); };
+	for (var name in classAttrs)
+	    __extend__(true, new_type, classAttrs);
 
 	//Constructor de instancia
 	new_type.__new__(name, bases, instanceAttrs);
@@ -403,13 +399,31 @@
             return result;
         }
     });
-    
+
+    var __HASHTABLE__  = "w5Q2KkFts3deLIPg8Nynu_JAUBZ9YxmH1XW47oDpa6lcjMRfi0CrhbGSOTvqzEV";
+
+    function hash(object) {
+        if (object == undefined || object == null) throw new TypeError('undefined or null are unhashable');
+        if (type(object) != String && type(object) != Number) throw new TypeError(object + ' objects are unhashable');
+        if (type(object) == Number) return object;
+        var h = 0;
+        for (var j = object.length-1; j >= 0; j--) {
+            h ^= __HASHTABLE__.indexOf(object.charAt(j)) + 1;
+            for (var i=0; i<3; i++) {
+                var m = (h = h << 7 | h >>> 25) & 150994944;
+                h ^= m ? (m == 150994944 ? 1 : 0) : 1;
+            }
+        }
+        return h;
+    }
+
     //Populate builtin
     $B({
         'super': super,
         'isinstance': isinstance,
         'issubclass': issubclass,
         'Arguments': Arguments,
+        'hash': hash,
         'assert': function assert( test, text ) {
             if ( test === false )
                 throw new AssertionError( text );
@@ -425,7 +439,7 @@
                 default: {
                         if (callable(object['__nonzero__'])) {
                             return object.__nonzero__();
-                        } else if (isarray(object)) {
+                        } else if (type(object) == Array) {
                             return object.length != 0;
                         } else {
                             return keys(object).length != 0;
@@ -434,24 +448,23 @@
             }
             throw new TypeError("object of type '" + typeof(object) + "' has no bool()");
         },
-	'callable': function callable(object) {
-	    return object && type(object) == Function;
-	},
+        'callable': function callable(object) {
+            return object && type(object) == Function;
+        },
         'chr': function chr(number){ 
-            if (type(number) != Number) throw new TypeError('An integer is required');
-            return String.fromCharCode(number); 
-	},
+                if (type(number) != Number) throw new TypeError('An integer is required');
+                return String.fromCharCode(number);
+        },
         'ord': function(ascii) { 
-	    if (type(number) != String) throw new TypeError('An string is required');
-	    return ascii.charCodeAt(0); 
-	},
-	'bisect': function bisect(array, element) {
+            if (type(number) != String) throw new TypeError('An string is required');
+            return ascii.charCodeAt(0);
+        },
+        'bisect': function bisect(array, element) {
             var i = 0;
             for (var length = array.length; i < length; i++)
                 if (array[i].__cmp__(element) > 0) return i;
             return i;
         },
-        'dict': function dict(object){ return new Dict(object) },
         //no se porque no anda el dir
         'equal': function(object1, object2){
             if (callable(object1['__eq__'])) return object1.__eq__(object2);
@@ -475,7 +488,7 @@
             return array.reduce(function(a,b) { return a.concat(b); }, []); 
         },
         'help': function help(module){
-	    module = module || this;
+            module = module || this;
             print(module['__doc__']);
         },
         'include': function include(object, element){
@@ -498,8 +511,8 @@
                 case 'number': throw new TypeError("object of type 'number' has no len()");
                 default: {
                         if (callable(object['__len__'])) {
-                            return object.length;
-                        } else if (isarray(object)) {
+                            return object.__len__();
+                        } else if (type(object) == Array) {
                             return object.length;
                         } else {
                             return keys(object).length;
@@ -539,9 +552,9 @@
             return String(object)
         },
         'values': function values(obj){ 
-	    return [e for each (e in obj)] 
-	},
-	'keys': function keys(object){ 
+            return [e for each (e in obj)]
+        },
+        'keys': function keys(object){
             return [e for (e in object)];
         },
         'unique': function unique(sorted) {
@@ -576,29 +589,29 @@
 (function(){
     //--------------------------------------- Functions -------------------------------------//
     extend(Function.prototype, {
-	bind: function() {
+	'bind': function bind() {
 	    if (arguments.length < 2 && (!arguments[0])) return this;
 	    var __method = this, args = array(arguments), object = args.shift();
 	    return function() { return __method.apply(object, args.concat(array(arguments))); }
 	},
 
-	curry: function() {
+	'curry': function curry() {
 	    if (!arguments.length) return this;
 	    var __method = this, args = array(arguments);
 	    return function() { return __method.apply(this, args.concat(array(arguments))); }
 	},
 
-	delay: function() {
+	'delay': function delay() {
 	    var __method = this, args = array(arguments), timeout = args.shift() * 1000;
 	    return window.setTimeout(function() { return __method.apply(__method, args); }, timeout);
 	},
 
-	defer: function() {
+	'defer': function defer() {
 	    var args = [0.01].concat(array(arguments));
 	    return this.delay.apply(this, args);
 	},
 
-	wrap: function(wrapper) {
+	'wrap': function wrap(wrapper) {
 	    var __method = this;
 	    return function() { return wrapper.apply(this, [__method.bind(this)].concat(array(arguments))); }
 	}
@@ -606,7 +619,7 @@
 
     //--------------------------------------- String -------------------------------------//
     extend(String, {
-	interpret: function(value) {
+	'interpret': function interpret(value) {
 	    return value == null ? '' : String(value);
 	},
 	
@@ -621,7 +634,7 @@
     });
 
     extend(String.prototype, {
-	gsub: function(pattern, replacement) {
+	'gsub': function gsub(pattern, replacement) {
 	    var result = '', source = this, match;
 	    replacement = arguments.callee.prepare_replacement(replacement);
 
@@ -637,7 +650,7 @@
 	    return result;
 	},
 
-	sub: function(pattern, replacement, count) {
+	'sub': function sub(pattern, replacement, count) {
 	    replacement = this.gsub.prepare_replacement(replacement);
 	    count = (!count) ? 1 : count;
 
@@ -647,13 +660,13 @@
 	    });
 	},
 
-	scan: function(pattern, iterator) {
+	'scan': function scan(pattern, iterator) {
 	    this.gsub(pattern, iterator);
 	    return String(this);
 	},
 
 	//% operator like python
-	subs: function() {
+	'subs': function subs() {
 	    var args = flatten(array(arguments));
 	    //%% escaped
 	    var string = this.gsub(/%%/, function(match){ return '<ESC%%>'; });
@@ -664,26 +677,26 @@
 	    return string.gsub(/<ESC%%>/, function(match){ return '%'; });
 	},
 
-	truncate: function(length, truncation) {
+	'truncate': function truncate(length, truncation) {
 	    length = length || 30;
 	    truncation = (!truncation) ? '...' : truncation;
 	    return this.length > length ?
 	    this.slice(0, length - truncation.length) + truncation : String(this);
 	},
 
-	strip: function() {
+	'strip': function strip() {
 	    return this.replace(/^\s+/, '').replace(/\s+$/, '');
 	},
 
-	strip_tags: function() {
+	'strip_tags': function strip_tags() {
 	    return this.replace(/<\/?[^>]+>/gi, '');
 	},
 
-	strip_scripts: function() {
+	'strip_scripts': function strip_scripts() {
 	    return this.replace(new RegExp(Protopy.ScriptFragment, 'img'), '');
 	},
 
-	extract_scripts: function() {
+	'extract_scripts': function extract_scripts() {
 	    var matchAll = new RegExp(Protopy.ScriptFragment, 'img');
 	    var matchOne = new RegExp(Protopy.ScriptFragment, 'im');
 	    return (this.match(matchAll) || []).map(function(scriptTag) {
@@ -691,17 +704,17 @@
 	    });
 	},
 
-	eval_scripts: function() {
+	'eval_scripts': function eval_scripts() {
 	    return this.extractScripts().map(function(script) { return eval(script) });
 	},
 
-	escape_HTML: function() {
+	'escape_HTML': function escape_HTML() {
 	    var self = arguments.callee;
 	    self.text.data = this;
 	    return self.div.innerHTML;
 	},
 
-	unescape_HTML: function() {
+	'unescape_HTML': function unescape_HTML() {
 	    var div = new Element('div');
 	    div.innerHTML = this.stripTags();
 	    return div.childNodes[0] ? (div.childNodes.length > 1 ?
@@ -709,7 +722,7 @@
 	    div.childNodes[0].nodeValue) : '';
 	},
 
-	to_query_params: function(separator) {
+	'to_query_params': function to_query_params(separator) {
 	    var match = this.strip().match(/([^?#]*)(#.*)?$/);
 	    if (!match) return { };
 
@@ -720,7 +733,7 @@
 		if (value != undefined) value = decodeURIComponent(value);
 
 		if (key in hash) {
-		if (!isarray(hash[key])) hash[key] = [hash[key]];
+		if (type(hash[key]) != Array) hash[key] = [hash[key]];
 		hash[key].push(value);
 		}
 		else hash[key] = value;
@@ -729,20 +742,20 @@
 	    }, {});
 	},
 
-	to_array: function() {
+	'to_array': function to_array() {
 	    return this.split('');
 	},
 
-	succ: function() {
+	'succ': function succ() {
 	    return this.slice(0, this.length - 1) +
 	    String.fromCharCode(this.charCodeAt(this.length - 1) + 1);
 	},
 
-	times: function(count) {
+	'times': function times(count) {
 	    return count < 1 ? '' : new Array(count + 1).join(this);
 	},
 
-	camelize: function() {
+	'camelize': function camelize() {
 	    var parts = this.split('-'), len = parts.length;
 	    if (len == 1) return parts[0];
 
@@ -756,19 +769,19 @@
 	    return camelized;
 	},
 
-	capitalize: function() {
+	'capitalize': function capitalize() {
 	    return this.charAt(0).toUpperCase() + this.substring(1).toLowerCase();
 	},
 
-	underscore: function() {
+	'underscore': function underscore() {
 	    return this.gsub(/::/, '/').gsub(/([A-Z]+)([A-Z][a-z])/,'#{1}_#{2}').gsub(/([a-z\d])([A-Z])/,'#{1}_#{2}').gsub(/-/,'_').toLowerCase();
 	},
 
-	dasherize: function() {
+	'dasherize': function dasherize() {
 	    return this.gsub(/_/,'-');
 	},
 
-	inspect: function(useDoubleQuotes) {
+	'inspect': function inspect(useDoubleQuotes) {
 	    var escapedString = this.gsub(/[\x00-\x1f\\]/, function(match) {
 	    var character = String.specialChar[match[0]];
 	    return character ? character : '\\u00' + match[0].charCodeAt().toPaddedString(2, 16);
@@ -777,26 +790,26 @@
 	    return "'" + escapedString.replace(/'/g, '\\\'') + "'";
 	},
 
-	to_JSON: function() {
+	'to_JSON': function to_JSON() {
 	    return this.inspect(true);
 	},
 
-	unfilter_JSON: function(filter) {
+	'unfilter_JSON': function unfilter_JSON(filter) {
 	    return this.sub(filter || Protopy.JSONFilter, '#{1}');
 	},
 
-	is_in: function(array) {
+	'is_in': function is_in(array) {
 	    return array.indexOf(String(this)) > -1;
 	},
 
-	is_JSON: function() {
+	'is_JSON': function is_JSON() {
 	    var str = this;
 	    if (str.blank()) return false;
 	    str = this.replace(/\\./g, '@').replace(/"[^"\\\n\r]*"/g, '');
 	    return (/^[,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]*$/).test(str);
 	},
 
-	eval_JSON: function(sanitize) {
+	'eval_JSON': function eval_JSON(sanitize) {
 	    var json = this.unfilter_JSON();
 	    try {
 	    if (!sanitize || json.is_JSON()) return eval('(' + json + ')');
@@ -804,16 +817,16 @@
 	    throw new SyntaxError('Badly formed JSON string: ' + this.inspect());
 	},
 
-	starts_with: function(pattern) {
+	'starts_with': function starts_with(pattern) {
 	    return this.indexOf(pattern) === 0;
 	},
 
-	ends_with: function(pattern) {
+	'ends_with': function ends_with(pattern) {
 	    var d = this.length - pattern.length;
 	    return d >= 0 && this.lastIndexOf(pattern) === d;
 	},
 
-	blank: function() {
+	'blank': function blank() {
 	    return /^\s*$/.test(this);
 	}
     });
@@ -861,16 +874,16 @@
     }
     
     var Template = type('Template', {
-	//Static
-	Pattern: /(^|.|\r|\n)(%\((.+?)\))s/,
+        //Static
+        Pattern: /(^|.|\r|\n)(%\((.+?)\))s/,
     },{
 	//Prototype
-    __init__: function(template, pattern) {
+    '__init__': function __init__(template, pattern) {
 	this.template = str(template);
 	this.pattern = pattern || Template.Pattern;
     },
 
-    evaluate: function(object) {
+    'evaluate': function evaluate(object) {
 	if (callable(object.toTemplateReplacements))
 	object = object.toTemplateReplacements();
 
@@ -899,7 +912,7 @@
     });
 
     var Try = {
-	these: function() {
+	'these': function these() {
 	    var returnValue;
 	    for (var i = 0, length = arguments.length; i < length; i++) {
 		var lambda = arguments[i];
@@ -914,7 +927,7 @@
     //--------------------------------------- Ajax ----------------------------------------------//
 
     var Ajax = {
-	getTransport: function() {
+	'getTransport': function getTransport() {
 	    return Try.these(
 	    function() {return new XMLHttpRequest()},
 	    function() {return new ActiveXObject('Msxml2.XMLHTTP')},
@@ -927,16 +940,16 @@
     Ajax.Responders = {
 	responders: [],
 
-	register: function(responder) {
+	'register': function register(responder) {
 	    if (!include(this.responders, responder))
 	    this.responders.push(responder);
 	},
 
-	unregister: function(responder) {
+	'unregister': function unregister(responder) {
 	    this.responders = this.responders.without(responder);
 	},
 
-	dispatch: function(callback, request, transport, json) {
+	'dispatch': function dispatch(callback, request, transport, json) {
 	    for each (var responder in this.responders) {
 	    if (callable(responder[callback])) {
 		try {
@@ -948,12 +961,12 @@
     };
 
     Ajax.Responders.register({
-	onCreate:   function() { Ajax.activeRequestCount++ },
-	onComplete: function() { Ajax.activeRequestCount-- }
+        'onCreate': function() { Ajax.activeRequestCount++ },
+        'onComplete': function onComplete() { Ajax.activeRequestCount-- }
     });
 
     Ajax.Base = type('Base', {
-	__init__: function(options) {
+	'__init__': function __init__(options) {
 	    this.options = {
 		method:       'post',
 		asynchronous: true,
@@ -975,13 +988,13 @@
     Ajax.Request = type('Request', Ajax.Base, {
 	_complete: false,
 
-	__init__: function(url, options) {
+	'__init__': function __init__(url, options) {
 	    super(Ajax.Base, this).__init__(options);
 	    this.transport = Ajax.getTransport();
 	    this.request(url);
 	},
 
-	request: function(url) {
+	'request': function request(url) {
 	    this.url = url;
 	    this.method = this.options.method;
 	    var params = extend({}, this.options.parameters);
@@ -1020,13 +1033,13 @@
 	    }
 	},
 
-	onStateChange: function() {
+	'onStateChange': function onStateChange() {
 	    var readyState = this.transport.readyState;
 	    if (readyState > 1 && !((readyState == 4) && this._complete))
 	    this.respondToReadyState(this.transport.readyState);
 	},
 
-	setRequestHeaders: function() {
+	'setRequestHeaders': function setRequestHeaders() {
 	    var headers = {
 	    'X-Requested-With': 'XMLHttpRequest',
 	    'X-Protopy-Version': Protopy.Version,
@@ -1061,18 +1074,18 @@
 	    this.transport.setRequestHeader(name, headers[name]);
 	},
 
-	success: function() {
+	'success': function success() {
 	    var status = this.getStatus();
 	    return !status || (status >= 200 && status < 300);
 	},
 
-	getStatus: function() {
+	'getStatus': function getStatus() {
 	    try {
 	    return this.transport.status || 0;
 	    } catch (e) { return 0 }
 	},
 
-	respondToReadyState: function(readyState) {
+	'respondToReadyState': function respondToReadyState(readyState) {
 	    var state = Ajax.Request.Events[readyState], response = new Ajax.Response(this);
 
 	    if (state == 'Complete') {
@@ -1105,7 +1118,7 @@
 	    }
 	},
 
-	isSameOrigin: function() {
+	'isSameOrigin': function isSameOrigin() {
 	    var m = this.url.match(/^\s*https?:\/\/[^\/]*/);
 	    return !m || (m[0] == '#{protocol}//#{domain}#{port}'.interpolate({
 	    protocol: location.protocol,
@@ -1114,13 +1127,13 @@
 	    }));
 	},
 
-	getHeader: function(name) {
+	'getHeader': function getHeader(name) {
 	    try {
 	    return this.transport.getResponseHeader(name) || null;
 	    } catch (e) { return null }
 	},
 
-	evalResponse: function() {
+	'evalResponse': function evalResponse() {
 	    try {
 	    return eval((this.transport.responseText || '').unfilter_JSON());
 	    } catch (e) {
@@ -1128,7 +1141,7 @@
 	    }
 	},
 
-	dispatchException: function(exception) {
+	'dispatchException': function dispatchException(exception) {
 	    (this.options.onException || Protopy.emptyfunction)(this, exception);
 	    Ajax.Responders.dispatch('onException', this, exception);
 	}
@@ -1137,7 +1150,7 @@
     Ajax.Request.Events = ['Uninitialized', 'Loading', 'Loaded', 'Interactive', 'Complete'];
 
     Ajax.Response = type('Response', {
-    __init__: function(request){
+    '__init__': function __init__(request){
 	this.request = request;
 	var transport  = this.transport  = request.transport,
 	    readyState = this.readyState = transport.readyState;
@@ -1161,7 +1174,7 @@
 
     getStatus: Ajax.Request.prototype.getStatus,
 
-    getStatusText: function() {
+    'getStatusText': function getStatusText() {
 	try {
 	return this.transport.statusText || '';
 	} catch (e) { return '' }
@@ -1169,21 +1182,21 @@
 
     getHeader: Ajax.Request.prototype.getHeader,
 
-    getAllHeaders: function() {
+    'getAllHeaders': function getAllHeaders() {
 	try {
 	return this.getAllResponseHeaders();
 	} catch (e) { return null }
     },
 
-    getResponseHeader: function(name) {
+    'getResponseHeader': function getResponseHeader(name) {
 	return this.transport.getResponseHeader(name);
     },
 
-    getAllResponseHeaders: function() {
+    'getAllResponseHeaders': function getAllResponseHeaders() {
 	return this.transport.getAllResponseHeaders();
     },
 
-    _getHeaderJSON: function() {
+    '_getHeaderJSON': function _getHeaderJSON() {
 	var json = this.getHeader('X-JSON');
 	if (!json) return null;
 	json = decodeURIComponent(escape(json));
@@ -1195,7 +1208,7 @@
 	}
     },
 
-    _getResponseJSON: function() {
+    '_getResponseJSON': function _getResponseJSON() {
 	var options = this.request.options;
 	if (!options.evalJSON || (options.evalJSON != 'force' &&
 	!include((this.getHeader('Content-type') || ''), 'application/json')) ||
@@ -1211,4 +1224,268 @@
     });
 
     $B({'Protopy': Protopy, 'Template': Template, 'Try': Try, 'Ajax':Ajax});
+})();
+
+//More Data types
+(function(){
+    var Dict = type('Dict', [object], {
+        '__init__': function __init__(object) {
+            this._value = {};
+            this._key = {};
+            if (!object || (type(object) == Array && !bool(object))) return;
+            if (object instanceof Dict) {
+                this._value = extend({}, object._value);
+                this._key = extend({}, object._key);
+            } else if (isfunction(object['next'])) {
+                for each (var [key, value] in object)
+                    this.set(key, value);
+            } else if (isarray(object) && type(object[0]) == Array) {
+                for each (var [key, value] in object)
+                    this.set(key, value);
+            } else if (object instanceof Object){
+                for (var key in object)
+                    this.set(key, object[key]);
+            }
+        },
+
+        '__iter__': function __iter__() {
+            for each (var hash in this._value) {
+                var value = this._value[hash], key = this._key[hash];
+                var pair = [key, value];
+                pair.key = key;
+                pair.value = value;
+                yield pair;
+            }
+        },
+
+        '__copy__': function __copy__() {
+            return new Dict(this);
+        },
+
+        'size': function size() {
+            return keys(this._key).length;
+        },
+
+        'set': function set(key, value) {
+            var hash = id(key);
+            this._key[hash] = key;
+            return this._value[hash] = value;
+        },
+
+        'setdefault': function setdefault(key, value){
+            var ret = this.get(key);
+            if (ret) return ret;
+            return this.set(key, value);
+
+        },
+
+        'get': function get(key, otherwise) {
+            var hash = id(key);
+            var value = this._value[hash];
+            if (value)
+                return value;
+            else otherwise
+                return otherwise;
+        },
+
+        'unset': function unset(key) {
+            var hash = id(key);
+            var value = this._value[hash];
+            delete this._value[hash];
+            delete this._key[hash];
+            return value;
+        },
+
+        'to_object': function to_object() {
+            return create(this.to_array());
+        },
+
+        'keys': function keys() {
+            return [k for each (k in this._key)];
+        },
+
+        values: function () {
+            return [v for each (v in this._value)];
+        },
+
+        'to_array': function to_array() {
+            return zip(this.keys(), this.values());
+        },
+
+        'items': function items() {
+            return this.to_array();
+        },
+
+        'index': function index(value) {
+            var match = this.detect(function(pair) {
+                return pair.value === value;
+            });
+            return match && match.key;
+        },
+
+        'update': function update(object) {
+            for (var hash in object._key)
+                this.set(object._key[hash], object._value[hash]);
+        },
+
+        'inspect': function inspect() {
+            return '#<Dict:{' + this.map(function(pair) {
+                return pair.map(inspect).join(': ');
+            }).join(', ') + '}>';
+        },
+
+        'to_JSON': function to_JSON() {
+            return to_JSON(this.to_object());
+        },
+
+        'pop': function pop(key) {
+            var val = this.unset(key);
+            if (isundefined(val))
+                throw new KeyError(key);
+            return val;
+        },
+
+        'popitem': function popitem() {
+            var val = this.unset(key);
+            if (isundefined(val))
+                throw new KeyError(key);
+            return [key, val];
+        },
+
+        'clear': function clear() {
+            this._value = {};
+            this._key = {};
+        },
+
+        'has_key': function has_key(key) {
+            var hash = id(key);
+            return hash in this._key;
+        }
+    });
+
+    var Set = type('Set', [object], {
+        '__init__': function __init__(elements){
+            var elements = elements || [];
+            if (type(elements) != Array)
+                throw new TypeError(elements + ' object is not array');
+            this.elements = unique(elements);
+        },
+
+        get length(){
+            return this.elements.length;
+        },
+
+        '__contains__': function __contains__(element){
+            return include(this.elements, element);
+        },
+
+        '__nonzero__': function __nonzero__(){
+            return bool(this.elements);
+        },
+
+        '__len__': function __len__() {
+            return len(this.elements);
+        },
+
+        '__eq__': function __eq__(set) {
+            return true;
+        },
+
+        '__ne__': function __ne__(set) {
+            return true;
+        },
+
+        '__copy__': function __copy__(){
+            return this.copy();
+        },
+
+        '__deepcopy__': function __deepcopy__(){
+            return new Set(this.elements.__deepcopy__());
+        },
+
+        '__iter__': function __iter__() {
+            for each (var element in this.elements)
+                yield element;
+        },
+
+        'add': function add(element) {
+          if (!include(this.elements, element))
+              this.elements.push(element);
+        },
+
+        'remove': function remove(element){
+          var index = this.elements.indexOf(element);
+          if (index == -1)
+              throw new KeyError(element);
+          return this.elements.splice(index, 1)[0];
+        },
+
+        'discard': function discard(element){
+          try {
+              return this.remove(element);
+          } catch (e if e instanceof KeyError) {
+              return null;
+          }
+        },
+
+        'pop': function pop(){
+            return this.elements.pop();
+        },
+
+        'update': function update(set){
+            var elements = (type(set) == Array)? set : set.elements;
+            this.elements = unique(this.elements.concat(elements));
+        },
+
+        'union': function union(set){
+            var elements = (type(set) == Array)? set : set.elements;
+            return new Set(this.elements.concat(elements));
+        },
+
+        'intersection': function intersection(set){
+            return new Set(this.elements.filter(function(e) { return include(set, e); }));
+        },
+
+        'intersection_update':  function(set){
+            this.elements = this.elements.filter(function(e) { return include(set, e); });
+        },
+
+        'issubset': function issubset(set){
+            if (this.length > set.length) return false;
+            return this.elements.map(function(e){ return include(set, e) }).every(function(x){ return x });
+        },
+
+        'issuperset': function issuperset(set){
+            if (this.length < set.length) return false;
+            return set.elements.map(function(e){ return include(this, e) }, this).every(function(x){ return x });
+        },
+
+        'clear': function clear(){
+            return this.elements.clear();
+        },
+
+        'copy': function copy(){
+            return new Set(this.elements);
+        },
+
+        'difference': function difference(set){
+            return new Set(this.elements.filter(function(e) { return !include(set, e); }));
+        },
+
+        'difference_update': function difference_update(set){
+            this.elements = this.elements.filter(function(e) { return !include(set, e); });
+        },
+
+        'symmetric_difference': function symmetric_difference(set){
+            var set = this.difference(set);
+            return set.difference(this);
+        },
+
+        'symmetric_difference_update': function symmetric_difference_update(set){
+            var set = this.difference(set);
+            this.elements = set.difference(this).elements;
+        }
+    });
+    
+    $B({'Dict': Dict, 'Set': Set});
 })();

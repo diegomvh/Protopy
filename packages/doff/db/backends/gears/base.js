@@ -20,29 +20,29 @@ database.register_converter("decimal", util.typecast_decimal);
 
 var DatabaseOperations = type('DatabaseOperations', BaseDatabaseOperations, {
     //TODO: le faltan cosas
-    autoinc_sql: function(table, column){
+    'autoinc_sql': function autoinc_sql(table, column){
         return null;
     },
 
-    drop_foreignkey_sql: function(){
+    'drop_foreignkey_sql': function drop_foreignkey_sql(){
         return "";
     },
 
-    pk_default_value: function(){
+    'pk_default_value': function pk_default_value(){
         return 'NULL';
     },
 
-    quote_name: function(name){
+    'quote_name': function quote_name(name){
         if (name.starts_with('"') && name.ends_with('"'))
             return name;
         return '"%s"'.subs(name);
     },
 
-    no_limit_value: function(){
+    'no_limit_value': function no_limit_value(){
         return -1;
     },
 
-    year_lookup_bounds: function(value){
+    'year_lookup_bounds': function year_lookup_bounds(value){
         var first = '%s-01-01',
             second = '%s-12-31 23:59:59.999999';
         return [first.subs(value), second.subs(value)];
@@ -73,7 +73,7 @@ var DatabaseWrapper = type('DatabaseWrapper', BaseDatabaseWrapper, {
         'iendswith': "LIKE %s ESCAPE '\\'"
     },
 
-    __init__: function(settings){
+    '__init__': function __init__(settings){
         super(BaseDatabaseWrapper, this).__init__(settings);
         this.features = new DatabaseFeatures();
         this.ops = new DatabaseOperations();
@@ -82,7 +82,7 @@ var DatabaseWrapper = type('DatabaseWrapper', BaseDatabaseWrapper, {
         this.validation = new BaseDatabaseValidation();
     },
 
-    _cursor: function(settings) {
+    '_cursor': function _cursor(settings) {
         if (this.connection == null) {
             if (!bool(settings.DATABASE_NAME)) {
                 $L('doff.core.exceptions', 'ImproperlyConfigured');
@@ -105,7 +105,7 @@ var DatabaseWrapper = type('DatabaseWrapper', BaseDatabaseWrapper, {
 });
 
 var GearsCursorWrapper = type('GearsCursorWrapper', database.Cursor, {
-    execute: function(query, params) {
+    'execute': function execute(query, params) {
         params = params || [];
         try {
             print('Query: ', query); print('Params: ', params);
@@ -117,7 +117,7 @@ var GearsCursorWrapper = type('GearsCursorWrapper', database.Cursor, {
         }
     },
 
-    executemany: function(query, param_list) {
+    'executemany': function executemany(query, param_list) {
         try {
             var query = this.convert_query(query, param_list[0].length);
             for each (var params in param_list)
@@ -126,11 +126,11 @@ var GearsCursorWrapper = type('GearsCursorWrapper', database.Cursor, {
         return null;
     },
 
-    convert_query: function(query, num_params){
+    'convert_query': function convert_query(query, num_params){
         return query.subs(mult(["?"], num_params));
     }
 /*
-    __iter__: function() {
+    '__iter__': function __iter__() {
         yield this.next();
     }
 */

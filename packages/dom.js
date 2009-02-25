@@ -4,7 +4,7 @@ function $(element) {
       elements.push($(arguments[i]));
     return elements;
   }
-  if (isstring(element))
+  if (type(element) == String)
     element = document.getElementById(element);
   return Element.extend(element);
 }
@@ -118,7 +118,7 @@ Element.Methods = {
   insert: function(element, insertions) {
     element = $(element);
 
-    if (isstring(insertions) || Object.isNumber(insertions) ||
+    if (type(insertions) == String || Object.isNumber(insertions) ||
         Object.isElement(insertions) || (insertions && (insertions.toElement || insertions.toHTML)))
           insertions = {bottom:insertions};
 
@@ -155,7 +155,7 @@ Element.Methods = {
     element = $(element);
     if (Object.isElement(wrapper))
       $(wrapper).writeAttribute(attributes || { });
-    else if (isstring(wrapper)) wrapper = new Element(wrapper, attributes);
+    else if (type(wrapper) == String) wrapper = new Element(wrapper, attributes);
     else wrapper = new Element('div', wrapper);
     if (element.parentNode)
       element.parentNode.replaceChild(wrapper, element);
@@ -218,7 +218,7 @@ Element.Methods = {
   },
 
   match: function(element, selector) {
-    if (isstring(selector))
+    if (type(selector) == String)
       selector = new Selector(selector);
     return selector.match($(element));
   },
@@ -404,7 +404,7 @@ Element.Methods = {
   setStyle: function(element, styles) {
     element = $(element);
     var elementStyle = element.style, match;
-    if (isstring(styles)) {
+    if (type(styles) == String) {
       element.style.cssText += ';' + styles;
       return styles.include('opacity') ?
         element.setOpacity(styles.match(/opacity:\s*(\d?\.?\d*)/)[1]) : element;
@@ -2032,7 +2032,7 @@ Form.Methods = {
     options.parameters = form.serialize(true);
 
     if (params) {
-      if (isstring(params)) params = params.toQueryParams();
+      if (type(params) == String) params = params.toQueryParams();
       extend(options.parameters, params);
     }
 
@@ -2198,7 +2198,7 @@ Abstract.TimedObserver = type(PeriodicalExecuter, {
 
   execute: function() {
     var value = this.getValue();
-    if (isstring(this.lastValue) && isstring(value) ?
+    if (isstring(this.lastValue) && type(value) == String ?
         this.lastValue != value : String(this.lastValue) != String(value)) {
       this.callback(this.element, value);
       this.lastValue = value;
