@@ -69,7 +69,7 @@ var Options = type('Options', {
                 // Ignore any private attributes that Django doesn't care about.
                 // NOTE: We can't modify a dictionary's contents while looping
                 // over it, so we loop over the *original* dictionary instead.
-                if (name.starts_with('_'))
+                if (name.startswith('_'))
                     delete meta_attrs[name];
             }
             for each (attr_name in DEFAULT_NAMES) {
@@ -304,7 +304,7 @@ var Options = type('Options', {
         var names = keys(cache);
         names.sort();
         // Internal-only names end with "+" (symmetrical m2m related names being the main example). Trim them.
-        return [val for each (val in names) if (!val.ends_with('+'))];
+        return [val for each (val in names) if (!val.endswith('+'))];
     },
 
     /*

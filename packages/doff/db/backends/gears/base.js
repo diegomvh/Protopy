@@ -33,7 +33,7 @@ var DatabaseOperations = type('DatabaseOperations', BaseDatabaseOperations, {
     },
 
     'quote_name': function quote_name(name){
-        if (name.starts_with('"') && name.ends_with('"'))
+        if (name.startswith('"') && name.endswith('"'))
             return name;
         return '"%s"'.subs(name);
     },

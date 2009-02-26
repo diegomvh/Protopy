@@ -212,7 +212,7 @@ var Query = type('Query', {
 
         /* retorna el from/where y los parametros en un arreglo */
         var [from_, f_params] = this.get_from_clause();
-        var [where, w_params] = this.where.as_sql(this.quote_name_unless_alias.bind(this));
+        var [where, w_params] = this.where.as_sql(getattr(this, 'quote_name_unless_alias'));
 
         var params = [];
                     var result = ["SELECT"];
@@ -383,7 +383,7 @@ var Query = type('Query', {
     'get_columns': function get_columns(with_aliases) {
 
         var with_aliases = with_aliases || false;
-        var qn = this.quote_name_unless_alias.bind(this);
+        var qn = getattr(this, 'quote_name_unless_alias');
         var qn2 = this.connection.ops.quote_name;
         var result = ['(%s) AS %s'.subs(col[0], qn2(alias)) for ([alias, col] in this.extra_select)];
         var aliases = new Set(this.extra_select.keys());
@@ -457,7 +457,7 @@ var Query = type('Query', {
 
         var root_pk = opts.pk.column;
         var seen = new Dict({'None': table_alias});
-        qn = this.quote_name_unless_alias.bind(this);
+        qn = getattr(this, 'quote_name_unless_alias');
         qn2 = this.connection.ops.quote_name;
         aliases = new Set();
         for each (var [field, model] in opts.get_fields_with_model()) {
@@ -502,7 +502,7 @@ var Query = type('Query', {
     'get_from_clause': function get_from_clause() {
 
         var result = [];
-        var qn = this.quote_name_unless_alias.bind(this);
+        var qn = getattr(this, 'quote_name_unless_alias');
         var qn2 = this.connection.ops.quote_name;
         var first = true;
         for each (alias in this.tables) {
@@ -541,7 +541,7 @@ var Query = type('Query', {
 
     /* Returns a tuple representing the SQL elements in the "group by" clause. */
     'get_grouping': function get_grouping() {
-        var qn = this.quote_name_unless_alias.bind(this);
+        var qn = getattr(this, 'quote_name_unless_alias');
         var result = [];
         for each (var col in this.group_by)
             if (type(col) == Array)
@@ -589,7 +589,7 @@ var Query = type('Query', {
             ordering = this.order_by;
         else
             ordering = bool(this.order_by)? this.order_by: this.model._meta.ordering;
-        var qn = this.quote_name_unless_alias.bind(this);
+        var qn = getattr(this, 'quote_name_unless_alias');
         var qn2 = this.connection.ops.quote_name;
         var distinct = this.distinct;
         var select_aliases = this._select_aliases;

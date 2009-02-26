@@ -187,11 +187,11 @@ var Lexer = type('Lexer', {
 
     'create_token': function create_token(token_string, in_tag){
         if (in_tag){
-            if (token_string.starts_with(VARIABLE_TAG_START))
+            if (token_string.startswith(VARIABLE_TAG_START))
                 token = new Token(TOKEN_VAR, token_string.substring(VARIABLE_TAG_START.length, token_string.length - VARIABLE_TAG_END.length).strip());
-            else if (token_string.starts_with(BLOCK_TAG_START))
+            else if (token_string.startswith(BLOCK_TAG_START))
                 token = new Token(TOKEN_BLOCK, token_string.substring(BLOCK_TAG_START.length, token_string.length - BLOCK_TAG_END.length).strip());
-            else if (token_string.starts_with(COMMENT_TAG_START))
+            else if (token_string.startswith(COMMENT_TAG_START))
                 token = new Token(TOKEN_COMMENT, '');
         } else
             token = new Token(TOKEN_TEXT, token_string);
@@ -422,17 +422,13 @@ var Variable = type('Variable', {
 
     '_resolve_lookup': function _resolve_lookup(context) {
         var current = context;
-        var geted = null;
         for each (var bit in this.lookups) {
             try {
                 // Si tienen get lo uso antes que []
                 if (callable(current['__getitem__']))
-                    geted = current.__getitem__(bit);
+                    current = current.__getitem__(bit);
                 else
-                    geted = current[bit];
-                if (callable(geted))
-                    geted = geted.bind(current);
-                current = geted;
+                    current = getattr(current, bit);
             } catch (e) {
                 throw new VariableDoesNotExist("Failed lookup for key [%s] in %s".subs(bit, current))
             }

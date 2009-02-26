@@ -264,6 +264,37 @@
         'ValueError':  type('ValueError', Exception),
     });
 
+    function getattr(object, name, def) {
+	//TODO: validar argumentos
+	var attr = object[name];
+	if (attr == undefined) {
+	    if (def == undefined)
+		throw new AttributeError(object + ' has no attribute ' + name);
+	    else
+		return def;
+	}
+	if (type(attr) == Function) {
+	    var method = attr, obj = object;
+	    return function() { return method.apply(obj, array(arguments)); }
+	} else {
+	    return attr;
+	}
+	throw new AttributeError(object + ' has no attribute ' + name);
+    }
+    
+    function setattr(object, name, value) {
+	object[name] = value;
+    }
+
+    function hasattr(object, name){
+	try {
+	    getattr(object, name);
+	    return true;
+	} catch (e if e instanceof AttributeError){
+	    return false;
+	}
+    }
+    
     //Populate exceptions
     __builtin__(__modules__['exceptions']);
 
@@ -293,8 +324,11 @@
         '$D': __doc__,
 	'object': object,
 	'type': type,
-    'extend': function extend() {return __extend__.apply(this, [false].concat(array(arguments)));},
-    'ls': function ls(obj){ return keys(__modules__[(obj && obj['__name__']) || this['__name__']]); },
+	'getattr': getattr,
+	'setattr': setattr,
+	'hasattr': hasattr,
+	'extend': function extend() {return __extend__.apply(this, [false].concat(array(arguments)));},
+	'ls': function ls(obj){ return keys(__modules__[(obj && obj['__name__']) || this['__name__']]); },
 	'locals': function locals(){ return __modules__[this['__name__']]; },
 	'globals': function globals(){ return __modules__['__main__']; }
     });
@@ -374,15 +408,15 @@
 	
         '_populate': function _populate() {
             this._kwargs = {};
-            for (var p in this._defaults || {})
+            for (p in this._defaults || {})
                 this._kwargs[p] = this._defaults[p];
             if (this.collect[this.collect.length - 1] instanceof Object) {
-                var object = this.collect[this.collect.length - 1];
-                for (var p in object)
+                let object = this.collect[this.collect.length - 1];
+                for (p in object)
                     this._kwargs[p] = object[p];
             }
             if (this.names.length < this.collect.length)
-                this._args = this.collect.slice(this.names.length, (!this._kwargs)? this.collect.length : this.collect.length - 1);
+                this._args = this.collect.slice(this.names.length, (bool(this._kwargs))? this.collect.length - 1 : this.collect.length);
             else
                 this._args = [];
             this.populated = true;
@@ -624,12 +658,6 @@
 (function(){
     //--------------------------------------- Functions -------------------------------------//
     extend(Function.prototype, {
-	'bind': function bind() {
-	    if (arguments.length < 2 && (!arguments[0])) return this;
-	    var __method = this, args = array(arguments), object = args.shift();
-	    return function() { return __method.apply(object, args.concat(array(arguments))); }
-	},
-
 	'curry': function curry() {
 	    if (!arguments.length) return this;
 	    var __method = this, args = array(arguments);
@@ -644,11 +672,6 @@
 	'defer': function defer() {
 	    var args = [0.01].concat(array(arguments));
 	    return this.delay.apply(this, args);
-	},
-
-	'wrap': function wrap(wrapper) {
-	    var __method = this;
-	    return function() { return wrapper.apply(this, [__method.bind(this)].concat(array(arguments))); }
 	}
     });
 
@@ -778,10 +801,6 @@
 	    }, {});
 	},
 
-	'to_array': function to_array() {
-	    return this.split('');
-	},
-
 	'succ': function succ() {
 	    return this.slice(0, this.length - 1) +
 	    String.fromCharCode(this.charCodeAt(this.length - 1) + 1);
@@ -826,38 +845,11 @@
 	    return "'" + escapedString.replace(/'/g, '\\\'') + "'";
 	},
 
-	'to_JSON': function to_JSON() {
-	    return this.inspect(true);
-	},
-
-	'unfilter_JSON': function unfilter_JSON(filter) {
-	    return this.sub(filter || Protopy.JSONFilter, '#{1}');
-	},
-
-	'is_in': function is_in(array) {
-	    return array.indexOf(String(this)) > -1;
-	},
-
-	'is_JSON': function is_JSON() {
-	    var str = this;
-	    if (str.blank()) return false;
-	    str = this.replace(/\\./g, '@').replace(/"[^"\\\n\r]*"/g, '');
-	    return (/^[,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]*$/).test(str);
-	},
-
-	'eval_JSON': function eval_JSON(sanitize) {
-	    var json = this.unfilter_JSON();
-	    try {
-	    if (!sanitize || json.is_JSON()) return eval('(' + json + ')');
-	    } catch (e) { }
-	    throw new SyntaxError('Badly formed JSON string: ' + this.inspect());
-	},
-
-	'starts_with': function starts_with(pattern) {
+	'startswith': function startswith(pattern) {
 	    return this.indexOf(pattern) === 0;
 	},
 
-	'ends_with': function ends_with(pattern) {
+	'endswith': function endswith(pattern) {
 	    var d = this.length - pattern.length;
 	    return d >= 0 && this.lastIndexOf(pattern) === d;
 	},
@@ -935,7 +927,7 @@
 	if (match == null) return before;
 
 	while (match != null) {
-	    var comp = match[1].starts_with('[') ? match[2].gsub('\\\\]', ']') : match[1];
+	    var comp = match[1].startswith('[') ? match[2].gsub('\\\\]', ']') : match[1];
 	    ctx = ctx[comp];
 	    if (null == ctx || '' == match[3]) break;
 	    expr = expr.substring('[' == match[3] ? match[1].length : match[0].length);
@@ -1051,9 +1043,9 @@
 	    this.transport.open(this.method.toUpperCase(), this.url,
 		this.options.asynchronous);
 
-	    if (this.options.asynchronous) this.respondToReadyState.bind(this).defer(1);
+	    if (this.options.asynchronous) getattr(this, 'respondToReadyState').defer(1);
 
-	    this.transport.onreadystatechange = this.onStateChange.bind(this);
+	    this.transport.onreadystatechange = getattr(this, 'onStateChange');
 	    this.setRequestHeaders();
 
 	    this.body = this.method == 'post' ? (this.options.postBody || params) : null;

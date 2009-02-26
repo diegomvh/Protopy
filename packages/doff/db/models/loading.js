@@ -4,9 +4,9 @@ $L('doff.core.exceptions', 'ImproperlyConfigured');
 $L('doff.utils.datastructures', 'SortedDict');
 
 /*
-    * A cache that stores installed applications and their models. Used to
-    * provide reverse-relations and for app introspection (e.g. admin).
-    */
+ * A cache that stores installed applications and their models. Used to
+ * provide reverse-relations and for app introspection (e.g. admin).
+ */
 var AppCache = type('AppCache', {
     '__init__': function __init__() {
         this.app_store = new SortedDict();
@@ -157,11 +157,11 @@ var AppCache = type('AppCache', {
 
 var cache = new AppCache();
 
-$P({    'get_apps': cache.get_apps.bind(cache),
-        'get_app': cache.get_app.bind(cache),
-        'get_app_errors': cache.get_app_errors.bind(cache),
-        'get_models': cache.get_models.bind(cache),
-        'get_model': cache.get_model.bind(cache),
-        'register_models': cache.register_models.bind(cache),
-        'load_app': cache.load_app.bind(cache),
-        'app_cache_ready': cache.app_cache_ready.bind(cache) });
+$P({    'get_apps': getattr(cache, 'get_apps'),
+        'get_app': getattr(cache, 'get_app'),
+        'get_app_errors': getattr(cache, 'get_app_errors'),
+        'get_models': getattr(cache, 'get_models'),
+        'get_model': getattr(cache, 'get_model'),
+        'register_models': getattr(cache, 'register_models'),
+        'load_app': getattr(cache, 'load_app'),
+        'app_cache_ready': getattr(cache, 'app_cache_ready') });
