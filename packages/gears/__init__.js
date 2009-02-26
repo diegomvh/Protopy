@@ -1,7 +1,7 @@
 if (window.google && window.google.gears) {
     return;
 }
-print('*Do not* define any objects if Gears is not installed. This mimics the behavior of Gears defining the objects in the future.');
+
 var factory = null;
 if (typeof GearsFactory != 'undefined') {
     factory = new GearsFactory();
