@@ -1,13 +1,25 @@
 $D('HTML Widget classes');
+$L('copy', 'copy');
+$L('doff.conf', 'settings');
+$L('doff.forms.util', 'flatatt');
+//TODO: implementar getattr, setattr, property
 /*
-try:
-    set
-except NameError:
-    from sets import Set as set   # Python 2.3 fallback
-
-import copy
+me quede pensadon sobre getattr, setattr y property 
+no es mala idea implementarlo en protopy
+porque tienen una pequeña vuelta de rosca que estaria bueno que se haga en ese lugar
+para no estar jugando tanto con los algo.prototype[cacho] = function (){}
+creo que soluciona tambien mi probamas con los bind, en una buena parte :)
+de las funciones
+porque si estas obteniendo una funcion de otro objecto ejemplo pepe = {'algo': function (){}}
+getattr(pepe, 'algo');
+tenes que devolver la funcion bindeada con el objeto sino el scope cambia y haces moco
+luego si se la queres poer a otro objeto otro = {}
+setattr(otro, 'algo', getattr(pepe, 'algo'))
+tenes que rebindear la funcion con otro
+se ve?
+a eso sumale, que pasa si no es una funcion o que pasa si es un propery o cosas asi
+*/
 from itertools import chain
-from django.conf import settings
 from django.utils.datastructures import MultiValueDict, MergeDict
 from django.utils.html import escape, conditional_escape
 from django.utils.translation import ugettext
@@ -15,101 +27,118 @@ from django.utils.encoding import StrAndUnicode, force_unicode
 from django.utils.safestring import mark_safe
 from django.utils import datetime_safe
 from datetime import time
-from util import flatatt
-from urlparse import urljoin
 
+from urlparse import urljoin
+//TODO: crear urlparse e itertools
 
 var MEDIA_TYPES = ['css','js'];
 
-var Media = type('Media', {});
-class Media(StrAndUnicode):
-    def __init__(self, media=None, **kwargs):
-        if media:
-            media_attrs = media.__dict__
-        else:
-            media_attrs = kwargs
+var Media = type('Media', {
+    __init__: function(media) {
+        arguments = new Arguments(arguments);
+        if (media)
+            media_attrs = media;
+        else
+            media_attrs = arguments.kwargs
 
-        self._css = {}
-        self._js = []
+        this._css = {};
+        this._js = [];
 
-        for name in MEDIA_TYPES:
-            getattr(self, 'add_' + name)(media_attrs.get(name, None))
+        for each (var name in MEDIA_TYPES)
+            getattr(this, 'add_' + name)(media_attrs[name] || null);
+    },
 
-        # Any leftover attributes must be invalid.
-        # if media_attrs != {}:
-        #     raise TypeError, "'class Media' has invalid attribute(s): %s" % ','.join(media_attrs.keys())
+    __str__: function() {
+        return this.render();
+    },
 
-    def __str__(self):
-        return self.render()
+    render: function() {
+        var result = []
+        for each (var name in MEDIA_TYPES) {
+            result = result.concat(getattr(this, 'render_' + name)());
+        }
+        return result.join('\n');
+    },
 
-    def render(self):
-        return mark_safe(u'\n'.join(chain(*[getattr(self, 'render_' + name)() for name in MEDIA_TYPES])))
+    render_js: function() {
+        return ['<script type="text/javascript" src="%s"></script>'.subs(this.absolute_path(path) for each (path in this._js)];
+    },
 
-    def render_js(self):
-        return [u'<script type="text/javascript" src="%s"></script>' % self.absolute_path(path) for path in self._js]
+    render_css: function() {
+        // To keep rendering order consistent, we can't just iterate over items().
+        // We need to sort the keys, and iterate over the sorted list.
+        var media = keys(this._css);
+        media.sort();
+        return  [
+                    ['<link href="%s" type="text/css" media="%s" rel="stylesheet" />'.subs(this.absolute_path(path), medium) for each (path in this._css[medium])]
+                for each (medium in media)];
+    },
 
-    def render_css(self):
-        # To keep rendering order consistent, we can't just iterate over items().
-        # We need to sort the keys, and iterate over the sorted list.
-        media = self._css.keys()
-        media.sort()
-        return chain(*[
-            [u'<link href="%s" type="text/css" media="%s" rel="stylesheet" />' % (self.absolute_path(path), medium)
-                    for path in self._css[medium]]
-                for medium in media])
+    absolute_path: function(path) {
+        //TODO: cambiar en protopy los starts_withs por los pythonicos
+        if (path.startswith('http://') || path.startswith('https://') || path.startswith('/'))
+            return path;
+        return urljoin(settings.MEDIA_URL, path);
+    },
 
-    def absolute_path(self, path):
-        if path.startswith(u'http://') or path.startswith(u'https://') or path.startswith(u'/'):
-            return path
-        return urljoin(settings.MEDIA_URL,path)
+    get: function(name) {
+        //Returns a Media object that only contains media of the given type
+        if (include(MEDIA_TYPES, name))
+            return new Media(this['_' + name]);
+        throw new KeyError('Unknown media type "%s"'.subs(name));
+    },
 
-    def __getitem__(self, name):
-        "Returns a Media object that only contains media of the given type"
-        if name in MEDIA_TYPES:
-            return Media(**{name: getattr(self, '_' + name)})
-        raise KeyError('Unknown media type "%s"' % name)
+    add_js: function(data) {
+        if (bool(data))
+            this._js = this._js.concat([path for each (path in data) if (!include(this._js, path))]);
+    },
 
-    def add_js(self, data):
-        if data:
-            self._js.extend([path for path in data if path not in self._js])
+    add_css: function(data) {
+        if (bool(data))
+            //TODO: implementar iterms como builtin
+            for each ([medium, paths] in items(data)) {
+                this._css[medium] = this._css[medium] || [];
+                this._css[medium] = this._css[medium].concat([path for each (path in paths) if (!include(this._css[medium], path))]);
+            }
+    },
 
-    def add_css(self, data):
-        if data:
-            for medium, paths in data.items():
-                self._css.setdefault(medium, []).extend([path for path in paths if path not in self._css[medium]])
+    __add__(other)
+        var combined = new Media();
+        for each (name in MEDIA_TYPES) {
+            getattr(combined, 'add_' + name)(getattr(this, '_' + name, null));
+            getattr(combined, 'add_' + name)(getattr(other, '_' + name, null));
+        }
+        return combined;
+});
 
-    def __add__(self, other):
-        combined = Media()
-        for name in MEDIA_TYPES:
-            getattr(combined, 'add_' + name)(getattr(self, '_' + name, None))
-            getattr(combined, 'add_' + name)(getattr(other, '_' + name, None))
-        return combined
+function media_property(cls) {
+    function _media()
+        // Get the media property of the superclass, if it exists
+        if hasattr(super(cls, this), 'media')
+            base = super(cls, this).media
+        else
+            base = new Media();
 
-def media_property(cls):
-    def _media(self):
-        # Get the media property of the superclass, if it exists
-        if hasattr(super(cls, self), 'media'):
-            base = super(cls, self).media
-        else:
-            base = Media()
-
-        # Get the media definition for this class
-        definition = getattr(cls, 'Media', None)
-        if definition:
-            extend = getattr(definition, 'extend', True)
-            if extend:
-                if extend == True:
-                    m = base
-                else:
-                    m = Media()
-                    for medium in extend:
-                        m = m + base[medium]
-                return m + Media(definition)
-            else:
-                return Media(definition)
-        else:
-            return base
-    return property(_media)
+        // Get the media definition for this class
+        var definition = getattr(cls, 'Media', null);
+        if (definition) {
+            var extend = getattr(definition, 'extend', true);
+            if (extend) {
+                if (extend == true)
+                    m = base;
+                else
+                    m = new Media();
+                    for each (medium in extend)
+                        m = m.__add__(base[medium]);
+                return m.__add__(new Media(definition));
+            } else {
+                return new Media(definition);
+            }
+        } else {
+            return base;
+        }
+    return property(_media);
+}
 
 var Widget = type('Widget', {
     //Static
@@ -118,6 +147,16 @@ var Widget = type('Widget', {
         if (!('media' in attrs))
             new_class.media = media_property(new_class);
         return new_class;
+    },
+    /* 
+     * Returns the HTML ID attribute of this Widget for use by a <label>,
+     * given the ID of the field. Returns None if no ID is available.
+     * This hook is necessary because some widgets have multiple HTML
+     * elements and, thus, multiple IDs. In that case, this method should
+     * return an ID value that corresponds to the first ID in the widget's tags.
+     */
+    id_for_label: function(id_) {
+        return id_;
     }
 }, {
     is_hidden: false,          // Determines whether this corresponds to an <input type="hidden">.
@@ -176,395 +215,412 @@ var Widget = type('Widget', {
         if force_unicode(initial_value) != force_unicode(data_value):
             return True
         return False
-
-    def id_for_label(self, id_):
-        """
-        Returns the HTML ID attribute of this Widget for use by a <label>,
-        given the ID of the field. Returns None if no ID is available.
-
-        This hook is necessary because some widgets have multiple HTML
-        elements and, thus, multiple IDs. In that case, this method should
-        return an ID value that corresponds to the first ID in the widget's
-        tags.
-        """
-        return id_
-    id_for_label = classmethod(id_for_label)
 });
 
-var Media = type('Media', {});
-class Input(Widget):
-    """
-    Base class for all <input> widgets (except type='checkbox' and
-    type='radio', which are special).
-    """
-    input_type = None # Subclasses must define this.
+/* 
+ * Base class for all <input> widgets (except type='checkbox' and
+ * type='radio', which are special).
+ */
+var Input = type('Input', Widget, {
+    input_type: null, // Subclasses must define this.
 
-    def render(self, name, value, attrs=None):
-        if value is None: value = ''
-        final_attrs = self.build_attrs(attrs, type=self.input_type, name=name)
-        if value != '':
-            # Only add the 'value' attribute if a value is non-empty.
-            final_attrs['value'] = force_unicode(value)
-        return mark_safe(u'<input%s />' % flatatt(final_attrs))
+    render: function(name, value, attrs) {
+        if (!value) value = '';
+        var final_attrs = this.build_attrs(attrs, {'type': this.input_type, 'name':name});
+        if (value != '')
+            // Only add the 'value' attribute if a value is non-empty.
+            final_attrs['value'] = value;
+        return '<input%s />'.subs(flatatt(final_attrs));
+    }
+});
 
-var Media = type('Media', {});
-class TextInput(Input):
-    input_type = 'text'
+var TextInput = type('TextInput', Input, {
+    input_type: 'text'
+});
 
-var Media = type('Media', {});
-class PasswordInput(Input):
-    input_type = 'password'
+var PasswordInput = type('PasswordInput', Input, {
+    input_type: 'password',
 
-    def __init__(self, attrs=None, render_value=True):
-        super(PasswordInput, self).__init__(attrs)
-        self.render_value = render_value
+    __init__: function(attrs, render_value) {
+        render_value = render_value || true;
+        super(Input, this).__init__(attrs);
+        this.render_value = render_value;
+    },
 
-    def render(self, name, value, attrs=None):
-        if not self.render_value: value=None
-        return super(PasswordInput, self).render(name, value, attrs)
+    render: function(name, value, attrs) {
+        if (!this.render_value) value = null;
+        return super(Input, this).render(name, value, attrs);
+    }
+});
 
-var Media = type('Media', {});
-class HiddenInput(Input):
-    input_type = 'hidden'
-    is_hidden = True
-    
-var Media = type('Media', {});
-class MultipleHiddenInput(HiddenInput):
-    """
-    A widget that handles <input type="hidden"> for fields that have a list
-    of values.
-    """
-    def __init__(self, attrs=None, choices=()):
-        super(MultipleHiddenInput, self).__init__(attrs)
-        # choices can be any iterable
-        self.choices = choices
+var HiddenInput = type('HiddenInput', Input, {
+    input_type:'hidden',
+    is_hidden: true
+});
 
-    def render(self, name, value, attrs=None, choices=()):
-        if value is None: value = []
-        final_attrs = self.build_attrs(attrs, type=self.input_type, name=name)
-        return mark_safe(u'\n'.join([(u'<input%s />' %
-            flatatt(new Dict(value=force_unicode(v), **final_attrs)))
-            for v in value]))
+/* 
+ * A widget that handles <input type="hidden"> for fields that have a list of values.
+ */
+var MultipleHiddenInput = type('MultipleHiddenInput', HiddenInput, {
+    __init__: function(attrs, choices) {
+        super(HiddenInput, this).__init__(attrs);
+        // choices can be any iterable
+        this.choices = choices;
+    },
 
-    def value_from_datadict(self, data, files, name):
-        if isinstance(data, (MultiValueDict, MergeDict)):
-            return data.getlist(name)
-        return data.get(name, None)
+    render: function(name, value, attrs, choices) {
+        if (!value) value = [];
+        var final_attrs = this.build_attrs(attrs, {'type':this.input_type, 'name':name});
+        return ['<input%s />'.subs(flatatt(extend({}, {'value':v}, final_attrs))) for each (v in value)].join('\n');
+    },
 
-var Media = type('Media', {});
-class FileInput(Input):
-    input_type = 'file'
-    needs_multipart_form = True
+    value_from_datadict: function(data, files, name) {
+        if isinstance(data, [MultiValueDict, MergeDict])
+            return data.getlist(name);
+        return data.get(name, null);
+    }
+});
 
-    def render(self, name, value, attrs=None):
-        return super(FileInput, self).render(name, None, attrs=attrs)
+var FileInput = type('FileInput', Input, {
+    input_type: 'file',
+    needs_multipart_form: true,
 
-    def value_from_datadict(self, data, files, name):
-        "File widgets take data from FILES, not POST"
-        return files.get(name, None)
+    render: function(name, value, attrs) {
+        return super(Input, this).render(name, null, attrs)
+    },
 
-    def _has_changed(self, initial, data):
-        if data is None:
-            return False
-        return True
+    value_from_datadict: function(data, files, name) {
+        //File widgets take data from FILES, not POST
+        return files.get(name, null);
+    },
 
-var Media = type('Media', {});
-class Textarea(Widget):
-    def __init__(self, attrs=None):
-        # The 'rows' and 'cols' attributes are required for HTML correctness.
-        self.attrs = {'cols': '40', 'rows': '10'}
-        if attrs:
-            self.attrs.update(attrs)
+    _has_changed: function(initial, data) {
+        if (!data)
+            return false;
+        return true;
+    }
+});
 
-    def render(self, name, value, attrs=None):
-        if value is None: value = ''
-        value = force_unicode(value)
-        final_attrs = self.build_attrs(attrs, name=name)
-        return mark_safe(u'<textarea%s>%s</textarea>' % (flatatt(final_attrs),
-                conditional_escape(force_unicode(value))))
+var Textarea = type('Textarea', Widget, {
+    __init__: function(attrs) {
+        // The 'rows' and 'cols' attributes are required for HTML correctness.
+        this.attrs = {'cols': '40', 'rows': '10'};
+        extend(this.attrs, attrs || {});
+    },
 
-var Media = type('Media', {});
-class DateTimeInput(Input):
-    input_type = 'text'
-    format = '%Y-%m-%d %H:%M:%S'     # '2006-10-25 14:30:59'
+    render: function(name, value, attrs) {
+        if (!value) value = '';
+        var final_attrs = this.build_attrs(attrs, {'name':name});
+        return '<textarea%s>%s</textarea>'.subs(flatatt(final_attrs), conditional_escape(value));
+    }
+});
 
-    def __init__(self, attrs=None, format=None):
-        super(DateTimeInput, self).__init__(attrs)
-        if format:
-            self.format = format
+var DateTimeInput = type('DateTimeInput', Input, {
+    input_type: 'text',
+    format: '%Y-%m-%d %H:%M:%S',     // '2006-10-25 14:30:59'
 
-    def render(self, name, value, attrs=None):
-        if value is None:
-            value = ''
-        elif hasattr(value, 'strftime'):
-            value = datetime_safe.new_datetime(value)
-            value = value.strftime(self.format)
-        return super(DateTimeInput, self).render(name, value, attrs)
+    __init__: function(attrs, format) {
+        super(Input, this).__init__(attrs);
+        if (format)
+            this.format = format;
+    },
 
-var Media = type('Media', {});
-class TimeInput(Input):
-    input_type = 'text'
+    render: function(name, value, attrs) {
+        if (!value) value = ''
+        else if (hasattr(value, 'strftime')) {
+            value = datetime_safe.new_datetime(value);
+            value = value.strftime(this.format);
+        }
+        return super(Input, this).render(name, value, attrs);
+});
 
-    def render(self, name, value, attrs=None):
-        if value is None:
-            value = ''
-        elif isinstance(value, time):
-            value = value.replace(microsecond=0)
-        return super(TimeInput, self).render(name, value, attrs)
+var TimeInput = type('TimeInput', Input, {
+    input_type: 'text',
 
-var Media = type('Media', {});
-class CheckboxInput(Widget):
-    def __init__(self, attrs=None, check_test=bool):
-        super(CheckboxInput, self).__init__(attrs)
-        # check_test is a callable that takes a value and returns True
-        # if the checkbox should be checked for that value.
-        self.check_test = check_test
+    render: function(name, value, attrs) {
+        if (!value) value = '';
+        else if (isinstance(value, time))
+            value = value.replace(microsecond=0);
+        return super(Input, this).render(name, value, attrs);
+    }
+});
 
-    def render(self, name, value, attrs=None):
-        final_attrs = self.build_attrs(attrs, type='checkbox', name=name)
-        try:
-            result = self.check_test(value)
-        except: # Silently catch exceptions
-            result = False
-        if result:
-            final_attrs['checked'] = 'checked'
-        if value not in ('', True, False, None):
-            # Only add the 'value' attribute if a value is non-empty.
-            final_attrs['value'] = force_unicode(value)
-        return mark_safe(u'<input%s />' % flatatt(final_attrs))
+var CheckboxInput = type('CheckboxInput', Widget, {
+    __init__: function(attrs, check_test) {
+        super(Widget, this).__init__(attrs)
+        // check_test is a callable that takes a value and returns True
+        // if the checkbox should be checked for that value.
+        this.check_test = check_test || bool;
+    },
 
-    def value_from_datadict(self, data, files, name):
-        if name not in data:
-            # A missing value means False because HTML form submission does not
-            # send results for unselected checkboxes.
-            return False
-        return super(CheckboxInput, self).value_from_datadict(data, files, name)
+    render: function(name, value, attrs) {
+        var final_attrs = this.build_attrs(attrs, {'type':'checkbox', 'name':name});
+        try {
+            result = this.check_test(value);
+        } catch (e) { // Silently catch exceptions
+            result = false;
+        }
+        if (result) final_attrs['checked'] = 'checked';
+        if (!include(['', true, false, null], value))
+            // Only add the 'value' attribute if a value is non-empty.
+            final_attrs['value'] = value;
+        return '<input%s />'.subs(flatatt(final_attrs));
+    },
 
-    def _has_changed(self, initial, data):
-        # Sometimes data or initial could be None or u'' which should be the
-        # same thing as False.
-        return bool(initial) != bool(data)
+    value_from_datadict: function(data, files, name) {
+        if (!include(data, name))
+            // A missing value means False because HTML form submission does not
+            // send results for unselected checkboxes.
+            return false;
+        return super(Widget, this).value_from_datadict(data, files, name);
+    },
 
-var Media = type('Media', {});
-class Select(Widget):
-    def __init__(self, attrs=None, choices=()):
-        super(Select, self).__init__(attrs)
-        # choices can be any iterable, but we may need to render this widget
-        # multiple times. Thus, collapse it into a list so it can be consumed
-        # more than once.
-        self.choices = list(choices)
+    _has_changed: function(initial, data) {
+        // Sometimes data or initial could be None or u'' which should be the
+        // same thing as False.
+        return bool(initial) != bool(data);
+    }
+});
 
-    def render(self, name, value, attrs=None, choices=()):
-        if value is None: value = ''
-        final_attrs = self.build_attrs(attrs, name=name)
-        output = [u'<select%s>' % flatatt(final_attrs)]
-        options = self.render_options(choices, [value])
-        if options:
-            output.append(options)
-        output.append('</select>')
-        return mark_safe(u'\n'.join(output))
+var Select = type('Select', Widget, {
+    __init__: function(attrs, choices) {
+        super(Widget, this).__init__(attrs);
+        // choices can be any iterable, but we may need to render this widget
+        // multiple times. Thus, collapse it into a list so it can be consumed
+        // more than once.
+        this.choices = array(choices);
+    },
 
-    def render_options(self, choices, selected_choices):
-        def render_option(option_value, option_label):
-            option_value = force_unicode(option_value)
-            selected_html = (option_value in selected_choices) and u' selected="selected"' or ''
-            return u'<option value="%s"%s>%s</option>' % (
-                escape(option_value), selected_html,
-                conditional_escape(force_unicode(option_label)))
-        # Normalize to strings.
-        selected_choices = set([force_unicode(v) for v in selected_choices])
-        output = []
-        for option_value, option_label in chain(self.choices, choices):
-            if isinstance(option_label, (list, tuple)):
-                output.append(u'<optgroup label="%s">' % escape(force_unicode(option_value)))
-                for option in option_label:
-                    output.append(render_option(*option))
-                output.append(u'</optgroup>')
-            else:
-                output.append(render_option(option_value, option_label))
-        return u'\n'.join(output)
+    render: function(name, value, attrs, choices) {
+        if (!value) value = '';
+        var final_attrs = this.build_attrs(attrs, {'name':name});
+        var output = ['<select%s>'.subs(flatatt(final_attrs))];
+        var options = this.render_options(choices, [value]);
+        if (bool(options))
+            output.push(options);
+        output.push('</select>');
+        return output.join('\n');
+    },
 
-var Media = type('Media', {});
-class NullBooleanSelect(Select):
-    """
-    A Select Widget intended to be used with NullBooleanField.
-    """
-    def __init__(self, attrs=None):
-        choices = ((u'1', ugettext('Unknown')), (u'2', ugettext('Yes')), (u'3', ugettext('No')))
-        super(NullBooleanSelect, self).__init__(attrs, choices)
+    render_options: function(choices, selected_choices) {
+        function render_option(option_value, option_label) {
+            var selected_html = include(selected_choices, option_value) && ' selected="selected"' || ''
+            return '<option value="%s"%s>%s</option>'.subs(escape(option_value), selected_html, conditional_escape(option_label));
+        }
+        // Normalize to strings.
+        var selected_choices = new Set([v for (v in selected_choices)]);
+        var output = [];
+        for ([option_value, option_label] in chain(this.choices, choices)) {
+            if (isinstance(option_label, Array)) {
+                output.push('<optgroup label="%s">'.subs(escape(option_value)));
+                for each (var option in option_label)
+                    output.push(render_option(option[0], option[1]));
+                output.append('</optgroup>');
+            } else {
+                output.push(render_option(option_value, option_label));
+        }
+        return output.join('\n');
+    }
+});
+/* 
+ * A Select Widget intended to be used with NullBooleanField.
+ */
+var NullBooleanSelect = type('NullBooleanSelect', Select, {
+    __init__: function(attrs) {
+        var choices = [['1', ugettext('Unknown')], ['2', ugettext('Yes')], ['3', ugettext('No')]];
+        super(Select, this).__init__(attrs, choices);
+    },
 
-    def render(self, name, value, attrs=None, choices=()):
-        try:
-            value = {True: u'2', False: u'3', u'2': u'2', u'3': u'3'}[value]
-        except KeyError:
-            value = u'1'
-        return super(NullBooleanSelect, self).render(name, value, attrs, choices)
+    render: function(name, value, attrs, choices) {
+        value = {true: '2', false: '3', '2': '2', '3': '3'}[value] || '1'; 
+        return super(Select, this).render(name, value, attrs, choices);
+    },
 
-    def value_from_datadict(self, data, files, name):
-        value = data.get(name, None)
-        return {u'2': True, u'3': False, True: True, False: False}.get(value, None)
+    value_from_datadict: function(data, files, name) {
+        var value = data.get(name, null);
+        return {'2': true, '3': false, true: true, false: false}[value] || null;
+    },
 
-    def _has_changed(self, initial, data):
-        # Sometimes data or initial could be None or u'' which should be the
-        # same thing as False.
-        return bool(initial) != bool(data)
+    _has_changed: function(initial, data) {
+        // Sometimes data or initial could be None or u'' which should be the
+        // same thing as False.
+        return bool(initial) != bool(data);
+    }
+});
 
-var Media = type('Media', {});
-class SelectMultiple(Select):
-    def render(self, name, value, attrs=None, choices=()):
-        if value is None: value = []
-        final_attrs = self.build_attrs(attrs, name=name)
-        output = [u'<select multiple="multiple"%s>' % flatatt(final_attrs)]
-        options = self.render_options(choices, value)
-        if options:
-            output.append(options)
-        output.append('</select>')
-        return mark_safe(u'\n'.join(output))
+var SelectMultiple = type('SelectMultiple', Select, {
+    render: function(name, value, attrs, choices) {
+        if (!value) value = [];
+        var final_attrs = this.build_attrs(attrs, {'name':name});
+        var output = ['<select multiple="multiple"%s>'.subs(flatatt(final_attrs)];
+        var options = this.render_options(choices, value);
+        if (bool(options))
+            output.push(options);
+        output.push('</select>');
+        return output.join('\n');
+    },
 
-    def value_from_datadict(self, data, files, name):
-        if isinstance(data, (MultiValueDict, MergeDict)):
-            return data.getlist(name)
-        return data.get(name, None)
+    value_from_datadict: function(data, files, name) {
+        if isinstance(data, [MultiValueDict, MergeDict]):
+            return data.getlist(name);
+        return data.get(name, null);
+    },
 
-    def _has_changed(self, initial, data):
-        if initial is None:
-            initial = []
-        if data is None:
-            data = []
-        if len(initial) != len(data):
-            return True
-        for value1, value2 in zip(initial, data):
-            if force_unicode(value1) != force_unicode(value2):
-                return True
-        return False
+    _has_changed: function(initial, data) {
+        if (!initial)
+            initial = [];
+        if (!data)
+            data = [];
+        if (len(initial) != len(data))
+            return true;
+        for each ([value1, value2] in zip(initial, data))
+            if (value1 != value2)
+                return true;
+        return false;
+    }
+});
 
-var Media = type('Media', {});
-class RadioInput(StrAndUnicode):
-    """
-    An object used by RadioFieldRenderer that represents a single
-    <input type='radio'>.
-    """
+/* 
+ * An object used by RadioFieldRenderer that represents a single <input type='radio'>.
+ */
+var RadioInput = type('RadioInput', {
+    __init__: function(name, value, attrs, choice, index) {
+        this.name = name;
+        this.value = value;
+        this.attrs = attrs;
+        this.choice_value = choice[0];
+        this.choice_label = choice[1];
+        this.index = index;
+    },
 
-    def __init__(self, name, value, attrs, choice, index):
-        self.name, self.value = name, value
-        self.attrs = attrs
-        self.choice_value = force_unicode(choice[0])
-        self.choice_label = force_unicode(choice[1])
-        self.index = index
+    __str__: function() {
+        var label_for = ''
+        if ('id' in this.attrs)
+            var label_for = ' for="%s_%s"'.subs(this.attrs['id'], this.index);
+        var choice_label = conditional_escape(thsi.choice_label);
+        return '<label%s>%s %s</label>'.subs(label_for, this.tag(), choice_label);
+    },
 
-    def __str__(self):
-        if 'id' in self.attrs:
-            label_for = ' for="%s_%s"' % (self.attrs['id'], self.index)
-        else:
-            label_for = ''
-        choice_label = conditional_escape(force_unicode(self.choice_label))
-        return mark_safe(u'<label%s>%s %s</label>' % (label_for, self.tag(), choice_label))
+    is_checked: function() {
+        return this.value == this.choice_value;
+    },
 
-    def is_checked(self):
-        return self.value == self.choice_value
+    tag: function() {
+        if ('id' in this.attrs)
+            this.attrs['id'] = '%s_%s'.subs(this.attrs['id'], this.index);
+        var final_attrs = extend({}, this.attrs, {'type':'radio', 'name':this.name, 'value':this.choice_value});
+        if (this.is_checked())
+            final_attrs['checked'] = 'checked';
+        return '<input%s />'.subs(flatatt(final_attrs));
+    }
+});
+/*
+ * An object used by RadioSelect to enable customization of radio widgets.
+ */
+var RadioFieldRenderer = type('RadioFieldRenderer', {
+    __init__: function(name, value, attrs, choices) {
+        this.name = name;
+        this.value = value;
+        this.attrs = attrs;
+        this.choices = choices;
+    },
 
-    def tag(self):
-        if 'id' in self.attrs:
-            self.attrs['id'] = '%s_%s' % (self.attrs['id'], self.index)
-        final_attrs = new Dict(self.attrs, type='radio', name=self.name, value=self.choice_value)
-        if self.is_checked():
-            final_attrs['checked'] = 'checked'
-        return mark_safe(u'<input%s />' % flatatt(final_attrs))
+    __iter__: function() {
+        for ([i, choice] in Iterator(this.choices))
+            yield new RadioInput(this.name, this.value, copy(this.attrs), choice, i);
+    },
 
-var Media = type('Media', {});
-class RadioFieldRenderer(StrAndUnicode):
-    """
-    An object used by RadioSelect to enable customization of radio widgets.
-    """
+    __getitem__: function(this, idx) {
+        var choice = this.choices[idx] // Let the IndexError propogate
+        return new RadioInput(this.name, this.value, copy(this.attrs), choice, idx);
+    },
 
-    def __init__(self, name, value, attrs, choices):
-        self.name, self.value, self.attrs = name, value, attrs
-        self.choices = choices
+    __str__:function() {
+        return this.render();
+    },
 
-    def __iter__(self):
-        for i, choice in enumerate(self.choices):
-            yield RadioInput(self.name, self.value, self.attrs.copy(), choice, i)
+    render: function() {
+        //Outputs a <ul> for this set of radio fields.
+        return '<ul>\n%s\n</ul>'.subs(['<li>%s</li>'.subs(w) for (w in this)].join('\n'));
+    }
+});
 
-    def __getitem__(self, idx):
-        choice = self.choices[idx] # Let the IndexError propogate
-        return RadioInput(self.name, self.value, self.attrs.copy(), choice, idx)
+var RadioSelect = type('RadioSelect', Select, {
+    //Static
+    id_for_label: function(id_) {
+        // RadioSelect is represented by multiple <input type="radio"> fields,
+        // each of which has a distinct ID. The IDs are made distinct by a "_X"
+        // suffix, where X is the zero-based index of the radio field. Thus,
+        // the label for a RadioSelect should reference the first one ('_0').
+        if (id_)
+            id_ += '_0';
+        return id_;
+    }
+}, {
+    renderer: RadioFieldRenderer,
 
-    def __str__(self):
-        return self.render()
+    __init__: function() {
+        // Override the default renderer if we were passed one.
+        arguments = new Arguments(arguments);
+        var renderer = arguments.kwargs['renderer'] || null;
+        delete arguments.kwargs['renderer'];
+        if (renderer)
+            this.renderer = renderer;
+        super(Select, this).__init__(arguments);
+    },
 
-    def render(self):
-        """Outputs a <ul> for this set of radio fields."""
-        return mark_safe(u'<ul>\n%s\n</ul>' % u'\n'.join([u'<li>%s</li>'
-                % force_unicode(w) for w in self]))
+    get_renderer: function(name, value, attrs, choices) {
+        //Returns an instance of the renderer.
+        if (!value) value = '';
+        var str_value = str(value); // Normalize to string.
+        var final_attrs = this.build_attrs(attrs);
+        var choices = array(chain(this.choices, choices))
+        return this.renderer(name, str_value, final_attrs, choices);
+    },
 
-var Media = type('Media', {});
-class RadioSelect(Select):
-    renderer = RadioFieldRenderer
+    render: function(name, value, attrs, choices) {
+        return this.get_renderer(name, value, attrs, choices).render();
+    }
+});
 
-    def __init__(self, *args, **kwargs):
-        # Override the default renderer if we were passed one.
-        renderer = kwargs.pop('renderer', None)
-        if renderer:
-            self.renderer = renderer
-        super(RadioSelect, self).__init__(*args, **kwargs)
+var CheckboxSelectMultiple = type('CheckboxSelectMultiple', SelectMultiple, {
+    //Static
+    id_for_label: function(id_) {
+        // See the comment for RadioSelect.id_for_label()
+        if (id_)
+            id_ += '_0';
+        return id_;
+    }
+},{
+    render: function(name, value, attrs, choices) {
+        if (!value) value = [];
+        var has_id = attrs && 'id' in attrs;
+        var final_attrs = this.build_attrs(attrs, {'name':name});
+        var output = ['<ul>'];
+        // Normalize to strings
+        var str_values = new Set([v for (v in value)]);
+        for ([i, [option_value, option_label]] in Iterator(chain(this.choices, choices))) {
+            // If an ID attribute was given, add a numeric index as a suffix,
+            // so that the checkboxes don't all have the same ID attribute.
+            if (has_id) {
+                extend(final_attrs, {'id':'%s_%s'.subs(attrs['id'], i)});
+                label_for = ' for="%s"'.subs(final_attrs['id']);
+            } else {
+                label_for = '';
+            }
 
-    def get_renderer(self, name, value, attrs=None, choices=()):
-        """Returns an instance of the renderer."""
-        if value is None: value = ''
-        str_value = force_unicode(value) # Normalize to string.
-        final_attrs = self.build_attrs(attrs)
-        choices = list(chain(self.choices, choices))
-        return self.renderer(name, str_value, final_attrs, choices)
-
-    def render(self, name, value, attrs=None, choices=()):
-        return self.get_renderer(name, value, attrs, choices).render()
-
-    def id_for_label(self, id_):
-        # RadioSelect is represented by multiple <input type="radio"> fields,
-        # each of which has a distinct ID. The IDs are made distinct by a "_X"
-        # suffix, where X is the zero-based index of the radio field. Thus,
-        # the label for a RadioSelect should reference the first one ('_0').
-        if id_:
-            id_ += '_0'
-        return id_
-    id_for_label = classmethod(id_for_label)
-
-var Media = type('Media', {});
-class CheckboxSelectMultiple(SelectMultiple):
-    def render(self, name, value, attrs=None, choices=()):
-        if value is None: value = []
-        has_id = attrs and 'id' in attrs
-        final_attrs = self.build_attrs(attrs, name=name)
-        output = [u'<ul>']
-        # Normalize to strings
-        str_values = set([force_unicode(v) for v in value])
-        for i, (option_value, option_label) in enumerate(chain(self.choices, choices)):
-            # If an ID attribute was given, add a numeric index as a suffix,
-            # so that the checkboxes don't all have the same ID attribute.
-            if has_id:
-                final_attrs = new Dict(final_attrs, id='%s_%s' % (attrs['id'], i))
-                label_for = u' for="%s"' % final_attrs['id']
-            else:
-                label_for = ''
-
-            cb = CheckboxInput(final_attrs, check_test=lambda value: value in str_values)
-            option_value = force_unicode(option_value)
+            var cb = new CheckboxInput(final_attrs, function (value) { return include(str_values, value)} );
+            
             rendered_cb = cb.render(name, option_value)
-            option_label = conditional_escape(force_unicode(option_label))
-            output.append(u'<li><label%s>%s %s</label></li>' % (label_for, rendered_cb, option_label))
-        output.append(u'</ul>')
-        return mark_safe(u'\n'.join(output))
+            option_label = conditional_escape(option_label);
+            output.push('<li><label%s>%s %s</label></li>'.subs(label_for, rendered_cb, option_label))
+        }
+        output.push('</ul>');
+        return output.join('\n');
+    }
+});
 
-    def id_for_label(self, id_):
-        # See the comment for RadioSelect.id_for_label()
-        if id_:
-            id_ += '_0'
-        return id_
-    id_for_label = classmethod(id_for_label)
-
-var Media = type('Media', {});
-class MultiWidget(Widget):
-    """
+/*
     A widget that is composed of multiple widgets.
 
     Its render() method is different than other widgets', because it has to
@@ -589,121 +645,110 @@ class MultiWidget(Widget):
     widgets and returns a string of HTML that formats them any way you'd like.
 
     You'll probably want to use this class with MultiValueField.
-    """
-    def __init__(self, widgets, attrs=None):
-        self.widgets = [isinstance(w, type) and w() or w for w in widgets]
-        super(MultiWidget, self).__init__(attrs)
+*/
 
-    def render(self, name, value, attrs=None):
-        # value is a list of values, each corresponding to a widget
-        # in self.widgets.
-        if not isinstance(value, list):
-            value = self.decompress(value)
-        output = []
-        final_attrs = self.build_attrs(attrs)
-        id_ = final_attrs.get('id', None)
-        for i, widget in enumerate(self.widgets):
-            try:
-                widget_value = value[i]
-            except IndexError:
-                widget_value = None
-            if id_:
-                final_attrs = new Dict(final_attrs, id='%s_%s' % (id_, i))
-            output.append(widget.render(name + '_%s' % i, widget_value, final_attrs))
-        return mark_safe(self.format_output(output))
+var MultiWidget = type('MultiWidget', Widget, {
+    //Static 
+    id_for_label: function(id_) {
+        // See the comment for RadioSelect.id_for_label()
+        if (id_)
+            id_ += '_0';
+        return id_;
+    }
+},{
+    __init__: function(widgets, attrs) {
+        this.widgets = [isinstance(w, type) && w() || w for each (w in widgets)];
+        super(Widget, this).__init__(attrs);
+    },
 
-    def id_for_label(self, id_):
-        # See the comment for RadioSelect.id_for_label()
-        if id_:
-            id_ += '_0'
-        return id_
-    id_for_label = classmethod(id_for_label)
+    render: function(name, value, attrs) {
+        // value is a list of values, each corresponding to a widget in self.widgets.
+        if (!isinstance(value, Array))
+            value = this.decompress(value);
+        var output = [];
+        var final_attrs = this.build_attrs(attrs);
+        var id_ = final_attrs['id'] || null;
+        for ([i, widget] in Iterator(this.widgets)) {
+            try {
+                widget_value = value[i];
+            } catch (e) {
+                widget_value = null;
+            }
+            if (id_)
+                extend(final_attrs, {'id':'%s_%s'.subs(id_, i)});
+            output.push(widget.render(name + '_%s'.subs(i), widget_value, final_attrs));
+        }
+        return this.format_output(output);
+    },
 
-    def value_from_datadict(self, data, files, name):
-        return [widget.value_from_datadict(data, files, name + '_%s' % i) for i, widget in enumerate(self.widgets)]
+    value_from_datadict: function(data, files, name) {
+        return [widget.value_from_datadict(data, files, name + '_%s'.subs(i)) for ([i, widget] in Iterator(this.widgets))];
+    },
 
-    def _has_changed(self, initial, data):
-        if initial is None:
-            initial = [u'' for x in range(0, len(data))]
-        else:
-            if not isinstance(initial, list):
-                initial = self.decompress(initial)
-        for widget, initial, data in zip(self.widgets, initial, data):
-            if widget._has_changed(initial, data):
-                return True
-        return False
+    _has_changed: function(initial, data) {
+        if (!initial)
+            initial = ['' for (x in range(0, len(data)))];
+        else
+            if (!isinstance(initial, Array))
+                initial = this.decompress(initial);
+        for ([widget, initial, data] in zip(this.widgets, initial, data))
+            if (widget._has_changed(initial, data))
+                return true;
+        return false;
+    },
 
-    def format_output(self, rendered_widgets):
-        """
+    /*
         Given a list of rendered widgets (as strings), returns a Unicode string
         representing the HTML for the whole lot.
 
-        This hook allows you to format the HTML design of the widgets, if
-        needed.
-        """
-        return u''.join(rendered_widgets)
+        This hook allows you to format the HTML design of the widgets, if needed.
+     */
+    format_output: function(rendered_widgets) {
+        return rendered_widgets.join('');
+    },
 
-    def decompress(self, value):
-        """
+    /* 
         Returns a list of decompressed values for the given compressed value.
         The given value can be assumed to be valid, but not necessarily
         non-empty.
-        """
-        raise NotImplementedError('Subclasses must implement this method.')
+     */
+    decompress: function(value) {
+        throw new NotImplementedError('Subclasses must implement this method.');
+    },
 
-    def _get_media(self):
-        "Media for a multiwidget is the combination of all media of the subwidgets"
-        media = Media()
-        for w in self.widgets:
-            media = media + w.media
-        return media
-    media = property(_get_media)
-
-var Media = type('Media', {});
-class SplitDateTimeWidget(MultiWidget):
-    """
-    A Widget that splits datetime input into two <input type="text"> boxes.
-    """
-    def __init__(self, attrs=None):
-        widgets = (TextInput(attrs=attrs), TextInput(attrs=attrs))
-        super(SplitDateTimeWidget, self).__init__(widgets, attrs)
-
-    def decompress(self, value):
-        if value:
-            return [value.date(), value.time().replace(microsecond=0)]
-        return [None, None]
+    get media() {
+        //Media for a multiwidget is the combination of all media of the subwidgets"
+        media = new Media()
+        for (w in this.widgets)
+            media = media.__add__(w.media);
+        return media;
+    }
+});
 
 /*
+ * A Widget that splits datetime input into two <input type="text"> boxes.
+ */
+var SplitDateTimeWidget = type('SplitDateTimeWidget', MultiWidget, {
+    __init__: function(attrs) {
+        var widgets = [new TextInput(attrs), new TextInput(attrs)];
+        super(MultiWidget, this).__init__(widgets, attrs);
+    },
+
+    decompress: function(value) {
+        if (value)
+            return [value.date(), value.time().replace(microsecond=0)];
+        return [null, null];
+    }
+});
+/*
  * A Widget that splits datetime input into two <input type="hidden"> inputs.
- 
+ */ 
 var SplitHiddenDateTimeWidget = type('SplitHiddenDateTimeWidget', SplitDateTimeWidget, {
     '__init__': function __init__(attrs){
         var widgets = [new HiddenInput({'attrs':attrs}), new HiddenInput({'attrs':attrs})];
         super(SplitDateTimeWidget, this).__init__(widgets, attrs);
     }
 });
-*/
-
-var Moc = type('Moc', [object], {});
-var Media = Moc;
-var MediaDefiningClass = Moc;
-var Widget = Moc;
-var TextInput = Moc;
-var PasswordInput = Moc;
-var HiddenInput = Moc;
-var MultipleHiddenInput = Moc;
-var FileInput = Moc;
-var DateTimeInput = Moc;
-var TimeInput = Moc;
-var Textarea = Moc;
-var CheckboxInput = Moc;
-var Select = Moc;
-var NullBooleanSelect = Moc;
-var SelectMultiple = Moc;
-var RadioSelect = Moc;
-var CheckboxSelectMultiple = Moc;
-var MultiWidget = Moc;
-var SplitDateTimeWidget = Moc;
 
 $P({    'Media': Media,
         'MediaDefiningClass': MediaDefiningClass,
