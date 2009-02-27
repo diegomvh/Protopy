@@ -94,7 +94,7 @@ var Media = type('Media', {
     }
 });
 
-function _media(cls) {
+function media_property(cls) {
     // Get the media property of the superclass, if it exists
     if (hasattr(super(cls, this), 'media'))
         base = super(cls, this).media
@@ -126,7 +126,7 @@ var Widget = type('Widget', {
     '__new__': function __new__(name, bases, attrs) {
         var new_class = super(object, this).__new__(name, bases, attrs);
         if (!('media' in attrs))
-            new_class.prototype.__defineGetter__('media', _media(new_class));
+            new_class.prototype.__defineGetter__('media', media_property(new_class));
         return new_class;
     },
     /* 
@@ -740,6 +740,7 @@ var SplitHiddenDateTimeWidget = type('SplitHiddenDateTimeWidget', SplitDateTimeW
 
 $P({    'Media': Media,
         'MediaDefiningClass': MediaDefiningClass,
+        'media_property': media_property,
         'Widget': Widget,
         'TextInput': TextInput,
         'PasswordInput': PasswordInput,

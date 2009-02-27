@@ -4,6 +4,7 @@ $L('doff.db.models.query_utils', 'QueryWrapper');
 $L('doff.conf', 'settings');
 //from django import forms
 $L('doff.core.exceptions', 'ValidationError');
+$L('functional', 'curry');
 
 var NOT_PROVIDED = type('NOT_PROVIDED', Exception);
 
@@ -118,7 +119,7 @@ var Field = type('Field', {
         if (bool(this.choices)) {
                 //FIXME: creo ques es un add_method
             var key = 'get_%s_display'.subs(this.name);
-            cls[key] = cls._get_FIELD_display.curry(this);
+            cls[key] = curry(cls._get_FIELD_display, this);
         }
     },
 
@@ -485,9 +486,9 @@ var DateField = type('DateField', Field, {
 	super(Field, this).contribute_to_class(cls, name);
 	if (!this.none) {
 	    var key = 'get_next_by_%s'.subs(this.name);
-	    cls.prototype[key] = cls.prototype._get_next_or_previous_by_FIELD.curry(this, true);
+	    cls.prototype[key] = curry(cls.prototype._get_next_or_previous_by_FIELD, this, true);
 	    key = 'get_previous_by_%s'.subs(this.name);
-	    cls.prototype[key] = cls.prototype._get_next_or_previous_by_FIELD.curry(this, false);
+	    cls.prototype[key] = curry(cls.prototype._get_next_or_previous_by_FIELD, this, false);
 	}
     },
 

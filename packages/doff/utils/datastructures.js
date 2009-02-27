@@ -1,9 +1,9 @@
 $D("doff.utils.datastructures");
-
+$L('copy', 'copy');
 var SortedDict = type('SortedDict', Dict, {
-    '__init__': function __init__(object){
+    '__init__': function __init__(object) {
         super(Dict, this).__init__(object);
-        this.keyOrder = values(this._key);
+        this.keyOrder = (object instanceof SortedDict)? copy(object.keyOrder) : values(this._key);
     },
     
     '__iter__': function __iter__() {

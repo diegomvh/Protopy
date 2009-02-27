@@ -408,15 +408,17 @@
 	
         '_populate': function _populate() {
             this._kwargs = {};
+            var haskwargs = false;
             for (p in this._defaults || {})
                 this._kwargs[p] = this._defaults[p];
             if (this.collect[this.collect.length - 1] instanceof Object) {
+                haskwargs = true;
                 let object = this.collect[this.collect.length - 1];
                 for (p in object)
                     this._kwargs[p] = object[p];
             }
             if (this.names.length < this.collect.length)
-                this._args = this.collect.slice(this.names.length, (bool(this._kwargs))? this.collect.length - 1 : this.collect.length);
+                this._args = this.collect.slice(this.names.length, (haskwargs)? this.collect.length - 1 : this.collect.length);
             else
                 this._args = [];
             this.populated = true;
@@ -499,23 +501,13 @@
             return test;
         },
         'bool': function bool(object) {
-            if (object == null) return false;
-            switch (typeof(object)) {
-                case 'undefined': return false;
-                case 'string': return object != '';
-                case 'boolean': return object != false;
-                case 'number': return object != 0;
-                default: {
-                        if (callable(object['__nonzero__'])) {
-                            return object.__nonzero__();
-                        } else if (type(object) == Array) {
-                            return object.length != 0;
-                        } else {
-                            return keys(object).length != 0;
-                        }
-                }
-            }
-            throw new TypeError("object of type '" + typeof(object) + "' has no bool()");
+            if (object && callable(object['__nonzero__']))
+                return object.__nonzero__();
+            if (object && type(object) == Array)
+                return object.length != 0;
+            if (object && type(object) == Object)
+                return keys(object).length != 0;
+            return Boolean(object);
         },
         'callable': function callable(object) {
             return object && type(object) == Function;
@@ -573,29 +565,21 @@
             return number;
         },
         'len': function len(object) {
-            switch (typeof(object)) {
-                case 'undefined': throw new TypeError("object of type 'undefined' has no len()");
-                case 'string': return object.length;
-                case 'boolean': throw new TypeError("object of type 'bool' has no len()");
-                case 'number': throw new TypeError("object of type 'number' has no len()");
-                default: {
-                        if (callable(object['__len__'])) {
-                            return object.__len__();
-                        } else if (type(object) == Array) {
-                            return object.length;
-                        } else {
-                            return keys(object).length;
-                        }
-                }
-            }
-            throw new TypeError("object of type '" + typeof(object) + "' has no len()");
+            if (object && callable(object['__len__']))
+                return object.__len__();
+            if (object['length'] != undefined) 
+                return object.length;
+            if (object && type(object) == Object) 
+                return keys(object).length;
+            throw new TypeError("object of type '" + type(object) + "' has no len()");
         },
         'array': function array(iterable) {
-            if (!iterable) return [];
-            if (callable(iterable['__iterator__'])) return [e for each (e in iterable)];
-            var length = iterable.length || 0, results = new Array(length);
-            while (length--) results[length] = iterable[length];
-            return results;
+            if (!iterable) 
+                return [];
+            if (callable(iterable['__iterator__'])) 
+                return [e for each (e in iterable)];
+            if (iterable.length != undefined)
+                return Array.prototype.slice.call(iterable);
         },
         'mult': function mult(array, value) {
             var result = [];
@@ -617,7 +601,8 @@
             return ret;
         },
         'str': function str(object) {
-            if (object && callable(object['__str__'])) return object.__str__();
+            if (object && callable(object['__str__'])) 
+                return object.__str__();
             return String(object);
         },
         'values': function values(obj){ 
@@ -661,12 +646,7 @@
 (function(){
     //--------------------------------------- Functions -------------------------------------//
     extend(Function.prototype, {
-	'curry': function curry() {
-	    if (!arguments.length) return this;
-	    var __method = this, args = array(arguments);
-	    return function() { return __method.apply(this, args.concat(array(arguments))); }
-	},
-
+	
 	'delay': function delay() {
 	    var __method = this, args = array(arguments), timeout = args.shift() * 1000;
 	    return window.setTimeout(function() { return __method.apply(__method, args); }, timeout);
@@ -1264,7 +1244,7 @@
             this._value = {};
             this._key = {};
             if (!object || (type(object) == Array && !bool(object))) return;
-            if (object instanceof Dict) {
+            if (issubclass(object, Dict)) {
                 this._value = extend({}, object._value);
                 this._key = extend({}, object._key);
             } else if (callable(object['next'])) {
@@ -1291,6 +1271,10 @@
 
         '__copy__': function __copy__() {
             return new Dict(this);
+        },
+
+        '__nonzero__': function __nonzero__(){
+            return bool(this._key);
         },
 
         'size': function size() {

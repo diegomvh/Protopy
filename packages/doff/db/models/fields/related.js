@@ -8,6 +8,7 @@ $L('doff.db.models.query', 'QuerySet');
 $L('doff.db.models.query_utils', 'QueryWrapper');
 $L('doff.core.exceptions', 'ValidationError');
 $L('doff.db.transaction');
+$L('functional', 'curry');
 
 var RECURSIVE_RELATIONSHIP_CONSTANT = 'this';
 var pending_lookups = {};
@@ -53,7 +54,7 @@ var RelatedField = type('RelatedField', Field,  {
     'contribute_to_class': function contribute_to_class(cls, name) {
         super(Field, this).contribute_to_class(cls, name);
 
-        this.related_query_name = this._get_related_query_name.curry(cls._meta);
+        this.related_query_name = curry(this._get_related_query_name, cls._meta);
 
         if ((!cls._meta.abstracto) && (this.rel.related_name))
             this.rel.related_name = this.rel.related_name.interpolate({'class': cls.__name__.toLowerCase()});
@@ -919,7 +920,7 @@ var ManyToManyField = type('ManyToManyField', RelatedField, {
         cls.prototype.__defineSetter__(attr, function(value){ return rmrod.__set__(this, this.constructor, value); });
 
         // Set up the accessor for the m2m table name for the relation
-        this.m2m_db_table = this._get_m2m_db_table.curry(cls._meta);
+        this.m2m_db_table = curry(this._get_m2m_db_table, cls._meta);
 
         // Populate some necessary rel arguments so that cross-app relations
         // work correctly.
@@ -953,8 +954,8 @@ var ManyToManyField = type('ManyToManyField', RelatedField, {
         }
 
         // Set up the accessors for the column names on the m2m table
-        this.m2m_column_name = this._get_m2m_column_name.curry(related);
-        this.m2m_reverse_name = this._get_m2m_reverse_name.curry(related);
+        this.m2m_column_name = curry(this._get_m2m_column_name, related);
+        this.m2m_reverse_name = curry(this._get_m2m_reverse_name, related);
     },
 
     'set_attributes_from_rel': function set_attributes_from_rel() {},

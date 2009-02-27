@@ -26,4 +26,5 @@ var Post = type('Post', models.Model, {
 });
 
 $P({    'Tag': Tag,
-        'Post': Post    });
+        'Post': Post,
+        'Usuario': Usuario    });

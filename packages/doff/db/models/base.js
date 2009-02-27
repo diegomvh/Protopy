@@ -9,6 +9,7 @@ $L("doff.db.models.signals");
 $L("doff.db.models.manager");
 $L("doff.db.models.options", 'Options');
 $L("doff.db.models.loading", 'register_models', 'get_model');
+$L('functional', 'curry');
 
 var subclass_exception = function(name, parent, module) {
     var klass = type(name, parent);
@@ -157,12 +158,12 @@ var Model = type('Model', {
         opts._prepare(this);
 
         if (opts.order_with_respect_to) {
-            this.prototype.get_next_in_order = this.prototype._get_next_or_previous_in_order.curry(true);
-            this.prototype.get_previous_in_order = this.prototype._get_next_or_previous_in_order.curry(false);
+            this.prototype.get_next_in_order = curry(this.prototype._get_next_or_previous_in_order, true);
+            this.prototype.get_previous_in_order = curry(this.prototype._get_next_or_previous_in_order, false);
             var key = 'get_%s_order'.subs(this.__name__.toLowerCase());
-            opts.order_with_respect_to.rel.to[key] = method_get_order.curry(this);
+            opts.order_with_respect_to.rel.to[key] = curry(method_get_order, this);
             key = 'set_%s_order'.subs(this.__name__.toLowerCase());
-            opts.order_with_respect_to.rel.to[key] = method_set_order.curry(this);
+            opts.order_with_respect_to.rel.to[key] = curry(method_set_order, this);
         }
             // Give the class a docstring -- its definition.
         if (!this.__doc__)

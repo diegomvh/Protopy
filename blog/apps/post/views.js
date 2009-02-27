@@ -1,4 +1,4 @@
-$L('blog.apps.post.models', 'Tag', 'Post');
+$L('blog.apps.post.models', 'Tag', 'Post', 'Usuario');
 $L('doff.template');
 $L('doff.template.default_filters', 'slugify');
 $L('doff.template.loader');
