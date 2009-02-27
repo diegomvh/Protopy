@@ -2,23 +2,7 @@ $D('HTML Widget classes');
 $L('copy', 'copy');
 $L('doff.conf', 'settings');
 $L('doff.forms.util', 'flatatt');
-//TODO: implementar getattr, setattr, property
 /*
-me quede pensadon sobre getattr, setattr y property 
-no es mala idea implementarlo en protopy
-porque tienen una pequeña vuelta de rosca que estaria bueno que se haga en ese lugar
-para no estar jugando tanto con los algo.prototype[cacho] = function (){}
-creo que soluciona tambien mi probamas con los bind, en una buena parte :)
-de las funciones
-porque si estas obteniendo una funcion de otro objecto ejemplo pepe = {'algo': function (){}}
-getattr(pepe, 'algo');
-tenes que devolver la funcion bindeada con el objeto sino el scope cambia y haces moco
-luego si se la queres poer a otro objeto otro = {}
-setattr(otro, 'algo', getattr(pepe, 'algo'))
-tenes que rebindear la funcion con otro
-se ve?
-a eso sumale, que pasa si no es una funcion o que pasa si es un propery o cosas asi
-*/
 from itertools import chain
 from django.utils.datastructures import MultiValueDict, MergeDict
 from django.utils.html import escape, conditional_escape
@@ -30,7 +14,7 @@ from datetime import time
 
 from urlparse import urljoin
 //TODO: crear urlparse e itertools
-
+*/
 var MEDIA_TYPES = ['css','js'];
 
 var Media = type('Media', {
@@ -61,7 +45,7 @@ var Media = type('Media', {
     },
 
     render_js: function() {
-        return ['<script type="text/javascript" src="%s"></script>'.subs(this.absolute_path(path) for each (path in this._js)];
+        return ['<script type="text/javascript" src="%s"></script>'.subs(this.absolute_path(path)) for each (path in this._js)];
     },
 
     render_css: function() {
@@ -75,7 +59,6 @@ var Media = type('Media', {
     },
 
     absolute_path: function(path) {
-        //TODO: cambiar en protopy los starts_withs por los pythonicos
         if (path.startswith('http://') || path.startswith('https://') || path.startswith('/'))
             return path;
         return urljoin(settings.MEDIA_URL, path);
@@ -95,57 +78,55 @@ var Media = type('Media', {
 
     add_css: function(data) {
         if (bool(data))
-            //TODO: implementar iterms como builtin
             for each ([medium, paths] in items(data)) {
                 this._css[medium] = this._css[medium] || [];
                 this._css[medium] = this._css[medium].concat([path for each (path in paths) if (!include(this._css[medium], path))]);
             }
     },
 
-    __add__(other)
+    __add__: function(other) {
         var combined = new Media();
         for each (name in MEDIA_TYPES) {
             getattr(combined, 'add_' + name)(getattr(this, '_' + name, null));
             getattr(combined, 'add_' + name)(getattr(other, '_' + name, null));
         }
         return combined;
+    }
 });
 
-function media_property(cls) {
-    function _media()
-        // Get the media property of the superclass, if it exists
-        if hasattr(super(cls, this), 'media')
-            base = super(cls, this).media
-        else
-            base = new Media();
+function _media(cls) {
+    // Get the media property of the superclass, if it exists
+    if (hasattr(super(cls, this), 'media'))
+        base = super(cls, this).media
+    else
+        base = new Media();
 
-        // Get the media definition for this class
-        var definition = getattr(cls, 'Media', null);
-        if (definition) {
-            var extend = getattr(definition, 'extend', true);
-            if (extend) {
-                if (extend == true)
-                    m = base;
-                else
-                    m = new Media();
-                    for each (medium in extend)
-                        m = m.__add__(base[medium]);
-                return m.__add__(new Media(definition));
-            } else {
-                return new Media(definition);
-            }
+    // Get the media definition for this class
+    var definition = getattr(cls, 'Media', null);
+    if (definition) {
+        var extend = getattr(definition, 'extend', true);
+        if (extend) {
+            if (extend == true)
+                m = base;
+            else
+                m = new Media();
+                for each (medium in extend)
+                    m = m.__add__(base[medium]);
+            return m.__add__(new Media(definition));
         } else {
-            return base;
+            return new Media(definition);
         }
-    return property(_media);
+    } else {
+        return base;
+    }
 }
 
 var Widget = type('Widget', {
     //Static
     '__new__': function __new__(name, bases, attrs) {
-        var new_class = super(object, cls).__new__(name, bases, attrs);
+        var new_class = super(object, this).__new__(name, bases, attrs);
         if (!('media' in attrs))
-            new_class.media = media_property(new_class);
+            new_class.prototype.__defineGetter__('media', _media(new_class));
         return new_class;
     },
     /* 
@@ -160,61 +141,64 @@ var Widget = type('Widget', {
     }
 }, {
     is_hidden: false,          // Determines whether this corresponds to an <input type="hidden">.
-    needs_multipart_form: false // Determines does this widget need multipart-encrypted form
+    needs_multipart_form: false, // Determines does this widget need multipart-encrypted form
 
-    def __init__(self, attrs=None):
-        if attrs is not None:
-            self.attrs = attrs.copy()
-        else:
-            self.attrs = {}
+    __init__: function(attrs) {
+        if (attrs)
+            this.attrs = copy(attrs);
+        else
+            this.attrs = {};
+    },
 
-    def __deepcopy__(self, memo):
-        obj = copy.copy(self)
-        obj.attrs = self.attrs.copy()
-        memo[id(self)] = obj
-        return obj
+    __deepcopy__: function() {
+        var obj = copy(this);
+        obj.attrs = copy(this.attrs);
+        return obj;
+    },
 
-    def render(self, name, value, attrs=None):
-        """
-        Returns this Widget rendered as HTML, as a Unicode string.
+    /* 
+     * Returns this Widget rendered as HTML, as a Unicode string.
+     * The 'value' given is not guaranteed to be valid input, so subclass
+     * implementations should program defensively.
+     */
+    render: function(name, value, attrs) {
+        throw NotImplementedError;
+    },
 
-        The 'value' given is not guaranteed to be valid input, so subclass
-        implementations should program defensively.
-        """
-        raise NotImplementedError
+    build_attrs: function(extra_attrs) {
+        //Helper function for building an attribute dictionary.
+        arguments = new Arguments(arguments);
+        var attrs = extend(this.attrs, arguments.kwargs);
+        if (bool(extra_attrs))
+            extend(attrs, extra_attrs);
+        return attrs;
+    },
 
-    def build_attrs(self, extra_attrs=None, **kwargs):
-        "Helper function for building an attribute dictionary."
-        attrs = new Dict(self.attrs, **kwargs)
-        if extra_attrs:
-            attrs.update(extra_attrs)
-        return attrs
-
-    def value_from_datadict(self, data, files, name):
-        """
-        Given a dictionary of data and this widget's name, returns the value
-        of this widget. Returns None if it's not provided.
-        """
-        return data.get(name, None)
-
-    def _has_changed(self, initial, data):
-        """
-        Return True if data differs from initial.
-        """
-        # For purposes of seeing whether something has changed, None is
-        # the same as an empty string, if the data or inital value we get
-        # is None, replace it w/ u''.
-        if data is None:
-            data_value = u''
-        else:
-            data_value = data
-        if initial is None:
-            initial_value = u''
-        else:
-            initial_value = initial
-        if force_unicode(initial_value) != force_unicode(data_value):
-            return True
-        return False
+    /*
+     * Given a dictionary of data and this widget's name, returns the value
+     * of this widget. Returns None if it's not provided.
+     */
+    value_from_datadict: function(data, files, name) {
+        return data[name] || null;
+    },
+    
+    //Return True if data differs from initial.
+    _has_changed: function(initial, data) {
+        // For purposes of seeing whether something has changed, None is
+        // the same as an empty string, if the data or inital value we get
+        // is None, replace it w/ u''.
+        if (!data)
+            data_value = '';
+        else
+            data_value = data;
+        if (!initial)
+            initial_value = '';
+        else
+            initial_value = initial;
+        if (initial_value != data_value)
+            return true;
+        return false;
+    }
 });
 
 /* 
@@ -275,7 +259,7 @@ var MultipleHiddenInput = type('MultipleHiddenInput', HiddenInput, {
     },
 
     value_from_datadict: function(data, files, name) {
-        if isinstance(data, [MultiValueDict, MergeDict])
+        if (isinstance(data, [MultiValueDict, MergeDict]))
             return data.getlist(name);
         return data.get(name, null);
     }
@@ -332,6 +316,7 @@ var DateTimeInput = type('DateTimeInput', Input, {
             value = value.strftime(this.format);
         }
         return super(Input, this).render(name, value, attrs);
+    }
 });
 
 var TimeInput = type('TimeInput', Input, {
@@ -418,6 +403,7 @@ var Select = type('Select', Widget, {
                 output.append('</optgroup>');
             } else {
                 output.push(render_option(option_value, option_label));
+            }
         }
         return output.join('\n');
     }
@@ -452,7 +438,7 @@ var SelectMultiple = type('SelectMultiple', Select, {
     render: function(name, value, attrs, choices) {
         if (!value) value = [];
         var final_attrs = this.build_attrs(attrs, {'name':name});
-        var output = ['<select multiple="multiple"%s>'.subs(flatatt(final_attrs)];
+        var output = ['<select multiple="multiple"%s>'.subs(flatatt(final_attrs))];
         var options = this.render_options(choices, value);
         if (bool(options))
             output.push(options);
@@ -461,7 +447,7 @@ var SelectMultiple = type('SelectMultiple', Select, {
     },
 
     value_from_datadict: function(data, files, name) {
-        if isinstance(data, [MultiValueDict, MergeDict]):
+        if (isinstance(data, [MultiValueDict, MergeDict]))
             return data.getlist(name);
         return data.get(name, null);
     },
@@ -530,7 +516,7 @@ var RadioFieldRenderer = type('RadioFieldRenderer', {
             yield new RadioInput(this.name, this.value, copy(this.attrs), choice, i);
     },
 
-    __getitem__: function(this, idx) {
+    __getitem__: function(idx) {
         var choice = this.choices[idx] // Let the IndexError propogate
         return new RadioInput(this.name, this.value, copy(this.attrs), choice, idx);
     },
@@ -691,9 +677,11 @@ var MultiWidget = type('MultiWidget', Widget, {
         else
             if (!isinstance(initial, Array))
                 initial = this.decompress(initial);
-        for ([widget, initial, data] in zip(this.widgets, initial, data))
+        for (elements in zip(this.widgets, initial, data)) {
+            var [widget, initial, data] = elements;
             if (widget._has_changed(initial, data))
                 return true;
+        }
         return false;
     },
 

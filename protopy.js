@@ -197,41 +197,41 @@
 
     // Type constructor
     function type(name) {
-    if (name == undefined || name == null)
-        throw new TypeError('Invalid arguments');
-	var args = Array.prototype.slice.call(arguments).slice(1);
-	if (name && args.length == 0)
-	    return name.constructor;
-	if (args[0] instanceof Array && args[0][0] != undefined)
-	    var bases = args.shift();
-	else if (!(args[0] instanceof Array) && args[0] instanceof Function)
-	    var bases = [args.shift()];
-	else var bases = [object];
-	if (args[0] instanceof Object && args.length == 2) {
-	    var classAttrs = args.shift();
-	    var instanceAttrs = args.shift();
-	} else if (args.length == 1) {
-	    var classAttrs = {};
-	    var instanceAttrs = args.shift();
-	} else if (args.length == 0) {
-	    var classAttrs = {};
-	    var instanceAttrs = {};
-    } else new TypeError('Invalid arguments');
+	if (name == undefined || name == null)
+	    throw new TypeError('Invalid arguments');
+	    var args = Array.prototype.slice.call(arguments).slice(1);
+	    if ((name || name === "") && args.length == 0)
+		return name.constructor;
+	    if (args[0] instanceof Array && args[0][0] != undefined)
+		var bases = args.shift();
+	    else if (!(args[0] instanceof Array) && args[0] instanceof Function)
+		var bases = [args.shift()];
+	    else var bases = [object];
+	    if (args[0] instanceof Object && args.length == 2) {
+		var classAttrs = args.shift();
+		var instanceAttrs = args.shift();
+	    } else if (args.length == 1) {
+		var classAttrs = {};
+		var instanceAttrs = args.shift();
+	    } else if (args.length == 0) {
+		var classAttrs = {};
+		var instanceAttrs = {};
+	} else new TypeError('Invalid arguments');
 
 	var new_type = eval('(function ' + name + '() { this.__init__.apply(this, arguments); })');
 
 	//Jerarquia
-    new_type.__base__ = bases[0];
+	new_type.__base__ = bases[0];
 	new_type.__bases__ = bases;
 	new_type.__subclasses__ = [];
-    new_type.__static__ = __extend__(true, {}, classAttrs);
+	new_type.__static__ = __extend__(true, {}, classAttrs);
 	for each (var base in bases.reverse()) {
 	    base.__subclasses__.push(new_type);
-        __extend__(true, new_type, base.__static__);
-        new_type.__new__ = base.__new__;
-    }
+	    __extend__(true, new_type, base.__static__);
+	    new_type.__new__ = base.__new__;
+	}
 
-    //Decorando los atributos
+	//Decorando los atributos
 	classAttrs['__name__'] = instanceAttrs['__name__'] = name;
 	classAttrs['__module__'] = instanceAttrs['__module__'] = this['__name__'];
 
@@ -625,6 +625,9 @@
         },
         'keys': function keys(object){
             return [e for (e in object)];
+        },
+	'items': function items(object){
+            return zip(keys(object), values(object));
         },
         'unique': function unique(sorted) {
             return sorted.reduce(function(array, value) {
