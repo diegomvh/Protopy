@@ -4,7 +4,7 @@
  * XML-style pairs.  It is assumed that the keys do not need to be XML-escaped.
  * If the passed dictionary is empty, then return an empty string.
  */
-var Dict = type('Dict', {});
+
 function flatatt(attrs) {
     return [' %s="%s"'.subs(k, v) for each ([k, v] in zip(keys(attrs), values(attrs)))].join('');
 }

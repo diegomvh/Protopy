@@ -107,10 +107,8 @@
             if (code) {
                 mod = new Module(name, file);
                 __modules__[name] = mod;
-                if (path) { 
+                if (path) 
                     mod['__path__'] = path;
-                    mod['__path__']['__builtins__'] = path; 
-                }
                 try {
                     with (mod['__builtins__']) {
                         eval(code).call(mod);
@@ -182,6 +180,7 @@
             this.prototype.__iterator__ = this.prototype.__iter__;
         this.prototype.constructor = this;
         this.prototype.__class__ = this;
+        return this;
     };
     object.__base__ = null;
     object.__bases__ = [];
@@ -240,7 +239,7 @@
 	    __extend__(true, new_type, classAttrs);
 
 	//Constructor de instancia
-	new_type.__new__(new_type.__name__, new_type.__bases__, instanceAttrs);
+	new_type = new_type.__new__(new_type.__name__, new_type.__bases__, instanceAttrs);
 	return new_type;
     }
 

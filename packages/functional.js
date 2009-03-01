@@ -1,5 +1,5 @@
 function curry(f) {
-    var curried = f, args = array(arguments);
+    var curried = f, args = array(arguments).slice(1);
     return function() {
         return curried.apply(this, args.concat(array(arguments)));
     }

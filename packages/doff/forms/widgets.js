@@ -95,36 +95,40 @@ var Media = type('Media', {
 });
 
 function media_property(cls) {
-    // Get the media property of the superclass, if it exists
-    if (hasattr(super(cls, this), 'media'))
-        base = super(cls, this).media
-    else
-        base = new Media();
+    function _media() {
+        // Get the media property of the superclass, if it exists
+        if (hasattr(cls.prototype, 'media'))
+            var base = cls.property.media;
+        else
+            var base = new Media();
 
-    // Get the media definition for this class
-    var definition = getattr(cls, 'Media', null);
-    if (definition) {
-        var extend = getattr(definition, 'extend', true);
-        if (extend) {
-            if (extend == true)
-                m = base;
-            else
-                m = new Media();
-                for each (medium in extend)
-                    m = m.__add__(base[medium]);
-            return m.__add__(new Media(definition));
+        // Get the media definition for this class
+        var definition = getattr(cls, 'Media', null);
+        if (definition) {
+            var extend = getattr(definition, 'extend', true);
+            if (extend) {
+                if (extend == true) {
+                    m = base;
+                } else {
+                    m = new Media();
+                    for each (medium in extend)
+                        m = m.__add__(base[medium]);
+                }
+                return m.__add__(new Media(definition));
+            } else {
+                return new Media(definition);
+            }
         } else {
-            return new Media(definition);
+            return base;
         }
-    } else {
-        return base;
     }
+    return _media;
 }
 
 var Widget = type('Widget', {
     //Static
     '__new__': function __new__(name, bases, attrs) {
-        var new_class = super(object, this).__new__(name, bases, attrs);
+        var new_class = super(Widget, this).__new__(name, bases, attrs);
         if (!('media' in attrs))
             new_class.prototype.__defineGetter__('media', media_property(new_class));
         return new_class;
@@ -739,7 +743,6 @@ var SplitHiddenDateTimeWidget = type('SplitHiddenDateTimeWidget', SplitDateTimeW
 });
 
 $P({    'Media': Media,
-        'MediaDefiningClass': MediaDefiningClass,
         'media_property': media_property,
         'Widget': Widget,
         'TextInput': TextInput,

@@ -8,24 +8,12 @@ $L('doff.forms.widgets', 'TextInput', 'PasswordInput', 'HiddenInput', 'MultipleH
 import re
 import time
 import urlparse
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from StringIO import StringIO
 
 // Python 2.3 fallbacks
 try:
     from decimal import Decimal, DecimalException
 except ImportError:
     from django.utils._decimal import Decimal, DecimalException
-try:
-    set
-except NameError:
-    from sets import Set as set
-
-import django.core.exceptions
-from django.utils.translation import ugettext_lazy as _
-from django.utils.encoding import smart_unicode, smart_str
 
 from django.core.files.uploadedfile import SimpleUploadedFile as UploadedFile
 */

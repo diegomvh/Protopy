@@ -36,11 +36,11 @@ function get_declared_fields(bases, attrs, with_base_fields) {
     // order to preserve the correct order of fields.
     if (with_base_fields)
         for each (base in bases.reverse()) {
-            if hasattr(base, 'base_fields')
+            if (hasattr(base, 'base_fields'))
                 fields = items(base.base_fields).concat(fields);
     } else {
         for each (base in bases.reverse())
-            if hasattr(base, 'declared_fields')
+            if (hasattr(base, 'declared_fields'))
                 fields = items(base.declared_fields).concat(fields);
     }
     return new SortedDict(fields);
@@ -53,15 +53,16 @@ function get_declared_fields(bases, attrs, with_base_fields) {
 var BaseForm = type('BaseForm', {
     __init__: function() {
         arguments = new Arguments(arguments, {'data':null, 'files':null, 'auto_id':'id_%s', 'prefix':null, 'initial':null, 'error_class':ErrorList, 'label_suffix':':', 'empty_permitted':false});
-        this.is_bound = bool(data || files);
-        this.data = data || {};
-        this.files = files || {};
-        this.auto_id = auto_id;
-        this.prefix = prefix;
-        this.initial = initial || {};
-        this.error_class = error_class;
-        this.label_suffix = label_suffix;
-        this.empty_permitted = empty_permitted;
+        var kwargs = arguments.kwargs;
+        this.is_bound = bool(kwargs['data'] || kwargs['files']);
+        this.data = kwargs['data'] || {};
+        this.files = kwargs['files'] || {};
+        this.auto_id = kwargs['auto_id'];
+        this.prefix = kwargs['prefix'];
+        this.initial = kwargs['initial'] || {};
+        this.error_class = kwargs['error_class'];
+        this.label_suffix = kwargs['label_suffix'];
+        this.empty_permitted = kwargs['empty_permitted'];
         this._errors = null; // Stores the errors after clean() has been called.
         this._changed_data = null;
 
@@ -89,7 +90,7 @@ var BaseForm = type('BaseForm', {
             throw new KeyError('Key %r not found in Form'.subs(name));
         return new BoundField(this, field, name);
     },
-    
+
     get: function(name) {
         return this.__getitem__(name);
     },
@@ -127,12 +128,12 @@ var BaseForm = type('BaseForm', {
         var top_errors = this.non_field_errors(); // Errors that should be displayed above all fields.
         var output = [];
         var hidden_fields = [];
-        for ([name, field] in items(this.fields))
+        for ([name, field] in items(this.fields)) {
             var bf = new BoundField(this, field, name);
-            var bf_errors = this.error_class([conditional_escape(error) for (error in bf.errors)]); // Escape and cache in local variable.
+            var bf_errors = this.error_class([conditional_escape(error) for each (error in bf.errors)]); // Escape and cache in local variable.
             if (bf.is_hidden) {
                 if (bool(bf_errors))
-                    top_errors = top_errors.concat(['(Hidden field %s) %s'.subs(name, e) for (e in bf_errors)]);
+                    top_errors = top_errors.concat(['(Hidden field %s) %s'.subs(name, e) for each (e in bf_errors)]);
                 hidden_fields.push(str(bf));
             } else {
                 if (errors_on_separate_row && bf_errors)
@@ -142,17 +143,20 @@ var BaseForm = type('BaseForm', {
                     // Only add the suffix if the label does not end in
                     // punctuation.
                     if (this.label_suffix)
-                        if (!include(':?.!', label.slice(-1))
+                        if (!include(':?.!', label.slice(-1)))
                             label += this.label_suffix;
                     label = bf.label_tag(label) || '';
                 } else {
                     var label = '';
+                }
                 if (field.help_text)
                     var help_text = help_text_html.subs(field.help_text);
                 else
                     var help_text = '';
-                output.push(normal_row.subs({'errors': bf_errors, 'label': label, 'field': str(bf), 'help_text': help_text});
-        if (top_errors)
+                output.push(normal_row.subs({'errors': bf_errors, 'label': label, 'field': str(bf), 'help_text': help_text}));
+            }
+        }
+        if (bool(top_errors))
             output.splice(0, 0, error_row.subs(top_errors));
         if (bool(hidden_fields)) { // Insert any hidden fields in the last row.
             var str_hidden = hidden_fields.join('');
@@ -233,6 +237,7 @@ var BaseForm = type('BaseForm', {
                 if (name in this.cleaned_data)
                     delete this.cleaned_data[name];
             }
+        }
         try {
             this.cleaned_data = this.clean();
         } catch (e if e instanceof ValidationError) {
@@ -257,14 +262,14 @@ var BaseForm = type('BaseForm', {
     },
 
     get changed_data() {
-        if (!this._changed_data)
+        if (!this._changed_data) {
             this._changed_data = [];
             // XXX: For now we're asking the individual widgets whether or not the
             // data has changed. It would probably be more efficient to hash the
             // initial data, store it in a hidden field, and compare a hash of the
             // submitted data, but we'd need a way to easily get the string value
             // for a given field. Right now, that logic is embedded in the render method of each widget.
-            for each ([name, field] in items(this.fields))
+            for each ([name, field] in items(this.fields)) {
                 var prefixed_name = this.add_prefix(name);
                 var data_value = field.widget.value_from_datadict(this.data, this.files, prefixed_name);
                 if (!field.show_hidden_initial) {
@@ -276,6 +281,8 @@ var BaseForm = type('BaseForm', {
                 }
                 if (field.widget._has_changed(initial_value, data_value))
                     this._changed_data.append(name);
+            }
+        }
         return this._changed_data;
     },
     
@@ -291,7 +298,7 @@ var BaseForm = type('BaseForm', {
      * Returns True if the form needs to be multipart-encrypted, i.e. it has FileInput. Otherwise, False.
      */
     is_multipart: function() {
-        for each (var field in values(this.fields))
+        for each (field in values(this.fields))
             if (field.widget.needs_multipart_form)
                 return true;
         return false;
@@ -306,12 +313,13 @@ var BaseForm = type('BaseForm', {
 // BaseForm itself has no way of designating self.fields.
 var Form = type('Form', BaseForm, {
     //Static
-    __new__: function(name, bases, attrs)
+    __new__: function(name, bases, attrs) {
         attrs['base_fields'] = get_declared_fields(bases, attrs);
         new_class = super(BaseForm, this).__new__(name, bases, attrs);
         if (!('media' in attrs))
             new_class.prototype.__defineGetter__('media', media_property(new_class));
         return new_class;
+    }
 }, {});
 
 //A Field plus data
@@ -327,7 +335,7 @@ var BoundField = type('BoundField', {
         else
             this.label = this.field.label;
         this.help_text = field.help_text || '';
-    }
+    },
 
     //Renders this field as an HTML widget."""
     __str__: function() {
@@ -336,12 +344,11 @@ var BoundField = type('BoundField', {
         return this.as_widget();
     },
 
-    /* Returns an ErrorList for this field. Returns an empty ErrorList if there are none.
-    */
+    /* Returns an ErrorList for this field. Returns an empty ErrorList if there are none. */
     get errors() {
         return this.form.errors.get(this.name, this.form.error_class());
     },
-    
+
     /* 
      * Renders the field by rendering the passed widget, adding any HTML
      * attributes passed as attrs.  If no widget is specified, then the
@@ -356,7 +363,7 @@ var BoundField = type('BoundField', {
             attrs['id'] = auto_id;
         if (!this.form.is_bound) {
             var data = this.form.initial.get(this.name, this.field.initial);
-            if callable(data)
+            if (callable(data))
                 data = data();
         } else {
             data = this.data;
@@ -399,7 +406,7 @@ var BoundField = type('BoundField', {
         If attrs are given, they're used as HTML attributes on the <label> tag.
     */
     label_tag: function(contents, attrs) {
-        var contents = contents or conditional_escape(this.label);
+        contents = contents || conditional_escape(this.label);
         var widget = this.field.widget;
         var id_ = widget.attrs['id'] || this.auto_id;
         if (id_) {
@@ -429,4 +436,4 @@ var BoundField = type('BoundField', {
 });
 
 $P({    'BaseForm': BaseForm, 
-        'Form': Form })
+        'Form': Form });
