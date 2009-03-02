@@ -223,7 +223,7 @@ var BaseForm = type('BaseForm', {
             var value = field.widget.value_from_datadict(this.data, this.files, this.add_prefix(name));
             try {
                 if (isinstance(field, FileField)) {
-                    var initial = this.initial.get(name, field.initial);
+                    var initial = this.initial[name] || field.initial;
                     value = field.clean(value, initial);
                 } else {
                     value = field.clean(value);
@@ -274,7 +274,7 @@ var BaseForm = type('BaseForm', {
                 var prefixed_name = this.add_prefix(name);
                 var data_value = field.widget.value_from_datadict(this.data, this.files, prefixed_name);
                 if (!field.show_hidden_initial) {
-                    var initial_value = this.initial.get(name, field.initial);
+                    var initial_value = this.initial[name] || field.initial;
                 } else {
                     var initial_prefixed_name = this.add_initial_prefix(name);
                     var hidden_widget = field.hidden_widget();
@@ -363,16 +363,13 @@ var BoundField = type('BoundField', {
         if (auto_id && !('id' in attrs) && !('id' in widget.attrs))
             attrs['id'] = auto_id;
         if (!this.form.is_bound) {
-            var data = this.form.initial.get(this.name, this.field.initial);
+            var data = this.form.initial[this.name] || this.field.initial;
             if (callable(data))
                 data = data();
         } else {
-            data = this.data;
+            var data = this.data;
         }
-        if (!only_initial)
-            name = this.html_name;
-        else
-            name = this.html_initial_name;
+        var name = (!only_initial)? this.html_name : this.html_initial_name;
         return widget.render(name, data, attrs);
     },
     

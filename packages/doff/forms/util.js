@@ -31,13 +31,33 @@ var ErrorDict = type('ErrorDict', Dict, {
  * A collection of errors that knows how to display itself in various formats.
  */
 var ErrorList = type('ErrorList', {
+    '__init__': function __init__(errors) {
+	this.errors = errors;
+    },
+
     '__str__': function __str__() {
         return this.as_ul();
-   },
+    },
+
+    '__nonzero__': function __nonzero__() {
+        return bool(this.errors);
+    },
+
+    'push': function push(error) {
+	this.errors.push(error);
+    },
+
+    'pop': function pop() {
+	return this.errors.pop();
+    },
+
+    'concat': function concat(errors) {
+	return this.errors.concat(errors);
+    },
 
     'as_ul': function as_ul() {
         return '<ul class="errorlist">%s</ul>'.subs(['<li>%s</li>'.subs(e) for each (e in this.errors)].join(''));
-   },
+    },
 
     'as_text': function as_text() {
         return ['* %s'.subs(e) for each (e in this.errors)].join('\n');

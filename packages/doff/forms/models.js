@@ -164,7 +164,7 @@ var ModelFormOptions = type('ModelFormOptions', {
 });
 
 var BaseModelForm = type('BaseModelForm', BaseForm, {
-    __init__: function() {
+    __init__: function(data) {
         arguments = new Arguments(arguments, {'data':null, 'files':null, 'auto_id':'id_%s', 'prefix':null, 'initial':null, 'error_class':ErrorList, 'label_suffix':':', 'empty_permitted':false, 'instance':null});
         var kwargs = arguments.kwargs;
         var opts = this._meta;

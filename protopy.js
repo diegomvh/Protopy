@@ -236,8 +236,7 @@
 
 	//Construyendo el tipo
         __extend__(true, new_type.__static__, classAttrs);
-	for (var name in new_type.__static__)
-	    __extend__(true, new_type, classAttrs);
+	__extend__(true, new_type, new_type.__static__);
 
 	//Constructor de instancia
 	new_type = new_type.__new__(new_type.__name__, new_type.__bases__, instanceAttrs);
@@ -365,29 +364,30 @@
         return obj;
     }
 
-    function isinstance(object, type) {
-	if (type && type.constructor != Array) type = [type];
-	if (type.constructor == Array && type[0] == undefined)
+    function isinstance(object, _type) {
+	if (_type && type(_type) != Array) _type = [_type];
+	if (!_type || (type(_type) == Array && _type[0] == undefined))
 	    // end of recursion
 	    return false;
 	else {
 	    var others = [];
-	    for each (var t in type) {
-		if (object instanceof t) return true;
+	    for each (var t in _type) {
+		if (type(object) == t) return true;
 		others = others.concat(t.__subclasses__);
 	    }
 	    return isinstance(object, others);
 	}
     }
 
-    function issubclass(type2, type) {
-	if (type && type.constructor != Array) type = [type];
-	if (type.constructor == Array && type[0] == undefined)
+    function issubclass(type2, _type) {
+	if (_type && type(_type) != Array) 
+	    _type = [_type];
+	if (!_type || (type(_type) == Array && _type[0] == undefined))
 	    // end of recursion
 	    return false;
 	else {
 	    var others = [];
-	    for each (var t in type) {
+	    for each (var t in _type) {
 		if (type2 == t) return true;
 		others = others.concat(t.__subclasses__);
 	    }
@@ -413,11 +413,11 @@
             var haskwargs = false;
             for (p in this._defaults || {})
                 this._kwargs[p] = this._defaults[p];
-            if (this.collect[this.collect.length - 1] instanceof Object) {
+	    var last = this.collect[this.collect.length - 1];
+            if (last && type(last) == Object) {
                 haskwargs = true;
-                let object = this.collect[this.collect.length - 1];
-                for (p in object)
-                    this._kwargs[p] = object[p];
+                for (p in last)
+                    this._kwargs[p] = last[p];
             }
             if (this.names.length < this.collect.length)
                 this._args = this.collect.slice(this.names.length, (haskwargs)? this.collect.length - 1 : this.collect.length);
@@ -1261,7 +1261,7 @@
                     this._key[hash] = key;
                     this._value[hash] = value;
                 }
-            } else if (object instanceof Object){
+            } else if (type(object) == Object){
                 for (var key in object) {
                     var hash = id(key);
                     this._key[hash] = key;
