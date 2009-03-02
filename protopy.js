@@ -223,10 +223,10 @@
 	new_type.__base__ = bases[0];
 	new_type.__bases__ = bases;
 	new_type.__subclasses__ = [];
-	new_type.__static__ = __extend__(true, {}, classAttrs);
+	new_type.__static__ = {};
 	for each (var base in bases.reverse()) {
 	    base.__subclasses__.push(new_type);
-	    __extend__(true, new_type, base.__static__);
+	    __extend__(true, new_type.__static__, base.__static__);
 	    new_type.__new__ = base.__new__;
 	}
 
@@ -235,7 +235,8 @@
 	classAttrs['__module__'] = instanceAttrs['__module__'] = this['__name__'];
 
 	//Construyendo el tipo
-	for (var name in classAttrs)
+        __extend__(true, new_type.__static__, classAttrs);
+	for (var name in new_type.__static__)
 	    __extend__(true, new_type, classAttrs);
 
 	//Constructor de instancia

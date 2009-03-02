@@ -27,7 +27,8 @@ _copy_dispatch[Object] = function _copy_Object(object) {
 }
 
 _copy_dispatch['Instance'] = function _copy_Instance(object) {
-    var obj = new type('Empty', {});
+    var obj = type('Empty', {});
+    obj = new obj();
     extend(obj, object);
     obj['__name__'] = object['__name__'];
     obj['__module__'] = object['__module__'];

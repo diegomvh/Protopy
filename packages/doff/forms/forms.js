@@ -412,7 +412,7 @@ var BoundField = type('BoundField', {
         var id_ = widget.attrs['id'] || this.auto_id;
         if (id_) {
             attrs = attrs && flatatt(attrs) || '';
-            contents = '<label for="%s"%s>%s</label>'.subs(widget.id_for_label(id_), attrs, str(contents));
+            contents = '<label for="%s"%s>%s</label>'.subs(widget.__class__.id_for_label(id_), attrs, str(contents));
         }
         return contents;
     },
