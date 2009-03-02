@@ -265,20 +265,22 @@
 
     function getattr(object, name, def) {
 	//TODO: validar argumentos
-	var attr = object[name];
-	if (attr == undefined) {
-	    if (def == undefined)
-		throw new AttributeError(object + ' has no attribute ' + name);
-	    else
-		return def;
-	}
-	if (type(attr) == Function) {
-	    var method = attr, obj = object;
-	    return function() { return method.apply(obj, array(arguments)); }
-	} else {
-	    return attr;
-	}
-	throw new AttributeError(object + ' has no attribute ' + name);
+        var attr = null;
+        if (object) {
+            attr = object[name];
+            if (typeof(attr) !== 'undefined') {
+                if (type(attr) == Function && typeof(attr['__new__']) === 'undefined') {
+                    var method = attr, obj = object;
+                    return function() { return method.apply(obj, array(arguments)); }
+                } else {
+                    return attr;
+                }
+            }
+        }
+        if (typeof(def) === 'undefined')
+	   throw new AttributeError(object + ' has no attribute ' + name);
+	else
+	   return def;
     }
     
     function setattr(object, name, value) {
@@ -1247,14 +1249,23 @@
                 this._value = extend({}, object._value);
                 this._key = extend({}, object._key);
             } else if (callable(object['next'])) {
-                for each (var [key, value] in object)
-                    this.set(key, value);
+                for each (var [key, value] in object) {
+                    var hash = id(key);
+                    this._key[hash] = key;
+                    this._value[hash] = value;
+                }
             } else if (type(object) == Array && type(object[0]) == Array) {
-                for each (var [key, value] in object)
-                    this.set(key, value);
+                for each (var [key, value] in object) {
+                    var hash = id(key);
+                    this._key[hash] = key;
+                    this._value[hash] = value;
+                }
             } else if (object instanceof Object){
-                for (var key in object)
-                    this.set(key, object[key]);
+                for (var key in object) {
+                    var hash = id(key);
+                    this._key[hash] = key;
+                    this._value[hash] = object[key];
+                }
             }
         },
 

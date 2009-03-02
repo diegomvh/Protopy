@@ -2,7 +2,7 @@ $D('doff.forms.fields, Field classes.');
 
 $L('copy');
 $L('doff.forms.util', 'ErrorList', 'ValidationError');
-$L('doff.forms.widgets', 'TextInput', 'PasswordInput', 'HiddenInput', 'MultipleHiddenInput', 'FileInput', 'CheckboxInput', 'Select', 'NullBooleanSelect', 'SelectMultiple', 'DateTimeInput', 'TimeInput', 'SplitDateTimeWidget', 'SplitHiddenDateTimeWidget');
+$L('doff.forms.widgets', 'Widget', 'TextInput', 'PasswordInput', 'HiddenInput', 'MultipleHiddenInput', 'FileInput', 'CheckboxInput', 'Select', 'NullBooleanSelect', 'SelectMultiple', 'DateTimeInput', 'TimeInput', 'SplitDateTimeWidget', 'SplitHiddenDateTimeWidget');
 
 /*import os
 import re
@@ -42,7 +42,7 @@ var Field = type('Field', {
         this.show_hidden_initial = kwargs['show_hidden_initial'];
         this.help_text = kwargs['help_text'];
         var widget = kwargs['widget'] || this.widget;
-        if (isinstance(widget))
+        if (issubclass(widget, Widget))
             widget = new widget();
 
         // Hook into this.widget_attrs() for any Field-specific HTML attributes.
@@ -57,12 +57,13 @@ var Field = type('Field', {
         Field.creation_counter += 1;
         //FIXME: los mensajes estan en un objeto
         function set_class_error_messages(messages, klass) {
-            set_class_error_messages(messages, klass.superclass);
-            messages.update(klass['default_error_messages'] || {});
+            for each (base_class in klass.__bases__)
+                set_class_error_messages(messages, base_class);
+            extend(messages, klass['default_error_messages'] || {});
         }
         var messages = {};
         set_class_error_messages(messages, this.__class__);
-        messages.update(error_messages || {})
+        extend(messages, kwargs['error_messages'] || {});
         this.error_messages = messages;
     },
 

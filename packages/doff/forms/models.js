@@ -1,312 +1,314 @@
 $D('Helper functions for creating Form classes from Django models and database field objects.');
 
+$L('doff.utils.datastructures', 'SortedDict');
+$L('doff.forms.util', 'ValidationError', 'ErrorList');
+$L('doff.forms.forms', 'BaseForm', 'get_declared_fields');
+$L('doff.forms.fields', 'Field', 'ChoiceField', 'IntegerField', 'EMPTY_VALUES');
+$L('doff.forms.widgets', 'Select', 'SelectMultiple', 'HiddenInput', 'MultipleHiddenInput');
+$L('doff.forms.widgets', 'media_property');
 
+
+/*
 from django.utils.encoding import smart_unicode, force_unicode
-from django.utils.datastructures import SortedDict
+
 from django.utils.text import get_text_list, capfirst
 
-from util import ValidationError, ErrorList
-from forms import BaseForm, get_declared_fields
-from fields import Field, ChoiceField, IntegerField, EMPTY_VALUES
-from widgets import Select, SelectMultiple, HiddenInput, MultipleHiddenInput
-from widgets import media_property
 from formsets import BaseFormSet, formset_factory, DELETION_FIELD_NAME
-
-def save_instance(form, instance, fields=None, fail_message='saved',
-                  commit=True, exclude=None):
-    """
-    Saves bound Form ``form``'s cleaned_data into model instance ``instance``.
-
-    If commit=True, then the changes to ``instance`` will be saved to the
-    database. Returns ``instance``.
-    """
-    from django.db import models
-    opts = instance._meta
-    if form.errors:
-        raise ValueError("The %s could not be %s because the data didn't"
-                         " validate." % (opts.object_name, fail_message))
-    cleaned_data = form.cleaned_data
-    file_field_list = []
-    for f in opts.fields:
-        if not f.editable or isinstance(f, models.AutoField) \
-                or not f.name in cleaned_data:
-            continue
-        if fields and f.name not in fields:
-            continue
-        if exclude and f.name in exclude:
-            continue
+*/
+/*
+ * Saves bound Form ``form``'s cleaned_data into model instance ``instance``.
+ * If commit=True, then the changes to ``instance`` will be saved to the database. Returns ``instance``.
+ */
+function save_instance(form, instance) { 
+    arguments = new Arguments(arguments, {'fields':null, 'fail_message':'saved', 'commit':true, 'exclude':null});
+    $L('doff.db.models');
+    var opts = instance._meta;
+    if (bool(form.errors))
+        throw new ValueError("The %s could not be %s because the data didn't validate.".subs(opts.object_name, fail_message));
+    var cleaned_data = form.cleaned_data;
+    var file_field_list = [];
+    for each (f in opts.fields) {
+        if (!f.editable || isinstance(f, models.AutoField) || !(f.name in cleaned_data))
+            continue;
+        if (fields && !include(fields, f.name))
+            continue;
+        if (exclude && inlcude(exclude, f.name))
+            continue;
         // Defer saving file-type fields until after the other fields, so a
         // callable upload_to can use the values from other fields.
-        if isinstance(f, models.FileField):
-            file_field_list.append(f)
-        else:
-            f.save_form_data(instance, cleaned_data[f.name])
-            
-    for f in file_field_list:
-        f.save_form_data(instance, cleaned_data[f.name])
-        
+        if (isinstance(f, models.FileField))
+            file_field_list.push(f);
+        else
+            f.save_form_data(instance, cleaned_data[f.name]);
+    }
+    for each (f in file_field_list)
+        f.save_form_data(instance, cleaned_data[f.name]);
+
     // Wrap up the saving of m2m data as a function.
-    def save_m2m():
-        opts = instance._meta
-        cleaned_data = form.cleaned_data
-        for f in opts.many_to_many:
-            if fields and f.name not in fields:
-                continue
-            if f.name in cleaned_data:
-                f.save_form_data(instance, cleaned_data[f.name])
-    if commit:
+    function save_m2m() {
+        opts = instance._meta;
+        cleaned_data = form.cleaned_data;
+        for each (f in opts.many_to_many) {
+            if (fields && !include(fields, f.name))
+                continue;
+            if (include(cleaned_data, f.name))
+                f.save_form_data(instance, cleaned_data[f.name]);
+        }
+    }
+    if (commit) {
         // If we are committing, save the instance and the m2m data immediately.
-        instance.save()
-        save_m2m()
-    else:
+        instance.save();
+        save_m2m();
+    } else {
         // We're not committing. Add a method to the form to allow deferred
         // saving of m2m data.
-        form.save_m2m = save_m2m
-    return instance
+        form.save_m2m = save_m2m;
+    }
+    return instance;
+}
 
-def make_model_save(model, fields, fail_message):
-    """Returns the save() method for a Form."""
-    def save(self, commit=True):
-        return save_instance(self, model(), fields, fail_message, commit)
-    return save
+//Returns the save() method for a Form.
+function make_model_save(model, fields, fail_message) {
+    function save(commit) {
+        commit = commit || true;
+        return save_instance(this, new model(), {'fields':fields, 'fail_message':fail_message, 'commit':commit});
+    }
+    return save;
+}
 
-def make_instance_save(instance, fields, fail_message):
-    """Returns the save() method for a Form."""
-    def save(self, commit=True):
-        return save_instance(self, instance, fields, fail_message, commit)
-    return save
+//Returns the save() method for a Form.
+function make_instance_save(instance, fields, fail_message) {
+    function save(commit) {
+        commit = commit || true;
+        return save_instance(this, instance, {'fields':fields, 'fail_message':fail_message, 'commit':commit});
+    }
+    return save;
+}
 
-def form_for_fields(field_list):
-    """
-    Returns a Form class for the given list of Django database field instances.
-    """
-    fields = SortedDict([(f.name, f.formfield())
-                         for f in field_list if f.editable])
-    return type('FormForFields', (BaseForm,), {'base_fields': fields})
+//Returns a Form class for the given list of Django database field instances.
+function form_for_fields(field_list) {
+    var fields = new SortedDict([[f.name, f.formfield()] for each (f in field_list) if (f.editable)]);
+    return type('FormForFields', [BaseForm], { 'base_fields': fields});
+}
 
 
 // ModelForms //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-def model_to_dict(instance, fields=None, exclude=None):
-    """
-    Returns a dict containing the data in ``instance`` suitable for passing as
-    a Form's ``initial`` keyword argument.
-
+/*
+ * Returns a dict containing the data in ``instance`` suitable for passing as a Form's ``initial`` keyword argument.
     ``fields`` is an optional list of field names. If provided, only the named
     fields will be included in the returned dict.
-
     ``exclude`` is an optional list of field names. If provided, the named
-    fields will be excluded from the returned dict, even if they are listed in
-    the ``fields`` argument.
-    """
+    fields will be excluded from the returned dict, even if they are listed in the ``fields`` argument.
+ */
+function model_to_dict(instance, fields, exclude) {
     // avoid a circular import
-    from django.db.models.fields.related import ManyToManyField, OneToOneField
-    opts = instance._meta
-    data = {}
-    for f in opts.fields + opts.many_to_many:
-        if not f.editable:
-            continue
-        if fields and not f.name in fields:
-            continue
-        if exclude and f.name in exclude:
-            continue
-        if isinstance(f, ManyToManyField):
+    $L('doff.db.models.fields.related', 'ManyToManyField', 'OneToOneField');
+    var opts = instance._meta;
+    var data = {};
+    for each (f in opts.fields.concat(opts.many_to_many)) {
+        if (!f.editable)
+            continue;
+        if (bool(fields) && !include(fields, f.name))
+            continue;
+        if (bool(exclude) && include(exclude, f.name))
+            continue;
+        if (isinstance(f, ManyToManyField)) {
             // If the object doesn't have a primry key yet, just use an empty
             // list for its m2m fields. Calling f.value_from_object will raise
             // an exception.
-            if instance.pk is None:
-                data[f.name] = []
-            else:
+            if (!instance.pk)
+                data[f.name] = [];
+            else
                 // MultipleChoiceWidget needs a list of pks, not object instances.
-                data[f.name] = [obj.pk for obj in f.value_from_object(instance)]
-        else:
-            data[f.name] = f.value_from_object(instance)
-    return data
+                data[f.name] = [obj.pk for each (obj in f.value_from_object(instance))];
+        } else {
+            data[f.name] = f.value_from_object(instance);
+        }
+    }
+    return data;
+}
 
-def fields_for_model(model, fields=None, exclude=None, formfield_callback=lambda f: f.formfield()):
-    """
+/* 
     Returns a ``SortedDict`` containing form fields for the given model.
-
     ``fields`` is an optional list of field names. If provided, only the named
     fields will be included in the returned fields.
-
     ``exclude`` is an optional list of field names. If provided, the named
     fields will be excluded from the returned fields, even if they are listed
     in the ``fields`` argument.
-    """
+ */
+function fields_for_model(model, fields, exclude, formfield_callback) {
     // TODO: if fields is provided, it would be nice to return fields in that order
-    field_list = []
-    opts = model._meta
-    for f in opts.fields + opts.many_to_many:
-        if not f.editable:
-            continue
-        if fields and not f.name in fields:
-            continue
-        if exclude and f.name in exclude:
-            continue
-        formfield = formfield_callback(f)
-        if formfield:
-            field_list.append((f.name, formfield))
-    return SortedDict(field_list)
+    formfield_callback = formfield_callback || function(f) { return f.formfield(); };
+    var field_list = [];
+    var opts = model._meta;
+    for each (f in opts.fields.concat(opts.many_to_many)) {
+        if (!f.editable)
+            continue;
+        if (bool(fields) && !include(fields, f.name))
+            continue;
+        if (bool(exclude) && include(exclude, f.name))
+            continue;
+        var formfield = formfield_callback(f);
+        if (formfield)
+            field_list.push([f.name, formfield]);
+    }
+    return new SortedDict(field_list);
+}
 
-class ModelFormOptions(object):
-    def __init__(self, options=None):
-        self.model = getattr(options, 'model', None)
-        self.fields = getattr(options, 'fields', None)
-        self.exclude = getattr(options, 'exclude', None)
+var ModelFormOptions = type('ModelFormOptions', {
+    __init__: function(options) {
+        this.model = getattr(options, 'model', null);
+        this.fields = getattr(options, 'fields', null);
+        this.exclude = getattr(options, 'exclude', null);
+    }
+});
 
-
-class ModelFormMetaclass(type):
-    def __new__(cls, name, bases, attrs):
-        formfield_callback = attrs.pop('formfield_callback',
-                lambda f: f.formfield())
-        try:
-            parents = [b for b in bases if issubclass(b, ModelForm)]
-        except NameError:
-            // We are defining ModelForm itself.
-            parents = None
-        declared_fields = get_declared_fields(bases, attrs, False)
-        new_class = super(ModelFormMetaclass, cls).__new__(cls, name, bases,
-                attrs)
-        if not parents:
-            return new_class
-
-        if 'media' not in attrs:
-            new_class.media = media_property(new_class)
-        opts = new_class._meta = ModelFormOptions(getattr(new_class, 'Meta', None))
-        if opts.model:
-            // If a model is defined, extract form fields from it.
-            fields = fields_for_model(opts.model, opts.fields,
-                                      opts.exclude, formfield_callback)
-            // Override default model fields with any custom declared ones
-            // (plus, include all the other declared fields).
-            fields.update(declared_fields)
-        else:
-            fields = declared_fields
-        new_class.declared_fields = declared_fields
-        new_class.base_fields = fields
-        return new_class
-
-class BaseModelForm(BaseForm):
-    def __init__(self, data=None, files=None, auto_id='id_%s', prefix=None,
-                 initial=None, error_class=ErrorList, label_suffix=':',
-                 empty_permitted=False, instance=None):
-        opts = self._meta
-        if instance is None:
+var BaseModelForm = type('BaseModelForm', BaseForm, {
+    __init__: function() {
+        arguments = new Arguments(arguments, {'data':null, 'files':null, 'auto_id':'id_%s', 'prefix':null, 'initial':null, 'error_class':ErrorList, 'label_suffix':':', 'empty_permitted':false, 'instance':null});
+        var kwargs = arguments.kwargs;
+        var opts = this._meta;
+        if (!kwargs['instance']) {
             // if we didn't get an instance, instantiate a new one
-            self.instance = opts.model()
-            object_data = {}
-        else:
-            self.instance = instance
-            object_data = model_to_dict(instance, opts.fields, opts.exclude)
+            this.instance = new opts.model();
+            var object_data = {};
+        } else {
+            this.instance = instance;
+            var object_data = model_to_dict(instance, opts.fields, opts.exclude);
+        }
         // if initial was provided, it should override the values from instance
-        if initial is not None:
-            object_data.update(initial)
-        super(BaseModelForm, self).__init__(data, files, auto_id, prefix, object_data,
-                                            error_class, label_suffix, empty_permitted)
-    def clean(self):
-        self.validate_unique()
-        return self.cleaned_data
+        if (kwargs['initial'])
+            extend(object_data, initial);
+        super(BaseForm, this).__init__({'data':kwargs['data'], 'files':kwargs['files'], 'auto_id':kwargs['auto_id'], 'prefix':kwargs['prefix'], 'initial':object_data, 'error_class':kwargs['error_class'], 'label_suffix':kwargs['label_suffix'], 'empty_permitted':kwargs['empty_permitted']});
+    },
 
-    def validate_unique(self):
-        from django.db.models.fields import FieldDoesNotExist
+    clean: function() {
+        this.validate_unique();
+        return this.cleaned_data;
+    },
 
+    validate_unique: function() {
+        $L('doff.db.models.fields', 'FieldDoesNotExist');
+        
         // Gather a list of checks to perform. We only perform unique checks 
         // for fields present and not None in cleaned_data.  Since this is a 
         // ModelForm, some fields may have been excluded; we can't perform a unique 
         // check on a form that is missing fields involved in that check.  It also does
         // not make sense to check data that didn't validate, and since NULL does not 
         // equal NULL in SQL we should not do any unique checking for NULL values.
-        unique_checks = []
-        for check in self.instance._meta.unique_together[:]:
-            fields_on_form = [field for field in check if self.cleaned_data.get(field) is not None]
-            if len(fields_on_form) == len(check):
-                unique_checks.append(check)
-
-        form_errors = []
+        var unique_checks = [];
+        for each (check in this.instance._meta.unique_together) {
+            fields_on_form = [field for each (field in check) if (this.cleaned_data[field])];
+            if (len(fields_on_form) == len(check))
+                unique_checks.push(check)
+        }
+        var form_errors = [];
 
         // Gather a list of checks for fields declared as unique and add them to
         // the list of checks. Again, skip empty fields and any that did not validate.
-        for name, field in self.fields.items():
-            try:
-                f = self.instance._meta.get_field_by_name(name)[0]
-            except FieldDoesNotExist:
+        for each ([name, field] in items(this.fields)) {
+            try {
+                f = this.instance._meta.get_field_by_name(name)[0];
+            } catch (e if e instanceof FieldDoesNotExist) {
                 // This is an extra field that's not on the ModelForm, ignore it
-                continue
-            if f.unique and self.cleaned_data.get(name) is not None:
-                unique_checks.append((name,))
-
-        bad_fields = set()
-        for unique_check in unique_checks:
+                continue;
+            }
+            if (f.unique && this.cleaned_data[name])
+                unique_checks.push([name]);
+        }
+        var bad_fields = new Set();
+        for each (unique_check in unique_checks) {
             // Try to look up an existing object with the same values as this
             // object's values for all the unique field.
 
-            lookup_kwargs = {}
-            for field_name in unique_check:
-                lookup_kwargs[field_name] = self.cleaned_data[field_name]
+            var lookup_kwargs = {}
+            for each (field_name in unique_check)
+                lookup_kwargs[field_name] = this.cleaned_data[field_name];
 
-            qs = self.instance.__class__._default_manager.filter(**lookup_kwargs)
+            var qs = this.instance.__class__._default_manager.filter(lookup_kwargs);
 
             // Exclude the current object from the query if we are editing an
             // instance (as opposed to creating a new one)
-            if self.instance.pk is not None:
-                qs = qs.exclude(pk=self.instance.pk)
+            if (this.instance.pk != null || this.instance.pk != undefined)
+                qs = qs.exclude({'pk':this.instance.pk});
 
             // This cute trick with extra/values is the most efficient way to
             // tell if a particular query returns any results.
-            if qs.extra(select={'a': 1}).values('a').order_by():
-                model_name = capfirst(self.instance._meta.verbose_name)
+            if (qs.extra({'select':{'a': 1}}).values('a').order_by()) {
+                model_name = this.instance._meta.verbose_name.capitalize();
 
                 // A unique field
-                if len(unique_check) == 1:
-                    field_name = unique_check[0]
-                    field_label = self.fields[field_name].label
+                if (len(unique_check) == 1) {
+                    field_name = unique_check[0];
+                    field_label = this.fields[field_name].label;
                     // Insert the error into the error dict, very sneaky
-                    self._errors[field_name] = ErrorList([
-                        _(u"%(model_name)s with this %(field_label)s already exists.") % \
-                        {'model_name': unicode(model_name),
-                         'field_label': unicode(field_label)}
-                    ])
+                    this._errors[field_name] = new ErrorList(["%(model_name)s with this %(field_label)s already exists.".subs({'model_name': model_name, 'field_label': field_label})]);
                 // unique_together
-                else:
-                    field_labels = [self.fields[field_name].label for field_name in unique_check]
-                    field_labels = get_text_list(field_labels, _('and'))
-                    form_errors.append(
-                        _(u"%(model_name)s with this %(field_label)s already exists.") % \
-                        {'model_name': unicode(model_name),
-                         'field_label': unicode(field_labels)}
-                    )
-
+                } else {
+                    field_labels = [this.fields[field_name].label for each (field_name in unique_check)];
+                    field_labels = get_text_list(field_labels, 'and');
+                    form_errors.push("%(model_name)s with this %(field_label)s already exists.".subs({'model_name': model_name, 'field_label': field_labels}));
+                }
                 // Mark these fields as needing to be removed from cleaned data
                 // later.
-                for field_name in unique_check:
-                    bad_fields.add(field_name)
-
-        for field_name in bad_fields:
-            del self.cleaned_data[field_name]
-        if form_errors:
+                for each (field_name in unique_check)
+                    bad_fields.add(field_name);
+            }
+        }
+        for each (field_name in bad_fields)
+            delete this.cleaned_data[field_name];
+        if (bool(form_errors))
             // Raise the unique together errors since they are considered
             // form-wide.
-            raise ValidationError(form_errors)
+            throw new ValidationError(form_errors);
+    },
+    
+    /*
+     * Saves this ``form``'s cleaned_data into model instance ``self.instance``.
+     * If commit=True, then the changes to ``instance`` will be saved to the
+     * database. Returns ``instance``.
+     */
+    save: function(commit) {
+        commit = commit || true;
+        var fail_message = (!this.instance.pk)? 'created' :'changed';
+        return save_instance(this, this.instance, {'fields': this._meta.fields, 'fail_message': fail_message, 'commit': commit});
+    }
+});
 
-    def save(self, commit=True):
-        """
-        Saves this ``form``'s cleaned_data into model instance
-        ``self.instance``.
+var ModelForm = type('ModelForm', BaseModelForm, {
+    //Static
+    __new__: function(name, bases, attrs) {
+        var formfield_callback = attrs['formfield_callback'] || function(f) { return f.formfield(); };
+        try {
+            parents = [b for each (b in bases) if (issubclass(b, ModelForm))];
+        } catch (e) {
+            // We are defining ModelForm itself.
+            parents = null;
+        }
+        var declared_fields = get_declared_fields(bases, attrs, false);
+        var new_class = super(ModelForm, this).__new__(name, bases, attrs);
+        if (!bool(parents))
+            return new_class;
 
-        If commit=True, then the changes to ``instance`` will be saved to the
-        database. Returns ``instance``.
-        """
-        if self.instance.pk is None:
-            fail_message = 'created'
-        else:
-            fail_message = 'changed'
-        return save_instance(self, self.instance, self._meta.fields, fail_message, commit)
-
-class ModelForm(BaseModelForm):
-    __metaclass__ = ModelFormMetaclass
-
-def modelform_factory(model, form=ModelForm, fields=None, exclude=None,
+        if (!('media' in attrs))
+            new_class.prototype.__defineGetter__('media', media_property(new_class));
+        var opts = new_class.prototype._meta = new ModelFormOptions(getattr(new_class.prototype, 'Meta', null));
+        if (opts.model) {
+            // If a model is defined, extract form fields from it.
+            var fields = fields_for_model(opts.model, opts.fields, opts.exclude, formfield_callback);
+            // Override default model fields with any custom declared ones
+            // (plus, include all the other declared fields).
+            fields.update(declared_fields);
+        } else {
+            var fields = declared_fields;
+        }
+        new_class.prototype.declared_fields = declared_fields;
+        new_class.prototype.base_fields = fields;
+        return new_class;
+    }
+}, {});
+/*
+function modelform_factory(model, form=ModelForm, fields=None, exclude=None,
                        formfield_callback=lambda f: f.formfield()):
     // HACK: we should be able to construct a ModelForm without creating
     // and passing in a temporary inner class
@@ -319,9 +321,8 @@ def modelform_factory(model, form=ModelForm, fields=None, exclude=None,
     return ModelFormMetaclass(class_name, (form,), {'Meta': Meta,
                               'formfield_callback': formfield_callback})
 
-
+/*
 // ModelFormSets ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 class BaseModelFormSet(BaseFormSet):
     """
     A ``FormSet`` for editing a queryset and/or adding new objects to it.
@@ -724,12 +725,13 @@ class ModelMultipleChoiceField(ModelChoiceField):
             else:
                 final_values.append(obj)
         return final_values
-
+*/
 $P( {   'ModelForm': ModelForm,
         'BaseModelForm': BaseModelForm,
         'model_to_dict': model_to_dict,
         'fields_for_model': fields_for_model,
         'save_instance': save_instance,
-        'form_for_fields': form_for_fields,
+        'form_for_fields': form_for_fields
+        /*
         'ModelChoiceField': ModelChoiceField,
-        'ModelMultipleChoiceField': ModelMultipleChoiceField });
+        'ModelMultipleChoiceField': ModelMultipleChoiceField */ });

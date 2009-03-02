@@ -2,7 +2,7 @@ $L('doff.db', 'connection');
 $L('doff.db.models.signals');
 $L('doff.db.models.query_utils', 'QueryWrapper');
 $L('doff.conf', 'settings');
-//from django import forms
+$L('doff.forms');
 $L('doff.core.exceptions', 'ValidationError');
 $L('functional', 'curry');
 
@@ -303,33 +303,35 @@ var Field = type('Field', {
         instance[this.name] = data;
     },
 
-    /* TODO: Forms
-    def formfield(self, form_class=forms.CharField, **kwargs):
-	"Returns a django.forms.Field instance for this database Field."
-	defaults = {'required': not self.blank, 'label': capfirst(self.verbose_name), 'help_text': self.help_text}
-	if self.has_default():
-	    defaults['initial'] = self.get_default()
-	    if callable(self.default):
-		defaults['show_hidden_initial'] = True
-	if self.choices:
-	    # Fields with choices get special treatment.
-	    include_blank = self.blank or not (self.has_default() or 'initial' in kwargs)
-	    defaults['choices'] = self.get_choices(include_blank=include_blank)
-	    defaults['coerce'] = self.to_javascript
-	    if self.null:
-		defaults['empty_value'] = None
-	    form_class = forms.TypedChoiceField
-	    # Many of the subclass-specific formfield arguments (min_value,
-	    # max_value) don't apply for choice fields, so be sure to only pass
-	    # the values that TypedChoiceField will understand.
-	    for k in kwargs.keys():
-		if k not in ('coerce', 'empty_value', 'choices', 'required',
-				'widget', 'label', 'initial', 'help_text',
-				'error_messages'):
-		    del kwargs[k]
-	defaults.update(kwargs)
-	return form_class(**defaults)
-	*/
+    //Returns a django.forms.Field instance for this database Field.
+    'formfield': function(form_class) {
+        form_class = form_class || forms.CharField;
+        arguments = new Arguments(arguments);
+        var kwargs = arguments.kwargs;
+	var defaults = {'required': !this.blank, 'label': this.verbose_name.capitalize(), 'help_text': this.help_text};
+	if (this.has_default()) {
+	    defaults['initial'] = this.get_default();
+	    if (callable(this.default))
+		defaults['show_hidden_initial'] = true;
+        }
+	if (bool(this.choices)) {
+	    // Fields with choices get special treatment.
+	    var include_blank = this.blank || !(this.has_default() || 'initial' in kwargs);
+	    defaults['choices'] = this.get_choices(include_blank);
+	    defaults['coerce'] = getattr(this, to_javascript);
+	    if (this.null)
+		defaults['empty_value'] = null;
+	    var form_class = forms.TypedChoiceField;
+	    // Many of the subclass-specific formfield arguments (min_value,
+	    // max_value) don't apply for choice fields, so be sure to only pass
+	    // the values that TypedChoiceField will understand.
+	    for each (k in keys(kwargs))
+		if (!include(['coerce', 'empty_value', 'choices', 'required', 'widget', 'label', 'initial', 'help_text', 'error_messages'], k))
+		    delete kwargs[k];
+        }
+	extend(defaults, kwargs);
+	return new form_class(defaults);
+    },
     /*
 	* Returns the value of this field in the given model instance.
 	*/

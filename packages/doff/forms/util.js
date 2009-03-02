@@ -13,7 +13,7 @@ function flatatt(attrs) {
  * A collection of errors that knows how to display itself in various formats.
  * The dictionary keys are the field names, and the values are the errors.
  */
-var ErrorDict = ('ErrorDict', Dict, {
+var ErrorDict = type('ErrorDict', Dict, {
     '__str__': function __str__() {
         return this.as_ul();
     },
@@ -30,7 +30,7 @@ var ErrorDict = ('ErrorDict', Dict, {
 /*
  * A collection of errors that knows how to display itself in various formats.
  */
-var ErrorList = ('ErrorList', {
+var ErrorList = type('ErrorList', {
     '__str__': function __str__() {
         return this.as_ul();
    },

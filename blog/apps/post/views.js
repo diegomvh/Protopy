@@ -1,8 +1,15 @@
 $L('blog.apps.post.models', 'Tag', 'Post', 'Usuario');
+$L('doff.forms');
 $L('doff.template');
 $L('doff.template.default_filters', 'slugify');
 $L('doff.template.loader');
 $L('doff.template.context', 'Context');
+
+var TagForm = type('TagForm', forms.ModelForm, {
+    'Meta': {
+        'model': Tag
+    }
+});
 
 function syncdb(){
     print('Creando las tablas');
@@ -40,4 +47,5 @@ $P({ 'syncdb': syncdb,
      'add_tag': add_tag,
      'add_post': add_post,
      'show_posts': show_posts,
+     'TagForm': TagForm,
      'set_tags_by_title': set_tags_by_title});

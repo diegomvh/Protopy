@@ -3,6 +3,7 @@ $L('copy', 'deepcopy');
 $L('doff.utils.datastructures', 'SortedDict');
 
 //from django.utils.html import conditional_escape
+function conditional_escape(v) { return v; }
 
 $L('doff.forms.fields', 'Field', 'FileField');
 $L('doff.forms.widgets', 'Media', 'media_property', 'TextInput', 'Textarea');
@@ -28,7 +29,7 @@ Create a list of form field instances from the passed in 'attrs', plus any
 */
 function get_declared_fields(bases, attrs, with_base_fields) {
     with_base_fields = with_base_fields || true;
-    var fields = [[field_name, obj] for ([field_name, obj] in items(attrs)) if (isinstance(obj, Field))];
+    var fields = [[field_name, obj] for each ([field_name, obj] in items(attrs)) if (isinstance(obj, Field))];
     fields.sort(function(x, y) { return cmp(x[1].creation_counter, y[1].creation_counter)});
 
     // If this class is subclassing another Form, add that Form's fields.
@@ -79,13 +80,13 @@ var BaseForm = type('BaseForm', {
     },
 
     __iter__: function() {
-        for each ([name, field] in items(this.fields))
+        for each ([name, field] in this.fields.items())
             yield new BoundField(this, field, name);
     },
 
     //Returns a BoundField with the given name."
     __getitem__: function(name) {
-        var field = this.fields[name];
+        var field = this.fields.get(name);
         if (field == undefined)
             throw new KeyError('Key %r not found in Form'.subs(name));
         return new BoundField(this, field, name);
@@ -128,7 +129,7 @@ var BaseForm = type('BaseForm', {
         var top_errors = this.non_field_errors(); // Errors that should be displayed above all fields.
         var output = [];
         var hidden_fields = [];
-        for ([name, field] in items(this.fields)) {
+        for each ([name, field] in this.fields.items()) {
             var bf = new BoundField(this, field, name);
             var bf_errors = this.error_class([conditional_escape(error) for each (error in bf.errors)]); // Escape and cache in local variable.
             if (bf.is_hidden) {
@@ -202,7 +203,7 @@ var BaseForm = type('BaseForm', {
      * field -- i.e., from Form.clean(). Returns an empty ErrorList if there are none.
      */
     non_field_errors: function() {
-        return this.errors.get(NON_FIELD_ERRORS, this.error_class());
+        return this.errors.get(NON_FIELD_ERRORS, new this.error_class());
     },
 
     /* Cleans all of self.data and populates self._errors and self.cleaned_data. */
@@ -215,7 +216,7 @@ var BaseForm = type('BaseForm', {
         // changed from the initial data, short circuit any validation.
         if (this.empty_permitted && !this.has_changed())
             return;
-        for each ([name, field] in items(this.fields)) {
+        for each ([name, field] in this.fields.items()) {
             // value_from_datadict() gets the data from the data dictionaries.
             // Each widget type knows how to retrieve its own data, because some
             // widgets split data over several HTML fields.
@@ -269,7 +270,7 @@ var BaseForm = type('BaseForm', {
             // initial data, store it in a hidden field, and compare a hash of the
             // submitted data, but we'd need a way to easily get the string value
             // for a given field. Right now, that logic is embedded in the render method of each widget.
-            for each ([name, field] in items(this.fields)) {
+            for each ([name, field] in this.fields.items()) {
                 var prefixed_name = this.add_prefix(name);
                 var data_value = field.widget.value_from_datadict(this.data, this.files, prefixed_name);
                 if (!field.show_hidden_initial) {
@@ -289,7 +290,7 @@ var BaseForm = type('BaseForm', {
     /* Provide a description of all media required to render the widgets on this form */
     get media() {
         var media = new Media();
-        for each (var field in values(this.fields))
+        for each (var field in this.fields.values())
             media = media.__add__(field.widget.media);
         return media;
     },
@@ -298,7 +299,7 @@ var BaseForm = type('BaseForm', {
      * Returns True if the form needs to be multipart-encrypted, i.e. it has FileInput. Otherwise, False.
      */
     is_multipart: function() {
-        for each (field in values(this.fields))
+        for each (field in this.fields.values())
             if (field.widget.needs_multipart_form)
                 return true;
         return false;
@@ -435,5 +436,6 @@ var BoundField = type('BoundField', {
     }
 });
 
-$P({    'BaseForm': BaseForm, 
+$P({    'BaseForm': BaseForm,
+        'get_declared_fields': get_declared_fields,
         'Form': Form });

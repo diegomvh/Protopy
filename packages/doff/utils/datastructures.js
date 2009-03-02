@@ -1,5 +1,6 @@
 $D("doff.utils.datastructures");
-$L('copy', 'copy');
+$L('copy', 'copy', 'deepcopy');
+
 var SortedDict = type('SortedDict', Dict, {
     '__init__': function __init__(object) {
         super(Dict, this).__init__(object);
@@ -14,6 +15,20 @@ var SortedDict = type('SortedDict', Dict, {
             pair.value = value;
             yield pair;
         }
+    },
+
+    '__copy__': function __copy__() {
+        return new SortedDict(this);
+    },
+    
+    '__deepcopy__': function __copy__() {
+        var obj = new SortedDict();
+        for (hash in this._key) {
+            obj._key[hash] = deepcopy(this._key[hash]);
+            obj._value[hash] = deepcopy(this._value[hash]);
+        }
+        obj.keyOrder = deepcopy(this.keyOrder); 
+        return obj;
     },
 
     'set': function set(key, value) {
