@@ -666,12 +666,11 @@ var ValuesQuerySet = type('ValuesQuerySet', QuerySet, {
     },
 
     'iterator': function iterator() {
-        if (!this.extra_names && this.field_names.length != this.model._meta.fields.length)
+        if (!bool(this.extra_names) && this.field_names.length != this.model._meta.fields.length)
             this.query.trim_extra_select(this.extra_names);
-        var names = keys(this.query.extra_select).concat(this.field_names);
+        var names = this.query.extra_select.keys().concat(this.field_names);
         for each (var row in this.query.results_iter()) {
-            var ret = create(zip(names, row));
-            yield ret;
+            yield row;
         }
     },
 
@@ -685,20 +684,20 @@ var ValuesQuerySet = type('ValuesQuerySet', QuerySet, {
     '_setup_query': function _setup_query() {
 
         this.extra_names = [];
-        if (this._fields) {
-            if (!this.query.extra_select) {
-                field_names = this._fields;
+        if (bool(this._fields)) {
+            if (!bool(this.query.extra_select)) {
+                var field_names = this._fields;
             } else {
-                field_names = [];
+                var field_names = [];
                 for each (var f in this._fields)
-                    if (this.query.extra_select[f])
+                    if (this.query.extra_select.get(f, false))
                         this.extra_names.push(f);
                     else
                         field_names.push(f);
             }
         } else {
             // Default to all fields.
-            field_names = [f.attname for each (f in this.model._meta.fields)];
+            var field_names = [f.attname for each (f in this.model._meta.fields)];
         }
         this.query.add_fields(field_names, false);
         this.query.default_cols = false;
@@ -729,22 +728,23 @@ var ValuesQuerySet = type('ValuesQuerySet', QuerySet, {
 var ValuesListQuerySet = type('ValuesListQuerySet', ValuesQuerySet, {
     'iterator': function iterator() {
         this.query.trim_extra_select(this.extra_names);
-        if ((this.flat) && (this._fields.length == 1))
+        if ((this.flat) && (this._fields.length == 1)) {
             for each (var row in this.query.results_iter())
                 yield row[0];
-        else if (!this.query.extra_select)
+        } else if (!bool(this.query.extra_select)) {
             for each (var row in this.query.results_iter())
                 yield row;
-        else
+        } else {
             // When extra(select=...) is involved, the extra cols come are
             // always at the start of the row, so we need to reorder the fields
             // to match the order in this._fields.
-            names = Objects.keys(this.query.extra_select) + this.field_names;
+            names = this.query.extra_select.keys().concat(this.field_names);
             for each (var row in this.query.results_iter()) {
                 data = create(names.zip(row));
                 var ret = [data[f] for (f in this._fields)];
                 yield ret;
             }
+        }
     },
 
     '_clone': function _clone() {

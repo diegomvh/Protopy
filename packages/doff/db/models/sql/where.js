@@ -52,7 +52,7 @@ var WhereNode = type('WhereNode', Node, {
     'as_sql': function as_sql(qn){
 
         if (!qn)
-            var qn = connection.ops.quote_name.bind(connection.ops);
+            var qn = getattr(connection.ops, 'quote_name');
         if (!bool(this.children))
             return [null, []];
         

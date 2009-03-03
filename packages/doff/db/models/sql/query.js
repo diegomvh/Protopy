@@ -382,19 +382,19 @@ var Query = type('Query', {
         */
     'get_columns': function get_columns(with_aliases) {
 
-        var with_aliases = with_aliases || false;
+        with_aliases = with_aliases || false;
         var qn = getattr(this, 'quote_name_unless_alias');
         var qn2 = this.connection.ops.quote_name;
-        var result = ['(%s) AS %s'.subs(col[0], qn2(alias)) for ([alias, col] in this.extra_select)];
+        var result = ['(%s) AS %s'.subs(col[0], qn2(alias)) for each ([alias, col] in this.extra_select.items())];
         var aliases = new Set(this.extra_select.keys());
         if (with_aliases)
-            col_aliases = copy(aliases);
+            var col_aliases = copy(aliases);
         else
-            col_aliases = new Set();
+            var col_aliases = new Set();
         if (bool(this.select)) {
             for each (var col in this.select) {
                 if (type(col) == Array) {
-                    r = '%s.%s'.subs(qn(col[0]), qn(col[1]));
+                    var r = '%s.%s'.subs(qn(col[0]), qn(col[1]));
                     if (with_aliases && include(col_aliases, col[1])) {
                         c_alias = 'Col%s'.subs(col_aliases.length);
                         result.push('%s AS %s'.subs(r, c_alias));
@@ -415,14 +415,13 @@ var Query = type('Query', {
                     }
                 }
             }
-        }
-        else if (this.default_cols) {
+        } else if (this.default_cols) {
             var [cols, new_aliases] = this.get_default_columns(with_aliases, col_aliases);
             result = result.concat(cols);
             aliases.update(new_aliases);
         }
         for each (var [table, col] in this.related_select_cols) {
-            r = '%s.%s'.subs(qn(table), qn(col));
+            var r = '%s.%s'.subs(qn(table), qn(col));
             if (with_aliases && include(col_aliases, col)) {
                 c_alias = 'Col%s'.subs(col_aliases.length);
                 result.push('%s AS %s'.subs(r, c_alias));
@@ -664,18 +663,18 @@ var Query = type('Query', {
         The 'name' is of the form 'field1__field2__...__fieldN'.
         */
     'find_ordering_name': function find_ordering_name(name, opts, alias, default_order, already_seen) {
-        var alias = alias || null;
-        var default_order = default_order || 'ASC';
-        var already_seen = already_seen || null;
+        alias = alias || null;
+        default_order = default_order || 'ASC';
+        already_seen = already_seen || null;
 
         var [name, order] = get_order_dir(name, default_order);
         var pieces = name.split(LOOKUP_SEP);
         if (!alias)
             alias = this.get_initial_alias();
         var [field, target, opts, joins, last, extra] = this.setup_joins(pieces, opts, alias, false);
-        //TODO: Algo para levantar indices negativos en los array
+
         alias = joins[joins.length - 1];
-        col = target.column;
+        var col = target.column;
         if (!field.rel) {
             // To avoid inadvertent trimming of a necessary alias, use the
             // refcount to show that we are referencing a non-relation field on
@@ -727,7 +726,7 @@ var Query = type('Query', {
         most recently created alias for the table (if one exists) is reused.
         */
     'table_alias': function table_alias(table_name, create) {
-        var create = create || false;
+        create = create || false;
         current = this.table_map[table_name];
         if (!create && current) {
             alias = current[0];
@@ -950,12 +949,12 @@ var Query = type('Query', {
         is a candidate for promotion (to "left outer") when combining querysets.
         */
     'join': function join(connection, always_create, exclusions, promote, outer_if_first, nullable, reuse) {
-        var always_create = always_create || false;
-        var exclusions = exclusions || [];
-        var promote = promote || false;
-        var outer_if_first = outer_if_first || false;
-        var nullable = nullable || false;
-        var reuse = reuse || null;
+        always_create = always_create || false;
+        exclusions = exclusions || [];
+        promote = promote || false;
+        outer_if_first = outer_if_first || false;
+        nullable = nullable || false;
+        reuse = reuse || null;
         var [lhs, table, lhs_col, col] = connection;
         if (lhs in this.alias_map) {
             lhs_table = this.alias_map[lhs][TABLE_NAME];
@@ -1127,22 +1126,18 @@ var Query = type('Query', {
         */
     'add_filter': function add_filter(filter_expr, connector, negate, trim, can_reuse, process_extras) {
 
-        var connector = connector || AND;
-        var negate = negate || false;
-        var trim = trim || false;
-        var can_reuse = can_reuse || null;
-        var process_extras = process_extras || true;
+        connector = connector || AND;
+        negate = negate || false;
+        trim = trim || false;
+        can_reuse = can_reuse || null;
+        process_extras = process_extras || true;
         var [arg, value] = filter_expr;
         var parts = arg.split(LOOKUP_SEP);
-        var lookup_type;
         if (!bool(parts))
             throw new FieldError("Cannot parse keyword query %r".subs(arg));
 
         // Work out the lookup type and remove it from 'parts', if necessary.
-        if (parts.length == 1 || bool(this.query_terms[parts[parts.length - 1]]))
-            var lookup_type = 'exact';
-        else
-            var lookup_type = parts.pop();
+        var lookup_type = (parts.length == 1 || bool(this.query_terms[parts[parts.length - 1]]))? 'exact' : parts.pop();
 
         // Interpret '__exact=None' as the sql 'is NULL'; otherwise, reject all
         // uses of None as a query value.
@@ -1151,19 +1146,19 @@ var Query = type('Query', {
                 throw new ValueError("Cannot use None as a query value");
             lookup_type = 'isnull';
             value = true;
-        }
-        else if (value == '' && lookup_type == 'exact' && connection.features.interprets_empty_strings_as_nulls) {
+        } else if (value == '' && lookup_type == 'exact' && connection.features.interprets_empty_strings_as_nulls) {
             lookup_type = 'isnull';
             value = true;
+        } else if (callable(value)) { 
+            value = value(); 
         }
-        else if (callable(value)) { value = value(); }
 
         var opts = this.get_meta();
         var alias = this.get_initial_alias();
         var allow_many = trim || !negate;
 
         try {
-            [field, target, opts, join_list, last, extra_filters] = this.setup_joins(parts, opts, alias, true, allow_many, can_reuse, negate, process_extras);
+            var [field, target, opts, join_list, last, extra_filters] = this.setup_joins(parts, opts, alias, true, allow_many, can_reuse, negate, process_extras);
         }
         catch (e if e instanceof MultiJoin) {
             this.split_exclude(filter_expr, parts.slice(0,e.level).join(LOOKUP_SEP), can_reuse);
@@ -1178,10 +1173,12 @@ var Query = type('Query', {
             var join_list = join_list.slice(0, penultimate);
             final = penultimate;
             penultimate = last.pop();
-            col = this.alias_map[extra[0]][LHS_JOIN_COL];
-            for (alias in extra)
+            var col = this.alias_map[extra[0]][LHS_JOIN_COL];
+            for each (var alias in extra)
                 this.unref_alias(alias);
-        } else { col = target.column; }
+        } else { 
+            var col = target.column; 
+        }
         alias = join_list[join_list.length - 1];
 
         while (final > 1) {
@@ -1515,7 +1512,7 @@ var Query = type('Query', {
         var alias = this.get_initial_alias();
         var opts = this.get_meta();
         try {
-            for each (name in field_names)
+            for each (var name in field_names) {
                 var [field, target, u2, joins, u3, u4] = this.setup_joins(name.split(LOOKUP_SEP), opts, alias, false, allow_m2m, true);
                 var final_alias = joins[joins.length -1];
                 var col = target.column;
@@ -1531,12 +1528,11 @@ var Query = type('Query', {
                 this.promote_alias_chain(joins.slice(1));
                 this.select.push([final_alias, col]);
                 this.select_fields.push(field);
-        }
-        catch (e if e instanceof MultiJoin) {
+            }
+        } catch (e if e instanceof MultiJoin) {
             throw new FieldError("Invalid field name: '%s'".subs(name));
-        }
-        catch (e if e instanceof FieldError) {
-            var names = opts.get_all_field_names() + this.extra_select.keys()
+        } catch (e if e instanceof FieldError) {
+            var names = opts.get_all_field_names() + this.extra_select.keys();
             names.sort();
             throw new FieldError("Cannot resolve keyword %r into field. Choices are: %s".subs(name, names.join(", ")))
         }
@@ -1724,7 +1720,7 @@ var Query = type('Query', {
         */
     'execute_sql': function execute_sql(result_type) {
 
-        result_type = (result_type == undefined)?MULTI:result_type;
+        result_type = (typeof(result_type) === 'undefined')?MULTI:result_type;
         var sql = null, params = null;
         try {
             [sql, params] = this.as_sql();

@@ -3,8 +3,8 @@ $L('copy', 'copy', 'deepcopy');
 
 var SortedDict = type('SortedDict', Dict, {
     '__init__': function __init__(object) {
+        this.keyOrder = (object && isinstance(object, SortedDict))? copy(object.keyOrder) : [];
         super(Dict, this).__init__(object);
-        this.keyOrder = (object instanceof SortedDict)? copy(object.keyOrder) : values(this._key);
     },
     
     '__iter__': function __iter__() {
@@ -41,9 +41,9 @@ var SortedDict = type('SortedDict', Dict, {
         return super(Dict, this).unset(key);
     },
 
-    /* 
-        * Returns the value of the item at the given zero-based index.
-        */
+     /* 
+      * Returns the value of the item at the given zero-based index.
+      */
     'value_for_index': function value_for_index(index) {
         return this.get(this.keyOrder[index]);
     }

@@ -195,7 +195,7 @@ var UpdateQuery = type('UpdateQuery', Query, {
         if (!this.values)
             return ['', []];
         var table = this.tables[0];
-        var qn = this.quote_name_unless_alias.bind(this);
+        var qn = getattr(this, 'quote_name_unless_alias');
         var result = ['UPDATE %s'.subs(qn(table))];
         result.push('SET');
         var values = [], update_params = [];

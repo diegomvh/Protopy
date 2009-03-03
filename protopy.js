@@ -1246,27 +1246,18 @@
             this._value = {};
             this._key = {};
             if (!object || (type(object) == Array && !bool(object))) return;
-            if (issubclass(object, Dict)) {
+            if (object && isinstance(object, Dict)) {
                 this._value = extend({}, object._value);
                 this._key = extend({}, object._key);
             } else if (callable(object['next'])) {
-                for each (var [key, value] in object) {
-                    var hash = id(key);
-                    this._key[hash] = key;
-                    this._value[hash] = value;
-                }
+                for each (var [key, value] in object)
+                    this.set(key, value);
             } else if (type(object) == Array && type(object[0]) == Array) {
-                for each (var [key, value] in object) {
-                    var hash = id(key);
-                    this._key[hash] = key;
-                    this._value[hash] = value;
-                }
+                for each (var [key, value] in object)
+                    this.set(key, value);
             } else if (type(object) == Object){
-                for (var key in object) {
-                    var hash = id(key);
-                    this._key[hash] = key;
-                    this._value[hash] = object[key];
-                }
+                for (var key in object)
+                    this.set(key, object[key]);
             }
         },
 

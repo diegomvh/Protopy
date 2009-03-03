@@ -19,10 +19,12 @@ var ErrorDict = type('ErrorDict', Dict, {
     },
 
     'as_ul': function as_ul() {
+        if (!bool(this)) return '';
         return '<ul class="errorlist">%s</ul>'.subs(['<li>%s%s</li>'.subs(k, v) for each ([k, v] in this.items())].join(''));
     },
 
     'as_text': function as_text() {
+        if (!bool(this)) return '';
         return ['* %s\n%s'.subs(k, ['  * %s'.subs(i) for (i in v)].join('\n')) for each ([k, v] in this.items())].join('\n');
     }
 });
@@ -61,10 +63,12 @@ var ErrorList = type('ErrorList', {
     },
 
     'as_ul': function as_ul() {
+        if (!bool(this)) return '';
         return '<ul class="errorlist">%s</ul>'.subs(['<li>%s</li>'.subs(e) for each (e in this.errors)].join(''));
     },
 
     'as_text': function as_text() {
+        if (!bool(this)) return '';
         return ['* %s'.subs(e) for each (e in this.errors)].join('\n');
     },
     

@@ -21,18 +21,19 @@ from formsets import BaseFormSet, formset_factory, DELETION_FIELD_NAME
  */
 function save_instance(form, instance) { 
     arguments = new Arguments(arguments, {'fields':null, 'fail_message':'saved', 'commit':true, 'exclude':null});
+    var kwargs = arguments.kwargs;
     $L('doff.db.models');
     var opts = instance._meta;
     if (bool(form.errors))
-        throw new ValueError("The %s could not be %s because the data didn't validate.".subs(opts.object_name, fail_message));
+        throw new ValueError("The %s could not be %s because the data didn't validate.".subs(opts.object_name, kwargs['fail_message']));
     var cleaned_data = form.cleaned_data;
     var file_field_list = [];
     for each (f in opts.fields) {
         if (!f.editable || isinstance(f, models.AutoField) || !(f.name in cleaned_data))
             continue;
-        if (fields && !include(fields, f.name))
+        if (kwargs['fields'] && !include(kwargs['fields'], f.name))
             continue;
-        if (exclude && inlcude(exclude, f.name))
+        if (kwargs['exclude'] && inlcude(kwargs['exclude'], f.name))
             continue;
         // Defer saving file-type fields until after the other fields, so a
         // callable upload_to can use the values from other fields.
@@ -49,13 +50,13 @@ function save_instance(form, instance) {
         opts = instance._meta;
         cleaned_data = form.cleaned_data;
         for each (f in opts.many_to_many) {
-            if (fields && !include(fields, f.name))
+            if (kwargs['fields'] && !include(kwargs['fields'], f.name))
                 continue;
             if (include(cleaned_data, f.name))
                 f.save_form_data(instance, cleaned_data[f.name]);
         }
     }
-    if (commit) {
+    if (kwargs['commit']) {
         // If we are committing, save the instance and the m2m data immediately.
         instance.save();
         save_m2m();
