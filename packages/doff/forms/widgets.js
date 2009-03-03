@@ -265,7 +265,7 @@ var MultipleHiddenInput = type('MultipleHiddenInput', HiddenInput, {
     value_from_datadict: function(data, files, name) {
         if (isinstance(data, [MultiValueDict, MergeDict]))
             return data.getlist(name);
-        return data.get(name, null);
+        return data[name] || null;
     }
 });
 
@@ -672,7 +672,7 @@ var MultiWidget = type('MultiWidget', Widget, {
     },
 
     value_from_datadict: function(data, files, name) {
-        return [widget.value_from_datadict(data, files, name + '_%s'.subs(i)) for ([i, widget] in Iterator(this.widgets))];
+        return [widget.value_from_datadict(data, files, name + '_%s'.subs(i)) for each ([i, widget] in Iterator(this.widgets))];
     },
 
     _has_changed: function(initial, data) {

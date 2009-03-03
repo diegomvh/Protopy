@@ -55,7 +55,7 @@ var BaseForm = type('BaseForm', {
     __init__: function() {
         arguments = new Arguments(arguments, {'data':null, 'files':null, 'auto_id':'id_%s', 'prefix':null, 'initial':null, 'error_class':ErrorList, 'label_suffix':':', 'empty_permitted':false});
         var kwargs = arguments.kwargs;
-        this.is_bound = bool(kwargs['data'] || kwargs['files']);
+        this.is_bound = kwargs['data'] != null || kwargs['files'] != null;
         this.data = kwargs['data'] || {};
         this.files = kwargs['files'] || {};
         this.auto_id = kwargs['auto_id'];
@@ -131,13 +131,13 @@ var BaseForm = type('BaseForm', {
         var hidden_fields = [];
         for each ([name, field] in this.fields.items()) {
             var bf = new BoundField(this, field, name);
-            var bf_errors = this.error_class([conditional_escape(error) for each (error in bf.errors)]); // Escape and cache in local variable.
+            var bf_errors = new this.error_class([conditional_escape(error) for (error in bf.errors)]); // Escape and cache in local variable.
             if (bf.is_hidden) {
                 if (bool(bf_errors))
                     top_errors = top_errors.concat(['(Hidden field %s) %s'.subs(name, e) for each (e in bf_errors)]);
                 hidden_fields.push(str(bf));
             } else {
-                if (errors_on_separate_row && bf_errors)
+                if (errors_on_separate_row && bool(bf_errors))
                     output.push(error_row.subs(bf_errors));
                 if (bf.label) {
                     var label = conditional_escape(bf.label);
@@ -347,7 +347,7 @@ var BoundField = type('BoundField', {
 
     /* Returns an ErrorList for this field. Returns an empty ErrorList if there are none. */
     get errors() {
-        return this.form.errors.get(this.name, this.form.error_class());
+        return this.form.errors.get(this.name, new this.form.error_class());
     },
 
     /* 
@@ -393,7 +393,7 @@ var BoundField = type('BoundField', {
 
     //Returns the data for this BoundField, or None if it wasn't given.
     get data() {
-        return this.field.widget.value_from_datadict(thsi.form.data, this.form.files, this.html_name);
+        return this.field.widget.value_from_datadict(this.form.data, this.form.files, this.html_name);
     },
 
     /* 
@@ -415,7 +415,7 @@ var BoundField = type('BoundField', {
     },
 
     //Returns True if this BoundField's widget is hidden."
-    get _is_hidden() {
+    get is_hidden() {
         return this.field.widget.is_hidden;
     },
 

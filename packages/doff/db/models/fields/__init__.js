@@ -1,3 +1,4 @@
+$D('doff.db.models.fields.__init__');
 $L('doff.db', 'connection');
 $L('doff.db.models.signals');
 $L('doff.db.models.query_utils', 'QueryWrapper');

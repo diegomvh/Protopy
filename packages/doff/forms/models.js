@@ -164,7 +164,7 @@ var ModelFormOptions = type('ModelFormOptions', {
 });
 
 var BaseModelForm = type('BaseModelForm', BaseForm, {
-    __init__: function(data) {
+    __init__: function() {
         arguments = new Arguments(arguments, {'data':null, 'files':null, 'auto_id':'id_%s', 'prefix':null, 'initial':null, 'error_class':ErrorList, 'label_suffix':':', 'empty_permitted':false, 'instance':null});
         var kwargs = arguments.kwargs;
         var opts = this._meta;
@@ -173,8 +173,8 @@ var BaseModelForm = type('BaseModelForm', BaseForm, {
             this.instance = new opts.model();
             var object_data = {};
         } else {
-            this.instance = instance;
-            var object_data = model_to_dict(instance, opts.fields, opts.exclude);
+            this.instance = kwargs['instance'];
+            var object_data = model_to_dict(kwargs['instance'], opts.fields, opts.exclude);
         }
         // if initial was provided, it should override the values from instance
         if (kwargs['initial'])

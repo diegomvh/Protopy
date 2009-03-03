@@ -37,7 +37,7 @@ var Field = type('Field', {
         var kwargs = arguments.kwargs;
 
         this.required = kwargs['required'];
-        this.label = ['label'];
+        this.label = kwargs['label'];
         this.initial = kwargs['initial'];
         this.show_hidden_initial = kwargs['show_hidden_initial'];
         this.help_text = kwargs['help_text'];

@@ -32,7 +32,7 @@ var ErrorDict = type('ErrorDict', Dict, {
  */
 var ErrorList = type('ErrorList', {
     '__init__': function __init__(errors) {
-	this.errors = errors;
+	this.errors = errors || [];
     },
 
     '__str__': function __str__() {
@@ -41,6 +41,11 @@ var ErrorList = type('ErrorList', {
 
     '__nonzero__': function __nonzero__() {
         return bool(this.errors);
+    },
+    
+    '__iter__': function __iter__() {
+	for (var e in this.errors)
+	    yield e;
     },
 
     'push': function push(error) {
