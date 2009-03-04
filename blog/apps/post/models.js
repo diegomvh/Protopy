@@ -1,7 +1,10 @@
 $L('doff.db.models');
 
 var Usuario = type('Usuario', models.Model, {
-    name: new models.CharField('Name', {'max_length':20})
+    name: new models.CharField('Name', {'max_length':20}),
+    '__str__': function __str__(){
+        return this.name;
+    }
 });
 
 var Tag = type('Tag', models.Model, {

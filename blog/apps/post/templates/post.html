@@ -1,3 +1,7 @@
+<form>
+    {{ form.as_ul }}
+    <input type="submit" name="submit">
+</form>
 {% for post in posts %}
     <h1>{{ post.title }}</h1>{{ post.date }}
     <p>{{ post.body }}</p>

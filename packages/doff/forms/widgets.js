@@ -2,19 +2,12 @@ $D('HTML Widget classes');
 $L('copy', 'copy');
 $L('doff.conf', 'settings');
 $L('doff.forms.util', 'flatatt');
+$L('itertools', 'chain');
 
 //from django.utils.html import escape, conditional_escape
 function conditional_escape(v) { return v; }
+function escape(v) { return v; }
 
-//from itertools import chain
-function chain() {
-    var argu = array(arguments);
-    var result = argu.shift();
-    result = (result && type(result) == Array)? result : [result];
-    for each (var r in argu)
-	result = result.concat(r);
-    return result;
-} 
 /*
 from django.utils.datastructures import MultiValueDict, MergeDict
 from django.utils.translation import ugettext

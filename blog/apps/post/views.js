@@ -5,7 +5,7 @@ $L('doff.template.default_filters', 'slugify');
 $L('doff.template.loader');
 $L('doff.template.context', 'Context');
 
-var TagForm = type('TagForm', forms.ModelForm, {
+var PostForm = type('PostForm', forms.ModelForm, {
     'Meta': {
         'model': Post
     }
@@ -39,7 +39,8 @@ function set_tags_by_title(post, tag_title){
 
 function show_posts(){
     var t = loader.get_template('post.html');
-    document.write(t.render(new Context({posts:Post.objects.all().order_by('-title')})));
+    var form = new PostForm();
+    document.write(t.render(new Context({'form': form, 'posts': Post.objects.all().order_by('-title')})));
     document.close();
 }
 
@@ -47,5 +48,5 @@ $P({ 'syncdb': syncdb,
      'add_tag': add_tag,
      'add_post': add_post,
      'show_posts': show_posts,
-     'TagForm': TagForm,
+     'PostForm': PostForm,
      'set_tags_by_title': set_tags_by_title});

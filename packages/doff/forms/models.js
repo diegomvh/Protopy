@@ -619,11 +619,9 @@ var ModelChoiceIterator = type('ModelChoiceIterator', [object], {
             // FIXME: The try..except shouldn't be necessary here. But this is
             // going in just before 1.0, so I want to be careful. Will check it
             // out later.
-            try {
-                var key = getattr(obj, this.field.to_field_name).pk;
-            } catch (e if e instanceof AttributeError) {
-                var key = getattr(obj, this.field.to_field_name);
-	    }
+            var key = getattr(obj, this.field.to_field_name).pk;
+            if (typeof(key) === 'undefined')
+                key = getattr(obj, this.field.to_field_name);
         } else {
             var key = obj.pk;
 	}

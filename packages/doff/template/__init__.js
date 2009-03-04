@@ -424,8 +424,8 @@ var Variable = type('Variable', {
         var current = context;
         for each (var bit in this.lookups) {
             try {
-                // Si tienen get lo uso antes que []
-                if (callable(current['__getitem__']))
+                // Si tienen __getitem__ lo uso antes que [] simpre que no sea una funcion lo que quiero hacer.
+                if (callable(current['__getitem__']) && !callable(current[bit]))
                     current = current.__getitem__(bit);
                 else
                     current = getattr(current, bit);
