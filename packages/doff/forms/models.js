@@ -552,124 +552,128 @@ def inlineformset_factory(parent_model, model, form=ModelForm,
     FormSet.fk = fk
     return FormSet
 
-
+*/
 // Fields //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-class InlineForeignKeyHiddenInput(HiddenInput):
-    def _has_changed(self, initial, data):
-        return False
-
-class InlineForeignKeyField(Field):
-    """
-    A basic integer field that deals with validating the given value to a
-    given parent instance in an inline.
-    """
-    default_error_messages = {
-        'invalid_choice': _(u'The inline foreign key did not match the parent instance primary key.'),
+var InlineForeignKeyHiddenInput = type('InlineForeignKeyHiddenInput', [HiddenInput], {
+    '_has_changed': function _has_changed(initial, data) {
+        return false;
     }
+});
+
+/* 
+ * A basic integer field that deals with validating the given value to a given parent instance in an inline.
+ */
+var InlineForeignKeyField = type('InlineForeignKeyField', [Field], {
+    default_error_messages: { 'invalid_choice': 'The inline foreign key did not match the parent instance primary key.' },
     
-    def __init__(self, parent_instance, *args, **kwargs):
-        self.parent_instance = parent_instance
-        self.pk_field = kwargs.pop("pk_field", False)
-        if self.parent_instance is not None:
-            kwargs["initial"] = self.parent_instance.pk
-        kwargs["required"] = False
-        kwargs["widget"] = InlineForeignKeyHiddenInput
-        super(InlineForeignKeyField, self).__init__(*args, **kwargs)
-    
-    def clean(self, value):
-        if value in EMPTY_VALUES:
-            if self.pk_field:
-                return None
+    '__init__': function __init__(parent_instance) {
+	arguments = new Arguments(arguments);
+	this.parent_instance = parent_instance;
+        this.pk_field = arguments.kwargs['pk_field'] || false;
+	delete arguments.kwargs['pk_field'];
+        if (this.parent_instance)
+            arguments.kwargs["initial"] = this.parent_instance.pk;
+        arguments.kwargs["required"] = false;
+        arguments.kwargs["widget"] = InlineForeignKeyHiddenInput;
+        super(Field, this).__init__(arguments);
+    },
+
+    'clean': function clean(value) {
+        if (include(EMPTY_VALUES, value)) {
+            if (this.pk_field)
+                return null;
             // if there is no value act as we did before.
-            return self.parent_instance
+            return this.parent_instance;
+	}
         // ensure the we compare the values as equal types.
-        if force_unicode(value) != force_unicode(self.parent_instance.pk):
-            raise ValidationError(self.error_messages['invalid_choice'])
-        if self.pk_field:
-            return self.parent_instance.pk
-        return self.parent_instance
+        if (value != this.parent_instance.pk)
+            throw new ValidationError(this.error_messages['invalid_choice']);
+        if (this.pk_field)
+            return this.parent_instance.pk;
+        return this.parent_instance;
+    }
+});
 
-class ModelChoiceIterator(object):
-    def __init__(self, field):
-        self.field = field
-        self.queryset = field.queryset
+var ModelChoiceIterator = type('ModelChoiceIterator', [object], {
+    '__init__': function __init__(field) {
+        this.field = field;
+        this.queryset = field.queryset;
+    },
 
-    def __iter__(self):
-        if self.field.empty_label is not None:
-            yield (u"", self.field.empty_label)
-        if self.field.cache_choices:
-            if self.field.choice_cache is None:
-                self.field.choice_cache = [
-                    self.choice(obj) for obj in self.queryset.all()
-                ]
-            for choice in self.field.choice_cache:
-                yield choice
-        else:
-            for obj in self.queryset.all():
-                yield self.choice(obj)
+    '__iter__': function __iter__() {
+        if (this.field.empty_label)
+            yield ["", this.field.empty_label];
+        if (this.field.cache_choices) {
+            if (!this.field.choice_cache)
+                this.field.choice_cache = [ this.choice(obj) for (obj in this.queryset.all()) ];
+            for each (var choice in this.field.choice_cache)
+                yield choice;
+        } else {
+            for each (var obj in this.queryset.all())
+                yield this.choice(obj);
+	}
+    },
 
-    def choice(self, obj):
-        if self.field.to_field_name:
+    'choice': function choice(obj) {
+        if (this.field.to_field_name) {
             // FIXME: The try..except shouldn't be necessary here. But this is
             // going in just before 1.0, so I want to be careful. Will check it
             // out later.
-            try:
-                key = getattr(obj, self.field.to_field_name).pk
-            except AttributeError:
-                key = getattr(obj, self.field.to_field_name)
-        else:
-            key = obj.pk
-        return (key, self.field.label_from_instance(obj))
+            try {
+                var key = getattr(obj, this.field.to_field_name).pk;
+            } catch (e if e instanceof AttributeError) {
+                var key = getattr(obj, this.field.to_field_name);
+	    }
+        } else {
+            var key = obj.pk;
+	}
+        return [key, this.field.label_from_instance(obj)];
+    }
+});
 
-
-class ModelChoiceField(ChoiceField):
-    """A ChoiceField whose choices are a model QuerySet."""
+// A ChoiceField whose choices are a model QuerySet.
+var ModelChoiceField = type('ModelChoiceField', [ChoiceField], {
     // This class is a subclass of ChoiceField for purity, but it doesn't
     // actually use any of ChoiceField's implementation.
-    default_error_messages = {
-        'invalid_choice': _(u'Select a valid choice. That choice is not one of'
-                            u' the available choices.'),
-    }
+    default_error_messages: { 'invalid_choice': 'Select a valid choice. That choice is not one of the available choices.' },
 
-    def __init__(self, queryset, empty_label=u"---------", cache_choices=False,
-                 required=True, widget=None, label=None, initial=None,
-                 help_text=None, to_field_name=None, *args, **kwargs):
-        self.empty_label = empty_label
-        self.cache_choices = cache_choices
+    '__init__': function __init__() {
+	arguments = new Arguments(arguments, {	'queryset': null, 'empty_label': "---------", 'cache_choices': false,
+						'required': true, 'widget': null, 'label': null, 'initial': null,
+						'help_text': null, 'to_field_name': null });
+        var kwargs = arguments.kwargs;
+	assert(kwargs['queryset'] != null, 'Falta queryset');
+	this.empty_label = kwargs['empty_label'];
+        this.cache_choices = kwargs['cache_choices'];
 
         // Call Field instead of ChoiceField __init__() because we don't need
         // ChoiceField.__init__().
-        Field.__init__(self, required, widget, label, initial, help_text,
-                       *args, **kwargs)
-        self.queryset = queryset
-        self.choice_cache = None
-        self.to_field_name = to_field_name
+        super(Field, this).__init__(arguments);
+        this.queryset = kwargs['queryset'];
+        this.choice_cache = null;
+        this.to_field_name = kwargs['to_field_name'];
+    },
 
-    def _get_queryset(self):
-        return self._queryset
+    get queryset() {
+        return this._queryset;
+    },
 
-    def _set_queryset(self, queryset):
-        self._queryset = queryset
-        self.widget.choices = self.choices
-
-    queryset = property(_get_queryset, _set_queryset)
+    set queryset(queryset) {
+        this._queryset = queryset;
+        this.widget.choices = this.choices;
+    },
 
     // this method will be used to create object labels by the QuerySetIterator.
     // Override it to customize the label.
-    def label_from_instance(self, obj):
-        """
-        This method is used to convert objects into strings; it's used to
-        generate the labels for the choices presented by this object. Subclasses
-        can override this method to customize the display of the choices.
-        """
-        return smart_unicode(obj)
+    'label_from_instance': function label_from_instance(obj) {
+        return obj;
+    },
 
-    def _get_choices(self):
+    get choices() {
         // If self._choices is set, then somebody must have manually set
         // the property self.choices. In this case, just return self._choices.
-        if hasattr(self, '_choices'):
-            return self._choices
+        if (hasattr(this, '_choices'))
+            return this._choices;
 
         // Otherwise, execute the QuerySet in self.queryset to determine the
         // choices dynamically. Return a fresh QuerySetIterator that has not been
@@ -678,61 +682,68 @@ class ModelChoiceField(ChoiceField):
         // accessed) so that we can ensure the QuerySet has not been consumed. This
         // construct might look complicated but it allows for lazy evaluation of
         // the queryset.
-        return ModelChoiceIterator(self)
+        return new ModelChoiceIterator(this);
+    },
 
-    choices = property(_get_choices, ChoiceField._set_choices)
+    set choices(value) {
+        this._choices = this.widget.choices = array(value);
+    },
 
-    def clean(self, value):
-        Field.clean(self, value)
-        if value in EMPTY_VALUES:
-            return None
-        try:
-            key = self.to_field_name or 'pk'
-            value = self.queryset.get(**{key: value})
-        except self.queryset.model.DoesNotExist:
-            raise ValidationError(self.error_messages['invalid_choice'])
-        return value
-
-class ModelMultipleChoiceField(ModelChoiceField):
-    """A MultipleChoiceField whose choices are a model QuerySet."""
-    widget = SelectMultiple
-    hidden_widget = MultipleHiddenInput
-    default_error_messages = {
-        'list': _(u'Enter a list of values.'),
-        'invalid_choice': _(u'Select a valid choice. %s is not one of the'
-                            u' available choices.'),
+    'clean': function clean(value) {
+        super(Field, this).clean(value);
+        if (include(EMPTY_VALUES, value))
+            return null;
+        try {
+            var key = this.to_field_name || 'pk';
+            var value = this.queryset.get({key: value});
+        } catch (e if e instanceof this.queryset.model.DoesNotExist) {
+            throw new ValidationError(this.error_messages['invalid_choice']);
+        }
+	return value;
     }
+});
 
-    def __init__(self, queryset, cache_choices=False, required=True,
-                 widget=None, label=None, initial=None,
-                 help_text=None, *args, **kwargs):
-        super(ModelMultipleChoiceField, self).__init__(queryset, None,
-            cache_choices, required, widget, label, initial, help_text,
-            *args, **kwargs)
+//A MultipleChoiceField whose choices are a model QuerySet.
+var ModelMultipleChoiceField = type('ModelMultipleChoiceField', [ModelChoiceField], {
+    widget: SelectMultiple,
+    hidden_widget: MultipleHiddenInput,
+    default_error_messages: {	'list': 'Enter a list of values.',
+				'invalid_choice': 'Select a valid choice. %s is not one of the available choices.' },
 
-    def clean(self, value):
-        if self.required and not value:
-            raise ValidationError(self.error_messages['required'])
-        elif not self.required and not value:
-            return []
-        if not isinstance(value, (list, tuple)):
-            raise ValidationError(self.error_messages['list'])
-        final_values = []
-        for val in value:
-            try:
-                obj = self.queryset.get(pk=val)
-            except self.queryset.model.DoesNotExist:
-                raise ValidationError(self.error_messages['invalid_choice'] % val)
-            else:
-                final_values.append(obj)
-        return final_values
-*/
-$P( {   'ModelForm': ModelForm,
+    '__init__': function __init__() {
+	arguments = new Arguments(arguments, {	'queryset': null, 'cache_choices': false, 'required': true, 'widget': null, 'label': null, 'initial': null, 'help_text': null });
+        var kwargs = arguments.kwargs;
+	assert(kwargs['queryset'] != null, 'Falta queryset');
+        super(ModelChoiceField, this).__init__(arguments);
+    },
+
+    'clean': function clean(value) {
+        if (this.required && !value)
+            throw new ValidationError(this.error_messages['required']);
+        else if (!this.required && !value)
+            return [];
+        if (!isinstance(value, Array))
+            throw new ValidationError(this.error_messages['list']);
+        var final_values = [];
+        for each (var val in value) {
+            try {
+                var obj = this.queryset.get({'pk': val});
+		final_values.push(obj);
+            } catch (e if e instanceof this.queryset.model.DoesNotExist) {
+                throw new ValidationError(this.error_messages['invalid_choice'].subs(val));
+            }
+	}
+        return final_values;
+    }
+});
+
+$P({   
+	'ModelForm': ModelForm,
         'BaseModelForm': BaseModelForm,
         'model_to_dict': model_to_dict,
         'fields_for_model': fields_for_model,
         'save_instance': save_instance,
-        'form_for_fields': form_for_fields
-        /*
+        'form_for_fields': form_for_fields,
         'ModelChoiceField': ModelChoiceField,
-        'ModelMultipleChoiceField': ModelMultipleChoiceField */ });
+        'ModelMultipleChoiceField': ModelMultipleChoiceField 
+});

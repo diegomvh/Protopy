@@ -48,7 +48,7 @@ var Field = type('Field', {
         // Hook into this.widget_attrs() for any Field-specific HTML attributes.
         var extra_attrs = this.widget_attrs(widget);
         if (bool(extra_attrs))
-            widget.attrs.update(extra_attrs);
+            extend(widget.attrs, extra_attrs);
 
         this.widget = widget;
 
@@ -561,7 +561,7 @@ var ChoiceField = type('ChoiceField', Field, {
         super(Field, this).__init__(arguments);
         this._choices = arguments.kwargs['choices'];
     },
-    /*
+    
     get choices() {
         return this._choises;
     },
@@ -569,7 +569,7 @@ var ChoiceField = type('ChoiceField', Field, {
     set choices(value) {
         this._choices = this.widget.choices = array(value);
     },
-    */
+    
     /* Validates that the input is in this.choices. */
     clean: function clean(value) {
         value = super(Field, this).clean(value);

@@ -6,6 +6,7 @@ $L('doff.db.models.fields', 'AutoField', 'Field', 'IntegerField', 'PositiveInteg
 $L('doff.db.models.related', 'RelatedObject');
 $L('doff.db.models.query', 'QuerySet');
 $L('doff.db.models.query_utils', 'QueryWrapper');
+$L('doff.forms');
 $L('doff.core.exceptions', 'ValidationError');
 $L('doff.db.transaction');
 $L('functional', 'curry');
@@ -689,17 +690,15 @@ var ForeignKey = type('ForeignKey', RelatedField, {
     },
 
     'contribute_to_related_class': function contribute_to_related_class(cls, related) {
-        //TODO: aca esta la parte chancha grosa de los __set__ y los __get__
         //TODO: validar que tiene que ser de intstancia y no de clase o modelo en los manager
         var frod = new ForeignRelatedObjectsDescriptor(related);
         var attr = related.get_accessor_name();
         cls.prototype.__defineGetter__(attr, function(){ return frod.__get__(this, this.constructor); });
         cls.prototype.__defineSetter__(attr, function(value){ return frod.__set__(this, this.constructor, value); });
-        //cls[related.get_accessor_name()] = new ForeignRelatedObjectsDescriptor(related);
     },
 
     'formfield': function formfield() {
-        arguments = new Arguments(arguments)
+        arguments = new Arguments(arguments);
         var defaults = {
             'form_class': forms.ModelChoiceField,
             'queryset': this.rel.to._default_manager.complex_filter(this.rel.limit_choices_to),
@@ -716,8 +715,8 @@ var ForeignKey = type('ForeignKey', RelatedField, {
         // in which case the column type is simply that of an IntegerField.
         // If the database needs similar types for key fields however, the only
         // thing we can do is making AutoField an IntegerField.
-        rel_field = this.rel.get_related_field();
-        if ((rel_field instanceof AutoField) || (!connection.features.related_fields_match_type && (rel_field instanceof PositiveIntegerField || rel_field instanceof PositiveSmallIntegerField)))
+        var rel_field = this.rel.get_related_field();
+        if (isinstance(rel_field, AutoField) || (!connection.features.related_fields_match_type && (isinstance(rel_field, PositiveIntegerField) || isinstance(rel_field, PositiveSmallIntegerField))))
             return new IntegerField().db_type();
         return rel_field.db_type();
     }
@@ -725,14 +724,12 @@ var ForeignKey = type('ForeignKey', RelatedField, {
 
 var OneToOneField = type('OneToOneField', ForeignKey, {
     '__init__': function __init__(to, to_field) {
-	//TODO: ver argumentos
-    arguments = new Arguments(arguments);
+	arguments = new Arguments(arguments);
 	arguments.kwargs['unique'] = true;
 	super(ForeignKey, this).__init__(to, to_field, OneToOneRel, arguments.kwargs);
     },
 
     'contribute_to_related_class': function contribute_to_related_class(cls, related) {
-
         var srod = new SingleRelatedObjectDescriptor(this);
         var attr = related.get_accessor_name();
         cls.prototype.__defineGetter__(attr, function(){ return srod.__get__(this, this.constructor); });
@@ -973,7 +970,10 @@ var ManyToManyField = type('ManyToManyField', RelatedField, {
 
     'formfield': function formfield() {
         arguments = new Arguments(arguments);
-        var defaults = {'form_class': forms.ModelMultipleChoiceField, 'queryset': this.rel.to._default_manager.complex_filter(this.rel.limit_choices_to)};
+        var defaults = {
+	    'form_class': forms.ModelMultipleChoiceField,
+	    'queryset': this.rel.to._default_manager.complex_filter(this.rel.limit_choices_to)
+	};
         extend(defaults, arguments.kwargs);
         // If initial is passed in, it's a list of related objects, but the
         // MultipleChoiceField takes a list of IDs.

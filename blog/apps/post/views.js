@@ -7,7 +7,7 @@ $L('doff.template.context', 'Context');
 
 var TagForm = type('TagForm', forms.ModelForm, {
     'Meta': {
-        'model': Tag
+        'model': Post
     }
 });
 

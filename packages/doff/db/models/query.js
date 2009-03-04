@@ -529,7 +529,7 @@ var QuerySet = type('QuerySet', {
             clone.query.add_q(filter_obj);
             return clone;
         } else {
-            return this._filter_or_exclude(null, [], filter_obj);
+            return this._filter_or_exclude(null, filter_obj);
         }
     },
 

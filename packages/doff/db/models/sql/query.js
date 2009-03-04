@@ -1763,9 +1763,9 @@ var Query = type('Query', {
 
         var used_aliases = used_aliases || this.used_aliases;
         var connector = AND, subtree = false;
-        if (q_object['add_to_query'])
+        if (q_object['add_to_query']) {
             q_object.add_to_query(this, used_aliases);
-        else {
+        } else {
             if (bool(this.where) && q_object.connector != AND && q_object.length > 1) {
                 this.where.start_subtree(AND);
                 subtree = true;
@@ -1778,11 +1778,11 @@ var Query = type('Query', {
                     this.where.start_subtree(connector);
                     this.add_q(child, used_aliases);
                     this.where.end_subtree();
-                }
-                else
+                } else {
                     //add_filter(filter_expr, connector, negate, trim, can_reuse, process_extras)
                     this.add_filter(child, connector, q_object.negated, null, used_aliases)
-                if (connector == OR)
+                }
+		if (connector == OR)
                     // Aliases that were newly added or not used at all need to
                     // be promoted to outer joins if they are nullable relations.
                     // (they shouldn't turn the whole conditional into the empty

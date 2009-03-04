@@ -214,7 +214,7 @@ var Field = type('Field', {
     'get_default': function get_default() {
 	if (this.has_default()) {
 	    if (callable(this.default_value))
-		return self.default_value();
+		return this.default_value();
 	    return this.default_value;
 	}
 	if (!this.empty_strings_allowed || (this.none && !connection.features.interprets_empty_strings_as_nulls))
@@ -305,10 +305,10 @@ var Field = type('Field', {
     },
 
     //Returns a django.forms.Field instance for this database Field.
-    'formfield': function(form_class) {
-        form_class = form_class || forms.CharField;
+    'formfield': function() {
         arguments = new Arguments(arguments);
         var kwargs = arguments.kwargs;
+	var form_class = kwargs['form_class'] || forms.CharField;
 	var defaults = {'required': !this.blank, 'label': this.verbose_name.capitalize(), 'help_text': this.help_text};
 	if (this.has_default()) {
 	    defaults['initial'] = this.get_default();
@@ -369,11 +369,11 @@ var AutoField = type('AutoField', Field, {
         super(Field, this).contribute_to_class(cls, name);
         cls._meta.has_auto_field = true;
         cls._meta.auto_field = this;
+    },
+
+    'formfield': function formfield() {
+	return null;
     }
-    /* TODO: forms
-    def formfield(self, **kwargs):
-	return None
-	*/
 });
 
 var BooleanField = type('BooleanField', Field, {
@@ -406,13 +406,14 @@ var BooleanField = type('BooleanField', Field, {
         if (!value)
             return null;
         return bool(value);
+    },
+
+    'formfield': function formfield() {
+	arguments = new Arguments(arguments);
+	var defaults = {'form_class': forms.BooleanField };
+	extend(defaults, arguments.kwargs);
+	return super(Field, this).formfield(defaults);
     }
-    /* TODO: forms
-    def formfield(self, **kwargs):
-	defaults = {'form_class': forms.BooleanField}
-	defaults.update(kwargs)
-	return super(BooleanField, self).formfield(**defaults)
-	*/
 });
 
 var CharField = type('CharField', Field, {
@@ -431,13 +432,14 @@ var CharField = type('CharField', Field, {
             else
             throw new ValidationError("This field cannot be null.");
         return value;
+    },
+    
+    'formfield': function formfield() {
+	arguments = new Arguments(arguments);
+	var defaults = {'max_length': this.max_length};
+	extend(defaults, arguments.kwargs);
+	return super(Field, this).formfield(defaults);
     }
-    /*
-    def formfield(self, **kwargs):
-	defaults = {'max_length': self.max_length}
-	defaults.update(kwargs)
-	return super(CharField, self).formfield(**defaults)
-	*/
 });
 
 var ansi_date_re = /^\d{4}-\d{1,2}-\d{1,2}$/;
@@ -485,7 +487,6 @@ var DateField = type('DateField', Field, {
     },
 
     'contribute_to_class': function contribute_to_class(cls, name) {
-	//TODO: ver si los contribute_to_class tambien hay que mandarlos a la instancia osea en prototype
 	super(Field, this).contribute_to_class(cls, name);
 	if (!this.none) {
 	    var key = 'get_next_by_%s'.subs(this.name);
@@ -517,13 +518,14 @@ var DateField = type('DateField', Field, {
 	    var data = datetime_safe.new_date(val).strftime("%Y-%m-%d")
 	}
 	return data;
+    },
+
+    'formfield': function formfield() {
+	arguments = new Arguments(arguments);
+	var defaults = {'form_class': forms.DateField };
+	extend(defaults, arguments.kwargs);
+	return super(Field, this).formfield(defaults);
     }
-/*
-    def formfield(self, **kwargs):
-	defaults = {'form_class': forms.DateField}
-	defaults.update(kwargs)
-	return super(DateField, self).formfield(**defaults)
-	*/
 });
 
 var DateTimeField = type('DateTimeField', DateField, {
@@ -581,13 +583,14 @@ var DateTimeField = type('DateTimeField', DateField, {
 	    data = d.strftime('%Y-%m-%d %H:%M:%S')
 	}
 	return data;
+    },
+
+    'formfield': function formfield() {
+	arguments = new Arguments(arguments);
+	var defaults = {'form_class': forms.DateTimeField };
+	extend(defaults, arguments.kwargs);
+	return super(DateField, this).formfield(defaults);
     }
-/*
-    def formfield(self, **kwargs):
-	defaults = {'form_class': forms.DateTimeField}
-	defaults.update(kwargs)
-	return super(DateTimeField, self).formfield(**defaults)
-    */
 });
 
 var DecimalField = type('DecimalField', Field, {
@@ -623,17 +626,18 @@ var DecimalField = type('DecimalField', Field, {
 
     'get_db_prep_value': function get_db_prep_value(value) {
         return connection.ops.value_to_db_decimal(this.to_javascript(value), this.max_digits, this.decimal_places);
-    }
-    /*
-    def formfield(self, **kwargs):
-	defaults = {
-	    'max_digits': self.max_digits,
-	    'decimal_places': self.decimal_places,
-	    'form_class': forms.DecimalField,
+    },
+    
+    'formfield': function formfield() {
+	arguments = new Arguments(arguments);
+	var defaults = {
+	    'max_digits': this.max_digits,
+	    'decimal_places': this.decimal_places,
+	    'form_class': forms.DecimalField
 	}
-	defaults.update(kwargs)
-	return super(DecimalField, self).formfield(**defaults)
-    */
+	extend(defaults, arguments.kwargs);
+	return super(Field, this).formfield(defaults);
+    }
 });
 
 var EmailField = type('EmailField', CharField, {
@@ -641,13 +645,14 @@ var EmailField = type('EmailField', CharField, {
         arguments = new Arguments(arguments);
         arguments.kwargs['max_length'] = arguments.kwargs['max_length'] || 75;
         super(CharField, this).__init__(arguments);
+    },
+
+    'formfield': function formfield() {
+	arguments = new Arguments(arguments);
+	var defaults = {'form_class': forms.EmailField };
+	extend(defaults, arguments.kwargs);
+	return super(CharField, this).formfield(defaults);
     }
-/*
-    def formfield(self, **kwargs):
-	defaults = {'form_class': forms.EmailField}
-	defaults.update(kwargs)
-	return super(EmailField, self).formfield(**defaults)
-*/
 });
 
 var FilePathField = type('FilePathField', Field, {
@@ -658,18 +663,19 @@ var FilePathField = type('FilePathField', Field, {
         this.recursive = arguments.kwargs['recursive'];
         arguments.kwargs['max_length'] = arguments.kwargs['max_length'] || 100;
         super(Field, this).__init__(arguments);
-    }
-/*
-    def formfield(self, **kwargs):
-	defaults = {
-	    'path': self.path,
-	    'match': self.match,
-	    'recursive': self.recursive,
-	    'form_class': forms.FilePathField,
+    },
+
+    'formfield': function formfield() {
+	arguments = new Arguments(arguments);
+	var defaults = {
+	    'path': this.path,
+	    'match': this.match,
+	    'recursive': this.recursive,
+	    'form_class': forms.FilePathField
 	}
-	defaults.update(kwargs)
-	return super(FilePathField, self).formfield(**defaults)
-    */
+	extend(defaults, arguments.kwargs);
+	return super(Field, this).formfield(defaults);
+    }
 });
 
 var FloatField = type('FloatField', Field, {
@@ -679,14 +685,14 @@ var FloatField = type('FloatField', Field, {
         if (!value)
             return null;
         return Number(value);
+    },
+    
+    'formfield': function formfield() {
+	arguments = new Arguments(arguments);
+	var defaults = {'form_class': forms.FloatField };
+	extend(defaults, arguments.kwargs);
+	return super(Field, this).formfield(defaults);
     }
-
-/*
-    def formfield(self, **kwargs):
-	defaults = {'form_class': forms.FloatField}
-	defaults.update(kwargs)
-	return super(FloatField, self).formfield(**defaults)
-*/
 });
 
 var IntegerField = type('IntegerField', Field, {
@@ -705,13 +711,14 @@ var IntegerField = type('IntegerField', Field, {
             throw new ValidationError("This value must be an integer.");
         }
         return n;
+    },
+
+    'formfield': function formfield() {
+	arguments = new Arguments(arguments);
+	var defaults = {'form_class': forms.IntegerField };
+	extend(defaults, arguments.kwargs);
+	return super(Field, this).formfield(defaults);
     }
-/*
-    def formfield(self, **kwargs):
-	defaults = {'form_class': forms.IntegerField}
-	defaults.update(kwargs)
-	return super(IntegerField, self).formfield(**defaults)
-*/
 });
 
 var IPAddressField = type('IPAddressField', Field, {
@@ -720,14 +727,14 @@ var IPAddressField = type('IPAddressField', Field, {
         arguments = new Arguments(arguments);
         arguments.kwargs['max_length'] = 15;
         super(Field, this).__init__(arguments);
-    }
+    },
 
-/*
-    def formfield(self, **kwargs):
-	defaults = {'form_class': forms.IPAddressField}
-	defaults.update(kwargs)
-	return super(IPAddressField, self).formfield(**defaults)
-*/
+    'formfield': function formfield() {
+	arguments = new Arguments(arguments);
+	var defaults = {'form_class': forms.IPAddressField};
+	extend(defaults, arguments.kwargs);
+	return super(Field, this).formfield(defaults);
+    }
 });
 
 var NullBooleanField = type('NullBooleanField', Field, {
@@ -760,65 +767,66 @@ var NullBooleanField = type('NullBooleanField', Field, {
 	if (value == null)
 	    return null;
 	return bool(value);
-    }
-/*
-    def formfield(self, **kwargs):
-	defaults = {
+    },
+    
+    'formfield': function formfield() {
+	arguments = new Arguments(arguments);
+	var defaults = {
 	    'form_class': forms.NullBooleanField,
-	    'required': not self.blank,
-	    'label': capfirst(self.verbose_name),
-	    'help_text': self.help_text}
-	defaults.update(kwargs)
-	return super(NullBooleanField, self).formfield(**defaults)
-*/
+	    'required':  !this.blank,
+	    'label': capfirst(this.verbose_name),
+	    'help_text': this.help_text
+	}
+	extend(defaults, arguments.kwargs);
+	return super(Field, this).formfield(defaults);
+    }
 });
 
 var PositiveIntegerField = type('PositiveIntegerField', IntegerField, {
-/*
-    def formfield(self, **kwargs):
-	defaults = {'min_value': 0}
-	defaults.update(kwargs)
-	return super(PositiveIntegerField, self).formfield(**defaults)
-*/
+    'formfield': function formfield() {
+	arguments = new Arguments(arguments);
+	var defaults = {'min_value': 0};
+	extend(defaults, arguments.kwargs);
+	return super(IntegerField, this).formfield(defaults);
+    }
 });
 
 var PositiveSmallIntegerField = type('PositiveSmallIntegerField', IntegerField, {
-
-/*
-    def formfield(self, **kwargs):
-	defaults = {'min_value': 0}
-	defaults.update(kwargs)
-	return super(PositiveSmallIntegerField, self).formfield(**defaults)
-*/
+    'formfield': function formfield() {
+	arguments = new Arguments(arguments);
+	var defaults = {'min_value': 0};
+	extend(defaults, arguments.kwargs);
+	return super(IntegerField, this).formfield(defaults);
+    }
 });
 
 var SlugField = type('SlugField', CharField, {
     '__init__': function __init__() {
-    arguments = new Arguments(arguments);
-    arguments.kwargs['max_length'] = arguments.kwargs['max_length'] || 50;
+	arguments = new Arguments(arguments);
+	arguments.kwargs['max_length'] = arguments.kwargs['max_length'] || 50;
 	// Set db_index = true unless it's been set manually.
 	if (!arguments.kwargs['db_index'])
 	    arguments.kwargs['db_index'] = true;
 	super(CharField, this).__init__(arguments);
-    }
+    },
 
-    /*
-    def formfield(self, **kwargs):
-	defaults = {'form_class': forms.SlugField}
-	defaults.update(kwargs)
-	return super(SlugField, self).formfield(**defaults)
-	*/
+    'formfield': function formfield() {
+	arguments = new Arguments(arguments);
+	var defaults = {'form_class': forms.SlugField };
+	extend(defaults, arguments.kwargs);
+	return super(CharField, this).formfield(defaults);
+    }
 });
 
 var SmallIntegerField = type('SmallIntegerField', IntegerField, {});
 
 var TextField = type('TextField', Field, {
-    /*
-    def formfield(self, **kwargs):
-	defaults = {'widget': forms.Textarea}
-	defaults.update(kwargs)
-	return super(TextField, self).formfield(**defaults)
-    */
+    'formfield': function formfield() {
+	arguments = new Arguments(arguments);
+	var defaults = {'widget': forms.Textarea };
+	extend(defaults, arguments.kwargs);
+	return super(Field, this).formfield(defaults);
+    }
 });
 var TimeField = type('TimeField', Field, {
     empty_strings_allowed: false,
@@ -888,13 +896,14 @@ var TimeField = type('TimeField', Field, {
 	    //TODO pasar a time
 	    var data = val.strftime("%H:%M:%S")
 	return data;
+    },
+
+    'formfield': function formfield() {
+	arguments = new Arguments(arguments);
+	var defaults = {'form_class': forms.TimeField }
+	extend(defaults, arguments.kwargs);
+	return super(Field, this).formfield(defaults);
     }
-/*
-    def formfield(self, **kwargs):
-	defaults = {'form_class': forms.TimeField}
-	defaults.update(kwargs)
-	return super(TimeField, self).formfield(**defaults)
-*/
 });
 
 var URLField = type('URLField', CharField, {
@@ -903,13 +912,14 @@ var URLField = type('URLField', CharField, {
         arguments.kwargs['max_length'] = arguments.kwargs['max_length'] || 200;
         this.verify_exists = arguments.kwargs['verify_exists'];
         super(CharField, this).__init__(arguments);
+    },
+  
+    'formfield': function formfield() {
+	arguments = new Arguments(arguments);
+	var defaults = {'form_class': forms.URLField, 'verify_exists': this.verify_exists };
+	extend(defaults, arguments.kwargs);
+	return super(CharField, this).formfield(defaults);
     }
-    /*
-    def formfield(self, **kwargs):
-	defaults = {'form_class': forms.URLField, 'verify_exists': self.verify_exists}
-	defaults.update(kwargs)
-	return super(URLField, self).formfield(**defaults)
-	*/
 });
 
 var XMLField = type('XMLField', TextField, {
@@ -921,8 +931,9 @@ var XMLField = type('XMLField', TextField, {
 });
 
 
-$P({ 'FieldDoesNotExist': FieldDoesNotExist, 
-     'Field': Field,
+$P({ 
+    'FieldDoesNotExist': FieldDoesNotExist, 
+    'Field': Field,
     'AutoField': AutoField,
     'BooleanField': BooleanField,
     'CharField': CharField,
@@ -942,5 +953,6 @@ $P({ 'FieldDoesNotExist': FieldDoesNotExist,
     'TextField': TextField,
     'TimeField': TimeField,
     'URLField': URLField,
-    'XMLField': XMLField });
+    'XMLField': XMLField 
+});
     
