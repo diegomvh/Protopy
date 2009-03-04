@@ -1,17 +1,16 @@
-$D("doff.db.models.sql.query");
-    
+$D("doff.db.models.sql.query"); 
 $L('doff.utils.tree', 'Node');
 $L('doff.utils.datastructures', 'SortedDict');
 $L('doff.db', 'connection');
 $L('doff.db.models.signals');
 $L('doff.db.models.fields', 'FieldDoesNotExist');
 $L('doff.db.models.query_utils', 'select_related_descend');
-$L('doff.db.models.sql.datastructures', 'Count', 'EmptyResultSet', 'Empty', 'MultiJoin');
+$L('doff.db.models.sql.datastructures', 'Count', 'EmptyResultSet', 'MultiJoin');
 $L('doff.db.models.sql.where', 'WhereNode', 'EverythingNode', 'AND', 'OR');
 $L('doff.core.exceptions', 'FieldError');
 $L('doff.db.models.sql.constants', '*');
 $L('copy', 'copy', 'deepcopy');
-                    
+
 /*
  * A single SQL query
  */
@@ -22,7 +21,7 @@ var Query = type('Query', {
     query_terms: QUERY_TERMS,
     
     '__init__': function __init__(model, connection, where){
-        var where = where || WhereNode;
+        where = where || WhereNode;
         this.model = model;
         this.connection = connection;
 
@@ -113,9 +112,14 @@ var Query = type('Query', {
         arguments = new Arguments(arguments);
         var args = arguments.args;
         var kwargs = arguments.kwargs;
-        var obj = new Empty();
-        klass = klass || this.constructor;
-        obj.__proto__ = klass.prototype;
+	klass = klass || this.constructor;
+	var obj = type('Empty', {});
+        obj.prototype.__proto__ = klass.prototype;
+	obj.prototype.constructor = klass.prototype.constructor;
+	obj = new obj();
+	obj['__name__'] = this['__name__'];
+	obj['__module__'] = this['__module__'];
+	obj['__class__'] = this['__class__'];
         obj.model = this.model;
         obj.connection = this.connection;
         obj.alias_refcount = copy(this.alias_refcount);
@@ -149,13 +153,13 @@ var Query = type('Query', {
         obj.extra_where = this.extra_where;
         obj.extra_params = this.extra_params;
         obj.extra_order_by = this.extra_order_by;
-        if (this.filter_is_sticky && this.used_aliases)
+        if (this.filter_is_sticky && bool(this.used_aliases))
             obj.used_aliases = copy(this.used_aliases);
         else
             obj.used_aliases = new Set();
         obj.filter_is_sticky = false;
         extend(obj, kwargs);
-        if (obj['_setup_query'])
+        if (callable(obj['_setup_query']))
             obj._setup_query();
         return obj;
     },
@@ -201,10 +205,10 @@ var Query = type('Query', {
         return number;
     },
 
-            'as_sql': function as_sql(wl, wa){
+    'as_sql': function as_sql(with_limits, with_col_aliases) {
 
-        var with_limits = wl || true,
-            with_col_aliases = wa || false;
+	with_limits = with_limits || true;
+	with_col_aliases = with_col_aliases || false;
 
         this.pre_sql_setup();
         var out_cols = this.get_columns(with_col_aliases);
@@ -215,18 +219,18 @@ var Query = type('Query', {
         var [where, w_params] = this.where.as_sql(getattr(this, 'quote_name_unless_alias'));
 
         var params = [];
-                    var result = ["SELECT"];
+        var result = ["SELECT"];
         
-                    if (this.distinct)
-                            result.push("DISTINCT");
-                    result.push(out_cols.concat(this.ordering_aliases).join(', '));
-                    result.push("FROM");
+	if (this.distinct)
+	    result.push("DISTINCT");
+	result.push(out_cols.concat(this.ordering_aliases).join(', '));
+        result.push("FROM");
                     
         result = result.concat(from_);
         params = params.concat(f_params);
 
-                    if (where){
-                            result.push('WHERE %s'.subs(where));
+        if (where) {
+            result.push('WHERE %s'.subs(where));
             params = params.concat(w_params);
         }
 
@@ -265,7 +269,7 @@ var Query = type('Query', {
         }
         params = params.concat(this.extra_params);
         return [result.join(' '), params];
-            },
+    },
 
     /*
         * Merge the 'rhs' query into the current one (with any 'rhs' effects
@@ -320,20 +324,20 @@ var Query = type('Query', {
             // rhs has an empty where clause.
             w = this.where_class();
             w.add(new EverythingNode(), AND);
-        }
-        else
+        } else {
             w = this.where_class();
+	}
         this.where.add(w, connector);
 
         // Selection columns and extra extensions are those provided by 'rhs'.
         this.select = [];
         for each (var col in rhs.select) {
-            if (type(col) == Array)
-                this.select.push([change_map.get(col[0], col[0]), col[1]])
-            else {
+            if (type(col) == Array) {
+                this.select.push([change_map.get(col[0], col[0]), col[1]]);
+            } else {
                 item = deepcopy(col);
                 item.relabel_aliases(change_map);
-                this.select.push(item)
+                this.select.push(item);
             }
         }
         this.select_fields = copy(rhs.select_fields);
@@ -393,21 +397,19 @@ var Query = type('Query', {
             var col_aliases = new Set();
         if (bool(this.select)) {
             for each (var col in this.select) {
-                if (type(col) == Array) {
+                if (isinstance(col, Array)) {
                     var r = '%s.%s'.subs(qn(col[0]), qn(col[1]));
                     if (with_aliases && include(col_aliases, col[1])) {
                         c_alias = 'Col%s'.subs(col_aliases.length);
                         result.push('%s AS %s'.subs(r, c_alias));
                         aliases.add(c_alias);
                         col_aliases.add(c_alias);
-                    }
-                    else {
+                    } else {
                         result.push(r);
                         aliases.add(r);
                         col_aliases.add(col[1]);
                     }
-                }
-                else {
+                } else {
                     result.push(col.as_sql(qn));
                     if (col['alias']) {
                         aliases.add(col.alias);
@@ -415,7 +417,7 @@ var Query = type('Query', {
                     }
                 }
             }
-        } else if (this.default_cols) {
+	} else if (this.default_cols) {
             var [cols, new_aliases] = this.get_default_columns(with_aliases, col_aliases);
             result = result.concat(cols);
             aliases.update(new_aliases);
@@ -447,12 +449,12 @@ var Query = type('Query', {
         */
     'get_default_columns': function get_default_columns(with_aliases, col_aliases, start_alias, opts, as_pairs) {
 
-        var with_aliases = with_aliases || false;
-        var col_aliases = col_aliases || null;
+        with_aliases = with_aliases || false;
+        col_aliases = col_aliases || null;
+        opts = opts || this.model._meta;
+        as_pairs = as_pairs || false;
         var table_alias = start_alias || this.tables[0];
-        var opts = opts || this.model._meta;
-        var as_pairs = as_pairs || false;
-        var result = [];
+	var result = [];
 
         var root_pk = opts.pk.column;
         var seen = new Dict({'None': table_alias});
@@ -475,8 +477,7 @@ var Query = type('Query', {
                 result.push('%s.%s AS %s'.subs(qn(alias), qn2(field.column), c_alias));
                 col_aliases.add(c_alias);
                 aliases.add(c_alias);
-            }
-            else {
+            } else {
                 r = '%s.%s'.subs(qn(alias), qn2(field.column));
                 result.push(r);
                 aliases.add(r);
@@ -510,7 +511,7 @@ var Query = type('Query', {
             try {
                 var [name, alias, join_type, lhs, lhs_col, col, nullable] = this.alias_map[alias];
             }
-            catch (e if e instanceof KeyError) {
+            catch (e if isinstance(e, KeyError)) {
                 // Extra tables can end up in self.tables, but not in the
                 // alias_map if they aren't in a join. That's OK. We skip them.
                 continue;
@@ -798,7 +799,7 @@ var Query = type('Query', {
         // FIXME: There's some (a lot of!) overlap with the similar OR promotion
         // in add_filter(). It's not quite identical, but is very similar. So
         // pulling out the common bits is something for later.
-        considered = {};
+        var considered = {};
         for each (var alias in this.tables)
             if (!include(used_aliases, alias))
                 continue;
@@ -1040,7 +1041,7 @@ var Query = type('Query', {
         // Setup for the case when only particular related fields should be
         // included in the related selection.
         if (!requested && !restricted) {
-            if (this.select_related instanceof Dict) {
+            if (isinstance(this.select_related, Dict)) {
                 requested = this.select_related;
                 restricted = true;
             } else { restricted = false };
@@ -1137,7 +1138,10 @@ var Query = type('Query', {
             throw new FieldError("Cannot parse keyword query %r".subs(arg));
 
         // Work out the lookup type and remove it from 'parts', if necessary.
-        var lookup_type = (parts.length == 1 || bool(this.query_terms[parts[parts.length - 1]]))? 'exact' : parts.pop();
+	if (len(parts) == 1 || !(parts[parts.length - 1] in this.query_terms))
+            var lookup_type = 'exact';
+        else
+            var lookup_type = parts.pop();
 
         // Interpret '__exact=None' as the sql 'is NULL'; otherwise, reject all
         // uses of None as a query value.
@@ -1160,7 +1164,7 @@ var Query = type('Query', {
         try {
             var [field, target, opts, join_list, last, extra_filters] = this.setup_joins(parts, opts, alias, true, allow_many, can_reuse, negate, process_extras);
         }
-        catch (e if e instanceof MultiJoin) {
+        catch (e if isinstance(e, MultiJoin)) {
             this.split_exclude(filter_expr, parts.slice(0,e.level).join(LOOKUP_SEP), can_reuse);
             return;
         }
@@ -1305,7 +1309,7 @@ var Query = type('Query', {
             try {
                 [field, model, direct, m2m] = opts.get_field_by_name(name);
             }
-            catch (e if e instanceof FieldDoesNotExist) {
+            catch (e if isinstance(e, FieldDoesNotExist)) {
                 if (!bool(opts.fields)) {
                     names = opts.get_all_field_names();
                     throw new FieldError("Cannot resolve keyword %r into field. Choices are: %s".subs(name, names.join(", ")));
@@ -1446,7 +1450,7 @@ var Query = type('Query', {
                 try {
                     this.update_dupe_avoidance(dupe_opts, dupe_col, int_alias);
                 }
-                catch (e if e instanceof NameError) {
+                catch (e if isinstance(e, NameError)) {
                     this.update_dupe_avoidance(dupe_opts, dupe_col, alias);
                 }
             }
@@ -1529,9 +1533,9 @@ var Query = type('Query', {
                 this.select.push([final_alias, col]);
                 this.select_fields.push(field);
             }
-        } catch (e if e instanceof MultiJoin) {
+        } catch (e if isinstance(e, MultiJoin)) {
             throw new FieldError("Invalid field name: '%s'".subs(name));
-        } catch (e if e instanceof FieldError) {
+        } catch (e if isinstance(e, FieldError)) {
             var names = opts.get_all_field_names() + this.extra_select.keys();
             names.sort();
             throw new FieldError("Cannot resolve keyword %r into field. Choices are: %s".subs(name, names.join(", ")))
@@ -1726,7 +1730,7 @@ var Query = type('Query', {
             [sql, params] = this.as_sql();
             if (!sql)
                 throw new EmptyResultSet();
-        } catch (e if e instanceof EmptyResultSet) {
+        } catch (e if isinstance(e, EmptyResultSet)) {
             if (result_type == MULTI) {
                 return empty_iter();
             } else { return; }
@@ -1760,10 +1764,10 @@ var Query = type('Query', {
         * Can also be used to add anything that has an 'add_to_query()' method.
         */
     'add_q': function add_q(q_object, used_aliases) {
-
-        var used_aliases = used_aliases || this.used_aliases;
-        var connector = AND, subtree = false;
-        if (q_object['add_to_query']) {
+        used_aliases = used_aliases || this.used_aliases;
+        var connector = AND;
+	var subtree = false;
+        if (callable(q_object['add_to_query'])) {
             q_object.add_to_query(this, used_aliases);
         } else {
             if (bool(this.where) && q_object.connector != AND && q_object.length > 1) {
@@ -1774,7 +1778,7 @@ var Query = type('Query', {
                 var refcounts_before = null;
                 if (connector == OR)
                     refcounts_before = copy(this.alias_refcount);
-                if (child instanceof Node) {
+                if (isinstance(child, Node)) {
                     this.where.start_subtree(connector);
                     this.add_q(child, used_aliases);
                     this.where.end_subtree();

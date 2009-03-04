@@ -38,6 +38,8 @@ _copy_dispatch['Instance'] = function _copy_Instance(object) {
 }
 
 function copy(x) {
+    if (typeof(x) === 'undefined') return undefined;
+    if (x === null) return null;
     if (callable(x['__copy__']))
         return x.__copy__(x);
 
@@ -81,15 +83,9 @@ _deepcopy_dispatch[Object] = function _deepcopy_array(object) {
     return extend({}, object);
 }
 
-_deepcopy_dispatch[String] = function _deepcopy_array(object) {
-    return object;
-}
-
-_deepcopy_dispatch[Number] = function _deepcopy_array(object) {
-    return object;
-}
-
 function deepcopy(x) {
+    if (typeof(x) === 'undefined') return undefined;
+    if (x === null) return null;
     if (callable(x['__deepcopy__']))
         return x.__deepcopy__(x);
     
@@ -98,10 +94,9 @@ function deepcopy(x) {
     var copier = _deepcopy_dispatch[cls];
     if (copier)
         return copier(x);
-
     return copy(x);
 }
 
 deepcopy.__doc__ = "Deep copy operation on arbitrary Protopy objects.";
 
-$P({ 'copy':copy, 'deepcopy': deepcopy });
+$P({ 'copy': copy, 'deepcopy': deepcopy });

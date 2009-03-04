@@ -14,7 +14,7 @@ var WhereNode = type('WhereNode', Node, {
 
     /* Los datos vienen en un objeto */
     'add': function add(data, connector) {
-        if (type(data) != Array) {
+        if (!isinstance(data, Array)) {
             super(Node, this).add(data, connector);
             return;
         }

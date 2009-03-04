@@ -10,16 +10,16 @@
 	    var back_iter = object['__iterator__'];
 	    delete object['__iterator__'];
 	    for (var name in object) {
-            if (safe || name.search(/^__.*__$/) == -1) {
-                var getter = object.__lookupGetter__(name);
-                var setter = object.__lookupSetter__(name);
-                if (getter)
-                    destiny.__defineGetter__(name, getter);
-                if (setter)
-                    destiny.__defineSetter__(name, setter);
-                if (getter || setter) continue;
-                destiny[name] = object[name];
-            }
+		if (safe || name.search(/^__.*__$/) == -1) {
+		    var getter = object.__lookupGetter__(name);
+		    var setter = object.__lookupSetter__(name);
+		    if (getter)
+			destiny.__defineGetter__(name, getter);
+		    if (setter)
+			destiny.__defineSetter__(name, setter);
+		    if (getter || setter) continue;
+		    destiny[name] = object[name];
+		}
 	    }
 	    if (back_iter) object['__iterator__'] = back_iter;
 	}
@@ -171,8 +171,7 @@
         }
         this.prototype.__proto__ = superbase.prototype;
 
-        for (var name in attrs)
-            __extend__(true, this.prototype, attrs);
+        __extend__(true, this.prototype, attrs);
 
         // Decorate javascript
         this.prototype.toString = this.prototype.__str__;

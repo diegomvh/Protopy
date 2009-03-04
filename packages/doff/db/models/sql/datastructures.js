@@ -12,8 +12,6 @@ var MultiJoin = type('MultiJoin', Exception, {
     }
 });
 
-var Empty = type('Empty');
-
 var RawValue = type('RawValue', {
     '__init__': function __init__(value) {
         this.value = value;
@@ -113,7 +111,6 @@ $P({
     'EmptyResultSet': EmptyResultSet,
     'FullResultSet': FullResultSet,
     'MultiJoin': MultiJoin,
-    'Empty': Empty,
     'RawValue': RawValue,
     'Aggregate': Aggregate,
     'Count': Count,
