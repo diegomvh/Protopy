@@ -1,3 +1,26 @@
+var Protopy = {
+    'Version': '0.05',
+    'Browser': {
+        'IE':     !!(window.attachEvent && navigator.userAgent.indexOf('Opera') === -1),
+        'Opera':  navigator.userAgent.indexOf('Opera') > -1,
+        'WebKit': navigator.userAgent.indexOf('AppleWebKit/') > -1,
+        'Gecko':  navigator.userAgent.indexOf('Gecko') > -1 && navigator.userAgent.indexOf('KHTML') === -1,
+        'MobileSafari': !!navigator.userAgent.match(/Apple.*Mobile.*Safari/),
+        'Features': {
+            'XPath': !!document.evaluate,
+            'SelectorsAPI': !!document.querySelector,
+            'ElementExtensions': !!window.HTMLElement,
+            'SpecificElementExtensions': document.createElement('div')['__proto__'] &&
+                                            document.createElement('div')['__proto__'] !==
+                                            document.createElement('form')['__proto__']
+        }
+    },
+    
+    'ScriptFragment': '<script[^>]*>([\\S\\s]*?)<\/script>',
+    'JSONFilter': /^\/\*-secure-([\s\S]*)\*\/\s*$/,
+    'emptyfunction': function emptyfunction(){}
+}
+
 (function(){
     var __modules__ = {}
     var __path__ = {'':'/packages/'}
@@ -83,7 +106,7 @@
                 'onSuccess': function onSuccess(transport) {
                     code = '(function(){ ' + transport.responseText + '});';
                 },
-                onException: function (obj, exception){
+                'onException': function onException(obj, exception){
                     throw exception;
                 },
                 'onFailure': function onFailure(){
@@ -95,7 +118,7 @@
                             code = '(function(){' + transport.responseText + '});';
                             path = base + names.join("/");
                         },
-                        onException: function (obj, exception){
+                        'onException': function onException(obj, exception){
                             throw exception;
                         },
                         'onFailure': function onFailure(){
@@ -157,10 +180,10 @@
         }
     }
     
-    //----------------Types and Objects---------------------//
+    /************************** Types and Objects ****************************/
     function object() { throw 'The wormhole stop here. Please, is just javascript not python :)'; };
 
-    //For the Class
+    //For the static
     object.__class__ = type;
     object.__new__ = function __new__(name, bases, attrs) {
         //Herencia
@@ -187,10 +210,9 @@
     object.__static__ = {};
     object.__doc__ = "";
 
-    //For de Instance
+    //For de prototype
     object.prototype.__init__ = function __init__(){};
     object.prototype.__doc__ = "";
-    object.prototype.__hash__ = function __hash__(){ return 1234567; };
     object.prototype.__str__ = function __str__(){ return this.__module__ + '.' + this.__name__ };
 
     // Type constructor
@@ -242,27 +264,7 @@
 	new_type = new_type.__new__(new_type.__name__, new_type.__bases__, instanceAttrs);
 	return new_type;
     }
-
-    var Exception = type('Exception', {
-        '__init__': function(message) { this.message = message; },
-        '__str__': function() { return this.__name__ + ': ' + this.message; }
-    });
     
-    //__main__ module
-    __modules__['__main__'] = new Module('__main__','built-in', {'__builtins__': {}, '__doc__': "Welcome to protopy" });
-    __modules__['__builtin__'] = new Module('__builtin__','built-in');
-   
-    __modules__['exceptions'] = new Module('exceptions', 'built-in', {
-        'Exception': Exception,
-        'AssertionError': type('AssertionError', Exception),
-        'AttributeError': type('AttributeError', Exception),
-        'LoadError':  type('LoadError', Exception),
-        'KeyError':  type('KeyError', Exception),
-        'NotImplementedError':  type('NotImplementedError', Exception),
-        'TypeError':  type('TypeError', Exception),
-        'ValueError':  type('ValueError', Exception),
-    });
-
     function getattr(object, name, def) {
 	//TODO: validar argumentos
         var attr = null;
@@ -295,28 +297,59 @@
 	    return false;
 	}
     }
+
+    /******************** Exceptions ***********************/
+    var Exception = type('Exception', {
+        '__init__': function(message) { this.message = message; },
+        '__str__': function() { return this.__name__ + ': ' + this.message; }
+    });
     
+    __modules__['exceptions'] = new Module('exceptions', 'built-in', {
+        'Exception': Exception,
+        'AssertionError': type('AssertionError', Exception),
+        'AttributeError': type('AttributeError', Exception),
+        'LoadError':  type('LoadError', Exception),
+        'KeyError':  type('KeyError', Exception),
+        'NotImplementedError':  type('NotImplementedError', Exception),
+        'TypeError':  type('TypeError', Exception),
+        'ValueError':  type('ValueError', Exception),
+    });
+
+    /********************** Events **************************/
+    var __listener__ = {};
+    var __eventlistener__ = {};
+    function __connect__ (obj, event, context, method, dont_fix) {
+    
+    }
+    
+    function __disconnect__ (obj, event, handle, listener) {
+        listener.remove(obj, event, handle);
+    }
+
+    __modules__['event'] = new Module('event', 'built-in', {
+        'connect':
+        'disconnect':
+        'subscribe':
+        'unsubscribe':
+        'publish':
+        'connectpublisher':
+        'fixevent':
+        'stopevent':
+    });
+
+    /******************** Populate **************************/
+    //__main__ module
+    __modules__['__main__'] = new Module('__main__','built-in', {'__builtins__': {}, '__doc__': "Welcome to protopy" });
+    __modules__['__builtin__'] = new Module('__builtin__','built-in');
+
     //Populate exceptions
     __builtin__(__modules__['exceptions']);
 
-    __modules__['errno'] = new Module('errno', 'built-in');
-    
-    __modules__['_codecs'] = new Module('_codecs', 'built-in');
-    
-    __modules__['zipimport'] = new Module('zipimport', 'built-in');
-    
     __modules__['sys'] = new Module('sys', 'built-in', { 'path': __path__ });
-    
-    __modules__['_types'] = new Module('_types', 'built-in');
-    
-    __modules__['signal'] = new Module('signal', 'built-in');
-    
-    __modules__['posix'] = new Module('posix', 'built-in');
 
     __extend__(true, __modules__['__main__']['__builtins__'], __modules__['__builtin__']);
     __extend__(true, window, __modules__['__main__']);
 
-    //Populate new builtins
     __builtin__({
         '$P': __publish__,
         '$L': __load__,
@@ -871,29 +904,7 @@
 
 //--------------------------------------- More builtins -----------------------------------------//
 (function(){
-    var Protopy = {
-	'Version': '0.01',
-	'Browser': {
-	    'IE':     !!(window.attachEvent && navigator.userAgent.indexOf('Opera') === -1),
-	    'Opera':  navigator.userAgent.indexOf('Opera') > -1,
-	    'WebKit': navigator.userAgent.indexOf('AppleWebKit/') > -1,
-	    'Gecko':  navigator.userAgent.indexOf('Gecko') > -1 && navigator.userAgent.indexOf('KHTML') === -1,
-	    'MobileSafari': !!navigator.userAgent.match(/Apple.*Mobile.*Safari/),
-	    'Features': {
-		'XPath': !!document.evaluate,
-		'SelectorsAPI': !!document.querySelector,
-		'ElementExtensions': !!window.HTMLElement,
-		'SpecificElementExtensions': document.createElement('div')['__proto__'] &&
-						document.createElement('div')['__proto__'] !==
-						document.createElement('form')['__proto__']
-	    }
-	},
-	
-	'ScriptFragment': '<script[^>]*>([\\S\\s]*?)<\/script>',
-	'JSONFilter': /^\/\*-secure-([\s\S]*)\*\/\s*$/,
-	'emptyfunction': function emptyfunction(){}
-    }
-    
+
     var Template = type('Template', {
         //Static
         Pattern: /(^|.|\r|\n)(%\((.+?)\))s/,
@@ -1244,7 +1255,7 @@
     }
     });
 
-    $B({'Protopy': Protopy, 'Template': Template, 'Try': Try, 'Ajax':Ajax});
+    $B({'Template': Template, 'Try': Try, 'Ajax':Ajax});
 })();
 
 //More Data types
