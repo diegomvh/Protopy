@@ -1,4 +1,5 @@
-var Protopy = {
+(function() {
+    window.Protopy = {
     'Version': '0.05',
     'Browser': {
         'IE':     !!(window.attachEvent && navigator.userAgent.indexOf('Opera') === -1),
@@ -15,16 +16,14 @@ var Protopy = {
                                             document.createElement('form')['__proto__']
         }
     },
-    
     'ScriptFragment': '<script[^>]*>([\\S\\s]*?)<\/script>',
     'JSONFilter': /^\/\*-secure-([\s\S]*)\*\/\s*$/,
     'emptyfunction': function emptyfunction(){}
-}
+    }
 
-(function(){
-    var __modules__ = {}
-    var __path__ = {'':'/packages/'}
-    var __resources__ = {}
+    var __modules__ = {};
+    var __path__ = {'':'/packages/'};
+    var __resources__ = {};
     
     //Extend form objects to object
     function __extend__(safe, destiny) {
@@ -316,25 +315,224 @@ var Protopy = {
     });
 
     /********************** Events **************************/
-    var __listener__ = {};
-    var __eventlistener__ = {};
-    function __connect__ (obj, event, context, method, dont_fix) {
-    
+    // From dojo
+    var __listener__ = {
+	// create a dispatcher function
+ 	'get_dispatcher': function get_dispatcher() {
+		return function() {
+			var callee = arguments.callee, listeners = callee._listeners, target = callee.target;
+			// return value comes from original target function
+			var ret = target && target.apply(this, arguments);
+			// invoke listeners after target function
+			for each (var listener in listeners)
+			    listener.apply(this, arguments);
+			// return value comes from original target function
+			return ret;
+		}
+	},
+	// add a listener to an object
+	'add': function add(source, method, listener) {
+		source = source || window;
+		// The source method is either null, a dispatcher, or some other function
+		var func = source[method];
+		// Ensure a dispatcher
+		if(!func || !func._listeners){
+			var dispatcher = this.get_dispatcher();
+			// original target function is special
+			dispatcher.target = func;
+			// dispatcher holds a list of listeners
+			dispatcher._listeners = []; 
+			// redirect source to dispatcher
+			func = source[method] = dispatcher;
+		}
+		return func._listeners.push(listener) ;
+	},
+	// remove a listener from an object
+	'remove': function(source, method, handle) {
+		var func = ( source || window )[method];
+		// remember that handle is the index+1 (0 is not a valid handle)
+		if(func && func._listeners && handle--) {
+			delete func._listeners[handle]; 
+		}
+	}
+    };
+
+    var __eventlistener__ = {
+	'add': function add(node, name, fp) {
+	    if(!node)
+		return; 
+	    name = this._normalizeEventName(name);
+	    fp = this._fixCallback(name, fp);
+	    var oname = name;
+	    if(!Protopy['Browser']['IE'] && (name == "mouseenter" || name == "mouseleave")) {
+		var ofp = fp;
+		//oname = name;
+		name = (name == "mouseenter") ? "mouseover" : "mouseout";
+		fp = function(e) {
+		    // thanks ben!
+		    //if(!dojo.isDescendant(e.relatedTarget, node)){
+		    // e.type = oname; // FIXME: doesn't take? SJM: event.type is generally immutable.
+			return ofp.call(this, e); 
+		   // }
+		}
+	    }
+	    node.addEventListener(name, fp, false);
+	    return fp; /*Handle*/
+	},
+	'remove': function remove(node, event, handle) {
+	    if (node)
+		node.removeEventListener(this._normalizeEventName(event), handle, false);
+	},
+	'_normalizeEventName': function _normalizeEventName(name) {
+	    // Generally, name should be lower case, unless it is special
+	    // somehow (e.g. a Mozilla DOM event).
+	    // Remove 'on'.
+	    return name.slice(0,2) =="on" ? name.slice(2) : name;
+	},
+	'_fixCallback': function _fixCallback(name, fp) {
+	    // By default, we only invoke _fixEvent for 'keypress'
+	    // If code is added to _fixEvent for other events, we have
+	    // to revisit this optimization.
+	    // This also applies to _fixEvent overrides for Safari and Opera
+	    // below.
+	    return name != "keypress" ? fp : function(e) { return fp.call(this, this._fixEvent(e, this)); };
+	},
+	'_fixEvent': function _fixEvent(evt, sender){
+	    // _fixCallback only attaches us to keypress.
+	    // Switch on evt.type anyway because we might 
+	    // be called directly from dojo.fixEvent.
+	    switch(evt.type){
+		    case "keypress":
+			    this._setKeyChar(evt);
+			    break;
+	    }
+	    return evt;
+	},
+	'_setKeyChar': function _setKeyChar(evt){
+	    evt.keyChar = evt.charCode ? String.fromCharCode(evt.charCode) : '';
+	}
+    };
+
+    var __topics__ = {};
+
+    function __connect__ (obj, event, context, method) {
+	// FIXME: need a more strict test
+	var isNode = obj && (obj.nodeType || obj.attachEvent || obj.addEventListener);
+	// choose one of three listener options: raw (connect.js), DOM event on a Node, custom event on a Node
+	// we need the third option to provide leak prevention on broken browsers (IE)
+	var lid = !isNode ? 0 : 1, l = [__listener__, __eventlistener__][lid];
+	// create a listener
+	var h = l.add(obj, event, isinstance(method, String)? getattr(context, method) : method);
+	// formerly, the disconnect package contained "l" directly, but if client code
+	// leaks the disconnect package (by connecting it to a node), referencing "l" 
+	// compounds the problem.
+	// instead we return a listener id, which requires custom _disconnect below.
+	// return disconnect package
+	return [ obj, event, h, lid ];
     }
     
     function __disconnect__ (obj, event, handle, listener) {
-        listener.remove(obj, event, handle);
+        ([__listener__, __eventlistener__][listener]).remove(obj, event, handle);
     }
 
     __modules__['event'] = new Module('event', 'built-in', {
-        'connect':
-        'disconnect':
-        'subscribe':
-        'unsubscribe':
-        'publish':
-        'connectpublisher':
-        'fixevent':
-        'stopevent':
+        'connect': function connect(obj, event, context, method) {
+	    var a = arguments, args = [], i = 0;
+	    // if a[0] is a String, obj was ommited
+	    args.push(isinstance(a[0], String) ? null : a[i++], a[i++]);
+	    // if the arg-after-next is a String or Function, context was NOT omitted
+	    var a1 = a[i+1];
+	    args.push((a1 && isinstance(a1, String)) || callable(a1) ? a[i++] : null, a[i++]);
+	    // absorb any additional arguments
+	    for (var l = a.length; i < l; i++) 
+		args.push(a[i]);
+	    // do the actual work
+	    return __connect__.apply(this, args); /*Handle*/
+	},
+        'disconnect': function disconnect(handle) {
+	    if(handle && typeof(handle[0]) !== 'undefined') {
+		__disconnect__.apply(this, handle);
+		// let's not keep this reference
+		delete handle[0];
+	    }
+	},
+        'subscribe': function subscribe(topic, context, method) {
+	    return [topic, __listener__.add(__topics__, topic, (method && isinstance(method, String))? getattr(context, method) : method)];
+	},
+        'unsubscribe': function unsubscrib(handle) {
+	    if(handle)
+		__listener__.remove(__topics__, handle[0], handle[1]);
+	},
+        'publish': function publish(topic, args) {
+	    var func = __topics__[topic];
+	    if(func)
+		func.apply(this, args || []);
+	},
+        'connectpublisher': function connectpublisher(topic, obj, event) {
+	    var pf = function() { 
+		this.publish(topic, arguments); 
+	    }
+	    return (event) ? this.connect(obj, event, pf) : this.connect(obj, pf); //Handle
+	},
+        'fixevent': function(){},
+        'stopevent': function(){},
+	'keys': { 'BACKSPACE': 8, 'TAB': 9, 'CLEAR': 12,
+		'ENTER': 13,
+		'SHIFT': 16,
+		'CTRL': 17,
+		'ALT': 18,
+		'PAUSE': 19,
+		'CAPS_LOCK': 20,
+		'ESCAPE': 27,
+		'SPACE': 32,
+		'PAGE_UP': 33,
+		'PAGE_DOWN': 34,
+		'END': 35,
+		'HOME': 36,
+		'LEFT_ARROW': 37,
+		'UP_ARROW': 38,
+		'RIGHT_ARROW': 39,
+		'DOWN_ARROW': 40,
+		'INSERT': 45,
+		'DELETE': 46,
+		'HELP': 47,
+		'LEFT_WINDOW': 91,
+		'RIGHT_WINDOW': 92,
+		'SELECT': 93,
+		'NUMPAD_0': 96,
+		'NUMPAD_1': 97,
+		'NUMPAD_2': 98,
+		'NUMPAD_3': 99,
+		'NUMPAD_4': 100,
+		'NUMPAD_5': 101,
+		'NUMPAD_6': 102,
+		'NUMPAD_7': 103,
+		'NUMPAD_8': 104,
+		'NUMPAD_9': 105,
+		'NUMPAD_MULTIPLY': 106,
+		'NUMPAD_PLUS': 107,
+		'NUMPAD_ENTER': 108,
+		'NUMPAD_MINUS': 109,
+		'NUMPAD_PERIOD': 110,
+		'NUMPAD_DIVIDE': 111,
+		'F1': 112,
+		'F2': 113,
+		'F3': 114,
+		'F4': 115,
+		'F5': 116,
+		'F6': 117,
+		'F7': 118,
+		'F8': 119,
+		'F9': 120,
+		'F10': 121,
+		'F11': 122,
+		'F12': 123,
+		'F13': 124,
+		'F14': 125,
+		'F15': 126,
+		'NUM_LOCK': 144,
+		'SCROLL_LOCK': 145
+	}
     });
 
     /******************** Populate **************************/
