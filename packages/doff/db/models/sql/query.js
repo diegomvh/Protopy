@@ -314,7 +314,7 @@ var Query = type('Query', {
         // Now relabel a copy of the rhs where-clause and add it to the current
         // one.
         if (bool(rhs.where)) {
-            w = deepcopy(rhs.where);
+            var w = deepcopy(rhs.where);
             w.relabel_aliases(change_map);
             if (!bool(this.where))
                 // Since 'self' matches everything, add an explicit "include
@@ -323,10 +323,10 @@ var Query = type('Query', {
                 this.where.add(new EverythingNode(), AND);
         } else if (bool(this.where)) {
             // rhs has an empty where clause.
-            w = this.where_class();
+            var w = new this.where_class();
             w.add(new EverythingNode(), AND);
         } else {
-            w = this.where_class();
+            var w = new this.where_class();
 	}
         this.where.add(w, connector);
 
@@ -1240,8 +1240,8 @@ var Query = type('Query', {
                 if (final > 1) {
                     for (alias in join_list) {
                         if (this.alias_map[alias][JOIN_TYPE] == this.LOUTER) {
-                            j_col = this.alias_map[alias][RHS_JOIN_COL];
-                            entry = this.where_class();
+                            var j_col = this.alias_map[alias][RHS_JOIN_COL];
+                            var entry = new this.where_class();
                             entry.add([alias, j_col, null, 'isnull', true], AND);
                             entry.negate();
                             this.where.add(entry, AND);
@@ -1252,7 +1252,7 @@ var Query = type('Query', {
                     // Leaky abstraction artifact: We have to specifically
                     // exclude the "foo__in=[]" case from this handling, because
                     // it's short-circuited in the Where class.
-                    entry = this.where_class();
+                    var entry = new this.where_class();
                     entry.add([alias, col, null, 'isnull', true], AND);
                     entry.negate();
                     this.where.add(entry, AND);
