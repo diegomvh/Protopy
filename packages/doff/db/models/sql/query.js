@@ -259,14 +259,15 @@ var Query = type('Query', {
         if (with_limits) {
             if (this.high_mark)
                 result.push('LIMIT %s'.subs(this.high_mark - this.low_mark));
-            if (this.low_mark)
-                if (this.high_mark) {
-                    val = this.connection.no_limit_value();
+            if (this.low_mark) {
+                if (this.high_mark == null) {
+                    var val = this.connection.ops.no_limit_value();
                     if (val)
                         result.push('LIMIT %s'.subs(val));
-                result.push('OFFSET %s' % this.low_mark);
-                }
-        }
+		}
+		result.push('OFFSET %s'.subs(this.low_mark));
+	    }
+	}
         params = params.concat(this.extra_params);
         return [result.join(' '), params];
     },
@@ -1815,13 +1816,13 @@ var Query = type('Query', {
     
         if (high) {
             if (this.high_mark)
-                this.high_mark = Number.min(this.high_mark, this.low_mark + high);
+                this.high_mark = Math.min(this.high_mark, this.low_mark + high);
             else
                 this.high_mark = this.low_mark + high;
         }
         if (low) {
             if (this.high_mark)
-                this.low_mark = Number.min(this.high_mark, this.low_mark + low);
+                this.low_mark = Math.min(this.high_mark, this.low_mark + low);
             else
                 this.low_mark = this.low_mark + low;
         }

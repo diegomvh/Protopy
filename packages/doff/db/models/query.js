@@ -176,7 +176,7 @@ var QuerySet = type('QuerySet', {
         // Since __len__ is called quite frequently (for example, as part of
         // list(qs), we make some effort here to be as efficient as possible
         // whilst not messing up any existing iterators against the QuerySet.
-        if (!this._result_cache) {
+        if (this._result_cache == null) {
             if (this._iter) {
                 this._result_cache = array(this._iter);
             } else {
@@ -194,56 +194,57 @@ var QuerySet = type('QuerySet', {
     
     /*
      * Retrieves an item or slice from the set of results.
-    __getitem__: function __getitem__(k) {
-        """
-        Retrieves an item or slice from the set of results.
-        """
-        if not isinstance(k, (slice, int, long)):
-            raise TypeError
-        assert ((not isinstance(k, slice) and (k >= 0))
-                or (isinstance(k, slice) and (k.start is None or k.start >= 0)
-                    and (k.stop is None or k.stop >= 0))), \
-                "Negative indexing is not supported."
-
-        if self._result_cache is not None:
-            if self._iter is not None:
-                # The result cache has only been partially populated, so we may
-                # need to fill it out a bit more.
-                if isinstance(k, slice):
-                    if k.stop is not None:
-                        # Some people insist on passing in strings here.
-                        bound = int(k.stop)
-                    else:
-                        bound = None
-                else:
-                    bound = k + 1
-                if len(self._result_cache) < bound:
-                    self._fill_cache(bound - len(self._result_cache))
-            return self._result_cache[k]
-
-        if isinstance(k, slice):
-            qs = self._clone()
-            if k.start is not None:
-                start = int(k.start)
-            else:
-                start = None
-            if k.stop is not None:
-                stop = int(k.stop)
-            else:
-                stop = None
-            qs.query.set_limits(start, stop)
-            return k.step and list(qs)[::k.step] or qs
-        try:
-            qs = self._clone()
-            qs.query.set_limits(k, k + 1)
-            return list(qs)[0]
-        except self.model.DoesNotExist, e:
-            raise IndexError, e.args
+     * k is a number or array where k[0] = start k[1] = stop
+     */
+    '__getitem__': function __getitem__(k) {
+        if (!isinstance(k, [Number, Array]))
+            throw new TypeError();
+        assert ((!isinstance(k, Array) && (k >= 0)) || 
+		(isinstance(k, Array) && (k[0] == null || k[0] >= 0) && (k[1] == null || k[1] >= 0)), "Negative indexing is not supported.");
+        if (this._result_cache != null) {
+            if (this._iter != null) {
+                // The result cache has only been partially populated, so we may need to fill it out a bit more.
+                if (isinstance(k, Array)) {
+                    if (k[1] != null)
+                        // Some people insist on passing in strings here.
+                        var bound = int(k[1])
+                    else
+                        var bound = null;
+                } else {
+                    var bound = k + 1;
+		}
+                if (len(this._result_cache) < bound)
+                    this._fill_cache(bound - len(this._result_cache));
+            }
+	    if (isinstance(k, Array))
+		return this._result_cache.slice(k[0], k[1]);
+	    else 
+		return this._result_cache[k];
+	}
+        if (isinstance(k, Array)) {
+            var qs = this._clone();
+            if (k[0] != null)
+                var start = int(k[0]);
+            else
+                var start = null;
+            if (k[1] != null)
+                var stop = int(k[1]);
+            else
+                var stop = null;
+            qs.query.set_limits(start, stop);
+            return qs;
+	}
+        try {
+            var qs = this._clone();
+            qs.query.set_limits(k, k + 1);
+            return array(qs)[0];
+        } catch (e if isinstance(e, this.model.DoesNotExist)) {
+            throw new IndexError(e.args);
+	}
     },
-    */
 
-    'slice': function(start, stop, step){
-        this.__getitem__([start, stop, step]);
+    'slice': function(start, stop){
+        return this.__getitem__([start, stop]);
     },
 
     //I whish __and__ , but
@@ -298,7 +299,7 @@ var QuerySet = type('QuerySet', {
      * of the cached results set to avoid multiple SELECT COUNT(*) calls.
      */
     'count': function count() {
-        if ((this._result_cache) && (!this._iter))
+        if (this._result_cache && !this._iter)
             return this._result_cache.length;
         return this.query.get_count();
     },
@@ -308,10 +309,12 @@ var QuerySet = type('QuerySet', {
      * keyword arguments.
      */
     'get': function get() {
-        //TODO: Si es un get con un numero es para indexar tipo array invocar a __getitem__
+	// Si only one argument and is number call to __getitem__
         arguments = new Arguments(arguments);
-        var clone = this.filter.apply(this, arguments.argskwargs);
-        var num = clone.length;
+        if (len(arguments) == 1 && bool(arguments.args) && isinstance(arguments.args[0], Number))
+	    return this.__getitem__(arguments.args[0]);
+	var clone = this.filter.apply(this, arguments.argskwargs);
+        var num = len(clone);
         if (num == 1)
             return clone._result_cache[0];
         if (num == 0)

@@ -197,23 +197,24 @@
     function type(name) {
 	if (name == undefined || name == null)
 	    throw new TypeError('Invalid arguments');
-	    var args = Array.prototype.slice.call(arguments).slice(1);
-	    if ((name || name === "") && args.length == 0)
-		return name.constructor;
-	    if (args[0] instanceof Array && args[0][0] != undefined)
-		var bases = args.shift();
-	    else if (!(args[0] instanceof Array) && args[0] instanceof Function)
-		var bases = [args.shift()];
-	    else var bases = [object];
-	    if (args[0] instanceof Object && args.length == 2) {
-		var classAttrs = args.shift();
-		var instanceAttrs = args.shift();
-	    } else if (args.length == 1) {
-		var classAttrs = {};
-		var instanceAttrs = args.shift();
-	    } else if (args.length == 0) {
-		var classAttrs = {};
-		var instanceAttrs = {};
+	var args = Array.prototype.slice.call(arguments).slice(1);
+	if (args.length == 0)
+	    return name.constructor;
+	if (args[0] instanceof Array && args[0][0] != undefined)
+	    var bases = args.shift();
+	else if (!(args[0] instanceof Array) && args[0] instanceof Function)
+	    var bases = [args.shift()];
+	else 
+	    var bases = [object];
+	if (args[0] instanceof Object && args.length == 2) {
+	    var classAttrs = args.shift();
+	    var instanceAttrs = args.shift();
+	} else if (args.length == 1) {
+	    var classAttrs = {};
+	    var instanceAttrs = args.shift();
+	} else if (args.length == 0) {
+	    var classAttrs = {};
+	    var instanceAttrs = {};
 	} else new TypeError('Invalid arguments');
 
 	var new_type = eval('(function ' + name + '() { this.__init__.apply(this, arguments); })');
@@ -407,6 +408,15 @@
             this.populated = false;
         },
 	
+	'__iter__' : function(){
+            for each (var arg in this.collect)
+                yield arg;
+        },
+
+	'__len__' : function(){
+            return len(this.collect);
+        },
+
         '_populate': function _populate() {
             this._kwargs = {};
             var haskwargs = false;
@@ -423,11 +433,6 @@
             else
                 this._args = [];
             this.populated = true;
-        },
-
-        '__iter__' :function(){
-            for each (var arg in this.collect)
-                yield arg;
         },
 
         get args() {
@@ -474,9 +479,9 @@
     function id(value) {
         if (!value)
             return 'null';
-        if (type(value) == Number || type(value) == String)
+        if (isinstance(value, Number) || isinstance(value, String))
             return value;
-        else if (type(value) == Array)
+        else if (isinstance(value, Array))
             return value.reduce(function(x, y) {return "" + id(x) + id(y)});
         else if (!value['__hash__']) {
             value['__hash__'] = id.next();
@@ -540,11 +545,13 @@
     
         },
         'float': function float(value) {
-            if (type(value) != String || type(value) != Number) throw new TypeError('Argument must be a string or a number');
-            var number = Number(value);
-            if (isNaN(number))
-                throw new ValueError('Invalid literal');
-            return number;
+            if (isinstance(value, String) || isinstance(value, Number)) {
+		var number = Number(value);
+		if (isNaN(number))
+		    throw new ValueError('Invalid literal');
+		return number;
+	    }
+	    throw new TypeError('Argument must be a string or number');
         },
         'flatten': function flatten(array) { 
             return array.reduce(function(a,b) { return a.concat(b); }, []); 
@@ -559,11 +566,13 @@
             return object.indexOf(element) > -1;
         },
         'int': function int(value) {
-            if (type(value) != String || type(value) != Number) throw new TypeError('Argument must be a string or a number');
-            var number = Math.floor(value);
-            if (isNaN(number))
-                throw new ValueError('Invalid literal');
-            return number;
+            if (isinstance(value, String) || isinstance(value, Number)) {
+		var number = Math.floor(value);
+		if (isNaN(number))
+		    throw new ValueError('Invalid literal');
+		return number;
+	    }
+	    throw new TypeError('Argument must be a string or number');
         },
         'len': function len(object) {
             if (object && callable(object['__len__']))
