@@ -1,6 +1,18 @@
 syntax: glob
 .pydevproject
 .project
+*.aux
+*.bbl
+*.blg
+*.brf
+*.lof
+*.log
+*.lot
+*.out
+*.toc
+
+
+
 
 syntax: regexp
 ^nbproject
