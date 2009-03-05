@@ -457,7 +457,7 @@
 	    }
 	},
         'subscribe': function subscribe(topic, context, method) {
-	    return [topic, __listener__.add(__topics__, topic, (method && isinstance(method, String))? getattr(context, method) : method)];
+	    return [topic, __listener__.add(__topics__, topic, (method && isinstance(method, String))? getattr(context, method) : context)];
 	},
         'unsubscribe': function unsubscrib(handle) {
 	    if(handle)
