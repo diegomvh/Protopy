@@ -1,5 +1,5 @@
 $L('doff.conf', 'settings');
-$L('doff.db.models.signals');
+$L('event');
 
 var _load_path = 'doff.db.backends.';
 var backend = $L('%s%s.base'.subs(_load_path, settings.DATABASE_ENGINE));
@@ -12,13 +12,13 @@ function close_connection(kwargs){
     connection.close();
 }
 
-//signals.request_finished.connect(close_connection);
+var hrf = event.subscribe('request_finished', close_connection);
 
 function reset_queries(kwargs) {
     connection.queries = [];
 }
 
-//signals.request_started.connect(reset_queries);
+var hrs = event.subscribe('request_started', reset_queries);
 
 $P({    'backend': backend,
         'connection': connection,

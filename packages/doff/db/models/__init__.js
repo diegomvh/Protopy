@@ -9,8 +9,6 @@ $L('doff.db.models.fields', '*');
 //var [FileField, ImageField] = $L('doff.db.models.fields.files', ['FileField', 'ImageField']);
 $L('doff.db.models.fields.related', '*');
 
-$L('doff.db.models.signals');
-    
 $P({    'ObjectDoesNotExist': ObjectDoesNotExist,
         'ImproperlyConfigured': ImproperlyConfigured,
         'connection': connection,
@@ -53,6 +51,5 @@ $P({    'ObjectDoesNotExist': ObjectDoesNotExist,
         'ManyToOneRel': ManyToOneRel,
         'ManyToManyRel': ManyToManyRel,
         'OneToOneRel': OneToOneRel,
-        'signals': signals
     });
 

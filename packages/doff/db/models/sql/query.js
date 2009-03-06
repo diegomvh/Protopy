@@ -2,7 +2,6 @@ $D("doff.db.models.sql.query");
 $L('doff.utils.tree', 'Node');
 $L('doff.utils.datastructures', 'SortedDict');
 $L('doff.db', 'connection');
-$L('doff.db.models.signals');
 $L('doff.db.models.fields', 'FieldDoesNotExist');
 $L('doff.db.models.query_utils', 'select_related_descend');
 $L('doff.db.models.sql.datastructures', 'Count', 'EmptyResultSet', 'MultiJoin');
@@ -10,6 +9,7 @@ $L('doff.db.models.sql.where', 'WhereNode', 'EverythingNode', 'AND', 'OR');
 $L('doff.core.exceptions', 'FieldError');
 $L('doff.db.models.sql.constants', '*');
 $L('copy', 'copy', 'deepcopy');
+$L('event');
 
 /*
  * A single SQL query
@@ -1887,11 +1887,11 @@ function order_modified_iter(cursor, trim, sentinel){
 
     This method initialises the (empty) cache when the model is created.
     */
-function setup_join_cache(payload) {
-    payload['sender']._meta._join_cache = {};
+function setup_join_cache(cls) {
+    cls._meta._join_cache = {};
 }
 
-signals.class_prepared.connect(setup_join_cache);
+var hcp = event.subscribe('class_prepared', setup_join_cache);
 
 $P({  'Query': Query  });
 

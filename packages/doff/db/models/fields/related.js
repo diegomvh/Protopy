@@ -1,6 +1,5 @@
 $D("doff.db.models.fields.related");
 $L('doff.db', 'connection');
-$L('doff.db.models.signals');
 $L('doff.db.models.loading', 'get_model');
 $L('doff.db.models.fields', 'AutoField', 'Field', 'IntegerField', 'PositiveIntegerField', 'PositiveSmallIntegerField', 'FieldDoesNotExist');
 $L('doff.db.models.related', 'RelatedObject');
@@ -10,6 +9,7 @@ $L('doff.forms');
 $L('doff.core.exceptions', 'ValidationError');
 $L('doff.db.transaction');
 $L('functional', 'curry');
+$L('event');
 
 var RECURSIVE_RELATIONSHIP_CONSTANT = 'this';
 var pending_lookups = {};
@@ -40,8 +40,8 @@ function add_lazy_relation(cls, field, relation, operation){
     }
 }
 
-function do_pending_lookups(payload) {
-    var key = payload['sender']._meta.app_label + payload['sender'].__name__;
+function do_pending_lookups(sender) {
+    var key = sender._meta.app_label + sender.__name__;
     for each (var value in pending_lookups[key]) {
         var [cls, field, operation] = value;
         operation(field, sender, cls);
@@ -49,7 +49,7 @@ function do_pending_lookups(payload) {
     delete pending_lookups[key];
 }
 
-signals.class_prepared.connect(do_pending_lookups);
+var hcp = event.subscribe('class_prepared', do_pending_lookups);
 
 var RelatedField = type('RelatedField', Field,  {
     'contribute_to_class': function contribute_to_class(cls, name) {

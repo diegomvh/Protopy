@@ -1,12 +1,11 @@
 $D("doff.db.models.query");
-
 $L('doff.db', 'connection', 'IntegrityError');
 $L('doff.db.models.fields', 'DateField');
 $L('doff.db.models.query_utils', 'Q', 'select_related_descend');
-$L('doff.db.models.signals');
 $L('doff.db.models.sql');
 $L('doff.db.transaction');
 $L('copy', 'copy');
+$L('event');
 
 var CHUNK_SIZE = 100;
 var ITER_CHUNK_SIZE = CHUNK_SIZE;
@@ -881,7 +880,7 @@ function delete_objects(seen_objs) {
         // Pre-notify all instances to be deleted.
         for (element in items) {
             var [pk_val, instance] = element;
-            events.pre_delete.fire({'sender':cls, 'instance':instance});
+            event.publish('pre_delete', [cls, instance]);
         }
         pk_list = [pk for ([pk, instance] in items)];
         del_query = new sql.DeleteQuery(cls, connection);
@@ -916,7 +915,7 @@ function delete_objects(seen_objs) {
                 if (field.rel && field.none && include(seen_objs, field.rel.to))
                     instance[field.attname] = null;
             }
-            events.post_delete.fire({'sender':cls, 'instance':instance});
+            event.publish('post_delete', [cls, instance]);
             instance[cls._meta.pk.attname] = null;
         }
     }

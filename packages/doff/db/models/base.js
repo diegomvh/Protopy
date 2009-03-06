@@ -1,15 +1,14 @@
 $D("doff.db.models.base");
-
 $L('copy', 'copy', 'deepcopy');
 $L("doff.core.exceptions", 'ObjectDoesNotExist', 'MultipleObjectsReturned', 'FieldError');
 $L("doff.db.models.fields", 'AutoField');
 $L("doff.db.models.fields.related", 'OneToOneRel', 'ManyToOneRel', 'OneToOneField');
 $L("doff.db.models.sql");
-$L("doff.db.models.signals");
 $L("doff.db.models.manager");
 $L("doff.db.models.options", 'Options');
 $L("doff.db.models.loading", 'register_models', 'get_model');
 $L('functional', 'curry');
+$L('event');
 
 var subclass_exception = function(name, parent, module) {
     var klass = type(name, parent);
@@ -169,7 +168,7 @@ var Model = type('Model', {
         if (!this.__doc__)
             this.__doc__ = "%s(%s)".subs(this.__name__, [f.attname for each (f in opts.fields)].join(', '));
 
-        signals.class_prepared.send({'sender': this});
+        event.publish('class_prepared', [ this ]);
     }
 
 },{
@@ -177,7 +176,7 @@ var Model = type('Model', {
         arguments = new Arguments(arguments);
         var args = arguments.args;
         var kwargs = arguments.kwargs;
-        signals.pre_init.send({'sender':this.constructor, 'args':args, 'kwargs':kwargs});
+	event.publish('pre_init', [this.constructor, args, kwargs]);
         // There is a rather weird disparity here; if kwargs, it's set, then args
         // overrides it. It should be one or the other; don't duplicate the work
         // The reason for the kwargs check is that standard iterator passes in by
@@ -235,7 +234,7 @@ var Model = type('Model', {
             }
         }
         
-        signals.post_init.send({'sender':this.constructor, 'instance':this});
+	event.publish('post_init', [this.constructor, this]);
     },
 
     '__str__': function __str__() {
@@ -297,8 +296,8 @@ var Model = type('Model', {
         if (!cls) {
             var cls = this.constructor;
             meta = this._meta;
-            signal = true
-            signals.pre_save.send({'sender':this.constructor, 'instance':this, 'raw':raw});
+            signal = true;
+            event.publish('pre_save', [this.constructor, this, raw]);
         } else {
             meta = cls._meta;
             signal = false;
@@ -370,7 +369,7 @@ var Model = type('Model', {
         //transaction.commit_unless_managed()
 
         if (signal)
-            signals.post_save.send({'sender':this.constructor, 'instance':this, 'created':!record_exists, 'raw':raw});
+	    event.publish('post_save', [this.constructor, this, !record_exists, raw]);
     },
 
     /*

@@ -1,12 +1,10 @@
 $D("doff.db.models.manager");
-    
 $L('doff.db.models.query', 'QuerySet', 'EmptyQuerySet', 'insert_query');
-$L('doff.db.models.signals');
+$L('event');
 $L('doff.db.models.fields', 'FieldDoesNotExist');
 $L('copy', 'copy');
 
-function ensure_default_manager(payload) {
-    var cls = payload['sender'];
+function ensure_default_manager(cls) {
     if (!cls['_default_manager'] && !cls._meta.abstracto) {
         try {
             var f = cls._meta.get_field('objects');
@@ -16,7 +14,7 @@ function ensure_default_manager(payload) {
     }
 };
 
-signals.class_prepared.connect(ensure_default_manager);
+var hcp = event.subscribe('class_prepared', ensure_default_manager);
 
 var Manager = type('Manager', {
         '__init__': function __init__(){
