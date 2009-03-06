@@ -8,10 +8,14 @@ $L('doff.core.dispatcher', 'Signal');
 var Modo = type('Modo', {
     // Arreglo de modos
     MODES: {
-        'ONLINE' : 0,
-	    'OFFLINE' : 1,
-	    'ONLINE_TO_OFFLINE' : 2,
-	    'OFFLINE_TO_ONLINE' : 3    
+        ONLINE : 0,
+	    OFFLINE : 1,
+	    ONLINE_TO_OFFLINE : 2,
+	    OFFLINE_TO_ONLINE : 3    
+    },
+    x__new__: function (name, bases, attrs){
+        // return Object;
+        return super(Modo, this).__new__(name, bases, attrs);
     }
 }, {
     /**
@@ -76,6 +80,6 @@ function go_online(){
 
 
 $P({'go_offline': go_offline,
-    'modo':modo
+    'mode':mode
     }
   );
