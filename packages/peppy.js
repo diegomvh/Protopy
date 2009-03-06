@@ -13,7 +13,7 @@
 
 // Adapted to work with protpy's load method
 
-//(function(){	
+//(function(){
 	var doc = document;
 	var isIE = /(?!.*?opera.*?)msie(?!.*?opera.*?)/i.test( navigator.userAgent );
 	var isWebKit = /webkit/i.test( navigator.userAgent );
@@ -206,10 +206,7 @@
 		return result;
 	}
 	
-    
-    // Primer cambio
-	$P({
-		query : function( selectorGroups, root, includeRoot, recursed, flat ) {
+	function query( selectorGroups, root, includeRoot, recursed, flat ) {
 			var elements = [];						
 			if( !recursed ) {  // TODO: try to clean this up. 
 				selectorGroups = selectorGroups.replace( reg.trim, "" ) // get rid of leading and trailing spaces												 
@@ -309,8 +306,8 @@
 			if( groups.length > 1 ) elements = filter(elements);
 			
 			return ( cache[ cacheKey ] = elements.slice(0));
-		},
-		queryCombinator: function( l, r, c ) {
+		}
+		function queryCombinator( l, r, c ) {
 			var result = [], 
 				uids = {}, 
 				proc = {}, 
@@ -331,8 +328,8 @@
 				proc[ re.uid ] = re;
 			}
 			return result;
-		},
-		querySelector : function( selector, root, includeRoot, flat ) {
+		}
+		function querySelector( selector, root, includeRoot, flat ) {
 			var context, 
 				passed = [],				 
 				count, 
@@ -458,8 +455,8 @@
 				first = false;
 			}
 			return passed;
-		},
-		simpleSelector: {
+		}
+		var simpleSelector= {
 			attribute: {
 				"null": function( e, a, v ) { return !!getAttribute(e,a); },
 				"=" : function( e, a, v ) { return getAttribute(e,a) == v; },
@@ -613,6 +610,17 @@
 				}
 			}
 		}
+    
+    // Primer cambio
+	$P({
+		query : query, 
+		queryCombinator: queryCombinator,
+		querySelector : querySelector,
+		simpleSelector: simpleSelector
+	});
+
+	$B({
+		$Q : query
 	});
     
     // TODO: Las funciones de acá abajo habría que ver que es lo que hacen \
