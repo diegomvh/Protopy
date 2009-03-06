@@ -10,7 +10,10 @@
    Licenced under the FreeBSD (http://www.freebsd.org/copyright/freebsd-license.html) licence.
 
 */
-(function(){	
+
+// Adapted to work with protpy's load method
+
+//(function(){	
 	var doc = document;
 	var isIE = /(?!.*?opera.*?)msie(?!.*?opera.*?)/i.test( navigator.userAgent );
 	var isWebKit = /webkit/i.test( navigator.userAgent );
@@ -203,7 +206,9 @@
 		return result;
 	}
 	
-	peppy = {
+    
+    // Primer cambio
+	$P({
 		query : function( selectorGroups, root, includeRoot, recursed, flat ) {
 			var elements = [];						
 			if( !recursed ) {  // TODO: try to clean this up. 
@@ -608,7 +613,12 @@
 				}
 			}
 		}
-	}
+	});
+    
+    // TODO: Las funciones de acá abajo habría que ver que es lo que hacen \
+    // exactamente
+    
+    
 	
 	// From John Resig -> http://ejohn.org/blog/thoughts-on-queryselectorall/
 	// Copyright 2008, John Resig (http://ejohn.org/)
@@ -639,6 +649,7 @@
 		aEvent("DOMNodeInserted", clearCache, false);
 		aEvent("DOMNodeRemoved", clearCache, false);	
 	}
-	
+/*	
+    // More mods for protopy
 	if( !($ = window.$) ) $ = peppy.query;
-})();
+})();*/
