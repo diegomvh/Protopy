@@ -318,7 +318,7 @@ var UpdateQuery = type('UpdateQuery', Query, {
         var Model = $L('doff.db.models.base', ['Model']);
         for each (var element in values_seq) {
             var [field, model, val] = element;
-            if (field.rel && val instanceof Model)
+            if (field.rel && isinstance(val, Model))
                 val = val.pk;
 
             // Getting the placeholder for the field.

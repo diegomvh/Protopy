@@ -653,7 +653,7 @@ var ForeignKey = type('ForeignKey', RelatedField, {
     },
 
     'get_db_prep_save': function get_db_prep_save(value) {
-        if (bool(value))
+        if (value === '' || value == null || typeof(value) === 'undefined')
             return null;
         else
             return this.rel.get_related_field().get_db_prep_save(value);

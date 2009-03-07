@@ -293,15 +293,15 @@ var Model = type('Model', {
     'save_base': function save_base(raw, cls, force_insert, force_update) {
         
         assert (!(force_insert && force_update));
-        var cls = cls || null;
+        cls = cls || null;
         if (!cls) {
-            var cls = this.constructor;
-            meta = this._meta;
-            signal = true;
-            event.publish('pre_save', [this.constructor, this, raw]);
+            cls = this.__class__;
+            var meta = this._meta;
+            var signal = true;
+            event.publish('pre_save', [this.__class__, this, raw]);
         } else {
-            meta = cls._meta;
-            signal = false;
+            var meta = cls._meta;
+            var signal = false;
         }
 
         // If we are in a raw save, save the object exactly as presented.
@@ -320,48 +320,50 @@ var Model = type('Model', {
                 this[field.attname] = this._get_pk_val(parent._meta);
             }
         }
-        non_pks = [f for each (f in meta.local_fields) if (!f.primary_key)];
+        var non_pks = [f for each (f in meta.local_fields) if (!f.primary_key)];
 
         // First, try an UPDATE. If that doesn't update anything, do an INSERT.
-        pk_val = this._get_pk_val(meta);
-        pk_set = pk_val != null;
-        record_exists = true;
-        manager = cls._default_manager;
+        var pk_val = this._get_pk_val(meta);
+        var pk_set = pk_val != null;
+        var record_exists = true;
+        var manager = cls._default_manager;
         if (pk_set) {
             // Determine whether a record with the primary key already exists.
             if ((force_update || (!force_insert && bool(manager.filter({'pk':pk_val}).extra({'a': 1}).values('a').order_by())))) {
                 // It does already exist, so do an UPDATE.
                 if (force_update || non_pks) {
-                    values = [[f, null, f.get_db_prep_save(raw && this[f.attname] || f.pre_save(this, false))] for each (f in non_pks)];
-                    rows = manager.filter({'pk':pk_val})._update(values);
+                    var values = [[f, null, f.get_db_prep_save(raw && this[f.attname] || f.pre_save(this, false))] for each (f in non_pks)];
+                    var rows = manager.filter({'pk':pk_val})._update(values);
                     if (force_update && !rows)
                         throw new DatabaseError('Forced update did not affect any rows.');
                 }
-            } else { record_exists = false; }
+            } else { 
+		record_exists = false; 
+	    }
         }
         if (!pk_set || !record_exists) {
             if (!pk_set) {
                 if (force_update)
                     throw new ValueError('Cannot force an update in save() with no primary key.');
-                values = [[f, f.get_db_prep_save(raw && this[f.attname] || f.pre_save(this, true))] for each (f in meta.local_fields) if (!(f instanceof AutoField))];
+                var values = [[f, f.get_db_prep_save(raw && this[f.attname] || f.pre_save(this, true))] for each (f in meta.local_fields) if (!(f instanceof AutoField))];
             } else {
-                values = [[f, f.get_db_prep_save(raw && this[f.attname] || f.pre_save(this, true))] for each (f in meta.local_fields)];
+                var values = [[f, f.get_db_prep_save(raw && this[f.attname] || f.pre_save(this, true))] for each (f in meta.local_fields)];
             }
 
             if (meta.order_with_respect_to) {
-                field = meta.order_with_respect_to;
+                var field = meta.order_with_respect_to;
                 var key1 = field.name;
                 values.concat([meta.get_field_by_name('_order')[0], manager.filter({key1: this[field.attname]}).count()]);
             }
             record_exists = false;
 
-            update_pk = bool(meta.has_auto_field && !pk_set);
+            var update_pk = bool(meta.has_auto_field && !pk_set);
             if (bool(values))
                 // Create a new record.
-                result = manager._insert(values, {'return_id':update_pk});
+                var result = manager._insert(values, {'return_id':update_pk});
             else
                 // Create a new record with defaults for everything.
-                result = manager._insert([[meta.pk, connection.ops.pk_default_value()]], {'return_id':update_pk, 'raw_values':true});
+                var result = manager._insert([[meta.pk, connection.ops.pk_default_value()]], {'return_id':update_pk, 'raw_values':true});
 
             if (update_pk) {
                 this[meta.pk.attname] = result;
