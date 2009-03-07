@@ -40,7 +40,7 @@ function set_tags_by_title(post, tag_title){
 function show_posts(){
     var t = loader.get_template('post.html');
     var form = new PostForm();
-    document.write(t.render(new Context({'form': form, 'posts': Post.objects.all().order_by('-title')})));
+    document.write(t.render(new Context({'tags': Tag.objects.all(), 'form': form, 'posts': Post.objects.all().order_by('-title')})));
     document.close();
 }
 

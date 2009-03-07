@@ -345,13 +345,13 @@ var FilterExpression = type('FilterExpression', {
         /* if (!filter_re.test(token))
             throw new TemplateSyntaxError("Could not parse the remainder: '%s'".subs(token)) */
         this.token = token;
-        var split_re = /\|(\S+)/;
+        var split_re = /\|/;
         var tokens = token.split(split_re),
             value = tokens.shift(),
             filters = [];
-        if (bool(tokens)) {
+        /*if (bool(tokens)) {
             tokens = tokens[0].split('|');
-        }
+        }*/
         for each (var filter in tokens) {
             var parts = filter.split(':');
             var filter_name = parts.shift();
