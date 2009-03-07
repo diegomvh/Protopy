@@ -1,12 +1,13 @@
-$D("doff.db.models.base");
+$D('doff.db.models.base');
 $L('copy', 'copy', 'deepcopy');
-$L("doff.core.exceptions", 'ObjectDoesNotExist', 'MultipleObjectsReturned', 'FieldError');
-$L("doff.db.models.fields", 'AutoField');
-$L("doff.db.models.fields.related", 'OneToOneRel', 'ManyToOneRel', 'OneToOneField');
-$L("doff.db.models.sql");
-$L("doff.db.models.manager");
-$L("doff.db.models.options", 'Options');
-$L("doff.db.models.loading", 'register_models', 'get_model');
+$L('doff.core.exceptions', 'ObjectDoesNotExist', 'MultipleObjectsReturned', 'FieldError');
+$L('doff.db.models.fields', 'AutoField');
+$L('doff.db.models.fields.related', 'OneToOneRel', 'ManyToOneRel', 'OneToOneField');
+$L('doff.db.models.sql');
+$L('doff.db.models.query', 'delete_objects', 'Q', 'CollectedObjects');
+$L('doff.db.models.manager');
+$L('doff.db.models.options', 'Options');
+$L('doff.db.models.loading', 'register_models', 'get_model');
 $L('functional', 'curry');
 $L('event');
 
@@ -166,7 +167,7 @@ var Model = type('Model', {
         }
             // Give the class a docstring -- its definition.
         if (!this.__doc__)
-            this.__doc__ = "%s(%s)".subs(this.__name__, [f.attname for each (f in opts.fields)].join(', '));
+            this.__doc__ = '%s(%s)'.subs(this.__name__, [f.attname for each (f in opts.fields)].join(', '));
 
         event.publish('class_prepared', [ this ]);
     }
@@ -184,7 +185,7 @@ var Model = type('Model', {
         var args_len = args.length;
         if (args_len > this._meta.fields.length)
             // Daft, but matches old exception sans the err msg.
-            throw new IndexError("Number of args exceeds number of fields");
+            throw new IndexError('Number of args exceeds number of fields');
 
         var data = zip(args, this._meta.fields);
         if (bool(keys(kwargs))) {
@@ -224,7 +225,7 @@ var Model = type('Model', {
             }
             
             // If we got passed a related instance, set it using the field.name
-            // instead of field.attname (e.g. "user" instead of "user_id") so
+            // instead of field.attname (e.g. 'user' instead of 'user_id') so
             // that the object gets properly cached (and type checked) by the
             // RelatedObjectDescriptor.
             if (rel_obj) {
@@ -272,14 +273,14 @@ var Model = type('Model', {
         control the saving process.
 
         The 'force_insert' and 'force_update' parameters can be used to insist
-        that the "save" must be an SQL insert or update (or equivalent for
+        that the 'save' must be an SQL insert or update (or equivalent for
         non-SQL backends), respectively. Normally, they should not be set.
         */
     'save': function save(force_insert, force_update) {
         var force_insert = force_insert || false;
         var force_update = force_update || false;
         if (force_insert && force_update)
-            throw new ValueError("Cannot force both insert and updating in model saving.");
+            throw new ValueError('Cannot force both insert and updating in model saving.');
         this.save_base(false, null, force_insert, force_update);
     },
 
@@ -334,14 +335,14 @@ var Model = type('Model', {
                     values = [[f, null, f.get_db_prep_save(raw && this[f.attname] || f.pre_save(this, false))] for each (f in non_pks)];
                     rows = manager.filter({'pk':pk_val})._update(values);
                     if (force_update && !rows)
-                        throw new DatabaseError("Forced update did not affect any rows.");
+                        throw new DatabaseError('Forced update did not affect any rows.');
                 }
             } else { record_exists = false; }
         }
         if (!pk_set || !record_exists) {
             if (!pk_set) {
                 if (force_update)
-                    throw new ValueError("Cannot force an update in save() with no primary key.");
+                    throw new ValueError('Cannot force an update in save() with no primary key.');
                 values = [[f, f.get_db_prep_save(raw && this[f.attname] || f.pre_save(this, true))] for each (f in meta.local_fields) if (!(f instanceof AutoField))];
             } else {
                 values = [[f, f.get_db_prep_save(raw && this[f.attname] || f.pre_save(this, true))] for each (f in meta.local_fields)];
@@ -381,28 +382,28 @@ var Model = type('Model', {
                 (model_class, {pk_val: obj, pk_val: obj, ...}), ...]
         */
     '_collect_sub_objects': function _collect_sub_objects(seen_objs, parent, nullable) {
-        pk_val = this._get_pk_val();
-        if (seen_objs.add(this.constructor, pk_val, this, parent || null, nullable || false))
+        var pk_val = this._get_pk_val();
+        if (seen_objs.add(this.__class__, pk_val, this, parent || null, nullable || false))
             return;
 
         for each (related in this._meta.get_all_related_objects()) {
-            rel_opts_name = related.get_accessor_name();
-            if (related.field.rel instanceof OneToOneRel) {
+            var rel_opts_name = related.get_accessor_name();
+            if (isinstance(related.field.rel, OneToOneRel)) {
                 try {
-                    sub_obj = this[rel_opts_name];
-                } catch (e if e instanceof ObjectDoesNotExist){}
-                sub_obj._collect_sub_objects(seen_objs, this.constructor, related.field.None);
+                    var sub_obj = this[rel_opts_name];
+                } catch (e if e instanceof ObjectDoesNotExist) {}
+                sub_obj._collect_sub_objects(seen_objs, this.__class__, related.field.None);
             } else {
                 for each (sub_obj in this[rel_opts_name].all())
-                    sub_obj._collect_sub_objects(seen_objs, this.constructor, related.field.none);
+                    sub_obj._collect_sub_objects(seen_objs, this.__class__, related.field.none);
             }
         }
         // Handle any ancestors (for the model-inheritance case). We do this by
         // traversing to the most remote parent classes -- those with no parents
         // themselves -- and then adding those instances to the collection. That
-        // will include all the child instances down to "self".
-        parent_stack = this._meta.parents.values();
-        while (parent_stack) {
+        // will include all the child instances down to 'self'.
+        var parent_stack = this._meta.parents.values();
+        while (bool(parent_stack)) {
             link = parent_stack.pop();
             parent_obj = this[link.name];
             if (parent_obj._meta.parents) {
@@ -419,7 +420,7 @@ var Model = type('Model', {
         assert (this._get_pk_val(), "%s object can't be deleted because its %s attribute is set to None.".subs(this._meta.object_name, this._meta.pk.attname));
 
         // Find all the objects than need to be deleted.
-        seen_objs = new CollectedObjects();
+        var seen_objs = new CollectedObjects();
         this._collect_sub_objects(seen_objs);
 
         // Actually delete the objects.
@@ -440,17 +441,17 @@ var Model = type('Model', {
         var q = new Q({key: param});
         key2 = 'pk__%s'.subs(op);
         var key2 = field.name;
-        q = q.or(Q({key2: param, key: this.pk}));
+        q = q.or(new Q({key2: param, key: this.pk}));
         qs = this.constructor._default_manager.filter(arguments.kwargs).filter(q).order_by('%s%s'.subs(order, field.name), '%spk'.subs(order));
         try {
             return qs.get(0);
         } catch (e if e instanceof IndexError) {
-            throw new this.DoesNotExist("%s matching query does not exist.".subs(this.constructor._meta.object_name));
+            throw new this.DoesNotExist('%s matching query does not exist.'.subs(this.constructor._meta.object_name));
         }
     },
 
     '_get_next_or_previous_in_order': function _get_next_or_previous_in_order(is_next) {
-        cachename = "__%s_order_cache".subs(is_next);
+        cachename = '__%s_order_cache'.subs(is_next);
         if (!this[cachename]) {
             qn = connection.ops.quote_name;
             op = is_next && '>' || '<';
@@ -482,7 +483,7 @@ Model.prototype.del.alters_data = true;
 var method_set_order = function(ordered_obj, id_list) {
     var rel_val = this[ordered_obj._meta.order_with_respect_to.rel.field_name];
     var order_name = ordered_obj._meta.order_with_respect_to.name;
-    // FIXME: It would be nice if there was an "update many" version of update
+    // FIXME: It would be nice if there was an 'update many' version of update
     // for situations like this.
     //for ([i, j] in enumerate(id_list))
         //ordered_obj.objects.filter({'pk': j, 'order_name': rel_val}).update({'_order':i});

@@ -1,4 +1,6 @@
 $L('doff.db.models.sql.query', 'Query');
+$L('doff.db.models.sql.constants', 'GET_ITERATOR_CHUNK_SIZE');
+$L('doff.db.models.sql.where', 'AND', 'OR');
 $L('copy', 'copy');
 
 /*
@@ -33,17 +35,17 @@ var DeleteQuery = type('DeleteQuery', Query, {
      */
     'delete_batch_related': function delete_batch_related(pk_list) {
         var cls = this.model;
-        for each (related in cls._meta.get_all_related_many_to_many_objects()) {
+        for each (var related in cls._meta.get_all_related_many_to_many_objects()) {
             for each (var offset in range(0, pk_list.length)) {
-                    var where = this.where_class();
-                    where.add([null, related.field.m2m_reverse_name(), related.field, 'in', pk_list.slice(offset, offset + GET_ITERATOR_CHUNK_SIZE)], AND);
-                    this.do_query(related.field.m2m_db_table(), where);
+		var where = new this.where_class();
+                where.add([null, related.field.m2m_reverse_name(), related.field, 'in', pk_list.slice(offset, offset + GET_ITERATOR_CHUNK_SIZE)], AND);
+                this.do_query(related.field.m2m_db_table(), where);
             }
         }
         for each (f in cls._meta.many_to_many) {
-            var w1 = this.where_class();
-            for each (offset in range(0, pk_list.length)) {
-                var where = this.where_class();
+            var w1 = new this.where_class();
+            for each (var offset in range(0, pk_list.length)) {
+                var where = new this.where_class();
                 where.add([null, f.m2m_column_name(), f, 'in', pk_list.slice(offset, offset + GET_ITERATOR_CHUNK_SIZE)], AND);
                 if (w1)
                     where.add(w1, AND);
@@ -61,9 +63,9 @@ var DeleteQuery = type('DeleteQuery', Query, {
     'delete_batch': function delete_batch(pk_list) {
 
         for each (offset in range(0, pk_list.length)) {
-            var where = this.where_class();
+            var where = new this.where_class();
             var field = this.model._meta.pk;
-            where.add([None, field.column, field, 'in', pk_list.slice(offset, offset + GET_ITERATOR_CHUNK_SIZE)], AND);
+            where.add([null, field.column, field, 'in', pk_list.slice(offset, offset + GET_ITERATOR_CHUNK_SIZE)], AND);
             this.do_query(this.model._meta.db_table, where);
         }
     }
@@ -71,18 +73,18 @@ var DeleteQuery = type('DeleteQuery', Query, {
 
 var InsertQuery = type('InsertQuery', Query, {
     '__init__': function __init__(model, connection){
-            super(Query, this).__init__(model, connection);
-            this.columns = [];
-            this.values = [];
-            this.params = [];
+	super(Query, this).__init__(model, connection);
+	this.columns = [];
+	this.values = [];
+	this.params = [];
     },
 
     'clone': function clone(klass) {
         arguments = new Arguments(arguments, {'columns': copy(this.columns), 'values': copy(this.values), 'params': this.params});
         return super(Query, this)(klass, arguments);
     },
-    
-            'as_sql': function as_sql() {
+	
+    'as_sql': function as_sql() {
         // We don't need quote_name_unless_alias() here, since these are all
         // going to be column names (so we can avoid the extra overhead).
         var qn = this.connection.ops.quote_name;
@@ -257,7 +259,7 @@ var UpdateQuery = type('UpdateQuery', Query, {
 
         // Now we adjust the current query: reset the where clause and get rid
         // of all the tables we don't need (since they're in the sub-select).
-        this.where = this.where_class();
+        this.where = new this.where_class();
         if (this.related_updates || must_pre_select) {
             // Either we're using the idents in multiple update queries (so
             // don't want them to change), or the db backend doesn't support
@@ -283,7 +285,7 @@ var UpdateQuery = type('UpdateQuery', Query, {
         */
     'clear_related': function clear_related(related_field, pk_list) {
         for each (offset in range(0, pk_list.length)) {
-            this.where = this.where_class();
+            this.where = new this.where_class();
             var f = this.model._meta.pk;
             this.where.add([null, f.column, f, 'in', pk_list.slice(offset, offset + GET_ITERATOR_CHUNK_SIZE)], AND);
             this.values = [[related_field.column, null, '%s']];

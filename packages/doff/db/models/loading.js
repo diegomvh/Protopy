@@ -62,7 +62,7 @@ var AppCache = type('AppCache', {
                 self.postponed.append(app_name)
             return None*/
         if (!this.app_store.has_key(mod))
-            this.app_store.set(mod, this.app_store.size());
+            this.app_store.set(mod, len(this.app_store));
         return mod;
     },
 

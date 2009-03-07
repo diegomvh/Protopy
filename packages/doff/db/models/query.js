@@ -1,7 +1,8 @@
-$D("doff.db.models.query");
+$D('doff.db.models.query');
 $L('doff.db', 'connection', 'IntegrityError');
 $L('doff.db.models.fields', 'DateField');
 $L('doff.db.models.query_utils', 'Q', 'select_related_descend');
+$L('doff.utils.datastructures', 'SortedDict');
 $L('doff.db.models.sql');
 $L('doff.db.transaction');
 $L('copy', 'copy');
@@ -20,8 +21,8 @@ var CyclicDependency = type('CyclicDependency', Exception);
  */
 var CollectedObjects = type('CollectedObjects', {
     '__init__': function __init__() {
-        this.data = {};
-        this.children = {};
+        this.data = new Dict();
+        this.children = new Dict();
     },
 
     /*
@@ -38,15 +39,15 @@ var CollectedObjects = type('CollectedObjects', {
      */
     'add': function add(model, pk, obj, parent_model, nullable) {
         nullable = nullable || false;
-        if (!this.data[model])
-            this.data[model] = new Hash();
-        var d = this.data[model];
-        var retval = pk in d;
-        d[pk] = obj
+        if (!this.data.has_key(model))
+            this.data.set(model, {});
+        var d = this.data.get(model);
+	var retval = pk in d;
+        this.data.get(model)[pk] = obj;
         if (parent_model && !nullable) {
-            if (!this.children[parent_model])
-                this.children[parent_model] = [];
-            this.children[parent_model].push(model);
+            if (!this.children.has_key(parent_model))
+                this.children.set(parent_model, []);
+            this.children.get(parent_model).push(model);
         }
         return retval;
     },
@@ -56,15 +57,19 @@ var CollectedObjects = type('CollectedObjects', {
     },
 
     '__getitem__': function __getitem__(key) {
-        return this.data[key]
+        return this.data.get(key);
     },
 
     '__nonzero__': function __nonzero__() {
-        return bool(keys(this.data));
+        return bool(this.data);
+    },
+
+    'get': function get(key){
+	return this.__getitem__(key);
     },
 
     'iteritems': function iteritems() {
-        for (k in this.ordered_keys()) {
+        for each (k in this.ordered_keys()) {
             var ret = [k, this.get(k)];
             yield ret;
         }
@@ -85,15 +90,17 @@ var CollectedObjects = type('CollectedObjects', {
     'ordered_keys': function ordered_keys() {
         var dealt_with = new SortedDict();
         // Start with items that have no children
-        models = keys(this.data);
-        while (dealt_with.size() < models.length) {
-            found = false;
-            for (model in models) {
-                if (dealt_with.inclued(model))
+        var models = this.data.keys();
+        while (len(dealt_with) < models.length) {
+            var found = false;
+            for each (var model in models) {
+                if (dealt_with.has_key(model))
                     continue;
-                children = this.children.setdefault(model, []);
+		if (!this.children.has_key(model))
+		    this.children.set(model, []);
+                var children = this.children.get(model);
                 var list = [c for each (c in children) if (!include(dealt_with, c))];
-                if (list.length == 0) {
+                if (len(list) == 0) {
                     dealt_with.set(model, null);
                     found = true;
                 }
@@ -105,10 +112,10 @@ var CollectedObjects = type('CollectedObjects', {
     },
 
     /*
-     * Fallback for the case where is a cyclic dependency but we don't  care.
+     * Fallback for the case where is a cyclic dependency but we don't care.
      */
     'unordered_keys': function unordered_keys() {
-        return this.data.keys();
+        return keys(this.data);
     }
 });
 
@@ -393,26 +400,25 @@ var QuerySet = type('QuerySet', {
     'del': function del() {
         if (!this.query.can_filter()) throw " Assert Cannot use 'limit' or 'offset' with delete.";
 
-        del_query = this._clone();
+        var del_query = this._clone();
 
         // Disable non-supported fields.
         del_query.query.select_related = false;
         del_query.query.clear_ordering();
-/*
+
         // Delete objects in chunks to prevent the list of related objects from becoming too long.
-        while 1
+        while (true) {
             // Collect all the objects to be deleted in this chunk, and all the
             // objects that are related to the objects that are to be deleted.
-            seen_objs = CollectedObjects();
-            for object in del_query[:CHUNK_SIZE]
+            var seen_objs = new CollectedObjects();
+            for (var object in del_query.slice(CHUNK_SIZE))
                 object._collect_sub_objects(seen_objs)
-
-            if not seen_objs:
-                break
-            delete_objects(seen_objs)
-
+            if (!bool(seen_objs))
+                break;
+            delete_objects(seen_objs);
+	}
         // Clear the result cache, in case this QuerySet gets reused.
-        this._result_cache = null;*/
+        this._result_cache = null;
     },
 
     /*
@@ -421,7 +427,7 @@ var QuerySet = type('QuerySet', {
      */
     'update': function update(kwargs) {
         if (!this.query.can_filter()) throw " Assert Cannot update a query once a slice has been taken.";
-        query = this.query.clone(sql.UpdateQuery);
+        var query = this.query.clone(sql.UpdateQuery);
         query.add_update_values(kwargs);
         rows = query.execute_sql(null);
         transaction.commit_unless_managed();
@@ -862,7 +868,7 @@ function get_cached_row(klass, row, index_start, max_depth, cur_depth, requested
  */
 function delete_objects(seen_objs) {
     try {
-        ordered_classes = seen_objs.keys();
+        var ordered_classes = seen_objs.keys();
     } catch (e if e instanceof CyclicDependency) {
         // If there is a cyclic dependency, we cannot in general delete the
         // objects.  However, if an appropriate transaction is set up, or if the
@@ -871,24 +877,21 @@ function delete_objects(seen_objs) {
         ordered_classes = seen_objs.unordered_keys();
     }
 
-    obj_pairs = {};
-    for (cls in ordered_classes) {
-        items = seen_objs[cls].items();
-        items.sort();
-        obj_pairs[cls] = items;
+    var obj_pairs = {};
+    for each (var cls in ordered_classes) {
+        var itms = items(seen_objs.get(cls));
+        itms.sort();
+        obj_pairs[cls.__name__] = itms;
 
         // Pre-notify all instances to be deleted.
-        for (element in items) {
-            var [pk_val, instance] = element;
+        for each (var [pk_val, instance] in itms)
             event.publish('pre_delete', [cls, instance]);
-        }
-        pk_list = [pk for ([pk, instance] in items)];
-        del_query = new sql.DeleteQuery(cls, connection);
+        var pk_list = [pk for each ([pk, instance] in itms)];
+        var del_query = new sql.DeleteQuery(cls, connection);
         del_query.delete_batch_related(pk_list);
 
-        update_query = new sql.UpdateQuery(cls, connection);
-        for (elements in cls._meta.get_fields_with_model()) {
-            var [field, model] = elements;
+        var update_query = new sql.UpdateQuery(cls, connection);
+        for each (var [field, model] in cls._meta.get_fields_with_model()) {
             if (field.rel && field.none && include(seen_objs, field.rel.to) && field.rel.to._meta.fields.values().filter(function(f) { return f.column == field.column})) {
                 if (model)
                     new sql.UpdateQuery(model, connection).clear_related(field, pk_list);
@@ -898,20 +901,19 @@ function delete_objects(seen_objs) {
         }
     }
     // Now delete the actual data.
-    for (cls in ordered_classes) {
-        items = obj_pairs[cls];
-        items.reverse();
+    for each (var cls in ordered_classes) {
+        var itms = obj_pairs[cls.__name__];
+        itms.reverse();
 
-        pk_list = [pk for ([pk,instance] in items)];
-        del_query = new sql.DeleteQuery(cls, connection);
+        var pk_list = [pk for each ([pk,instance] in itms)];
+        var del_query = new sql.DeleteQuery(cls, connection);
         del_query.delete_batch(pk_list);
 
         // Last cleanup; set NULLs where there once was a reference to the
         // object, NULL the primary key of the found objects, and perform
         // post-notification.
-        for (element in items) {
-            var [pk_val, instance] = element;
-            for (field in cls._meta.fields) {
+        for each (var [pk_val, instance] in itms) {
+            for each (var field in cls._meta.fields) {
                 if (field.rel && field.none && include(seen_objs, field.rel.to))
                     instance[field.attname] = null;
             }
@@ -935,7 +937,11 @@ var insert_query = function(model, values, return_id, raw_values) {
     return query.execute_sql(return_id);
 }
 
-$P({    'Q': Q,
+$P({    
+	'Q': Q,
+	'CollectedObjects': CollectedObjects,
 	'QuerySet': QuerySet,
         'EmptyQuerySet': EmptyQuerySet,
-        'insert_query': insert_query   });
+	'delete_objects': delete_objects,
+        'insert_query': insert_query   
+});

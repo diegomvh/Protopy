@@ -349,8 +349,8 @@ var Options = type('Options', {
     '_fill_related_objects_cache': function _fill_related_objects_cache() {
         var cache = new SortedDict();
         var parent_list = this.get_parent_list();
-        for each (parent in this.parents)
-            for each ([obj, model] in parent._meta.get_all_related_objects_with_model()) {
+        for each (var parent in this.parents)
+            for each (var [obj, model] in parent._meta.get_all_related_objects_with_model()) {
                 if ((obj.field.creation_counter < 0 || obj.field.rel.parent_link) && !include(parent_list, obj.model))
                     continue;
                 if (!model)
@@ -358,8 +358,8 @@ var Options = type('Options', {
                 else
                     cache.set(obj, model);
             }
-        for each (klass in get_models())
-            for each (f in klass._meta.local_fields)
+        for each (var klass in get_models())
+            for each (var f in klass._meta.local_fields)
                 if (f.rel && type(f.rel.to) != String && this == f.rel.to._meta)
                     cache.set(new RelatedObject(f.rel.to, klass, f), null);
         this._related_objects_cache = cache;

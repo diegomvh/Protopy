@@ -644,7 +644,7 @@
                 yield arg;
         },
 
-	'__len__' : function(){
+	'__len__' : function __len__(){
             return len(this.collect);
         },
 
@@ -1496,8 +1496,8 @@
             return bool(this._key);
         },
 
-        'size': function size() {
-            return keys(this._key).length;
+        '__len__': function __len__() {
+            return len(this._key);
         },
 
         'set': function set(key, value) {
