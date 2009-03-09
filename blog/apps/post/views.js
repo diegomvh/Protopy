@@ -30,7 +30,7 @@ function add_post(title, body, tags){
 
 function set_tags_by_title(post, tag_title){
     tag_title = (type(tag_title) == Array)? tag_title : [tag_title];
-    var tags = []
+    var tags = [];
     for each (var title in tag_title) {
         tags.push(Tag.objects.get({'title':title}));
     }

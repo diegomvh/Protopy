@@ -28,7 +28,11 @@
 \chapter{Introducción}
 \label{ch:intro}
 
-\chapter{Capítulo teórico}
+\chapter{Aplicación del lado del servidor}
+\section{El lenguaje de programación Python}
+
+\section{Frameworks web basados en Python}
+
 \section{Django}
 \href{http://www.djangoproject.com}{Django} es un framework web escrito en
 Python\footnote{\href{http://www.python.org/}{Lenguaje de programación
@@ -51,10 +55,54 @@ aplicación.
 \item[Template] La generación de salida (típicamente código HTML)
 \end{description}
 
+\section{Aplicación del lado del cliente}
+\section{Modelo de ejecución en el cliente}
+\section{Liberías de Javascript}
+\emph{Breve explicación de la existencia de tantas librerías de javascript,
+necesidad de utilización de estas librerías para consistencia, modularidad y
+portabilidad del código}
+\subsection{Elementos de una librería de javascript}
 
 
+\subsubsection{Manejo unificado de DOM}
+Problemas con las implementaciones de DOM de cada navegador, sacar material de
+la charla que dio Jhon Reisig (está en Google Techtalks)
 
-\chapter{Plataforma}
+
+\subsubsection{Enfoque funcinal (encadenamiento) }
+\subsubsection{Tipos de datos}
+\subsubsection{Eventos}
+\subsubsection{Ajax}
+\subsubsection{Widgets}
+
+\section{Ejemplos de librerías}
+\subsection{jQuery}
+\subsection{Prototype}
+\subsection{YUI (Yahoo User Interface)}
+
+\section{Javascript 1.7}
+Explicación de Javascript 2.0.
+
+\subsection{Protopy}
+Javascript 1.7 + modularidad + ejecución en contexto
+
+\chapter{Aplicación web desconectada}
+Doff, Django implementado sobre protopy.
+\subsection{Problemas de la traducción del framework a Javascript}
+\subsection{Soporte en Django}
+
+
+\appendix
+
+\title{Protopy}
+\chapter{Referencia Protopy}
+%\chapter*{Plataforma}
+
+\section{Módulos}
+\subsection{event}
+\begin{description}
+\item[event.connect]{Concetar}
+\end{description}
 \section{Plataforma Mozilla}
 \begin{itemize}
   \item Porque desarrollaron e implementaron Javascript 1.7
@@ -73,7 +121,7 @@ aplicación.
 
 
 
-\chapter{Referencia Protopy}
+
 \label{ch:protopy}
 
 Protopy persigue acercar la semántica del Javascript 1.7 a la del lenguaje

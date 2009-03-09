@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Pruebas de DOM</title>
+<script type="text/javascript;version=1.7" src="../protopy.js"></script>
+<style type="text/css">
+	#debug {
+		position: absolute;
+		top: 2%;
+		right: 3%;
+		border: 1px solid #dec;
+		width: 200px;
+		/*heihght: 30%;
+		min-height: 120px;*/
+		
+	}
+	#debug h3 {
+		font-family: "Verdana";
+		margin-top: 0px;
+		margin-bottom: 0px;
+		background: #dec;
+		text-align: center;	
+		
+	}
+	#debug span {
+		overflow-y: scroll;
+		width: 100%;
+		height: 200px;
+		display: block;
+		
+	}
+	#debug span p {
+		font-family: monospace;
+		font-size: 9px;
+		background: #FFF197;
+		border-bottom: 1px dashed #ccc;
+		padding-top: 0px;
+		padding-bottom: 3px;
+		padding: 2px;	
+	}
+	#debug span p.error {
+		background: #FF6851;
+	}
+	
+
+</style>
+</head>
+<body>
+	<h3>Pruebas de DOM</h3>
+	<div id="debug">
+		<h3>Debug</h3>
+		<span>
+		
+		</span>
+	</div>
+	
+	
+	<p>Usando Peppy como selector CSS.</p>
+	<p>Usando event.</p>
+	<input type="text" id="log_this">
+	
+	<div>
+		<ul>
+		<li><a href="/1">Link 1</a></li>
+		<li><a href="/2">Link 2</a></li>
+		<li><a href="/3">Link 3</a></li>
+		<li><a href="/4">Link 4</a></li>
+		</ul>
+	
+	</div>
+	
+	
+	<script type="text/javascript;version=1.7">
+		window.html_debug = (function (){
+			$L('peppy');	
+			$L('event');
+			var debug = peppy.query('#debug span')[0];
+			
+			return {
+				log: function (msg){
+					if (msg) {
+						var p = document.createElement('p');
+						p.innerHTML = msg;
+						debug.appendChild(p); 
+					}
+				},
+				error: function (msg){
+					if (msg) {
+						var p = document.createElement('p');
+						p.innerHTML = msg;
+						debug.appendChild(p);
+						p.setAttribute('class', 'error'); 
+					}
+				}
+
+			}
+
+			var hdlr = event.connect(peppy.query('#log_this')[0],'blur', function (e){
+				html_debug.log('Se perdio el foco');
+			}); 
+			console.log(hdlr);
+		})();
+	</script>
+</body>
+</html>

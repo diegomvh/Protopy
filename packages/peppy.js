@@ -620,7 +620,8 @@
 	});
 
 	$B({
-		$Q : query
+		$Q : query,
+        $G : doc.getElementById
 	});
     
     // TODO: Las funciones de acá abajo habría que ver que es lo que hacen \

@@ -1722,4 +1722,10 @@
     });
     
     $B({'Dict': Dict, 'Set': Set});
+    
+    // These are some simple yet useful aliases, there are most likely to be
+    // used with DOM and Peppy boilerplate code
+    $B({'$f': function (a){return a[0]}, // first item
+        '$l': function (a){return a[a.length -1]} // last item
+    });
 })();
