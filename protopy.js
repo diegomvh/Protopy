@@ -1,28 +1,6 @@
 (function() {
-    window.Protopy = {
-    'Version': '0.05',
-    'Browser': {
-        'IE':     !!(window.attachEvent && navigator.userAgent.indexOf('Opera') === -1),
-        'Opera':  navigator.userAgent.indexOf('Opera') > -1,
-        'WebKit': navigator.userAgent.indexOf('AppleWebKit/') > -1,
-        'Gecko':  navigator.userAgent.indexOf('Gecko') > -1 && navigator.userAgent.indexOf('KHTML') === -1,
-        'MobileSafari': !!navigator.userAgent.match(/Apple.*Mobile.*Safari/),
-        'Features': {
-            'XPath': !!document.evaluate,
-            'SelectorsAPI': !!document.querySelector,
-            'ElementExtensions': !!window.HTMLElement,
-            'SpecificElementExtensions': document.createElement('div')['__proto__'] &&
-                                            document.createElement('div')['__proto__'] !==
-                                            document.createElement('form')['__proto__']
-        }
-    },
-    'ScriptFragment': '<script[^>]*>([\\S\\s]*?)<\/script>',
-    'JSONFilter': /^\/\*-secure-([\s\S]*)\*\/\s*$/,
-    'emptyfunction': function emptyfunction(){}
-    }
-
     var __modules__ = {};
-    var __path__ = {'':'/packages/'};
+    var __path__ = {'': '/packages/' };
     var __resources__ = {};
     
     //Extend form objects to object
@@ -48,7 +26,7 @@
 	return destiny;
     }
 
-    //Publish simbols in mododules
+    //Publish simbols in modules
     function __publish__(object) {
         for (var k in object) {
             __modules__[this['__name__']][k] = object[k];
@@ -56,6 +34,7 @@
     }
 
     //Publish resources
+    //TODO: esto no es resource sino una forma de mapear nombres de paquetes en url, tiene que registrar url para nombres de paquetes y hacer una para retornar los nombres convertidos.
     function __resource__(object) {
         //TODO: validate
     }
@@ -99,9 +78,8 @@
                 file = base + names.join("/") + '.js',
                 code = null;
                 if (names[0])
-            new Ajax.Request(file, {
+            new ajax.Request(file, {
                 asynchronous : false,
-                evalJS: false,
                 'onSuccess': function onSuccess(transport) {
                     code = '(function(){ ' + transport.responseText + '});';
                 },
@@ -110,9 +88,8 @@
                 },
                 'onFailure': function onFailure(){
                     file = base + names.join("/") + "/__init__.js";
-                    new Ajax.Request(file, {
+                    new ajax.Request(file, {
                         asynchronous : false,
-                        evalJS: false,
                         'onSuccess': function onSuccess(transport) {
                             code = '(function(){' + transport.responseText + '});';
                             path = base + names.join("/");
@@ -264,46 +241,36 @@
 	return new_type;
     }
     
-    function getattr(object, name, def) {
-	//TODO: validar argumentos
-        var attr = null;
-        if (object) {
-            attr = object[name];
-            if (typeof(attr) !== 'undefined') {
-                if (type(attr) == Function && typeof(attr['__new__']) === 'undefined') {
-                    var method = attr, obj = object;
-                    return function() { return method.apply(obj, array(arguments)); }
-                } else {
-                    return attr;
-                }
-            }
-        }
-        if (typeof(def) === 'undefined')
-	   throw new AttributeError(object + ' has no attribute ' + name);
-	else
-	   return def;
-    }
-    
-    function setattr(object, name, value) {
-	object[name] = value;
-    }
+    /******************** sys ***********************/
+    var sys = __modules__['sys'] = new Module('sys', 'built-in', { 
+	'version': '0.05',
+	'browser': {
+	    'IE':     !!(window.attachEvent && navigator.userAgent.indexOf('Opera') === -1),
+	    'Opera':  navigator.userAgent.indexOf('Opera') > -1,
+	    'WebKit': navigator.userAgent.indexOf('AppleWebKit/') > -1,
+	    'Gecko':  navigator.userAgent.indexOf('Gecko') > -1 && navigator.userAgent.indexOf('KHTML') === -1,
+	    'MobileSafari': !!navigator.userAgent.match(/Apple.*Mobile.*Safari/),
+	    'features': {
+		'XPath': !!document.evaluate,
+		'SelectorsAPI': !!document.querySelector,
+		'ElementExtensions': !!window.HTMLElement,
+		'SpecificElementExtensions': document.createElement('div')['__proto__'] &&
+						document.createElement('div')['__proto__'] !==
+						document.createElement('form')['__proto__']
+	    }
+	},
+	'transport': XMLHttpRequest || ActiveXObject('Msxml2.XMLHTTP') || ActiveXObject('Microsoft.XMLHTTP') || false,
+	'path': __path__,
+	'modules': __modules__
+    });
 
-    function hasattr(object, name){
-	try {
-	    getattr(object, name);
-	    return true;
-	} catch (e if e instanceof AttributeError){
-	    return false;
-	}
-    }
-
-    /******************** Exceptions ***********************/
+    /******************** exception ***********************/
     var Exception = type('Exception', {
         '__init__': function(message) { this.message = message; },
         '__str__': function() { return this.__name__ + ': ' + this.message; }
     });
     
-    __modules__['exceptions'] = new Module('exceptions', 'built-in', {
+    var exception = __modules__['exceptions'] = new Module('exceptions', 'built-in', {
         'Exception': Exception,
         'AssertionError': type('AssertionError', Exception),
         'AttributeError': type('AttributeError', Exception),
@@ -314,7 +281,7 @@
         'ValueError':  type('ValueError', Exception),
     });
 
-    /********************** Events **************************/
+    /********************** event **************************/
     // From dojo
     var __listener__ = {
 	// create a dispatcher function
@@ -364,7 +331,7 @@
 	    name = this._normalizeEventName(name);
 	    fp = this._fixCallback(name, fp);
 	    var oname = name;
-	    if(!Protopy['Browser']['IE'] && (name == "mouseenter" || name == "mouseleave")) {
+	    if(!sys.browser.IE && (name == "mouseenter" || name == "mouseleave")) {
 		var ofp = fp;
 		//oname = name;
 		name = (name == "mouseenter") ? "mouseover" : "mouseout";
@@ -435,7 +402,7 @@
         ([__listener__, __eventlistener__][listener]).remove(obj, event, handle);
     }
 
-    __modules__['event'] = new Module('event', 'built-in', {
+    var event = __modules__['event'] = new Module('event', 'built-in', {
         'connect': function connect(obj, event, context, method) {
 	    var a = arguments, args = [], i = 0;
 	    // if a[0] is a String, obj was ommited
@@ -476,64 +443,274 @@
 	},
         'fixevent': function(){},
         'stopevent': function(){},
-	'keys': { 'BACKSPACE': 8, 'TAB': 9, 'CLEAR': 12,
-		'ENTER': 13,
-		'SHIFT': 16,
-		'CTRL': 17,
-		'ALT': 18,
-		'PAUSE': 19,
-		'CAPS_LOCK': 20,
-		'ESCAPE': 27,
-		'SPACE': 32,
-		'PAGE_UP': 33,
-		'PAGE_DOWN': 34,
-		'END': 35,
-		'HOME': 36,
-		'LEFT_ARROW': 37,
-		'UP_ARROW': 38,
-		'RIGHT_ARROW': 39,
-		'DOWN_ARROW': 40,
-		'INSERT': 45,
-		'DELETE': 46,
-		'HELP': 47,
-		'LEFT_WINDOW': 91,
-		'RIGHT_WINDOW': 92,
-		'SELECT': 93,
-		'NUMPAD_0': 96,
-		'NUMPAD_1': 97,
-		'NUMPAD_2': 98,
-		'NUMPAD_3': 99,
-		'NUMPAD_4': 100,
-		'NUMPAD_5': 101,
-		'NUMPAD_6': 102,
-		'NUMPAD_7': 103,
-		'NUMPAD_8': 104,
-		'NUMPAD_9': 105,
-		'NUMPAD_MULTIPLY': 106,
-		'NUMPAD_PLUS': 107,
-		'NUMPAD_ENTER': 108,
-		'NUMPAD_MINUS': 109,
-		'NUMPAD_PERIOD': 110,
-		'NUMPAD_DIVIDE': 111,
-		'F1': 112,
-		'F2': 113,
-		'F3': 114,
-		'F4': 115,
-		'F5': 116,
-		'F6': 117,
-		'F7': 118,
-		'F8': 119,
-		'F9': 120,
-		'F10': 121,
-		'F11': 122,
-		'F12': 123,
-		'F13': 124,
-		'F14': 125,
-		'F15': 126,
-		'NUM_LOCK': 144,
-		'SCROLL_LOCK': 145
+	'keys': {   'BACKSPACE': 8, 'TAB': 9, 'CLEAR': 12, 'ENTER': 13, 'SHIFT': 16, 'CTRL': 17, 'ALT': 18, 'PAUSE': 19, 'CAPS_LOCK': 20, 
+		    'ESCAPE': 27, 'SPACE': 32, 'PAGE_UP': 33, 'PAGE_DOWN': 34, 'END': 35, 'HOME': 36, 'LEFT_ARROW': 37, 'UP_ARROW': 38,
+		    'RIGHT_ARROW': 39, 'DOWN_ARROW': 40, 'INSERT': 45, 'DELETE': 46, 'HELP': 47, 'LEFT_WINDOW': 91, 'RIGHT_WINDOW': 92,
+		    'SELECT': 93, 'NUMPAD_0': 96, 'NUMPAD_1': 97, 'NUMPAD_2': 98, 'NUMPAD_3': 99, 'NUMPAD_4': 100, 'NUMPAD_5': 101,
+		    'NUMPAD_6': 102, 'NUMPAD_7': 103, 'NUMPAD_8': 104, 'NUMPAD_9': 105, 'NUMPAD_MULTIPLY': 106, 'NUMPAD_PLUS': 107,
+		    'NUMPAD_ENTER': 108, 'NUMPAD_MINUS': 109, 'NUMPAD_PERIOD': 110, 'NUMPAD_DIVIDE': 111, 'F1': 112, 'F2': 113, 'F3': 114,
+		    'F4': 115, 'F5': 116, 'F6': 117, 'F7': 118, 'F8': 119, 'F9': 120, 'F10': 121, 'F11': 122, 'F12': 123, 'F13': 124, 
+		    'F14': 125, 'F15': 126, 'NUM_LOCK': 144, 'SCROLL_LOCK': 145 }
+    });
+
+    /******************** timer **************************/
+    var timer = __modules__['timer'] = new Module('timer', 'built-in', {
+	'setTimeout': window.setTimeout,
+	'setInterval': window.setInterval,
+	'clearTimeout': window.clearTimeout,
+	'delay': function delay(f) {
+	    var __method = f, args = array(arguments).slice(1), timeout = args.shift() * 1000;
+	    return window.setTimeout(function() { return __method.apply(__method, args); }, timeout);
+	},
+	'defer': function defer(f) {
+	    var args = [0.01].concat(array(arguments).slice(1));
+	    return f.delay.apply(this, args);
 	}
     });
+
+    /******************** ajax **************************/
+    var activeRequestCount = 0;
+
+    var Responders = {
+	responders: [],
+	'register': function register(responder) {
+	    if (this.responders.indexOf(responder) != -1)
+	    this.responders.push(responder);
+	},
+	'unregister': function unregister(responder) {
+	    this.responders = this.responders.without(responder);
+	},
+	'dispatch': function dispatch(callback, request, transport, json) {
+	    for each (var responder in this.responders) {
+		if (callable(responder[callback])) {
+		    try {
+			responder[callback].apply(responder, [request, transport, json]);
+		    } catch (e) { }
+		}
+	    }
+	}
+    };
+
+    Responders.register({
+        'onCreate': function onCreate() { activeRequestCount++ },
+        'onComplete': function onComplete() { activeRequestCount-- }
+    });
+
+    //TODO: armar algo para podes pasar parametros.
+    var Base = type('Base', {
+	'__init__': function __init__(options) {
+	    this.options = {
+		method:       'post',
+		asynchronous: true,
+		contentType:  'application/x-www-form-urlencoded',
+		encoding:     'UTF-8',
+		parameters:   ''
+	    };
+	    extend(this.options, options || { });
+
+	    this.options.method = this.options.method.toLowerCase();
+
+	    if (type(this.options.parameters) == String)
+		this.options.parameters = this.options.parameters.to_query_params();
+	}
+    });
+
+    var Request = type('Request', Base, {
+	_complete: false,
+
+	'__init__': function __init__(url, options) {
+	    super(Base, this).__init__(options);
+	    this.transport = new sys.transport;
+	    this.request(url);
+	},
+
+	'request': function request(url) {
+	    this.url = url;
+	    this.method = this.options.method;
+	    var params = extend({}, this.options.parameters);
+
+	    if (['get', 'post'].indexOf(this.method) == -1) {
+		// simulate other verbs over post
+		params['_method'] = this.method;
+		this.method = 'post';
+	    }
+
+	    this.parameters = params;
+
+	    try {
+		var response = new Response(this);
+		if (this.options.onCreate) this.options.onCreate(response);
+		    Responders.dispatch('onCreate', this, response);
+
+		this.transport.open(this.method.toUpperCase(), this.url, this.options.asynchronous);
+
+		if (this.options.asynchronous) 
+		    timer.defer(getattr(this, 'respondToReadyState'), 1);
+
+		this.transport.onreadystatechange = getattr(this, 'onStateChange');
+		this.setRequestHeaders();
+
+		this.body = this.method == 'post' ? (this.options.postBody || params) : null;
+		this.transport.send(this.body);
+
+		/* Force Firefox to handle ready state 4 for synchronous requests */
+		if (!this.options.asynchronous && this.transport.overrideMimeType)
+		    this.onStateChange();
+	    }
+	    catch (e) {
+		this.dispatchException(e);
+	    }
+	},
+
+	'onStateChange': function onStateChange() {
+	    var readyState = this.transport.readyState;
+	    if (readyState > 1 && !((readyState == 4) && this._complete))
+	    this.respondToReadyState(this.transport.readyState);
+	},
+
+	'setRequestHeaders': function setRequestHeaders() {
+	    var headers = {
+		'X-Requested-With': 'XMLHttpRequest',
+		'X-Protopy-Version': sys.version,
+		'Accept': 'text/javascript, text/html, application/xml, text/xml, */*'
+	    };
+
+	    if (this.method == 'post') {
+		headers['Content-type'] = this.options.contentType + (this.options.encoding ? '; charset=' + this.options.encoding : '');
+
+	    /* Force "Connection: close" for older Mozilla browsers to work
+	    * around a bug where XMLHttpRequest sends an incorrect
+	    * Content-length header. See Mozilla Bugzilla #246651.
+	    */
+	    if (this.transport.overrideMimeType &&
+		(navigator.userAgent.match(/Gecko\/(\d{4})/) || [0,2005])[1] < 2005)
+		    headers['Connection'] = 'close';
+	    }
+
+	    // user-defined headers
+	    if (this.options.requestHeaders && type(this.options.requestHeaders) == Object)
+		var extras = this.options.requestHeaders;
+
+	    if (extras && type(extras.push) == Function)
+		for (var i = 0, length = extras.length; i < length; i += 2)
+		    headers[extras[i]] = extras[i+1];
+	    
+	    for (var name in headers)
+		this.transport.setRequestHeader(name, headers[name]);
+	},
+
+	'success': function success() {
+	    var status = this.getStatus();
+	    return !status || (status >= 200 && status < 300);
+	},
+
+	'getStatus': function getStatus() {
+	    try {
+	    return this.transport.status || 0;
+	    } catch (e) { return 0 }
+	},
+
+	'respondToReadyState': function respondToReadyState(readyState) {
+	    var state = Request.Events[readyState], response = new Response(this);
+
+	    if (state == 'Complete') {
+		try {
+		    this._complete = true;
+		    (this.options['on' + response.status]
+		    || this.options['on' + (this.success() ? 'Success' : 'Failure')]
+		    || function(){})(response);
+		} catch (e) {
+		    this.dispatchException(e);
+		}
+
+		var contentType = response.getHeader('Content-type');
+	    }
+	    try {
+		(this.options['on' + state] || function(){})(response);
+		Responders.dispatch('on' + state, this, response);
+	    } catch (e) {
+		this.dispatchException(e);
+	    }
+
+	    if (state == 'Complete') {
+	    // avoid memory leak in MSIE: clean up
+		this.transport.onreadystatechange = function(){};
+	    }
+	},
+
+	'isSameOrigin': function isSameOrigin() {
+	    var m = this.url.match(/^\s*https?:\/\/[^\/]*/);
+	    return !m || (m[0] == '#{protocol}//#{domain}#{port}'.interpolate({
+		protocol: location.protocol,
+		domain: document.domain,
+		port: location.port ? ':' + location.port : ''
+	    }));
+	},
+
+	'getHeader': function getHeader(name) {
+	    try {
+	    return this.transport.getResponseHeader(name) || null;
+	    } catch (e) { return null }
+	},
+
+	'dispatchException': function dispatchException(exception) {
+	    (this.options.onException || function(){})(this, exception);
+	    Responders.dispatch('onException', this, exception);
+	}
+    });
+
+    Request.Events = ['Uninitialized', 'Loading', 'Loaded', 'Interactive', 'Complete'];
+
+    var Response = type('Response', {
+	'__init__': function __init__(request){
+	    this.request = request;
+	    var transport  = this.transport  = request.transport,
+		readyState = this.readyState = transport.readyState;
+
+	    if((readyState > 2 && !sys.browser.IE) || readyState == 4) {
+		this.status       = this.getStatus();
+		this.statusText   = this.getStatusText();
+		this.responseText = String.interpret(transport.responseText);
+	    }
+
+	    if(readyState == 4) {
+		var xml = transport.responseXML;
+		this.responseXML  = (!xml) ? null : xml;
+	    }
+	},
+
+	status:      0,
+	statusText: '',
+
+	getStatus: Request.prototype.getStatus,
+
+	'getStatusText': function getStatusText() {
+	    try {
+		return this.transport.statusText || '';
+	    } catch (e) { return '' }
+	},
+
+	getHeader: Request.prototype.getHeader,
+
+	'getAllHeaders': function getAllHeaders() {
+	    try {
+	    return this.getAllResponseHeaders();
+	    } catch (e) { return null }
+	},
+
+	'getResponseHeader': function getResponseHeader(name) {
+	    return this.transport.getResponseHeader(name);
+	},
+
+	'getAllResponseHeaders': function getAllResponseHeaders() {
+	    return this.transport.getAllResponseHeaders();
+	}
+    });
+    var ajax = __modules__['ajax'] = new Module('ajax', 'built-in', {
+	'Request': Request,
+	'Response': Response
+    });
+    /******************** DOM **************************/
 
     /******************** Populate **************************/
     //__main__ module
@@ -542,8 +719,6 @@
 
     //Populate exceptions
     __builtin__(__modules__['exceptions']);
-
-    __modules__['sys'] = new Module('sys', 'built-in', { 'path': __path__ });
 
     __extend__(true, __modules__['__main__']['__builtins__'], __modules__['__builtin__']);
     __extend__(true, window, __modules__['__main__']);
@@ -556,9 +731,6 @@
         '$D': __doc__,
 	'object': object,
 	'type': type,
-	'getattr': getattr,
-	'setattr': setattr,
-	'hasattr': hasattr,
 	'extend': function extend() {return __extend__.apply(this, [false].concat(array(arguments)));},
 	'ls': function ls(obj){ return keys(__modules__[(obj && obj['__name__']) || this['__name__']]); },
 	'locals': function locals(){ return __modules__[this['__name__']]; },
@@ -690,6 +862,44 @@
         }
     });
 
+    var Template = type('Template', {
+        //Static
+        Pattern: /(^|.|\r|\n)(%\((.+?)\))s/,
+    },{
+	//Prototype
+	'__init__': function __init__(template, pattern) {
+	    this.template = str(template);
+	    this.pattern = pattern || Template.Pattern;
+	},
+
+	'evaluate': function evaluate(object) {
+	    if (callable(object.toTemplateReplacements))
+		object = object.toTemplateReplacements();
+
+	    return this.template.gsub(this.pattern, function(match) {
+		if (object == null) return '';
+
+		var before = match[1] || '';
+		if (before == '\\') return match[2];
+
+		var ctx = object, expr = match[3];
+		var pattern = /^([^.[]+|\[((?:.*?[^\\])?)\])(\.|\[|$)/;
+		match = pattern.exec(expr);
+		if (match == null) return before;
+
+		while (match != null) {
+		    var comp = match[1].startswith('[') ? match[2].gsub('\\\\]', ']') : match[1];
+		    ctx = ctx[comp];
+		    if (null == ctx || '' == match[3]) break;
+		    expr = expr.substring('[' == match[3] ? match[1].length : match[0].length);
+		    match = pattern.exec(expr);
+		}
+
+		return before + String.interpret(ctx);
+	    });
+	}
+    });
+
     var __HASHTABLE__  = "w5Q2KkFts3deLIPg8Nynu_JAUBZ9YxmH1XW47oDpa6lcjMRfi0CrhbGSOTvqzEV";
 
     function hash(object) {
@@ -724,14 +934,51 @@
     id.next = function () { return id.current += 1; };
     id.__doc__ = "I'm sorry";
 
+    function getattr(object, name, def) {
+	//TODO: validar argumentos
+        var attr = null;
+        if (object) {
+            attr = object[name];
+            if (typeof(attr) !== 'undefined') {
+                if (type(attr) == Function && typeof(attr['__new__']) === 'undefined') {
+                    var method = attr, obj = object;
+                    return function() { return method.apply(obj, array(arguments)); }
+                } else {
+                    return attr;
+                }
+            }
+        }
+        if (typeof(def) === 'undefined')
+	   throw new AttributeError(object + ' has no attribute ' + name);
+	else
+	   return def;
+    }
+    
+    function setattr(object, name, value) {
+	object[name] = value;
+    }
+
+    function hasattr(object, name){
+	try {
+	    getattr(object, name);
+	    return true;
+	} catch (e if e instanceof AttributeError){
+	    return false;
+	}
+    }
+
     //Populate builtin
     $B({
         'super': super,
         'isinstance': isinstance,
         'issubclass': issubclass,
         'Arguments': Arguments,
-        'hash': hash,
+        'Template': Template,
+	'hash': hash,
         'id': id,
+	'getattr': getattr,
+	'setattr': setattr,
+	'hasattr': hasattr,
         'assert': function assert( test, text ) {
             if ( test === false )
                 throw new AssertionError( text );
@@ -753,7 +1000,7 @@
                 if (type(number) != Number) throw new TypeError('An integer is required');
                 return String.fromCharCode(number);
         },
-        'ord': function(ascii) { 
+        'ord': function ord(ascii) {
             if (type(number) != String) throw new TypeError('An string is required');
             return ascii.charCodeAt(0);
         },
@@ -764,11 +1011,11 @@
             return i;
         },
         //no se porque no anda el dir
-        'equal': function(object1, object2){
+        'equal': function equal(object1, object2){
             if (callable(object1['__eq__'])) return object1.__eq__(object2);
             return object1 == object2;
         },
-        'nequal': function(object1, object2){
+        'nequal': function nequal(object1, object2){
             if (callable(object1['__ne__'])) return object1.__ne__(object2);
             return object1 != object2;
         },
@@ -869,7 +1116,7 @@
             for (var i = xstart; i < xstop; i += xstep)
                 yield i;
         },
-        'zip': function(){
+        'zip': function zip(){
             var args = array(arguments);
     
             var collections = args.map(array);
@@ -885,20 +1132,6 @@
 
 //------------------------------------ Extendin JavaScript --------------------------------//
 (function(){
-    //--------------------------------------- Functions -------------------------------------//
-    extend(Function.prototype, {
-	
-	'delay': function delay() {
-	    var __method = this, args = array(arguments), timeout = args.shift() * 1000;
-	    return window.setTimeout(function() { return __method.apply(__method, args); }, timeout);
-	},
-
-	'defer': function defer() {
-	    var args = [0.01].concat(array(arguments));
-	    return this.delay.apply(this, args);
-	}
-    });
-
     //--------------------------------------- String -------------------------------------//
     extend(String, {
 	'interpret': function interpret(value) {
@@ -976,12 +1209,12 @@
 	},
 
 	'strip_scripts': function strip_scripts() {
-	    return this.replace(new RegExp(Protopy.ScriptFragment, 'img'), '');
+	    return this.replace(new RegExp(sys.ScriptFragment, 'img'), '');
 	},
 
 	'extract_scripts': function extract_scripts() {
-	    var matchAll = new RegExp(Protopy.ScriptFragment, 'img');
-	    var matchOne = new RegExp(Protopy.ScriptFragment, 'im');
+	    var matchAll = new RegExp(sys.ScriptFragment, 'img');
+	    var matchOne = new RegExp(sys.ScriptFragment, 'im');
 	    return (this.match(matchAll) || []).map(function(scriptTag) {
 	    return (scriptTag.match(matchOne) || ['', ''])[1];
 	    });
@@ -1101,361 +1334,6 @@
 })();
 
 //--------------------------------------- More builtins -----------------------------------------//
-(function(){
-
-    var Template = type('Template', {
-        //Static
-        Pattern: /(^|.|\r|\n)(%\((.+?)\))s/,
-    },{
-	//Prototype
-    '__init__': function __init__(template, pattern) {
-	this.template = str(template);
-	this.pattern = pattern || Template.Pattern;
-    },
-
-    'evaluate': function evaluate(object) {
-	if (callable(object.toTemplateReplacements))
-	object = object.toTemplateReplacements();
-
-	return this.template.gsub(this.pattern, function(match) {
-	if (object == null) return '';
-
-	var before = match[1] || '';
-	if (before == '\\') return match[2];
-
-	var ctx = object, expr = match[3];
-	var pattern = /^([^.[]+|\[((?:.*?[^\\])?)\])(\.|\[|$)/;
-	match = pattern.exec(expr);
-	if (match == null) return before;
-
-	while (match != null) {
-	    var comp = match[1].startswith('[') ? match[2].gsub('\\\\]', ']') : match[1];
-	    ctx = ctx[comp];
-	    if (null == ctx || '' == match[3]) break;
-	    expr = expr.substring('[' == match[3] ? match[1].length : match[0].length);
-	    match = pattern.exec(expr);
-	}
-
-	return before + String.interpret(ctx);
-	});
-    }
-    });
-
-    var Try = {
-	'these': function these() {
-	    var returnValue;
-	    for (var i = 0, length = arguments.length; i < length; i++) {
-		var lambda = arguments[i];
-		try {
-		    returnValue = lambda();
-		    break;
-		} catch (e) { }
-	    }
-	    return returnValue; } 
-    };
-
-    //--------------------------------------- Ajax ----------------------------------------------//
-
-    var Ajax = {
-	'getTransport': function getTransport() {
-	    return Try.these(
-	    function() {return new XMLHttpRequest()},
-	    function() {return new ActiveXObject('Msxml2.XMLHTTP')},
-	    function() {return new ActiveXObject('Microsoft.XMLHTTP')}
-	    ) || false;
-	},
-	activeRequestCount: 0
-    };
-
-    Ajax.Responders = {
-	responders: [],
-
-	'register': function register(responder) {
-	    if (!include(this.responders, responder))
-	    this.responders.push(responder);
-	},
-
-	'unregister': function unregister(responder) {
-	    this.responders = this.responders.without(responder);
-	},
-
-	'dispatch': function dispatch(callback, request, transport, json) {
-	    for each (var responder in this.responders) {
-	    if (callable(responder[callback])) {
-		try {
-		responder[callback].apply(responder, [request, transport, json]);
-		} catch (e) { }
-	    }
-	    }
-	}
-    };
-
-    Ajax.Responders.register({
-        'onCreate': function() { Ajax.activeRequestCount++ },
-        'onComplete': function onComplete() { Ajax.activeRequestCount-- }
-    });
-
-    Ajax.Base = type('Base', {
-	'__init__': function __init__(options) {
-	    this.options = {
-		method:       'post',
-		asynchronous: true,
-		contentType:  'application/x-www-form-urlencoded',
-		encoding:     'UTF-8',
-		parameters:   '',
-		evalJSON:     true,
-		evalJS:       true
-	    };
-	    extend(this.options, options || { });
-
-	    this.options.method = this.options.method.toLowerCase();
-
-	    if (type(this.options.parameters) == String)
-	    this.options.parameters = this.options.parameters.to_query_params();
-	}
-    });
-
-    Ajax.Request = type('Request', Ajax.Base, {
-	_complete: false,
-
-	'__init__': function __init__(url, options) {
-	    super(Ajax.Base, this).__init__(options);
-	    this.transport = Ajax.getTransport();
-	    this.request(url);
-	},
-
-	'request': function request(url) {
-	    this.url = url;
-	    this.method = this.options.method;
-	    var params = extend({}, this.options.parameters);
-
-	    if (!include(['get', 'post'], this.method)) {
-	    // simulate other verbs over post
-	    params['_method'] = this.method;
-	    this.method = 'post';
-	    }
-
-	    this.parameters = params;
-
-	    try {
-	    var response = new Ajax.Response(this);
-	    if (this.options.onCreate) this.options.onCreate(response);
-	    Ajax.Responders.dispatch('onCreate', this, response);
-
-	    this.transport.open(this.method.toUpperCase(), this.url,
-		this.options.asynchronous);
-
-	    if (this.options.asynchronous) getattr(this, 'respondToReadyState').defer(1);
-
-	    this.transport.onreadystatechange = getattr(this, 'onStateChange');
-	    this.setRequestHeaders();
-
-	    this.body = this.method == 'post' ? (this.options.postBody || params) : null;
-	    this.transport.send(this.body);
-
-	    /* Force Firefox to handle ready state 4 for synchronous requests */
-	    if (!this.options.asynchronous && this.transport.overrideMimeType)
-		this.onStateChange();
-
-	    }
-	    catch (e) {
-	    this.dispatchException(e);
-	    }
-	},
-
-	'onStateChange': function onStateChange() {
-	    var readyState = this.transport.readyState;
-	    if (readyState > 1 && !((readyState == 4) && this._complete))
-	    this.respondToReadyState(this.transport.readyState);
-	},
-
-	'setRequestHeaders': function setRequestHeaders() {
-	    var headers = {
-	    'X-Requested-With': 'XMLHttpRequest',
-	    'X-Protopy-Version': Protopy.Version,
-	    'Accept': 'text/javascript, text/html, application/xml, text/xml, */*'
-	    };
-
-	    if (this.method == 'post') {
-	    headers['Content-type'] = this.options.contentType +
-		(this.options.encoding ? '; charset=' + this.options.encoding : '');
-
-	    /* Force "Connection: close" for older Mozilla browsers to work
-	    * around a bug where XMLHttpRequest sends an incorrect
-	    * Content-length header. See Mozilla Bugzilla #246651.
-	    */
-	    if (this.transport.overrideMimeType &&
-		(navigator.userAgent.match(/Gecko\/(\d{4})/) || [0,2005])[1] < 2005)
-		    headers['Connection'] = 'close';
-	    }
-
-	    // user-defined headers
-	    if (typeof this.options.requestHeaders == 'object') {
-	    var extras = this.options.requestHeaders;
-
-	    if (callable(extras.push))
-		for (var i = 0, length = extras.length; i < length; i += 2)
-		headers[extras[i]] = extras[i+1];
-	    else
-		$H(extras).each(function(pair) { headers[pair.key] = pair.value });
-	    }
-
-	    for (var name in headers)
-	    this.transport.setRequestHeader(name, headers[name]);
-	},
-
-	'success': function success() {
-	    var status = this.getStatus();
-	    return !status || (status >= 200 && status < 300);
-	},
-
-	'getStatus': function getStatus() {
-	    try {
-	    return this.transport.status || 0;
-	    } catch (e) { return 0 }
-	},
-
-	'respondToReadyState': function respondToReadyState(readyState) {
-	    var state = Ajax.Request.Events[readyState], response = new Ajax.Response(this);
-
-	    if (state == 'Complete') {
-	    try {
-		this._complete = true;
-		(this.options['on' + response.status]
-		|| this.options['on' + (this.success() ? 'Success' : 'Failure')]
-		|| Protopy.emptyfunction)(response, response.headerJSON);
-	    } catch (e) {
-		this.dispatchException(e);
-	    }
-
-	    var contentType = response.getHeader('Content-type');
-	    if (this.options.evalJS == 'force'
-		|| (this.options.evalJS && this.isSameOrigin() && contentType
-		&& contentType.match(/^\s*(text|application)\/(x-)?(java|ecma)script(;.*)?\s*$/i)))
-		this.evalResponse();
-	    }
-
-	    try {
-	    (this.options['on' + state] || Protopy.emptyfunction)(response, response.headerJSON);
-	    Ajax.Responders.dispatch('on' + state, this, response, response.headerJSON);
-	    } catch (e) {
-	    this.dispatchException(e);
-	    }
-
-	    if (state == 'Complete') {
-	    // avoid memory leak in MSIE: clean up
-	    this.transport.onreadystatechange = Protopy.emptyfunction;
-	    }
-	},
-
-	'isSameOrigin': function isSameOrigin() {
-	    var m = this.url.match(/^\s*https?:\/\/[^\/]*/);
-	    return !m || (m[0] == '#{protocol}//#{domain}#{port}'.interpolate({
-	    protocol: location.protocol,
-	    domain: document.domain,
-	    port: location.port ? ':' + location.port : ''
-	    }));
-	},
-
-	'getHeader': function getHeader(name) {
-	    try {
-	    return this.transport.getResponseHeader(name) || null;
-	    } catch (e) { return null }
-	},
-
-	'evalResponse': function evalResponse() {
-	    try {
-	    return eval((this.transport.responseText || '').unfilter_JSON());
-	    } catch (e) {
-	    this.dispatchException(e);
-	    }
-	},
-
-	'dispatchException': function dispatchException(exception) {
-	    (this.options.onException || Protopy.emptyfunction)(this, exception);
-	    Ajax.Responders.dispatch('onException', this, exception);
-	}
-    });
-
-    Ajax.Request.Events = ['Uninitialized', 'Loading', 'Loaded', 'Interactive', 'Complete'];
-
-    Ajax.Response = type('Response', {
-    '__init__': function __init__(request){
-	this.request = request;
-	var transport  = this.transport  = request.transport,
-	    readyState = this.readyState = transport.readyState;
-
-	if((readyState > 2 && !Protopy.Browser.IE) || readyState == 4) {
-	this.status       = this.getStatus();
-	this.statusText   = this.getStatusText();
-	this.responseText = String.interpret(transport.responseText);
-	this.headerJSON   = this._getHeaderJSON();
-	}
-
-	if(readyState == 4) {
-	var xml = transport.responseXML;
-	this.responseXML  = (!xml) ? null : xml;
-	this.responseJSON = this._getResponseJSON();
-	}
-    },
-
-    status:      0,
-    statusText: '',
-
-    getStatus: Ajax.Request.prototype.getStatus,
-
-    'getStatusText': function getStatusText() {
-	try {
-	return this.transport.statusText || '';
-	} catch (e) { return '' }
-    },
-
-    getHeader: Ajax.Request.prototype.getHeader,
-
-    'getAllHeaders': function getAllHeaders() {
-	try {
-	return this.getAllResponseHeaders();
-	} catch (e) { return null }
-    },
-
-    'getResponseHeader': function getResponseHeader(name) {
-	return this.transport.getResponseHeader(name);
-    },
-
-    'getAllResponseHeaders': function getAllResponseHeaders() {
-	return this.transport.getAllResponseHeaders();
-    },
-
-    '_getHeaderJSON': function _getHeaderJSON() {
-	var json = this.getHeader('X-JSON');
-	if (!json) return null;
-	json = decodeURIComponent(escape(json));
-	try {
-	return json.evalJSON(this.request.options.sanitizeJSON ||
-	    !this.request.isSameOrigin());
-	} catch (e) {
-	this.request.dispatchException(e);
-	}
-    },
-
-    '_getResponseJSON': function _getResponseJSON() {
-	var options = this.request.options;
-	if (!options.evalJSON || (options.evalJSON != 'force' &&
-	!include((this.getHeader('Content-type') || ''), 'application/json')) ||
-	    this.responseText.blank())
-	    return null;
-	try {
-	return this.responseText.evalJSON(options.sanitizeJSON ||
-	    !this.request.isSameOrigin());
-	} catch (e) {
-	this.request.dispatchException(e);
-	}
-    }
-    });
-
-    $B({'Template': Template, 'Try': Try, 'Ajax':Ajax});
-})();
-
 //More Data types
 (function(){
     var Dict = type('Dict', [object], {

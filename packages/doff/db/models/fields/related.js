@@ -770,7 +770,7 @@ var ManyToManyField = type('ManyToManyField', RelatedField, {
 
         super(RelatedField, this).__init__(arguments.kwargs);
 
-        msg = 'Hold down "Control", or "Command" on a Mac, to select more than one.';
+        var msg = 'Hold down "Control", or "Command" on a Mac, to select more than one.';
         this.help_text = this.help_text + ' ' + msg;
     },
 

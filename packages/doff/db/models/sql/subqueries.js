@@ -273,7 +273,7 @@ var UpdateQuery = type('UpdateQuery', Query, {
             // The fast path. Filters and updates in one query.
             this.add_filter(['pk__in', query]);
         }
-        for each (alias in this.tables.slice(1))
+        for each (var alias in this.tables.slice(1))
             this.alias_refcount[alias] = 0;
     },
 

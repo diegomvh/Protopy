@@ -1,5 +1,6 @@
 $L('doff.template', 'TemplateDoesNotExist');
 $L('doff.conf', 'settings');
+$L('ajax');
 
 function get_template_sources(template_name, template_dirs) {
 
@@ -19,7 +20,7 @@ function load_template_source(template_name, template_dirs) {
         error_msg = '';
     for each (var path in paths){
         /* Levantar los templates */
-        new Ajax.Request(path, {
+        new Request(path, {
             asynchronous : false,
             'onSuccess': function onSuccess(transport) {
                 template = (transport.responseText);

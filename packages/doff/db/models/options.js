@@ -72,7 +72,7 @@ var Options = type('Options', {
                 if (name.startswith('_'))
                     delete meta_attrs[name];
             }
-            for each (attr_name in DEFAULT_NAMES) {
+            for each (var attr_name in DEFAULT_NAMES) {
                 if (attr_name in meta_attrs)
                     this[attr_name] = meta_attrs[attr_name];
                 else if (this.meta[attr_name])
@@ -129,7 +129,7 @@ var Options = type('Options', {
         // self.duplicate_targets will map each duplicate field column to the
         // columns it duplicates.
         var collections = {};
-        for each (column in this.duplicate_targets) {
+        for each (var column in this.duplicate_targets) {
             var target = this.duplicate_targets[column];
             if (!collections[target])
                 collections[target] = new Set();
@@ -139,7 +139,7 @@ var Options = type('Options', {
         for each (elt in collections) {
             if (elt.length == 1)
                 continue;
-            for each (column in elt)
+            for each (var column in elt)
                 this.duplicate_targets[column] = elt.difference(new Set([column]));
         }
     },

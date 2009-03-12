@@ -1,8 +1,8 @@
 var glb_settings = $L('doff.conf.global_settings');
+$L('ajax', 'Request');
 
-new Ajax.Request(window.settings, {
+new Request(window.settings, {
         asynchronous : false,
-        evalJS: false,
         'onSuccess': function onSuccess(transport) {
             code = '(' + transport.responseText + ');';
             var project = eval(code);
