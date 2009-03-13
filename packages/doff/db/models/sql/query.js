@@ -520,7 +520,7 @@ var Query = type('Query', {
             if (join_type && !first)
                 result.push('%s %s%s ON (%s.%s = %s.%s)'.subs(join_type, qn(name), alias_str, qn(lhs), qn2(lhs_col), qn(alias), qn2(col)));
             else {
-                connector = !first && ', ' || '';
+                var connector = !first && ', ' || '';
                 result.push('%s%s%s'.subs(connector, qn(name), alias_str));
             }
             first = false;
@@ -531,7 +531,7 @@ var Query = type('Query', {
             // calls increments the refcount, so an alias refcount of one means
             // this is the only reference.
             if (!(alias in this.alias_map) || this.alias_refcount[alias] == 1) {
-                connector = !first && ', ' || '';
+                var connector = !first && ', ' || '';
                 result.push('%s%s'.(connector, qn(alias)));
                 first = false;
             }
@@ -726,7 +726,7 @@ var Query = type('Query', {
         */
     'table_alias': function table_alias(table_name, create) {
         create = create || false;
-        current = this.table_map[table_name];
+        var current = this.table_map[table_name];
         if (!create && current) {
             alias = current[0];
             this.alias_refcount[alias] = this.alias_refcount[alias] + 1;
@@ -1621,12 +1621,12 @@ var Query = type('Query', {
         var field_dict = new Dict();
         for each (var field in fields) {
             var d = field_dict;
-            for (part in field.split(LOOKUP_SEP))
+            for each (var part in field.split(LOOKUP_SEP))
                 d = d.setdefault(part, {});
+        }
         this.select_related = field_dict;
         this.related_select_cols = [];
         this.related_select_fields = [];
-        }
     },
 
     /*
@@ -1764,7 +1764,7 @@ var Query = type('Query', {
     'add_q': function add_q(q_object, used_aliases) {
         used_aliases = used_aliases || this.used_aliases;
         var connector = AND;
-	var subtree = false;
+        var subtree = false;
         if (callable(q_object['add_to_query'])) {
             q_object.add_to_query(this, used_aliases);
         } else {
@@ -1784,7 +1784,7 @@ var Query = type('Query', {
                     //add_filter(filter_expr, connector, negate, trim, can_reuse, process_extras)
                     this.add_filter(child, connector, q_object.negated, null, used_aliases)
                 }
-		if (connector == OR)
+                if (connector == OR)
                     // Aliases that were newly added or not used at all need to
                     // be promoted to outer joins if they are nullable relations.
                     // (they shouldn't turn the whole conditional into the empty

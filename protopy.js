@@ -1380,15 +1380,15 @@
             return len(this.collect);
         },
 
-        '_populate': function _populate() {
+    '_populate': function _populate() {
             this._kwargs = {};
             var haskwargs = false;
-            for (p in this._defaults || {})
+            for (var p in this._defaults || {})
                 this._kwargs[p] = this._defaults[p];
-	    var last = this.collect[this.collect.length - 1];
+            var last = this.collect[this.collect.length - 1];
             if (last && type(last) == Object) {
                 haskwargs = true;
-                for (p in last)
+                for (var p in last)
                     this._kwargs[p] = last[p];
             }
             if (this.names.length < this.collect.length)

@@ -846,7 +846,7 @@ function get_cached_row(klass, row, index_start, max_depth, cur_depth, requested
         obj = null;
     else
         obj = new klass(fields);
-    for (f in klass._meta.fields) {
+    for (var f in klass._meta.fields) {
         if (!select_related_descend(f, restricted, requested))
             continue;
         if (restricted)

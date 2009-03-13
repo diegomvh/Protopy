@@ -620,7 +620,7 @@ var ForeignKey = type('ForeignKey', RelatedField, {
         var to_field = null, rel_class = arguments.kwargs['rel_class'];
 
         try {
-            to_name = to._meta.object_name.toLowerCase();
+            var to_name = to._meta.object_name.toLowerCase();
         } catch (e if e instanceof TypeError ) {
             assert(type(to) == String, "%s is invalid. First parameter to ForeignKey must be either a model, a model name, or the string %s".subs(to, RECURSIVE_RELATIONSHIP_CONSTANT));
         } finally {
@@ -675,18 +675,18 @@ var ForeignKey = type('ForeignKey', RelatedField, {
     },
 
     'contribute_to_class': function contribute_to_class(cls, name) {
-	//TODO: aca esta la parte chancha grosa de los __set__ y los __get__
-	// a la clase le mando el objeto luego en la instanciacion hago los enlaces
-	super(RelatedField, this).contribute_to_class(cls, name);
-	var frod = new ReverseSingleRelatedObjectDescriptor(this);
-	var attr = this.name;
-	cls.prototype.__defineGetter__(attr, function(){ return frod.__get__(this, this.constructor); });
-	cls.prototype.__defineSetter__(attr, function(value){ return frod.__set__(this, this.constructor, value); });
-	if (type(this.rel.to) == String)
-	    target = this.rel.to;
-	else
-	    target = this.rel.to._meta.db_table
-	cls._meta.duplicate_targets[this.column] = [target, "o2m"];
+        //TODO: aca esta la parte chancha grosa de los __set__ y los __get__
+        // a la clase le mando el objeto luego en la instanciacion hago los enlaces
+        super(RelatedField, this).contribute_to_class(cls, name);
+        var frod = new ReverseSingleRelatedObjectDescriptor(this);
+        var attr = this.name;
+        cls.prototype.__defineGetter__(attr, function(){ return frod.__get__(this, this.constructor); });
+        cls.prototype.__defineSetter__(attr, function(value){ return frod.__set__(this, this.constructor, value); });
+        if (type(this.rel.to) == String)
+            var target = this.rel.to;
+        else
+            var target = this.rel.to._meta.db_table
+        cls._meta.duplicate_targets[this.column] = [target, "o2m"];
     },
 
     'contribute_to_related_class': function contribute_to_related_class(cls, related) {
@@ -798,7 +798,7 @@ var ManyToManyField = type('ManyToManyField', RelatedField, {
 	    return this._m2m_column_name_cache;
 	} else {
 	    if (this.rel.through) {
-		for (f in this.rel.through_model._meta.fields)
+		for (var f in this.rel.through_model._meta.fields)
 		    if (f['rel'] && f.rel && f.rel.to == related.model) {
 			this._m2m_column_name_cache = f.column;
 			break;
@@ -826,7 +826,7 @@ var ManyToManyField = type('ManyToManyField', RelatedField, {
 	} else {
 	    if (this.rel.through) {
 		found = false;
-		for (f in this.rel.through_model._meta.fields) {
+		for (var f in this.rel.through_model._meta.fields) {
 		    if (f['rel'] && f.rel && f.rel.to == related.parent_model) {
 			if (related.model == related.parent_model) {
 			    // If this is an m2m-intermediate to self,
@@ -933,9 +933,9 @@ var ManyToManyField = type('ManyToManyField', RelatedField, {
         }
 
         if (this.rel.to && type(this.rel.to) == String)
-            target = this.rel.to;
+            var target = this.rel.to;
         else
-            target = this.rel.to._meta.db_table;
+            var target = this.rel.to._meta.db_table;
         cls._meta.duplicate_targets[this.column] = [target, "m2m"]
     },
 
