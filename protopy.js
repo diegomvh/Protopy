@@ -51,7 +51,7 @@
     function __doc__(doc) {
         __modules__[this['__name__']]['__doc__'] = doc;
     }
-    
+
     //The module concept
     function Module(name, file, source) {
         this['__file__'] = file;
@@ -927,7 +927,7 @@
 	reg.quickTest.lastIndex = 0;
 	if( reg.quickTest.test( selectorGroups ) ) {
 	    elements = get_context_from_sequence_selector( selectorGroups, root, includeRoot, flat );
-	    return (cache[ cacheKey ] = elements.slice(0));
+	    return (cache[ cacheKey ] = decorate_elements(elements.slice(0)));
 	}
 	    
 	var groupsWorker, 
@@ -998,8 +998,8 @@
 	    
 	if( groups.length > 1 ) 
 	    elements = filter(elements);
-	    
-	return ( cache[ cacheKey ] = elements.slice(0));
+
+	return ( cache[ cacheKey ] = decorate_elements(elements.slice(0)));
     }
 
     function query_combinator( l, r, c ) {
@@ -1263,6 +1263,159 @@
 	}
     }
 
+    function decorate_elements(elements) {
+	var decorated = [];
+	//Decorando los elementos
+	for each (var element in elements) {
+	    if (!element.tagName) continue;
+	    var name = element.tagName.toLowerCase();
+	    if (name in TagNames)
+		extend(element, TagNames[name]);
+	    if (element.elements && element.elements.length != 0)
+		decorate_elements(element.elements);
+	    decorated.push(element);
+	}
+	return decorated;
+    }
+
+    var TagNames = {};
+    TagNames['form'] = {
+	'disable': function() {
+	    array(this.elements).forEach(function(e) {e.disable();});
+	},
+	'enable': function() {
+	    array(this.elements).forEach(function(e) {e.enable();});
+	},
+	'serialize': function() {
+	    var elements = array(this.elements);
+	    var data = elements.reduce(function(result, element) {
+		if (!element.disabled && element.name) {
+		    key = element.name; value = element.get_value();
+		    if (value != null && element.type != 'file' && (element.type != 'submit')) {
+			if (key in result) {
+			    // a key is already present; construct an array of values
+			    if (type(result[key]) != Array) 
+				result[key] = [result[key]];
+			    result[key].push(value);
+			} else result[key] = value;
+		    }
+		}
+		return result;
+	    }, {});
+
+	    return data;
+	}
+    };
+    
+    TagNames['input'] = TagNames['select'] = TagNames['textarea'] = {
+	serialize: function() {
+	    if (!this.disabled && this.name) {
+		var value = this.get_value();
+		if (value != undefined) {
+		    var pair = { };
+		    pair[this.name] = value;
+		    return pair;
+		}
+	    }
+	    return '';
+	},
+
+	get_value: function() {
+	    var method = this.tagName.toLowerCase();
+	    return Serializers[method](this);
+	},
+
+	set_value: function(value) {
+	    var method = this.tagName.toLowerCase();
+	    Serializers[method](this, value);
+	},
+
+	clear: function() {
+	    this.value = '';
+	},
+
+	present: function() {
+	    return this.value != '';
+	},
+
+	activate: function() {
+	    try {
+		this.focus();
+		if (this.select && (this.tagName.toLowerCase() != 'input' || !include(['button', 'reset', 'submit'], element.type)))
+		    this.select();
+	    } catch (e) { }
+	},
+
+	disable: function() {
+	    this.disabled = true;
+	},
+
+	enable: function() {
+	    this.disabled = false;
+	}
+    }
+
+    var Serializers = {
+	input: function(element, value) {
+	    switch (element.type.toLowerCase()) {
+	    case 'checkbox':
+	    case 'radio':
+		return this.inputSelector(element, value);
+	    default:
+		return this.textarea(element, value);
+	    }
+	},
+
+	inputSelector: function(element, value) {
+	    if (typeof(value) === 'undefined') return element.checked ? element.value : null;
+	    else element.checked = !!value;
+	},
+
+	textarea: function(element, value) {
+	    if (typeof(value) === 'undefined') return element.value;
+	    else element.value = value;
+	},
+
+	select: function(element, value) {
+	    if (typeof(value) === 'undefined')
+	    return this[element.type == 'select-one' ?
+		'selectOne' : 'selectMany'](element);
+	    else {
+	    var opt, currentValue, single = type(value) != Array;
+	    for (var i = 0, length = element.length; i < length; i++) {
+		opt = element.options[i];
+		currentValue = this.optionValue(opt);
+		if (single) {
+		    if (currentValue == value) {
+			opt.selected = true;
+			return;
+		    }
+		} else 
+		    opt.selected = include(value, currentValue);
+	    }
+	    }
+	},
+
+	selectOne: function(element) {
+	    var index = element.selectedIndex;
+	    return index >= 0 ? this.optionValue(element.options[index]) : null;
+	},
+
+	selectMany: function(element) {
+	    var values, length = element.length;
+	    if (!length) return null;
+
+	    for (var i = 0, values = []; i < length; i++) {
+	    var opt = element.options[i];
+	    if (opt.selected) values.push(this.optionValue(opt));
+	    }
+	    return values;
+	},
+
+	optionValue: function(opt) {
+	    return opt.hasAttribute('value') ? opt.value : opt.text;
+	}
+    };
     // Primer cambio
     var dom = __modules__['dom'] = new Module('dom', 'built-in', {
 	'query': query, 
@@ -1280,7 +1433,7 @@
         '$L': __load__,
         '$B': __builtins__,
         '$R': __resource__,
-        '$D': __doc__,
+	'$D': __doc__,
 	'$Q': query,
 	'object': object,
 	'type': type,
@@ -1291,11 +1444,9 @@
     });
 
     /******************** POPULATE **************************/
+    __extend__(true, window, main);
     __builtins__(builtin);
     __builtins__(exception);
-
-    __extend__(true, main['__builtins__'], builtin);
-    __extend__(true, window, main);
 })();
 
 // ******************************* MORE BUILTINS ************************************* //

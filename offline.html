@@ -20,11 +20,10 @@
 	<script type="text/javascript;version=1.7">
 
 
-			$L('doff.core.offline_support');
 			$L('event');
-			function link_handler(element){	
-				alert('hola');
-				print('hola', this, arguments);
+			function link_handler(event){	
+				print(this);
+				print(arguments);
 				return false;
 			}
 
@@ -35,7 +34,8 @@
 				console.log('me construyo');
 			},
 			listener: function () {
-				console.log('This: ', this, 'Arguments: ', arguments);
+				print(this);
+				print(arguments);
 			}
  
 			});

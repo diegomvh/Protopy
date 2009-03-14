@@ -1,4 +1,4 @@
-/* Copy */
+__doc__ = 'hola';
 
 var _copy_dispatch = {};
 _copy_dispatch[Array] = function _copy_Array(x) { return x };
