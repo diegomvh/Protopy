@@ -280,9 +280,9 @@ var QuerySet = type('QuerySet', {
     'iterator': function iterator() {
         var fill_cache = this.query.select_related;
         if (fill_cache instanceof Object)
-            requested = fill_cache;
+            var requested = fill_cache;
         else
-            requested = null
+            var requested = null
         var max_depth = this.query.max_depth
         var extra_select = this.query.extra_select.keys()
         var index_start = extra_select.length
@@ -830,14 +830,14 @@ var EmptyQuerySet = type('EmptyQuerySet', QuerySet, {
  * related attributes already populated.
  */
 function get_cached_row(klass, row, index_start, max_depth, cur_depth, requested) {
-    var max_depth = max_depth || 0;
-    var cur_depth = cur_depth || 0;
-    var requested = requested || null;
+    max_depth = max_depth || 0;
+    cur_depth = cur_depth || 0;
+    requested = requested || null;
     if (max_depth && !requested && cur_depth > max_depth)
         // We've recursed deeply enough; stop now.
         return null;
 
-    restricted = requested  != null;
+    var restricted = requested != null;
     index_end = index_start + klass._meta.fields.length;
     fields = row.slice(index_start,index_end);
     var list = [x for (x in fields) if (x)];
@@ -846,7 +846,7 @@ function get_cached_row(klass, row, index_start, max_depth, cur_depth, requested
         obj = null;
     else
         obj = new klass(fields);
-    for (f in klass._meta.fields) {
+    for (var f in klass._meta.fields) {
         if (!select_related_descend(f, restricted, requested))
             continue;
         if (restricted)

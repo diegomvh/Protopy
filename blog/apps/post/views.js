@@ -1,3 +1,4 @@
+$L('event');
 $L('blog.apps.post.models', 'Tag', 'Post', 'Usuario');
 $L('doff.forms');
 $L('doff.template');
@@ -8,6 +9,12 @@ $L('doff.template.context', 'Context');
 var PostForm = type('PostForm', forms.ModelForm, {
     'Meta': {
         'model': Post
+    }
+});
+
+var TagForm = type('TagForm', forms.ModelForm, {
+    'Meta': {
+        'model': Tag
     }
 });
 
@@ -39,9 +46,11 @@ function set_tags_by_title(post, tag_title){
 
 function show_posts(){
     var t = loader.get_template('post.html');
-    var form = new PostForm();
-    document.write(t.render(new Context({'tags': Tag.objects.all(), 'form': form, 'posts': Post.objects.all().order_by('-title')})));
-    document.close();
+    var formtag = new TagForm();
+    var formpost = new PostForm();
+    event.connect(window, 'load', function(){
+	$Q('#content')[0].innerHTML = t.render(new Context({'tags': Tag.objects.all(), 'formtag': formtag, 'formpost': formpost, 'posts': Post.objects.all().order_by('-title')}));
+    });
 }
 
 $P({ 'syncdb': syncdb,

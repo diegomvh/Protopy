@@ -33,13 +33,13 @@ var AppCache = type('AppCache', {
 
         if (this.loaded)
             return
-        for each (app_name in settings.INSTALLED_APPS) {
+        for each (var app_name in settings.INSTALLED_APPS) {
             if (app_name in this.handled)
                 continue
             this.load_app(app_name, true);
         }
         if (!this.nesting_level) {
-            for each (app_name in this.postponed)
+            for each (var app_name in this.postponed)
                 this.load_app(app_name);
             this.loaded = true;
         }

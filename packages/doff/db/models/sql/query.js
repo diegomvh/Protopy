@@ -455,13 +455,12 @@ var Query = type('Query', {
         opts = opts || this.model._meta;
         as_pairs = as_pairs || false;
         var table_alias = start_alias || this.tables[0];
-	var result = [];
-
+        var result = [];
         var root_pk = opts.pk.column;
         var seen = new Dict({'None': table_alias});
-        qn = getattr(this, 'quote_name_unless_alias');
-        qn2 = this.connection.ops.quote_name;
-        aliases = new Set();
+        var qn = getattr(this, 'quote_name_unless_alias');
+        var qn2 = this.connection.ops.quote_name;
+        var aliases = new Set();
         for each (var [field, model] in opts.get_fields_with_model()) {
             model = model || 'None';
             var alias = seen.get(model);
@@ -479,7 +478,7 @@ var Query = type('Query', {
                 col_aliases.add(c_alias);
                 aliases.add(c_alias);
             } else {
-                r = '%s.%s'.subs(qn(alias), qn2(field.column));
+                var r = '%s.%s'.subs(qn(alias), qn2(field.column));
                 result.push(r);
                 aliases.add(r);
                 if (with_aliases)
@@ -506,7 +505,7 @@ var Query = type('Query', {
         var qn = getattr(this, 'quote_name_unless_alias');
         var qn2 = this.connection.ops.quote_name;
         var first = true;
-        for each (alias in this.tables) {
+        for each (var alias in this.tables) {
             if (!this.alias_refcount[alias])
                 continue;
             try {
@@ -517,11 +516,11 @@ var Query = type('Query', {
                 // alias_map if they aren't in a join. That's OK. We skip them.
                 continue;
             }
-            alias_str = (alias != name && ' %s'.subs(alias) || '');
+            var alias_str = (alias != name && ' %s'.subs(alias) || '');
             if (join_type && !first)
                 result.push('%s %s%s ON (%s.%s = %s.%s)'.subs(join_type, qn(name), alias_str, qn(lhs), qn2(lhs_col), qn(alias), qn2(col)));
             else {
-                connector = !first && ', ' || '';
+                var connector = !first && ', ' || '';
                 result.push('%s%s%s'.subs(connector, qn(name), alias_str));
             }
             first = false;
@@ -532,7 +531,7 @@ var Query = type('Query', {
             // calls increments the refcount, so an alias refcount of one means
             // this is the only reference.
             if (!(alias in this.alias_map) || this.alias_refcount[alias] == 1) {
-                connector = !first && ', ' || '';
+                var connector = !first && ', ' || '';
                 result.push('%s%s'.(connector, qn(alias)));
                 first = false;
             }
@@ -563,7 +562,7 @@ var Query = type('Query', {
     'get_having': function get_having() {
         var result = [];
         var params = [];
-        for each (elt in this.having)
+        for each (var elt in this.having)
             if (callable(elt['as_sql'])) {
                 var [sql, params] = elt.as_sql();
                 result.push(sql);
@@ -585,11 +584,11 @@ var Query = type('Query', {
         */
     'get_ordering': function get_ordering() {
         if (bool(this.extra_order_by))
-            ordering = this.extra_order_by;
+            var ordering = this.extra_order_by;
         else if (!this.default_ordering)
-            ordering = this.order_by;
+            var ordering = this.order_by;
         else
-            ordering = bool(this.order_by)? this.order_by: this.model._meta.ordering;
+            var ordering = bool(this.order_by)? this.order_by: this.model._meta.ordering;
         var qn = getattr(this, 'quote_name_unless_alias');
         var qn2 = this.connection.ops.quote_name;
         var distinct = this.distinct;
@@ -604,7 +603,7 @@ var Query = type('Query', {
         // It's possible, due to model inheritance, that normal usage might try
         // to include the same field more than once in the ordering. We track
         // the table/column pairs we use and discard any after the first use.
-        processed_pairs = new Set();
+        var processed_pairs = new Set();
 
         for each (var field in ordering) {
             if (field == '?') {
@@ -626,30 +625,28 @@ var Query = type('Query', {
                 // on verbatim.
                 var [col, order] = get_order_dir(field, asc);
                 var [table, col] = col.split('.', 1);
-                if (![table, col] in processed_pairs)
+                if (!include(processed_pairs, [table, col]))
                     var elt = '%s.%s'.subs(qn(table), col);
                     processed_pairs.add([table, col]);
                     if (!distinct || elt in select_aliases)
                         result.push('%s %s'.subs(elt, order));
-            }
-            else if (!(this.extra_select.has_key(get_order_dir(field)[0]))) {
+            } else if (!(this.extra_select.has_key(get_order_dir(field)[0]))) {
                 // 'col' is of the form 'field' or 'field1__field2' or
                 // '-field1__field2__field', etc.
                 // find_ordering_name(name, opts, alias, default_order, already_seen)
                 for each (var element in this.find_ordering_name(field, this.model._meta, null, asc)) {
                     var [table, col, order] = element;
                     if (!(include(processed_pairs, [table, col]))) {
-                        elt = '%s.%s'.subs(qn(table), qn2(col));
+                        var elt = '%s.%s'.subs(qn(table), qn2(col));
                         processed_pairs.add([table, col]);
                         if (distinct && !(elt in select_aliases))
                             ordering_aliases.push(elt);
                         result.push('%s %s'.subs(elt, order));
                     }
                 }
-            }
-            else {
+            } else {
                 var [col, order] = get_order_dir(field, asc);
-                elt = qn2(col);
+                var elt = qn2(col);
                 if (distinct && !(col in select_aliases))
                     ordering_aliases.push(elt);
                 result.push('%s %s'.subs(elt, order));
@@ -729,7 +726,7 @@ var Query = type('Query', {
         */
     'table_alias': function table_alias(table_name, create) {
         create = create || false;
-        current = this.table_map[table_name];
+        var current = this.table_map[table_name];
         if (!create && current) {
             alias = current[0];
             this.alias_refcount[alias] = this.alias_refcount[alias] + 1;
@@ -958,9 +955,10 @@ var Query = type('Query', {
         nullable = nullable || false;
         reuse = reuse || null;
         var [lhs, table, lhs_col, col] = connection;
-        if (lhs in this.alias_map) {
-            lhs_table = this.alias_map[lhs][TABLE_NAME];
-        } else { lhs_table = lhs; }
+        if (lhs in this.alias_map)
+            var lhs_table = this.alias_map[lhs][TABLE_NAME];
+        else
+            var lhs_table = lhs;
 
         if (reuse && always_create && this.table_map[table]) {
             // Convert the 'reuse' to case to be "exclude everything but the
@@ -968,7 +966,7 @@ var Query = type('Query', {
             exclusions = new Set(this.table_map[table]).difference(reuse).union(new Set(exclusions));
             always_create = false;
         }
-        t_ident = [lhs_table, table, lhs_col, col];
+        var t_ident = [lhs_table, table, lhs_col, col];
         if (!always_create) {
             var map = this.join_map[t_ident] || [];
             for each (var alias in map) {
@@ -989,12 +987,12 @@ var Query = type('Query', {
         if (!lhs)
             // Not all tables need to be joined to anything. No join type
             // means the later columns are ignored.
-            join_type = null;
+            var join_type = null;
         else if (promote || outer_if_first)
-            join_type = this.LOUTER;
+            var join_type = this.LOUTER;
         else
-            join_type = this.INNER;
-        _join = [table, alias, join_type, lhs, lhs_col, col, nullable];
+            var join_type = this.INNER;
+        var _join = [table, alias, join_type, lhs, lhs_col, col, nullable];
         this.alias_map[alias] = _join;
         if (this.join_map[t_ident])
             this.join_map[t_ident] = this.join_map[t_ident].concat([alias]);
@@ -1012,15 +1010,15 @@ var Query = type('Query', {
         */
     'fill_related_selections': function fill_related_selections(opts, root_alias, cur_depth, used, requested, restricted, nullable, dupe_set, avoid_set) {
 
-        var opts = opts || null;
-        var root_alias = root_alias || null;
-        var cur_depth = cur_depth || 1;
-        var used = used || null;
-        var requested = requested || null;
-        var restricted = restricted || null;
-        var nullable = nullable || null;
-        var dupe_set = dupe_set || null;
-        var avoid_set = avoid_set || null;
+        opts = opts || null;
+        root_alias = root_alias || null;
+        cur_depth = cur_depth || 1;
+        used = used || null;
+        requested = requested || null;
+        restricted = restricted || null;
+        nullable = nullable || null;
+        dupe_set = dupe_set || null;
+        avoid_set = avoid_set || null;
         if (!restricted && this.max_depth && cur_depth > this.max_depth)
             // We've recursed far enough; bail out.
             return;
@@ -1285,11 +1283,11 @@ var Query = type('Query', {
         list of tables joined.
         */
     'setup_joins': function setup_joins(names, opts, alias, dupe_multis, allow_many, allow_explicit_fk, can_reuse, negate, process_extras) {
-        var allow_many = allow_many || true;
-        var allow_explicit_fk = allow_explicit_fk || false;
-        var can_reuse = can_reuse || null;
-        var negate = negate || false;
-        var process_extras = process_extras || true;
+        allow_many = allow_many || true;
+        allow_explicit_fk = allow_explicit_fk || false;
+        can_reuse = can_reuse || null;
+        negate = negate || false;
+        process_extras = process_extras || true;
         var int_alias = null;
         var pos = 0;
         var name = null;
@@ -1308,9 +1306,8 @@ var Query = type('Query', {
             if (name == 'pk')
                 name = opts.pk.name;
             try {
-                [field, model, direct, m2m] = opts.get_field_by_name(name);
-            }
-            catch (e if isinstance(e, FieldDoesNotExist)) {
+                var [field, model, direct, m2m] = opts.get_field_by_name(name);
+            } catch (e if isinstance(e, FieldDoesNotExist)) {
                 if (!bool(opts.fields)) {
                     names = opts.get_all_field_names();
                     throw new FieldError("Cannot resolve keyword %r into field. Choices are: %s".subs(name, names.join(", ")));
@@ -1320,7 +1317,7 @@ var Query = type('Query', {
                         // XXX: A hack to allow foo_id to work in values() for
                         // backwards compatibility purposes. If we dropped that
                         // feature, this could be removed.
-                        [field, model, direct, m2m] = opts.get_field_by_name(f.name);
+                        var [field, model, direct, m2m] = opts.get_field_by_name(f.name);
                         break;
                     }
                 }
@@ -1407,7 +1404,7 @@ var Query = type('Query', {
                     break;
                 }
             } else {
-                orig_field = field;
+                var orig_field = field;
                 field = field.field;
                 if (m2m) {
                     // Many-to-many field defined on the target model.
@@ -1624,12 +1621,12 @@ var Query = type('Query', {
         var field_dict = new Dict();
         for each (var field in fields) {
             var d = field_dict;
-            for (part in field.split(LOOKUP_SEP))
+            for each (var part in field.split(LOOKUP_SEP))
                 d = d.setdefault(part, {});
+        }
         this.select_related = field_dict;
         this.related_select_cols = [];
         this.related_select_fields = [];
-        }
     },
 
     /*
@@ -1767,7 +1764,7 @@ var Query = type('Query', {
     'add_q': function add_q(q_object, used_aliases) {
         used_aliases = used_aliases || this.used_aliases;
         var connector = AND;
-	var subtree = false;
+        var subtree = false;
         if (callable(q_object['add_to_query'])) {
             q_object.add_to_query(this, used_aliases);
         } else {
@@ -1787,7 +1784,7 @@ var Query = type('Query', {
                     //add_filter(filter_expr, connector, negate, trim, can_reuse, process_extras)
                     this.add_filter(child, connector, q_object.negated, null, used_aliases)
                 }
-		if (connector == OR)
+                if (connector == OR)
                     // Aliases that were newly added or not used at all need to
                     // be promoted to outer joins if they are nullable relations.
                     // (they shouldn't turn the whole conditional into the empty
@@ -1851,7 +1848,7 @@ var Query = type('Query', {
     */
 function get_order_dir(field, def) {
     var def = def || 'ASC';
-    dirn = ORDER_DIR[def]
+    var dirn = ORDER_DIR[def]
     if (field[0] == '-')
         return [field.substr(1), dirn[1]];
     return [field, dirn[0]];

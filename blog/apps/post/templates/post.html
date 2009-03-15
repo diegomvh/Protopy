@@ -5,3 +5,10 @@
     <p>{{ post.body }}</p>
     <p>Tags: {% for tag in post.tags.all %}{{ tag }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
 {% endfor %}
+<h1>Inserte un nuevo Post</h1>
+<div>
+<form id='{{ formpost.__name__ }}' action="" method="GET">
+{{ formpost.as_ul }}
+<input type='button' value='guardar'>
+</from>
+</div>

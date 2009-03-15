@@ -281,10 +281,10 @@ var ModelForm = type('ModelForm', BaseModelForm, {
     __new__: function(name, bases, attrs) {
         var formfield_callback = attrs['formfield_callback'] || function(f) { return f.formfield(); };
         try {
-            parents = [b for each (b in bases) if (issubclass(b, ModelForm))];
+            var parents = [b for each (b in bases) if (issubclass(b, ModelForm))];
         } catch (e) {
             // We are defining ModelForm itself.
-            parents = null;
+            var parents = null;
         }
         var declared_fields = get_declared_fields(bases, attrs, false);
         var new_class = super(ModelForm, this).__new__(name, bases, attrs);

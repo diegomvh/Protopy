@@ -88,7 +88,7 @@ var DatabaseWrapper = type('DatabaseWrapper', BaseDatabaseWrapper, {
                 $L('doff.core.exceptions', 'ImproperlyConfigured');
                 throw new ImproperlyConfigured("Please fill out DATABASE_NAME in the settings module before using the database.");
             }
-            args = {
+            var args = {
                 'database': settings.DATABASE_NAME,
                 'detect_types': settings.PARSE_DECLTYPES | settings.PARSE_COLNAMES,
                 'factory': GearsCursorWrapper
