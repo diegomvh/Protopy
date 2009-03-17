@@ -5,7 +5,10 @@
 
 // 
 $L('event');
+$L('gears');
 
+
+var url_resolver_worker = google.gears.factory.create('beta.workerpool');
 
 var Modo = type('Modo', {
     // Modes array
@@ -21,7 +24,6 @@ var Modo = type('Modo', {
      */
     __init__: function (){
         this.mode = Modo.MODES.ONLINE;
-        //this.modo = 'Unknown';
     
     },
     /**
@@ -78,6 +80,8 @@ function go_online(){
 
 
 $P({'go_offline': go_offline,
-    'mode':mode
+    'mode':mode,
+    // No se si es bueno
+    'resolver': url_resolver_worker
     }
   );
