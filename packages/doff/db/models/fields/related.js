@@ -279,7 +279,7 @@ var ForeignRelatedObjectsDescriptor = type('ForeignRelatedObjectsDescriptor', {
             }
 
             RelatedManager.prototype['clear'] = function clear() {
-                for (obj in this.all()) {
+                for (var obj in this.all()) {
                 obj[rel_field.name] = null;
                 obj.save();
                 }

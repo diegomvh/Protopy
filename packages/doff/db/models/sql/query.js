@@ -707,8 +707,9 @@ var Query = type('Query', {
             // add_filter, since the final column might not otherwise be part of
             // the select set (so we can't order on it).
             while (1) {
-                join = this.alias_map[alias];
-                if (col != join[RHS_JOIN_COL]) break;
+                var join = this.alias_map[alias];
+                if (col != join[RHS_JOIN_COL])
+                    break;
                 this.unref_alias(alias);
                 alias = join[LHS_ALIAS];
                 col = join[LHS_JOIN_COL];
@@ -727,6 +728,7 @@ var Query = type('Query', {
     'table_alias': function table_alias(table_name, create) {
         create = create || false;
         var current = this.table_map[table_name];
+        var alias = null;
         if (!create && current) {
             alias = current[0];
             this.alias_refcount[alias] = this.alias_refcount[alias] + 1;
@@ -1190,8 +1192,9 @@ var Query = type('Query', {
             // chain and compare against the lhs of the join instead (and then
             // repeat the optimization). The result, potentially, involves less
             // table joins.
-            join = this.alias_map[alias];
-            if (col != join[RHS_JOIN_COL]) break;
+            var join = this.alias_map[alias];
+            if (col != join[RHS_JOIN_COL])
+                break;
             this.unref_alias(alias);
             alias = join[LHS_ALIAS];
             col = join[LHS_JOIN_COL];
@@ -1694,13 +1697,13 @@ var Query = type('Query', {
 
         // The call to setup_joins added an extra reference to everything in
         // joins. Reverse that.
-        for (var alias in joins)
+        for (alias in joins)
             this.unref_alias(alias);
 
         // We might be able to trim some joins from the front of this query,
         // providing that we only traverse "always equal" connections (i.e. rhs
         // is *always* the same value as lhs).
-        for (alias in joins.slice(1)){
+        for (alias in joins.slice(1)) {
             var join_info = this.alias_map[alias];
             if (join_info[LHS_JOIN_COL] != select_col || join_info[JOIN_TYPE] != this.INNER)
                 break

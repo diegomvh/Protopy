@@ -403,7 +403,7 @@ var Select = type('Select', Widget, {
         // Normalize to strings.
         var selected_choices = new Set([v for (v in selected_choices)]);
         var output = [];
-        for ([option_value, option_label] in chain(this.choices, choices)) {
+        for (var [option_value, option_label] in chain(this.choices, choices)) {
             if (isinstance(option_label, Array)) {
                 output.push('<optgroup label="%s">'.subs(escape(option_value)));
                 for each (var option in option_label)
