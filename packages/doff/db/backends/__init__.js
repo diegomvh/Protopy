@@ -123,7 +123,7 @@ var BaseDatabaseOperations = type('BaseDatabaseOperations', {
     'value_to_db_datetime': function value_to_db_datetime(value) {
         if (!value)
             return null;
-        return str(value);
+        return value.getTime();
     },
 
     'value_to_db_time': function value_to_db_time(value) {

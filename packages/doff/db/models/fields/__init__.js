@@ -534,37 +534,7 @@ var DateTimeField = type('DateTimeField', DateField, {
 	    return value;
 	if (value instanceof Date)
 	    return value;
-
-	/* TODO: Parsear la cadena para levantar la fecha y hora
-	new Date("month day, year hours:minutes:seconds")
-
-	# split usecs, because they are not recognized by strptime.
-	if '.' in value:
-	    try:
-		value, usecs = value.split('.')
-		usecs = int(usecs)
-	    except ValueError:
-		raise ValidationError(
-		    _('Enter a valid date/time in YYYY-MM-DD HH:MM[:ss[.uuuuuu]] format.'))
-	else:
-	    usecs = 0
-	kwargs = {'microsecond': usecs}
-	try: # Seconds are optional, so try converting seconds first.
-	    return datetime.datetime(*time.strptime(value, '%Y-%m-%d %H:%M:%S')[:6],
-					**kwargs)
-
-	except ValueError:
-	    try: # Try without seconds.
-		return datetime.datetime(*time.strptime(value, '%Y-%m-%d %H:%M')[:5],
-					    **kwargs)
-	    except ValueError: # Try without hour/minutes/seconds.
-		try:
-		    return datetime.datetime(*time.strptime(value, '%Y-%m-%d')[:3],
-						**kwargs)
-		except ValueError:
-		    raise ValidationError(
-			_('Enter a valid date/time in YYYY-MM-DD HH:MM[:ss[.uuuuuu]] format.'))
-	*/
+	return new Date(int(value));
     },
 
     'get_db_prep_value': function get_db_prep_value(value) {

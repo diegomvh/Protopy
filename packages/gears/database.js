@@ -1,15 +1,5 @@
-$L('gears');
-
-var converters = {};
-var adapters = {};
-
-function register_converter(type, func) {
-    converters[type] = func;
-}
-
-function register_adapter(type, func) {
-    adapters[type] = func;
-}
+if (!window.google || !window.google.gears)
+    throw new Exception('google is not defined, vieja!!');
 
 function connect(options) {
     return new Connection(options);
@@ -22,8 +12,6 @@ var Connection = type('Connection', {
         this.factory = options['factory'] || Cursor;
     },
 
-    'create_function': function create_function() {},
-    
     'cursor': function cursor() {
         try {
             var connection = google.gears.factory.create('beta.database');
@@ -120,7 +108,6 @@ var Cursor = type('Cursor', {
     },
 
     'next': function next() {
-        //FIXME: or not :) can return objects multi asoc
         if (this.lastResulSet == null)
             throw StopIteration;
         if (!this.lastResulSet.isValidRow()) throw StopIteration;
@@ -137,8 +124,7 @@ var Cursor = type('Cursor', {
 });
 
 $P({    'connect': connect,
-        'register_converter': register_converter,
-        'register_adapter': register_adapter,
         'Cursor': Cursor,
         'DatabaseError': type('DatabaseError'),
-        'IntegrityError': type('IntegrityError')  });
+        'IntegrityError': type('IntegrityError')
+});

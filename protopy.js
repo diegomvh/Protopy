@@ -92,7 +92,7 @@
                     new ajax.Request(file, {
                         asynchronous : false,
                         'onSuccess': function onSuccess(transport) {
-                            code = '(function(){' + transport.responseText + '});';
+			    code = '(function(){' + transport.responseText + '});';
                             path = base + names.join("/");
                         },
                         'onException': function onException(obj, exception){
@@ -246,6 +246,37 @@
     
     // ******************************* MODULES ************************************* //
     /******************** sys ***********************/
+    function get_gears(){
+	var factory;
+	
+	if (window.google && window.google.gears) { return window.google.gears; } // already defined elsewhere
+	
+	if(typeof GearsFactory != "undefined"){ // Firefox
+		factory = new GearsFactory();
+	}else{
+		if(sys.browser.IE){
+			try{
+				factory = new ActiveXObject("Gears.Factory");
+			}catch(e){
+				// ok to squelch; there's no gears factory.  move on.
+			}
+		}else if(navigator.mimeTypes["application/x-googlegears"]){
+			// Safari?
+			factory = document.createElement("object");
+			factory.setAttribute("type", "application/x-googlegears");
+			factory.setAttribute("width", 0);
+			factory.setAttribute("height", 0);
+			factory.style.display = "none";
+			document.documentElement.appendChild(factory);
+		}
+	}
+
+	if(!factory){ return null; }
+	
+	window.google = {}, window.google.gears = {}, window.google.gears.factory = factory;
+	return window.google.gears;
+    }
+    
     var sys = __modules__['sys'] = new Module('sys', 'built-in', { 
 	'version': '0.05',
 	'browser': {
@@ -258,12 +289,18 @@
 		'XPath': !!document.evaluate,
 		'SelectorsAPI': !!document.querySelector,
 		'ElementExtensions': !!window.HTMLElement,
+		'Gears': !!get_gears() || false,
 		'SpecificElementExtensions': document.createElement('div')['__proto__'] &&
 						document.createElement('div')['__proto__'] !==
 						document.createElement('form')['__proto__']
 	    }
 	},
-	'transport': XMLHttpRequest || ActiveXObject('Msxml2.XMLHTTP') || ActiveXObject('Microsoft.XMLHTTP') || false,
+	'get_transport': function get_transport() {
+	    if (this.browser.Gecko || this.browser.WebKit)
+		return new XMLHttpRequest();
+	    return false;
+	},
+	'get_gears': get_gears,
 	'path': __path__,
 	'modules': __modules__
     });
@@ -468,7 +505,7 @@
 	},
 	'defer': function defer(f) {
 	    var args = [0.01].concat(array(arguments).slice(1));
-	    return f.delay.apply(this, args);
+	    return this.delay(f, args);
 	}
     });
 
@@ -516,6 +553,11 @@
 
 	    if (type(this.options.parameters) == String)
 		this.options.parameters = this.options.parameters.to_query_params();
+	},
+	
+	'serialize': function serialize(object){
+	    //TODO:Serializar
+	    return;
 	}
     });
 
@@ -524,7 +566,7 @@
 
 	'__init__': function __init__(url, options) {
 	    super(Base, this).__init__(options);
-	    this.transport = new sys.transport;
+	    this.transport = sys.get_transport();
 	    this.request(url);
 	},
 
@@ -548,18 +590,18 @@
 
 		this.transport.open(this.method.toUpperCase(), this.url, this.options.asynchronous);
 
-		if (this.options.asynchronous) 
+		if (this.options.asynchronous)
 		    timer.defer(getattr(this, 'respondToReadyState'), 1);
 
 		this.transport.onreadystatechange = getattr(this, 'onStateChange');
 		this.setRequestHeaders();
 
-		this.body = this.method == 'post' ? (this.options.postBody || params) : null;
+		this.body = this.method == 'post' ? this.serialize(this.options.postBody || params) : null;
 		this.transport.send(this.body);
 
 		/* Force Firefox to handle ready state 4 for synchronous requests */
 		if (!this.options.asynchronous && this.transport.overrideMimeType)
-		    this.onStateChange();
+		    this.onStateChange();   
 	    }
 	    catch (e) {
 		this.dispatchException(e);

@@ -9,15 +9,6 @@ $L('doff.db.backends.gears.introspection', 'DatabaseIntrospection');
 var DatabaseError = database.DatabaseError;
 var IntegrityError = database.IntegrityError;
 
-database.register_converter("bool", function(s) { return str(s) == '1' });
-database.register_converter("time", util.typecast_time);
-database.register_converter("date", util.typecast_date);
-database.register_converter("datetime", util.typecast_timestamp);
-database.register_converter("timestamp", util.typecast_timestamp);
-database.register_converter("TIMESTAMP", util.typecast_timestamp);
-database.register_converter("decimal", util.typecast_decimal);
-//database.register_adapter(decimal.Decimal, util.rev_typecast_decimal);
-
 var DatabaseOperations = type('DatabaseOperations', BaseDatabaseOperations, {
     //TODO: le faltan cosas
     'autoinc_sql': function autoinc_sql(table, column){
@@ -96,9 +87,9 @@ var DatabaseWrapper = type('DatabaseWrapper', BaseDatabaseWrapper, {
             extend(args, this.options || {});
             this.connection = database.connect(args);
             // Register extract, date_trunc, and regexp functions.
-            this.connection.create_function("django_extract", 2, _sqlite_extract);
-            this.connection.create_function("django_date_trunc", 2, _sqlite_date_trunc);
-            this.connection.create_function("regexp", 2, _sqlite_regexp);
+            //this.connection.create_function("django_extract", 2, _sqlite_extract);
+            //this.connection.create_function("django_date_trunc", 2, _sqlite_date_trunc);
+            //this.connection.create_function("regexp", 2, _sqlite_regexp);
         }
         return this.connection.cursor();
     }
@@ -129,11 +120,6 @@ var GearsCursorWrapper = type('GearsCursorWrapper', database.Cursor, {
     'convert_query': function convert_query(query, num_params){
         return query.subs(mult(["?"], num_params));
     }
-/*
-    '__iter__': function __iter__() {
-        yield this.next();
-    }
-*/
 });
 
 function _sqlite_extract(lookup_type, dt) {
@@ -165,7 +151,7 @@ function _sqlite_regexp(re_pattern, re_string) {
     try {
         return bool(re_string.search(re_pattern));
     } catch (e) { return false; }
-    }
+}
 
 var field_cast_sql = function(value){return '%s';};
 

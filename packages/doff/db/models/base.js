@@ -188,12 +188,12 @@ var Model = type('Model', {
             throw new IndexError('Number of args exceeds number of fields');
 
         var data = zip(args, this._meta.fields);
-        if (bool(keys(kwargs))) {
+        if (!bool(keys(kwargs))) {
             for each (var [val, field] in data)
-                this[field.attname] = val;
+                this[field.attname] = field.to_javascript(val);
         } else {
             for each (var [val, field] in data) {
-                this[field.attname] = val;
+                this[field.attname] = field.to_javascript(val);
                 delete kwargs[field.name];
                 // Maintain compatibility with existing calls.
                 if (field.rel instanceof ManyToOneRel)
@@ -231,7 +231,7 @@ var Model = type('Model', {
             if (rel_obj) {
                 this[field.name] = rel_obj;
             } else {
-                this[field.attname] = val;
+                this[field.attname] = field.to_javascript(val);
             }
         }
         
