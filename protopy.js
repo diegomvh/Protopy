@@ -1,8 +1,7 @@
 //******************************* PROTOPY CORE *************************************//
 (function() {
     var __modules__ = {};
-    var __path__ = {'': '/packages/' };
-    var __resources__ = {};
+    var __paths__ = {'': '/packages/' };
     
     //Extend form objects to object
     function __extend__(safe, destiny) {
@@ -34,12 +33,6 @@
         }
     }
 
-    //Publish resources
-    //TODO: esto no es resource sino una forma de mapear nombres de paquetes en url, tiene que registrar url para nombres de paquetes y hacer una para retornar los nombres convertidos.
-    function __resource__(object) {
-        //TODO: validate
-    }
-    
     //Add simbols to builtins
     function __builtins__(object) {
         __extend__(false, __modules__['__builtin__'], object);
@@ -75,10 +68,9 @@
             path = null;
     
         if (!mod) {
-            var base = (__path__[names[0]] == undefined) ? __path__[''] : __path__[names.shift()],
-                file = base + names.join("/") + '.js',
+	    //TODO: Armar algo para obtener los nombres desde sys con module_url
+            var file = sys.module_url(name, '.js');
                 code = null;
-                if (names[0])
             new ajax.Request(file, {
                 asynchronous : false,
                 'onSuccess': function onSuccess(transport) {
@@ -88,12 +80,12 @@
                     throw exception;
                 },
                 'onFailure': function onFailure(){
-                    file = base + names.join("/") + "/__init__.js";
+                    file = sys.module_url(name, '/__init__.js');
                     new ajax.Request(file, {
                         asynchronous : false,
                         'onSuccess': function onSuccess(transport) {
 			    code = '(function(){' + transport.responseText + '});';
-                            path = base + names.join("/");
+                            path = file.replace('/__init__.js', '');
                         },
                         'onException': function onException(obj, exception){
                             throw exception;
@@ -301,7 +293,21 @@
 	    return false;
 	},
 	'get_gears': get_gears,
-	'path': __path__,
+	'register_module_path': function register_module_path(module, path) { 
+	    __paths__[module] = path; 
+	},
+	'module_url': function module_url(module, prefix) { 
+	    //TODO: Un buen manejo de urls barras, concatenados, etc
+	    var url = null;
+	    for (var s in __paths__)
+		if (s && module.indexOf(s) != -1)
+		    url = module.replace(s, __paths__[s]).replace('.','/','g');
+	    if (!url)
+		url = module.replace('', __paths__['']).replace('.','/','g');
+	    if (prefix)
+		url += prefix;
+	    return url;
+	},
 	'modules': __modules__
     });
 
@@ -1474,7 +1480,6 @@
         '$P': __publish__,
         '$L': __load__,
         '$B': __builtins__,
-        '$R': __resource__,
 	'$D': __doc__,
 	'$Q': query,
 	'object': object,
