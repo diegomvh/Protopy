@@ -281,7 +281,6 @@
 		'XPath': !!document.evaluate,
 		'SelectorsAPI': !!document.querySelector,
 		'ElementExtensions': !!window.HTMLElement,
-		'Gears': !!get_gears() || false,
 		'SpecificElementExtensions': document.createElement('div')['__proto__'] &&
 						document.createElement('div')['__proto__'] !==
 						document.createElement('form')['__proto__']
@@ -311,6 +310,7 @@
 	'modules': __modules__
     });
 
+    sys.browser.features.Gears = !!get_gears() || false;
     /******************** exception ***********************/
     var Exception = type('Exception', {
         '__init__': function(message) { this.message = message; },

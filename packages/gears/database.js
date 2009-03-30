@@ -1,5 +1,7 @@
-if (!window.google || !window.google.gears)
-    throw new Exception('google is not defined, vieja!!');
+if (!window.google || !window.google.gears) {
+    alert('google is not defined, vieja!!');
+    window.location.href = 'http://gears.google.com/';
+}
 
 function connect(options) {
     return new Connection(options);

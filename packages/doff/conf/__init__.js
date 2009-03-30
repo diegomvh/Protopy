@@ -1,7 +1,8 @@
 var glb_settings = $L('doff.conf.global_settings');
+$L('doff.core.project');
 $L('ajax', 'Request');
 
-new Request(window.settings, {
+new Request(project.settings_url(), {
         asynchronous : false,
         'onSuccess': function onSuccess(transport) {
             code = '(' + transport.responseText + ');';

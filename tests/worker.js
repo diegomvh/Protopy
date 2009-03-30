@@ -5,10 +5,8 @@ var timer = google.gears.factory.create('beta.timer');
 var mainThread = 0;
 var timer_id = null;
 
-
 function handler (a, b, message){
-    
-    wp.sendMessage('Recibi a='+a+', b='+b+' msg='+ message, mainThread);
+    wp.sendMessage('Recibi a= a' + this, mainThread);
 }
 // Create a handler for WP
 wp.onmessage = handler;

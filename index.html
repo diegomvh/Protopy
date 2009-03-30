@@ -1,7 +1,23 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <script type="text/javascript;version=1.7" src="protopy.js"></script>
-    <script type="text/javascript;version=1.7" src="/blog/blog.js"></script>
+    <script type="text/javascript;version=1.7">
+        $L('event');
+        var proyecto = $L('doff.core.project');
+        proyecto.ui.name = "Simple Blog";
+        proyecto.ui.module = "blog";
+        proyecto.ui.path = "/blog/";
+        proyecto.files.slurp();
+        
+        var myApp = {
+	   initialize: function(){
+	       $L('blog.apps.post.views');
+               views.syncdb();
+	   }
+	}
+        event.connect(proyecto.ui, "onLoad", myApp, "initialize");
+        proyecto.initialize();
+    </script>
 </head>
 <body>
     <div id="content" ></div>

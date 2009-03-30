@@ -4,8 +4,9 @@
     <script type="text/javascript;version=1.7" src="../protopy.js"></script>
     <script type="text/javascript;version=1.7">
         (function (){
-            $L('gears');
-            document.title = 'Pruebas de Workerpool';
+            $L('gears.workerpool');
+            workerpool.create_worker();
+            /*document.title = 'Pruebas de Workerpool';
             var msgCnt = 0;
             var wp = google.gears.factory.create('beta.workerpool');
             function message_handler (messageText, senderId, messageObject){
@@ -19,11 +20,7 @@
             }
             wp.onmessage = message_handler;
             var child = wp.createWorkerFromUrl('worker.js');
-            wp.sendMessage( {'localstore':1}, 
-              
-              
-                            child);
-          
+            wp.sendMessage( {'localstore':1}, child);*/
         })();
     </script>
 </head>
