@@ -1,6 +1,8 @@
 var glb_settings = $L('doff.conf.global_settings');
-$L('doff.core.project');
+var project = $L('doff.core.offline', 'project')();
 $L('ajax', 'Request');
+
+
 
 new Request(project.settings_url(), {
         asynchronous : false,

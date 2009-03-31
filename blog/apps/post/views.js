@@ -20,7 +20,7 @@ var TagForm = type('TagForm', forms.ModelForm, {
 
 function syncdb(){
     print('Creando las tablas');
-    var s = $L('doff.core.commands.syncdb');
+    var s = $L('doff.core.syncdb');
     s.execute();
 }
 

@@ -44,7 +44,7 @@
     function __doc__(doc) {
         __modules__[this['__name__']]['__doc__'] = doc;
     }
-
+//memoria ps2 16, cable usb del mp3, auriculares, un cargador y baterias, un pack de dvd
     //The module concept
     function Module(name, file, source) {
         this['__file__'] = file;
