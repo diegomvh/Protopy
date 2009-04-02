@@ -138,6 +138,9 @@ var Project = type('Project', [object], {
     }
 });
 
+/**
+ * Instancia del proyecto
+*/
 var project = null;
 
 function get_project(name, package, path){

@@ -37,19 +37,36 @@ function remove_tag(request, slug){
     show_posts(request);
 }
 
-function add_post(title, body, tags){
-    var [obj, created] = Post.objects.get_or_create({'slug':slugify(title), 'defaults': {'title':title, 'slug':slugify(title), 'body':body, 'date': new Date()}});
-    for each (var tag in tags) obj.tags.add(tag);
-    return obj;
+function add_post(request){
+    if (request.method == 'post') {
+	// var [obj, crated] = Tag.objects.get_or_create({'slug':slugify(request['post']['title']), 'defaults': {'title':request['post']['title']}});
+	var [obj, created] = Post.objects.get_or_create({'slug': slugify(request.post.title),
+						     'defaults': {'title':request.post.title, 'slug':slugify(request.post.title), 
+						     'body':request.post.body, 'date': new Date()}});
+	show_posts(request);
+    }
+    
+
+
+     
+//     for each (var tag in tags) obj.tags.add(tag);
+//     return obj;
 }
 
-function set_tags_by_title(post, tag_title){
+function set_tags_by_title(request){
     tag_title = (type(tag_title) == Array)? tag_title : [tag_title];
     var tags = [];
     for each (var title in tag_title) {
         tags.push(Tag.objects.get({'title':title}));
     }
     post.tags.add.apply(post.tags,tags);
+}
+
+function una_vista(request, param1, param2){
+  var datos = {};
+  datos.algo = 1;
+
+  return render_to_response('inex.html', datos);
 }
 
 function show_posts(request){

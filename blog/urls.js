@@ -3,7 +3,8 @@ $L('blog.views', 'index');
 
 var urlpatterns = patterns('',
     // Example:
-    ['^$', 'blog.apps.post.views.show_posts'],
+    // ['^$', 'blog.apps.post.views.show_posts'],
+    ['^$', index],
     ['^blog/', include('blog.apps.post.urls')]
 )
 

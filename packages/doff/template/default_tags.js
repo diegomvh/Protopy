@@ -1,6 +1,6 @@
-$L('doff.template', 'Node', 'Variable', 'NodeList', 'Template');
-$L('doff.template', 'TemplateSyntaxError', 'VariableDoesNotExist');
-$L('doff.template', 'get_library', 'Library', 'InvalidTemplateLibrary');
+$L('doff.template.*', 'Node', 'Variable', 'NodeList', 'Template');
+$L('doff.template.*', 'TemplateSyntaxError', 'VariableDoesNotExist');
+$L('doff.template.*', 'get_library', 'Library', 'InvalidTemplateLibrary');
 $L('doff.template.context', 'Context');
 
 var register = new Library();

@@ -1,4 +1,4 @@
-$L('doff.template', 'Variable', 'Library');
+$L('doff.template.*', 'Variable', 'Library');
 var register = new Library();
 
 function capitalize(value){ return value.capitalize(); };

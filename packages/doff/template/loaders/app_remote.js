@@ -1,5 +1,5 @@
 $D('Wrapper for loading templates from "template" directories in INSTALLED_APPS packages.');
-$L('doff.template', 'TemplateDoesNotExist');
+$L('doff.template.*', 'TemplateDoesNotExist');
 $L('doff.core.exceptions', 'ImproperlyConfigured');
 $L('doff.core.project', 'get_settings');
 $L('ajax');

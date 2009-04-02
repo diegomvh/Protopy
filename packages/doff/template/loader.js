@@ -1,5 +1,5 @@
 $L('doff.core.exceptions', 'ImproperlyConfigured'),
-$L('doff.template', 'Origin', 'Template', 'Context', 'TemplateDoesNotExist', 'add_to_builtins');
+$L('doff.template.*', 'Origin', 'Template', 'Context', 'TemplateDoesNotExist', 'add_to_builtins');
 $L('doff.core.project', 'get_settings');
 
 var settings = get_settings();

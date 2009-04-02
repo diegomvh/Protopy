@@ -1,18 +1,25 @@
-<html>
+<!--<html>
   <head>
     <title></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     {% block extraheader %}{% endblock %}
   </head>
-  <body>
+  <body>-->
       <div id="main">
       {% block main %}
         <p>main</p>
       {% endblock %}
       {% block sidebar %}
         <p>side</p>
+	<a href="/blog/show_posts/" onClick="return blog.handler.handle(this);">Un link</a>
       {% endblock %}
+      
+      {% block content %}
+        <p>side</p>
+      {% endblock %}
+
+  
       {{ algo }}
       </div>
-  </body>
-</html>
+<!--  </body>
+</html>-->

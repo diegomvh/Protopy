@@ -1,4 +1,4 @@
-$L('doff.template', 'TemplateSyntaxError', 'TemplateDoesNotExist', 'Variable', 'Library', 'Node', 'TextNode');
+$L('doff.template.*', 'TemplateSyntaxError', 'TemplateDoesNotExist', 'Variable', 'Library', 'Node', 'TextNode');
 $L('doff.template.loader', 'get_template', 'get_template_from_string', 'find_template_source');
     
 var register = new Library();

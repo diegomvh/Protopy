@@ -16,7 +16,7 @@ var Tag = type('Tag', models.Model, {
 });
 
 var Post = type('Post', models.Model, {
-    slug: new models.SlugField('Slug', {'primary_key':true}),
+    slug: new models.SlugField('Slug', {'primary_key':true, editable: false}),
     tags: new models.ManyToManyField(Tag),
     title: new models.CharField('Title', {'max_length':30}),
     date: new models.DateTimeField('Date'),

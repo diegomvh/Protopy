@@ -1,4 +1,4 @@
-$L('doff.template', 'TemplateDoesNotExist');
+$L('doff.template.*', 'TemplateDoesNotExist');
 $L('doff.core.project', 'get_settings');
 $L('ajax');
 

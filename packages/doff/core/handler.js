@@ -45,21 +45,22 @@ var Handler = type('Handler', [object], {
         var resolver = new urlresolvers.RegexURLResolver('^/', urlconf);
         try {
             var [callback, callback_args, callback_kwargs] = resolver.resolve(request.path_info);
-
+	    print([callback, callback_args, callback_kwargs]);
             try {
 		var args = [request];
 		args = args.concat(callback_args);
 		args.push(callback_kwargs);
                 var response = callback.apply(this, args);
             } catch (e) {
-                throw e; 
+                print(e);
 	    }
         } catch (e) {
 	    //Handle everything else, including SuspiciousOperation, etc.
             // Get the exception info now, in case another exception is thrown later.
-            exc_info = sys.exc_info();
-            receivers = event.send('got_request_exception', this.__class__, request);
-            return this.handle_uncaught_exception(request, resolver, exc_info);
+            //exc_info = sys.exc_info();
+            //receivers = event.send('got_request_exception', this.__class__, request);
+            //return this.handle_uncaught_exception(request, resolver, exc_info);
+	    print(e);
 	}
     },
 
