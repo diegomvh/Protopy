@@ -1,14 +1,12 @@
 <h1>Todos los Tags</h1>
-<p>{{ tags|join:", " }}</p>
-{% for post in posts %}
-    <h1>{{ post.title|capitalize }}</h1>{{ post.date }}
-    <p>{{ post.body }}</p>
-    <p>Tags: {% for tag in post.tags.all %}{{ tag }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+<h4>Haga click en un tag para quitarlo</h4>
+{% for tag in tags %}
+    <a href="/blog/remove_tag/{{ tag.slug }}/" onClick="return blog.handler.handle_a(this);">{{ tag.title }}</a>
 {% endfor %}
-<h1>Inserte un nuevo Post</h1>
+<h1>Inserte un nuevo Tag</h1>
 <div>
-<form id='{{ formpost.__name__ }}' action="" method="GET">
-{{ formpost.as_ul }}
-<input type='button' value='guardar'>
+<form id='{{ formtag.__name__ }}' action="/blog/add_tag/" onSubmit="return blog.handler.handle_form(this);" method="post">
+{{ formtag.as_ul }}
+<input type='submit' value='guardar'>
 </from>
 </div>

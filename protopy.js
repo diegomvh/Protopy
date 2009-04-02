@@ -1,7 +1,7 @@
 //******************************* PROTOPY CORE *************************************//
 (function() {
     var __modules__ = {};
-    var __paths__ = {'': '/packages/' };
+    var __paths__ = {};
     
     //Extend form objects to object
     function __extend__(safe, destiny) {
@@ -293,7 +293,7 @@
 	},
 	'get_gears': get_gears,
 	'register_module_path': function register_module_path(module, path) { 
-	    __paths__[module] = path; 
+	    __paths__[module] = this.base_url + path; 
 	},
 	'module_url': function module_url(module, prefix) { 
 	    //TODO: Un buen manejo de urls barras, concatenados, etc
@@ -947,7 +947,9 @@
     }
 	
     function query( selectorGroups, root, includeRoot, recursed, flat ) {
-	var elements = [];						
+	var elements = [];
+	if (!isinstance(selectorGroups, String))
+	    return decorate_elements([selectorGroups])[0];
 	if( !recursed ) {  // TODO: try to clean this up. 
 	    selectorGroups = selectorGroups.replace( reg.trim, "" ) // get rid of leading and trailing spaces 
 		.replace( /(\[)\s+/g, "$1") // remove spaces around '['  of attributes
@@ -1489,15 +1491,12 @@
 	'locals': function locals(){ return __modules__[this['__name__']]; },
 	'globals': function globals(){ return __modules__['__main__']; }
     });
-
     /******************** POPULATE **************************/
     __extend__(true, window, main);
     __builtins__(builtin);
     __builtins__(exception);
-})();
 
-// ******************************* MORE BUILTINS ************************************* //
-(function(){
+    // ******************************* MORE BUILTINS ************************************* //
     function super(_type, _object) {
         //TODO: Validar que sea una instancia a subclase del tipo dado
         //TODO: soportar distintos tipos incluso el mismo tipo de la base que le pase el primero de __bases__
@@ -1886,6 +1885,16 @@
             });
         }
     });
+    
+    // WHERE
+    var scripts = dom.query('script');
+    for each (var script in scripts) {
+	if (script.src) {
+	    var m = script.src.match(/^(.*)\/protopy.js$/i);
+	    if (m) sys.base_url = m[1];
+	}
+    }
+    __paths__[''] = sys.base_url + '/packages/';
 })();
 
 // ******************************* EXTENDING JAVASCRIPT ************************************* //

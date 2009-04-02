@@ -1,5 +1,7 @@
 $L('sys');
+$L('event');
 $L('ajax');
+$L('doff.core.handler', 'Handler');
 
 var Project = type('Project', [object], {
     files: {slurp: function(){}},
@@ -11,13 +13,14 @@ var Project = type('Project', [object], {
     _initialize_called: false,
     _storage_loaded: false,
     _page_loaded: false,
+    handler: new Handler(),
 
     '__init__': function __init__(name, package, path){
 	this.name = name;
 	this.package = package;
 	this.path = path;
 	sys.register_module_path(this.package, this.path);
-	this.availability_url = sys.module_url(this.package, "/network_check.txt")
+	this.availability_url = sys.module_url(this.package, '/network_check.txt');
 	this._initializeCalled = true;
 	this._storageLoaded = true;
 	this._pageLoaded = true;
@@ -28,13 +31,20 @@ var Project = type('Project', [object], {
     onNetwork: function(type){},
 
     settings_url: function settings_url() {
-	return this.path + 'settings.js';
+	return sys.module_url(this.package, '/settings.js');
     },
 
     //FIXME: Mejorar esto un poco tengo un __init__ y un initialize es como medio cualquiera
     initialize: function initialize(){
+	var self = this;
+	event.connect(window, 'load', function(){
+	    self.onLoad();
+	    self.handler.handle_url('/');
+	});
+	/*
 	if(this._storageLoaded && this._pageLoaded)
 	    this.onLoad();
+	*/
     },
     
     go_offline: function(){ 

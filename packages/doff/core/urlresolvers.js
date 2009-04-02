@@ -1,44 +1,5 @@
-"""
-This module converts requested URLs to callback view functions.
-
-RegexURLResolver is the main class here. Its resolve() method takes a URL (as
-a string) and returns a tuple in this format:
-
-    (view_function, function_args, function_kwargs)
-"""
-
-import re
-
-from django.http import Http404
-from django.core.exceptions import ImproperlyConfigured, ViewDoesNotExist
-from django.utils.datastructures import MultiValueDict
-from django.utils.encoding import iri_to_uri, force_unicode, smart_str
-from django.utils.functional import memoize
-from django.utils.regex_helper import normalize
-from django.utils.thread_support import currentThread
-
-try:
-    reversed
-except NameError:
-    from django.utils.itercompat import reversed     # Python 2.3 fallback
-    from sets import Set as set
-
-_resolver_cache = {} # Maps urlconf modules to RegexURLResolver instances.
-_callable_cache = {} # Maps view and url pattern names to their view functions.
-
-# SCRIPT_NAME prefixes for each thread are stored here. If there's no entry for
-# the current thread (which is the only one we ever access), it is assumed to
-# be empty.
-_prefixes = {}
-
-var RegexURLPattern = type('RegexURLPattern', [object], {});
-class Resolver404(Http404):
-    pass
-
-var RegexURLPattern = type('RegexURLPattern', [object], {});
-class NoReverseMatch(Exception):
-    # Don't make this raise an error when used in a template.
-    silent_variable_failure = True
+var Resolver404 = type('Resolver404', [object], {});
+var NoReverseMatch = type('NoReverseMatch', [object], {});
 
 /*
 Convert a string version of a function name to the callable object.
@@ -53,13 +14,12 @@ function get_callable(lookup_view, can_fail) {
     can_fail = can_fail || false;
     if (!callable(lookup_view))
         try {
-            //Bail early for non-ASCII strings (they can't be functions).
-            mod_name, func_name = get_mod_func(lookup_view);
+            var [mod_name, func_name] = get_mod_func(lookup_view);
             if (func_name)
                 var lookup_view = $L(mod_name, func_name);
                 if (!callable(lookup_view))
                     throw new AttributeError("'%s.%s' is not a callable.".subs(mod_name, func_name));
-        } catch (e if isincance(e, [LoadError, AttributeError]) {
+        } catch (e if isincance(e, [LoadError, AttributeError])) {
             if (!can_fail)
                 throw e;
         }
@@ -73,7 +33,7 @@ function get_resolver(urlconf) {
         var settings = $L('doff.conf', 'settings');
         urlconf = settings.ROOT_URLCONF;
     }
-    return new RegexURLResolver(r'^/', urlconf);
+    return new RegexURLResolver('^/', urlconf);
 }
 //get_resolver = memoize(get_resolver, _resolver_cache, 1)
 
@@ -91,7 +51,7 @@ var RegexURLPattern = type('RegexURLPattern', [object], {
         // callback is either a string like 'foo.views.news.stories.story_detail'
         // which represents the path to a module and a view function name, or a
         // callable object (view).
-        this.regex = RegExp(regex);
+        this.regex = new RegExp(regex);
         if (callable(callback))
             this._callback = callback;
         else {
@@ -107,23 +67,13 @@ var RegexURLPattern = type('RegexURLPattern', [object], {
         if (!prefix || !hasattr(this, '_callback_str'))
             return;
         this._callback_str = prefix + '.' + this._callback_str;
-    }
+    },
 
-    resolve: function resolve(path)
-        var match = this.regex.exec(path);
+    resolve: function resolve(path) {
+        var match = path.match(this.regex);
         if (bool(match)) {
-            // If there are any named groups, use those as kwargs, ignoring
-            // non-named groups. Otherwise, pass all non-named arguments as
-            // positional arguments.
-            var kwargs = match.groupdict();
-            if (kwargs)
-                args = [];
-            else
-                args = match.groups();
-            // In both cases, pass any extra_kwargs as **kwargs.
-            extend(kwargs, this.default_args);
-
-            return [this.callback, args, kwargs];
+	    // In both cases, pass any extra_kwargs as **kwargs.
+            return [this.callback, match.slice(1), this.default_args];
        }
     },
 
@@ -144,15 +94,67 @@ var RegexURLPattern = type('RegexURLPattern', [object], {
 });
 
 var RegexURLResolver = type('RegexURLResolver', [object], {
-    def __init__(self, regex, urlconf_name, default_kwargs=None):
-        # regex is a string representing a regular expression.
-        # urlconf_name is a string representing the module containing urlconfs.
-        self.regex = re.compile(regex, re.UNICODE)
-        self.urlconf_name = urlconf_name
-        self.callback = None
-        self.default_kwargs = default_kwargs or {}
-        self._reverse_dict = MultiValueDict()
+    __init__: function(regex, urlconf_name, default_kwargs) {
+        // regex is a string representing a regular expression.
+        // urlconf_name is a string representing the module containing urlconfs.
+        this.regex = new RegExp(regex);
+        this.urlconf_name = urlconf_name;
+        this.callback = null;
+        this.default_kwargs = default_kwargs || {};
+        this._reverse_dict = {}; //MultiValueDict()
+    },
 
+    resolve: function resolve(path) {
+        var tried = [];
+        var index = path.search(this.regex);
+	var match = path.match(this.regex);
+        if (index != -1) {
+            var new_path = path.slice(match[0].length + index);
+            for each (var pattern in this.urlconf_module.urlpatterns) {
+                try {
+                    var sub_match = pattern.resolve(new_path);
+                } catch (e if isinstance(e, Resolver404)) {
+                    tried = tried.concat([(pattern.regex.pattern + '   ' + t) for (t in e.args[0]['tried'])]);
+                }
+		if (sub_match) {
+		    return [sub_match[0], sub_match[1], this.default_kwargs];
+		}
+		tried.push(pattern.regex.pattern);
+	    }
+            throw new Resolver404({'tried': tried, 'path': new_path});
+	}
+    },
+
+    get urlconf_module() {
+        var ret = this._urlconf_module;
+	if (!ret) {
+	    ret = this._urlconf_module = $L(this.urlconf_name);
+	}
+	return ret;
+    },
+
+    get url_patterns() {
+        return this.urlconf_module.urlpatterns;
+    },
+
+    _resolve_special: function _resolve_special(view_type) {
+        callback = getattr(this.urlconf_module, 'handler%s'.subs(view_type));
+        var [mod_name, func_name] = get_mod_func(callback);
+        try {
+            return [$L(mod_name, func_name), {}];
+        } catch (e if isinstance(e, LoadError)) {
+            throw new ViewDoesNotExist("Tried %s. Error was: %s".subs(callback, e));
+	}
+    },
+
+    resolve404: function resolve404() {
+        return this._resolve_special('404');
+    },
+
+    resolve500: function resolve500() {
+        return this._resolve_special('500');
+    }
+/*
     get reverse_dict() {
         if not self._reverse_dict and hasattr(self.urlconf_module, 'urlpatterns'):
             for pattern in reversed(self.urlconf_module.urlpatterns):
@@ -174,52 +176,7 @@ var RegexURLResolver = type('RegexURLResolver', [object], {
         return self._reverse_dict
     },
 
-    def resolve(self, path):
-        tried = []
-        match = self.regex.search(path)
-        if match:
-            new_path = path[match.end():]
-            for pattern in self.urlconf_module.urlpatterns:
-                try:
-                    sub_match = pattern.resolve(new_path)
-                except Resolver404, e:
-                    tried.extend([(pattern.regex.pattern + '   ' + t) for t in e.args[0]['tried']])
-                else:
-                    if sub_match:
-                        sub_match_dict = dict([(smart_str(k), v) for k, v in match.groupdict().items()])
-                        sub_match_dict.update(self.default_kwargs)
-                        for k, v in sub_match[2].iteritems():
-                            sub_match_dict[smart_str(k)] = v
-                        return sub_match[0], sub_match[1], sub_match_dict
-                    tried.append(pattern.regex.pattern)
-            raise Resolver404, {'tried': tried, 'path': new_path}
-
-    get urlconf_module() {
-        try:
-            return self._urlconf_module
-        except AttributeError:
-            self._urlconf_module = __import__(self.urlconf_name, {}, {}, [''])
-            return self._urlconf_module
-    }
-
-    get url_patterns() {
-        return self.urlconf_module.urlpatterns
-    }
-
-    def _resolve_special(self, view_type):
-        callback = getattr(self.urlconf_module, 'handler%s' % view_type)
-        mod_name, func_name = get_mod_func(callback)
-        try:
-            return getattr(__import__(mod_name, {}, {}, ['']), func_name), {}
-        except (ImportError, AttributeError), e:
-            raise ViewDoesNotExist, "Tried %s. Error was: %s" % (callback, str(e))
-
-    def resolve404(self):
-        return self._resolve_special('404')
-
-    def resolve500(self):
-        return self._resolve_special('500')
-
+    
     def reverse(self, lookup_view, *args, **kwargs):
         if args and kwargs:
             raise ValueError("Don't mix *args and **kwargs in call to reverse()!")
@@ -244,39 +201,14 @@ var RegexURLResolver = type('RegexURLResolver', [object], {
                     return candidate
         raise NoReverseMatch("Reverse for '%s' with arguments '%s' and keyword "
                 "arguments '%s' not found." % (lookup_view, args, kwargs))
+*/
 });
 
 function resolve(path, urlconf) {
     return get_resolver(urlconf).resolve(path);
 }
 
-def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None):
-    args = args or []
-    kwargs = kwargs or {}
-    if prefix is None:
-        prefix = get_script_prefix()
-    return iri_to_uri(u'%s%s' % (prefix, get_resolver(urlconf).reverse(viewname,
-            *args, **kwargs)))
-
-def clear_url_caches():
-    global _resolver_cache
-    global _callable_cache
-    _resolver_cache.clear()
-    _callable_cache.clear()
-
-def set_script_prefix(prefix):
-    """
-    Sets the script prefix for the current thread.
-    """
-    if not prefix.endswith('/'):
-        prefix += '/'
-    _prefixes[currentThread()] = prefix
-
-def get_script_prefix():
-    """
-    Returns the currently active script prefix. Useful for client code that
-    wishes to construct their own URLs manually (although accessing the request
-    instance is normally going to be a lot cleaner).
-    """
-    return _prefixes.get(currentThread(), u'/')
-
+$P({
+    RegexURLPattern: RegexURLPattern,
+    RegexURLResolver: RegexURLResolver 
+});

@@ -4,16 +4,10 @@
     <script type="text/javascript;version=1.7">
         $L('event');
         var proyecto = $L('doff.core.offline', 'project');
-        var myProyecto = proyecto('Simple Blog', 'blog', '/blog/');
-	myProyecto.files.slurp();
-        
-	function initialize(){
-	    $L('blog.apps.post.views');
-	    views.syncdb();
-	}
-        event.connect(myProyecto, "onLoad", initialize);
-        myProyecto.initialize();
-	myProyecto._start_network_thread();
+        var blog = proyecto('Simple Blog', 'blog', '/blog/');
+	blog.files.slurp();
+        blog.initialize();
+	//myProyecto._start_network_thread();
     </script>
 </head>
 <body>

@@ -8,7 +8,7 @@ var Usuario = type('Usuario', models.Model, {
 });
 
 var Tag = type('Tag', models.Model, {
-    slug: new models.SlugField('Slug', {'help_text':'Automatically built from the title.', 'primary_key':true}),
+    slug: new models.SlugField('Slug', {'help_text':'Automatically built from the title.', 'primary_key':true, 'editable': false}),
     title: new models.CharField('Title', {'max_length':30}),
     '__str__': function __str__(){
         return this.title;

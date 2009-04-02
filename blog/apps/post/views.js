@@ -20,13 +20,21 @@ var TagForm = type('TagForm', forms.ModelForm, {
 
 function syncdb(){
     print('Creando las tablas');
-    var s = $L('doff.core.syncdb');
+    var s = $L('doff.core.commands.syncdb');
     s.execute();
 }
 
-function add_tag(title, description){
-    var [obj, crated] = Tag.objects.get_or_create({'slug':slugify(title), 'defaults': {'title':title, 'description': description}});
-    return obj;
+function add_tag(request){
+    if (request.method == 'post') {
+	var [obj, crated] = Tag.objects.get_or_create({'slug':slugify(request['post']['title']), 'defaults': {'title':request['post']['title']}});
+	show_posts(request);
+    }
+}
+
+function remove_tag(request, slug){
+    var tag = Tag.objects.get({'slug': slug});
+    tag.del();
+    show_posts(request);
 }
 
 function add_post(title, body, tags){
@@ -44,18 +52,17 @@ function set_tags_by_title(post, tag_title){
     post.tags.add.apply(post.tags,tags);
 }
 
-function show_posts(){
+function show_posts(request){
     var t = loader.get_template('post.html');
     var formtag = new TagForm();
     var formpost = new PostForm();
-    event.connect(window, 'load', function(){
-	$Q('#content')[0].innerHTML = t.render(new Context({'tags': Tag.objects.all(), 'formtag': formtag, 'formpost': formpost, 'posts': Post.objects.all().order_by('-title')}));
-    });
+    $Q('#content')[0].innerHTML = t.render(new Context({'tags': Tag.objects.all(), 'formtag': formtag, 'formpost': formpost, 'posts': Post.objects.all().order_by('-title')}));
 }
 
 $P({ 'syncdb': syncdb,
      'add_tag': add_tag,
      'add_post': add_post,
+     'remove_tag': remove_tag,
      'show_posts': show_posts,
      'PostForm': PostForm,
      'set_tags_by_title': set_tags_by_title});
