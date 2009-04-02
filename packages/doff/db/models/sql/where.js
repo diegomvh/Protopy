@@ -1,7 +1,7 @@
-$D("doff.db.models.sql.where");
+$D('doff.db.models.sql.where');
 $L('doff.utils.tree', 'Node');
-$L('doff.db.models.fields', 'Field');
-$L('doff.db', 'connection');
+$L('doff.db.models.fields.*', 'Field');
+$L('doff.db.*', 'connection');
 $L('doff.db.models.sql.datastructures', 'EmptyResultSet', 'FullResultSet');
 $L('doff.db.models.query_utils', 'QueryWrapper');
         

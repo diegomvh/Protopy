@@ -1,11 +1,11 @@
 $D("doff.db.models.fields.related");
-$L('doff.db', 'connection');
+$L('doff.db.*', 'connection');
 $L('doff.db.models.loading', 'get_model');
-$L('doff.db.models.fields', 'AutoField', 'Field', 'IntegerField', 'PositiveIntegerField', 'PositiveSmallIntegerField', 'FieldDoesNotExist');
+$L('doff.db.models.fields.*', 'AutoField', 'Field', 'IntegerField', 'PositiveIntegerField', 'PositiveSmallIntegerField', 'FieldDoesNotExist');
 $L('doff.db.models.related', 'RelatedObject');
 $L('doff.db.models.query', 'QuerySet');
 $L('doff.db.models.query_utils', 'QueryWrapper');
-$L('doff.forms');
+$L('doff.forms.*');
 $L('doff.core.exceptions', 'ValidationError');
 $L('doff.db.transaction');
 $L('functional', 'curry');

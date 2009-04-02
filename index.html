@@ -3,8 +3,8 @@
     <script type="text/javascript;version=1.7" src="protopy.js"></script>
     <script type="text/javascript;version=1.7">
         $L('event');
-        var proyecto = $L('doff.core.offline', 'project');
-        var blog = proyecto('Simple Blog', 'blog', '/blog/');
+        var get_project = $L('doff.core.project', 'get_project');
+        var blog = get_project('Simple Blog', 'blog', '/blog/');
 	blog.files.slurp();
         blog.initialize();
 	//myProyecto._start_network_thread();

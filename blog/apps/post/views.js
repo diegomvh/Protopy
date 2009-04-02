@@ -1,7 +1,7 @@
 $L('event');
 $L('blog.apps.post.models', 'Tag', 'Post', 'Usuario');
-$L('doff.forms');
-$L('doff.template');
+$L('doff.forms.*');
+$L('doff.template.*');
 $L('doff.template.default_filters', 'slugify');
 $L('doff.template.loader');
 $L('doff.template.context', 'Context');

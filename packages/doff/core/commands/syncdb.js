@@ -4,7 +4,8 @@ function execute() {
     $L('doff.db', 'connection');
     $L('doff.db.models');
     $L('doff.db.transaction');
-    $L('doff.conf', 'settings');
+    $L('doff.core.project', 'get_settings');
+    var settings = get_settings();
     for each (var app_name in settings.INSTALLED_APPS) {
 	try {
 	    $L(app_name + '.management');

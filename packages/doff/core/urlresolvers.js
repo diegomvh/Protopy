@@ -30,7 +30,8 @@ function get_callable(lookup_view, can_fail) {
 
 function get_resolver(urlconf) {
     if (!urlconf) {
-        var settings = $L('doff.conf', 'settings');
+        var settings = $L('doff.core.project', 'get_settings');
+	var settings = get_settings();
         urlconf = settings.ROOT_URLCONF;
     }
     return new RegexURLResolver('^/', urlconf);

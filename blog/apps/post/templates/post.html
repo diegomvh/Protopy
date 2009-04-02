@@ -1,11 +1,11 @@
 <h1>Todos los Tags</h1>
 <h4>Haga click en un tag para quitarlo</h4>
 {% for tag in tags %}
-    <a href="/blog/remove_tag/{{ tag.slug }}/" onClick="return blog.handler.handle_a(this);">{{ tag.title }}</a>
+    <a href="/blog/remove_tag/{{ tag.slug }}/" onClick="return blog.handler.handle(this);">{{ tag.title }}</a>
 {% endfor %}
 <h1>Inserte un nuevo Tag</h1>
 <div>
-<form id='{{ formtag.__name__ }}' action="/blog/add_tag/" onSubmit="return blog.handler.handle_form(this);" method="post">
+<form id='{{ formtag.__name__ }}' action="/blog/add_tag/" onSubmit="return blog.handler.handle(this);" method="post">
 {{ formtag.as_ul }}
 <input type='submit' value='guardar'>
 </from>

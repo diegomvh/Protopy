@@ -1,9 +1,9 @@
 $D('doff.db.models.query');
 $L('doff.db', 'connection', 'IntegrityError');
-$L('doff.db.models.fields', 'DateField');
+$L('doff.db.models.fields.*', 'DateField');
 $L('doff.db.models.query_utils', 'Q', 'select_related_descend');
 $L('doff.utils.datastructures', 'SortedDict');
-$L('doff.db.models.sql');
+$L('doff.db.models.sql.*');
 $L('doff.db.transaction');
 $L('copy', 'copy');
 $L('event');

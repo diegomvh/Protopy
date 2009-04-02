@@ -62,14 +62,14 @@
     }
     
     //Load Modules
-    function __load__(name) {
-        var names = name.split('.'),
-            mod = __modules__[name],
-            path = null;
+    function __load__(module_name) {
+        var package = module_name.endswith('.*'),
+	    name = package ? module_name.slice(0, module_name.length - 2) : module_name,
+	    names = name.split('.'),
+            mod = __modules__[name];
     
         if (!mod) {
-	    //TODO: Armar algo para obtener los nombres desde sys con module_url
-            var file = sys.module_url(name, '.js');
+            var file = package ? sys.module_url(name, '/__init__.js') : sys.module_url(name, '.js');
                 code = null;
             new ajax.Request(file, {
                 asynchronous : false,
@@ -80,27 +80,12 @@
                     throw exception;
                 },
                 'onFailure': function onFailure(){
-                    file = sys.module_url(name, '/__init__.js');
-                    new ajax.Request(file, {
-                        asynchronous : false,
-                        'onSuccess': function onSuccess(transport) {
-			    code = '(function(){' + transport.responseText + '});';
-                            path = file.replace('/__init__.js', '');
-                        },
-                        'onException': function onException(obj, exception){
-                            throw exception;
-                        },
-                        'onFailure': function onFailure(){
-                            throw new LoadError();
-                        }
-                    });
-                }
+		    throw new LoadError(file);
+		}
             });
             if (code) {
                 mod = new Module(name, file);
                 __modules__[name] = mod;
-                if (path) 
-                    mod['__path__'] = path;
                 try {
                     with (mod['__builtins__']) {
                         eval(code).call(mod);

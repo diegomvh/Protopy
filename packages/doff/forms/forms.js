@@ -1,14 +1,12 @@
 $D('Form classes');
 $L('copy', 'deepcopy');
 $L('doff.utils.datastructures', 'SortedDict');
-
-//from django.utils.html import conditional_escape
-function conditional_escape(v) { return v; }
-
 $L('doff.forms.fields', 'Field', 'FileField');
 $L('doff.forms.widgets', 'Media', 'media_property', 'TextInput', 'Textarea');
 $L('doff.forms.util', 'flatatt', 'ErrorDict', 'ErrorList', 'ValidationError');
 
+//from django.utils.html import conditional_escape
+function conditional_escape(v) { return v; }
 var NON_FIELD_ERRORS = '__all__';
 
 function pretty_name(name) {

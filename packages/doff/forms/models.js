@@ -4,9 +4,7 @@ $L('doff.utils.datastructures', 'SortedDict');
 $L('doff.forms.util', 'ValidationError', 'ErrorList');
 $L('doff.forms.forms', 'BaseForm', 'get_declared_fields');
 $L('doff.forms.fields', 'Field', 'ChoiceField', 'IntegerField', 'EMPTY_VALUES');
-$L('doff.forms.widgets', 'Select', 'SelectMultiple', 'HiddenInput', 'MultipleHiddenInput');
-$L('doff.forms.widgets', 'media_property');
-
+$L('doff.forms.widgets', 'Select', 'SelectMultiple', 'HiddenInput', 'MultipleHiddenInput', 'media_property');
 
 /*
 from django.utils.encoding import smart_unicode, force_unicode

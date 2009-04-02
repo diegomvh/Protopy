@@ -1,6 +1,8 @@
 $L('doff.core.exceptions', 'ImproperlyConfigured'),
 $L('doff.template', 'Origin', 'Template', 'Context', 'TemplateDoesNotExist', 'add_to_builtins');
-$L('doff.conf', 'settings');
+$L('doff.core.project', 'get_settings');
+
+var settings = get_settings();
         
 var LoaderOrigin = type('LoaderOrigin', Origin, {
     '__init__': function __init__(display_name, loader, name, dirs) {

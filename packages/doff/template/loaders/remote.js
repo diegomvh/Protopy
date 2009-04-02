@@ -1,6 +1,8 @@
 $L('doff.template', 'TemplateDoesNotExist');
-$L('doff.conf', 'settings');
+$L('doff.core.project', 'get_settings');
 $L('ajax');
+
+var settings = get_settings();
 
 function get_template_sources(template_name, template_dirs) {
 

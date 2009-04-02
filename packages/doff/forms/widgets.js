@@ -1,8 +1,10 @@
 $D('HTML Widget classes');
 $L('copy', 'copy');
-$L('doff.conf', 'settings');
+$L('doff.core.project', 'get_settings');
 $L('doff.forms.util', 'flatatt');
 $L('itertools', 'chain');
+
+var settings = get_settings();
 
 //from django.utils.html import escape, conditional_escape
 function conditional_escape(v) { return v; }

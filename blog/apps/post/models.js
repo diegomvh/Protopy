@@ -1,4 +1,4 @@
-$L('doff.db.models');
+$L('doff.db.models.*');
 
 var Usuario = type('Usuario', models.Model, {
     name: new models.CharField('Name', {'max_length':20}),

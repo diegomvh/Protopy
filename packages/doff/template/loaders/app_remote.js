@@ -1,8 +1,10 @@
 $D('Wrapper for loading templates from "template" directories in INSTALLED_APPS packages.');
 $L('doff.template', 'TemplateDoesNotExist');
 $L('doff.core.exceptions', 'ImproperlyConfigured');
-$L('doff.conf', 'settings');
+$L('doff.core.project', 'get_settings');
 $L('ajax');
+
+var settings = get_settings();
 
 // It won't change, so convert it to a tuple to save memory.
 var app_template_dirs = [];

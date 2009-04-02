@@ -1,9 +1,9 @@
 $D('doff.db.models.base');
 $L('copy', 'copy', 'deepcopy');
 $L('doff.core.exceptions', 'ObjectDoesNotExist', 'MultipleObjectsReturned', 'FieldError');
-$L('doff.db.models.fields', 'AutoField');
+$L('doff.db.models.fields.*', 'AutoField');
 $L('doff.db.models.fields.related', 'OneToOneRel', 'ManyToOneRel', 'OneToOneField');
-$L('doff.db.models.sql');
+$L('doff.db.models.sql.*');
 $L('doff.db.models.query', 'delete_objects', 'Q', 'CollectedObjects');
 $L('doff.db.models.manager');
 $L('doff.db.models.options', 'Options');

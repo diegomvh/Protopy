@@ -1,10 +1,12 @@
-$D('doff.db.models.fields.__init__');
-$L('doff.db', 'connection');
+$D('doff.db.models.fields.*');
+$L('doff.db.*', 'connection');
 $L('doff.db.models.query_utils', 'QueryWrapper');
-$L('doff.conf', 'settings');
-$L('doff.forms');
+$L('doff.core.project', 'get_settings');
+$L('doff.forms.*');
 $L('doff.core.exceptions', 'ValidationError');
 $L('functional', 'curry');
+
+var settings = get_settings();
 
 var NOT_PROVIDED = type('NOT_PROVIDED', Exception);
 

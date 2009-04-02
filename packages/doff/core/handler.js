@@ -3,36 +3,42 @@ $L('event');
 $L('doff.core.exceptions');
 $L('doff.core.urlresolvers');
 
-var Handler = type('Handler', [object], {
-    handle_form: function handle_form(form){
-	var request = {}; 
-	form = $Q(form);
-	request.path_info = form.action.slice(sys.base_url.length);
-	request.method = form.method;
-	request[form.method] = form.serialize();
-	this.execute(request);
-	return false;
+var elements = {
+    'form': function form(request, element) {
+	var f = $Q(element);
+	request.method = f.method;
+	request.path_info = f.action.slice(sys.base_url.length);
+	request[f.method] = f.serialize();
+	return request;
     },
+    'a': function a(request, element) {
+	request.path_info = element.href.slice(sys.base_url.length);
+	request.method = 'get';
+	return request;
+    },
+}
 
-    handle_a: function handle_a(a){
+var Handler = type('Handler', [object], {
+    handle: function handle(element) {
 	var request = {};
-	request.path_info = a.href.slice(sys.base_url.length);
-	request.method = 'get';
-	this.execute(request);
+	if (element.tagName) {
+	    var name = element.tagName.toLowerCase();
+	    if (callable(elements[name]))
+		request = elements[name](request, element);
+	} else if (type(element) == String) {
+	    request.path_info = element;
+	    request.method = 'get';
+	}
+	if (request.path_info)
+	    this.execute(request);
 	return false;
-    },
-    
-    handle_url: function handle_url(url) {
-	var request = {};
-	request.path_info = url;
-	request.method = 'get';
-	this.execute(request);
     },
 
     execute: function execute(request) {
         //Execute action
-       $L('doff.conf', 'settings');
-
+       $L('doff.core.project', 'get_settings');
+	
+        var settings = get_settings();
         // Get urlconf.
         var urlconf = settings.ROOT_URLCONF;
 

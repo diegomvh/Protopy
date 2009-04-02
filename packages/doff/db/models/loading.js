@@ -1,7 +1,9 @@
 $D("doff.db.models.loading, Utilities for loading models and the modules that contain them.");
-$L('doff.conf', 'settings');
+$L('doff.core.project', 'get_settings');
 $L('doff.core.exceptions', 'ImproperlyConfigured');
 $L('doff.utils.datastructures', 'SortedDict');
+
+var settings = get_settings();
 
 /*
  * A cache that stores installed applications and their models. Used to

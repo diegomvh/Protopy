@@ -1,18 +1,18 @@
 $D("doff.db.models.options");
     
-$L('doff.conf', 'settings');
+$L('doff.core.project', 'get_settings');
 $L('doff.db.models.related', 'RelatedObject');
 $L('doff.db.models.fields.related', 'ManyToManyRel');
 $L('doff.db.models.fields', 'AutoField', 'FieldDoesNotExist');
 $L('doff.db.models.fields.proxy', 'OrderWrt');
 $L('doff.db.models.loading', 'get_models', 'app_cache_ready');
-
 $L('doff.utils.datastructures', 'SortedDict');
+
+var settings = get_settings();
 
 // Calculate the verbose_name by converting from InitialCaps to "lowercase with spaces".
 //TODO: Pasar los nombres de las clases
 var get_verbose_name = function(class_name) { return class_name;};
-
 
 var DEFAULT_NAMES = ['verbose_name', 'db_table', 'ordering', 'unique_together', 'permissions', 'get_latest_by',
                     'order_with_respect_to', 'app_label', 'db_tablespace',

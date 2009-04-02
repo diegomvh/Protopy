@@ -1,8 +1,8 @@
-$D("doff.db.backends.gears.base");
+$D('doff.db.backends.gears.base');
 
 $L('gears.database');
 $L('doff.db.backends.util');
-$L('doff.db.backends', 'BaseDatabaseFeatures', 'BaseDatabaseOperations', 'BaseDatabaseWrapper', 'BaseDatabaseValidation');
+$L('doff.db.backends.*', 'BaseDatabaseFeatures', 'BaseDatabaseOperations', 'BaseDatabaseWrapper', 'BaseDatabaseValidation');
 $L('doff.db.backends.gears.creation', 'DatabaseCreation');
 $L('doff.db.backends.gears.introspection', 'DatabaseIntrospection');
 

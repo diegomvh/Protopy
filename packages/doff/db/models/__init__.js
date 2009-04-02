@@ -1,10 +1,10 @@
 $L('doff.core.exceptions', 'ObjectDoesNotExist', 'ImproperlyConfigured');
-$L('doff.db', 'connection');
+$L('doff.db.*', 'connection');
 $L('doff.db.models.loading', 'get_apps', 'get_app', 'get_models', 'get_model', 'register_models');
 $L('doff.db.models.query', 'Q');
 $L('doff.db.models.manager', 'Manager');
 $L('doff.db.models.base', 'Model');
-$L('doff.db.models.fields', '*');
+$L('doff.db.models.fields.*', '*');
 //var SubfieldBase = $L('doff.db.models.fields.subclassing', ['SubfieldBase']);
 //var [FileField, ImageField] = $L('doff.db.models.fields.files', ['FileField', 'ImageField']);
 $L('doff.db.models.fields.related', '*');

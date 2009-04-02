@@ -1,5 +1,7 @@
-$L('doff.conf', 'settings');
+$L('doff.core.project', 'get_settings');
 $L('event');
+
+var settings = get_settings();
 
 var _load_path = 'doff.db.backends.';
 var backend = $L('%s%s.base'.subs(_load_path, settings.DATABASE_ENGINE));
