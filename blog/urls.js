@@ -5,6 +5,7 @@ var urlpatterns = patterns('',
     // Example:
     // ['^$', 'blog.apps.post.views.show_posts'],
     ['^$', index],
+    ['^syncdb/$', 'blog.views.syncdb'],
     ['^blog/', include('blog.apps.post.urls')]
 )
 

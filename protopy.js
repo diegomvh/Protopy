@@ -298,7 +298,12 @@
     sys.browser.features.Gears = !!get_gears() || false;
     /******************** exception ***********************/
     var Exception = type('Exception', {
-        '__init__': function(message) { this.message = message; },
+        '__init__': function(message) {
+            //TODO: Ver como tomar mas informacion de quien larga la exception
+            //this.caller = arguments.callee.caller;
+            this.args = arguments;
+            this.message = (type(message) == String)? message : '';
+        },
         '__str__': function() { return this.__name__ + ': ' + this.message; }
     });
     
@@ -1707,7 +1712,7 @@
 	try {
 	    getattr(object, name);
 	    return true;
-	} catch (e if e instanceof AttributeError) {
+	} catch (e if isinstance(e, AttributeError)) {
 	    return false;
 	}
     }

@@ -45,7 +45,6 @@ var Handler = type('Handler', [object], {
         var resolver = new urlresolvers.RegexURLResolver('^/', urlconf);
         try {
             var [callback, callback_args, callback_kwargs] = resolver.resolve(request.path_info);
-	    print([callback, callback_args, callback_kwargs]);
             try {
 		var args = [request];
 		args = args.concat(callback_args);

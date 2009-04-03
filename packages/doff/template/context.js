@@ -1,3 +1,8 @@
+$L('doff.core.project', 'get_settings', 'get_project');
+
+var settings = get_settings();
+var project = get_project();
+
 var ContextPopException = type('ContextPopException', Exception);
 
 var Context = type('Context', {
@@ -58,4 +63,51 @@ var Context = type('Context', {
      }
 });
 
-$P({ 'Context': Context });
+// This is a function rather than module-level procedural code because we only want it to execute if somebody uses RequestContext.
+function get_standard_processors() {
+    var standard_context_processors = project._standard_context_processors;
+    if (!standard_context_processors) {
+        var processors = [];
+        for each (var path in settings.TEMPLATE_CONTEXT_PROCESSORS) {
+            var i = path.lastIndexOf('.');
+            var module = path.substring(0, i);
+            var attr = path.substring(i + 1 , path.length);
+            try {
+                var mod = $L(module);
+            } catch (e) {
+                throw new ImproperlyConfigured('Error importing request processor module %s: "%s"'.subs(module, e));
+            }
+            try {
+                var func = getattr(mod, attr);
+            } catch (e if isinstance(e, AttributeError)) {
+                throw new ImproperlyConfigured('Module "%s" does not define a "%s" callable request processor'.subs(module, attr));
+            }
+            processors.push(func);
+            standard_context_processors = project._standard_context_processors = processors;
+        }
+    }
+    return standard_context_processors;
+}
+
+var RequestContext = type('RequestContext', [Context], {
+    /*
+    This subclass of template.Context automatically populates itself using
+    the processors defined in TEMPLATE_CONTEXT_PROCESSORS.
+    Additional processors can be specified as a list of callables
+    using the "processors" keyword argument.
+    */ 
+    __init__: function __init__(request, dict, processors) {
+        super(Context, this).__init__(dict);
+        if (!processors)
+            processors = [];
+        else
+            processors = array(processors);
+        for each (var processor in get_standard_processors().concat(processors))
+            this.update(processor(request));
+    }
+});
+
+$P({ 
+    'Context': Context,
+    'RequestContext': RequestContext
+});

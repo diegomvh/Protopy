@@ -1,8 +1,9 @@
 $L('doff.core.exceptions', 'ImproperlyConfigured'),
 $L('doff.template.*', 'Origin', 'Template', 'Context', 'TemplateDoesNotExist', 'add_to_builtins');
-$L('doff.core.project', 'get_settings');
+$L('doff.core.project', 'get_settings', 'get_project');
 
 var settings = get_settings();
+var project = get_project();
         
 var LoaderOrigin = type('LoaderOrigin', Origin, {
     '__init__': function __init__(display_name, loader, name, dirs) {
@@ -26,7 +27,7 @@ function make_origin(display_name, loader, name, dirs) {
 
 function find_template_source(name, dirs) {
 
-    var template_source_loaders = settings.template_source_loaders;
+    var template_source_loaders = project._template_source_loaders;
     if (!template_source_loaders) {
         var loaders = [];
         for each (var path in settings.TEMPLATE_LOADERS) {
@@ -34,17 +35,18 @@ function find_template_source(name, dirs) {
             var module = path.substring(0, i);
             var attr = path.substring(i + 1 , path.length);
             try {
-                mod = $L(module);
+                var mod = $L(module);
             } catch (e) {
                 throw new ImproperlyConfigured('Error importing template source loader %s: "%s"'.subs(module, e));
             }
-            var loader = mod[attr];
-            if (loader)
-                loaders.push(loader);
-            else
+            try {
+                var loader = getattr(mod, attr);
+            } catch (e if isinstance(e, AttributeError)) {
                 throw new ImproperlyConfigured('Module "%s" does not define a "%s" callable template source loader'.subs(module, attr));
-        };
-        template_source_loaders = settings.template_source_loaders = loaders;
+            }
+            loaders.push(loader);
+        }
+        template_source_loaders = project._template_source_loaders = loaders;
     }
     for each (var loader in template_source_loaders) {
         try {

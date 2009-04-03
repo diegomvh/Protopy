@@ -1,5 +1,5 @@
 $L('doff.template.*', 'TemplateSyntaxError', 'TemplateDoesNotExist', 'Variable', 'Library', 'Node', 'TextNode');
-$L('doff.template.loader', 'get_template', 'get_template_from_string', 'find_template_source');
+$L('doff.template.loader');
     
 var register = new Library();
 
@@ -130,7 +130,7 @@ var IncludeNode = type('IncludeNode', Node, {
     'render': function render(context){
         try {
             var template_name = this.template_name.resolve(context);
-            t = get_template(template_name);
+            t = loader.get_template(template_name);
             return t.render(context);
         }
         catch (e) {

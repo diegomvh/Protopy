@@ -1,5 +1,5 @@
-var Resolver404 = type('Resolver404', [object], {});
-var NoReverseMatch = type('NoReverseMatch', [object], {});
+var Resolver404 = type('Resolver404', [Exception], {});
+var NoReverseMatch = type('NoReverseMatch', [Exception], {});
 
 /*
 Convert a string version of a function name to the callable object.

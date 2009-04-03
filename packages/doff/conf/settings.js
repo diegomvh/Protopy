@@ -30,7 +30,9 @@ $P({
         // Each one should be a callable that takes the request object as its
         // only parameter and returns a dictionary to add to the context.
         TEMPLATE_CONTEXT_PROCESSORS: [
-            'doff.core.context_processors.algo',
+            'doff.core.context_processors.debug',
+            'doff.core.context_processors.media',
+            'doff.core.context_processors.request'
         ],
 
         TEMPLATE_STRING_IF_INVALID: '',
