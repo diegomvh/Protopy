@@ -474,12 +474,12 @@ class BufferingFormatter:
             rv = rv + self.formatFooter(records)
         return rv
 
-#---------------------------------------------------------------------------
-#   Filter classes and functions
-#---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//   Filter classes and functions
+//---------------------------------------------------------------------------
 
 var Filter = type('Filter', {
-    """
+    /*
     Filter instances are used to perform arbitrary filtering of LogRecords.
 
     Loggers and Handlers can optionally use Filter instances to filter
@@ -488,99 +488,97 @@ var Filter = type('Filter', {
     initialized with "A.B" will allow events logged by loggers "A.B",
     "A.B.C", "A.B.C.D", "A.B.D" etc. but not "A.BB", "B.A.B" etc. If
     initialized with the empty string, all events are passed.
-    """
-    def __init__(self, name=''):
-        """
+    */
+    __init__: function __init__(name) {
+        /*
         Initialize a filter.
 
         Initialize with the name of the logger which, together with its
         children, will have its events allowed through the filter. If no
         name is specified, allow every event.
-        """
-        self.name = name
-        self.nlen = len(name)
+        */
+        this.name = name;
+        this.nlen = len(name);
+    },
 
-    def filter(self, record):
-        """
+    filter: function filter(record) {
+        /*
         Determine if the specified record is to be logged.
 
         Is the specified record to be logged? Returns 0 for no, nonzero for
         yes. If deemed appropriate, the record may be modified in-place.
-        """
-        if self.nlen == 0:
-            return 1
-        elif self.name == record.name:
-            return 1
-        elif string.find(record.name, self.name, 0, self.nlen) != 0:
-            return 0
-        return (record.name[self.nlen] == ".")
+        */
+        if (this.nlen == 0)
+            return 1;
+        else if (this.name == record.name)
+            return 1;
+        else if (record.name.slice(0, this.nlen).search(this.name) != 0):
+            return 0;
+        return (record.name[this.nlen] == ".");
+    }
 });
 
-class Filterer:
-    """
-    A base class for loggers and handlers which allows them to share
-    common code.
-    """
-    def __init__(self):
-        """
-        Initialize the list of filters to be an empty list.
-        """
-        self.filters = []
+//A base class for loggers and handlers which allows them to share common code.
+var Filterer = type('Filterer', {
+    __init__: function __init__() {
+        //Initialize the list of filters to be an empty list.
+        this.filters = [];
+    },
 
-    def addFilter(self, filter):
-        """
-        Add the specified filter to this handler.
-        """
-        if not (filter in self.filters):
-            self.filters.append(filter)
+    add_filter: function add_filter(filter) {
+        //Add the specified filter to this handler.
+        if (!include(this.filters, filter))
+            this.filters.push(filter);
+    },
 
-    def removeFilter(self, filter):
-        """
-        Remove the specified filter from this handler.
-        """
-        if filter in self.filters:
-            self.filters.remove(filter)
+    remove_filter: function remove_filter(filter) {
+        //Remove the specified filter from this handler.
+        var index = this.filters.indexOf(filter);
+	if (index != -1)
+            delete this.filters[index];
+    },
 
-    def filter(self, record):
-        """
+    filter: function filter(record) {
+        /*
         Determine if a record is loggable by consulting all the filters.
 
         The default is to allow the record to be logged; any filter can veto
         this and the record is then dropped. Returns a zero value if a record
         is to be dropped, else non-zero.
-        """
-        rv = 1
-        for f in self.filters:
-            if not f.filter(record):
-                rv = 0
-                break
-        return rv
+        */
+        for each (var f in this.filters)
+            if (!f.filter(record))
+                return false;
+        return true;
+    }
+});
 
-#---------------------------------------------------------------------------
-#   Handler classes and functions
-#---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//   Handler classes and functions
+//---------------------------------------------------------------------------
 
-_handlers = {}  #repository of handlers (for flushing when shutdown called)
-_handlerList = [] # added to allow handlers to be removed in reverse of order initialized
+var _handlers = {};  //repository of handlers (for flushing when shutdown called)
+var _handlerList = []; //added to allow handlers to be removed in reverse of order initialized
 
-class Handler(Filterer):
-    """
+var Handler = type('Handler', [Filterer], 
+    /*
     Handler instances dispatch logging events to specific destinations.
 
     The base handler class. Acts as a placeholder which defines the Handler
     interface. Handlers can optionally use Formatter instances to format
     records as desired. By default, no formatter is specified; in this case,
     the 'raw' message as determined by record.message is logged.
-    """
-    def __init__(self, level=NOTSET):
-        """
+    */
+    __init__: function(level) {
+        /*
         Initializes the instance - basically setting the formatter to None
         and the filter list to empty.
-        """
-        Filterer.__init__(self)
-        self.level = level
-        self.formatter = None
-        #get the module data lock, as we're updating a shared structure.
+        */
+	level= level || NOTSET;
+        super(Filterer, this).__init__();
+        this.level = level;
+        this.formatter = null;
+        //get the module data lock, as we're updating a shared structure.
         _acquireLock()
         try:    #unlikely to raise an exception, but you never know...
             _handlers[self] = 1
@@ -924,144 +922,167 @@ class Manager:
 #---------------------------------------------------------------------------
 #   Logger classes and functions
 #---------------------------------------------------------------------------
+/*
+Instances of the Logger class represent a single logging channel. A
+"logging channel" indicates an area of an application. Exactly how an
+"area" is defined is up to the application developer. Since an
+application can have any number of areas, logging channels are identified
+by a unique string. Application areas can be nested (e.g. an area
+of "input processing" might include sub-areas "read CSV files", "read
+XLS files" and "read Gnumeric files"). To cater for this natural nesting,
+channel names are organized into a namespace hierarchy where levels are
+separated by periods, much like the Java or Python package namespace. So
+in the instance given above, channel names might be "input" for the upper
+level, and "input.csv", "input.xls" and "input.gnu" for the sub-levels.
+There is no arbitrary limit to the depth of nesting.
+*/
+var Logger = type('Logger', [ Filterer ], { 
+    __init__: function __init__(name, level) {
+        //Initialize the logger with a name and an optional level.
+	level = lever || NOTSET;
+        super(Filterer, this).__init__();
+        this.name = name;
+        this.level = level;
+        this.parent = null;
+        this.propagate = 1;
+        this.handlers = [];
+        this.disabled = 0;
+    },
 
-var Logger = type('Logger', Filterer ) 
-    """
-    Instances of the Logger class represent a single logging channel. A
-    "logging channel" indicates an area of an application. Exactly how an
-    "area" is defined is up to the application developer. Since an
-    application can have any number of areas, logging channels are identified
-    by a unique string. Application areas can be nested (e.g. an area
-    of "input processing" might include sub-areas "read CSV files", "read
-    XLS files" and "read Gnumeric files"). To cater for this natural nesting,
-    channel names are organized into a namespace hierarchy where levels are
-    separated by periods, much like the Java or Python package namespace. So
-    in the instance given above, channel names might be "input" for the upper
-    level, and "input.csv", "input.xls" and "input.gnu" for the sub-levels.
-    There is no arbitrary limit to the depth of nesting.
-    """
-    def __init__(self, name, level=NOTSET):
-        """
-        Initialize the logger with a name and an optional level.
-        """
-        Filterer.__init__(self)
-        self.name = name
-        self.level = level
-        self.parent = None
-        self.propagate = 1
-        self.handlers = []
-        self.disabled = 0
+    set_level: function set_level(level) {
+        //Set the logging level of this logger.
+        this.level = level;
+    },
 
-    def setLevel(self, level):
-        """
-        Set the logging level of this logger.
-        """
-        self.level = level
-
-    def debug(self, msg, *args, **kwargs):
-        """
+    debug: function debug(msg) {
+        /*
         Log 'msg % args' with severity 'DEBUG'.
 
         To pass exception information, use the keyword argument exc_info with
         a true value, e.g.
 
         logger.debug("Houston, we have a %s", "thorny problem", exc_info=1)
-        """
-        if self.manager.disable >= DEBUG:
-            return
-        if DEBUG >= self.getEffectiveLevel():
-            apply(self._log, (DEBUG, msg, args), kwargs)
+        */
+	arguments = new Arguments(arguments);
+        var args = arguments.args;
+        var kwargs = arguments.kwargs;
+        if (this.manager.disable >= DEBUG)
+            return;
+        if (DEBUG >= this.get_effective_level())
+            this._log(DEBUG, msg, args, kwargs.exc_info, kwargs.extra);
+    },
 
-    def info(self, msg, *args, **kwargs):
-        """
+    info: function info(msg) {
+        /*
         Log 'msg % args' with severity 'INFO'.
 
         To pass exception information, use the keyword argument exc_info with
         a true value, e.g.
 
         logger.info("Houston, we have a %s", "interesting problem", exc_info=1)
-        """
-        if self.manager.disable >= INFO:
-            return
-        if INFO >= self.getEffectiveLevel():
-            apply(self._log, (INFO, msg, args), kwargs)
+        */
+        arguments = new Arguments(arguments);
+        var args = arguments.args;
+        var kwargs = arguments.kwargs;
+	if (this.manager.disable >= INFO)
+            return;
+        if (INFO >= this.get_effective_level())
+	    this._log(INFO, msg, args, kwargs.exc_info, kwargs.extra);
+    },
 
-    def warning(self, msg, *args, **kwargs):
-        """
+    warning: function warning(msg) {
+        /*
         Log 'msg % args' with severity 'WARNING'.
 
         To pass exception information, use the keyword argument exc_info with
         a true value, e.g.
 
         logger.warning("Houston, we have a %s", "bit of a problem", exc_info=1)
-        """
-        if self.manager.disable >= WARNING:
-            return
-        if self.isEnabledFor(WARNING):
-            apply(self._log, (WARNING, msg, args), kwargs)
+        */
+        arguments = new Arguments(arguments);
+        var args = arguments.args;
+        var kwargs = arguments.kwargs;
+	if (this.manager.disable >= WARNING)
+            return;
+        if (this.is_enabled_for(WARNING))
+	    this._log(WARNING, msg, args, kwargs.exc_info, kwargs.extra);
+    },
 
-    warn = warning
+    warn: this.warning,
 
-    def error(self, msg, *args, **kwargs):
-        """
+    error: function error(msg) {
+        /*
         Log 'msg % args' with severity 'ERROR'.
 
         To pass exception information, use the keyword argument exc_info with
         a true value, e.g.
 
         logger.error("Houston, we have a %s", "major problem", exc_info=1)
-        """
-        if self.manager.disable >= ERROR:
-            return
-        if self.isEnabledFor(ERROR):
-            apply(self._log, (ERROR, msg, args), kwargs)
+        */
+        arguments = new Arguments(arguments);
+        var args = arguments.args;
+        var kwargs = arguments.kwargs;
+	if (this.manager.disable >= ERROR)
+            return;
+        if (this.is_enabled_for(ERROR))
+            this._log(ERROR, msg, args, kwargs.exc_info, kwargs.extra);
+    },
 
-    def exception(self, msg, *args):
-        """
-        Convenience method for logging an ERROR with exception information.
-        """
-        apply(self.error, (msg,) + args, {'exc_info': 1})
+    exception: function exception(msg) {
+        //Convenience method for logging an ERROR with exception information.
+        arguments = new Arguments(arguments);
+        var args = arguments.args;
+        this.error(msg, args, {'exc_info': 1});
+    },
 
-    def critical(self, msg, *args, **kwargs):
-        """
+    critical: function critical(msg) {
+        /*
         Log 'msg % args' with severity 'CRITICAL'.
 
         To pass exception information, use the keyword argument exc_info with
         a true value, e.g.
 
         logger.critical("Houston, we have a %s", "major disaster", exc_info=1)
-        """
-        if self.manager.disable >= CRITICAL:
-            return
-        if CRITICAL >= self.getEffectiveLevel():
-            apply(self._log, (CRITICAL, msg, args), kwargs)
+        */
+        arguments = new Arguments(arguments);
+        var args = arguments.args;
+        var kwargs = arguments.kwargs;
+	if (this.manager.disable >= CRITICAL)
+            return;
+        if (CRITICAL >= this.get_effective_level())
+            this._log(CRITICAL, msg, args, kwargs.exc_info, kwargs.extra);
+    },
 
-    fatal = critical
+    fatal: this.critical,
 
-    def log(self, level, msg, *args, **kwargs):
-        """
+    log: function log(level, msg) {
+        /*
         Log 'msg % args' with the integer severity 'level'.
 
         To pass exception information, use the keyword argument exc_info with
         a true value, e.g.
 
         logger.log(level, "We have a %s", "mysterious problem", exc_info=1)
-        """
-        if type(level) != types.IntType:
-            if raiseExceptions:
-                raise TypeError, "level must be an integer"
-            else:
-                return
-        if self.manager.disable >= level:
-            return
-        if self.isEnabledFor(level):
-            apply(self._log, (level, msg, args), kwargs)
-
-    def findCaller(self):
-        """
+        */
+        arguments = new Arguments(arguments);
+        var args = arguments.args;
+        var kwargs = arguments.kwargs;
+	if (type(level) != Number)
+            if (raise_exceptions)
+                throw new TypeError("level must be an integer");
+            else
+                return;
+        if (this.manager.disable >= level)
+            return;
+        if (this.is_enabled_for(level))
+            this._log(level, msg, args, kwargs.exc_info, kwargs.extra);
+    },
+/*
+    find_caller: function find_caller() { 
+        /*
         Find the stack frame of the caller so that we can note the source
         file name, line number and function name.
-        """
+
         f = currentframe().f_back
         rv = "(unknown file)", 0, "(unknown function)"
         while hasattr(f, "f_code"):
@@ -1086,17 +1107,19 @@ var Logger = type('Logger', Filterer )
                     raise KeyError("Attempt to overwrite %r in LogRecord" % key)
                 rv.__dict__[key] = extra[key]
         return rv
-
-    def _log(self, level, msg, args, exc_info=None, extra=None):
-        """
+*/
+    _log: function _log(level, msg, args, exc_info, extra) {
+        /*
         Low-level logging routine which creates a LogRecord and then calls
         all the handlers of this logger to handle the record.
-        """
+        
         if _srcfile:
             fn, lno, func = self.findCaller()
         else:
-            fn, lno, func = "(unknown file)", 0, "(unknown function)"
-        if exc_info:
+	*/
+	//TODO: Agregar a sys un poco de informacion sobre la ejecucion
+        var [fn, lno, func] = ["(unknown file)", 0, "(unknown function)"];
+        if (exc_info)
             if type(exc_info) != types.TupleType:
                 exc_info = sys.exc_info()
         record = self.makeRecord(self.name, level, fn, lno, msg, args, exc_info, func, extra)
@@ -1178,6 +1201,7 @@ var Logger = type('Logger', Filterer )
         if self.manager.disable >= level:
             return 0
         return level >= self.getEffectiveLevel()
+});
 
 /*
 A root logger is not that different to any other logger, except that

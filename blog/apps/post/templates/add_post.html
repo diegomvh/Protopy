@@ -5,6 +5,6 @@
     <form id='{{ formpost.__name__ }}' action="/blog/add_post/" onSubmit="return blog.handler.handle(this);" method="post">
         {{ formpost.as_ul }}
         <input type='submit' value='guardar'/>
-    </from>
+    </form>
 </div>
 {% endblock %}
