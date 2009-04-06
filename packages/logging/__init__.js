@@ -1,116 +1,3 @@
-/*
-# Copyright 2001-2007 by Vinay Sajip. All Rights Reserved.
-#
-# Permission to use, copy, modify, and distribute this software and its
-# documentation for any purpose and without fee is hereby granted,
-# provided that the above copyright notice appear in all copies and that
-# both that copyright notice and this permission notice appear in
-# supporting documentation, and that the name of Vinay Sajip
-# not be used in advertising or publicity pertaining to distribution
-# of the software without specific, written prior permission.
-# VINAY SAJIP DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
-# ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL
-# VINAY SAJIP BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR
-# ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER
-# IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
-# OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
-
-Logging package for Python. Based on PEP 282 and comments thereto in
-comp.lang.python, and influenced by Apache's log4j system.
-
-Should work under Python versions >= 1.5.2, except that source line
-information is not available unless 'sys._getframe()' is.
-
-Copyright (C) 2001-2007 Vinay Sajip. All Rights Reserved.
-
-To use, simply 'import logging' and log away!
-*/
-
-import sys, os, types, time, string, cStringIO, traceback
-
-try:
-    import codecs
-except ImportError:
-    codecs = None
-
-try:
-    import thread
-    import threading
-except ImportError:
-    thread = None
-
-__author__  = "Vinay Sajip <vinay_sajip@red-dove.com>"
-__status__  = "production"
-__version__ = "0.5.0.2"
-__date__    = "16 February 2007"
-
-#---------------------------------------------------------------------------
-#   Miscellaneous module data
-#---------------------------------------------------------------------------
-
-#
-# _srcfile is used when walking the stack to check when we've got the first
-# caller stack frame.
-#
-if hasattr(sys, 'frozen'): #support for py2exe
-    _srcfile = "logging%s__init__%s" % (os.sep, __file__[-4:])
-elif string.lower(__file__[-4:]) in ['.pyc', '.pyo']:
-    _srcfile = __file__[:-4] + '.py'
-else:
-    _srcfile = __file__
-_srcfile = os.path.normcase(_srcfile)
-
-# next bit filched from 1.5.2's inspect.py
-def currentframe():
-    """Return the frame object for the caller's stack frame."""
-    try:
-        raise Exception
-    except:
-        return sys.exc_traceback.tb_frame.f_back
-
-if hasattr(sys, '_getframe'): currentframe = lambda: sys._getframe(3)
-# done filching
-
-# _srcfile is only used in conjunction with sys._getframe().
-# To provide compatibility with older versions of Python, set _srcfile
-# to None if _getframe() is not available; this value will prevent
-# findCaller() from being called.
-#if not hasattr(sys, "_getframe"):
-#    _srcfile = None
-
-#
-#_startTime is used as the base when calculating the relative time of events
-#
-_startTime = time.time()
-
-#
-#raiseExceptions is used to see if exceptions during handling should be
-#propagated
-#
-raiseExceptions = 1
-
-#
-# If you don't want threading information in the log, set this to zero
-#
-logThreads = 1
-
-#
-# If you don't want process information in the log, set this to zero
-#
-logProcesses = 1
-
-#---------------------------------------------------------------------------
-#   Level related stuff
-#---------------------------------------------------------------------------
-#
-# Default levels and level names, these can be replaced with any positive set
-# of values having corresponding names. There is a pseudo-level, NOTSET, which
-# is only really there as a lower limit for user-defined levels. Handlers and
-# loggers are initialized with NOTSET so that they will log all messages, even
-# at user-defined levels.
-#
-
 var CRITICAL = 50;
 var FATAL = CRITICAL;
 var ERROR = 40;
@@ -120,7 +7,7 @@ var INFO = 20;
 var DEBUG = 10;
 var NOTSET = 0;
 
-_levelNames = {
+var _levelNames = {
     CRITICAL : 'CRITICAL',
     ERROR : 'ERROR',
     WARNING : 'WARNING',
@@ -136,73 +23,20 @@ _levelNames = {
     'NOTSET' : NOTSET,
 }
 
-def getLevelName(level):
-    """
-    Return the textual representation of logging level 'level'.
+function get_level_name(level) {
+    return _levelNames[level] || "Level %s".subs(level);
+}
 
-    If the level is one of the predefined levels (CRITICAL, ERROR, WARNING,
-    INFO, DEBUG) then you get the corresponding string. If you have
-    associated levels with names using addLevelName then the name you have
-    associated with 'level' is returned.
+function add_level_name(level, levelname) {
+    _levelNames[level] = levelname;
+    _levelNames[levelname] = level;
+}
 
-    If a numeric value corresponding to one of the defined levels is passed
-    in, the corresponding string representation is returned.
+//-------------------------------------------------------------------------
+//   The logging record
+//-------------------------------------------------------------------------
 
-    Otherwise, the string "Level %s" % level is returned.
-    """
-    return _levelNames.get(level, ("Level %s" % level))
-
-def addLevelName(level, levelName):
-    """
-    Associate 'levelName' with 'level'.
-
-    This is used when converting levels to text during message formatting.
-    """
-    _acquireLock()
-    try:    #unlikely to cause an exception, but you never know...
-        _levelNames[level] = levelName
-        _levelNames[levelName] = level
-    finally:
-        _releaseLock()
-
-#---------------------------------------------------------------------------
-#   Thread-related stuff
-#---------------------------------------------------------------------------
-
-#
-#_lock is used to serialize access to shared data structures in this module.
-#This needs to be an RLock because fileConfig() creates Handlers and so
-#might arbitrary user threads. Since Handler.__init__() updates the shared
-#dictionary _handlers, it needs to acquire the lock. But if configuring,
-#the lock would already have been acquired - so we need an RLock.
-#The same argument applies to Loggers and Manager.loggerDict.
-#
-_lock = None
-
-def _acquireLock():
-    """
-    Acquire the module-level lock for serializing access to shared data.
-
-    This should be released with _releaseLock().
-    """
-    global _lock
-    if (not _lock) and thread:
-        _lock = threading.RLock()
-    if _lock:
-        _lock.acquire()
-
-def _releaseLock():
-    """
-    Release the module-level lock acquired by calling _acquireLock().
-    """
-    if _lock:
-        _lock.release()
-
-#---------------------------------------------------------------------------
-#   The logging record
-#---------------------------------------------------------------------------
-
-class LogRecord:
+var LogRecord = type('LogRecord', {
     """
     A LogRecord instance represents an event being logged.
 
@@ -288,21 +122,11 @@ class LogRecord:
         if self.args:
             msg = msg % self.args
         return msg
+});
 
-def makeLogRecord(dict):
-    """
-    Make a LogRecord whose attributes are defined by the specified dictionary,
-    This function is useful for converting a logging event received over
-    a socket connection (which is sent as a dictionary) into a LogRecord
-    instance.
-    """
-    rv = LogRecord(None, None, "", 0, "", (), None, None)
-    rv.__dict__.update(dict)
-    return rv
-
-#---------------------------------------------------------------------------
-#   Formatter classes and functions
-#---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//   Formatter classes and functions
+//---------------------------------------------------------------------------
 
 class Formatter:
     """
@@ -431,48 +255,7 @@ class Formatter:
             s = s + record.exc_text
         return s
 
-#
-#   The default formatter to use when no other is specified
-#
-_defaultFormatter = Formatter()
-
-class BufferingFormatter:
-    """
-    A formatter suitable for formatting a number of records.
-    """
-    def __init__(self, linefmt=None):
-        """
-        Optionally specify a formatter which will be used to format each
-        individual record.
-        """
-        if linefmt:
-            self.linefmt = linefmt
-        else:
-            self.linefmt = _defaultFormatter
-
-    def formatHeader(self, records):
-        """
-        Return the header string for the specified records.
-        """
-        return ""
-
-    def formatFooter(self, records):
-        """
-        Return the footer string for the specified records.
-        """
-        return ""
-
-    def format(self, records):
-        """
-        Format the specified records and return the result as a string.
-        """
-        rv = ""
-        if len(records) > 0:
-            rv = rv + self.formatHeader(records)
-            for record in records:
-                rv = rv + self.linefmt.format(record)
-            rv = rv + self.formatFooter(records)
-        return rv
+var _defaultFormatter = new Formatter();
 
 //---------------------------------------------------------------------------
 //   Filter classes and functions
@@ -578,37 +361,6 @@ var Handler = type('Handler', [Filterer],
         super(Filterer, this).__init__();
         this.level = level;
         this.formatter = null;
-        //get the module data lock, as we're updating a shared structure.
-        _acquireLock()
-        try:    #unlikely to raise an exception, but you never know...
-            _handlers[self] = 1
-            _handlerList.insert(0, self)
-        finally:
-            _releaseLock()
-        self.createLock()
-
-    def createLock(self):
-        """
-        Acquire a thread lock for serializing access to the underlying I/O.
-        """
-        if thread:
-            self.lock = threading.RLock()
-        else:
-            self.lock = None
-
-    def acquire(self):
-        """
-        Acquire the I/O thread lock.
-        """
-        if self.lock:
-            self.lock.acquire()
-
-    def release(self):
-        """
-        Release the I/O thread lock.
-        """
-        if self.lock:
-            self.lock.release()
 
     def setLevel(self, level):
         """
@@ -639,23 +391,20 @@ var Handler = type('Handler', [Filterer],
         raise NotImplementedError, 'emit must be implemented '\
                                     'by Handler subclasses'
 
-    def handle(self, record):
-        """
+    handle: function handle(record) {
+        /*
         Conditionally emit the specified logging record.
 
         Emission depends on filters which may have been added to the handler.
         Wrap the actual emission of the record with acquisition/release of
         the I/O thread lock. Returns whether the filter passed the record for
         emission.
-        """
-        rv = self.filter(record)
-        if rv:
-            self.acquire()
-            try:
-                self.emit(record)
-            finally:
-                self.release()
-        return rv
+        */
+        var rv = this.filter(record);
+        if (rv)
+            this.emit(record);
+        return rv;
+    }
 
     def setFormatter(self, fmt):
         """
@@ -706,141 +455,12 @@ var Handler = type('Handler', [Filterer],
             traceback.print_exception(ei[0], ei[1], ei[2], None, sys.stderr)
             del ei
 
-class StreamHandler(Handler):
-    """
-    A handler class which writes logging records, appropriately formatted,
-    to a stream. Note that this class does not close the stream, as
-    sys.stdout or sys.stderr may be used.
-    """
-    def __init__(self, strm=None):
-        """
-        Initialize the handler.
-
-        If strm is not specified, sys.stderr is used.
-        """
-        Handler.__init__(self)
-        if strm is None:
-            strm = sys.stderr
-        self.stream = strm
-        self.formatter = None
-
-    def flush(self):
-        """
-        Flushes the stream.
-        """
-        self.stream.flush()
-
-    def emit(self, record):
-        """
-        Emit a record.
-
-        If a formatter is specified, it is used to format the record.
-        The record is then written to the stream with a trailing newline
-        [N.B. this may be removed depending on feedback]. If exception
-        information is present, it is formatted using
-        traceback.print_exception and appended to the stream.
-        """
-        try:
-            msg = self.format(record)
-            fs = "%s\n"
-            if not hasattr(types, "UnicodeType"): #if no unicode support...
-                self.stream.write(fs % msg)
-            else:
-                try:
-                    self.stream.write(fs % msg)
-                except UnicodeError:
-                    self.stream.write(fs % msg.encode("UTF-8"))
-            self.flush()
-        except (KeyboardInterrupt, SystemExit):
-            raise
-        except:
-            self.handleError(record)
-
-class FileHandler(StreamHandler):
-    """
-    A handler class which writes formatted logging records to disk files.
-    """
-    def __init__(self, filename, mode='a', encoding=None):
-        """
-        Open the specified file and use it as the stream for logging.
-        """
-        if codecs is None:
-            encoding = None
-        if encoding is None:
-            stream = open(filename, mode)
-        else:
-            stream = codecs.open(filename, mode, encoding)
-        StreamHandler.__init__(self, stream)
-        #keep the absolute path, otherwise derived classes which use this
-        #may come a cropper when the current directory changes
-        self.baseFilename = os.path.abspath(filename)
-        self.mode = mode
-
-    def close(self):
-        """
-        Closes the stream.
-        """
-        self.flush()
-        self.stream.close()
-        StreamHandler.close(self)
-
-#---------------------------------------------------------------------------
-#   Manager classes and functions
-#---------------------------------------------------------------------------
-
-class PlaceHolder:
-    """
-    PlaceHolder instances are used in the Manager logger hierarchy to take
-    the place of nodes for which no loggers have been defined. This class is
-    intended for internal use only and not as part of the public API.
-    """
-    def __init__(self, alogger):
-        """
-        Initialize with the specified logger being a child of this placeholder.
-        """
-        #self.loggers = [alogger]
-        self.loggerMap = { alogger : None }
-
-    def append(self, alogger):
-        """
-        Add the specified logger as a child of this placeholder.
-        """
-        #if alogger not in self.loggers:
-        if not self.loggerMap.has_key(alogger):
-            #self.loggers.append(alogger)
-            self.loggerMap[alogger] = None
-
-#
-#   Determine which class to use when instantiating loggers.
-#
-_loggerClass = None
-
-def setLoggerClass(klass):
-    """
-    Set the class to be used when instantiating a logger. The class should
-    define __init__() such that only a name argument is required, and the
-    __init__() should call Logger.__init__()
-    """
-    if klass != Logger:
-        if not issubclass(klass, Logger):
-            raise TypeError, "logger not derived from logging.Logger: " + \
-                            klass.__name__
-    global _loggerClass
-    _loggerClass = klass
-
-def getLoggerClass():
-    """
-    Return the class to be used when instantiating a logger.
-    """
-
-    return _loggerClass
-
-class Manager:
-    """
+var Manager = type('Manager', {
+    /*
     There is [under normal circumstances] just one Manager instance, which
     holds the hierarchy of loggers.
-    """
-    def __init__(self, rootnode):
+    */
+    __init__: function __init__(rootnode) {
         """
         Initialize the manager with the root node of the logger hierarchy.
         """
@@ -848,9 +468,10 @@ class Manager:
         self.disable = 0
         self.emittedNoHandlerWarning = 0
         self.loggerDict = {}
+    },
 
-    def getLogger(self, name):
-        """
+    get_logger: function get_logger(name) {
+        /*
         Get a logger with the specified name (channel name), creating it
         if it doesn't yet exist. This name is a dot-separated hierarchical
         name, such as "a", "a.b", "a.b.c" or similar.
@@ -859,27 +480,18 @@ class Manager:
         didn't exist but a child of it did], replace it with the created
         logger and fix up the parent/child references which pointed to the
         placeholder to now point to the logger.
-        """
-        rv = None
-        _acquireLock()
-        try:
-            if self.loggerDict.has_key(name):
-                rv = self.loggerDict[name]
-                if isinstance(rv, PlaceHolder):
-                    ph = rv
-                    rv = _loggerClass(name)
-                    rv.manager = self
-                    self.loggerDict[name] = rv
-                    self._fixupChildren(ph, rv)
-                    self._fixupParents(rv)
-            else:
-                rv = _loggerClass(name)
-                rv.manager = self
-                self.loggerDict[name] = rv
-                self._fixupParents(rv)
-        finally:
-            _releaseLock()
-        return rv
+        */
+        var rv = null;
+        if (this.logger_dict[name]) {
+                rv = this.logger_dict[name];
+        } else {
+                rv = new LoggerClass(name);
+                rv.manager = this;
+                this.logger_dict[name] = rv;
+                this._fixupParents(rv);
+        }
+        return rv;
+    },
 
     def _fixupParents(self, alogger):
         """
@@ -918,10 +530,11 @@ class Manager:
             if c.parent.name[:namelen] != name:
                 alogger.parent = c.parent
                 c.parent = alogger
+});
 
-#---------------------------------------------------------------------------
-#   Logger classes and functions
-#---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//   Logger classes and functions
+//--------------------------------------------------------------------------
 /*
 Instances of the Logger class represent a single logging channel. A
 "logging channel" indicates an area of an application. Exactly how an
@@ -939,7 +552,7 @@ There is no arbitrary limit to the depth of nesting.
 var Logger = type('Logger', [ Filterer ], { 
     __init__: function __init__(name, level) {
         //Initialize the logger with a name and an optional level.
-	level = lever || NOTSET;
+        level = lever || NOTSET;
         super(Filterer, this).__init__();
         this.name = name;
         this.level = level;
@@ -1077,37 +690,7 @@ var Logger = type('Logger', [ Filterer ], {
         if (this.is_enabled_for(level))
             this._log(level, msg, args, kwargs.exc_info, kwargs.extra);
     },
-/*
-    find_caller: function find_caller() { 
-        /*
-        Find the stack frame of the caller so that we can note the source
-        file name, line number and function name.
 
-        f = currentframe().f_back
-        rv = "(unknown file)", 0, "(unknown function)"
-        while hasattr(f, "f_code"):
-            co = f.f_code
-            filename = os.path.normcase(co.co_filename)
-            if filename == _srcfile:
-                f = f.f_back
-                continue
-            rv = (filename, f.f_lineno, co.co_name)
-            break
-        return rv
-
-    def makeRecord(self, name, level, fn, lno, msg, args, exc_info, func=None, extra=None):
-        """
-        A factory method which can be overridden in subclasses to create
-        specialized LogRecords.
-        """
-        rv = LogRecord(name, level, fn, lno, msg, args, exc_info, func)
-        if extra:
-            for key in extra:
-                if (key in ["message", "asctime"]) or (key in rv.__dict__):
-                    raise KeyError("Attempt to overwrite %r in LogRecord" % key)
-                rv.__dict__[key] = extra[key]
-        return rv
-*/
     _log: function _log(level, msg, args, exc_info, extra) {
         /*
         Low-level logging routine which creates a LogRecord and then calls
@@ -1214,11 +797,11 @@ var RootLogger = type('RootLogger', [Logger], {
     }
 });
 
-_loggerClass = Logger
+var LoggerClass = Logger;
 
 var root = new RootLogger(WARNING);
-Logger.root = root
-Logger.manager = Manager(Logger.root)
+Logger.root = root;
+Logger.manager = new Manager(Logger.root);
 
 #---------------------------------------------------------------------------
 # Configuration classes and functions
@@ -1275,123 +858,14 @@ def basicConfig(**kwargs):
         if level:
             root.setLevel(level)
 
-#---------------------------------------------------------------------------
-# Utility functions at module level.
-# Basically delegate everything to the root logger.
-#---------------------------------------------------------------------------
 
-def getLogger(name=None):
-    """
-    Return a logger with the specified name, creating it if necessary.
-
-    If no name is specified, return the root logger.
-    """
-    if name:
-        return Logger.manager.getLogger(name)
-    else:
-        return root
-
-#def getRootLogger():
-#    """
-#    Return the root logger.
-#
-#    Note that getLogger('') now does the same thing, so this function is
-#    deprecated and may disappear in the future.
-#    """
-#    return root
-
-def critical(msg, *args, **kwargs):
-    """
-    Log a message with severity 'CRITICAL' on the root logger.
-    """
-    if len(root.handlers) == 0:
-        basicConfig()
-    apply(root.critical, (msg,)+args, kwargs)
-
-fatal = critical
-
-def error(msg, *args, **kwargs):
-    """
-    Log a message with severity 'ERROR' on the root logger.
-    """
-    if len(root.handlers) == 0:
-        basicConfig()
-    apply(root.error, (msg,)+args, kwargs)
-
-def exception(msg, *args):
-    """
-    Log a message with severity 'ERROR' on the root logger,
-    with exception information.
-    """
-    apply(error, (msg,)+args, {'exc_info': 1})
-
-def warning(msg, *args, **kwargs):
-    """
-    Log a message with severity 'WARNING' on the root logger.
-    """
-    if len(root.handlers) == 0:
-        basicConfig()
-    apply(root.warning, (msg,)+args, kwargs)
-
-warn = warning
-
-def info(msg, *args, **kwargs):
-    """
-    Log a message with severity 'INFO' on the root logger.
-    """
-    if len(root.handlers) == 0:
-        basicConfig()
-    apply(root.info, (msg,)+args, kwargs)
-
-def debug(msg, *args, **kwargs):
-    """
-    Log a message with severity 'DEBUG' on the root logger.
-    """
-    if len(root.handlers) == 0:
-        basicConfig()
-    apply(root.debug, (msg,)+args, kwargs)
-
-def log(level, msg, *args, **kwargs):
-    """
-    Log 'msg % args' with the integer severity 'level' on the root logger.
-    """
-    if len(root.handlers) == 0:
-        basicConfig()
-    apply(root.log, (level, msg)+args, kwargs)
-
-def disable(level):
-    """
-    Disable all logging calls less severe than 'level'.
-    """
-    root.manager.disable = level
-
-def shutdown(handlerList=_handlerList):
-    """
-    Perform any cleanup actions in the logging system (e.g. flushing
-    buffers).
-
-    Should be called at application exit.
-    """
-    for h in handlerList[:]:
-        #errors might occur, for example, if files are locked
-        #we just ignore them if raiseExceptions is not set
-        try:
-            h.flush()
-            h.close()
-        except:
-            if raiseExceptions:
-                raise
-            #else, swallow
-
-#Let's try and shutdown automatically on application exit...
-try:
-    import atexit
-    atexit.register(shutdown)
-except ImportError: # for Python versions < 2.0
-    def exithook(status, old_exit=sys.exit):
-        try:
-            shutdown()
-        finally:
-            old_exit(status)
-
-    sys.exit = exithook
+/*
+Return a logger with the specified name, creating it if necessary.
+If no name is specified, return the root logger.
+*/
+function getLogger(name) {
+    if name
+        return Logger.manager.getLogger(name);
+    else
+        return root;
+}
