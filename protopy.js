@@ -1731,7 +1731,7 @@
 	'hasattr': hasattr,
         'assert': function assert( test, text ) {
             if ( test === false )
-                throw new AssertionError( text );
+                throw new AssertionError( text || 'An assertion failed!');
             return test;
         },
         'bool': function bool(object) {
