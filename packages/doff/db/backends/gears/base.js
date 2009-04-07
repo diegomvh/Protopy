@@ -155,7 +155,9 @@ function _sqlite_regexp(re_pattern, re_string) {
 
 var field_cast_sql = function(value){return '%s';};
 
-$P({	'DatabaseWrapper': DatabaseWrapper,
-        'field_cast_sql': field_cast_sql,
-        'DatabaseError': DatabaseError,
-        'IntegrityError': IntegrityError });
+$P({	
+    'DatabaseWrapper': DatabaseWrapper,
+    'field_cast_sql': field_cast_sql,
+    'DatabaseError': DatabaseError,
+    'IntegrityError': IntegrityError 
+});

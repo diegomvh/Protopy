@@ -19,7 +19,7 @@ var Connection = type('Connection', {
             var connection = google.gears.factory.create('beta.database');
             connection.open(this.database);
         } catch(e) {
-            throw new Error("couldn`t open database: " + name + " exception: " + e.message);
+            throw new Exception("couldn`t open database: " + name + " exception: " + e.message);
         }
         var cur = new this.factory(connection);
         return cur;
@@ -45,7 +45,7 @@ var Cursor = type('Cursor', {
             this.connection.close();
         }
         catch(e) {
-            throw new Error(e.message);
+            throw new Exception(e.message);
         }
     },
 
@@ -54,17 +54,17 @@ var Cursor = type('Cursor', {
             this.connection.remove();
         }
         catch(e) {
-            throw new Error(e.message);
+            throw new Exception(e.message);
         }
     },
-    
+
     'execute': function execute(query, params){
         params = params || [];
         try {
             this.lastResulSet = this.connection.execute(query, params);
         }
         catch(e) {
-            throw new Error(e.message);
+            throw new Exception(e.message);
         }
     },
 

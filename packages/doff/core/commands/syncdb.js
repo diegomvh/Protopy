@@ -6,11 +6,13 @@ function execute() {
     $L('doff.db.transaction');
     $L('doff.core.project', 'get_settings');
     var settings = get_settings();
+    /* No creo que sea necesario
     for each (var app_name in settings.INSTALLED_APPS) {
 	try {
 	    $L(app_name + '.management');
 	} catch (e if e instanceof LoadError) { }
     }
+    */
     var cursor = connection.cursor();
     
     // Get a list of already installed *models* so that references work right.
