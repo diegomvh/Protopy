@@ -14,7 +14,7 @@ syntax: glob
 # Compilados de python
 *.pyc
 *.pyo
-
+.directory
 
 
 syntax: regexp

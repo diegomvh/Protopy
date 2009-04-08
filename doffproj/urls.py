@@ -1,4 +1,7 @@
+# coding: utf-8
 from django.conf.urls.defaults import *
+from django.conf import settings
+
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -14,4 +17,18 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     (r'^admin/(.*)', admin.site.root),
+    
+    # TODO: Reemplazar por un generic view.
+    (r'^$', 'doffproj.views.index',  ),
+    
+    (r'^blog/', include('doffproj.blog.urls'),),
+)
+
+
+# Medios estáticos
+
+urlpatterns += patterns('django.views.static',
+    (r'^%s/(?P<path>.*)$' % settings.MEDIA_URL[1:-1], 
+            'serve', {'document_root': settings.MEDIA_ROOT,
+                      'show_indexes': True, }),
 )
