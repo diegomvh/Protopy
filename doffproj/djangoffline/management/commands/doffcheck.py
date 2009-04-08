@@ -9,5 +9,5 @@ class Command(NoArgsCommand):
     requires_model_validation = False
     can_import_settings = True
     
-    def handle_norags(self, **options):
+    def handle_noargs(self, **options):
         print "Hola mundo"
