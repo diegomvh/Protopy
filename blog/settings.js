@@ -17,7 +17,7 @@
 
 'INSTALLED_APPS': [ 'blog.apps.post' ],
 
-'TEMPLATE_DIRS': [ '/tesis/blog/templates/' ],
+'TEMPLATE_DIRS': [ '/blog/templates/' ],
 
 'TEMPLATE_LOADERS': [
             'doff.template.loaders.remote.load_template_source',

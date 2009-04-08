@@ -1,0 +1,12 @@
+{
+
+  "betaManifestVersion": 1,
+  "version": "0.2",
+
+  "entries": [
+      { "url": "index.html" }, 
+      { "url": ".", "redirect": "index.html" },
+      { "url": "gears_init.js" },
+      { "url": "www.xurix.com.ar_archivos/apache.png" }
+    ]
+}

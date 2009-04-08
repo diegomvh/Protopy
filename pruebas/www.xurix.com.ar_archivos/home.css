@@ -1,0 +1,165 @@
+ 
+html {
+	background-color: #444f49;
+}
+
+b, h1, h2, h3{
+	color: #423832;	
+}
+h1, h2, h3{
+	margin-top: 0px;
+	padding: 10px;
+}
+
+p { 
+	text-indent: 1em;
+}
+
+/*
+p:first-letter {
+
+}
+*/
+
+
+#hd{
+	position: relative;
+	width: 900px;
+	height: 160px; 
+	background:url(../img/header.png) no-repeat left top; 
+	z-index: 2;
+	padding-left: 20px;
+}
+
+
+#hd h1{
+  font-size: 4em;
+  padding-top: 60px;
+  padding-left: 50px;
+  margin-bottom:0px;
+  font-family:monospace;
+  font-weight: normal;
+  color: #444f49;
+}
+
+#hd a{
+	text-decoration:none;
+}
+
+.content_box {	
+		padding:0px;
+		margin:0px;
+		width:850px;
+}
+
+.dlnavbar {
+	background:transparent url(../img/blackbar.gif) repeat-x scroll 0 0;
+	height:22px;
+}
+.dlnavbartext {
+	color:#FFFFFF;
+	font-family:"Lucida Grande","Trebuchet MS",Verdana,Arial,sans-serif;
+	font-size:12px;
+	padding-top:2px;
+	text-align:center;
+}
+
+
+a.dlnavlink {
+	color:#FFFFFF;
+	text-decoration:none;
+	padding-right: 5px;
+	padding-left: 5px;
+}
+
+
+a.dlnavlink:hover {
+	color:#BFBFBF;
+	text-decoration:underline;
+}
+
+.dlnavcurrent {
+	color:#BFBFBF;
+	text-decoration:none;
+}
+
+
+img {
+	margin:0px;
+	padding:0px;
+	border:none;
+}
+
+
+#sub-hd{
+	background-color: #000000;
+	width: 850px;
+	min-height: 100px;
+	color: #FFFFFF;
+}
+
+#sub-hd h1{
+	color: #FFFFFF;
+	font-size: 3em;
+}
+
+#doc2{
+	font-family:   helvetica;
+}
+#bd{
+	padding-left: 25px;
+	padding-right: 25px;
+	background: url(../img/main.png) repeat-y; 
+}
+
+#ft{
+	position: relative;
+	padding-top:10px;
+	text-align: center;
+	height: 87px;
+	background: url(../img/footer.png) no-repeat left top; 
+	z-index: 2;
+}
+
+
+.bloque {
+	margin-top: 40px;
+	margin-left: 15px;
+	margin-right: 15px;
+	border: 1px solid #cccccc;
+	-moz-border-radius: 15px;
+	-khtml-border-radius: 15px;
+	-webkit-border-radius: 15px;
+}
+
+.bloque-hd{
+	padding: 10px;
+  	font-size: large;	
+  	margin-bottom: 10px;
+  	border-bottom: 1px solid #cccccc;
+}
+
+.bloque-bd{
+ 	text-align:justify;
+  	padding: 10px;
+  	
+}
+
+.budy-list{
+	margin-top: 10px;
+	margin-bottom: 20px;
+	position:relative; 
+	min-height: 130px; 
+	padding:4px;
+	border-bottom: 1px solid #cccccc;
+}
+
+table{
+	border:none;
+}
+tr{
+	border:none;
+}
+td{
+	border:none;
+}

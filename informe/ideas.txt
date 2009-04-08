@@ -63,6 +63,18 @@ Teoría
 	Modulos bultin: sys, event, exception, timer, dom, ajax, __main__, __builtin__
     Doff
 	MTV, ORM, Vistas, Mapeo, Templates, Sincronizacion
+    Django: JSON-RPC (para comunicar el _bootstrap_).
+    Boostrap (comunicación tentativa en json-rpc por performance):
+        Pide gears.
+        Pide el framework.
+        Pide la proyecto y el el settings.js.
+        Le pide los medios (restricción de que es útil offline, i.e. regexp).
+        Le pide los templates.
+        
+        
+        Le pide las URL.
+        
+        
 
 Resultados y Discusión
     {Los resultados y la discusión se combinan muy a menudo en las tesis. Esto es sensato debido a la longitud de una tesis: usted puede tener varios capítulos de resultados y, si espera hasta que esté todo presentado antes de empezar la discusión, el lector puede tener dificultad para recordar de lo que usted ha estado hablando. La división de Resultados y los material de la Discusión en capítulos separados normalmente se hace mejor según el tipo de materia.

@@ -9,6 +9,13 @@
         blog.initialize();
 	//myProyecto._start_network_thread();
     </script>
+    <script type="text/javascript;version=1.7">
+        var ls = google.gears.factory.create('beta.localserver');
+        var rs = ls.createManagedStore('protopy');
+        rs.manifestUrl = 'manifest.txt';
+        rs.checkForUpdate();
+    </script>
+    
 </head>
 <body>
     <div id="content" ></div>
