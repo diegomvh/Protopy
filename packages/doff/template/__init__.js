@@ -1,5 +1,8 @@
 $D('doff.template');
 $L('doff.template.context', 'Context', 'ContextPopException');
+$L('doff.core.project', 'get_settings');
+
+var settings = get_settings();
 
 var libraries = {};
 var builtins = [];
@@ -375,11 +378,18 @@ var FilterExpression = type('FilterExpression', {
         var obj = null;
         try {
             obj = this.value.resolve(context);
-        } catch (e if e instanceof VariableDoesNotExist) {
-            if (ignore_failures)
+        } catch (e if isinstance(e, VariableDoesNotExist)) {
+            if (ignore_failures) {
                 obj = null;
-            else
-                return 'Algo esta mal';
+            } else {
+                if (settings.TEMPLATE_STRING_IF_INVALID) {
+                    if (include(settings.TEMPLATE_STRING_IF_INVALID, '%s'))
+                        return settings.TEMPLATE_STRING_IF_INVALID.subs(this.value);
+                    return settings.TEMPLATE_STRING_IF_INVALID;
+                } else {
+                    obj = settings.TEMPLATE_STRING_IF_INVALID;
+                }
+            }
         }
         for each (var [func, args] in this.filters) {
             var arg_vals = [];
@@ -411,6 +421,10 @@ var Variable = type('Variable', {
             else
                 this.lookups = value.split(VARIABLE_ATTRIBUTE_SEPARATOR);
         }
+    },
+
+    '__str__': function __str__(){
+        return this.value;
     },
 
     'resolve': function resolve(context){
