@@ -11,7 +11,9 @@ syntax: glob
 *.out
 *.toc
 *.prefs
-
+# Compilados de python
+*.pyc
+*.pyo
 
 
 
