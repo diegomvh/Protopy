@@ -1,11 +1,11 @@
 $L('doff.conf.urls', '*');
-$L('blog.views', 'index');
+$L('blog.views', 'index', 'removedb');
 
 var urlpatterns = patterns('',
     // Example:
-    // ['^$', 'blog.apps.post.views.show_posts'],
     ['^$', index],
     ['^syncdb/$', 'blog.views.syncdb'],
+    ['^removedb/$', removedb],
     ['^blog/', include('blog.apps.post.urls')]
 )
 

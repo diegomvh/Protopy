@@ -1,12 +1,13 @@
 {
 
   "betaManifestVersion": 1,
-  "version": "0.2",
+  "version": "0.3",
 
   "entries": [
       { "url": "index.html" }, 
       { "url": ".", "redirect": "index.html" },
       { "url": "protopy.js" },
-      { "url": "packages/datetime.js" }
+      { "url": "packages/datetime.js" },
+      { "url": "packages/copy.js" }
     ]
 }

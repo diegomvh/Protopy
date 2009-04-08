@@ -20,14 +20,12 @@
 
         <div class="middle">
             {% block middle %}
-            <h2>Posts</h2>
+            {% if sin_tablas %}
+            <h2>NO HAY DATOS O NO HAY BASE DE DATOS</h2>
             
-            Just to fill out empty space in the template I decided to write this and to add one of my previous templates
-            here. There are direct links to view one of my previous templates live and live link to download it also ;) 
-            Anyway hope you like both this one and previous one. You can see all of my templates at 
-            <a href="http://www.minimalistic-design.net">Minimalistic design</a> live.
+            Por favor cree una base de datos nueva, haciendo clic en el link correspondiente o <h2><a href="/syncdb/" onClick="return blog.handler.handle(this);">aqui</a></h2>
             <br /><br />
-            <img src="images/minimal.jpg" alt="Preview of Minimalistic Template" ></img>
+            {% endif %}
             {% endblock %}
 
         </div>
@@ -36,6 +34,8 @@
             {% block right %}
             <h2><a href="/" onClick="return blog.handler.handle(this);">Inicio</a></h2>
             <h2><a href="/syncdb/" onClick="return blog.handler.handle(this);">Crear Base de Datos</a></h2>
+            <h2><a href="/removedb/" onClick="return blog.handler.handle(this);">Eliminar Base de datos</a></h2>
+            {% if not sin_tablas %}
             <h2>Tags</h2>
                 <ul>
                     <li><a href="/blog/add_tag/" onClick="return blog.handler.handle(this);">Agregar</a></li>
@@ -45,6 +45,7 @@
                 <ul>
                     <li><a href="/blog/add_post/" onClick="return blog.handler.handle(this);">Agregar Post</a></li>
                 </ul>
+           {% endif %}
 	   {% endblock %}
         </div>
 

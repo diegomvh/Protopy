@@ -69,36 +69,27 @@
             mod = __modules__[name];
     
         if (!mod) {
+            //Only firefox, sorry and synchronous
             var file = package ? sys.module_url(name, '/__init__.js') : sys.module_url(name, '.js');
-                code = null;
-            new ajax.Request(file, {
-                asynchronous : false,
-                'onSuccess': function onSuccess(transport) {
-                    code = '(function(){ ' + transport.responseText + '});';
-                },
-                'onException': function onException(obj, exception){
-                    throw exception;
-                },
-                'onFailure': function onFailure(){
-		    throw new LoadError(file);
-		}
-            });
-            if (code) {
-                mod = new Module(name, file);
-                __modules__[name] = mod;
-                try {
-                    with (mod['__builtins__']) {
-                        eval(code).call(mod);
-                    }
-                } catch (except) {
-                    delete __modules__[name];
-                    throw except;
+                code = null,
+                request = new XMLHttpRequest();
+            request.open('GET', file, false); 
+            request.send(null);
+            if(request.status != 200)
+                throw new LoadError(file);
+            var code = '(function(){ ' + request.responseText + '});';
+            mod = new Module(name, file);
+            __modules__[name] = mod;
+            try {
+                with (mod['__builtins__']) {
+                    eval(code).call(mod);
                 }
-                // Muejejejeje
-                delete mod['__builtins__'];
-            } else {
-                throw new LoadError();
+            } catch (exception) {
+                delete __modules__[name];
+                throw exception;
             }
+            // Muejejejeje
+            delete mod['__builtins__'];
         }
         switch (arguments.length) {
             case 1:
