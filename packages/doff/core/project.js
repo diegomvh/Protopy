@@ -5,16 +5,16 @@ $L('doff.core.handler', 'Handler');
 
 var Project = type('Project', [object], {
     settings: null,
-    files: {slurp: function(){}},
     is_online: false,
     NET_CHECK: 5,
     availability_url: null,
     going_online: false,
     do_net_checking: true,
-    _initialize_called: false,
-    _storage_loaded: false,
-    _page_loaded: false,
     handler: new Handler(),
+    localserver: null,
+    media: null,
+    system: null,
+    project: null,
     
     
     '__init__': function __init__(name, package, path){
@@ -24,11 +24,22 @@ var Project = type('Project', [object], {
 	sys.register_module_path(this.package, this.path);
 	this.availability_url = sys.module_url(this.package, '/network_check.txt');
 	this.read_settings();
+	// ManagedStores
+	this.localserver = google.gears.factory.create('beta.localserver');
+	this.project = this.localserver.createManagedStore(package + 'project');
+	this.project.manifestUrl = sys.module_url(this.package, '/manifests/project.txt');
+        this.project.checkForUpdate();
+	this.media = this.localserver.createManagedStore(package + 'media');
+	this.media.manifestUrl = sys.module_url(this.package, '/manifests/media.txt');
+        this.media.checkForUpdate();
+	this.system = this.localserver.createManagedStore(package + 'system');
+	this.system.manifestUrl = sys.module_url(this.package, '/manifests/system.txt');
+        this.system.checkForUpdate();
     },
     
-    onLoad: function onLoad(){},
+    onLoad: function onLoad() {},
     
-    onNetwork: function(type){},
+    onNetwork: function(type) {},
 
     read_settings: function read_settings() {
 	var self = this;
