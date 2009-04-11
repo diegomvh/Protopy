@@ -44,7 +44,7 @@ var Project = type('Project', [object], {
     read_settings: function read_settings() {
 	var self = this;
 	var global_settings = $L('doff.conf.settings');
-	var url_settings = sys.module_url(this.package, '/settings.js');
+	var url_settings = sys.module_url(this.package, 'settings.js');
 	new ajax.Request(url_settings, {
 	    asynchronous : false,
 	    'onSuccess': function onSuccess(transport) {

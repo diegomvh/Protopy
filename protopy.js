@@ -63,16 +63,25 @@
     
     //Load Modules
     function __load__(module_name) {
+    	
         var package = module_name.endswith('.*'),
-	    name = package ? module_name.slice(0, module_name.length - 2) : module_name,
-	    names = name.split('.'),
+        	name = package ? module_name.slice(0, module_name.length - 2) : module_name,
+	    	names = name.split('.'),
             mod = __modules__[name];
     
         if (!mod) {
             //Only firefox, sorry and synchronous
-            var file = package ? sys.module_url(name, '/__init__.js') : sys.module_url(name, '.js');
-                code = null,
-                request = new XMLHttpRequest();
+        	if (package){
+        		var file = sys.module_url(name, '__init__.js');
+        	} else {
+        		var index = name.lastIndexOf('.');
+        		var [ pkg, filename ] = index != -1? [ name.slice(0, index), name.slice(index + 1)] : [ '', name];
+        		var file = sys.module_url(pkg, filename + '.js');
+        	}
+        	print( file );
+        	
+            var code = null,
+             	 request = new XMLHttpRequest();
             request.open('GET', file, false); 
             request.send(null);
             if(request.status != 200)
@@ -271,17 +280,27 @@
 	'register_module_path': function register_module_path(module, path) { 
 	    __paths__[module] = this.base_url + path; 
 	},
-	'module_url': function module_url(module, prefix) { 
-	    //TODO: Un buen manejo de urls barras, concatenados, etc
-	    var url = null;
-	    for (var s in __paths__)
-		if (s && module.indexOf(s) != -1)
-		    url = module.replace(s, __paths__[s]).replace('.','/','g');
-	    if (!url)
-		url = module.replace('', __paths__['']).replace('.','/','g');
-	    if (prefix)
-		url += prefix;
-	    return url;
+	'module_url': function module_url(module, postfix) {
+		print("Generar URL a partir de: ", module, postfix)
+        var url = null;
+
+        
+        for (var s in __paths__)
+            if (s && module.indexOf(s) == 0) {
+                url = __paths__[s].split('/');
+                url = url.concat(module.slice(len(s)).split('.'));
+                //url = url.slice(0, -1).concat(url[ len(url) - 1 ].split('.'));
+                break;
+            }
+        if (!url) {
+        	url = __paths__[''].split('/');
+            url = url.concat(module.split('.'));
+        }
+        postfix = postfix.split('/');
+
+        url = url.concat(postfix);
+        url = url.filter( function (x) {return len(x) > 0});
+        return url.join('/');
 	},
 	'modules': __modules__
     });
@@ -1871,7 +1890,7 @@
     var scripts = dom.query('script');
     for each (var script in scripts) {
 	if (script.src) {
-	    var m = script.src.match(/^(.*)\/protopy.js$/i);
+	    var m = script.src.match(new RegExp('^.*' + location.host + '/?(.*)/?protopy.js$', 'i'));
 	    if (m) sys.base_url = m[1];
 	}
     }
