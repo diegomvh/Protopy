@@ -78,8 +78,6 @@
         		var [ pkg, filename ] = index != -1? [ name.slice(0, index), name.slice(index + 1)] : [ '', name];
         		var file = sys.module_url(pkg, filename + '.js');
         	}
-        	print( file );
-        	
             var code = null,
              	 request = new XMLHttpRequest();
             request.open('GET', file, false); 
@@ -302,7 +300,8 @@
         url = url.filter( function (x) {return len(x) > 0});
         return url.join('/');
 	},
-	'modules': __modules__
+	'modules': __modules__,
+	'paths': __paths__
     });
 
     sys.browser.features.Gears = !!get_gears() || false;
