@@ -293,11 +293,13 @@
 	    if (postfix) 
 		url = url.concat(postfix.split('/'));
 	    //Si termina con / se la agrego al final, puese ser un camino y no un archivo
+	    //FIXME: Se puede hacer mejor
 	    var length = len(url) - 1;
 	    url = url.filter( function (element, index) { return len(element) > 0 || (element == '' && index == length) });
 	    return url.join('/');
 	},
-	'modules': __modules__
+	'modules': __modules__,
+	'paths': __paths__
     });
 
     sys.browser.features.Gears = !!get_gears() || false;
