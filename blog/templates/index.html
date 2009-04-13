@@ -35,7 +35,8 @@
             <h2><a href="/" onClick="return blog.handler.handle(this);">Inicio</a></h2>
             <h2><a href="/syncdb/" onClick="return blog.handler.handle(this);">Crear Base de Datos</a></h2>
             <h2><a href="/removedb/" onClick="return blog.handler.handle(this);">Eliminar Base de datos</a></h2>
-            {% if not sin_tablas %}
+            <h2><a id='google' href="http://www.google.com" onClick="return blog.handler.handle(this);">Google</a></h2>
+	    {% if not sin_tablas %}
             <h2>Tags</h2>
                 <ul>
                     <li><a href="/blog/add_tag/" onClick="return blog.handler.handle(this);">Agregar</a></li>

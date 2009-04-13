@@ -2,17 +2,30 @@ $L('sys');
 $L('event');
 $L('doff.core.exceptions');
 $L('doff.core.urlresolvers');
+$L('doff.core.http');
 
 var elements = {
+    'DEFAULT': function DEFAULT(request, obj) {
+	if (type(obj) == String) {
+	    //TODO: trabajar la cadena para tratar mas casos, ej, http://www.google.com, https://algo.com/ruta/recurso.js
+	    request.pathname = obj;
+	    request.method = 'get';
+	}
+	return request;
+    },
     'form': function form(request, element) {
+	//TODO: manejar merjor el acciont para ver para donde salen disparados, por si se van del dominio.
 	var f = $Q(element);
 	request.method = f.method;
-	request.path_info = f.action.slice(sys.base_url.length);
+	request.pathname = element.action.slice(len(request.build_absolute_uri()));
 	request[f.method] = f.serialize();
 	return request;
     },
+
     'a': function a(request, element) {
-	request.path_info = element.href.slice(sys.base_url.length);
+	request.pathname = element.pathname;
+	request.hostname = element.hostname;
+	request.protocol = element.protocol;
 	request.method = 'get';
 	return request;
     },
@@ -20,21 +33,22 @@ var elements = {
 
 var Handler = type('Handler', [object], {
     handle: function handle(element) {
-	var request = {};
+	var request = new http.HttpRequest();
 	if (element.tagName) {
 	    var name = element.tagName.toLowerCase();
 	    if (callable(elements[name]))
 		request = elements[name](request, element);
-	} else if (type(element) == String) {
-	    request.path_info = element;
-	    request.method = 'get';
+	    else 
+		throw new NotImplementedError('%s not implemented'.subs(name));
+	} else {
+	    request = elements['DEFAULT'](request, element);
 	}
-	if (request.path_info)
-	    this.execute(request);
+	if (request.valid())
+	    this._execute(request);
 	return false;
     },
 
-    execute: function execute(request) {
+    _execute: function execute(request) {
         //Execute action
        $L('doff.core.project', 'get_settings');
 	
@@ -44,12 +58,14 @@ var Handler = type('Handler', [object], {
 
         var resolver = new urlresolvers.RegexURLResolver('^/', urlconf);
         try {
-            var [callback, callback_args, callback_kwargs] = resolver.resolve(request.path_info);
+            var [callback, callback_args, callback_kwargs] = resolver.resolve(request.pathname);
             try {
 		var args = [request];
 		args = args.concat(callback_args);
 		args.push(callback_kwargs);
                 var response = callback.apply(this, args);
+		//TODO: A better name
+		response.render();
             } catch (e) {
                 print(e);
 	    }
