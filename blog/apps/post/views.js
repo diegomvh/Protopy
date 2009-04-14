@@ -34,13 +34,14 @@ function add_tag(request){
 
 function remove_tag(request, slug){
     var tag = Tag.objects.get({'slug': slug});
-    tag.del();
+    print(tag);
+    tag.delete();
     return new HttpResponseRedirect('/');
 }
 
 function remove_post(request, slug){
     var post = Post.objects.get({'slug': slug});
-    post.del();
+    post.delete();
     return new HttpResponseRedirect('/');
 }
 

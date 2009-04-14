@@ -397,7 +397,7 @@ var QuerySet = type('QuerySet', {
     },
 
     /* Deletes the records in the current QuerySet. */
-    'del': function del() {
+    'delete': function delete() {
         if (!this.query.can_filter()) throw " Assert Cannot use 'limit' or 'offset' with delete.";
 
         var del_query = this._clone();
@@ -659,7 +659,7 @@ var QuerySet = type('QuerySet', {
     }
 });
 
-QuerySet.prototype.del.alters_data = true;
+QuerySet.prototype.delete.alters_data = true;
 QuerySet.prototype.update.alters_data = true;
 QuerySet.prototype._update.alters_data = true;
 
