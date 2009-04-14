@@ -86,8 +86,79 @@ var ResourceStore = type ('ResourceStore', {
     }
 });
 
+var ManagedResourceStore = type ('ManagedResourceStore', {
+    _store: null,
+
+    '__init__': function __init__(name, requiredCookie) {
+	this._store = localServer.createStore(name, requiredCookie);
+	this._store.onerror = getattr(this, 'onSyncError');
+        this._store.oncomplete = getattr(this, 'onSyncComplete');
+	this._store.onprogress = getattr(this, 'onSyncProgress');
+    },
+
+    'delete': function delete() {
+	localServer.removeManagedStore(this.name, this.required_cookie);
+    },
+
+    get name(){
+	return this._store.name;
+    },
+    
+    get required_cookie(){
+	return this._store.requiredCookie;
+    },
+
+    get enabled(){
+	return this._store.enabled;
+    },
+
+    set enabled( value ){
+	this._store.enabled = value;
+    },
+
+    get manifest_url(){
+	return this._store.manifestUrl;
+    },
+
+    set manifest_url( value ){
+	this._store.manifestUrl = value;
+    },
+
+    get last_update_check_time(){
+	return this._store.lastUpdateCheckTime;
+    },
+
+    get update_status(){
+	return this._store.updateStatus;
+    },
+
+    get last_error_message(){
+	return this._store.lastErrorMessage;
+    },
+
+    get current_version(){
+	return this._store.currentVersion;
+    },
+
+    onSyncProgress: function onSyncProgress(event) {
+	print(Math.ceil(((event.filesComplete / event.filesTotal) * 100)) + "%");
+    },
+
+    onSyncComplete: function onSyncComplete() {
+	print("Sync Complete.");
+    },
+
+    onSyncError: function onSyncError(event) {
+	print("Error Syncing.");
+    },
+
+    check_for_update: function check_for_update(){
+	this._store.checkForUpdate();
+    }
+});
+
 $P({
     canServeLocally: localServer.canServeLocally,
     ResourceStore: ResourceStore,
-    //ManagedResourceStore: ManagedResourceStore
+    ManagedResourceStore: ManagedResourceStore
 });

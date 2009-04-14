@@ -388,7 +388,7 @@ var Model = type('Model', {
         if (seen_objs.add(this.__class__, pk_val, this, parent || null, nullable || false))
             return;
 
-        for each (related in this._meta.get_all_related_objects()) {
+        for each (var related in this._meta.get_all_related_objects()) {
             var rel_opts_name = related.get_accessor_name();
             if (isinstance(related.field.rel, OneToOneRel)) {
                 try {

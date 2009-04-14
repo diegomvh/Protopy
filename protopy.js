@@ -309,7 +309,7 @@
             //TODO: Ver como tomar mas informacion de quien larga la exception
             //this.caller = arguments.callee.caller;
             this.args = arguments;
-            this.message = (type(message) == String)? message : '';
+            this.message = (message && type(message) == String)? message : '';
         },
         '__str__': function() { return this.__name__ + ': ' + this.message; }
     });
