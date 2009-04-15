@@ -67,7 +67,7 @@
         var package = module_name.endswith('.*'),
         	name = package ? module_name.slice(0, module_name.length - 2) : module_name,
 	    	names = name.split('.'),
-            mod = __modules__[name];
+                mod = __modules__[name];
     
         if (!mod) {
             //Only firefox and synchronous, sorry
@@ -87,6 +87,7 @@
             var code = '(function(){ ' + request.responseText + '});';
             mod = new Module(name, file);
             __modules__[name] = mod;
+            event.publish('onModuleCreated', [this, mod]);
             try {
                 with (mod['__builtins__']) {
                     eval(code).call(mod);
@@ -98,6 +99,7 @@
             // Muejejejeje
             delete mod['__builtins__'];
         }
+        event.publish('onModuleLoaded', [this, mod]);
         switch (arguments.length) {
             case 1:
                     // Returns module
@@ -1949,11 +1951,12 @@
 	    var args = flatten(array(arguments));
 	    //%% escaped
 	    var string = this.gsub(/%%/, function(match){ return '<ESC%%>'; });
-	    if (args[0] && type(args[0]) == Object)
-            string = new Template(string, args[1]).evaluate(args[0]);
+	    if (args[0] && (type(args[0]) == Object || isinstance(args[0], object)))
+                string = new Template(string, args[1]).evaluate(args[0]);
 	    else
-            string = string.gsub(/%s/, function(match) { 
-                return (args.length != 0)? str(args.shift()) : match[0]; });
+                string = string.gsub(/%s/, function(match) { 
+                    return (args.length != 0)? str(args.shift()) : match[0]; 
+                });
 	    return string.gsub(/<ESC%%>/, function(match){ return '%'; });
 	},
 

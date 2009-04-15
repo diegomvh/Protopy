@@ -6,6 +6,7 @@ $L('doff.db.backends.*', 'BaseDatabaseFeatures', 'BaseDatabaseOperations', 'Base
 $L('doff.db.backends.gears.creation', 'DatabaseCreation');
 $L('doff.db.backends.gears.introspection', 'DatabaseIntrospection');
 
+
 var DatabaseError = database.DatabaseError;
 var IntegrityError = database.IntegrityError;
 
@@ -99,7 +100,7 @@ var GearsCursorWrapper = type('GearsCursorWrapper', database.Cursor, {
     'execute': function execute(query, params) {
         params = params || [];
         try {
-            print('Query: ', query); print('Params: ', params);
+            logger.debug('Query: %s \n Params: %s', query, params);
             var query = this.convert_query(query, params.length);
             super(database.Cursor, this).execute(query, params);
         }

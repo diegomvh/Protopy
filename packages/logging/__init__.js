@@ -1,3 +1,5 @@
+$L('datetime', 'datetime');
+
 var CRITICAL = 50;
 var FATAL = CRITICAL;
 var ERROR = 40;
@@ -7,7 +9,8 @@ var INFO = 20;
 var DEBUG = 10;
 var NOTSET = 0;
 
-var _start_time = new Date().getTime();
+var _start_time = new Date();
+var raise_exceptions = false;
 
 var _level_names = {
     'CRITICAL' : CRITICAL,
@@ -32,6 +35,10 @@ function get_level_name(level) {
     return _level_numbers['' + level] || "Level %s".subs(level);
 }
 
+function get_level_number(name) {
+    return _level_names[name] || NOTSET;
+}
+
 function add_level_name(level, levelname) {
     _level_names[level] = levelname;
     _level_names[levelname] = level;
@@ -54,7 +61,7 @@ information to be logged.
 var LogRecord = type('LogRecord', {
     //Initialize a logging record with interesting information.
     __init__: function __init__(name, level, pathname, lineno, msg, args, kwargs) {
-        var ct = new Date().getTime();
+        var ct = new Date();
         this.name = name;
         this.msg = msg;
 	/*
@@ -68,9 +75,8 @@ var LogRecord = type('LogRecord', {
         this.filename = kwargs.filename;
         this.module = kwargs.module;
         this.lineno = lineno;
-        this.created = ct;
-        //this.msecs = (ct - long(ct)) * 1000;
-        this.relative_created = (this.created - _start_time) * 1000;
+        this.created = datetime.datetime(ct);
+        this.relative_created = datetime.datetime((this.created - _start_time));
     },
 
     __str__: function __str__() {
@@ -91,7 +97,7 @@ var LogRecord = type('LogRecord', {
     },
 
     get time() {
-	return '';
+	return datetime.format(this.created, 'yyyy-mm-dd hh:nn:ss');
     }
 });
 
@@ -203,6 +209,14 @@ var Handler = type('Handler', [Filterer], {
         this.level = level;
     },
 
+    set_level: function (level) {
+        this.level = level;
+    },
+
+    set_formatter: function (formatter) {
+        this.formatter = formatter;
+    },
+
     format: function(record) {
         /*Format the specified record.
         If a formatter is set, use it. Otherwise, use the default formatter
@@ -241,16 +255,9 @@ var Handler = type('Handler', [Filterer], {
     }
 });
 
-var FirebugHandler = type('FirebugHandler', [Handler], {
-    /*
-    Base class for handlers that rotate log files at a certain point.
-    Not meant to be instantiated directly.  Instead, use RotatingFileHandler
-    or TimedRotatingFileHandler.
-    */
-    emit: function(record) {
-	console.log(record);
-    }
-});
+//---------------------------------------------------------------------------
+//   Manager classes and functions
+//---------------------------------------------------------------------------
 
 var Manager = type('Manager', {
     /*
@@ -262,7 +269,6 @@ var Manager = type('Manager', {
         Initialize the manager with the root node of the logger hierarchy.
         */
         this.root = rootnode;
-	rootnode.manager = this;
         this.disable = 0;
         this.emittedNoHandlerWarning = 0;
         this.logger_dict = {};
@@ -284,14 +290,14 @@ var Manager = type('Manager', {
 	    rv = this.logger_dict[name];
 	    if (!isinstance(rv, Logger)) {
 		var ph = rv;
-		rv = new LoggerClass(name);
+		rv = new Logger(name);
 		rv.manager = this;
 		this.logger_dict[name] = rv;
 		this._fixup_children(ph, rv);
 		this._fixup_parents(rv);
 	    }
         } else {
-	    rv = new LoggerClass(name);
+	    rv = new Logger(name);
 	    rv.manager = this;
 	    this.logger_dict[name] = rv;
 	    this._fixup_parents(rv);
@@ -366,7 +372,7 @@ var Logger = type('Logger', [ Filterer ], {
         this.name = name;
         this.level = level;
         this.parent = null;
-        this.propagate = 1;
+        this.propagate = true;
         this.handlers = [];
         this.disabled = 0;
     },
@@ -424,7 +430,7 @@ var Logger = type('Logger', [ Filterer ], {
 	    this._log(WARNING, msg, arguments.args, arguments.kwargs);
     },
 
-    warn: this.warning,
+    warn: function warn(msg) { return this.warning(msg);},
 
     error: function error(msg) {
         /*
@@ -464,7 +470,7 @@ var Logger = type('Logger', [ Filterer ], {
             this._log(CRITICAL, msg, arguments.args, arguments.kwargs);
     },
 
-    fatal: this.critical,
+    fatal: function fatal(msg) { return this.critical(msg);},
 
     log: function log(level, msg) {
         /*
@@ -531,6 +537,13 @@ var Logger = type('Logger', [ Filterer ], {
             delete this.handlers[index];
     },
 
+    clear_handlers: function clear_handlers() {
+        /*
+        Remove all the handlers from this logger.
+        */
+	this.handlers.length = 0;
+    },
+
     call_handlers: function call_handlers(record) {
         /*
         Pass a record to all relevant handlers.
@@ -595,11 +608,9 @@ var RootLogger = type('RootLogger', [Logger], {
     }
 });
 
-var LoggerClass = Logger;
-
 var root = new RootLogger(WARNING);
-Logger.root = root;
-Logger.manager = new Manager(Logger.root);
+Logger.prototype.root = root;
+root.manager = Logger.prototype.manager = new Manager(root);
 
 /*
 Return a logger with the specified name, creating it if necessary.
@@ -607,13 +618,16 @@ If no name is specified, return the root logger.
 */
 function get_logger(name) {
     if (name)
-        return Logger.manager.get_logger(name);
+        return root.manager.get_logger(name);
     else
         return root;
 }
 
 $P({
+    get_level_name: get_level_name,
+    get_level_number: get_level_number,
     get_logger: get_logger,
+    root: root,
     levels: {
 	    'CRITICAL' : CRITICAL,
 	    'ERROR' : ERROR,
@@ -623,5 +637,6 @@ $P({
 	    'DEBUG' : DEBUG,
 	    'NOTSET' : NOTSET
     },
-    handlers: {FirebugHandler: FirebugHandler}
+    Logger: Logger,
+    Handler: Handler
 });

@@ -1,7 +1,8 @@
 $L('sys');
 $L('event');
 $L('ajax');
-$L('doff.core.handler', 'Handler');
+$L('doff.core.urlhandler', 'Handler');
+$L('logging.config', 'file_config');
 
 var Project = type('Project', [object], {
     settings: null,
@@ -22,19 +23,21 @@ var Project = type('Project', [object], {
 	this.package = package;
 	this.path = path;
 	sys.register_module_path(this.package, this.path);
-	this.availability_url = sys.module_url(this.package, '/network_check.txt');
+	this.availability_url = sys.module_url(this.package, 'network_check.txt');
 	this.read_settings();
 	// ManagedStores
 	this.localserver = google.gears.factory.create('beta.localserver');
 	this.project = this.localserver.createManagedStore(package + 'project');
-	this.project.manifestUrl = sys.module_url(this.package, '/manifests/project.txt');
+	this.project.manifestUrl = sys.module_url(this.package, 'manifests/project.txt');
         this.project.checkForUpdate();
 	this.media = this.localserver.createManagedStore(package + 'media');
-	this.media.manifestUrl = sys.module_url(this.package, '/manifests/media.txt');
+	this.media.manifestUrl = sys.module_url(this.package, 'manifests/media.txt');
         this.media.checkForUpdate();
 	this.system = this.localserver.createManagedStore(package + 'system');
-	this.system.manifestUrl = sys.module_url(this.package, '/manifests/system.txt');
+	this.system.manifestUrl = sys.module_url(this.package, 'manifests/system.txt');
         this.system.checkForUpdate();
+        //Inicio el logging
+        file_config(sys.module_url(this.package, 'logging.js'));
     },
     
     onLoad: function onLoad() {},
