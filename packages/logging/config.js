@@ -19,7 +19,7 @@ function _create_handlers(cp) {
         if ('formatter' in hand)
             h.set_formatter(hand['formatter']);
         if ('level' in hand)
-            h.set_level(logging.get_level_number(hand['level']));
+            h.set_level(logging.get_level(hand['level']));
         hlers[hname] = h;
     }
     return hlers;
@@ -31,7 +31,7 @@ function _install_loggers(cp, hlers) {
     var root = logging.root;
     var opts = llist['root'];
     if ('level' in opts)
-        root.set_level(logging.get_level_number(opts['level']));
+        root.set_level(logging.get_level(opts['level']));
     root.clear_handlers();
     var hlist = opts['handlers'];
     if (len(hlist)) {
@@ -51,7 +51,7 @@ function _install_loggers(cp, hlers) {
             delete existing[index];
         logger.propagate = ('propagate' in opts)? opts['propagate'] : true;
         if ('level' in opts)
-            logger.set_level(logging.get_level_number(opts['level']));
+            logger.set_level(logging.get_level(opts['level']));
         logger.clear_handlers();
         logger.disabled = 0;
         var hlist = opts['handlers'];

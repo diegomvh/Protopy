@@ -20,7 +20,7 @@
         'firebug': {
             'class': 'FirebugHandler',
             'level':'DEBUG',
-            'formatter': '%(time)s %(name)s(%(levelname)s): %(message)s',
+            'formatter': '%(time)s %(name)s(%(levelname)s):\n%(message)s',
             'args': []
         }
     }

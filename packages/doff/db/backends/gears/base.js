@@ -101,8 +101,12 @@ var GearsCursorWrapper = type('GearsCursorWrapper', database.Cursor, {
     'execute': function execute(query, params) {
         params = params || [];
         try {
-            logger.debug('Query: %s \n Params: %s', query, params);
-            var query = this.convert_query(query, params.length);
+            query = this.convert_query(query, params.length);
+
+            logger.debug('Query: %s\nParams: %s', query, params, {});
+            logger.info('Query: %s\nParams: %s', query, params, {});
+            logger.warning('Query: %s\nParams: %s', query, params, {});
+            logger.error('Query: %s\nParams: %s', query, params, {});
             super(database.Cursor, this).execute(query, params);
         }
         catch(e) {

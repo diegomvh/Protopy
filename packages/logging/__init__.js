@@ -12,31 +12,25 @@ var NOTSET = 0;
 var _start_time = new Date();
 var raise_exceptions = false;
 
-var _level_names = {
-    'CRITICAL' : CRITICAL,
-    'ERROR' : ERROR,
-    'WARN' : WARNING,
-    'WARNING' : WARNING,
-    'INFO' : INFO,
-    'DEBUG' : DEBUG,
-    'NOTSET' : NOTSET
-}
+var _levels = {};
 
-var _level_numbers = {
-    '50' : 'CRITICAL',
-    '40' : 'ERROR',
-    '30' : 'WARNING',
-    '20' : 'INFO',
-    '10' : 'DEBUG',
-    '0' : 'NOTSET',
-}
+_levels['CRITICAL']= CRITICAL;
+_levels['ERROR']= ERROR;
+_levels['WARN']= WARNING;
+_levels['WARNING']= WARNING;
+_levels['INFO']= INFO;
+_levels['DEBUG']= DEBUG;
+_levels['NOTSET']= NOTSET;
+_levels[CRITICAL]= 'CRITICAL';
+_levels[ERROR]= 'ERROR';
+_levels[WARN]= 'WARNING';
+_levels[WARNING]= 'WARNING';
+_levels[INFO]= 'INFO';
+_levels[DEBUG]= 'DEBUG';
+_levels[NOTSET]= 'NOTSET';
 
-function get_level_name(level) {
-    return _level_numbers['' + level] || "Level %s".subs(level);
-}
-
-function get_level_number(name) {
-    return _level_names[name] || NOTSET;
+function get_level(level) {
+    return _levels[level] || "Level %s".subs(level);
 }
 
 function add_level_name(level, levelname) {
@@ -69,7 +63,7 @@ var LogRecord = type('LogRecord', {
             args = args[0]
         */
 	this.args = args;
-        this.levelname = get_level_name(level);
+        this.levelname = get_level(level);
         this.levelno = level;
         this.pathname = pathname;
         this.filename = kwargs.filename;
@@ -633,8 +627,7 @@ $P({
     DEBUG : DEBUG,
     NOTSET : NOTSET,
     //Functions
-    get_level_name: get_level_name,
-    get_level_number: get_level_number,
+    get_level: get_level,
     get_logger: get_logger,
     //root looger
     root: root,

@@ -1,108 +1,28 @@
 $L('logging.*');
 
 var FirebugHandler = type('FirebugHandler', [logging.Handler], {
-    /*
-    Base class for handlers that rotate log files at a certain point.
-    Not meant to be instantiated directly.  Instead, use RotatingFileHandler
-    or TimedRotatingFileHandler.
-    */
+    functions: {},
 
     '__init__': function __init__() {
-        
+
         //TODO: Validar si hay firebug instalado
-        
+
         //Ok tengo firebug
-        /*this.functions = {
-            logging.CRITICAL: console.error,
-            logging.ERROR: console.error,
-            logging.WARN: console.warn,
-            logging.WARNING: console.warn,
-            logging.INFO: console.info,
-            logging.DEBUG: console.debug
-        }*/
+        this.functions[logging.CRITICAL] = window.console.error;
+        this.functions[logging.ERROR]= window.console.error;
+        this.functions[logging.WARN]= window.console.warn;
+        this.functions[logging.WARNING]= window.console.warn;
+        this.functions[logging.INFO]= window.console.info;
+        this.functions[logging.DEBUG]= window.console.debug;
     },
 
     emit: function(record) {
-        console.debug(arguments.caller);
-        console.debug(this.__parent__.__parent__);
-        console.debug(record);
+        if (logging.ERROR == record.levelno)
+            window.console.trace();
+        this.functions[record.levelno](this.format(record));
     }
 });
 
 $P({
     FirebugHandler: FirebugHandler
 })
-
-/* TODO: Para firebug
-console.log(object[, object, ...])
-
-Writes a message to the console. You may pass as many arguments as you'd like, and they will be joined together in a space-delimited line.
-
-The first argument to log may be a string containing printf-like string substitution patterns. For example:
-
-console.log("The %s jumped over %d tall buildings", animal, count);
-
-The example above can be re-written without string substitution to achieve the same result:
-
-console.log("The", animal, "jumped over", count, "tall buildings");
-
-These two techniques can be combined. If you use string substitution but provide more arguments than there are substitution patterns, the remaining arguments will be appended in a space-delimited line, like so:
-
-console.log("I am %s and I have:", myName, thing1, thing2, thing3);
-
-If objects are logged, they will be written not as static text, but as interactive hyperlinks that can be clicked to inspect the object in Firebug's HTML, CSS, Script, or DOM tabs. You may also use the %o pattern to substitute a hyperlink in a string.
-
-Here is the complete set of patterns that you may use for string substitution:
-String Substitution Patterns
-%s	String
-%d, %i	Integer (numeric formatting is not yet supported)
-%f	Floating point number (numeric formatting is not yet supported)
-%o	Object hyperlink
-console.debug(object[, object, ...])
-
-Writes a message to the console, including a hyperlink to the line where it was called.
-console.info(object[, object, ...])
-
-Writes a message to the console with the visual "info" icon and color coding and a hyperlink to the line where it was called.
-console.warn(object[, object, ...])
-
-Writes a message to the console with the visual "warning" icon and color coding and a hyperlink to the line where it was called.
-console.error(object[, object, ...])
-
-Writes a message to the console with the visual "error" icon and color coding and a hyperlink to the line where it was called.
-console.assert(expression[, object, ...])
-
-Tests that an expression is true. If not, it will write a message to the console and throw an exception.
-console.dir(object)
-
-Prints an interactive listing of all properties of the object. This looks identical to the view that you would see in the DOM tab.
-console.dirxml(node)
-
-Prints the XML source tree of an HTML or XML element. This looks identical to the view that you would see in the HTML tab. You can click on any node to inspect it in the HTML tab.
-console.trace()
-
-Prints an interactive stack trace of JavaScript execution at the point where it is called.
-
-The stack trace details the functions on the stack, as well as the values that were passed as arguments to each function. You can click each function to take you to its source in the Script tab, and click each argument value to inspect it in the DOM or HTML tabs.
-console.group(object[, object, ...])
-
-Writes a message to the console and opens a nested block to indent all future messages sent to the console. Call console.groupEnd() to close the block.
-console.groupEnd()
-
-Closes the most recently opened block created by a call to console.group.
-console.time(name)
-
-Creates a new timer under the given name. Call console.timeEnd(name) with the same name to stop the timer and print the time elapsed..
-console.timeEnd(name)
-
-Stops a timer created by a call to console.time(name) and writes the time elapsed.
-console.profile([title])
-
-Turns on the JavaScript profiler. The optional argument title would contain the text to be printed in the header of the profile report.
-console.profileEnd()
-
-Turns off the JavaScript profiler and prints its report.
-console.count([title])
-
-Writes the number of times that the line of code where count was called was executed. The optional argument title will print a message in addition to the number of the count.
-*/
