@@ -5,8 +5,9 @@ $L('doff.db.backends.util');
 $L('doff.db.backends.*', 'BaseDatabaseFeatures', 'BaseDatabaseOperations', 'BaseDatabaseWrapper', 'BaseDatabaseValidation');
 $L('doff.db.backends.gears.creation', 'DatabaseCreation');
 $L('doff.db.backends.gears.introspection', 'DatabaseIntrospection');
+$L('logging.*');
 
-
+var logger = logging.get_logger(__name__);
 var DatabaseError = database.DatabaseError;
 var IntegrityError = database.IntegrityError;
 

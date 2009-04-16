@@ -88,13 +88,15 @@ function file_config(fname, defaults) {
 
     var hlers = _create_handlers(config);
     _install_loggers(config, hlers);
-    //DANGER, DANGER
+    /*  DANGER, DANGER
+        Bad idea
     if ('auto_set_onModuleCreated' in config && config['auto_set_onModuleCreated'])
         hmc = event.subscribe('onModuleLoaded', add_logger_to_module);
+    */
 }
 
-function add_logger_to_module(who, module) {
-    var name = who.__name__;
+function add_logger_to_module(execution_scope, module) {
+    var name = module.__name__;
     var logger = null;
     var logger_dict = logging.root.manager.logger_dict;
     var i = len(name);
@@ -106,7 +108,7 @@ function add_logger_to_module(who, module) {
         }
         i = name.lastIndexOf('.');
     }
-    who['logger'] = logger? logger : logging.root;
+    execution_scope['logger'] = logger? logger : logging.root;
 }
 
 $P({

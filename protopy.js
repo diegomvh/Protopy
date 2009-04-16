@@ -86,6 +86,7 @@
                 throw new LoadError(file);
             var code = '(function(){ ' + request.responseText + '});';
             mod = new Module(name, file);
+            //TODO: armar un arbol para los modulos, asi casa uno sabe quien es su __parent__
             __modules__[name] = mod;
             event.publish('onModuleCreated', [this, mod]);
             try {

@@ -6,9 +6,26 @@ var FirebugHandler = type('FirebugHandler', [logging.Handler], {
     Not meant to be instantiated directly.  Instead, use RotatingFileHandler
     or TimedRotatingFileHandler.
     */
+
+    '__init__': function __init__() {
+        
+        //TODO: Validar si hay firebug instalado
+        
+        //Ok tengo firebug
+        /*this.functions = {
+            logging.CRITICAL: console.error,
+            logging.ERROR: console.error,
+            logging.WARN: console.warn,
+            logging.WARNING: console.warn,
+            logging.INFO: console.info,
+            logging.DEBUG: console.debug
+        }*/
+    },
+
     emit: function(record) {
-        console.trace();
-        console.debug(this.format(record));
+        console.debug(arguments.caller);
+        console.debug(this.__parent__.__parent__);
+        console.debug(record);
     }
 });
 

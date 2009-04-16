@@ -624,19 +624,21 @@ function get_logger(name) {
 }
 
 $P({
+    //levels
+    CRITICAL : CRITICAL,
+    ERROR : ERROR,
+    WARN : WARNING,
+    WARNING : WARNING,
+    INFO : INFO,
+    DEBUG : DEBUG,
+    NOTSET : NOTSET,
+    //Functions
     get_level_name: get_level_name,
     get_level_number: get_level_number,
     get_logger: get_logger,
+    //root looger
     root: root,
-    levels: {
-	    'CRITICAL' : CRITICAL,
-	    'ERROR' : ERROR,
-	    'WARN' : WARNING,
-	    'WARNING' : WARNING,
-	    'INFO' : INFO,
-	    'DEBUG' : DEBUG,
-	    'NOTSET' : NOTSET
-    },
+    //Classes
     Logger: Logger,
     Handler: Handler
 });
