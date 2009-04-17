@@ -8,7 +8,7 @@ function get_template_sources(template_name, template_dirs) {
 
     var paths = [];
     if (!template_dirs)
-        template_dirs = settings.TEMPLATE_DIRS;
+        template_dirs = settings.TEMPLATE_URLS;
 
     for each (var template_dir in template_dirs)
         paths.push(template_dir + template_name);
@@ -23,6 +23,7 @@ function load_template_source(template_name, template_dirs) {
     for each (var path in paths){
         /* Levantar los templates */
         new Request(path, {
+            method: 'GET',
             asynchronous : false,
             'onSuccess': function onSuccess(transport) {
                 template = (transport.responseText);

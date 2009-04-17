@@ -1,5 +1,7 @@
-if (!window.google || !window.google.gears) {
-    alert('google is not defined');
+$L('sys');
+
+if (!sys.browser.features.Gears) {
+    alert('Google gears is not installed, please install from http://gears.google.com/, redirecting now.');
     window.location.href = 'http://gears.google.com/';
 }
 
@@ -90,7 +92,7 @@ var ManagedResourceStore = type ('ManagedResourceStore', {
     _store: null,
 
     '__init__': function __init__(name, requiredCookie) {
-	this._store = localServer.createStore(name, requiredCookie);
+	this._store = localServer.createManagedStore(name, requiredCookie);
 	this._store.onerror = getattr(this, 'onSyncError');
         this._store.oncomplete = getattr(this, 'onSyncComplete');
 	this._store.onprogress = getattr(this, 'onSyncProgress');

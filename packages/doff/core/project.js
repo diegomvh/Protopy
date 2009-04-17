@@ -3,6 +3,7 @@ $L('event');
 $L('ajax');
 $L('doff.core.urlhandler', 'Handler');
 $L('logging.config', 'file_config');
+$L('gears.localserver', 'ManagedResourceStore');
 
 var Project = type('Project', [object], {
     settings: null,
@@ -12,8 +13,6 @@ var Project = type('Project', [object], {
     going_online: false,
     do_net_checking: true,
     handler: new Handler(),
-    localserver: null,
-    media: null,
     system: null,
     project: null,
     
@@ -26,16 +25,10 @@ var Project = type('Project', [object], {
 	this.availability_url = sys.module_url(this.package, 'network_check.txt');
 	this.read_settings();
 	// ManagedStores
-	this.localserver = google.gears.factory.create('beta.localserver');
-	this.project = this.localserver.createManagedStore(package + 'project');
-	this.project.manifestUrl = sys.module_url(this.package, 'manifests/project.txt');
-        this.project.checkForUpdate();
-	this.media = this.localserver.createManagedStore(package + 'media');
-	this.media.manifestUrl = sys.module_url(this.package, 'manifests/media.txt');
-        this.media.checkForUpdate();
-	this.system = this.localserver.createManagedStore(package + 'system');
-	this.system.manifestUrl = sys.module_url(this.package, 'manifests/system.txt');
-        this.system.checkForUpdate();
+	this.project = new ManagedResourceStore(package + '_project');
+	this.project.manifest_url = sys.module_url(this.package, 'manifests/project.json');
+        this.system = new ManagedResourceStore(package + '_system');
+	this.system.manifest_url = sys.module_url(this.package, 'manifests/system.json');
         //Inicio el logging
         file_config(sys.module_url(this.package, 'logging.js'));
     },
@@ -49,6 +42,7 @@ var Project = type('Project', [object], {
 	var global_settings = $L('doff.conf.settings');
 	var url_settings = sys.module_url(this.package, 'settings.js');
 	new ajax.Request(url_settings, {
+            method: 'GET',
 	    asynchronous : false,
 	    'onSuccess': function onSuccess(transport) {
 		var code = '(' + transport.responseText + ');';

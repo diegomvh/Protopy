@@ -72,6 +72,7 @@ function file_config(fname, defaults) {
     var config = defaults || {};
     var url_settings = fname;
     new ajax.Request(url_settings, {
+        method: 'GET',
         asynchronous : false,
         'onSuccess': function onSuccess(transport) {
             var code = '(' + transport.responseText + ');';

@@ -33,6 +33,7 @@ function load_template_source(template_name, template_dirs) {
     for each (var path in paths){
         /* Levantar los templates */
         new Request(path, {
+            method: 'GET',
             asynchronous : false,
             'onSuccess': function onSuccess(transport) {
                 template = (transport.responseText);

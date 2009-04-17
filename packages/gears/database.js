@@ -1,5 +1,7 @@
-if (!window.google || !window.google.gears) {
-    alert('google is not defined');
+$L('sys');
+
+if (!sys.browser.features.Gears) {
+    alert('Google gears is not installed, please install from http://gears.google.com/, redirecting now.');
     window.location.href = 'http://gears.google.com/';
 }
 
