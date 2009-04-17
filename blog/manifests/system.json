@@ -1,6 +1,6 @@
 {
   "betaManifestVersion": 1,
-  "version": "system_1",
+  "version": "system_2",
   "entries": [
     { "url": "/index.html" },
     { "url": "/protopy.js" },
@@ -48,7 +48,6 @@
     { "url": "/packages/doff/forms/models.js" },
     { "url": "/packages/doff/forms/util.js" },
     { "url": "/packages/doff/forms/widgets.js" },
-    { "url": "/packages/doff/http/__init__.js" },
     { "url": "/packages/doff/template/__init__.js" },
     { "url": "/packages/doff/template/context.js" },
     { "url": "/packages/doff/template/default_filters.js" },

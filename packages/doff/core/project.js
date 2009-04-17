@@ -15,8 +15,13 @@ var Project = type('Project', [object], {
     handler: new Handler(),
     system: null,
     project: null,
-    
-    
+
+    onLoad: function onLoad() {
+        this.sync_stores();
+    },
+
+    onNetwork: function(type) {},
+
     '__init__': function __init__(name, package, path){
 	this.name = name;
 	this.package = package;
@@ -32,10 +37,20 @@ var Project = type('Project', [object], {
         //Inicio el logging
         file_config(sys.module_url(this.package, 'logging.js'));
     },
-    
-    onLoad: function onLoad() {},
-    
-    onNetwork: function(type) {},
+
+    //FIXME: Mejorar esto un poco tengo un __init__ y un initialize es como medio cualquiera
+    initialize: function initialize(){
+	var self = this;
+	event.connect(window, 'load', function(){
+	    self.onLoad();
+	    self.handler.handle('/');
+	});
+    },
+
+    sync_stores: function sync_stores() {
+        this.system.check_for_update();
+        this.project.check_for_update();
+    },
 
     read_settings: function read_settings() {
 	var self = this;
@@ -58,19 +73,6 @@ var Project = type('Project', [object], {
 	});
     },
 
-    //FIXME: Mejorar esto un poco tengo un __init__ y un initialize es como medio cualquiera
-    initialize: function initialize(){
-	var self = this;
-	event.connect(window, 'load', function(){
-	    self.onLoad();
-	    self.handler.handle('/');
-	});
-	/*
-	if(this._storageLoaded && this._pageLoaded)
-	    this.onLoad();
-	*/
-    },
-    
     go_offline: function(){ 
 	if((this.sync.is_syncing)||(this.going_online)){ 
 	    return; 
@@ -93,7 +95,7 @@ var Project = type('Project', [object], {
     network_check: function network_check(){
 	var self = this;
 	var get = new ajax.Request(this._get_availability_url(), {
-	    method: 'get',
+	    method: 'GET',
 	    asynchronous : false,
 	    'onSuccess': function onSuccess(transport) {
 		if(!self.is_online){
@@ -112,10 +114,6 @@ var Project = type('Project', [object], {
     },
 
     _start_network_thread: function(){
-	//console.debug("startNetworkThread");
-	
-	// kick off a thread that does periodic
-	// checks on the status of the network
 	if(!this.do_net_checking){
 	    return;
 	}

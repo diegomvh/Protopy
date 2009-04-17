@@ -1,6 +1,6 @@
 {
   "betaManifestVersion": 1,
-  "version": "project_1",
+  "version": "project_2",
   "entries": [
     { "url": "/blog/apps/post/models.js" },
     { "url": "/blog/apps/post/templates/add_post.html" },
@@ -9,7 +9,6 @@
     { "url": "/blog/apps/post/templates/show_posts.html" },
     { "url": "/blog/apps/post/urls.js" },
     { "url": "/blog/apps/post/views.js" },
-    { "url": "/blog/blog.js" },
     { "url": "/blog/logging.js" },
     { "url": "/blog/medios/hedr33.jpg" },
     { "url": "/blog/medios/main.css" },
