@@ -1,6 +1,6 @@
 {
   "betaManifestVersion": 1,
-  "version": "project_2",
+  "version": "project1",
   "entries": [
     { "url": "/blog/apps/post/models.js" },
     { "url": "/blog/apps/post/templates/add_post.html" },

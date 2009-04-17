@@ -1,6 +1,6 @@
 {
   "betaManifestVersion": 1,
-  "version": "system_2",
+  "version": "system1",
   "entries": [
     { "url": "/index.html" },
     { "url": "/protopy.js" },
