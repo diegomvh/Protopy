@@ -86,11 +86,33 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
+    'django.contrib.admin',
     
     # Ver si queda global y se instala con setuptools o 
     # si se copia dentro de la aplicación...
     'doffproj.djangoffline',
     
     # Aplicaciones de prueba
-    'doffproj.blog', 
+    'doffproj.blog',
+    
 )
+
+try:
+    import django_extensions
+    assert 'django_extensions' in INSTALLED_APPS
+except ImportError:
+    print "No tengo django extenions, no pasa nada."
+except AssertionError:
+    INSTALLED_APPS += ('django_extensions', )
+
+
+
+OFFLINE_APPS = {
+    'doffproj.blog': {
+                        'base_path': '%s/offline_blog'
+#                       'views': '%s/apps/views/' % MERDIA_URL,
+#                       'templates': ('', '', ),
+#                       'urlconf': '%s/urls.js',
+                        
+                       }
+}

@@ -1,11 +1,11 @@
 # coding: utf-8
 from django.conf.urls.defaults import *
 from django.conf import settings
-
+from doffproj.blog.admin import bolg_admin_site
 
 # Uncomment the next two lines to enable the admin:
-from django.contrib import admin
-admin.autodiscover()
+#from django.contrib import admin
+#admin.autodiscover()
 
 urlpatterns = patterns('',
     # Example:
@@ -16,12 +16,15 @@ urlpatterns = patterns('',
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
-    (r'^admin/(.*)', admin.site.root),
+    (r'^admin/(.*)', bolg_admin_site.root),
     
     # TODO: Reemplazar por un generic view.
     (r'^$', 'doffproj.views.index',  ),
     
     (r'^blog/', include('doffproj.blog.urls'),),
+    
+    # Incluimos las urls del offlinizador
+    (r'^doff/', include('doffproj.djangoffline.urls'), ), 
 )
 
 
