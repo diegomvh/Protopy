@@ -29,7 +29,7 @@
     //Publish simbols in modules
     function __publish__(object) {
         for (var k in object) {
-            __modules__[this['__name__']][k] = object[k];
+	    this[k] = object[k];
         }
     }
 
@@ -40,9 +40,11 @@
         __extend__(false, window, object);
     }
     
-    //Add doc string to modules
-    function __doc__(doc) {
-        __modules__[this['__name__']]['__doc__'] = doc;
+    function __doc__(obj, doc) {
+        if ( doc === undefined && type(obj) === String)
+	    this.__doc__ = obj;
+	else if (type(doc) === String)
+	    obj.__doc__ = doc;
     }
 //memoria ps2 16, cable usb del mp3, auriculares, un cargador y baterias, un pack de dvd
     //The module concept
@@ -52,12 +54,6 @@
         if (file == 'built-in') {
             if (source && source instanceof Object)
                 __extend__(true, this, source);
-        } else {
-            // Only for non builtins modules
-            this['__builtins__'] = {};
-            __extend__(false, this['__builtins__'], __modules__['__builtin__']);
-            this['__builtins__']['__file__'] = file;
-            this['__builtins__']['__name__'] = name;
         }
     }
     
@@ -71,34 +67,45 @@
     
         if (!mod) {
             //Only firefox and synchronous, sorry
-        	if (package){
-        		var file = sys.module_url(name, '__init__.js');
-        	} else {
-        		var index = name.lastIndexOf('.');
-        		var [ pkg, filename ] = index != -1? [ name.slice(0, index), name.slice(index + 1)] : [ '', name];
-        		var file = sys.module_url(pkg, filename + '.js');
-        	}
+	    if (package){
+		var file = sys.module_url(name, '__init__.js');
+	    } else {
+		var index = name.lastIndexOf('.');
+		var [ pkg, filename ] = index != -1? [ name.slice(0, index), name.slice(index + 1)] : [ '', name];
+		var file = sys.module_url(pkg, filename + '.js');
+	    }
             var code = null,
-             	 request = new XMLHttpRequest();
+		request = new XMLHttpRequest();
             request.open('GET', file, false); 
             request.send(null);
             if(request.status != 200)
-                throw new LoadError(file);
-            var code = '(function(){ ' + request.responseText + '});';
+		throw new LoadError(file);
+            //Tego el codigo, creo el modulo
+	    var code = '(function(){ ' + request.responseText + '});';
             mod = new Module(name, file);
-            //TODO: armar un arbol para los modulos, asi casa uno sabe quien es su __parent__
             __modules__[name] = mod;
-            event.publish('onModuleCreated', [this, mod]);
+            //Decoro el modulo con lo que reuiere para funcionar
+	    mod.$P = __publish__;
+	    mod.$L = __load__;
+	    mod.$B = __builtins__;
+	    mod.$D = __doc__;
+	    mod.type = type;
+	    //Listo el modululo base largo el evento
+	    event.publish('onModuleCreated', [this, mod]);
             try {
-                with (mod['__builtins__']) {
-                    eval(code).call(mod);
+                with (mod) {
+		    eval(code).call(mod);
                 }
             } catch (exception) {
                 delete __modules__[name];
                 throw exception;
             }
-            // Muejejejeje
-            delete mod['__builtins__'];
+	    //EL modulo esta cargado, quito la decoracion
+	    delete mod.$P;
+	    delete mod.$L;
+	    delete mod.$B;
+	    delete mod.$D;
+	    delete mod.type;
         }
         event.publish('onModuleLoaded', [this, mod]);
         switch (arguments.length) {
@@ -106,30 +113,23 @@
                     // Returns module
                     var last = names[names.length - 1];
                     this[last] = mod;
-                    __modules__[this['__name__']][last] = mod;
                     return mod;
-    
             case 2:
                     // If all contents were requested returns nothing
                     if (arguments[1] == '*') {
                         __extend__(false, this, mod);
-                        __extend__(false, __modules__[this['__name__']], mod);
                         return;
-    
                     // second arguments is the symbol in the package
                     } else {
                         var n = arguments[1];
                         this[n] = mod[n];
-                        __modules__[this['__name__']][n] = mod[n];
                         return mod[n];
                     }
-    
             default:
                     // every argyment but the first one are a symbol
                     // returns nothing
                     for (var i = 1, length = arguments.length; i < length; i++) {
                         this[arguments[i]] = mod[arguments[i]];
-                        __modules__[this['__name__']][arguments[i]] = mod[arguments[i]];
                     }
                     return;
         }

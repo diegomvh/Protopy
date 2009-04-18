@@ -14,7 +14,6 @@ var HttpRequest = type ('HttpRequest', {
 	this.META = {};
 	this.FILES = {};
         this.pathname = '';
-        this.method = null;
 	this.hostname = window.location.hostname;
 	this.port = window.location.port;
 	this.protocol = window.location.protocol;
@@ -49,6 +48,30 @@ var HttpRequest = type ('HttpRequest', {
     
     valid: function valid() {
 	return !!this.pathname;
+    },
+
+    set method(value) {
+	this._method = value && value.toUpperCase();
+    },
+    
+    get method() {
+	return this._method;
+    },
+
+    set post(value) {
+	this.POST = value;
+    },
+
+    get post() {
+	return this.POST;
+    },
+
+    set get(value) {
+	this.GET = value;
+    },
+    
+    get get() {
+	return this.GET;
     },
 });
 

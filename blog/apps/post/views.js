@@ -20,21 +20,23 @@ var TagForm = type('TagForm', forms.ModelForm, {
 });
 
 function add_tag(request){
-    if (request.method == 'post') {
-	var [obj, crated] = Tag.objects.get_or_create({'slug':slugify(request['post']['title']), 'defaults': {'title':request['post']['title']}});
-	return new HttpResponseRedirect('/');
+    if (request.method == 'POST') {
+	var formtag = new TagForm({ data: request.POST });
+	if (formtag.is_valid()) {
+	    var [obj, crated] = Tag.objects.get_or_create({'slug':slugify(request.POST['title']), 'defaults': {'title':request.POST['title']}});
+	    return new HttpResponseRedirect('/');
+	}
     } else {
-        var t = loader.get_template('add_tag.html');
-        var formtag = new TagForm();
-	var response = new HttpResponse();
-	response.write(t.render(new RequestContext(request, {'formtag': formtag })));
-	return response;
+	var formtag = new TagForm();
     }
+    var t = loader.get_template('add_tag.html');
+    var response = new HttpResponse();
+    response.write(t.render(new RequestContext(request, {'formtag': formtag })));
+    return response;
 }
 
 function remove_tag(request, slug){
     var tag = Tag.objects.get({'slug': slug});
-    print(tag);
     tag.delete();
     return new HttpResponseRedirect('/');
 }
@@ -45,21 +47,23 @@ function remove_post(request, slug){
     return new HttpResponseRedirect('/');
 }
 
-function add_post(request){
-    print(request);
-    if (request.method == 'post') {
-	var [post, created] = Post.objects.get_or_create({'slug': slugify(request.post.title),
+function add_post(request) {
+    if (request.method == 'POST') {
+	var formpost = new PostForm({ data: request.POST });
+	if (formpost.is_valid()) {
+	    var [post, created] = Post.objects.get_or_create({'slug': slugify(request.post.title),
 						     'defaults': {'title':request.post.title, 'slug':slugify(request.post.title), 
 						     'body':request.post.body, 'date': new Date()}});
-        post.tags.add.apply(post.tags, request.post.tags);
-	return new HttpResponseRedirect('/');
+	    post.tags.add.apply(post.tags, request.post.tags);
+	    return new HttpResponseRedirect('/');
+	}
     } else {
-        var t = loader.get_template('add_post.html');
-        var formpost = new PostForm();
-	var response = new HttpResponse();
-	response.write(t.render(new RequestContext(request, {'formpost': formpost })));
-	return response;
+	var formpost = new PostForm();
     }
+    var t = loader.get_template('add_post.html');
+    var response = new HttpResponse();
+    response.write(t.render(new RequestContext(request, {'formpost': formpost })));
+    return response;
 }
 
 $P({ 'add_tag': add_tag,

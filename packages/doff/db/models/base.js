@@ -167,11 +167,9 @@ var Model = type('Model', {
         }
             // Give the class a docstring -- its definition.
         if (!this.__doc__)
-            this.__doc__ = '%s(%s)'.subs(this.__name__, [f.attname for each (f in opts.fields)].join(', '));
-
+            $D('%s(%s)'.subs(this.__name__, [f.attname for each (f in opts.fields)].join(', ')));
         event.publish('class_prepared', [ this ]);
     }
-
 },{
     '__init__': function __init__() {
         arguments = new Arguments(arguments);

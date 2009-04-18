@@ -1,9 +1,8 @@
 {
-    'auto_set_onModuleCreated': true,
     'loggers': {
         'root': {
             'level': 'CRITICAL',
-            'handlers': 'firebug'
+            'handlers': 'alert'
         },
         'doff.db.models.sql': {
             'level':'DEBUG',
@@ -21,6 +20,12 @@
             'class': 'FirebugHandler',
             'level':'DEBUG',
             'formatter': '%(time)s %(name)s(%(levelname)s):\n%(message)s',
+            'args': []
+        },
+	'alert': {
+            'class': 'AlertHandler',
+            'level':'DEBUG',
+            'formatter': '%(levelname)s:\n%(message)s',
             'args': []
         }
     }

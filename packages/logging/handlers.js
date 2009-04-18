@@ -33,6 +33,13 @@ var FirebugHandler = type('FirebugHandler', [logging.Handler], {
     }
 });
 
+var AlertHandler = type('AlertHandler', [logging.Handler], {
+    emit: function(record) {
+        alert(this.format(record));
+    }
+});
+
 $P({
-    FirebugHandler: FirebugHandler
+    FirebugHandler: FirebugHandler,
+    AlertHandler: AlertHandler
 })
