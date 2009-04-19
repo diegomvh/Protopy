@@ -1,8 +1,8 @@
 $D("doff.core.management.commands.syncdb");
 
 function execute() {
-    $L('doff.db', 'connection');
-    $L('doff.db.models');
+    $L('doff.db.*', 'connection');
+    $L('doff.db.models.*');
     $L('doff.db.transaction');
     $L('doff.core.project', 'get_settings');
     var settings = get_settings();

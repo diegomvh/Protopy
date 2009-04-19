@@ -1,5 +1,3 @@
-__doc__ = 'hola';
-
 var _copy_dispatch = {};
 _copy_dispatch[Array] = function _copy_Array(x) { return x };
 _copy_dispatch[Boolean] = function _copy_Boolean(x) { return x };
@@ -53,7 +51,7 @@ function copy(x) {
     return x;
 }
 
-copy.__doc__ = "Shallow copy operation on arbitrary Protopy objects.";
+$D(copy, "Shallow copy operation on arbitrary Protopy objects.");
 
 /* Deepcopy */
 
@@ -97,6 +95,6 @@ function deepcopy(x) {
     return copy(x);
 }
 
-deepcopy.__doc__ = "Deep copy operation on arbitrary Protopy objects.";
+$D(deepcopy, "Deep copy operation on arbitrary Protopy objects.");
 
 $P({ 'copy': copy, 'deepcopy': deepcopy });

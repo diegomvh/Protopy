@@ -46,7 +46,7 @@ var ErrorList = type('ErrorList', {
     },
     
     '__iter__': function __iter__() {
-	for (var e in this.errors)
+	for each (var e in this.errors)
 	    yield e;
     },
 

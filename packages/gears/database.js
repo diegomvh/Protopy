@@ -1,5 +1,7 @@
-if (!window.google || !window.google.gears) {
-    alert('google is not defined, vieja!!');
+$L('sys');
+
+if (!sys.browser.features.Gears) {
+    alert('Google gears is not installed, please install from http://gears.google.com/, redirecting now.');
     window.location.href = 'http://gears.google.com/';
 }
 
@@ -125,8 +127,9 @@ var Cursor = type('Cursor', {
     }
 });
 
-$P({    'connect': connect,
-        'Cursor': Cursor,
-        'DatabaseError': type('DatabaseError'),
-        'IntegrityError': type('IntegrityError')
+$P({    
+    'connect': connect,
+    'Cursor': Cursor,
+    'DatabaseError': type('DatabaseError'),
+    'IntegrityError': type('IntegrityError')
 });

@@ -1,40 +1,63 @@
 $L('sys');
 $L('event');
 $L('ajax');
-$L('doff.core.handler', 'Handler');
+$L('doff.core.urlhandler', 'Handler');
+$L('logging.config', 'file_config');
+$L('gears.localserver', 'ManagedResourceStore');
 
 var Project = type('Project', [object], {
     settings: null,
-    files: {slurp: function(){}},
     is_online: false,
     NET_CHECK: 5,
     availability_url: null,
     going_online: false,
     do_net_checking: true,
-    _initialize_called: false,
-    _storage_loaded: false,
-    _page_loaded: false,
     handler: new Handler(),
-    
-    
+    system: null,
+    project: null,
+
+    onLoad: function onLoad() {
+        this.sync_stores();
+    },
+
+    onNetwork: function(type) {},
+
     '__init__': function __init__(name, package, path){
 	this.name = name;
 	this.package = package;
 	this.path = path;
 	sys.register_module_path(this.package, this.path);
-	this.availability_url = sys.module_url(this.package, '/network_check.txt');
+	this.availability_url = sys.module_url(this.package, 'network_check.txt');
 	this.read_settings();
+	// ManagedStores
+	this.project = new ManagedResourceStore(package + '_project');
+	this.project.manifest_url = sys.module_url(this.package, 'manifests/project.json');
+        this.system = new ManagedResourceStore(package + '_system');
+	this.system.manifest_url = sys.module_url(this.package, 'manifests/system.json');
+        //Inicio el logging
+        file_config(sys.module_url(this.package, 'logging.js'));
     },
-    
-    onLoad: function onLoad(){},
-    
-    onNetwork: function(type){},
+
+    //FIXME: Mejorar esto un poco tengo un __init__ y un initialize es como medio cualquiera
+    initialize: function initialize(){
+	var self = this;
+	event.connect(window, 'load', function(){
+	    self.onLoad();
+	    self.handler.handle('/');
+	});
+    },
+
+    sync_stores: function sync_stores() {
+        this.system.check_for_update();
+        this.project.check_for_update();
+    },
 
     read_settings: function read_settings() {
 	var self = this;
 	var global_settings = $L('doff.conf.settings');
-	var url_settings = sys.module_url(this.package, '/settings.js');
+	var url_settings = sys.module_url(this.package, 'settings.js');
 	new ajax.Request(url_settings, {
+            method: 'GET',
 	    asynchronous : false,
 	    'onSuccess': function onSuccess(transport) {
 		var code = '(' + transport.responseText + ');';
@@ -50,19 +73,6 @@ var Project = type('Project', [object], {
 	});
     },
 
-    //FIXME: Mejorar esto un poco tengo un __init__ y un initialize es como medio cualquiera
-    initialize: function initialize(){
-	var self = this;
-	event.connect(window, 'load', function(){
-	    self.onLoad();
-	    self.handler.handle('/');
-	});
-	/*
-	if(this._storageLoaded && this._pageLoaded)
-	    this.onLoad();
-	*/
-    },
-    
     go_offline: function(){ 
 	if((this.sync.is_syncing)||(this.going_online)){ 
 	    return; 
@@ -85,7 +95,7 @@ var Project = type('Project', [object], {
     network_check: function network_check(){
 	var self = this;
 	var get = new ajax.Request(this._get_availability_url(), {
-	    method: 'get',
+	    method: 'GET',
 	    asynchronous : false,
 	    'onSuccess': function onSuccess(transport) {
 		if(!self.is_online){
@@ -104,10 +114,6 @@ var Project = type('Project', [object], {
     },
 
     _start_network_thread: function(){
-	//console.debug("startNetworkThread");
-	
-	// kick off a thread that does periodic
-	// checks on the status of the network
 	if(!this.do_net_checking){
 	    return;
 	}

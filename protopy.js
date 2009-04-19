@@ -29,7 +29,7 @@
     //Publish simbols in modules
     function __publish__(object) {
         for (var k in object) {
-            __modules__[this['__name__']][k] = object[k];
+	    this[k] = object[k];
         }
     }
 
@@ -40,9 +40,11 @@
         __extend__(false, window, object);
     }
     
-    //Add doc string to modules
-    function __doc__(doc) {
-        __modules__[this['__name__']]['__doc__'] = doc;
+    function __doc__(obj, doc) {
+        if ( doc === undefined && type(obj) === String)
+	    this.__doc__ = obj;
+	else if (type(doc) === String)
+	    obj.__doc__ = doc;
     }
 //memoria ps2 16, cable usb del mp3, auriculares, un cargador y baterias, un pack de dvd
     //The module concept
@@ -52,74 +54,82 @@
         if (file == 'built-in') {
             if (source && source instanceof Object)
                 __extend__(true, this, source);
-        } else {
-            // Only for non builtins modules
-            this['__builtins__'] = {};
-            __extend__(false, this['__builtins__'], __modules__['__builtin__']);
-            this['__builtins__']['__file__'] = file;
-            this['__builtins__']['__name__'] = name;
         }
     }
     
     //Load Modules
     function __load__(module_name) {
+    	
         var package = module_name.endswith('.*'),
-	    name = package ? module_name.slice(0, module_name.length - 2) : module_name,
-	    names = name.split('.'),
-            mod = __modules__[name];
+        	name = package ? module_name.slice(0, module_name.length - 2) : module_name,
+	    	names = name.split('.'),
+                mod = __modules__[name];
     
         if (!mod) {
-            //Only firefox, sorry and synchronous
-            var file = package ? sys.module_url(name, '/__init__.js') : sys.module_url(name, '.js');
-                code = null,
-                request = new XMLHttpRequest();
+            //Only firefox and synchronous, sorry
+	    if (package){
+		var file = sys.module_url(name, '__init__.js');
+	    } else {
+		var index = name.lastIndexOf('.');
+		var [ pkg, filename ] = index != -1? [ name.slice(0, index), name.slice(index + 1)] : [ '', name];
+		var file = sys.module_url(pkg, filename + '.js');
+	    }
+            var code = null,
+		request = new XMLHttpRequest();
             request.open('GET', file, false); 
             request.send(null);
             if(request.status != 200)
-                throw new LoadError(file);
-            var code = '(function(){ ' + request.responseText + '});';
+		throw new LoadError(file);
+            //Tego el codigo, creo el modulo
+	    var code = '(function(){ ' + request.responseText + '});';
             mod = new Module(name, file);
             __modules__[name] = mod;
+            //Decoro el modulo con lo que reuiere para funcionar
+	    mod.$P = __publish__;
+	    mod.$L = __load__;
+	    mod.$B = __builtins__;
+	    mod.$D = __doc__;
+	    mod.type = type;
+	    //Listo el modululo base largo el evento
+	    event.publish('onModuleCreated', [this, mod]);
             try {
-                with (mod['__builtins__']) {
-                    eval(code).call(mod);
+                with (mod) {
+		    eval(code).call(mod);
                 }
             } catch (exception) {
                 delete __modules__[name];
                 throw exception;
             }
-            // Muejejejeje
-            delete mod['__builtins__'];
+	    //EL modulo esta cargado, quito la decoracion
+	    delete mod.$P;
+	    delete mod.$L;
+	    delete mod.$B;
+	    delete mod.$D;
+	    delete mod.type;
         }
+        event.publish('onModuleLoaded', [this, mod]);
         switch (arguments.length) {
             case 1:
                     // Returns module
                     var last = names[names.length - 1];
                     this[last] = mod;
-                    __modules__[this['__name__']][last] = mod;
                     return mod;
-    
             case 2:
                     // If all contents were requested returns nothing
                     if (arguments[1] == '*') {
                         __extend__(false, this, mod);
-                        __extend__(false, __modules__[this['__name__']], mod);
                         return;
-    
                     // second arguments is the symbol in the package
                     } else {
                         var n = arguments[1];
                         this[n] = mod[n];
-                        __modules__[this['__name__']][n] = mod[n];
                         return mod[n];
                     }
-    
             default:
                     // every argyment but the first one are a symbol
                     // returns nothing
                     for (var i = 1, length = arguments.length; i < length; i++) {
                         this[arguments[i]] = mod[arguments[i]];
-                        __modules__[this['__name__']][arguments[i]] = mod[arguments[i]];
                     }
                     return;
         }
@@ -271,19 +281,28 @@
 	'register_module_path': function register_module_path(module, path) { 
 	    __paths__[module] = this.base_url + path; 
 	},
-	'module_url': function module_url(module, prefix) { 
-	    //TODO: Un buen manejo de urls barras, concatenados, etc
+	'module_url': function module_url(module, postfix) {
 	    var url = null;
 	    for (var s in __paths__)
-		if (s && module.indexOf(s) != -1)
-		    url = module.replace(s, __paths__[s]).replace('.','/','g');
-	    if (!url)
-		url = module.replace('', __paths__['']).replace('.','/','g');
-	    if (prefix)
-		url += prefix;
-	    return url;
+		if (s && module.indexOf(s) == 0) {
+		    url = __paths__[s].split('/');
+		    url = url.concat(module.slice(len(s)).split('.'));
+		    break;
+		}
+	    if (!url) {
+		url = __paths__[''].split('/');
+		url = url.concat(module.split('.'));
+	    }
+	    if (postfix) 
+		url = url.concat(postfix.split('/'));
+	    //Si termina con / se la agrego al final, puese ser un camino y no un archivo
+	    //FIXME: Se puede hacer mejor
+	    var length = len(url) - 1;
+	    url = url.filter( function (element, index) { return len(element) > 0 || (element == '' && index == length) });
+	    return url.join('/');
 	},
-	'modules': __modules__
+	'modules': __modules__,
+	'paths': __paths__
     });
 
     sys.browser.features.Gears = !!get_gears() || false;
@@ -293,7 +312,7 @@
             //TODO: Ver como tomar mas informacion de quien larga la exception
             //this.caller = arguments.callee.caller;
             this.args = arguments;
-            this.message = (type(message) == String)? message : '';
+            this.message = (message && type(message) == String)? message : '';
         },
         '__str__': function() { return this.__name__ + ': ' + this.message; }
     });
@@ -1871,7 +1890,7 @@
     var scripts = dom.query('script');
     for each (var script in scripts) {
 	if (script.src) {
-	    var m = script.src.match(/^(.*)\/protopy.js$/i);
+	    var m = script.src.match(new RegExp('^.*' + location.host + '/?(.*)/?protopy.js$', 'i'));
 	    if (m) sys.base_url = m[1];
 	}
     }
@@ -1933,11 +1952,12 @@
 	    var args = flatten(array(arguments));
 	    //%% escaped
 	    var string = this.gsub(/%%/, function(match){ return '<ESC%%>'; });
-	    if (args[0] && type(args[0]) == Object)
-            string = new Template(string, args[1]).evaluate(args[0]);
+	    if (args[0] && (type(args[0]) == Object || isinstance(args[0], object)))
+                string = new Template(string, args[1]).evaluate(args[0]);
 	    else
-            string = string.gsub(/%s/, function(match) { 
-                return (args.length != 0)? str(args.shift()) : match[0]; });
+                string = string.gsub(/%s/, function(match) { 
+                    return (args.length != 0)? str(args.shift()) : match[0]; 
+                });
 	    return string.gsub(/<ESC%%>/, function(match){ return '%'; });
 	},
 

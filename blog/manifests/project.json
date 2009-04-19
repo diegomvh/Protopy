@@ -1,0 +1,25 @@
+{
+  "betaManifestVersion": 1,
+  "version": "project1",
+  "entries": [
+    { "url": "/blog/apps/post/models.js" },
+    { "url": "/blog/apps/post/templates/add_post.html" },
+    { "url": "/blog/apps/post/templates/add_tag.html" },
+    { "url": "/blog/apps/post/templates/post.html" },
+    { "url": "/blog/apps/post/templates/show_posts.html" },
+    { "url": "/blog/apps/post/urls.js" },
+    { "url": "/blog/apps/post/views.js" },
+    { "url": "/blog/logging.js" },
+    { "url": "/blog/medios/hedr33.jpg" },
+    { "url": "/blog/medios/main.css" },
+    { "url": "/blog/settings.js" },
+    { "url": "/blog/templates/about.html" },
+    { "url": "/blog/templates/filters.html" },
+    { "url": "/blog/templates/for.html" },
+    { "url": "/blog/templates/if.html" },
+    { "url": "/blog/templates/index.html" },
+    { "url": "/blog/templates/index_2.html" },
+    { "url": "/blog/urls.js" },
+    { "url": "/blog/views.js" }
+    ]
+}

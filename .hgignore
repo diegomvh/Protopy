@@ -11,12 +11,15 @@ syntax: glob
 *.out
 *.toc
 *.prefs
-# Compilados de python
 *.pyc
 *.pyo
 .directory
-
+*.h
+*.c
+*.cpp
+*.svn*
 
 syntax: regexp
 ^nbproject
 ^.*~$
+

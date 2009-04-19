@@ -214,7 +214,7 @@ var BaseForm = type('BaseForm', {
         // changed from the initial data, short circuit any validation.
         if (this.empty_permitted && !this.has_changed())
             return;
-        for each ([name, field] in this.fields.items()) {
+        for each (var [name, field] in this.fields.items()) {
             // value_from_datadict() gets the data from the data dictionaries.
             // Each widget type knows how to retrieve its own data, because some
             // widgets split data over several HTML fields.
@@ -231,19 +231,19 @@ var BaseForm = type('BaseForm', {
                     value = getattr(this, 'clean_%s'.subs(name))();
                     this.cleaned_data[name] = value;
                 }
-            } catch (e if e instanceof ValidationError) {
-                this._errors.set(name, e.messages)
+            } catch (e if isinstance(e, ValidationError)) {
+                this._errors.set(name, e.messages);
                 if (name in this.cleaned_data)
                     delete this.cleaned_data[name];
             }
         }
         try {
             this.cleaned_data = this.clean();
-        } catch (e if e instanceof ValidationError) {
+        } catch (e if isinstance(e, ValidationError)) {
             this._errors.set(NON_FIELD_ERRORS, e.messages);
         }
         if (bool(this._errors))
-            delattr(this, 'cleaned_data');
+            delete this['cleaned_data'];
     },
     /* 
     Hook for doing any extra form-wide cleaning after Field.clean() been

@@ -6,7 +6,6 @@ var project = get_project();
 var ContextPopException = type('ContextPopException', Exception);
 
 var Context = type('Context', {
-    __doc__: 'Context for the template rendering\npush the context, pop the context, get elements and set elements',
     '__init__': function __init__(_dict, autoescape) {
         _dict = _dict || {};
         this.dicts = [_dict];
@@ -62,6 +61,8 @@ var Context = type('Context', {
         return _dict;
      }
 });
+
+$D(Context, 'Context for the template rendering\npush the context, pop the context, get elements and set elements');
 
 // This is a function rather than module-level procedural code because we only want it to execute if somebody uses RequestContext.
 function get_standard_processors() {

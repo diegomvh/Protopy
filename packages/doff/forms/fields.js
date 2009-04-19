@@ -57,12 +57,13 @@ var Field = type('Field', {
         Field.creation_counter += 1;
         //FIXME: los mensajes estan en un objeto
         function set_class_error_messages(messages, klass) {
-            for each (base_class in klass.__bases__)
-                set_class_error_messages(messages, base_class);
-            extend(messages, klass['default_error_messages'] || {});
+	    for each (var base_class in klass.__bases__)
+                messages = set_class_error_messages(messages, base_class);
+            extend(messages, klass.prototype['default_error_messages'] || {});
+	    return messages;
         }
         var messages = {};
-        set_class_error_messages(messages, this.__class__);
+        messages = set_class_error_messages(messages, this.__class__);
         extend(messages, kwargs['error_messages'] || {});
         this.error_messages = messages;
     },

@@ -167,11 +167,9 @@ var Model = type('Model', {
         }
             // Give the class a docstring -- its definition.
         if (!this.__doc__)
-            this.__doc__ = '%s(%s)'.subs(this.__name__, [f.attname for each (f in opts.fields)].join(', '));
-
+            $D('%s(%s)'.subs(this.__name__, [f.attname for each (f in opts.fields)].join(', ')));
         event.publish('class_prepared', [ this ]);
     }
-
 },{
     '__init__': function __init__() {
         arguments = new Arguments(arguments);
@@ -388,7 +386,7 @@ var Model = type('Model', {
         if (seen_objs.add(this.__class__, pk_val, this, parent || null, nullable || false))
             return;
 
-        for each (related in this._meta.get_all_related_objects()) {
+        for each (var related in this._meta.get_all_related_objects()) {
             var rel_opts_name = related.get_accessor_name();
             if (isinstance(related.field.rel, OneToOneRel)) {
                 try {
@@ -418,7 +416,7 @@ var Model = type('Model', {
         }
     },
 
-    'del': function del() {
+    'delete': function delete() {
         assert (this._get_pk_val(), "%s object can't be deleted because its %s attribute is set to None.".subs(this._meta.object_name, this._meta.pk.attname));
 
         // Find all the objects than need to be deleted.
@@ -476,7 +474,7 @@ var Model = type('Model', {
 
 Model.prototype.save.alters_data = true;
 Model.prototype.save_base.alters_data = true;
-Model.prototype.del.alters_data = true;
+Model.prototype.delete.alters_data = true;
 
 // HELPER FUNCTIONS (CURRIED MODEL METHODS)
 //
@@ -499,4 +497,6 @@ var method_get_order = function(ordered_obj) {
     return [r[pk_name] for each (r in ordered_obj.objects.filter({'order_name': rel_val}).values(pk_name))];
 };
 
-$P({ 'Model': Model });
+$P({ 
+    Model: Model 
+});

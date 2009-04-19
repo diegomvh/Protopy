@@ -4,7 +4,7 @@
 
 //Database
 'DATABASE_ENGINE': 'gears',
-'DATABASE_NAME': 'blodg.db',
+'DATABASE_NAME': 'blog.db',
 'DATABASE_USER': '',
 'DATABASE_PASSWORD': '',
 'DATABASE_HOST': '',
@@ -17,13 +17,13 @@
 
 'INSTALLED_APPS': [ 'blog.apps.post' ],
 
-'TEMPLATE_DIRS': [ '/blog/templates/' ],
+'TEMPLATE_URLS': [ '/blog/templates/' ],
 
 'TEMPLATE_STRING_IF_INVALID': '{{ No esta <strong>%s</strong> en el contexto }}',
 
 'TEMPLATE_LOADERS': [
-            'doff.template.loaders.remote.load_template_source',
-            'doff.template.loaders.app_remote.load_template_source',
+            'doff.template.loaders.url.load_template_source',
+            'doff.template.loaders.app_url.load_template_source',
             //'doff.template.loaders.filesystem.load_template_source',
         ]
 }

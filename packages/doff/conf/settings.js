@@ -15,13 +15,13 @@ $P({
         INSTALLED_APPS: [],
 
         // List of locations of the template source files, in search order.
-        TEMPLATE_DIRS: [],
+        TEMPLATE_URLS: [],
 
         // List of callables that know how to import templates from various sources.
         // See the comments in django/core/template/loader.py for interface
         // documentation.
         TEMPLATE_LOADERS: [
-            'doff.template.loaders.remote.load_template_source',
+            'doff.template.loaders.url.load_template_source',
             //'doff.template.loaders.remote_app.load_template_source',
             //'doff.template.loaders.filesystem.load_template_source',
         ],

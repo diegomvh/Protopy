@@ -1,18 +1,24 @@
+$L('sys');
+
+if (!sys.browser.features.Gears) {
+    alert('Google gears is not installed, please install from http://gears.google.com/, redirecting now.');
+    window.location.href = 'http://gears.google.com/';
+}
+
 var localServer = google.gears.factory.create('beta.localserver');
 
-var GearsStore = type ('GearsStore', {
-    version_url: "version.js",
-    list_of_urls: [],
-    refreshing: false,
+//TODO: Se puede explotar mucho mas este objeto
+var ResourceStore = type ('ResourceStore', {
     _store: null,
-    _do_slurp: false,
 
     '__init__': function __init__(name, requiredCookie) {
-	var name = name || window.location.href.replace(/[^0-9A-Za-z_]/g, "_");
 	this._store = localServer.createStore(name, requiredCookie);
     },
 
-    //Wrapper of resourceStore
+    'delete': function delete() {
+	localServer.removeStore(this.name, this.required_cookie);
+    },
+
     get name(){
 	return this._store.name;
     },
@@ -48,17 +54,17 @@ var GearsStore = type ('GearsStore', {
     copy: function(srcUrl, destUrl) {
 	this._store.copy(srcUrl, destUrl);
     },
-   
+    
     is_captured: function(url) {
 	return this._store.isCaptured(url);
     },
 
     capture_blob: function(blob, url, optContentType) {
-	return this._store.captureBlob(blob, url, optContentType);
+	this._store.captureBlob(blob, url, optContentType);
     },
 
     capture_file: function(fileInputElement, url) {
-	return this._store.captureFile(fileInputElement, url);
+	this._store.captureFile(fileInputElement, url);
     },
 
     get_captured_file_name: function(url) {
@@ -79,204 +85,82 @@ var GearsStore = type ('GearsStore', {
 
     create_file_submitter: function() {
 	return this._store.createFileSubmitter();
+    }
+});
+
+var ManagedResourceStore = type ('ManagedResourceStore', {
+    _store: null,
+
+    '__init__': function __init__(name, requiredCookie) {
+	this._store = localServer.createManagedStore(name, requiredCookie);
+	this._store.onerror = getattr(this, 'onSyncError');
+        this._store.oncomplete = getattr(this, 'onSyncComplete');
+	this._store.onprogress = getattr(this, 'onSyncProgress');
     },
 
-    slurp: function(){
-	this._do_slurp = true;
-    },
-    
-    refresh: function(callback){ 
-	try{
-	    this.refreshing = true;
-	    if(this.version_url) {
-		this._getVersionInfo(function(oldVersion, newVersion) {
-		    if(!oldVersion || oldVersion != newVersion){
-			this._do_refresh(callback, newVersion);
-		    } else {
-			callback(false, []);
-		    }
-		});
-	    } else {
-		this._doRefresh(callback);
-	    }
-	}catch(e){
-	    this.refreshing = false;
-	}
-    },
-	
-    abort_refresh: function(){
-	if(!this.refreshing){
-	    return;
-	}
-	
-	this._store.abort_capture(this._cancel_id);
-	this.refreshing = false;
-    },
-    
-    _do_refresh: function(callback, newVersion){
-	var self = this;
-	this._cancelID = this._store.capture(this.list_of_urls);
+    'delete': function delete() {
+	localServer.removeManagedStore(this.name, this.required_cookie);
     },
 
-    _slurp: function(){
-	    if(!this._doSlurp){
-		    return;
-	    }
-	    
-	    var handleUrl = dojo.hitch(this, function(url){
-		    if(this._sameLocation(url)){
-			    this.cache(url);
-		    }
-	    });
-	    
-	    handleUrl(window.location.href);
-	    
-	    dojo.query("script").forEach(function(i){
-		    try{
-			    handleUrl(i.getAttribute("src"));
-		    }catch(exp){
-			    //console.debug("dojox.off.files.slurp 'script' error: " 
-			    //				+ exp.message||exp);
-		    }
-	    });
-	    
-	    dojo.query("link").forEach(function(i){
-		    try{
-			    if(!i.getAttribute("rel")
-				    || i.getAttribute("rel").toLowerCase() != "stylesheet"){
-				    return;
-			    }
-		    
-			    handleUrl(i.getAttribute("href"));
-		    }catch(exp){
-			    //console.debug("dojox.off.files.slurp 'link' error: " 
-			    //				+ exp.message||exp);
-		    }
-	    });
-	    
-	    dojo.query("img").forEach(function(i){
-		    try{
-			    handleUrl(i.getAttribute("src"));
-		    }catch(exp){
-			    //console.debug("dojox.off.files.slurp 'img' error: " 
-			    //				+ exp.message||exp);
-		    }
-	    });
-	    
-	    dojo.query("a").forEach(function(i){
-		    try{
-			    handleUrl(i.getAttribute("href"));
-		    }catch(exp){
-			    //console.debug("dojox.off.files.slurp 'a' error: " 
-			    //				+ exp.message||exp);
-		    }
-	    });
-	    
-	    // FIXME: handle 'object' and 'embed' tag
-	    
-	    // parse our style sheets for inline URLs and imports
-	    dojo.forEach(document.styleSheets, function(sheet){
-		    try{
-			    if(sheet.cssRules){ // Firefox
-				    dojo.forEach(sheet.cssRules, function(rule){
-					    var text = rule.cssText;
-					    if(text){
-						    var matches = text.match(/url\(\s*([^\) ]*)\s*\)/i);
-						    if(!matches){
-							    return;
-						    }
-						    
-						    for(var i = 1; i < matches.length; i++){
-							    handleUrl(matches[i])
-						    }
-					    }
-				    });
-			    }else if(sheet.cssText){ // IE
-				    var matches;
-				    var text = sheet.cssText.toString();
-				    // unfortunately, using RegExp.exec seems to be flakey
-				    // for looping across multiple lines on IE using the
-				    // global flag, so we have to simulate it
-				    var lines = text.split(/\f|\r|\n/);
-				    for(var i = 0; i < lines.length; i++){
-					    matches = lines[i].match(/url\(\s*([^\) ]*)\s*\)/i);
-					    if(matches && matches.length){
-						    handleUrl(matches[1]);
-					    }
-				    }
-			    }
-		    }catch(exp){
-			    //console.debug("dojox.off.files.slurp stylesheet parse error: " 
-			    //				+ exp.message||exp);
-		    }
-	    });
-	    
-	    //this.printURLs();
+    get name(){
+	return this._store.name;
     },
     
-    _sameLocation: function(url){
-	    if(!url){ return false; }
-	    
-	    // filter out anchors
-	    if(url.length && url.charAt(0) == "#"){
-		    return false;
-	    }
-	    
-	    // FIXME: dojo._Url should be made public;
-	    // it's functionality is very useful for
-	    // parsing URLs correctly, which is hard to
-	    // do right
-	    url = new dojo._Url(url);
-	    
-	    // totally relative -- ../../someFile.html
-	    if(!url.scheme && !url.port && !url.host){ 
-		    return true;
-	    }
-	    
-	    // scheme relative with port specified -- brad.com:8080
-	    if(!url.scheme && url.host && url.port
-			    && window.location.hostname == url.host
-			    && window.location.port == url.port){
-		    return true;
-	    }
-	    
-	    // scheme relative with no-port specified -- brad.com
-	    if(!url.scheme && url.host && !url.port
-		    && window.location.hostname == url.host
-		    && window.location.port == 80){
-		    return true;
-	    }
-	    
-	    // else we have everything
-	    return  window.location.protocol == (url.scheme + ":")
-			    && window.location.hostname == url.host
-			    && (window.location.port == url.port || !window.location.port && !url.port);
+    get required_cookie(){
+	return this._store.requiredCookie;
     },
-    
-    _get_version_info: function(callback) {
-	var oldVersion = dojox.storage.get("oldVersion", dojox.off.STORAGE_NAMESPACE);
-	var newVersion = null;
-	
-		dojo.xhrGet({
-				url: this.version_url + "?browserbust=" + new Date().getTime(),
-				error: function(err){
-					//console.warn("dojox.off.files._getVersionInfo, err=",err);
-					dojox.storage.remove("oldVersion", dojox.off.STORAGE_NAMESPACE);
-					dojox.storage.remove("justDebugged", dojox.off.STORAGE_NAMESPACE);
-					callback(oldVersion, newVersion, justDebugged);
-				},
-				load: function(data){
-					//console.warn("dojox.off.files._getVersionInfo, load=",data);
-					
-					// some servers incorrectly return 404's
-					// as a real page
-					if(data){
-						newVersion = data;
-					}
-					
-					callback(oldVersion, newVersion, justDebugged);
-				}
-		});
-	}
-}
+
+    get enabled(){
+	return this._store.enabled;
+    },
+
+    set enabled( value ){
+	this._store.enabled = value;
+    },
+
+    get manifest_url(){
+	return this._store.manifestUrl;
+    },
+
+    set manifest_url( value ){
+	this._store.manifestUrl = value;
+    },
+
+    get last_update_check_time(){
+	return this._store.lastUpdateCheckTime;
+    },
+
+    get update_status(){
+	return this._store.updateStatus;
+    },
+
+    get last_error_message(){
+	return this._store.lastErrorMessage;
+    },
+
+    get current_version(){
+	return this._store.currentVersion;
+    },
+
+    onSyncProgress: function onSyncProgress(event) {
+	print(Math.ceil(((event.filesComplete / event.filesTotal) * 100)) + "%");
+    },
+
+    onSyncComplete: function onSyncComplete() {
+	print("Sync Complete.");
+    },
+
+    onSyncError: function onSyncError(event) {
+	print("Error Syncing.");
+    },
+
+    check_for_update: function check_for_update(){
+	this._store.checkForUpdate();
+    }
+});
+
+$P({
+    canServeLocally: localServer.canServeLocally,
+    ResourceStore: ResourceStore,
+    ManagedResourceStore: ManagedResourceStore
 });

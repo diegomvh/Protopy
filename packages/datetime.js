@@ -458,10 +458,16 @@ datetime = {
         }
     },
 
+    fromNumber : function(d) {
+        // Returns a datetime object for now.
+        d = new Date(d);
+        return datetime.fromDate(d);
+    },
+
     now : function() {
         // Returns a datetime object for now.
-        d = new Date()
-        return datetime.fromDate(d)
+        d = new Date();
+        return datetime.fromDate(d);
     },
 
     datetime : function(obj) {
@@ -470,10 +476,12 @@ datetime = {
             returns a datetime object
         ***/
         if (typeof(obj) == 'string')
-            return datetime.parse(obj)
+            return datetime.parse(obj);
         if (obj.constructor == Date)
-            return datetime.fromDate(obj)
-        else return obj
+            return datetime.fromDate(obj);
+        if (obj.constructor == Number)
+            return datetime.fromNumber(obj);
+        else return obj;
     },
     
     /***
