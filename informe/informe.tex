@@ -3,7 +3,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[spanish]{babel}
 \usepackage[bookmarks=false,colorlinks=true,linkcolor={blue},pdfstartview={XYZ null null 1.22}]{hyperref}
-\
+
 \begin{document}
 
 \title{Sistemas Web Desconectados}
@@ -32,12 +32,16 @@
 \section{El lenguaje de programación Python}
 
 \section{Frameworks web basados en Python}
+\emph{Acá tenemos que justificar por que django}
+\emph{Quizás explicar un poquito de WSGI, FastCGI, mod\_python para
+ apache}
 
 \section{Django}
 \href{http://www.djangoproject.com}{Django} es un framework web escrito en
 Python\footnote{\href{http://www.python.org/}{Lenguaje de programación
 orientado a objetos multiparadigma}} el cual sigue vagamente el concepto de Modelo Vista
-Controlador. Ideado inicialmente como un adminsitrador de contenido para varios sitios de noticias, los desarrolladores encontraron que su CMS era lo sufcientemente genérico como
+Controlador. Ideado inicialmente como un adminsitrador de contenido para varios sitios de noticias, 
+los desarrolladores encontraron que su CMS era lo sufcientemente genérico como
 para curbir un ámbito más aplio de aplicaciones. Fue liberado\footnote{En el
 ámbito del software libre, la liberación es la fecha en la cual se pone a
 disposición de la comunidad del software en cuestión} bajo la licencia BSD en
@@ -45,11 +49,43 @@ Julio del 2005 como Django Web Framework en honor a Django Reinhart. En junio de
 2008 fue anuncidada la cereación de la Django Software Fundation, la cual se hace
 cargo hasta la fecha del desarrollo y mantenimiento.
 
-Django implementa una estructura \emph{modelo}, \emph{vista}, \emph{plantilla}.
-O MTV por sus siglas en inglés (model, view, template).
+\subsection*{Estructura de Django}
+%%Django implementa una estructura \emph{modelo}, \emph{vista}, \emph{plantilla}.
+%% o MTV por sus siglas en inglés (model, view, template).
+
+Django consiste en un conjunto de utilidades de consola que permiten crear y
+manipular proyectos y aplicaciones. Dentro de estas utilidades encontramos 
+un servidor standalone de desarrollo para probar los proyectos, creación de 
+tablas a partir de los modelos del mapeador objeto-relacional, realizar 
+volcado y carga de datos (\emph{fixtures}), ejecución de pruebas basadas 
+en test de unidad, entre otras.
+
+Un proyecto Django consite en 3 módulos\footnote{Un módulo en Python, es un
+archivo con extensión .py} básicos:
+\begin{description}
+ \item [settings]{El módulo \emph{settings} define la configuración transversal
+a las aplicaciones de usuario. En este módulo no se suelen definir más que constantes.
+Dentro de estas constantes encontramos la base de datos sobre la cual trabaja el ORM, 
+el(los) directorio(s) de las plantillas, las clases middleware,
+ubicación de los medios estáticos\footnote{
+Un medio estático es todo contenido que no se genera dinámicamente, como imágenes, 
+liberías de javascript, contenido para embeber como archivos multimedia u elementos}.
+En este módulo se defnien la lista de aplicaciones instaladas.}
+ \item [urls]{
+  Este módulo define las asociacines entre las URI y las funciones (vistas) que las
+atienden. Para generar código más modular, django permite delegar el tratado
+de urls a módulos dentro de cada aplicación.
+
+}
+ \item [manage]{
+  Esta es la interfase con el framework.
+}
+\end{description}
+
+
 \begin{description}
 \item[Modelo] Modelo de datos de la aplicación. Consiste en un mapeador Objeto
-Relacional.
+Relacional desarrolado específicamente para Django.
 \item[Vista] Funciones a ser ejecutadas cuando un cliente accede a la
 aplicación.
 \item[Template] La generación de salida (típicamente código HTML)
