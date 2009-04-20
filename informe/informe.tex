@@ -4,6 +4,10 @@
 \usepackage[spanish]{babel}
 \usepackage[bookmarks=false,colorlinks=true,linkcolor={blue},pdfstartview={XYZ null null 1.22}]{hyperref}
 \usepackage[pdftex]{graphicx}
+
+\usepackage{pythonlisting}
+
+
 \begin{document}
 
 \title{Sistemas Web Desconectados}
@@ -18,11 +22,12 @@
 \listoftables
 
 \chapter*{Agradecimientos}
-A Adrian Holovaty, Simon Willison, Jacob Kaplan-Moss y Wilson Miner por haber desarrollado
-un excelente framework simple y así mismo muy podroso para nuestro lenguaje preferido.
-
-A Michael Trier por su mantenernos actualizados sobre lo que ocurre en la comunidad con
-su \emph{podcast} \textbf{This Week in Django}
+A nuestros familiares
+% A Adrian Holovaty, Simon Willison, Jacob Kaplan-Moss y Wilson Miner por haber desarrollado
+% un excelente framework simple y así mismo muy podroso para nuestro lenguaje preferido.
+% 
+% A Michael Trier por su mantenernos actualizados sobre lo que ocurre en la comunidad con
+% su \emph{podcast} \textbf{This Week in Django}
 \begin{abstract}
 
 \end{abstract}
@@ -31,8 +36,14 @@ su \emph{podcast} \textbf{This Week in Django}
 
 \chapter{Introducción}
 \label{ch:intro}
+La World Wide Web, o \emph{web}, durante los últimos años ha ganado terreno como 
+plataforma para aplicaciones del variado tipo. 
+Diversas tecnologías fueron formuladas para convertir el escenario inical, donde
+la web se limitaba a ser una gran colección de documentos enlazados (\emph{hipertexto}),
+para llegar a ser...
 
 \chapter{Aplicación del lado del servidor}
+
 \section{El lenguaje de programación Python}
 \label{lang:python}
 % Esto está scado de la wikipedia 
@@ -97,57 +108,166 @@ desarrollador de Python Tim Peters en \emph{El Zen de Python}
   \item {Si la implementacion es fácil de explicar, puede que sea una buena idea}
   \item {Los espacios de nombres (namespaces) son una gran idea ¡Hagamos más de esas cosas!}
   \end{enumerate}
-  Desde la versión 2.1.2, Python incluye estos puntos (en su versión original en inglés) como un huevo de pascua que se muestra al ejecutar import this.
+  Desde la versión 2.1.2, Python incluye estos puntos (en su versión original en inglés) 
+  como un huevo de pascua que se muestra al ejecutar 
+  \begin{verbatim}
+    >>> import this
+  \end{verbatim}
+
+\subsection{Desarrollo del lengauje}
+
+
+
+\subsection{Tipos de datos y funciones}
+Python cuenta con los siguientes tipos de datos incorporados: 
+\emph{int}, 
+\emph{str}, 
+\emph{bool}, 
+\emph{float}, 
+\emph{complex}. Estos
+tipos de datos son denominados \textbf{inmutables}, es decir, para que su valor cambie, la instancia anterior
+es destruida. 
+
+Python no cuenta con el tipo de dato arreglo, sin embargo cuenta con 3 sustitutos. 
+El tipo de dato tupla (\emph{tuple()}) es un tipo de dato inmutable, que agrupa 
+de manera \emph{ordenada} un conjuntod de objetos del mismo o diferente
+tipo. El concepto de orden de los elementos es importante, ya que python tampoco provee la estrutura \emph{for} tradicional
+de lenguajes procedurales como C o Pascal. %\emph{for(comienzo, condicion, incremento)}. 
+Una tupla puede ser considreada como un arreglo fijo de valores que pueden
+tener diferentes tipos. Las tuplas pueden ser accedidas secuencialmente (\emph{iteradas}) en orden ascendente o descendente, se puede 
+acceder al n-ésimo item, pero no puede ser modificadas se generará una excepción debido 
+a que es un tipo de datos estático.
+
+\begin{python}
+ a = (1, 2, 3) # Una tupla de enteros
+
+ b = (1, 1.0, 'pasta') # Una tupla con un conjuto dispar 
+                       # de elementos
+
+ c = ( (1, 2), (3, 4), (5, 6)) # Una tupla que tiene 
+                               # por elmentos otras tuplas
+\end{python}
+
+Python soprta asinganción a con la sintaxis de tupla, es decir, al colocar un conjunto de nombres 
+separados por comas en el lado derecho de una asingación y un conjunto de valores o variables
+sobre la izquerda, la asingación es posicional.
+\begin{python}
+ a, b = 1, 2	# Es equivalente a (a, b) = (1, 2)
+ a, b = b, a	# Operación de intercambio sin auxiliar
+ c = (1, 2, 3, 'bacalao')
+ w, x, y, z = c	# Asignación posicional
+\end{python}
+
+
+Una lista es una coección ordenada de objetos del mismo o diferente tipo que pueden 
+ser modificados. Básicamente la lista se comporta como una tupla mutable.
+\begin{python}
+ a = [1, 2, 3, 4 ]
+ b[0] = 4
+\end{python}
+
+Los \emph{bloques} en Python son conjuntos de sentencias que se encuentran a 
+bajo un cierto nivel de inetación. Un bloque comienza con dos puntos (:)
+y termina cuando se pierde el nivel de indetación que lo definía. Veremos
+ejemplos de bloques con las sentencias de control de flujo.
+
+\subsubsection*{Bloques y estructuras de control}
+La esentencia \emph{if} ejecuta el 
+\begin{python}
+if condicion:
+    bloque_si_condicion_verdadera
+else:
+    bloque_si_codicion_falsa
+\end{python}
+
+
+
+
 
 \subsection{Espacio de nombres en Python}
-Un módulo es un archivo con definiciones y sentencias en Python.
-En un módulo se define un conjunto de símbolos.
-Un símbolo puede ser
+Cuando comenzamos a ejecutar el intérprete de Python de forma interactiva o cuando
+lo invocamos para ejecutar un script, están diponibles un conjuto de funciones, clases,
+clases de excepciones. El conjunto de estos nombres se conoce como ámbito de nombres 
+\_\_builtin\_\_ (\emph{incorporado}) y en este encontramos: int(), char(), str(), object, 
+Exception, TypeError, ValueError, True, False, range, map, zip, locals, globals, entre otras.
+Pueden verse en el interprete interactivo mediante
+\begin{verbatim}
+>>> dir(__builtins__)
+\end{verbatim}
+
+
+
+Un \emph{ámbito de nombres} en Python es un mapeo de nombres a objetos. La mayoría de 
+los ámbitos de nombres están implementados mediante diccionarios, but that's normally not noticeable in any
+way (except for performance), y podría cambiar en el futuro. Otros ejemplos de ámbitos de nombre
+son los nombres globales en un módulo; los valores locales en la invocación de una función y en cierta forma, 
+los atributos de un objeto también forman un ámbito de nombres.
+Es importante tener en cuenta que no existe ninguna relación entre nombres de diferentes ámbitos de nobres. 
+
+Un \emph{módulo} es un archivo con definiciones y sentencias en Python.
+El conjunto de todas las sentencias que no están indentadas, forman el ámbito de nombres global del modulo,
+las funciones, variables y clases que están suelen decirse que estan a ``nivel módulo''. Los elementos que pueden
+ser parete del ámbito de nombres del módulo son:
 \begin{itemize}
-  \item Definición de una función
-  \item Definición de una variable
-  \item Definición de una expresión lambda
-  \item Importación de otro módulo
+  \item una definición de una función
+  \item una vairable
+  \item una expresión lambda
+  \item el nombre de otro módulo importado
 \end{itemize}
 }
-Un módulo puede ser cargado desde el intérprete interactivo o desde otro módulo a través de 
+Un número, el llamado a función o el lanzado de una excepción no alteran el ámbito de nombres.
+Un módulo puede ser cargado desde el intérprete interactivo en el ámbito de nombres global
+o desde otro módulo (en su propio espacio de nombres) a través de 
 la sentencia \emph{import}
-\begin{verbatim}
+\begin{python}
 import os
-\end{verbatim}
-Al ejecutrse esta sentencia, el intérprete buscará secuencialmente en el PYTHONPATH un módulo llamado os, 
+\end{python}
+En este caso, el intérprete buscará secuencialmente en el PYTHONPATH un módulo llamado \textbf{os}, 
 en caso de encontrarlo, lo cargará y en el ámbito de nombres actual generará una referencia con el 
 nombre ``os''. A esta actividad se la llama importación y el interprete garantiza que un módulo
-se cargará de unicamente una vez, en otras palabras, existe una única instancia de un módulo.
+se cargará de unicamente una sola vez, en otras palabras, existe una única instancia de un módulo.
 En este caso, si varios módulos importan a ``os'', solo la primer ocurrencia realiza la importación efetiva.
 El resto de las sentencias import solamente generan referencias a la primera ``instancia'' de un módulo.
 
 La sentencia import permite a su vez hacer una importación selectiva de símbolos de un módulo, 
 por ejemplo:
-\begin{verbatim}
+\begin{python}
  from os import path
-\end{verbatim}
+\end{python}
 En este caso, import crea la instancia del módulo en la máquina virtual, pero no expone todo el contenido
 al ámbito de nombres local, sino que únicamente genera una referencia al símbolo \emph{path}.
 
 El comodín \textbf{*} permite importar todos los símbolos definidos en un módulo al espacio de nombres local.
-\begin{verbatim}
+\begin{python}
  from os import *
-\end{verbatim}
+\end{python}
 
 Está técnica debe ser utilizada con cuidado, debido a que ``contamina'' el ámbito de nombres local. Para
-mitigar este problma, puede definirse el símbolo \_\_all\_\_ al comienzo del módulo, con una tupla
-en la cual se definen los símbolos que se desean exportar. Por ejemplo:
+mitigar este problma, puede definirse una variable \textbf{\_\_all\_\_} al comienzo del archivo, con una tupla
+en la cual se definen los símbolos que se desean exportar. Suponendo que el siguiente código se encuentra
+en el módulo promedio:
 
-\begin{verbatim}
+\begin{python}
 __all__ = ('calcular_promedio', )
 
 def calular_promedio(numeros):
     return suma (numeros) / len( numeros )
 def suma(lista):
     return float( sum( lista ) ) 
-\end{verbatim}
+\end{python}
 
+Al realizar
+\begin{python}
+ from promedio import *
+\end{python}
+
+El único símbolo que encontraremos en nuestro espacio de nombres será, \emph{calcular\_promedio}.
+
+\subsection{Clases en Python}
+\emph{Explicar un poco de clases}
+En Python, todo es un objeto (incluso las clases). Las clases, al ser objetos,
+son instancias de una metaclase. Python además soporta herencia múltiple y
+polimorfismo.
 
 
 
