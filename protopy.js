@@ -21,7 +21,8 @@
 		    destiny[name] = object[name];
 		}
 	    }
-	    if (back_iter) object['__iterator__'] = back_iter;
+	    if (back_iter)
+		object['__iterator__'] = back_iter;
 	}
 	return destiny;
     }
@@ -61,9 +62,9 @@
     function __load__(module_name) {
     	
         var package = module_name.endswith('.*'),
-        	name = package ? module_name.slice(0, module_name.length - 2) : module_name,
-	    	names = name.split('.'),
-                mod = __modules__[name];
+	    name = package ? module_name.slice(0, module_name.length - 2) : module_name,
+	    names = name.split('.'),
+	    mod = __modules__[name];
     
         if (!mod) {
             //Only firefox and synchronous, sorry
@@ -272,6 +273,7 @@
 						document.createElement('form')['__proto__']
 	    }
 	},
+	'script_fragment': '<script[^>]*>([\\S\\s]*?)<\/script>',
 	'get_transport': function get_transport() {
 	    if (this.browser.Gecko || this.browser.WebKit)
 		return new XMLHttpRequest();
@@ -1977,19 +1979,19 @@
 	},
 
 	'strip_scripts': function strip_scripts() {
-	    return this.replace(new RegExp(sys.ScriptFragment, 'img'), '');
+	    return this.replace(new RegExp(sys.script_fragment, 'img'), '');
 	},
 
 	'extract_scripts': function extract_scripts() {
-	    var matchAll = new RegExp(sys.ScriptFragment, 'img');
-	    var matchOne = new RegExp(sys.ScriptFragment, 'im');
-	    return (this.match(matchAll) || []).map(function(scriptTag) {
-		return (scriptTag.match(matchOne) || ['', ''])[1];
+	    var match_all = new RegExp(sys.script_fragment, 'img');
+	    var match_one = new RegExp(sys.script_fragment, 'im');
+	    return (this.match(match_all) || []).map(function(script_tag) {
+		return (script_tag.match(match_one) || ['', ''])[1];
 	    });
 	},
 
 	'eval_scripts': function eval_scripts() {
-	    return this.extractScripts().map(function(script) { return eval(script) });
+	    return this.extract_scripts().map(function(script) { return eval(script) });
 	},
 
 	'escape_HTML': function escape_HTML() {
