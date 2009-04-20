@@ -3,7 +3,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[spanish]{babel}
 \usepackage[bookmarks=false,colorlinks=true,linkcolor={blue},pdfstartview={XYZ null null 1.22}]{hyperref}
-
+\usepackage[pdftex]{graphicx}
 \begin{document}
 
 \title{Sistemas Web Desconectados}
@@ -18,7 +18,11 @@
 \listoftables
 
 \chapter*{Agradecimientos}
+A Adrian Holovaty, Simon Willison, Jacob Kaplan-Moss y Wilson Miner por haber desarrollado
+un excelente framework simple y así mismo muy podroso para nuestro lenguaje preferido.
 
+A Michael Trier por su mantenernos actualizados sobre lo que ocurre en la comunidad con
+su \emph{podcast} \textbf{This Week in Django}
 \begin{abstract}
 
 \end{abstract}
@@ -30,16 +34,256 @@
 
 \chapter{Aplicación del lado del servidor}
 \section{El lenguaje de programación Python}
+\label{lang:python}
+% Esto está scado de la wikipedia 
+El lenguaje de programación Python fue creado por Guido van Rossum en el año 1991.
+Python es un lenguaje de programación multiparadigma. Es decir, permite al 
+programador utilizar diferentes formas de resolución de problemas
+\begin{itemize}
+ \item {programación orientada a objetos}
+ \item {programación estructurada}
+ \item {programación funcional}
+\end{itemize}
+Otros paradigmas (como programación lógica) están soportados mediante el uso de extensiones
+\footnote{PySWIP http://code.google.com/p/pyswip/}\footnote{python-logic}.
+
+Python usa tipo de dato dinámico y reference counting para el manejo de memoria. 
+Una característica importante de Python es la resolución dinámica de nombres, 
+lo que enlaza un método y un nombre de variable durante la ejecución del programa 
+(también llamado ligadura dinámica de métodos).
+
+Otro objetivo del diseño del lenguaje era la facilidad de extensión. 
+Nuevos módulos se pueden escribir fácilmente en C o C++. 
+Python puede utilizarse como un lenguaje de extensión para módulos y 
+aplicaciones que necesitan de una interfaz programable. Aunque el diseño de Python es 
+de alguna manera hostil a la programación funcional tradicional del Lisp, existen bastantes analogías 
+entre Python y los lenguajes minimalistas de la familia Lisp como puede ser Scheme.
+
+\subsubsection*{Filosofía del lenguaje}
+
+Los usuarios de Python se refieren a menudo a la Filosofía Python que es
+bastante análoga a la filosofía de Unix. El código que sigue los principios de
+Python de legibilidad y transparencia se dice que es "pythonico".
+Contrariamente, el código opaco u ofuscado es bautizado como "no pythonico"
+("unpythonic" en inglés). Estos principios fueron famosamente descritos por el
+desarrollador de Python Tim Peters en \emph{El Zen de Python}
+
+\begin{enumerate}
+  \item Bello es mejor que feo.
+  \item Explícito es mejor que implícito.
+  \item Simple es mejor que complejo.
+  \item Complejo es mejor que complicado.
+  \item Plano es mejor que anidado.
+  \item Ralo es mejor que denso.
+  \item La legibilidad cuenta.
+  \begin{item}
+    Los casos especiales no son tan especiales como para quebrantar las reglas.
+    \subitem{Aunque lo práctico gana a la pureza.}
+  \end{item}
+  \begin{item}
+    Los errores nunca deberían dejarse pasar silenciosamente.
+    \subitem{A menos que hayan sido silenciados explícitamente.}
+  \end{item}
+  \item {Frente a la ambigüedad, rechaza la tentación de adivinar.}
+  \begin{item}
+    Debería haber una -y preferiblemente sólo una- manera obvia de hacerlo. 
+    \subitem{Aunque esa manera puede no ser obvia al principio a menos que usted sea Holandés}
+  \end{item}
+  \begin{item}
+    Ahora es mejor que nunca
+    \subitem{Aunque nunca es a menudo mejor que ya}
+  \end{item}
+  \item {Si la implementación es dificil de explicar, es una mala idea.}
+  \item {Si la implementacion es fácil de explicar, puede que sea una buena idea}
+  \item {Los espacios de nombres (namespaces) son una gran idea ¡Hagamos más de esas cosas!}
+  \end{enumerate}
+  Desde la versión 2.1.2, Python incluye estos puntos (en su versión original en inglés) como un huevo de pascua que se muestra al ejecutar import this.
+
+\subsection{Espacio de nombres en Python}
+Un módulo es un archivo con definiciones y sentencias en Python.
+En un módulo se define un conjunto de símbolos.
+Un símbolo puede ser
+\begin{itemize}
+  \item Definición de una función
+  \item Definición de una variable
+  \item Definición de una expresión lambda
+  \item Importación de otro módulo
+\end{itemize}
+}
+Un módulo puede ser cargado desde el intérprete interactivo o desde otro módulo a través de 
+la sentencia \emph{import}
+\begin{verbatim}
+import os
+\end{verbatim}
+Al ejecutrse esta sentencia, el intérprete buscará secuencialmente en el PYTHONPATH un módulo llamado os, 
+en caso de encontrarlo, lo cargará y en el ámbito de nombres actual generará una referencia con el 
+nombre ``os''. A esta actividad se la llama importación y el interprete garantiza que un módulo
+se cargará de unicamente una vez, en otras palabras, existe una única instancia de un módulo.
+En este caso, si varios módulos importan a ``os'', solo la primer ocurrencia realiza la importación efetiva.
+El resto de las sentencias import solamente generan referencias a la primera ``instancia'' de un módulo.
+
+La sentencia import permite a su vez hacer una importación selectiva de símbolos de un módulo, 
+por ejemplo:
+\begin{verbatim}
+ from os import path
+\end{verbatim}
+En este caso, import crea la instancia del módulo en la máquina virtual, pero no expone todo el contenido
+al ámbito de nombres local, sino que únicamente genera una referencia al símbolo \emph{path}.
+
+El comodín \textbf{*} permite importar todos los símbolos definidos en un módulo al espacio de nombres local.
+\begin{verbatim}
+ from os import *
+\end{verbatim}
+
+Está técnica debe ser utilizada con cuidado, debido a que ``contamina'' el ámbito de nombres local. Para
+mitigar este problma, puede definirse el símbolo \_\_all\_\_ al comienzo del módulo, con una tupla
+en la cual se definen los símbolos que se desean exportar. Por ejemplo:
+
+\begin{verbatim}
+__all__ = ('calcular_promedio', )
+
+def calular_promedio(numeros):
+    return suma (numeros) / len( numeros )
+def suma(lista):
+    return float( sum( lista ) ) 
+\end{verbatim}
+
+
+
+
+
+\subsection{Expresiones regulares en Python}
+Las expresiones reuglares proveen un medio conciso y flexible de identificar cadenas en un texto, como
+caracteres en particular, palabras o patrones de caracteres. Las expresiones regulares (a menudo
+abreviadas \textbf{regex}, o \textbf{regexp}, o en plural \textbf{regexes}, \textbf{regexps}, o incluso \textbf{regexen})
+son escritas en un lenguaje formal que puede ser interpretado por un procesador de expresiones regulares.
+Las expresiones regulares se utilizan en muchos editores de texto, utilitarios\footnote{
+Como las utilidades de consola UNIX \emph{sed}, \emph{grep}, etc.} y lenguajes de programación.
+
+\emph{POSIX}\emph{Prel-like}
+
+El módulo \emph{re} en python provee un motor de análisis de expresiones regulares.
+La sintaxis de definición de expresiones con captura nombrada de gurpos.
+
+% \begin{table}
+% \begin{tabular}{c|c|c}
+% left & centre & right\\
+% more left & more centre & more right\\
+% \end{tabular}
+% \captin{Tabla de refrencia sobre expresiones regulares}
+% \end{table}
+
 
 \section{Frameworks web basados en Python}
 \emph{Acá tenemos que justificar por que django}
-\emph{Quizás explicar un poquito de WSGI, FastCGI, mod\_python para
- apache}
+\subsection{CGI}
+Interfaz de entrada común (en inglés Common Gateway Interface, abreviado CGI) es
+una importante tecnología de la World Wide Web que permite a un cliente
+(explorador web) solicitar datos de un programa ejecutado en un servidor web.
+CGI especifica un estándar para transferir datos entre el cliente y el programa.
+Es un mecanismo de comunicación entre el servidor web y una aplicación externa
+cuyo resultado final de la ejecución son objetos MIME\footnote{Ver apéndice sobre MIME\ref{mime}}.
+Las aplicaciones que se ejecutan en el servidor reciben el nombre de CGIs.
+
+
+Las aplicaciones CGI fueron una de las primeras maneras prácticas de crear
+contenido dinámico para las páginas web. En una aplicación CGI, el servidor web
+pasa las solicitudes del cliente a un programa externo. Este programa puede
+estar hecho en cualquier lenguaje que soporte el servidor, aunque por razones de
+portabilidad se suelen usar lenguajes de script. La salida de dicho programa es
+enviada al cliente en lugar del archivo estático tradicional.
+
+CGI ha hecho posible la implementación de funciones nuevas y variadas en las
+páginas web, de tal manera que esta interfaz rápidamente se volvió un estándar,
+siendo implementada en todo tipo de servidores web.
+\subsubsection*{Ejecución de CGI}
+
+A continuación se describe la forma de actuación de un CGI de forma esquemática:
+\begin{enumerate}
+  \item{En primera instancia, el servidor recibe una petición (el cliente ha
+activado un URL que contiene el CGI), y comprueba si se trata de una invocación
+de un CGI.}
+  \item{Posteriormente, el servidor prepara el entorno para ejecutar la
+aplicación. Esta información procede mayoritariamente del cliente.}
+  \item{Seguidamente, el servidor ejecuta la aplicación, capturando su salida
+estándar.}
+  \item{A continuación, la aplicación realiza su función: como consecuencia de
+su actividad se va generando un objeto MIME que la aplicación escribe en su
+salida estándar.}
+  \item{Finalmente, cuando la aplicación finaliza, el servidor envía la
+información producida, junto con información propia, al cliente, que se
+encontraba en estado de espera.
+Es responsabilidad de la aplicación anunciar el
+tipo de objeto MIME que se genera (campo CONTENT\_TYPE), pero el servidor
+calculará el tamaño del objeto producido.}
+\end{enumerate}
+
+\subsubsection*{Intercambio de información: Variable de Entorno}
+Variables de entorno que se intercambian de cliente a CGI:
+\begin{description}
+  \item[QUERY\_STRING]{Es la cadena de entrada del CGI cuando se utiliza el método GET sustituyendo algunos símbolos especiales por otros. Cada elemento se envía como una pareja Variable=Valor. Si se utiliza el método POST esta variable de entorno está vacía}
+  \item[CONTENT\_TYPE]{Tipo MIME de los datos enviados al CGI mediante POST. Con GET está vacía. Un valor típico para esta variable es: Application/X-www-form-urlencoded}
+  \item[CONTENT\_LENGTH]{Longitud en bytes de los datos enviados al CGI utilizando el método POST. Con GET está vacía}
+  \item[PATH\_INFO]{Información adicional de la ruta (el "path") tal y como llega al servidor en el URL}
+  \item[REQUEST\_METHOD]{Nombre del método (GET o POST) utilizado para invocar al CGI}
+  \item[SCRIPT\_NAME]{Nombre del CGI invocado}
+  \item[SERVER\_PORT]{Puerto por el que el servidor recibe la conexión}
+\end{description}
+Variables de entorno que se intercambian de servidor a CGI:
+\begin{description}
+  \item [SERVER\_SOFTWARE]{Nombre y versión del software servidor de www}
+  \item [SERVER\_NAME]{Nombre del servidor}
+  \item [GATEWAY\_INTERFACE]{Nombre y versión de la interfaz de comunicación entre servidor y aplicaciones CGI/1.12}
+\end{description}
+
+
+
+\subsection{WSGI}
+The Web Server Gateway Interface defines a simple and universal interface
+between web servers and web applications or frameworks for the Python
+programming language. The latest version 3.0 of Python, released in December
+2008, is already supported by mod_wsgi (a module for the Apache Web server).
+
+\subsubsection{¿Por qué WSGI?}
+Historically Python web application frameworks have been a problem for new
+Python users because, generally speaking, the choice of web framework would
+limit the choice of usable web servers, and vice versa. Python applications were
+often designed for either CGI, FastCGI, mod_python or even custom API interfaces
+of specific web-servers.
+
+WSGI\footnote{\href{http://www.python.org/dev/peps/pep-0333/}{PEP 333}, Python Web Server Gateway Interface v1.0} 
+(sometimes pronounced 'whiskey' or 'wiz-gee') was created as a low-level
+interface between web servers and web applications or frameworks to promote
+common ground for portable web application development. WSGI is based on the
+existing CGI standard.
+
+\subsubsection{Descripción general de la especificación}
+The WSGI has two sides: the "server" or "gateway" side, and the "application" or
+"framework" side. The server side invokes[clarification needed] a callable
+object (usually a function or a method) that is provided by the application
+side. Additionally WSGI provides middleware; WSGI middleware implements both
+sides of the API, so that it can be inserted "between" a WSGI server and a WSGI
+application -- the middleware will act as an application from the server's point
+of view, and as a server from the application's point of view.
+
+Un módulo middleware puede realizar opreaciones como:
+\begin{itemize}
+  \item{Routing a request to different application objects based on the target URL, after changing the environment variables accordingly.}
+  \item{Allowing multiple applications or frameworks to run side-by-side in the same process}
+  \item{Load balancing and remote processing, by forwarding requests and responses over a network}
+  \item{Perform content postprocessing, such as applying XSLT stylesheets}
+\end{itemize}
+
+\subsubsection{Aplicación de ejemplo}
+A WSGI compatible "Hello World" application in Python syntax:
+\emph{continuar}
+
+
 
 \section{Django}
 \href{http://www.djangoproject.com}{Django} es un framework web escrito en
-Python\footnote{\href{http://www.python.org/}{Lenguaje de programación
-orientado a objetos multiparadigma}} el cual sigue vagamente el concepto de Modelo Vista
+Python\footnote{Ver apartado sobre el lengauje Python \ref{lang:python}}  el cual 
+sigue vagamente el concepto de Modelo Vista
 Controlador. Ideado inicialmente como un adminsitrador de contenido para varios sitios de noticias, 
 los desarrolladores encontraron que su CMS era lo sufcientemente genérico como
 para curbir un ámbito más aplio de aplicaciones. Fue liberado\footnote{En el
@@ -49,47 +293,114 @@ Julio del 2005 como Django Web Framework en honor a Django Reinhart. En junio de
 2008 fue anuncidada la cereación de la Django Software Fundation, la cual se hace
 cargo hasta la fecha del desarrollo y mantenimiento.
 
-\subsection*{Estructura de Django}
+Los orígenes de Django en la administración de páginas de noticias son evidentes
+en su diseño, ya que proporciona una serie de características que facilitan el
+desarrollo rápido de páginas orientadas a contenidos. Por ejemplo, en lugar de
+requerir que los desarrolladores escriban controladores y vistas para las áreas
+de administración de la página, Django proporciona una aplicación incorporada
+para administrar los contenidos (\textbf{django.contrib.admin}), 
+que puede incluirse como parte de cualquier
+página hecha con Django y que puede administrar varias páginas hechas con Django
+a partir de una misma instalación; la aplicación administrativa permite la
+creación, actualización y eliminación de objetos de contenido, llevando un
+registro de todas las acciones realizadas sobre cada uno, y proporciona una
+interfaz para administrar los usuarios y los grupos de usuarios (incluyendo una
+asignación detallada de permisos).
+
+La distribución principal de Django también aglutina aplicaciones que
+proporcionan un sistema de comentarios, herramientas para sindicar contenido via
+RSS y/o Atom, "páginas planas" que permiten gestionar páginas de contenido sin
+necesidad de escribir controladores o vistas para esas páginas, y un sistema de
+redirección de URLs.
+
+
+\begin{figure}[htp]
+\centering
+\includegraphics[scale=0.60]{img/django_simple_mtv.pdf}
+\caption{Estruccura báisca de Django}\label{fig:erptsqfit}
+\end{figure}
+  
+
+Django como framework de desarrollo consiste en un  conjunto de utilidades 
+de consola que permiten crear y manipular proyectos y aplicaciones.
+
+\subsection*{Estructura de un proyecto}
 %%Django implementa una estructura \emph{modelo}, \emph{vista}, \emph{plantilla}.
 %% o MTV por sus siglas en inglés (model, view, template).
+Un proyecto funciona como un contenedor de aplicaciones que ser rigen bajo
+la misma base de datos, los mismos templates y las mismas clases de middleware.
 
-Django consiste en un conjunto de utilidades de consola que permiten crear y
-manipular proyectos y aplicaciones. Dentro de estas utilidades encontramos 
-un servidor standalone de desarrollo para probar los proyectos, creación de 
-tablas a partir de los modelos del mapeador objeto-relacional, realizar 
-volcado y carga de datos (\emph{fixtures}), ejecución de pruebas basadas 
-en test de unidad, entre otras.
+Una aplicación es un paquete que contiene al menos los módulos \textbf{models.py} y \textbf{views.py}, 
+y generalmente suele agregarse un módulo \textbf{urls.py}.
 
-Un proyecto Django consite en 3 módulos\footnote{Un módulo en Python, es un
+
+
+
+%  Dentro de estas utilidades encontramos 
+% un servidor standalone de desarrollo para probar los proyectos, creación de 
+% tablas a partir de los modelos del mapeador objeto-relacional, realizar 
+% volcado y carga de datos (\emph{fixtures}), ejecución de pruebas basadas 
+% en test de unidad, entre otras.
+
+Un \label{django:proyecto}{proyecto} Django consite en 3 módulos\footnote{Un módulo en Python, es un
 archivo con extensión .py} básicos:
-\begin{description}
- \item [settings]{El módulo \emph{settings} define la configuración transversal
+\subsubsection*{Módulo manage.py}
+  Esta es la interfase con el framework. Este módulo permite crear aplicaciones,
+testear que los modelos de una aplicación estén bien definidos (validación),
+iniciar el servidor de desarrollo, crar volcados de la base de datos y restaurarlos
+restaurarlos (\emph{fixtures}, utilizados en casos de pruebas y para precarga
+de datos conocidos).
+
+\subsubsection*{Módulo settings.py}
+  El módulo \emph{settings} define la configuración transversal
 a las aplicaciones de usuario. En este módulo no se suelen definir más que constantes.
 Dentro de estas constantes encontramos la base de datos sobre la cual trabaja el ORM, 
 el(los) directorio(s) de las plantillas, las clases middleware,
 ubicación de los medios estáticos\footnote{
 Un medio estático es todo contenido que no se genera dinámicamente, como imágenes, 
 liberías de javascript, contenido para embeber como archivos multimedia u elementos}.
-En este módulo se defnien la lista de aplicaciones instaladas.}
- \item [urls]{
-  Este módulo define las asociacines entre las URI y las funciones (vistas) que las
-atienden. Para generar código más modular, django permite delegar el tratado
-de urls a módulos dentro de cada aplicación.
+En este módulo se defnien la lista de aplicaciones instaladas.
 
-}
- \item [manage]{
-  Esta es la interfase con el framework.
-}
-\end{description}
+\subsubsection*{Módulo urls.py}
+  Este módulo define las asociacines entre las URL y las funciones (vistas) que las
+atienden. Para generar código más modular, django permite delegar urls que cumplan
+con cierto patrón a un otro módulo. Típicamente este módulo se llama también urls y 
+es parte de una aplicación (Ej: tratar todo lo lo que comience con \textbf{/clientes/} con el módulo
+\textbf{mi\_proyecto.mi\_aplicacion.urls}).
+
+Una \emph{expresión regular} es una forma de definir un patrón en una cadena. Mediante
+ésta técnica se realizan validaciones y búsquedas de elementos en cadenas. En python
+se define además una forma de otorgarle un alias a los elementos buscaods (en contraposición
+a la forma tradicional que utiliza un índice numérico).
+Esta particularidad de las expresiones regulares ha sido explotada para la asociación
+de las URLs a las funciones que las atienden.
+Cuando el cliente realiza accede a una URL dentro de un proyecto django, esta es checkeada
+contra cada patrón definido como url, en caso de éxito, se ejecuta la función asociada o vista.
+Si la expresión regualar tiene definido gurpos nombrados, cada subcadena pasa a ser argumento
+
+pasan a ser argumentos de la vista, es decir, cada grupo nombrado, pasa a ser argumento
+de la función asociada.
+
+\subsection*{Elementos de una aplicación Django}
+
+Una aplicación consiste en 2 módulos fundamentales.
+\subsubsection*{Módulo models.py}
+En este módulo se definien los modelos.
+
+\subsubsection*{Módulo views.py}
+En este módulo se definen las viastas. Una vista es una función que recibe como primer
+argumento un objeto HttpRequest\footnote{
+\href{http://docs.djangoproject.com/en/dev/ref/request-response/\#httprequest-objects}
+{Documentación oficial sobre HttpRequest en djangoproject.com}}, el cual encapsula la información preveniente del request, 
+como el método (GET, POST), los elementos de la query http.
+\begin{figure}[htp]
+\centering
+\includegraphics[scale=0.40]{img/django_strucure.pdf}
+\caption{Esquema de flujo de una aplicación Django}\label{fig:erptsqfit}
+\end{figure}
 
 
-\begin{description}
-\item[Modelo] Modelo de datos de la aplicación. Consiste en un mapeador Objeto
-Relacional desarrolado específicamente para Django.
-\item[Vista] Funciones a ser ejecutadas cuando un cliente accede a la
-aplicación.
-\item[Template] La generación de salida (típicamente código HTML)
-\end{description}
+
 
 \section{Aplicación del lado del cliente}
 \section{Modelo de ejecución en el cliente}
@@ -130,7 +441,113 @@ Doff, Django implementado sobre protopy.
 
 \appendix
 
-\title{Protopy}
+\chapter{MIME}
+
+\textbf{MIME} \label{mime}(\textit{\textbf{M}ultipurpose \textbf{I}nternet \textbf{M}ail \textbf{E}xtensions}), 
+(Extensiones de Correo de Internet Multipropósito), son una serie de
+convenciones o especificaciones dirigidas a que se puedan intercambiar a través
+de Internet todo tipo de archivos (texto, audio, vídeo, etc.) de forma
+transparente para el usuario. Una parte importante del MIME está dedicada a
+mejorar las posibilidades de transferencia de texto en distintos idiomas y
+alfabetos. En sentido general las extensiones de MIME van encaminadas a
+soportar:
+\begin{itemize}
+ \item texto en conjuntos de caracteres distintos de US-ASCII
+ \item adjuntos que no son de tipo texto
+ \item cuerpos de mensajes con múltiples partes (multi-part)
+ \item información de encabezados con conjuntos de caracteres distintos de ASCII.
+\end{itemize}
+
+Prácticamente todos los mensajes de correo electrónico escritos por personas en
+Internet y una proporción considerable de estos mensajes generados
+automáticamente son transmitidos en formato MIME a través de SMTP. Los mensajes
+de correo electrónico en Internet están tan cercanamente asociados con el SMTP y
+MIME que usualmente se les llama mensaje SMTP/MIME.[1]
+
+En 1991 la IETF (Internet Engineering Task Force) comenzó a desarrollar esta
+norma y desde 1994 todas las extensiones MIME están especificadas de forma
+detallada en diversos documentos oficiales disponibles en Internet.
+
+MIME está especificado en seis RFCs (acrónimo inglés de Request For Comments) :
+RFC 2045, RFC 2046, RFC 2047, RFC 4288, RFC 4289 y RFC 2077.
+
+Los tipos de contenido definidos por el estándar MIME tienen gran importancia
+también fuera del contexto de los mensajes electrónicos. Ejemplo de esto son
+algunos protocolos de red tales como HTTP de la Web. HTTP requiere que los datos
+sean transmitidos en un contexto de mensajes tipo e-mail aunque los datos pueden
+no ser un e-mail propiamente dicho.
+
+En la actualidad ningún programa de correo electrónico o navegador de Internet
+puede considerarse completo si no acepta MIME en sus diferentes facetas (texto y
+formatos de archivo).
+
+\section{Introducción}
+El protocolo básico de transmisión de mensajes electrónicos de Internet soporta
+solo caracteres ASCII de 7 bit (véase también 8BITMIME). Esto limita los
+mensajes de correo electrónico, ya que incluyen solo caracteres suficientes para
+escribir en un número reducido de lenguajes, principalmente Inglés. Otros
+lenguajes basados en el Alfabeto latino es adicionalmente un componente
+fundamental en protocolos de comunicación como HTTP, el que requiere que los
+datos sean transmitidos como un e-mail aunque los datos pueden no ser un e-mail
+propiamente dicho. Los clientes de correo y los servidores de correo convierten
+automáticamente desde y a formato MIME cuando envían o reciben (SMTP/MIME)
+e-mails.
+
+\section*{Encabezados MIME}
+\subsubsection*{MIME-Version}
+La presencia de este encabezado indica que el mensaje utiliza el formato MIME. Su valor es típicamente igual a "1.0" por lo que este encabezado aparece como:
+
+\begin{verbatim}
+   MIME-Version: 1.0
+\end{verbatim}
+
+Debe señalarse que los implementadores han intentado cambiar el número de
+versión en el pasado y el cambio ha tenido resultados imprevistos. En una
+reunión de IETF realizada en Julio 2007 se decidió mantener el número de versión
+en \emph{``1.0''} aunque se han realizado muchas actualizaciones a la versión de MIME.
+
+\subsubsection*{Content-Type}
+Este encabezado indica el tipo de medio que representa el contenido del mensaje,
+consiste en un tipo: type y un subtipo: subtype, por ejemplo:
+\begin{verbatim}
+ Content-Type: text/plain
+\end{verbatim}
+A través del uso del tipo multiparte (multipart), MIME da la posibilidad de
+crear mensajes que tengan partes y subpartes organizadas en una estructura
+arbórea en la que los nodos hoja pueden ser cualquier tipo de contenido no
+multiparte y los nodos que no son hojas pueden ser de cualquiera de las
+variedades de tipos multiparte. Este mecanismo soporta:
+\begin{itemize}
+\item{mensajes de texto plano usando text/plain (este es el valor implícito para
+el encabezado "Content-type:")}
+\begin{item}
+\item{texto más archivos adjuntos (multipart/mixed con una parte text/plain y
+otras partes que no son de texto, por ejemplo: application/pdf para documentos
+pdf, application/vnd.oasis.opendocument.text para OpenDocument text). Un mensaje
+MIME que incluye un archivo adjunto generalmente indica el nombre original del
+archivo con un encabezado "Content-disposition:" o por un atributo name de
+Content-Type, por lo que el tipo o formato del archivo se indica usando tanto el
+encabezado MIME content-type y la extensión del archivo (usualmente dependiente
+del SO).}
+
+
+\begin{verbatim}
+Content-Type: application/vnd.oasis.opendocument.text;
+    name="Carta.odt"
+Content-Disposition: inline;
+    filename="Carta.odt"
+
+\end{verbatim}
+\end{item}
+\item{reenviar con el mensaje original adjunto (multipart/mixed con una parte
+text/plain y el mensaje original como una parte message/rfc822)}
+\item{contenido alternativo, un mensaje que contiene el texto tanto en texto
+plano como en otro formato, usualmente HTML (multipart/alternative con el mismo
+contenido en forma de text/plain y text/html)}
+\item{muchas otras construcciones de mensaje}
+\end{itemize}
+
+% \title{Protopy}
 \chapter{Referencia Protopy}
 %\chapter*{Plataforma}
 
