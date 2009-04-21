@@ -1,7 +1,9 @@
 $L('doff.template.*', 'Variable', 'Library');
 var register = new Library();
 
-function capitalize(value){ return value.capitalize(); };
+function capitalize(value){ 
+    return value.capitalize(); 
+};
 register.filter(capitalize);
 
 function join(value, arg) {
@@ -19,8 +21,7 @@ function slugify(value) {
 }
 register.filter(slugify);
 
-// For the library
-$P({ 'register': register });
-
-// For the rest
-$P({ 'slugify': slugify });
+$P({ 
+    register: register 
+    slugify: slugify
+});

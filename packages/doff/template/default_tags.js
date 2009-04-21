@@ -3,13 +3,16 @@ $L('doff.template.context', 'Context');
 
 var register = new Library();
 
-var AutoEscapeControlNode = type('AutoEscapeControlNode', Node,{
-    '__init__': function __init__(setting, nodelist) {
+/*
+ * Implements the actions of the autoescape tag.
+ */
+var AutoEscapeControlNode = type('AutoEscapeControlNode', [ Node ], {
+    __init__: function(setting, nodelist) {
         this.setting = setting;
         this.nodelist = nodelist;
     },
     
-    'render': function render(context) {
+    render: function(context) {
         var old_setting = context.autoescape;
         context.autoescape = this.setting;
         var output = this.nodelist.render(context);
@@ -18,11 +21,62 @@ var AutoEscapeControlNode = type('AutoEscapeControlNode', Node,{
     }
 });
 
-var CommentNode = type('CommentNode', Node,{
-    'render': function render(context) { return "";}
+var CommentNode = type('CommentNode', [ Node ], {
+    render: function(context) { 
+        return "";
+    }
 });
 
-var ForNode = type('ForNode', Node,{
+var CycleNode = type('CycleNode', [ Node ], {
+    __init__: function(cyclevars, variable_name) {
+        this.cycle_iter = Iterator([new Variable(v) for each (v in cyclevars)]);
+        this.variable_name = variable_name || null;
+    },
+
+    render: function(context) { 
+        var value = this.cycle_iter.next()[1].resolve(context);
+        if (this.variable_name)
+            context.set(this.variable_name) = value;
+        return value;
+    }
+});
+
+var FilterNode = type('FilterNode', [ Node ], {
+    __init__: function(filter_expr, nodelist) {
+        this.filter_expr = filter_expr;
+        this.nodelist = nodelist;
+    },
+
+    render: function(context) { 
+        var output = this.nodelist.render(context);
+        // Apply filters.
+        context.update({'var': output});
+        var filtered = this.filter_expr.resolve(context);
+        context.pop();
+        return filtered;
+    }
+});
+
+var FirstOfNode = type('FirstOfNode', [ Node ], {
+    __init__: function(vars) {
+        this.vars = [new Variable(v) for each (v in vars)];
+    },
+
+    render: function(context) { 
+        for each (v in this.vars) {
+            try {
+                var value = v.resolve(context);
+            } catch (e if isinstance(e, VariableDoesNotExist)) {
+                continue;
+            }
+            if (value)
+                return value;
+        }
+        return '';
+    }
+});
+
+var ForNode = type('ForNode', [ Node ], {
     '__init__': function __init__(loopvars, sequence, is_reversed, nodelist_loop){
         this.loopvars = loopvars;
         this.sequence = sequence;
@@ -86,7 +140,7 @@ var ForNode = type('ForNode', Node,{
         }
     });
 
-    var IfEqualNode = type('IfEqualNode', Node, {
+    var IfEqualNode = type('IfEqualNode', [ Node ], {
         '__init__': function __init__(var1, var2, nodelist_true, nodelist_false, negate){
             this.var1 = new Variable(var1);
             this.var2 = new Variable(var2);
@@ -116,7 +170,7 @@ var ForNode = type('ForNode', Node,{
         }
     });
 
-    var IfNode = type('IfNode', Node, {
+    var IfNode = type('IfNode', [ Node ], {
         '__init__': function __init__(bool_exprs, nodelist_true, nodelist_false, link_type){
             this.bool_exprs = bool_exprs;
             this.nodelist_true = nodelist_true;
@@ -172,6 +226,23 @@ var ForNode = type('ForNode', Node,{
 
     IfNode.LinkTypes = {'and_':0, 'or_': 1};
 
+var WithNode = type('WithNode', [ Node ], {
+    __init__: function(variable, name, nodelist) {
+        this.variable = variable;
+        this.name = name;
+        this.nodelist = nodelist;
+    },
+
+    render: function(context) { 
+        var val = this.variable.resolve(context);
+        context.push();
+        context.set(this.name) = val;
+        var output = this.nodelist.render(context);
+        context.pop();
+        return output;
+    }
+});
+
 /* --------------------- Registrando los nodos -------------------------*/
 function do_for(parser, token, negate){
     var bits = array(token.split_contents());
@@ -222,53 +293,67 @@ function ifnotequal(parser, token) {
 }
 register.tag("ifnotequal", ifnotequal);
 
-    function do_if(parser, token) {
+function do_if(parser, token) {
 
-        var link_type = null;
+    var link_type = null;
 
-        var bits = token.contents.split(/\s+/);
-        bits.shift();
-        if (!bool(bits))
-            throw new TemplateSyntaxError("'if' statement requires at least one argument")
+    var bits = token.contents.split(/\s+/);
+    bits.shift();
+    if (!bool(bits))
+        throw new TemplateSyntaxError("'if' statement requires at least one argument")
 
-        var bitstr = bits.join(' ');
-        var boolpairs = bitstr.split(' and ');
-        var boolvars = [];
-        if (boolpairs.length == 1){
-            link_type = IfNode.LinkTypes.or_;
-            boolpairs = bitstr.split(' or ');
-        }
-        else{
-            link_type = IfNode.LinkTypes.and_;
-            if (include(bitstr, ' or '))
-                throw new TemplateSyntaxError, "'if' tags can't mix 'and' and 'or'";
-        }
-        for each (var boolpair in boolpairs) {
-            if (include(boolpair, ' ')){
-                var not = null, boolvar = null;
-                try {
-                    [not, boolvar] = boolpair.split(' ');
-                } catch (e if e instanceof VariableDoesNotExist) {
-                    throw new TemplateSyntaxError, "'if' statement improperly formatted";
-                }
-                if (not != 'not')
-                    throw new TemplateSyntaxError, "Expected 'not' in if statement";
-                boolvars.push([true, parser.compile_filter(boolvar)]);
-            } else {
-                boolvars.push([false, parser.compile_filter(boolpair)]);
-            }
-        }
-        var nodelist_true = parser.parse(['else', 'endif']);
-        token = parser.next_token();
-        if (token.contents == 'else') {
-            var nodelist_false = parser.parse(['endif']);
-            parser.delete_first_token();
-        } else {
-            nodelist_false = new NodeList();
-        }
-        return new IfNode(boolvars, nodelist_true, nodelist_false, link_type);
+    var bitstr = bits.join(' ');
+    var boolpairs = bitstr.split(' and ');
+    var boolvars = [];
+    if (boolpairs.length == 1){
+        link_type = IfNode.LinkTypes.or_;
+        boolpairs = bitstr.split(' or ');
     }
-
+    else{
+        link_type = IfNode.LinkTypes.and_;
+        if (include(bitstr, ' or '))
+            throw new TemplateSyntaxError, "'if' tags can't mix 'and' and 'or'";
+    }
+    for each (var boolpair in boolpairs) {
+        if (include(boolpair, ' ')){
+            var not = null, boolvar = null;
+            try {
+                [not, boolvar] = boolpair.split(' ');
+            } catch (e if e instanceof VariableDoesNotExist) {
+                throw new TemplateSyntaxError, "'if' statement improperly formatted";
+            }
+            if (not != 'not')
+                throw new TemplateSyntaxError, "Expected 'not' in if statement";
+            boolvars.push([true, parser.compile_filter(boolvar)]);
+        } else {
+            boolvars.push([false, parser.compile_filter(boolpair)]);
+        }
+    }
+    var nodelist_true = parser.parse(['else', 'endif']);
+    token = parser.next_token();
+    if (token.contents == 'else') {
+        var nodelist_false = parser.parse(['endif']);
+        parser.delete_first_token();
+    } else {
+        nodelist_false = new NodeList();
+    }
+    return new IfNode(boolvars, nodelist_true, nodelist_false, link_type);
+}
 register.tag("if", do_if);
 
-$P({ 'register': register });
+function do_with(parser, token) {
+    var bits = token.contents.split(/\s+/);
+    if (bits.length != 4 || bits[2] != "as")
+        throw new TemplateSyntaxError("%r expected format is 'value as name'".subs(bits[0]));
+    var variable = parser.compile_filter(bits[1]);
+    var name = bits[3];
+    var nodelist = parser.parse(['endwith']);
+    parser.delete_first_token();
+    return new WithNode(variable, name, nodelist);
+}
+register.tag("with", do_with);
+
+
+$P({ 
+    register: register 
+});

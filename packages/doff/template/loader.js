@@ -5,16 +5,15 @@ $L('doff.core.project', 'get_settings', 'get_project');
 var settings = get_settings();
 var project = get_project();
         
-var LoaderOrigin = type('LoaderOrigin', Origin, {
-    '__init__': function __init__(display_name, loader, name, dirs) {
+var LoaderOrigin = type('LoaderOrigin', [ Origin ], {
+    __init__: function(display_name, loader, name, dirs) {
         super(Origin, this).__init__(display_name);
         this.loader = loader;
         this.loadname = name;
         this.dirs = dirs;
-
     },
-    
-    'reload': function reload() {
+
+    reload: function() {
         return this.loader(this.loadname, this.dirs)[0]; }
 });
 
@@ -25,8 +24,11 @@ function make_origin(display_name, loader, name, dirs) {
         return null;
 }
 
+/* defo:translate
+ * Busca un template para cada uno de los cargadores de template definididos en settings
+ * Si los cargadores no estan iniciados, los inicia, dejandolos dentro del proyecto
+ */
 function find_template_source(name, dirs) {
-
     var template_source_loaders = project._template_source_loaders;
     if (!template_source_loaders) {
         var loaders = [];
@@ -57,6 +59,9 @@ function find_template_source(name, dirs) {
     throw new TemplateDoesNotExist(name);
 }
 
+/* defo:translate
+ * Carga un template en base a su nombre ejemplo.html
+ */
 function get_template(template_name) {
     var [source, origin] = find_template_source(template_name);
     var template = get_template_from_string(source, origin, template_name);
@@ -67,6 +72,7 @@ function get_template_from_string(source, origin, name) {
     return new Template(source, origin, name);
 }
 
+/* Candidato a la borrada
 function render_to_string(template_name, dictionary, context_instance) {
     var dictionary = dictionary || {};
     if (template_name instanceof Array)
@@ -88,7 +94,9 @@ function select_template(template_name_list) {
     }
     throw new TemplateDoesNotExist(template_name_list.join(', '));
 }
-
-$P({ 'find_template_source': find_template_source,
-     'get_template_from_string': get_template_from_string,
-     'get_template': get_template });
+*/
+$P({ 
+    find_template_source: find_template_source,
+    get_template_from_string: get_template_from_string,
+    get_template: get_template 
+});

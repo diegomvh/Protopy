@@ -175,7 +175,7 @@
 
     // Type constructor
     function type(name) {
-	if (name == undefined || name == null)
+	if (name == undefined)
 	    throw new TypeError('Invalid arguments');
 	var args = Array.prototype.slice.call(arguments).slice(1);
 	if (args.length == 0)
@@ -2106,7 +2106,7 @@
 //--------------------------------------- More builtins -----------------------------------------//
 //More Data types
 (function(){
-    var Dict = type('Dict', [object], {
+    var Dict = type('Dict', [ object ], {
         '__init__': function __init__(object) {
             this._value = {};
             this._key = {};
@@ -2245,7 +2245,7 @@
         }
     });
 
-    var Set = type('Set', [object], {
+    var Set = type('Set', [ object ], {
         '__init__': function __init__(elements){
             var elements = elements || [];
             if (type(elements) != Array)
