@@ -2,6 +2,12 @@
 # -*- coding: utf-8 -*-
 
 
+# make_offline 
+# genera el {{ settings.OFFLINE_ROOT }}/offline_{{ PROJECT_NAME }}/settings.js
+# {{ settings.OFFLINE_ROOT }}/offline_{{ PROJECT_NAME }}/urls.js
+#
+#
+
 from django.core.management.base import *
 
 class Command(NoArgsCommand):
