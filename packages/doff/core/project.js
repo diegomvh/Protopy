@@ -12,7 +12,7 @@ var Project = type('Project', [object], {
     availability_url: null,
     going_online: false,
     do_net_checking: true,
-    handler: new Handler(),
+    handler: null,
     system: null,
     project: null,
 

@@ -2,10 +2,10 @@ var RESERVED_CHARS = "!*'();:@&=+$,/?%#[]";
 
 var absolute_http_url_re = RegExp("^https?://", 'i');
 
-var Http404 = type('Http404', Exception, {});
+var Http404 = type('Http404', [ Exception ]);
 
 /*A basic HTTP request.*/
-var HttpRequest = type ('HttpRequest', {
+var HttpRequest = type ('HttpRequest', [ object ], {
 
     __init__: function __init__() {
         this.GET = {};

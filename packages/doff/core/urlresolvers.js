@@ -1,5 +1,7 @@
-var Resolver404 = type('Resolver404', [Exception], {});
-var NoReverseMatch = type('NoReverseMatch', [Exception], {});
+$L('doff.core.http', 'Http404');
+
+var Resolver404 = type('Resolver404', [ Http404 ]);
+var NoReverseMatch = type('NoReverseMatch', [ Exception ]);
 
 /*
 Convert a string version of a function name to the callable object.
