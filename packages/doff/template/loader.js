@@ -1,10 +1,13 @@
 $L('doff.core.exceptions', 'ImproperlyConfigured'),
-$L('doff.template.*', 'Origin', 'Template', 'Context', 'TemplateDoesNotExist', 'add_to_builtins');
+$L('doff.template.*', 'Template', 'Context', 'TemplateDoesNotExist', 'add_to_builtins');
 $L('doff.core.project', 'get_settings', 'get_project');
+$L('logging.*');
 
+var logger = logging.get_logger(__name__);
 var settings = get_settings();
 var project = get_project();
-        
+
+/* Candidato a la borrada
 var LoaderOrigin = type('LoaderOrigin', [ Origin ], {
     __init__: function(display_name, loader, name, dirs) {
         super(Origin, this).__init__(display_name);
@@ -23,12 +26,15 @@ function make_origin(display_name, loader, name, dirs) {
     else
         return null;
 }
+*/
 
+//TODO: Una cache para los templates cargados
 /* defo:translate
  * Busca un template para cada uno de los cargadores de template definididos en settings
  * Si los cargadores no estan iniciados, los inicia, dejandolos dentro del proyecto
  */
 function find_template_source(name, dirs) {
+    //TODO: ver si dejo los loaders en el proyecto o dentro de este modulo como una variable
     var template_source_loaders = project._template_source_loaders;
     if (!template_source_loaders) {
         var loaders = [];
@@ -53,8 +59,9 @@ function find_template_source(name, dirs) {
     for each (var loader in template_source_loaders) {
         try {
             var [source, display_name] = loader(name, dirs);
-            return [source, make_origin(display_name, loader, name, dirs)];
-        } catch (e if e instanceof TemplateDoesNotExist) {}
+            logger.debug("Template: %s, Name: %s, Dirs: %s", display_name, name, dirs);
+            return source;
+        } catch (e if isinstance(e, TemplateDoesNotExist)) { }
     }
     throw new TemplateDoesNotExist(name);
 }
@@ -63,13 +70,13 @@ function find_template_source(name, dirs) {
  * Carga un template en base a su nombre ejemplo.html
  */
 function get_template(template_name) {
-    var [source, origin] = find_template_source(template_name);
-    var template = get_template_from_string(source, origin, template_name);
+    var source = find_template_source(template_name);
+    var template = get_template_from_string(source, template_name);
     return template;
 }
 
-function get_template_from_string(source, origin, name) {
-    return new Template(source, origin, name);
+function get_template_from_string(source, name) {
+    return new Template(source, name);
 }
 
 /* Candidato a la borrada
@@ -95,8 +102,9 @@ function select_template(template_name_list) {
     throw new TemplateDoesNotExist(template_name_list.join(', '));
 }
 */
+
 $P({ 
     find_template_source: find_template_source,
     get_template_from_string: get_template_from_string,
-    get_template: get_template 
+    get_template: get_template
 });

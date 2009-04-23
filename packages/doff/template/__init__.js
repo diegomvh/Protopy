@@ -39,21 +39,6 @@ var VariableDoesNotExist = type('VariableDoesNotExist', Exception);
 
 var InvalidTemplateLibrary = type('InvalidTemplateLibrary', Exception);
 
-var Origin = type('Origin', {
-    '__init__': function __init__(name) { this.name = name; },
-    '__str__': function __str__() { return this.name; },
-    'reload': function reload() { throw new NotImplementedError(); }
-});
-
-var StringOrigin = type('StringOrigin', Origin, {
-    '__init__': function __init__(source) {
-        super(Origin, this).__init__(UNKNOWN_SOURCE);
-        this.source = source;
-    },
-    '__str__': function __str__() { return this.name},
-    'reload': function reload() { return this.source }
-});
-
 /* ------------------ Nodos ----------------- */
 var Node = type('Node', {
     must_be_first: false,
@@ -141,8 +126,9 @@ function compile_string(template_string){
 };
 
 var Template = type('Template', {
-    '__init__': function __init__(template) {
+    '__init__': function __init__(template, name) {
         this.nodelist = compile_string(template);
+        this.name = name || '<Unknown Template>';
     },
 
     '__iter__': function __iter__() {
@@ -508,7 +494,6 @@ $P({ 'TemplateSyntaxError': TemplateSyntaxError,
      'Node': Node,
      'TextNode': TextNode,
      'NodeList': NodeList,
-     'Origin': Origin,
      'Template': Template,
      'Library': Library,
      'get_library': get_library });

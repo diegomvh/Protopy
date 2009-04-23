@@ -17,7 +17,7 @@ var Project = type('Project', [object], {
     project: null,
 
     onLoad: function onLoad() {
-        this.sync_stores();
+        //this.sync_stores();
     },
 
     onNetwork: function(type) {},
@@ -29,6 +29,7 @@ var Project = type('Project', [object], {
 	sys.register_module_path(this.package, this.path);
 	this.availability_url = sys.module_url(this.package, 'network_check.txt');
 	this.read_settings();
+        this.handler = new Handler(this.settings.ROOT_URLCONF);
 	// ManagedStores
 	this.project = new ManagedResourceStore(package + '_project');
 	this.project.manifest_url = sys.module_url(this.package, 'manifests/project.json');

@@ -3,7 +3,7 @@ var register = new Library();
 
 function capitalize(value){ 
     return value.capitalize(); 
-};
+}
 register.filter(capitalize);
 
 function join(value, arg) {
@@ -21,7 +21,7 @@ function slugify(value) {
 }
 register.filter(slugify);
 
-$P({ 
-    register: register 
+$P({
+    register: register,
     slugify: slugify
 });

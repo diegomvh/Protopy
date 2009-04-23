@@ -9,4 +9,6 @@ var urlpatterns = patterns('',
     ['^blog/', include('blog.apps.post.urls')]
 )
 
-$P({ 'urlpatterns': urlpatterns });
+$P({ 
+    'urlpatterns': urlpatterns 
+});

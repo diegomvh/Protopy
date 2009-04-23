@@ -57,7 +57,6 @@ var ExtendsNode = type('ExtendsNode', [ Node ], {
 
     get_parent: function(context) {
         var source = null,
-            origin = null,
             parent = null;
         if (this.parent_name_expr)
             this.parent_name = this.parent_name_expr.resolve(context);
@@ -71,13 +70,13 @@ var ExtendsNode = type('ExtendsNode', [ Node ], {
         if (callable(parent['render']))
             return parent;
         try {
-            [source, origin] = loader.find_template_source(parent, this.template_dirs);
+            source = loader.find_template_source(parent, this.template_dirs);
         }
         catch (e if isinstance(e, TemplateDoesNotExist)) {
             throw new TemplateSyntaxError("Template %r cannot be extended, because it doesn't exist".subs(parent));
         }
         finally {
-            return loader.get_template_from_string(source, origin, parent);
+            return loader.get_template_from_string(source, parent);
         }
     },
 
