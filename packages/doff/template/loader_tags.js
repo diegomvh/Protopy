@@ -39,11 +39,10 @@ var BlockNode = type('BlockNode', [ Node ], {
 
 var ExtendsNode = type('ExtendsNode', [ Node ], {
     must_be_first: true,
-    __init__: function(nodelist, parent_name, parent_name_expr, template_dirs){
+    __init__: function(nodelist, parent_name, parent_name_expr){
         this.nodelist = nodelist;
         this.parent_name = parent_name;
         this.parent_name_expr = parent_name_expr;
-        this.template_dirs = template_dirs;
     },
 
     render: function(context){
@@ -67,16 +66,14 @@ var ExtendsNode = type('ExtendsNode', [ Node ], {
                 error_msg += " Got this from the '%s' variable.".subs(this.parent_name_expr.token);
             throw new TemplateSyntaxError(error_msg);
         }
-        if (callable(parent['render']))
+        if (parent['render'])
             return parent;
         try {
-            source = loader.find_template_source(parent, this.template_dirs);
+            source = loader.get_template(parent);
+	    return source;
         }
         catch (e if isinstance(e, TemplateDoesNotExist)) {
             throw new TemplateSyntaxError("Template %r cannot be extended, because it doesn't exist".subs(parent));
-        }
-        finally {
-            return loader.get_template_from_string(source, parent);
         }
     },
 
@@ -146,7 +143,7 @@ var IncludeNode = type('IncludeNode', [ Node ], {
  * Funciones que procesan los tokens, generando y retornanodo los nodos correspondientes
  */
 function do_block(parser, token) {
-    var bits = token.contents.split(/\s+/);
+    var bits = token.split_contents();
     if (bits.length != 2)
         throw new TemplateSyntaxError("'%s' tag takes only one argument".subs(bits[0]));
     var block_name = bits[1];
@@ -164,7 +161,7 @@ function do_block(parser, token) {
 };
 
 function do_extends(parser, token) {
-    var bits = token.contents.split(/\s+/);
+    var bits = token.split_contents();
     if (bits.length != 2)
         throw new TemplateSyntaxError("'%s' takes one argument".subs(bits[0]));
     var parent_name = null;
@@ -180,7 +177,7 @@ function do_extends(parser, token) {
 };
 
 function do_include(parser, token) {
-    var bits = token.contents.split(/\s+/);
+    var bits = token.split_contents();
     if (bits.length != 2)
         throw new TemplateSyntaxError("%s tag takes one argument: the name of the template to be included".subs(bits[0]));
     var path = bits[1];
@@ -197,5 +194,5 @@ register.tag('extends', do_extends);
 register.tag('include', do_include);
 
 $P({ 
-    register: register 
+    register: register
 });

@@ -65,7 +65,7 @@ var Handler = type('Handler', [ object ], {
             } catch (e) {
                 print(e);
 	    }
-        } catch (e if isinstance(e, html.Http404)) {
+        } catch (e if isinstance(e, http.Http404)) {
             var [callback, param_dict] = this._resolver.resolve404();
             return callback(request, param_dict);
 	}

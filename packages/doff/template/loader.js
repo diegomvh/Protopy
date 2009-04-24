@@ -5,37 +5,14 @@ $L('logging.*');
 
 var logger = logging.get_logger(__name__);
 var settings = get_settings();
-var project = get_project();
 
-/* Candidato a la borrada
-var LoaderOrigin = type('LoaderOrigin', [ Origin ], {
-    __init__: function(display_name, loader, name, dirs) {
-        super(Origin, this).__init__(display_name);
-        this.loader = loader;
-        this.loadname = name;
-        this.dirs = dirs;
-    },
-
-    reload: function() {
-        return this.loader(this.loadname, this.dirs)[0]; }
-});
-
-function make_origin(display_name, loader, name, dirs) {
-    if (settings.TEMPLATE_DEBUG)
-        return new LoaderOrigin(display_name, loader, name, dirs);
-    else
-        return null;
-}
-*/
-
-//TODO: Una cache para los templates cargados
 /* defo:translate
  * Busca un template para cada uno de los cargadores de template definididos en settings
  * Si los cargadores no estan iniciados, los inicia, dejandolos dentro del proyecto
  */
+var template_source_loaders = null;
+
 function find_template_source(name, dirs) {
-    //TODO: ver si dejo los loaders en el proyecto o dentro de este modulo como una variable
-    var template_source_loaders = project._template_source_loaders;
     if (!template_source_loaders) {
         var loaders = [];
         for each (var path in settings.TEMPLATE_LOADERS) {
@@ -54,7 +31,7 @@ function find_template_source(name, dirs) {
             }
             loaders.push(loader);
         }
-        template_source_loaders = project._template_source_loaders = loaders;
+        template_source_loaders = loaders;
     }
     for each (var loader in template_source_loaders) {
         try {
@@ -69,10 +46,14 @@ function find_template_source(name, dirs) {
 /* defo:translate
  * Carga un template en base a su nombre ejemplo.html
  */
+var _template_cache = {};
+
 function get_template(template_name) {
-    var source = find_template_source(template_name);
-    var template = get_template_from_string(source, template_name);
-    return template;
+    if (!_template_cache[template_name]) {
+	var source = find_template_source(template_name);
+	_template_cache[template_name] = get_template_from_string(source, template_name);
+    }
+    return _template_cache[template_name];
 }
 
 function get_template_from_string(source, name) {

@@ -29,24 +29,25 @@ var tag_re = new RegExp('(%s.*?%s|%s.*?%s|%s.*?%s)'.subs(BLOCK_TAG_START, BLOCK_
                                       VARIABLE_TAG_START, VARIABLE_TAG_END,
                                       COMMENT_TAG_START, COMMENT_TAG_END));
 
-var TemplateSyntaxError = type('TemplateSyntaxError', Exception);
+var TemplateSyntaxError = type('TemplateSyntaxError', [ Exception ]);
 
-var TemplateDoesNotExist = type('TemplateDoesNotExist', Exception);
+var TemplateDoesNotExist = type('TemplateDoesNotExist', [ Exception ]);
 
-var TemplateEncodingError = type('TemplateEncodingError', Exception);
+var TemplateEncodingError = type('TemplateEncodingError', [ Exception ]);
 
-var VariableDoesNotExist = type('VariableDoesNotExist', Exception);
+var VariableDoesNotExist = type('VariableDoesNotExist', [ Exception ]);
 
-var InvalidTemplateLibrary = type('InvalidTemplateLibrary', Exception);
+var InvalidTemplateLibrary = type('InvalidTemplateLibrary', [ Exception ]);
 
 /* ------------------ Nodos ----------------- */
-var Node = type('Node', {
+var Node = type('Node', [ object ], {
     must_be_first: false,
-    'render': function render(context) {},
+    render: function(context) { },
+    __iter__: function() { 
+	yield this; 
+    },
 
-    '__iter__': function __iter__() { yield this; },
-
-    'get_nodes_by_type': function get_nodes_by_type(nodetype){
+    get_nodes_by_type: function(nodetype){
         var nodes = [];
         if (isinstance(this, nodetype))
             nodes.push(this);
@@ -56,7 +57,7 @@ var Node = type('Node', {
     }
 });
 
-var NodeList = type('NodeList', {
+var NodeList = type('NodeList', [ object ], {
     contains_nontext: false,
 
     '__init__': function __init__() {
@@ -100,15 +101,17 @@ var NodeList = type('NodeList', {
   }
 });
 
-var TextNode = type('TextNode', Node, {
-    '__init__': function __init__(s) {
+var TextNode = type('TextNode', [ Node ], {
+    __init__: function(s) {
         this.s = s;
     },
 
-    'render': function render(context) { return this.s;}
+    render: function(context) { 
+	return this.s;
+    }
 });
 
-var VariableNode = type('VariableNode', Node, {
+var VariableNode = type('VariableNode', [ Node ], {
     '__init__': function __init__(filter_expression) {
         this.filter_expression = filter_expression;
     },
@@ -125,7 +128,7 @@ function compile_string(template_string){
     return parser.parse();
 };
 
-var Template = type('Template', {
+var Template = type('Template', [ object ], {
     '__init__': function __init__(template, name) {
         this.nodelist = compile_string(template);
         this.name = name || '<Unknown Template>';
@@ -392,35 +395,35 @@ var FilterExpression = type('FilterExpression', {
 });
 
 
-var Variable = type('Variable', {
-    '__init__': function __init__(value) {
+var Variable = type('Variable', [ object ], {
+    __init__: function(value) {
         this.value = value;
         this.literal = null;
         this.lookups = null;
-
         this.literal = Number(value);
-
         if (isNaN(this.literal)) {
             // No es un numero
-            if (include(["'", '"'], value[0]) && value[0] == value[value.length - 1])
+            if (include(["'", '"'], value[0]) && value[0] == value[value.length - 1]) {
                 this.literal = value.substring(1, value.length -1);
-            else
+	    } else {
                 this.lookups = value.split(VARIABLE_ATTRIBUTE_SEPARATOR);
+	    }
         }
     },
 
-    '__str__': function __str__(){
+    __str__: function() {
         return this.value;
     },
 
-    'resolve': function resolve(context){
-        if (this.lookups)
+    resolve: function(context){
+        if (this.lookups) {
             return this._resolve_lookup(context);
-        else
+        } else {
             return this.literal;
+	}
     },
 
-    '_resolve_lookup': function _resolve_lookup(context) {
+    _resolve_lookup: function(context) {
         var current = context;
         for each (var bit in this.lookups) {
             try {
@@ -439,44 +442,51 @@ var Variable = type('Variable', {
     }
 });
 
-var Library = type('Library', {
-    '__init__': function __init__() {
+var Library = type('Library', [ object ], {
+    __init__: function() {
         this.filters = {};
         this.tags = {};
     },
 
-    'tag': function tag(name, compile_function){
-        if (callable(name)){
+    tag: function(name, compile_function) {
+        if (callable(name)) {
             this.tags[name.name] = name;
             return name;
         } else if (name != null && callable(compile_function)) {
             this.tags[name] = compile_function;
             return compile_function;
-        } else
+        } else {
             throw new InvalidTemplateLibrary("Unsupported arguments to Library.tag: (%s, %s)".subs(name, compile_function));
+	}
     },
 
-    'filter': function filter(name, filter_func) {
+    filter: function(name, filter_func) {
         if (callable(name)){
             this.filters[name.name] = name;
             return name;
         } else if (name != null && callable(filter_func)) {
             this.filters[name] = filter_func;
             return filter_func;
-        } else
+        } else {
             throw new InvalidTemplateLibrary("Unsupported arguments to Library.filter: (%s, %s)".subs(name, filter_func));
-        }
+	}
+    }
 });
 
 function get_library(module_name){
     var lib = libraries[module_name];
     if (!lib) {
-        var mod = $L(module_name);
-        lib = mod.register;
-        if (lib)
+        try {
+	    var mod = $L(module_name);
+        } catch (e if isinstance(e, LoadError)) {
+	    throw new InvalidTemplateLibrary("Could not load template library from %s, %s".subs(module_name, e));
+	}
+	lib = mod.register;
+        if (lib) {
             libraries[module_name] = lib;
-        else
-            throw 'TODO MAL';
+        } else {
+            throw new InvalidTemplateLibrary("Template library %s does not have a variable named 'register'".subs(module_name));
+	}
     }
     return lib;
 };
@@ -485,18 +495,20 @@ function add_to_builtins(module_name){
     builtins.push(get_library(module_name));
 };
 
-$P({ 'TemplateSyntaxError': TemplateSyntaxError,
-     'TemplateDoesNotExist': TemplateDoesNotExist,
-     'TemplateEncodingError': TemplateEncodingError,
-     'VariableDoesNotExist': VariableDoesNotExist,
-     'InvalidTemplateLibrary': InvalidTemplateLibrary,
-     'Variable': Variable,
-     'Node': Node,
-     'TextNode': TextNode,
-     'NodeList': NodeList,
-     'Template': Template,
-     'Library': Library,
-     'get_library': get_library });
+$P({ 
+    TemplateSyntaxError: TemplateSyntaxError,
+    TemplateDoesNotExist: TemplateDoesNotExist,
+    TemplateEncodingError: TemplateEncodingError,
+    VariableDoesNotExist: VariableDoesNotExist,
+    InvalidTemplateLibrary: InvalidTemplateLibrary,
+    Variable: Variable,
+    Node: Node,
+    TextNode: TextNode,
+    NodeList: NodeList,
+    Template: Template,
+    Library: Library,
+    get_library: get_library 
+});
 
 add_to_builtins('doff.template.default_tags');
 add_to_builtins('doff.template.loader_tags');

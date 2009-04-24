@@ -1,9 +1,6 @@
 //******************************* PROTOPY CORE *************************************//
 (function() {
-    var __modules__ = {};
-    var __paths__ = {};
     
-    //Extend form objects to object
     function __extend__(safe, destiny) {
 	for (var i = 2, length = arguments.length; i < length; i++) {
 	    var object = arguments[i];
@@ -36,8 +33,8 @@
 
     //Add simbols to builtins
     function __builtins__(object) {
-        __extend__(false, __modules__['__builtin__'], object);
-        __extend__(false, __modules__['__main__']['__builtins__'], object);
+        //__extend__(false, builtin, object);
+        //__extend__(false, main__']['__builtins__'], object);
         __extend__(false, window, object);
     }
     
@@ -47,24 +44,67 @@
 	else if (type(doc) === String)
 	    obj.__doc__ = doc;
     }
+
 //memoria ps2 16, cable usb del mp3, auriculares, un cargador y baterias, un pack de dvd
-    //The module concept
-    function Module(name, file, source) {
-        this['__file__'] = file;
-        this['__name__'] = name;
-        if (file == 'built-in') {
-            if (source && source instanceof Object)
-                __extend__(true, this, source);
-        }
-    }
     
+    var ModuleManager = {
+	modules: {},
+	modules_dict: {},
+	paths: {},
+	module_functions: {
+	    $P: __publish__,
+	    $L: __load__,
+	    $D: __doc__,
+	    type: type
+	},
+	base: '/', //Where i'm, set this for another place. Default root 
+	default_path: 'packages',
+	add: function(module) {
+	    var name = module['__name__'];
+	    this.modules[name] = module;
+	},
+	remove: function(module) {
+	    var name = module['__name__'];
+	    delete this.modules[name];
+	},
+	create: function(name, file, source) {
+	    var module = this.modules_dict;
+	    for each (var n in name.split('.')) {
+		module = module[n] || (module[n] = new Object());
+	    }
+	    module['__file__'] = file;
+	    module['__name__'] = name;
+	    if (source)
+		__extend__(true, module, source);
+	    return module;
+	},
+	decorate: function(module) {
+	    return __extend__(false, module, this.module_functions);
+	},
+	clean: function(module) {
+	    for (var f in this.module_functions)
+		delete module[f];
+	    return module;
+	},
+	get: function(name) {
+	    return this.modules[name] || null;
+	},
+	register_path: function(name, path) {
+	    assert(name.lastIndexOf('.') == -1, 'The module name showld be whitout dots');
+	    path = path.split('/');
+	    //TODO: creo que hay una mejor forma de hacer esto que con un filter, quiza un any o un all o algo de eso
+	    path = path.filter( function (e) { return e; });
+	    this.paths[name] = path.join('/');
+	},
+    };
+
     //Load Modules
     function __load__(module_name) {
     	
         var package = module_name.endswith('.*'),
 	    name = package ? module_name.slice(0, module_name.length - 2) : module_name,
 	    names = name.split('.'),
-	    mod = __modules__[name];
+	    mod = ModuleManager.get(name);
     
         if (!mod) {
             //Only firefox and synchronous, sorry
@@ -83,30 +123,20 @@
 		throw new LoadError(file);
             //Tego el codigo, creo el modulo
 	    var code = '(function(){ ' + request.responseText + '});';
-            mod = new Module(name, file);
-            __modules__[name] = mod;
-            //Decoro el modulo con lo que reuiere para funcionar
-	    mod.$P = __publish__;
-	    mod.$L = __load__;
-	    mod.$B = __builtins__;
-	    mod.$D = __doc__;
-	    mod.type = type;
+            mod = ModuleManager.create(name, file);
+            mod = ModuleManager.decorate(mod);
+            ModuleManager.add(mod);
 	    //Listo el modululo base largo el evento
 	    event.publish('onModuleCreated', [this, mod]);
             try {
-                with (mod) {
+		with (mod) {
 		    eval(code).call(mod);
-                }
-            } catch (exception) {
-                delete __modules__[name];
-                throw exception;
-            }
-	    //EL modulo esta cargado, quito la decoracion
-	    delete mod.$P;
-	    delete mod.$L;
-	    delete mod.$B;
-	    delete mod.$D;
-	    delete mod.type;
+		}
+	    } catch (e) {
+		ModuleManager.remove(mod);
+		throw e;
+	    }
+            mod = ModuleManager.clean(mod);
         }
         event.publish('onModuleLoaded', [this, mod]);
         switch (arguments.length) {
@@ -171,7 +201,7 @@
     //For de prototype
     object.prototype.__init__ = function __init__(){};
     object.prototype.__doc__ = "";
-    object.prototype.__str__ = function __str__(){ return this.__module__ + '.' + this.__name__ };
+    object.prototype.__str__ = function __str__(){ return this['__module__'] + '.' + this['__name__'] };
 
     // Type constructor
     function type(name) {
@@ -256,7 +286,7 @@
 	return window.google.gears;
     }
     
-    var sys = __modules__['sys'] = new Module('sys', 'built-in', { 
+    var sys = ModuleManager.create('sys', 'built-in', { 
 	'version': '0.05',
 	'browser': {
 	    'IE':     !!(window.attachEvent && navigator.userAgent.indexOf('Opera') === -1),
@@ -281,18 +311,18 @@
 	},
 	'get_gears': get_gears,
 	'register_module_path': function register_module_path(module, path) { 
-	    __paths__[module] = this.base_url + path; 
+	    ModuleManager.register_path(module, path); 
 	},
 	'module_url': function module_url(module, postfix) {
 	    var url = null;
-	    for (var s in __paths__)
+	    for (var s in ModuleManager.paths)
 		if (s && module.indexOf(s) == 0) {
-		    url = __paths__[s].split('/');
+		    url = ModuleManager.paths[s].split('/');
 		    url = url.concat(module.slice(len(s)).split('.'));
 		    break;
 		}
 	    if (!url) {
-		url = __paths__[''].split('/');
+		url = ModuleManager.default_path.split('/');
 		url = url.concat(module.split('.'));
 	    }
 	    if (postfix) 
@@ -303,8 +333,8 @@
 	    url = url.filter( function (element, index) { return len(element) > 0 || (element == '' && index == length) });
 	    return url.join('/');
 	},
-	'modules': __modules__,
-	'paths': __paths__
+	'modules': ModuleManager.modules,
+	'paths': ModuleManager.paths
     });
 
     sys.browser.features.Gears = !!get_gears() || false;
@@ -319,7 +349,7 @@
         '__str__': function() { return this.__name__ + ': ' + this.message; }
     });
     
-    var exception = __modules__['exceptions'] = new Module('exceptions', 'built-in', {
+    var exception = ModuleManager.create('exceptions', 'built-in', {
         'Exception': Exception,
         'AssertionError': type('AssertionError', Exception),
         'AttributeError': type('AttributeError', Exception),
@@ -451,7 +481,7 @@
         ([__listener__, __eventlistener__][listener]).remove(obj, event, handle);
     }
 
-    var event = __modules__['event'] = new Module('event', 'built-in', {
+    var event = ModuleManager.create('event', 'built-in', {
         'connect': function connect(obj, event, context, method) {
 	    var a = arguments, args = [], i = 0;
 	    // if a[0] is a String, obj was ommited
@@ -503,7 +533,7 @@
     });
 
     /******************** timer **************************/
-    var timer = __modules__['timer'] = new Module('timer', 'built-in', {
+    var timer = ModuleManager.create('timer', 'built-in', {
 	'setTimeout': window.setTimeout,
 	'setInterval': window.setInterval,
 	'clearTimeout': window.clearTimeout,
@@ -761,7 +791,7 @@
 	}
     });
 
-    var ajax = __modules__['ajax'] = new Module('ajax', 'built-in', {
+    var ajax = ModuleManager.create('ajax', 'built-in', {
 	'Request': Request,
 	'Response': Response
     });
@@ -1469,18 +1499,15 @@
 	}
     };
     // Primer cambio
-    var dom = __modules__['dom'] = new Module('dom', 'built-in', {
+    var dom = ModuleManager.create('dom', 'built-in', {
 	'query': query, 
 	'query_combinator': query_combinator,
 	'query_selector': query_selector,
 	'simple_selector': simple_selector
     });
 
-    /******************** main **************************/
-    var main = __modules__['__main__'] = new Module('__main__','built-in', {'__builtins__': {}, '__doc__': "Welcome to protopy" });
-    
     /******************** builtin **************************/
-    var builtin = __modules__['__builtin__'] = new Module('__builtin__','built-in', {
+    var builtin = ModuleManager.create('__builtin__','built-in', {
         '$P': __publish__,
         '$L': __load__,
         '$B': __builtins__,
@@ -1489,12 +1516,18 @@
 	'object': object,
 	'type': type,
 	'extend': function extend() {return __extend__.apply(this, [false].concat(array(arguments)));},
-	'ls': function ls(obj){ return keys(__modules__[(obj && obj['__name__']) || this['__name__']]); },
-	'locals': function locals(){ return __modules__[this['__name__']]; },
-	'globals': function globals(){ return __modules__['__main__']; }
+	//'ls': function ls(obj){ return keys(__modules__[(obj && obj['__name__']) || this['__name__']]); },
+	//'locals': function locals(){ return __modules__[this['__name__']]; },
+	//'globals': function globals(){ return __modules__['__main__']; }
     });
     /******************** POPULATE **************************/
-    __extend__(true, window, main);
+    ModuleManager.add(sys);
+    ModuleManager.add(exception);
+    ModuleManager.add(event);
+    ModuleManager.add(timer);
+    ModuleManager.add(ajax);
+    ModuleManager.add(dom);
+    ModuleManager.add(builtin);
     __builtins__(builtin);
     __builtins__(exception);
 
@@ -1893,10 +1926,11 @@
     for each (var script in scripts) {
 	if (script.src) {
 	    var m = script.src.match(new RegExp('^.*' + location.host + '/?(.*)/?protopy.js$', 'i'));
-	    if (m) sys.base_url = m[1];
+	    if (m) 
+		ModuleManager.base = m[1];
 	}
     }
-    __paths__[''] = sys.base_url + '/packages/';
+    //__paths__[''] = sys.base_url + '/packages/';
 })();
 
 // ******************************* EXTENDING JAVASCRIPT ************************************* //

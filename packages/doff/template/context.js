@@ -70,8 +70,9 @@ var Context = type('Context', {
 /*
  * This is a function rather than module-level procedural code because we only want it to execute if somebody uses RequestContext.
  */
+var standard_context_processors = null;
+
 function get_standard_processors() {
-    var standard_context_processors = project._standard_context_processors;
     if (!standard_context_processors) {
         var processors = [];
         for each (var path in settings.TEMPLATE_CONTEXT_PROCESSORS) {
@@ -89,7 +90,7 @@ function get_standard_processors() {
                 throw new ImproperlyConfigured('Module "%s" does not define a "%s" callable request processor'.subs(module, attr));
             }
             processors.push(func);
-            standard_context_processors = project._standard_context_processors = processors;
+            standard_context_processors = processors;
         }
     }
     return standard_context_processors;
@@ -100,7 +101,7 @@ function get_standard_processors() {
  * Additional processors can be specified as a list of callables using the "processors" keyword argument.
  */ 
 var RequestContext = type('RequestContext', [Context], {
-    __init__: function __init__(request, dict, processors) {
+    __init__: function(request, dict, processors) {
         super(Context, this).__init__(dict);
         if (!processors)
             processors = [];
@@ -112,6 +113,6 @@ var RequestContext = type('RequestContext', [Context], {
 });
 
 $P({ 
-    'Context': Context,
-    'RequestContext': RequestContext
+    Context: Context,
+    RequestContext: RequestContext
 });
