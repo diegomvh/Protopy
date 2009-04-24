@@ -5,10 +5,6 @@ if (!sys.browser.features.Gears) {
     window.location.href = 'http://gears.google.com/';
 }
 
-function connect(options) {
-    return new Connection(options);
-}
-
 var Connection = type('Connection', {
     '__init__': function __init__(options) {
         this.database = options['database'];
@@ -128,7 +124,7 @@ var Cursor = type('Cursor', {
 });
 
 $P({    
-    'connect': connect,
+    'connect': function(options) { return new Connection(options); },
     'Cursor': Cursor,
     'DatabaseError': type('DatabaseError'),
     'IntegrityError': type('IntegrityError')
