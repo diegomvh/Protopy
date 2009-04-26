@@ -10,4 +10,53 @@
 </head>
 <body>
     <div id="content" ></div>
+    <div class="panel">
+	logger
+    </div>
+    <div id="bar">
+	<ul>
+	    <li><a>status</a></li>
+	    <li><a>settings</a></li>
+	    <li><a>logger</a></li>
+	    <li><a>sql</a></li>
+	</ul>
+    </div>
+<style type="text/css">
+    div#bar {
+	background: white none repeat scroll 0 0;
+	border-top:1px solid #93B2CC;
+	border-left:1px solid #93B2CC;
+	font-weight:bold;
+	text-indent:15px;
+	position: fixed;
+	bottom: 0em;
+	margin: 0;
+	padding: 1px 0;
+	right: 0em;
+    }
+    div#bar li { 
+	border-right:1px solid black;
+	display:inline;
+	font-size:0.7em;
+	margin-right:1em;
+	padding-right:1em;
+    }
+    div#bar li:last-child { border-right: none }
+    
+    div.panel {	
+	background: white none repeat scroll 0 0;
+	border-top:1px solid #93B2CC;
+	border-left:1px solid #93B2CC;
+	font-weight:bold;
+	text-indent:15px;
+	position: fixed;
+	width:30em;
+	bottom: 0em;
+	margin: 0;
+	padding: 1px 0;
+	right: 0em;
+	height: 25em;
+	display: none;
+    }
+</style>
 </body>

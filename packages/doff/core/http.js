@@ -81,7 +81,7 @@ var HttpResponse = type('HttpResponse', {
 
     __init__: function __init__(where, content, status, content_type) {
 	content = content || '';
-	this.where = where || 'body';
+	this.where = where || '#content'; //'body'
         if (!content_type)
             content_type = "%s; charset=%s".subs('text/html', 'utf-8');
         if (!isinstance(content, String) && hasattr(content, '__iter__')) {
