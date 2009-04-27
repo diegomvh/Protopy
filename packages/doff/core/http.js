@@ -13,8 +13,8 @@ var HttpRequest = type ('HttpRequest', [ object ], {
 	this.COOKIES = {};
 	this.META = {};
 	this.FILES = {};
-        this.pathname = '';
-	this.hostname = window.location.hostname;
+        this.path = '';
+	this.host = window.location.hostname;
 	this.port = window.location.port;
 	this.protocol = window.location.protocol;
     },
@@ -24,14 +24,14 @@ var HttpRequest = type ('HttpRequest', [ object ], {
     },
 	
     get_host: function get_host(){
-	return '%s%s'.subs(this.hostname, (this.port) ? ':' + this.port : ''); 
+	return '%s%s'.subs(this.host, (this.port) ? ':' + this.port : ''); 
     },
 
     build_absolute_uri: function build_absolute_uri(location) {
         if (!location)
             location = this.get_full_path();
         if (!absolute_http_url_re.test(location)) {
-	    var current_uri = '%s//%s%s'.subs(this.protocol, this.get_host(), this.pathname);
+	    var current_uri = '%s//%s%s'.subs(this.protocol, this.get_host(), this.path);
             //TODO: algo para unir urls, quiza tocando un poco module_url
 	    location = current_uri + location;
 	}
@@ -47,7 +47,7 @@ var HttpRequest = type ('HttpRequest', [ object ], {
     },
     
     valid: function valid() {
-	return !!this.pathname;
+	return !!this.path;
     },
 
     set method(value) {

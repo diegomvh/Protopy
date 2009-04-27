@@ -1,6 +1,5 @@
 //******************************* PROTOPY CORE *************************************//
 (function() {
-    
     function __extend__(safe, destiny) {
 	for (var i = 2, length = arguments.length; i < length; i++) {
 	    var object = arguments[i];
@@ -26,18 +25,9 @@
 
     //Publish simbols in modules
     function __publish__(object) {
-        for (var k in object) {
-	    this[k] = object[k];
-        }
+        __extend__(false, this, object);
     }
 
-    //Add simbols to builtins
-    function __builtins__(object) {
-        //__extend__(false, builtin, object);
-        //__extend__(false, main__']['__builtins__'], object);
-        __extend__(false, window, object);
-    }
-    
     function __doc__(obj, doc) {
         if ( doc === undefined && type(obj) === String)
 	    this.__doc__ = obj;
@@ -136,7 +126,7 @@
 		ModuleManager.remove(mod);
 		throw e;
 	    }
-            mod = ModuleManager.clean(mod);
+            //mod = ModuleManager.clean(mod);
         }
         event.publish('onModuleLoaded', [this, mod]);
         switch (arguments.length) {
@@ -242,7 +232,7 @@
 
 	//Decorando los atributos
 	classAttrs['__name__'] = instanceAttrs['__name__'] = name;
-	classAttrs['__module__'] = instanceAttrs['__module__'] = this['__name__'];
+	classAttrs['__module__'] = instanceAttrs['__module__'] = this['__name__'] || 'window';
 
 	//Construyendo el tipo
         __extend__(true, new_type.__static__, classAttrs);
@@ -287,7 +277,7 @@
     }
     
     var sys = ModuleManager.create('sys', 'built-in', { 
-	'version': '0.05',
+	'version': '0.1',
 	'browser': {
 	    'IE':     !!(window.attachEvent && navigator.userAgent.indexOf('Opera') === -1),
 	    'Opera':  navigator.userAgent.indexOf('Opera') > -1,
@@ -1510,8 +1500,7 @@
     var builtin = ModuleManager.create('__builtin__','built-in', {
         '$P': __publish__,
         '$L': __load__,
-        '$B': __builtins__,
-	'$D': __doc__,
+        '$D': __doc__,
 	'$Q': query,
 	'object': object,
 	'type': type,
@@ -1520,16 +1509,6 @@
 	//'locals': function locals(){ return __modules__[this['__name__']]; },
 	//'globals': function globals(){ return __modules__['__main__']; }
     });
-    /******************** POPULATE **************************/
-    ModuleManager.add(sys);
-    ModuleManager.add(exception);
-    ModuleManager.add(event);
-    ModuleManager.add(timer);
-    ModuleManager.add(ajax);
-    ModuleManager.add(dom);
-    ModuleManager.add(builtin);
-    __builtins__(builtin);
-    __builtins__(exception);
 
     // ******************************* MORE BUILTINS ************************************* //
     function super(_type, _object) {
@@ -1612,7 +1591,7 @@
             return len(this.collect);
         },
 
-    '_populate': function _populate() {
+        '_populate': function _populate() {
             this._kwargs = {};
             var haskwargs = false;
             for (var p in this._defaults || {})
@@ -1762,384 +1741,6 @@
 	}
     }
 
-    //Populate builtins
-    $B({
-        'super': super,
-        'isinstance': isinstance,
-        'issubclass': issubclass,
-        'Arguments': Arguments,
-        'Template': Template,
-	'hash': hash,
-        'id': id,
-	'getattr': getattr,
-	'setattr': setattr,
-	'hasattr': hasattr,
-        'assert': function assert( test, text ) {
-            if ( test === false )
-                throw new AssertionError( text || 'An assertion failed!');
-            return test;
-        },
-        'bool': function bool(object) {
-            if (object && callable(object['__nonzero__']))
-                return object.__nonzero__();
-            if (object && type(object) == Array)
-                return object.length != 0;
-            if (object && type(object) == Object)
-                return keys(object).length != 0;
-            return Boolean(object);
-        },
-        'callable': function callable(object) {
-            return object && type(object) == Function;
-        },
-        'chr': function chr(number){ 
-	    if (type(number) != Number) throw new TypeError('An integer is required');
-	    return String.fromCharCode(number);
-        },
-        'ord': function ord(ascii) {
-            if (type(number) != String) throw new TypeError('An string is required');
-            return ascii.charCodeAt(0);
-        },
-        'bisect': function bisect(array, element) {
-            var i = 0;
-            for (var length = array.length; i < length; i++)
-                if (array[i].__cmp__(element) > 0) return i;
-            return i;
-        },
-        //no se porque no anda el dir
-        'equal': function equal(object1, object2) {
-            if (callable(object1['__eq__'])) return object1.__eq__(object2);
-            return object1 == object2;
-        },
-        'nequal': function nequal(object1, object2) {
-            if (callable(object1['__ne__'])) return object1.__ne__(object2);
-            return object1 != object2;
-        },
-        'filter': function filter(func, sequence) { 
-    
-        },
-        'float': function float(value) {
-            if (isinstance(value, String) || isinstance(value, Number)) {
-		var number = Number(value);
-		if (isNaN(number))
-		    throw new ValueError('Invalid literal');
-		return number;
-	    }
-	    throw new TypeError('Argument must be a string or number');
-        },
-        'flatten': function flatten(array) { 
-            return array.reduce(function(a,b) { return a.concat(b); }, []); 
-        },
-        'help': function help(module){
-            module = module || this;
-            print(module['__doc__']);
-        },
-        'include': function include(object, element){
-            if (object == undefined) return false;
-            if (callable(object['__contains__'])) return object.__contains__(element);
-            return object.indexOf(element) > -1;
-        },
-        'int': function int(value) {
-            if (isinstance(value, String) || isinstance(value, Number)) {
-		var number = Math.floor(value);
-		if (isNaN(number))
-		    throw new ValueError('Invalid literal');
-		return number;
-	    }
-	    throw new TypeError('Argument must be a string or number');
-        },
-        'len': function len(object) {
-            if (object && callable(object['__len__']))
-                return object.__len__();
-            if (object['length'] != undefined) 
-                return object.length;
-            if (object && type(object) == Object) 
-                return keys(object).length;
-            throw new TypeError("object of type '" + type(object) + "' has no len()");
-        },
-        'array': function array(iterable) {
-            if (!iterable) 
-                return [];
-            if (callable(iterable['__iterator__'])) 
-                return [e for each (e in iterable)];
-            if (iterable.length != undefined)
-                return Array.prototype.slice.call(iterable);
-        },
-        'mult': function mult(array, value) {
-            var result = [];
-            for (var i = 0; i < value; i++)
-                result = result.concat(array);
-            return result;
-        },
-        'print': window.console && window.console.log || function(){},
-        'range': function xrange(start, stop, step){
-            var rstep = step || 1;
-            var rstop = (stop == undefined)? start : stop;
-            var rstart = (stop == undefined)? 0 : start;
-            var ret = [];
-            for (var i = rstart; i < rstop; i += rstep)
-                ret.push(i);
-            return ret;
-        },
-        'str': function str(object) {
-            if (object && callable(object['__str__'])) 
-                return object.__str__();
-            return String(object);
-        },
-        'values': function values(obj){ 
-            return [e for each (e in obj)]
-        },
-        'keys': function keys(object){
-            return [e for (e in object)];
-        },
-	'items': function items(object){
-            return zip(keys(object), values(object));
-        },
-        'unique': function unique(sorted) {
-            return sorted.reduce(function(array, value) {
-                if (!include(array, value))
-                    array.push(value);
-                return array;
-                }, []);
-        },
-        'xrange': function xrange(start, stop, step){
-            var xstep = step || 1;
-            var xstop = (!stop)? start : stop;
-            var xstart = (!stop)? 0 : start;
-            for (var i = xstart; i < xstop; i += xstep)
-                yield i;
-        },
-        'zip': function zip(){
-            var args = array(arguments);
-    
-            var collections = args.map(array);
-            var array1 = collections.shift();
-            return array1.map( function(value, index) { 
-                return [value].concat(collections.map( function (v) {
-                    return v[index];
-                }));
-            });
-        }
-    });
-    
-    // WHERE
-    var scripts = dom.query('script');
-    for each (var script in scripts) {
-	if (script.src) {
-	    var m = script.src.match(new RegExp('^.*' + location.host + '/?(.*)/?protopy.js$', 'i'));
-	    if (m) 
-		ModuleManager.base = m[1];
-	}
-    }
-    //__paths__[''] = sys.base_url + '/packages/';
-})();
-
-// ******************************* EXTENDING JAVASCRIPT ************************************* //
-(function(){
-    //--------------------------------------- String -------------------------------------//
-    extend(String, {
-	'interpret': function interpret(value) {
-	    return value == null ? '' : String(value);
-	},
-	
-	specialChar: {
-	    '\b': '\\b',
-	    '\t': '\\t',
-	    '\n': '\\n',
-	    '\f': '\\f',
-	    '\r': '\\r',
-	    '\\': '\\\\'
-	}
-    });
-
-    extend(String.prototype, {
-	'gsub': function gsub(pattern, replacement) {
-	    var result = '', source = this, match;
-	    replacement = arguments.callee.prepare_replacement(replacement);
-
-	    while (source.length > 0) {
-		if (match = source.match(pattern)) {
-		    result += source.slice(0, match.index);
-		    result += String.interpret(replacement(match));
-		    source  = source.slice(match.index + match[0].length);
-		} else {
-		    result += source, source = '';
-		}
-	    }
-	    return result;
-	},
-
-	'sub': function sub(pattern, replacement, count) {
-	    replacement = this.gsub.prepare_replacement(replacement);
-	    count = (!count) ? 1 : count;
-
-	    return this.gsub(pattern, function(match) {
-		if (--count < 0) return match[0];
-		    return replacement(match);
-	    });
-	},
-
-	'scan': function scan(pattern, iterator) {
-	    this.gsub(pattern, iterator);
-	    return String(this);
-	},
-
-	//% operator like python
-	'subs': function subs() {
-	    var args = flatten(array(arguments));
-	    //%% escaped
-	    var string = this.gsub(/%%/, function(match){ return '<ESC%%>'; });
-	    if (args[0] && (type(args[0]) == Object || isinstance(args[0], object)))
-                string = new Template(string, args[1]).evaluate(args[0]);
-	    else
-                string = string.gsub(/%s/, function(match) { 
-                    return (args.length != 0)? str(args.shift()) : match[0]; 
-                });
-	    return string.gsub(/<ESC%%>/, function(match){ return '%'; });
-	},
-
-	'truncate': function truncate(length, truncation) {
-	    length = length || 30;
-	    truncation = (!truncation) ? '...' : truncation;
-	    return this.length > length ?
-	    this.slice(0, length - truncation.length) + truncation : String(this);
-	},
-
-	'strip': function strip() {
-	    return this.replace(/^\s+/, '').replace(/\s+$/, '');
-	},
-
-	'strip_tags': function strip_tags() {
-	    return this.replace(/<\/?[^>]+>/gi, '');
-	},
-
-	'strip_scripts': function strip_scripts() {
-	    return this.replace(new RegExp(sys.script_fragment, 'img'), '');
-	},
-
-	'extract_scripts': function extract_scripts() {
-	    var match_all = new RegExp(sys.script_fragment, 'img');
-	    var match_one = new RegExp(sys.script_fragment, 'im');
-	    return (this.match(match_all) || []).map(function(script_tag) {
-		return (script_tag.match(match_one) || ['', ''])[1];
-	    });
-	},
-
-	'eval_scripts': function eval_scripts() {
-	    return this.extract_scripts().map(function(script) { return eval(script) });
-	},
-
-	'escape_HTML': function escape_HTML() {
-	    var self = arguments.callee;
-	    self.text.data = this;
-	    return self.div.innerHTML;
-	},
-
-	'unescape_HTML': function unescape_HTML() {
-	    var div = new Element('div');
-	    div.innerHTML = this.stripTags();
-	    return div.childNodes[0] ? (div.childNodes.length > 1 ?
-	    array(div.childNodes).reduce(function(memo, node) { return memo + node.nodeValue }, '') :
-	    div.childNodes[0].nodeValue) : '';
-	},
-
-	'to_query_params': function to_query_params(separator) {
-	    var match = this.strip().match(/([^?#]*)(#.*)?$/);
-	    if (!match) return { };
-
-	    return match[1].split(separator || '&').reduce(function(hash, pair) {
-	    if ((pair = pair.split('='))[0]) {
-		var key = decodeURIComponent(pair.shift());
-		var value = pair.length > 1 ? pair.join('=') : pair[0];
-		if (value != undefined) value = decodeURIComponent(value);
-
-		if (key in hash) {
-		    if (type(hash[key]) != Array) hash[key] = [hash[key]];
-		    hash[key].push(value);
-		} else hash[key] = value;
-	    }
-	    return hash;
-	    }, {});
-	},
-
-	'succ': function succ() {
-	    return this.slice(0, this.length - 1) +
-	    String.fromCharCode(this.charCodeAt(this.length - 1) + 1);
-	},
-
-	'times': function times(count) {
-	    return count < 1 ? '' : new Array(count + 1).join(this);
-	},
-
-	'camelize': function camelize() {
-	    var parts = this.split('-'), len = parts.length;
-	    if (len == 1) return parts[0];
-
-	    var camelized = this.charAt(0) == '-'
-	    ? parts[0].charAt(0).toUpperCase() + parts[0].substring(1)
-	    : parts[0];
-
-	    for (var i = 1; i < len; i++)
-	    camelized += parts[i].charAt(0).toUpperCase() + parts[i].substring(1);
-
-	    return camelized;
-	},
-
-	'capitalize': function capitalize() {
-	    return this.charAt(0).toUpperCase() + this.substring(1).toLowerCase();
-	},
-
-	'underscore': function underscore() {
-	    return this.gsub(/::/, '/').gsub(/([A-Z]+)([A-Z][a-z])/,'#{1}_#{2}').gsub(/([a-z\d])([A-Z])/,'#{1}_#{2}').gsub(/-/,'_').toLowerCase();
-	},
-
-	'dasherize': function dasherize() {
-	    return this.gsub(/_/,'-');
-	},
-
-	'inspect': function inspect(useDoubleQuotes) {
-	    var escapedString = this.gsub(/[\x00-\x1f\\]/, function(match) {
-	    var character = String.specialChar[match[0]];
-	    return character ? character : '\\u00' + match[0].charCodeAt().toPaddedString(2, 16);
-	    });
-	    if (useDoubleQuotes) return '"' + escapedString.replace(/"/g, '\\"') + '"';
-	    return "'" + escapedString.replace(/'/g, '\\\'') + "'";
-	},
-
-	'startswith': function startswith(pattern) {
-	    return this.indexOf(pattern) === 0;
-	},
-
-	'endswith': function endswith(pattern) {
-	    var d = this.length - pattern.length;
-	    return d >= 0 && this.lastIndexOf(pattern) === d;
-	},
-
-	'blank': function blank() {
-	    return /^\s*$/.test(this);
-	}
-    });
-
-    String.prototype.gsub.prepare_replacement = function(replacement) {
-	if (callable(replacement)) 
-	    return replacement;
-	var template = new Template(replacement);
-	return function(match) { return template.evaluate(match) };
-    };
-
-    String.prototype.parse_query = String.prototype.to_query_params;
-
-    extend(String.prototype.escape_HTML, {
-	div:  document.createElement('div'),
-	text: document.createTextNode('')
-    });
-
-    String.prototype.escape_HTML.div.appendChild(String.prototype.escape_HTML.text);
-
-})();
-
-//--------------------------------------- More builtins -----------------------------------------//
-//More Data types
-(function(){
     var Dict = type('Dict', [ object ], {
         '__init__': function __init__(object) {
             this._value = {};
@@ -2398,12 +1999,390 @@
             this.elements = set.difference(this).elements;
         }
     });
+
+    //Populate builtins
+    __extend__(false, builtin, {
+        'super': super,
+        'isinstance': isinstance,
+        'issubclass': issubclass,
+        'Arguments': Arguments,
+        'Template': Template,
+        'Dict': Dict,
+        'Set': Set,
+	'hash': hash,
+        'id': id,
+	'getattr': getattr,
+	'setattr': setattr,
+	'hasattr': hasattr,
+        'assert': function assert( test, text ) {
+            if ( test === false )
+                throw new AssertionError( text || 'An assertion failed!');
+            return test;
+        },
+        'bool': function bool(object) {
+            if (object && callable(object['__nonzero__']))
+                return object.__nonzero__();
+            if (object && type(object) == Array)
+                return object.length != 0;
+            if (object && type(object) == Object)
+                return keys(object).length != 0;
+            return Boolean(object);
+        },
+        'callable': function callable(object) {
+            return object && type(object) == Function;
+        },
+        'chr': function chr(number){ 
+	    if (type(number) != Number) throw new TypeError('An integer is required');
+	    return String.fromCharCode(number);
+        },
+        'ord': function ord(ascii) {
+            if (type(number) != String) throw new TypeError('An string is required');
+            return ascii.charCodeAt(0);
+        },
+        'bisect': function bisect(array, element) {
+            var i = 0;
+            for (var length = array.length; i < length; i++)
+                if (array[i].__cmp__(element) > 0) return i;
+            return i;
+        },
+        //no se porque no anda el dir
+        'equal': function equal(object1, object2) {
+            if (callable(object1['__eq__'])) return object1.__eq__(object2);
+            return object1 == object2;
+        },
+        'nequal': function nequal(object1, object2) {
+            if (callable(object1['__ne__'])) return object1.__ne__(object2);
+            return object1 != object2;
+        },
+        'filter': function filter(func, sequence) { 
     
-    $B({'Dict': Dict, 'Set': Set});
+        },
+        'float': function float(value) {
+            if (isinstance(value, String) || isinstance(value, Number)) {
+		var number = Number(value);
+		if (isNaN(number))
+		    throw new ValueError('Invalid literal');
+		return number;
+	    }
+	    throw new TypeError('Argument must be a string or number');
+        },
+        'flatten': function flatten(array) { 
+            return array.reduce(function(a,b) { return a.concat(b); }, []); 
+        },
+        'help': function help(module){
+            module = module || this;
+            print(module['__doc__']);
+        },
+        'include': function include(object, element){
+            if (object == undefined) return false;
+            if (callable(object['__contains__'])) return object.__contains__(element);
+            return object.indexOf(element) > -1;
+        },
+        'int': function int(value) {
+            if (isinstance(value, String) || isinstance(value, Number)) {
+		var number = Math.floor(value);
+		if (isNaN(number))
+		    throw new ValueError('Invalid literal');
+		return number;
+	    }
+	    throw new TypeError('Argument must be a string or number');
+        },
+        'len': function len(object) {
+            if (object && callable(object['__len__']))
+                return object.__len__();
+            if (object['length'] != undefined) 
+                return object.length;
+            if (object && type(object) == Object) 
+                return keys(object).length;
+            throw new TypeError("object of type '" + type(object) + "' has no len()");
+        },
+        'array': function array(iterable) {
+            if (!iterable) 
+                return [];
+            if (callable(iterable['__iterator__'])) 
+                return [e for each (e in iterable)];
+            if (iterable.length != undefined)
+                return Array.prototype.slice.call(iterable);
+        },
+        'mult': function mult(array, value) {
+            var result = [];
+            for (var i = 0; i < value; i++)
+                result = result.concat(array);
+            return result;
+        },
+        'print': window.console && window.console.log || function(){},
+        'range': function xrange(start, stop, step){
+            var rstep = step || 1;
+            var rstop = (stop == undefined)? start : stop;
+            var rstart = (stop == undefined)? 0 : start;
+            var ret = [];
+            for (var i = rstart; i < rstop; i += rstep)
+                ret.push(i);
+            return ret;
+        },
+        'str': function str(object) {
+            if (object && callable(object['__str__'])) 
+                return object.__str__();
+            return String(object);
+        },
+        'values': function values(obj){ 
+            return [e for each (e in obj)]
+        },
+        'keys': function keys(object){
+            return [e for (e in object)];
+        },
+	'items': function items(object){
+            return zip(keys(object), values(object));
+        },
+        'unique': function unique(sorted) {
+            return sorted.reduce(function(array, value) {
+                if (!include(array, value))
+                    array.push(value);
+                return array;
+                }, []);
+        },
+        'xrange': function xrange(start, stop, step){
+            var xstep = step || 1;
+            var xstop = (!stop)? start : stop;
+            var xstart = (!stop)? 0 : start;
+            for (var i = xstart; i < xstop; i += xstep)
+                yield i;
+        },
+        'zip': function zip(){
+            var args = array(arguments);
     
-    // These are some simple yet useful aliases, there are most likely to be
-    // used with DOM and Peppy boilerplate code
-    $B({'$f': function (a){return a[0]}, // first item
-        '$l': function (a){return a[a.length -1]} // last item
+            var collections = args.map(array);
+            var array1 = collections.shift();
+            return array1.map( function(value, index) { 
+                return [value].concat(collections.map( function (v) {
+                    return v[index];
+                }));
+            });
+        }
     });
+
+    /******************** POPULATE **************************/
+    ModuleManager.add(sys);
+    ModuleManager.add(exception);
+    ModuleManager.add(event);
+    ModuleManager.add(timer);
+    ModuleManager.add(ajax);
+    ModuleManager.add(dom);
+    ModuleManager.add(builtin);
+    __publish__(builtin);
+    __publish__(exception);
+
+    // WHERE
+    var scripts = dom.query('script');
+    for each (var script in scripts) {
+	if (script.src) {
+	    var m = script.src.match(new RegExp('^.*' + location.host + '/?(.*)/?protopy.js$', 'i'));
+	    if (m) 
+		ModuleManager.base = m[1];
+	}
+    }
+})();
+
+// ******************************* EXTENDING JAVASCRIPT ************************************* //
+(function(){
+    //--------------------------------------- String -------------------------------------//
+    extend(String, {
+	'interpret': function interpret(value) {
+	    return value == null ? '' : String(value);
+	},
+	
+	specialChar: {
+	    '\b': '\\b',
+	    '\t': '\\t',
+	    '\n': '\\n',
+	    '\f': '\\f',
+	    '\r': '\\r',
+	    '\\': '\\\\'
+	}
+    });
+
+    extend(String.prototype, {
+	'gsub': function gsub(pattern, replacement) {
+	    var result = '', source = this, match;
+	    replacement = arguments.callee.prepare_replacement(replacement);
+
+	    while (source.length > 0) {
+		if (match = source.match(pattern)) {
+		    result += source.slice(0, match.index);
+		    result += String.interpret(replacement(match));
+		    source  = source.slice(match.index + match[0].length);
+		} else {
+		    result += source, source = '';
+		}
+	    }
+	    return result;
+	},
+
+	'sub': function sub(pattern, replacement, count) {
+	    replacement = this.gsub.prepare_replacement(replacement);
+	    count = (!count) ? 1 : count;
+
+	    return this.gsub(pattern, function(match) {
+		if (--count < 0) return match[0];
+		    return replacement(match);
+	    });
+	},
+
+	'scan': function scan(pattern, iterator) {
+	    this.gsub(pattern, iterator);
+	    return String(this);
+	},
+
+	//% operator like python
+	'subs': function subs() {
+	    var args = flatten(array(arguments));
+	    //%% escaped
+	    var string = this.gsub(/%%/, function(match){ return '<ESC%%>'; });
+	    if (args[0] && (type(args[0]) == Object || isinstance(args[0], object)))
+                string = new Template(string, args[1]).evaluate(args[0]);
+	    else
+                string = string.gsub(/%s/, function(match) { 
+                    return (args.length != 0)? str(args.shift()) : match[0]; 
+                });
+	    return string.gsub(/<ESC%%>/, function(match){ return '%'; });
+	},
+
+	'truncate': function truncate(length, truncation) {
+	    length = length || 30;
+	    truncation = (!truncation) ? '...' : truncation;
+	    return this.length > length ?
+	    this.slice(0, length - truncation.length) + truncation : String(this);
+	},
+
+	'strip': function strip() {
+	    return this.replace(/^\s+/, '').replace(/\s+$/, '');
+	},
+
+	'strip_tags': function strip_tags() {
+	    return this.replace(/<\/?[^>]+>/gi, '');
+	},
+
+	'strip_scripts': function strip_scripts() {
+	    return this.replace(new RegExp(sys.script_fragment, 'img'), '');
+	},
+
+	'extract_scripts': function extract_scripts() {
+	    var match_all = new RegExp(sys.script_fragment, 'img');
+	    var match_one = new RegExp(sys.script_fragment, 'im');
+	    return (this.match(match_all) || []).map(function(script_tag) {
+		return (script_tag.match(match_one) || ['', ''])[1];
+	    });
+	},
+
+	'eval_scripts': function eval_scripts() {
+	    return this.extract_scripts().map(function(script) { return eval(script) });
+	},
+
+	'escape_HTML': function escape_HTML() {
+	    var self = arguments.callee;
+	    self.text.data = this;
+	    return self.div.innerHTML;
+	},
+
+	'unescape_HTML': function unescape_HTML() {
+	    var div = new Element('div');
+	    div.innerHTML = this.stripTags();
+	    return div.childNodes[0] ? (div.childNodes.length > 1 ?
+	    array(div.childNodes).reduce(function(memo, node) { return memo + node.nodeValue }, '') :
+	    div.childNodes[0].nodeValue) : '';
+	},
+
+	'to_query_params': function to_query_params(separator) {
+	    var match = this.strip().match(/([^?#]*)(#.*)?$/);
+	    if (!match) return { };
+
+	    return match[1].split(separator || '&').reduce(function(hash, pair) {
+	    if ((pair = pair.split('='))[0]) {
+		var key = decodeURIComponent(pair.shift());
+		var value = pair.length > 1 ? pair.join('=') : pair[0];
+		if (value != undefined) value = decodeURIComponent(value);
+
+		if (key in hash) {
+		    if (type(hash[key]) != Array) hash[key] = [hash[key]];
+		    hash[key].push(value);
+		} else hash[key] = value;
+	    }
+	    return hash;
+	    }, {});
+	},
+
+	'succ': function succ() {
+	    return this.slice(0, this.length - 1) +
+	    String.fromCharCode(this.charCodeAt(this.length - 1) + 1);
+	},
+
+	'times': function times(count) {
+	    return count < 1 ? '' : new Array(count + 1).join(this);
+	},
+
+	'camelize': function camelize() {
+	    var parts = this.split('-'), len = parts.length;
+	    if (len == 1) return parts[0];
+
+	    var camelized = this.charAt(0) == '-'
+	    ? parts[0].charAt(0).toUpperCase() + parts[0].substring(1)
+	    : parts[0];
+
+	    for (var i = 1; i < len; i++)
+	    camelized += parts[i].charAt(0).toUpperCase() + parts[i].substring(1);
+
+	    return camelized;
+	},
+
+	'capitalize': function capitalize() {
+	    return this.charAt(0).toUpperCase() + this.substring(1).toLowerCase();
+	},
+
+	'underscore': function underscore() {
+	    return this.gsub(/::/, '/').gsub(/([A-Z]+)([A-Z][a-z])/,'#{1}_#{2}').gsub(/([a-z\d])([A-Z])/,'#{1}_#{2}').gsub(/-/,'_').toLowerCase();
+	},
+
+	'dasherize': function dasherize() {
+	    return this.gsub(/_/,'-');
+	},
+
+	'inspect': function inspect(useDoubleQuotes) {
+	    var escapedString = this.gsub(/[\x00-\x1f\\]/, function(match) {
+	    var character = String.specialChar[match[0]];
+	    return character ? character : '\\u00' + match[0].charCodeAt().toPaddedString(2, 16);
+	    });
+	    if (useDoubleQuotes) return '"' + escapedString.replace(/"/g, '\\"') + '"';
+	    return "'" + escapedString.replace(/'/g, '\\\'') + "'";
+	},
+
+	'startswith': function startswith(pattern) {
+	    return this.indexOf(pattern) === 0;
+	},
+
+	'endswith': function endswith(pattern) {
+	    var d = this.length - pattern.length;
+	    return d >= 0 && this.lastIndexOf(pattern) === d;
+	},
+
+	'blank': function blank() {
+	    return /^\s*$/.test(this);
+	}
+    });
+
+    String.prototype.gsub.prepare_replacement = function(replacement) {
+	if (callable(replacement)) 
+	    return replacement;
+	var template = new Template(replacement);
+	return function(match) { return template.evaluate(match) };
+    };
+
+    String.prototype.parse_query = String.prototype.to_query_params;
+
+    extend(String.prototype.escape_HTML, {
+	div:  document.createElement('div'),
+	text: document.createTextNode('')
+    });
+
+    String.prototype.escape_HTML.div.appendChild(String.prototype.escape_HTML.text);
+
 })();

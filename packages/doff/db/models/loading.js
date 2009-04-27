@@ -144,7 +144,7 @@ var AppCache = type('AppCache', {
         * Register a set of models as belonging to an app.
         */
     'register_models': function register_models(app_label, models) {
-        var models = (type(models) == Array)?models:[models];
+        var models = (type(models) == Array)? models : [models];
         for each (var model in models) {
             // Store as 'name: model' pair in a dictionary
             // in the app_models dictionary

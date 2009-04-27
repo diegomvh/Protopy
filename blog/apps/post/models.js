@@ -20,6 +20,7 @@ var Post = type('Post', models.Model, {
     }
 });
 
-$P({    'Tag': Tag,
-        'Post': Post
+$P({    
+    Tag: Tag,
+    Post: Post
 });

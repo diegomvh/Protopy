@@ -4,28 +4,59 @@ $L('doff.core.exceptions');
 $L('doff.core.urlresolvers');
 $L('doff.core.http');
 
-var elements = {
-    'DEFAULT': function DEFAULT(request, obj) {
-	if (type(obj) == String) {
-	    //TODO: trabajar la cadena para tratar mas casos, ej, http://www.google.com, https://algo.com/ruta/recurso.js
-	    request.pathname = obj;
-	    request.method = 'get';
-	}
-	return request;
+/*
+ * parseUri 1.2.1
+ * (c) 2007 Steven Levithan <stevenlevithan.com>
+ * MIT License
+ */
+function parseUri (str) {
+    var	o   = parseUri.options,
+        m   = o.parser[o.strictMode ? "strict" : "loose"].exec(str),
+        uri = {},
+        i   = 14;
+
+    while (i--) 
+        uri[o.key[i]] = m[i] || "";
+
+    uri[o.q.name] = {};
+    uri[o.key[12]].replace(o.q.parser, function ($0, $1, $2) {
+        if ($1) 
+            uri[o.q.name][$1] = $2;
+    });
+    return uri;
+};
+
+parseUri.options = {
+    strictMode: false,
+    key: ["source","protocol","authority","userInfo","user","password","host","port","relative","path","directory","file","query","anchor"],
+    q: {
+        name:   "queryKey",
+        parser: /(?:^|&)([^&=]*)=?([^&]*)/g
     },
+    parser: {
+        strict: /^(?:([^:\/?#]+):)?(?:\/\/((?:(([^:@]*):?([^:@]*))?@)?([^:\/?#]*)(?::(\d*))?))?((((?:[^?#\/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/,
+        loose:  /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*):?([^:@]*))?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/
+    }
+};
+
+
+function string_url(request, str) {
+    extend(request, parseUri(str));
+    return request;
+}
+
+var html_elements = {
     'form': function form(request, element) {
 	//TODO: manejar merjor el acciont para ver para donde salen disparados, por si se van del dominio.
 	var f = $Q(element);
-	request.method = f.method;
-	request.pathname = element.action.slice(len(request.build_absolute_uri()));
+	string_url(request, f.action);
+        request.method = f.method;
 	request[f.method] = f.serialize();
 	return request;
     },
 
     'a': function a(request, element) {
-	request.pathname = element.pathname;
-	request.hostname = element.hostname;
-	request.protocol = element.protocol;
+        string_url(request, element.href);
 	request.method = 'get';
 	return request;
     },
@@ -34,14 +65,15 @@ var elements = {
 var Handler = type('Handler', [ object ], {
     handle: function handle(element) {
 	var request = new http.HttpRequest();
+        //TODO: vero como determinar si es un elemento del html creo que es algo con el tipo de nodo debe ser 2
 	if (element.tagName) {
 	    var name = element.tagName.toLowerCase();
-	    if (callable(elements[name]))
-		request = elements[name](request, element);
+	    if (callable(html_elements[name]))
+		request = html_elements[name](request, element);
 	    else 
 		throw new NotImplementedError('%s not implemented'.subs(name));
 	} else {
-	    request = elements['DEFAULT'](request, element);
+	    request = string_url(request, element);
 	}
 	if (request.valid())
 	    this.execute(request);
@@ -49,13 +81,12 @@ var Handler = type('Handler', [ object ], {
     },
 
     __init__: function(urlconf) {
-        //TODO: pasar la url
         this._resolver = new urlresolvers.RegexURLResolver('^/', urlconf);
     },
 
     get_response: function(request){
         try {
-            var [callback, callback_args, callback_kwargs] = this._resolver.resolve(request.pathname);
+            var [callback, callback_args, callback_kwargs] = this._resolver.resolve(request.path);
             try {
 		var args = [request];
 		args = args.concat(callback_args);

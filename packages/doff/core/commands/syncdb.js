@@ -1,10 +1,10 @@
 $D("doff.core.management.commands.syncdb");
+$L('doff.db.*', 'connection');
+$L('doff.db.models.*');
+$L('doff.db.transaction');
+$L('doff.core.project', 'get_settings');
 
 function execute() {
-    $L('doff.db.*', 'connection');
-    $L('doff.db.models.*');
-    $L('doff.db.transaction');
-    $L('doff.core.project', 'get_settings');
     var settings = get_settings();
     /* No creo que sea necesario
     for each (var app_name in settings.INSTALLED_APPS) {
@@ -120,4 +120,4 @@ function execute() {
     //call_command('loaddata', 'initial_data', verbosity=verbosity)
 }
 
-$P({ 'execute': execute });        
+$P({ 'execute': execute });
