@@ -1,11 +1,11 @@
 /* 'doff.db.backends.gears.base' */
 
-$L('gears.database');
-$L('doff.db.backends.util');
-$L('doff.db.backends.base', 'BaseDatabaseFeatures', 'BaseDatabaseOperations', 'BaseDatabaseWrapper', 'BaseDatabaseValidation');
-$L('doff.db.backends.gears.creation', 'DatabaseCreation');
-$L('doff.db.backends.gears.introspection', 'DatabaseIntrospection');
-$L('logging.base');
+require('gears.database');
+require('doff.db.backends.util');
+require('doff.db.backends.base', 'BaseDatabaseFeatures', 'BaseDatabaseOperations', 'BaseDatabaseWrapper', 'BaseDatabaseValidation');
+require('doff.db.backends.gears.creation', 'DatabaseCreation');
+require('doff.db.backends.gears.introspection', 'DatabaseIntrospection');
+var logging = require('logging.base');
 
 var logger = logging.get_logger(__name__);
 var DatabaseError = database.DatabaseError;
@@ -78,7 +78,7 @@ var DatabaseWrapper = type('DatabaseWrapper', BaseDatabaseWrapper, {
     '_cursor': function _cursor(settings) {
         if (this.connection == null) {
             if (!bool(settings.DATABASE_NAME)) {
-                $L('doff.core.exceptions', 'ImproperlyConfigured');
+                require('doff.core.exceptions', 'ImproperlyConfigured');
                 throw new ImproperlyConfigured("Please fill out DATABASE_NAME in the settings module before using the database.");
             }
             var args = {

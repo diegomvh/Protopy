@@ -1,9 +1,9 @@
 /* 'doff.db.models.sql.where' */
-$L('doff.utils.tree', 'Node');
-$L('doff.db.models.fields.base', 'Field');
-$L('doff.db.base', 'connection');
-$L('doff.db.models.sql.datastructures', 'EmptyResultSet', 'FullResultSet');
-$L('doff.db.models.query_utils', 'QueryWrapper');
+require('doff.utils.tree', 'Node');
+require('doff.db.models.fields.base', 'Field');
+require('doff.db.base', 'connection');
+require('doff.db.models.sql.datastructures', 'EmptyResultSet', 'FullResultSet');
+require('doff.db.models.query_utils', 'QueryWrapper');
         
 var AND = 'AND',
     OR = 'OR';

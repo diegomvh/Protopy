@@ -1,4 +1,4 @@
-$L('doff.db.models.*');
+var models = require('doff.db.models.base');
 
 var Tag = type('Tag', models.Model, {
     slug: new models.SlugField('Slug', {'help_text':'Automatically built from the title.', 'primary_key':true, 'editable': false}),
@@ -20,7 +20,7 @@ var Post = type('Post', models.Model, {
     }
 });
 
-$P({    
+publish({    
     Tag: Tag,
     Post: Post
 });

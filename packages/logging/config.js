@@ -1,6 +1,6 @@
 require('ajax');
 require('event');
-require('logging.base');
+var logging = require('logging.base');
 require('logging.handlers');
 
 var hmc = null;

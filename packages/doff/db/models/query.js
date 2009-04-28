@@ -1,12 +1,12 @@
 /* 'doff.db.models.query' */
-$L('doff.db', 'connection', 'IntegrityError');
-$L('doff.db.models.fields.base', 'DateField');
-$L('doff.db.models.query_utils', 'Q', 'select_related_descend');
-$L('doff.utils.datastructures', 'SortedDict');
-$L('doff.db.models.sql.base');
-$L('doff.db.transaction');
-$L('copy', 'copy');
-$L('event');
+require('doff.db.base', 'connection', 'IntegrityError');
+require('doff.db.models.fields.base', 'DateField');
+require('doff.db.models.query_utils', 'Q', 'select_related_descend');
+require('doff.utils.datastructures', 'SortedDict');
+var sql = require('doff.db.models.sql.base');
+require('doff.db.transaction');
+require('copy', 'copy');
+require('event');
 
 var CHUNK_SIZE = 100;
 var ITER_CHUNK_SIZE = CHUNK_SIZE;

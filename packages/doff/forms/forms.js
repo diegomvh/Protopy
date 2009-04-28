@@ -1,9 +1,9 @@
 /* 'Form classes' */
-$L('copy', 'deepcopy');
-$L('doff.utils.datastructures', 'SortedDict');
-$L('doff.forms.fields', 'Field', 'FileField');
-$L('doff.forms.widgets', 'Media', 'media_property', 'TextInput', 'Textarea');
-$L('doff.forms.util', 'flatatt', 'ErrorDict', 'ErrorList', 'ValidationError');
+require('copy', 'deepcopy');
+require('doff.utils.datastructures', 'SortedDict');
+require('doff.forms.fields', 'Field', 'FileField');
+require('doff.forms.widgets', 'Media', 'media_property', 'TextInput', 'Textarea');
+require('doff.forms.util', 'flatatt', 'ErrorDict', 'ErrorList', 'ValidationError');
 
 //from django.utils.html import conditional_escape
 function conditional_escape(v) { return v; }
@@ -431,6 +431,6 @@ var BoundField = type('BoundField', {
     }
 });
 
-$P({    'BaseForm': BaseForm,
+publish({    'BaseForm': BaseForm,
         'get_declared_fields': get_declared_fields,
         'Form': Form });

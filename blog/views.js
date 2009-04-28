@@ -1,10 +1,10 @@
-$L('blog.apps.post.models', 'Post', 'Tag');
-$L('doff.template.context', 'RequestContext');
-$L('doff.template.loader');
-$L('doff.core.http', 'HttpResponse', 'HttpResponseRedirect');
+require('blog.apps.post.models', 'Post', 'Tag');
+require('doff.template.context', 'RequestContext');
+require('doff.template.loader');
+require('doff.core.http', 'HttpResponse', 'HttpResponseRedirect');
 
 function index(request) {
-    $L('doff.db', 'connection');
+    require('doff.db.base', 'connection');
     var response = new HttpResponse();
     if (!bool(connection.introspection.table_names())) {
         var t = loader.get_template('index.html');
@@ -17,19 +17,19 @@ function index(request) {
 }
 
 function syncdb(request) {
-    var s = $L('doff.core.commands.syncdb');
+    var s = require('doff.core.commands.syncdb');
     s.execute();
     return new HttpResponseRedirect('/');
 }
 
 function removedb(request) {
-    var s = $L('doff.core.commands.removedb');
+    var s = require('doff.core.commands.removedb');
     s.execute();
     return new HttpResponseRedirect('/');
 }
 
-$P({ 
-        'index': index,
-        'syncdb': syncdb,
-        'removedb': removedb
+publish({ 
+    index: index,
+    syncdb: syncdb,
+    removedb: removedb
 });

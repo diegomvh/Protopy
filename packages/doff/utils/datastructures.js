@@ -1,5 +1,5 @@
 /* 'doff.utils.datastructures' */
-$L('copy', 'copy', 'deepcopy');
+require('copy', 'copy', 'deepcopy');
 
 var SortedDict = type('SortedDict', Dict, {
     '__init__': function __init__(object) {
@@ -49,4 +49,6 @@ var SortedDict = type('SortedDict', Dict, {
     }
 });
 
-$P({ 'SortedDict': SortedDict });
+publish({ 
+    SortedDict: SortedDict 
+});

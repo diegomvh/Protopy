@@ -1,5 +1,5 @@
-$L('doff.forms.util', 'ValidationError');
-$L('doff.forms.widgets', '*');
-$L('doff.forms.fields', '*');
-$L('doff.forms.forms', '*');
-$L('doff.forms.models', '*');
+require('doff.forms.util', 'ValidationError');
+require('doff.forms.widgets', '*');
+require('doff.forms.fields', '*');
+require('doff.forms.forms', '*');
+require('doff.forms.models', '*');

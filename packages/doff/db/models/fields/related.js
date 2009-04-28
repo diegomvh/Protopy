@@ -1,15 +1,15 @@
 /* "doff.db.models.fields.related" */
-$L('doff.db.base', 'connection');
-$L('doff.db.models.loading', 'get_model');
-$L('doff.db.models.fields.base', 'AutoField', 'Field', 'IntegerField', 'PositiveIntegerField', 'PositiveSmallIntegerField', 'FieldDoesNotExist');
-$L('doff.db.models.related', 'RelatedObject');
-$L('doff.db.models.query', 'QuerySet');
-$L('doff.db.models.query_utils', 'QueryWrapper');
-$L('doff.forms.base');
-$L('doff.core.exceptions', 'ValidationError');
-$L('doff.db.transaction');
-$L('functional', 'curry');
-$L('event');
+require('doff.db.base', 'connection');
+require('doff.db.models.loading', 'get_model');
+require('doff.db.models.fields.base', 'AutoField', 'Field', 'IntegerField', 'PositiveIntegerField', 'PositiveSmallIntegerField', 'FieldDoesNotExist');
+require('doff.db.models.related', 'RelatedObject');
+require('doff.db.models.query', 'QuerySet');
+require('doff.db.models.query_utils', 'QueryWrapper');
+require('doff.forms.base');
+require('doff.core.exceptions', 'ValidationError');
+require('doff.db.transaction');
+require('functional', 'curry');
+require('event');
 
 var RECURSIVE_RELATIONSHIP_CONSTANT = 'this';
 var pending_lookups = {};

@@ -1,5 +1,5 @@
 /* 'A class for storing a tree graph. Primarily used for filter constructs in the ORM.' */
-$L('copy', 'deepcopy')
+require('copy', 'deepcopy')
 
 var Node = type('Node', [ object ], {
     default_connector: "DEFAULT",

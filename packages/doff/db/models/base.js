@@ -1,13 +1,13 @@
-$L('doff.core.exceptions', 'ObjectDoesNotExist', 'ImproperlyConfigured');
-$L('doff.db.base', 'connection');
-$L('doff.db.models.loading', 'get_apps', 'get_app', 'get_models', 'get_model', 'register_models');
-$L('doff.db.models.query', 'Q');
-$L('doff.db.models.manager', 'Manager');
-$L('doff.db.models.model', 'Model');
-$L('doff.db.models.fields.base', '*');
-//var SubfieldBase = $L('doff.db.models.fields.subclassing', ['SubfieldBase']);
-//var [FileField, ImageField] = $L('doff.db.models.fields.files', ['FileField', 'ImageField']);
-$L('doff.db.models.fields.related', '*');
+require('doff.core.exceptions', 'ObjectDoesNotExist', 'ImproperlyConfigured');
+require('doff.db.base', 'connection');
+require('doff.db.models.loading', 'get_apps', 'get_app', 'get_models', 'get_model', 'register_models');
+require('doff.db.models.query', 'Q');
+require('doff.db.models.manager', 'Manager');
+require('doff.db.models.model', 'Model');
+require('doff.db.models.fields.base', '*');
+//var SubfieldBase = require('doff.db.models.fields.subclassing', ['SubfieldBase']);
+//var [FileField, ImageField] = require('doff.db.models.fields.files', ['FileField', 'ImageField']);
+require('doff.db.models.fields.related', '*');
 
 publish({    'ObjectDoesNotExist': ObjectDoesNotExist,
         'ImproperlyConfigured': ImproperlyConfigured,

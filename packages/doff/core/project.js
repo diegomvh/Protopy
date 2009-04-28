@@ -1,9 +1,9 @@
-$L('sys');
-$L('event');
-$L('ajax');
-$L('doff.core.urlhandler', 'Handler');
-$L('logging.config', 'file_config');
-$L('gears.localserver', 'ManagedResourceStore');
+require('sys');
+require('event');
+require('ajax');
+require('doff.core.urlhandler', 'Handler');
+require('logging.config', 'file_config');
+require('gears.localserver', 'ManagedResourceStore');
 
 var Project = type('Project', [object], {
     settings: null,
@@ -55,7 +55,7 @@ var Project = type('Project', [object], {
 
     read_settings: function read_settings() {
 	var self = this;
-	var global_settings = $L('doff.conf.settings');
+	var global_settings = require('doff.conf.settings');
 	var url_settings = sys.module_url(this.package, 'settings.js');
 	new ajax.Request(url_settings, {
             method: 'GET',

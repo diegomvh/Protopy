@@ -1,5 +1,5 @@
-$L('doff.utils.tree', 'Node');
-$L('copy', 'copy', 'deepcopy');
+require('doff.utils.tree', 'Node');
+require('copy', 'copy', 'deepcopy');
 
 var QueryWrapper = type('QueryWrapper', {
     '__init__': function __init__(sql, params){

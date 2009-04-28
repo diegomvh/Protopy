@@ -17,7 +17,7 @@ var BaseDatabaseCreation = type('BaseDatabaseCreation', {
         */
     'sql_create_model': function sql_create_model(model, kms){
 
-        var IntegerField = $L('doff.db.models.fields', 'IntegerField');
+        var IntegerField = require('doff.db.models.fields', 'IntegerField');
         var known_models = (bool(kms))?kms : new Set();
 
         var opts = model._meta,
@@ -130,7 +130,7 @@ var BaseDatabaseCreation = type('BaseDatabaseCreation', {
         */
     'sql_for_many_to_many_field': function sql_for_many_to_many_field(model, f){
 
-        var AutoField = $L('doff.db.models.fields', 'AutoField');
+        var AutoField = require('doff.db.models.fields', 'AutoField');
 
         var output = [];
         if (f.creates_table) {
@@ -176,7 +176,7 @@ var BaseDatabaseCreation = type('BaseDatabaseCreation', {
         */
     'sql_for_inline_many_to_many_references': function sql_for_inline_many_to_many_references(model, field){
 
-        $L('doff.db.models.fields.related', 'ForeignKey');
+        require('doff.db.models.fields.related', 'ForeignKey');
 
         var opts = model._meta,
             qn = this.connection.ops.quote_name;

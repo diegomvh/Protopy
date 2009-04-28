@@ -1,8 +1,8 @@
 /* 'doff.forms.fields, Field classes.' */
 
-$L('copy');
-$L('doff.forms.util', 'ErrorList', 'ValidationError');
-$L('doff.forms.widgets', 'Widget', 'TextInput', 'PasswordInput', 'HiddenInput', 'MultipleHiddenInput', 'FileInput', 'CheckboxInput', 'Select', 'NullBooleanSelect', 'SelectMultiple', 'DateTimeInput', 'TimeInput', 'SplitDateTimeWidget', 'SplitHiddenDateTimeWidget');
+require('copy');
+require('doff.forms.util', 'ErrorList', 'ValidationError');
+require('doff.forms.widgets', 'Widget', 'TextInput', 'PasswordInput', 'HiddenInput', 'MultipleHiddenInput', 'FileInput', 'CheckboxInput', 'Select', 'NullBooleanSelect', 'SelectMultiple', 'DateTimeInput', 'TimeInput', 'SplitDateTimeWidget', 'SplitHiddenDateTimeWidget');
 
 /*import os
 import re
@@ -850,7 +850,7 @@ var SlugField = type('SlugField', RegexField, {
     }
 });
 
-$P({    'Field': Field,
+publish({    'Field': Field,
         'CharField': CharField,
         'IntegerField': IntegerField,
         'DEFAULT_DATE_INPUT_FORMATS': DEFAULT_DATE_INPUT_FORMATS,

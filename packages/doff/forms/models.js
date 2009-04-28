@@ -1,10 +1,10 @@
 /* 'Helper functions for creating Form classes from Django models and database field objects.' */
 
-$L('doff.utils.datastructures', 'SortedDict');
-$L('doff.forms.util', 'ValidationError', 'ErrorList');
-$L('doff.forms.forms', 'BaseForm', 'get_declared_fields');
-$L('doff.forms.fields', 'Field', 'ChoiceField', 'IntegerField', 'EMPTY_VALUES');
-$L('doff.forms.widgets', 'Select', 'SelectMultiple', 'HiddenInput', 'MultipleHiddenInput', 'media_property');
+require('doff.utils.datastructures', 'SortedDict');
+require('doff.forms.util', 'ValidationError', 'ErrorList');
+require('doff.forms.forms', 'BaseForm', 'get_declared_fields');
+require('doff.forms.fields', 'Field', 'ChoiceField', 'IntegerField', 'EMPTY_VALUES');
+require('doff.forms.widgets', 'Select', 'SelectMultiple', 'HiddenInput', 'MultipleHiddenInput', 'media_property');
 
 /*
 from django.utils.encoding import smart_unicode, force_unicode
@@ -20,7 +20,7 @@ from formsets import BaseFormSet, formset_factory, DELETION_FIELD_NAME
 function save_instance(form, instance) { 
     arguments = new Arguments(arguments, {'fields':null, 'fail_message':'saved', 'commit':true, 'exclude':null});
     var kwargs = arguments.kwargs;
-    $L('doff.db.models');
+    require('doff.db.models');
     var opts = instance._meta;
     if (bool(form.errors))
         throw new ValueError("The %s could not be %s because the data didn't validate.".subs(opts.object_name, kwargs['fail_message']));
@@ -101,7 +101,7 @@ function form_for_fields(field_list) {
  */
 function model_to_dict(instance, fields, exclude) {
     // avoid a circular import
-    $L('doff.db.models.fields.related', 'ManyToManyField', 'OneToOneField');
+    require('doff.db.models.fields.related', 'ManyToManyField', 'OneToOneField');
     var opts = instance._meta;
     var data = {};
     for each (f in opts.fields.concat(opts.many_to_many)) {
@@ -187,7 +187,7 @@ var BaseModelForm = type('BaseModelForm', BaseForm, {
     },
 
     validate_unique: function() {
-        $L('doff.db.models.fields', 'FieldDoesNotExist');
+        require('doff.db.models.fields', 'FieldDoesNotExist');
         
         // Gather a list of checks to perform. We only perform unique checks 
         // for fields present and not None in cleaned_data.  Since this is a 
@@ -733,7 +733,7 @@ var ModelMultipleChoiceField = type('ModelMultipleChoiceField', [ModelChoiceFiel
     }
 });
 
-$P({   
+publish({   
 	'ModelForm': ModelForm,
         'BaseModelForm': BaseModelForm,
         'model_to_dict': model_to_dict,

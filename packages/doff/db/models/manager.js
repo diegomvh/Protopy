@@ -1,8 +1,8 @@
 /* "doff.db.models.manager" */
-$L('doff.db.models.query', 'QuerySet', 'EmptyQuerySet', 'insert_query');
-$L('event');
-$L('doff.db.models.fields', 'FieldDoesNotExist');
-$L('copy', 'copy');
+require('doff.db.models.query', 'QuerySet', 'EmptyQuerySet', 'insert_query');
+require('event');
+require('doff.db.models.fields.base', 'FieldDoesNotExist');
+require('copy', 'copy');
 
 function ensure_default_manager(cls) {
     if (!cls['_default_manager'] && !cls._meta.abstracto) {

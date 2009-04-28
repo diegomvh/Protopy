@@ -1,8 +1,8 @@
-$L('sys');
-$L('event');
-$L('doff.core.exceptions');
-$L('doff.core.urlresolvers');
-$L('doff.core.http');
+require('sys');
+require('event');
+require('doff.core.exceptions');
+require('doff.core.urlresolvers');
+require('doff.core.http');
 
 /*
  * parseUri 1.2.1

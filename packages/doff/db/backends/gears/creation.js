@@ -1,4 +1,4 @@
-$L('doff.db.backends.creation', 'BaseDatabaseCreation');
+require('doff.db.backends.creation', 'BaseDatabaseCreation');
 
 var DatabaseCreation = type('DatabaseCreation', BaseDatabaseCreation, {
     data_types: {

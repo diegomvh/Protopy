@@ -7,7 +7,7 @@ These are referenced from the setting TEMPLATE_CONTEXT_PROCESSORS and used by
 RequestContext.
 */
 
-$L('doff.core.project', 'get_settings', 'get_project');
+require('doff.core.project', 'get_settings', 'get_project');
 var settings = get_settings();
 var project = get_project();
 
@@ -42,7 +42,7 @@ function debug(request) {
 }
 
 function media(request) {
-    $L('sys');
+    require('sys');
     return {'MEDIA_URL': sys.module_url(project.package, settings.MEDIA_URL)};
 }
 

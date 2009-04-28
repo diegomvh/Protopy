@@ -1,8 +1,8 @@
 /* 'HTML Widget classes' */
-$L('copy', 'copy');
-$L('doff.core.project', 'get_settings');
-$L('doff.forms.util', 'flatatt');
-$L('itertools', 'chain');
+require('copy', 'copy');
+require('doff.core.project', 'get_settings');
+require('doff.forms.util', 'flatatt');
+require('itertools', 'chain');
 
 var settings = get_settings();
 
@@ -748,7 +748,7 @@ var SplitHiddenDateTimeWidget = type('SplitHiddenDateTimeWidget', SplitDateTimeW
     }
 });
 
-$P({    'Media': Media,
+publish({    'Media': Media,
         'media_property': media_property,
         'Widget': Widget,
         'TextInput': TextInput,

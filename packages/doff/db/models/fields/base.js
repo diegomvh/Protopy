@@ -1,10 +1,10 @@
 /* 'doff.db.models.fields.base' */
-$L('doff.db.base', 'connection');
-$L('doff.db.models.query_utils', 'QueryWrapper');
-$L('doff.core.project', 'get_settings');
-$L('doff.forms.base');
-$L('doff.core.exceptions', 'ValidationError');
-$L('functional', 'curry');
+require('doff.db.base', 'connection');
+require('doff.db.models.query_utils', 'QueryWrapper');
+require('doff.core.project', 'get_settings');
+var forms = require('doff.forms.base');
+require('doff.core.exceptions', 'ValidationError');
+require('functional', 'curry');
 
 var settings = get_settings();
 
@@ -591,7 +591,7 @@ var DecimalField = type('DecimalField', Field, {
 	* Formats a number into a string with the requisite number of digits and decimal places.
 	*/
     'format_number': function format_number(value) {
-        var util = $L('doff.db.backends.util');
+        var util = require('doff.db.backends.util');
         return util.format_number(value, this.max_digits, this.decimal_places);
     },
 

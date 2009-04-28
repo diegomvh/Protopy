@@ -1,7 +1,7 @@
 /* "doff.db.models.loading, Utilities for loading models and the modules that contain them." */
-$L('doff.core.project', 'get_settings');
-$L('doff.core.exceptions', 'ImproperlyConfigured');
-$L('doff.utils.datastructures', 'SortedDict');
+require('doff.core.project', 'get_settings');
+require('doff.core.exceptions', 'ImproperlyConfigured');
+require('doff.utils.datastructures', 'SortedDict');
 
 var settings = get_settings();
 
@@ -53,7 +53,7 @@ var AppCache = type('AppCache', {
     'load_app': function load_app(app_name, can_postpone) {
         this.handled[app_name] = null;
         this.nesting_level = this.nesting_level + 1;
-        var mod = $L(app_name + '.models');
+        var mod = require(app_name + '.models');
         this.nesting_level = this.nesting_level - 1;
             /*if not hasattr(mod, 'models'):
             if can_postpone:

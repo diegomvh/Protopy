@@ -1,15 +1,15 @@
 /* 'doff.db.models.model' */
-$L('copy', 'copy', 'deepcopy');
-$L('doff.core.exceptions', 'ObjectDoesNotExist', 'MultipleObjectsReturned', 'FieldError');
-$L('doff.db.models.fields.*', 'AutoField');
-$L('doff.db.models.fields.related', 'OneToOneRel', 'ManyToOneRel', 'OneToOneField');
-$L('doff.db.models.sql.base');
-$L('doff.db.models.query', 'delete_objects', 'Q', 'CollectedObjects');
-$L('doff.db.models.manager');
-$L('doff.db.models.options', 'Options');
-$L('doff.db.models.loading', 'register_models', 'get_model');
-$L('functional', 'curry');
-$L('event');
+require('copy', 'copy', 'deepcopy');
+require('doff.core.exceptions', 'ObjectDoesNotExist', 'MultipleObjectsReturned', 'FieldError');
+require('doff.db.models.fields.base', 'AutoField');
+require('doff.db.models.fields.related', 'OneToOneRel', 'ManyToOneRel', 'OneToOneField');
+var sql = require('doff.db.models.sql.base');
+require('doff.db.models.query', 'delete_objects', 'Q', 'CollectedObjects');
+require('doff.db.models.manager');
+require('doff.db.models.options', 'Options');
+require('doff.db.models.loading', 'register_models', 'get_model');
+require('functional', 'curry');
+require('event');
 
 var subclass_exception = function(name, parent, module) {
     var klass = type(name, parent);
@@ -165,9 +165,6 @@ var Model = type('Model', {
             key = 'set_%s_order'.subs(this.__name__.toLowerCase());
             opts.order_with_respect_to.rel.to[key] = curry(method_set_order, this);
         }
-            // Give the class a docstring -- its definition.
-        if (!this.__doc__)
-            $D('%s(%s)'.subs(this.__name__, [f.attname for each (f in opts.fields)].join(', ')));
         event.publish('class_prepared', [ this ]);
     }
 },{

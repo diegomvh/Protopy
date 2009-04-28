@@ -1,4 +1,4 @@
-$L('doff.core.http', 'Http404');
+require('doff.core.http', 'Http404');
 
 var Resolver404 = type('Resolver404', [ Http404 ]);
 var NoReverseMatch = type('NoReverseMatch', [ Exception ]);
@@ -18,7 +18,7 @@ function get_callable(lookup_view, can_fail) {
         try {
             var [mod_name, func_name] = get_mod_func(lookup_view);
             if (func_name)
-                var lookup_view = $L(mod_name, func_name);
+                var lookup_view = require(mod_name, func_name);
                 if (!callable(lookup_view))
                     throw new AttributeError("'%s.%s' is not a callable.".subs(mod_name, func_name));
         } catch (e if isincance(e, [LoadError, AttributeError])) {
@@ -32,7 +32,7 @@ function get_callable(lookup_view, can_fail) {
 
 function get_resolver(urlconf) {
     if (!urlconf) {
-        var settings = $L('doff.core.project', 'get_settings');
+        var settings = require('doff.core.project', 'get_settings');
 	var settings = get_settings();
         urlconf = settings.ROOT_URLCONF;
     }
@@ -131,7 +131,7 @@ var RegexURLResolver = type('RegexURLResolver', [object], {
     get urlconf_module() {
         var ret = this._urlconf_module;
 	if (!ret) {
-	    ret = this._urlconf_module = $L(this.urlconf_name);
+	    ret = this._urlconf_module = require(this.urlconf_name);
 	}
 	return ret;
     },
@@ -144,7 +144,7 @@ var RegexURLResolver = type('RegexURLResolver', [object], {
         callback = getattr(this.urlconf_module, 'handler%s'.subs(view_type));
         var [mod_name, func_name] = get_mod_func(callback);
         try {
-            return [$L(mod_name, func_name), {}];
+            return [require(mod_name, func_name), {}];
         } catch (e if isinstance(e, LoadError)) {
             throw new ViewDoesNotExist("Tried %s. Error was: %s".subs(callback, e));
 	}
