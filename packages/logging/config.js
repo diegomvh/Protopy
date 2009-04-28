@@ -41,7 +41,7 @@ function _install_loggers(cp, hlers) {
     }
     delete llist['root'];
 
-    existing = keys(root.manager.logger_dict);
+    var existing = keys(root.manager.logger_dict);
     
     for (var lname in llist) {
         opts = llist[lname];

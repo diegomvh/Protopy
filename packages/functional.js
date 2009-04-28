@@ -15,4 +15,4 @@ function wrap(f, wrapper) {
 publish({
     curry: curry,
     wrap: wrap
-    });
+});

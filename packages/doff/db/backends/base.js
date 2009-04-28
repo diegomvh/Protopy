@@ -175,7 +175,7 @@ var BaseDatabaseIntrospection = type('BaseDatabaseIntrospection', {
         * Returns a list of names of all tables that exist in the database.
         */
     'table_names': function table_names() {
-        cursor = this.connection.cursor();
+        var cursor = this.connection.cursor();
         return this.get_table_list(cursor);
     },
 
