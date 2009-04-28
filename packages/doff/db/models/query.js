@@ -1,9 +1,9 @@
-$D('doff.db.models.query');
+/* 'doff.db.models.query' */
 $L('doff.db', 'connection', 'IntegrityError');
-$L('doff.db.models.fields.*', 'DateField');
+$L('doff.db.models.fields.base', 'DateField');
 $L('doff.db.models.query_utils', 'Q', 'select_related_descend');
 $L('doff.utils.datastructures', 'SortedDict');
-$L('doff.db.models.sql.*');
+$L('doff.db.models.sql.base');
 $L('doff.db.transaction');
 $L('copy', 'copy');
 $L('event');
@@ -937,11 +937,11 @@ var insert_query = function(model, values, return_id, raw_values) {
     return query.execute_sql(return_id);
 }
 
-$P({    
-	'Q': Q,
-	'CollectedObjects': CollectedObjects,
-	'QuerySet': QuerySet,
-        'EmptyQuerySet': EmptyQuerySet,
-	'delete_objects': delete_objects,
-        'insert_query': insert_query   
+publish({    
+    Q: Q,
+    CollectedObjects: CollectedObjects,
+    QuerySet: QuerySet,
+    EmptyQuerySet: EmptyQuerySet,
+    delete_objects: delete_objects,
+    insert_query: insert_query   
 });

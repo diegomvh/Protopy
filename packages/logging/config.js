@@ -1,7 +1,7 @@
-$L('ajax');
-$L('event');
-$L('logging.*');
-$L('logging.handlers');
+require('ajax');
+require('event');
+require('logging.base');
+require('logging.handlers');
 
 var hmc = null;
 
@@ -91,6 +91,6 @@ function file_config(fname, defaults) {
     _install_loggers(config, hlers);
 }
 
-$P({
+publish({
     file_config: file_config
 });

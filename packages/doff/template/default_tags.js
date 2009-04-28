@@ -1,6 +1,6 @@
-$L('doff.template.*', 'Node', 'Variable', 'NodeList', 'Template', 'TemplateSyntaxError', 'VariableDoesNotExist', 'get_library', 'Library', 'InvalidTemplateLibrary');
-$L('doff.template.context', 'Context');
-$L('itertools');
+require('doff.template.base', 'Node', 'Variable', 'NodeList', 'Template', 'TemplateSyntaxError', 'VariableDoesNotExist', 'get_library', 'Library', 'InvalidTemplateLibrary');
+require('doff.template.context', 'Context');
+require('itertools');
 
 var register = new Library();
 
@@ -452,6 +452,6 @@ function do_with(parser, token) {
 }
 register.tag("with", do_with);
 
-$P({ 
+publish({ 
     register: register 
 });

@@ -109,4 +109,6 @@ var Handler = type('Handler', [ object ], {
     }
 });
 
-$P({Handler: Handler});
+publish({
+    Handler: Handler
+});

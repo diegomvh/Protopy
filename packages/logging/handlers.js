@@ -1,4 +1,4 @@
-$L('logging.*');
+require('logging.base');
 
 var FirebugHandler = type('FirebugHandler', [logging.Handler], {
     functions: {},
@@ -39,7 +39,7 @@ var AlertHandler = type('AlertHandler', [logging.Handler], {
     }
 });
 
-$P({
+publish({
     FirebugHandler: FirebugHandler,
     AlertHandler: AlertHandler
 })

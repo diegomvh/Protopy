@@ -1,5 +1,5 @@
-$L('doff.template.*', 'TemplateSyntaxError', 'TemplateDoesNotExist', 'Variable', 'Library', 'Node', 'TextNode');
-$L('doff.template.loader');
+require('doff.template.base', 'TemplateSyntaxError', 'TemplateDoesNotExist', 'Variable', 'Library', 'Node', 'TextNode');
+require('doff.template.loader');
 
 var register = new Library();
 
@@ -78,6 +78,7 @@ var ExtendsNode = type('ExtendsNode', [ Node ], {
     },
 
     render: function(context){
+        //FIXME: hacer una copia del template, para no modificar definitivamente el que esta cargado
         var compiled_parent = this.get_parent(context);
         var parent_blocks = {};
         for each (var n in compiled_parent.nodelist.get_nodes_by_type(BlockNode)) {
@@ -193,6 +194,6 @@ register.tag('block', do_block);
 register.tag('extends', do_extends);
 register.tag('include', do_include);
 
-$P({ 
+publish({ 
     register: register
 });

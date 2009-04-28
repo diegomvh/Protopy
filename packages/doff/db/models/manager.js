@@ -1,4 +1,4 @@
-$D("doff.db.models.manager");
+/* "doff.db.models.manager" */
 $L('doff.db.models.query', 'QuerySet', 'EmptyQuerySet', 'insert_query');
 $L('event');
 $L('doff.db.models.fields', 'FieldDoesNotExist');
@@ -210,6 +210,8 @@ var EmptyManager = type('EmptyManager', Manager, {
     }
 });
 
-$P({    'Manager': Manager,
-        'ManagerDescriptor': ManagerDescriptor,
-        'EmptyManager': EmptyManager  });
+publish({    
+    Manager: Manager,
+    ManagerDescriptor: ManagerDescriptor,
+    EmptyManager: EmptyManager  
+});

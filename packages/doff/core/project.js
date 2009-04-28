@@ -160,7 +160,7 @@ function get_settings() {
     return get_project().settings;
 }
 
-$P({
+publish({
     get_project: get_project,
     get_settings: get_settings
 });

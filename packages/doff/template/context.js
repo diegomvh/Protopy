@@ -1,4 +1,4 @@
-$L('doff.core.project', 'get_settings', 'get_project');
+require('doff.core.project', 'get_settings', 'get_project');
 
 var settings = get_settings();
 var project = get_project();
@@ -80,7 +80,7 @@ function get_standard_processors() {
             var module = path.substring(0, i);
             var attr = path.substring(i + 1 , path.length);
             try {
-                var mod = $L(module);
+                var mod = require(module);
             } catch (e) {
                 throw new ImproperlyConfigured('Error importing request processor module %s: "%s"'.subs(module, e));
             }
@@ -112,7 +112,7 @@ var RequestContext = type('RequestContext', [Context], {
     }
 });
 
-$P({ 
+publish({ 
     Context: Context,
     RequestContext: RequestContext
 });

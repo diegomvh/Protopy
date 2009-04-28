@@ -1,8 +1,8 @@
-$D('doff.db.models.fields.*');
-$L('doff.db.*', 'connection');
+/* 'doff.db.models.fields.base' */
+$L('doff.db.base', 'connection');
 $L('doff.db.models.query_utils', 'QueryWrapper');
 $L('doff.core.project', 'get_settings');
-$L('doff.forms.*');
+$L('doff.forms.base');
 $L('doff.core.exceptions', 'ValidationError');
 $L('functional', 'curry');
 
@@ -901,29 +901,28 @@ var XMLField = type('XMLField', TextField, {
     }
 });
 
-
-$P({ 
-    'FieldDoesNotExist': FieldDoesNotExist, 
-    'Field': Field,
-    'AutoField': AutoField,
-    'BooleanField': BooleanField,
-    'CharField': CharField,
-    'DateField': DateField,
-    'DateTimeField': DateTimeField,
-    'DecimalField': DecimalField,
-    'EmailField': EmailField,
-    'FilePathField': FilePathField,
-    'FloatField': FloatField,
-    'IntegerField': IntegerField,
-    'IPAddressField': IPAddressField,
-    'NullBooleanField': NullBooleanField,
-    'PositiveIntegerField': PositiveIntegerField,
-    'PositiveSmallIntegerField': PositiveSmallIntegerField,
-    'SlugField': SlugField,
-    'SmallIntegerField': SmallIntegerField,
-    'TextField': TextField,
-    'TimeField': TimeField,
-    'URLField': URLField,
-    'XMLField': XMLField 
+publish({ 
+    FieldDoesNotExist: FieldDoesNotExist, 
+    Field: Field,
+    AutoField: AutoField,
+    BooleanField: BooleanField,
+    CharField: CharField,
+    DateField: DateField,
+    DateTimeField: DateTimeField,
+    DecimalField: DecimalField,
+    EmailField: EmailField,
+    FilePathField: FilePathField,
+    FloatField: FloatField,
+    IntegerField: IntegerField,
+    IPAddressField: IPAddressField,
+    NullBooleanField: NullBooleanField,
+    PositiveIntegerField: PositiveIntegerField,
+    PositiveSmallIntegerField: PositiveSmallIntegerField,
+    SlugField: SlugField,
+    SmallIntegerField: SmallIntegerField,
+    TextField: TextField,
+    TimeField: TimeField,
+    URLField: URLField,
+    XMLField: XMLField 
 });
     

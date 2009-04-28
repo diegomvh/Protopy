@@ -1,4 +1,4 @@
-$D('Form classes');
+/* 'Form classes' */
 $L('copy', 'deepcopy');
 $L('doff.utils.datastructures', 'SortedDict');
 $L('doff.forms.fields', 'Field', 'FileField');

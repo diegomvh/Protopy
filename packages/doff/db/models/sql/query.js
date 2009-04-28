@@ -1,8 +1,8 @@
-$D("doff.db.models.sql.query"); 
+/* "doff.db.models.sql.query" */
 $L('doff.utils.tree', 'Node');
 $L('doff.utils.datastructures', 'SortedDict');
-$L('doff.db.*', 'connection');
-$L('doff.db.models.fields.*', 'FieldDoesNotExist');
+$L('doff.db.base', 'connection');
+$L('doff.db.models.fields.base', 'FieldDoesNotExist');
 $L('doff.db.models.query_utils', 'select_related_descend');
 $L('doff.db.models.sql.datastructures', 'Count', 'EmptyResultSet', 'MultiJoin');
 $L('doff.db.models.sql.where', 'WhereNode', 'EverythingNode', 'AND', 'OR');
@@ -1893,5 +1893,6 @@ function setup_join_cache(cls) {
 
 var hcp = event.subscribe('class_prepared', setup_join_cache);
 
-$P({  'Query': Query  });
-
+publish({  
+    Query: Query  
+});

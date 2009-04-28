@@ -76,6 +76,8 @@ var DatabaseIntrospection = type('DatabaseIntrospection', BaseDatabaseIntrospect
     }
 });
 
-$P({ 'DatabaseIntrospection': DatabaseIntrospection });
+publish({ 
+    DatabaseIntrospection: DatabaseIntrospection 
+});
 
     

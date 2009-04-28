@@ -1,4 +1,4 @@
-$L('sys');
+require('sys');
 
 if (!sys.browser.features.Gears) {
     alert('Google gears is not installed, please install from http://gears.google.com/, redirecting now.');
@@ -123,9 +123,9 @@ var Cursor = type('Cursor', {
     }
 });
 
-$P({    
-    'connect': function(options) { return new Connection(options); },
-    'Cursor': Cursor,
-    'DatabaseError': type('DatabaseError'),
-    'IntegrityError': type('IntegrityError')
+publish({    
+    connect: function(options) { return new Connection(options); },
+    Cursor: Cursor,
+    DatabaseError: type('DatabaseError', [ object ]),
+    IntegrityError: type('IntegrityError', [ object ])
 });

@@ -1,4 +1,4 @@
-$L('doff.template.*', 'Variable', 'Library');
+require('doff.template.base', 'Variable', 'Library');
 var register = new Library();
 
 function capitalize(value){ 
@@ -21,7 +21,7 @@ function slugify(value) {
 }
 register.filter(slugify);
 
-$P({
+publish({
     register: register,
     slugify: slugify
 });

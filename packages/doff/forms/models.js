@@ -1,4 +1,4 @@
-$D('Helper functions for creating Form classes from Django models and database field objects.');
+/* 'Helper functions for creating Form classes from Django models and database field objects.' */
 
 $L('doff.utils.datastructures', 'SortedDict');
 $L('doff.forms.util', 'ValidationError', 'ErrorList');

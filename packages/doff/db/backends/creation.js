@@ -281,4 +281,6 @@ var BaseDatabaseCreation = type('BaseDatabaseCreation', {
     }
 });
     
-$P({ 'BaseDatabaseCreation': BaseDatabaseCreation });
+publish({ 
+    BaseDatabaseCreation: BaseDatabaseCreation 
+});

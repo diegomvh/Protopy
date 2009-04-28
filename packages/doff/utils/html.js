@@ -1,4 +1,4 @@
-$D('HTML utilities suitable for global use.');
+/* 'HTML utilities suitable for global use.' */
 
 import re
 import string

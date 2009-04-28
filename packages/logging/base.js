@@ -1,4 +1,4 @@
-$L('datetime', 'datetime');
+require('datetime', 'datetime');
 
 var CRITICAL = 50;
 var FATAL = CRITICAL;
@@ -617,7 +617,7 @@ function get_logger(name) {
         return root;
 }
 
-$P({
+publish({
     //levels
     CRITICAL : CRITICAL,
     ERROR : ERROR,

@@ -417,8 +417,10 @@ var DateQuery = type('DateQuery', Query, {
     }
 });
 
-$P({	'DeleteQuery': DeleteQuery,
-        'InsertQuery': InsertQuery,
-        'DateQuery': DateQuery,
-        'UpdateQuery': UpdateQuery,
-        'CountQuery': CountQuery });
+publish({	
+    DeleteQuery: DeleteQuery,
+    InsertQuery: InsertQuery,
+    DateQuery: DateQuery,
+    UpdateQuery: UpdateQuery,
+    CountQuery: CountQuery 
+});

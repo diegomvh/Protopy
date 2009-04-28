@@ -1,4 +1,4 @@
-$D('doff.forms.fields, Field classes.');
+/* 'doff.forms.fields, Field classes.' */
 
 $L('copy');
 $L('doff.forms.util', 'ErrorList', 'ValidationError');

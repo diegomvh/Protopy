@@ -33,4 +33,6 @@ var DatabaseCreation = type('DatabaseCreation', BaseDatabaseCreation, {
     }
 });
 
-$P({ 'DatabaseCreation': DatabaseCreation });
+publish({ 
+    DatabaseCreation: DatabaseCreation 
+});

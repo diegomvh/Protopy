@@ -1,4 +1,4 @@
-$D('doff.db.models.related');
+/* 'doff.db.models.related' */
 
 var BoundRelatedObject = type('BoundRelatedObject', {
     '__init__': function __init__(related_object, field_mapping, original){
@@ -46,4 +46,6 @@ var RelatedObject = type('RelatedObject', {
     }
 });
 
-$P({ 'RelatedObject': RelatedObject });
+publish({ 
+    RelatedObject: RelatedObject 
+});

@@ -1,4 +1,4 @@
-$D('doff.utils.datastructures');
+/* 'doff.utils.datastructures' */
 $L('copy', 'copy', 'deepcopy');
 
 var SortedDict = type('SortedDict', Dict, {

@@ -1456,6 +1456,6 @@ datetime = {
     
 ***/
 
-$P({
+publish({
     datetime: datetime
 });

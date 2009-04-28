@@ -1,6 +1,6 @@
-$D("doff.core.management.commands.syncdb");
-$L('doff.db.*', 'connection');
-$L('doff.db.models.*');
+/* "doff.core.management.commands.syncdb" */
+$L('doff.db.base', 'connection');
+$L('doff.db.models.base');
 $L('doff.db.transaction');
 $L('doff.core.project', 'get_settings');
 
@@ -120,4 +120,6 @@ function execute() {
     //call_command('loaddata', 'initial_data', verbosity=verbosity)
 }
 
-$P({ 'execute': execute });
+publish({ 
+    execute: execute 
+});

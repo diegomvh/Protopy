@@ -1,4 +1,4 @@
-$D("doff.db.models.loading, Utilities for loading models and the modules that contain them.");
+/* "doff.db.models.loading, Utilities for loading models and the modules that contain them." */
 $L('doff.core.project', 'get_settings');
 $L('doff.core.exceptions', 'ImproperlyConfigured');
 $L('doff.utils.datastructures', 'SortedDict');
@@ -159,11 +159,13 @@ var AppCache = type('AppCache', {
 
 var cache = new AppCache();
 
-$P({    'get_apps': getattr(cache, 'get_apps'),
-        'get_app': getattr(cache, 'get_app'),
-        'get_app_errors': getattr(cache, 'get_app_errors'),
-        'get_models': getattr(cache, 'get_models'),
-        'get_model': getattr(cache, 'get_model'),
-        'register_models': getattr(cache, 'register_models'),
-        'load_app': getattr(cache, 'load_app'),
-        'app_cache_ready': getattr(cache, 'app_cache_ready') });
+publish({    
+    get_apps: getattr(cache, 'get_apps'),
+    get_app: getattr(cache, 'get_app'),
+    get_app_errors: getattr(cache, 'get_app_errors'),
+    get_models: getattr(cache, 'get_models'),
+    get_model: getattr(cache, 'get_model'),
+    register_models: getattr(cache, 'register_models'),
+    load_app: getattr(cache, 'load_app'),
+    app_cache_ready: getattr(cache, 'app_cache_ready') 
+});

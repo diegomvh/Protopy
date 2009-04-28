@@ -57,6 +57,8 @@ function select_related_descend(field, restricted, requested) {
     return true;
 }
 
-$P({   'QueryWrapper': QueryWrapper,
-       'Q':Q,
-       'select_related_descend': select_related_descend });
+publish({   
+    QueryWrapper: QueryWrapper,
+    Q:Q,
+    select_related_descend: select_related_descend 
+});

@@ -1,11 +1,11 @@
-$D("doff.db.models.fields.related");
-$L('doff.db.*', 'connection');
+/* "doff.db.models.fields.related" */
+$L('doff.db.base', 'connection');
 $L('doff.db.models.loading', 'get_model');
-$L('doff.db.models.fields.*', 'AutoField', 'Field', 'IntegerField', 'PositiveIntegerField', 'PositiveSmallIntegerField', 'FieldDoesNotExist');
+$L('doff.db.models.fields.base', 'AutoField', 'Field', 'IntegerField', 'PositiveIntegerField', 'PositiveSmallIntegerField', 'FieldDoesNotExist');
 $L('doff.db.models.related', 'RelatedObject');
 $L('doff.db.models.query', 'QuerySet');
 $L('doff.db.models.query_utils', 'QueryWrapper');
-$L('doff.forms.*');
+$L('doff.forms.base');
 $L('doff.core.exceptions', 'ValidationError');
 $L('doff.db.transaction');
 $L('functional', 'curry');
@@ -989,15 +989,17 @@ var ManyToManyField = type('ManyToManyField', RelatedField, {
     }
 });
 
-$P({	'RelatedField': RelatedField,
-        'SingleRelatedObjectDescriptor': SingleRelatedObjectDescriptor,
-        'ReverseSingleRelatedObjectDescriptor': ReverseSingleRelatedObjectDescriptor,
-        'ForeignRelatedObjectsDescriptor': ForeignRelatedObjectsDescriptor,
-        'ManyRelatedObjectsDescriptor': ManyRelatedObjectsDescriptor,
-        'ReverseManyRelatedObjectsDescriptor': ReverseManyRelatedObjectsDescriptor,
-        'ManyToOneRel': ManyToOneRel,
-        'OneToOneRel': OneToOneRel,
-        'ManyToManyRel': ManyToManyRel,
-        'ForeignKey': ForeignKey,
-        'OneToOneField': OneToOneField,
-        'ManyToManyField': ManyToManyField });
+publish({
+    RelatedField: RelatedField,
+    SingleRelatedObjectDescriptor: SingleRelatedObjectDescriptor,
+    ReverseSingleRelatedObjectDescriptor: ReverseSingleRelatedObjectDescriptor,
+    ForeignRelatedObjectsDescriptor: ForeignRelatedObjectsDescriptor,
+    ManyRelatedObjectsDescriptor: ManyRelatedObjectsDescriptor,
+    ReverseManyRelatedObjectsDescriptor: ReverseManyRelatedObjectsDescriptor,
+    ManyToOneRel: ManyToOneRel,
+    OneToOneRel: OneToOneRel,
+    ManyToManyRel: ManyToManyRel,
+    ForeignKey: ForeignKey,
+    OneToOneField: OneToOneField,
+    ManyToManyField: ManyToManyField 
+});

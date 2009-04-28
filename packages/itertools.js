@@ -30,19 +30,19 @@ function starmap(){ throw new NotImplementedError('Sorry'); }
 function takewhile(){ throw new NotImplementedError('Sorry'); }
 function tee(){ throw new NotImplementedError('Sorry'); }
 
-$P({ 
-    'chain': chain,
-    'count': count,
-    'cycle': cycle,
-    'dropwhile': dropwhile,
-    'groupby': groupby,
-    'ifilter': ifilter,
-    'ifilterfalse': ifilterfalse,
-    'imap': imap,
-    'islice': islice,
-    'izip': izip,
-    'repeat': repeat,
-    'starmap': starmap,
-    'takewhile': takewhile,
-    'tee': tee
+publish({ 
+    chain: chain,
+    count: count,
+    cycle: cycle,
+    dropwhile: dropwhile,
+    groupby: groupby,
+    ifilter: ifilter,
+    ifilterfalse: ifilterfalse,
+    imap: imap,
+    islice: islice,
+    izip: izip,
+    repeat: repeat,
+    starmap: starmap,
+    takewhile: takewhile,
+    tee: tee
 });

@@ -1,4 +1,4 @@
-$P({
+publish({
     // Valid query types (a dictionary is used for speedy lookups).
     QUERY_TERMS: {'exact': null, 'iexact': null, 'contains': null, 'icontains': null, 'gt': null,
         'gte': null, 'lt': null, 'lte': null, 'in': null, 'startswith': null, 'istartswith': null,
@@ -29,4 +29,4 @@ $P({
 
     ORDER_PATTERN: /\?|[-+]?[.\w]+$/,
     ORDER_DIR: { 'ASC': ['ASC', 'DESC'], 'DESC': ['DESC', 'ASC']}
-    });
+});

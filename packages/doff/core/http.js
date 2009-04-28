@@ -212,7 +212,7 @@ var HttpResponseServerError = type('HttpResponseServerError', HttpResponse, {
     status_code: 500
 });
 
-$P({
+publish({
     Http404: Http404,
     HttpRequest: HttpRequest, 
     HttpResponse: HttpResponse, 

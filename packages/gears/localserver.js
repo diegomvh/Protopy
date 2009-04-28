@@ -1,4 +1,4 @@
-$L('sys');
+require('sys');
 
 if (!sys.browser.features.Gears) {
     alert('Google gears is not installed, please install from http://gears.google.com/, redirecting now.');
@@ -159,7 +159,7 @@ var ManagedResourceStore = type ('ManagedResourceStore', {
     }
 });
 
-$P({
+publish({
     canServeLocally: localServer.canServeLocally,
     ResourceStore: ResourceStore,
     ManagedResourceStore: ManagedResourceStore

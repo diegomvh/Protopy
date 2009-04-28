@@ -50,7 +50,7 @@ function request(request) {
     return {'request': request};
 }
 
-$P({
+publish({
     debug: debug,
     media: media,
     request: request

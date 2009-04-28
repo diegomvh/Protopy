@@ -211,7 +211,7 @@ function resolve(path, urlconf) {
     return get_resolver(urlconf).resolve(path);
 }
 
-$P({
+publish({
     RegexURLPattern: RegexURLPattern,
     RegexURLResolver: RegexURLResolver 
 });

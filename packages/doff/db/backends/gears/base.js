@@ -1,11 +1,11 @@
-$D('doff.db.backends.gears.base');
+/* 'doff.db.backends.gears.base' */
 
 $L('gears.database');
 $L('doff.db.backends.util');
-$L('doff.db.backends.*', 'BaseDatabaseFeatures', 'BaseDatabaseOperations', 'BaseDatabaseWrapper', 'BaseDatabaseValidation');
+$L('doff.db.backends.base', 'BaseDatabaseFeatures', 'BaseDatabaseOperations', 'BaseDatabaseWrapper', 'BaseDatabaseValidation');
 $L('doff.db.backends.gears.creation', 'DatabaseCreation');
 $L('doff.db.backends.gears.introspection', 'DatabaseIntrospection');
-$L('logging.*');
+$L('logging.base');
 
 var logger = logging.get_logger(__name__);
 var DatabaseError = database.DatabaseError;
@@ -158,9 +158,9 @@ function _sqlite_regexp(re_pattern, re_string) {
 
 var field_cast_sql = function(value){return '%s';};
 
-$P({	
-    'DatabaseWrapper': DatabaseWrapper,
-    'field_cast_sql': field_cast_sql,
-    'DatabaseError': DatabaseError,
-    'IntegrityError': IntegrityError 
+publish({	
+    DatabaseWrapper: DatabaseWrapper,
+    field_cast_sql: field_cast_sql,
+    DatabaseError: DatabaseError,
+    IntegrityError: IntegrityError 
 });

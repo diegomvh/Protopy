@@ -1,4 +1,4 @@
-$D("doff.db.backends.__init__");
+/* "doff.db.backends.base" */
 /*
  * Represents a database connection.
  */
@@ -241,8 +241,10 @@ var BaseDatabaseIntrospection = type('BaseDatabaseIntrospection', {
 
 });
 
-$P({    'BaseDatabaseWrapper': BaseDatabaseWrapper,
-        'BaseDatabaseFeatures': BaseDatabaseFeatures,
-        'BaseDatabaseOperations': BaseDatabaseOperations,
-        'BaseDatabaseValidation': BaseDatabaseValidation,
-        'BaseDatabaseIntrospection': BaseDatabaseIntrospection });
+publish({    
+    BaseDatabaseWrapper: BaseDatabaseWrapper,
+    BaseDatabaseFeatures: BaseDatabaseFeatures,
+    BaseDatabaseOperations: BaseDatabaseOperations,
+    BaseDatabaseValidation: BaseDatabaseValidation,
+    BaseDatabaseIntrospection: BaseDatabaseIntrospection 
+});

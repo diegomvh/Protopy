@@ -19,24 +19,26 @@ var autocommit = function(){};
 var commit_on_success = function(){};
 var commit_manually = function(){};
 
-$P({    'enter_transaction_management': enter_transaction_management,
-        'leave_transaction_management': leave_transaction_management,
-        'is_dirty': is_dirty,
-        'set_dirty': set_dirty,
-        'set_clean': set_clean,
-        'clean_savepoints': clean_savepoints,
-        'is_managed': is_managed,
-        'managed': managed,
-        'commit_unless_managed': commit_unless_managed,
-        'rollback_unless_managed': rollback_unless_managed,
-        'commit': commit,
-        'rollback': rollback,
-        'savepoint': savepoint,
-        'savepoint_rollback': savepoint_rollback,
-        'savepoint_commit': savepoint_commit,
-        'autocommit': autocommit,
-        'commit_on_success': commit_on_success,
-        'commit_manually': commit_manually });
+publish({    
+    enter_transaction_management: enter_transaction_management,
+    leave_transaction_management: leave_transaction_management,
+    is_dirty: is_dirty,
+    set_dirty: set_dirty,
+    set_clean: set_clean,
+    clean_savepoints: clean_savepoints,
+    is_managed: is_managed,
+    managed: managed,
+    commit_unless_managed: commit_unless_managed,
+    rollback_unless_managed: rollback_unless_managed,
+    commit: commit,
+    rollback: rollback,
+    savepoint: savepoint,
+    savepoint_rollback: savepoint_rollback,
+    savepoint_commit: savepoint_commit,
+    autocommit: autocommit,
+    commit_on_success: commit_on_success,
+    commit_manually: commit_manually 
+});
 
 /**
 This module implements a transaction manager that can be used to define

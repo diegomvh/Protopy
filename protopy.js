@@ -24,27 +24,18 @@
     }
 
     //Publish simbols in modules
-    function __publish__(object) {
+    function publish(object) {
         __extend__(false, this, object);
     }
 
-    function __doc__(obj, doc) {
-        if ( doc === undefined && type(obj) === String)
-	    this.__doc__ = obj;
-	else if (type(doc) === String)
-	    obj.__doc__ = doc;
-    }
-
 //memoria ps2 16, cable usb del mp3, auriculares, un cargador y baterias, un pack de dvd
-    
     var ModuleManager = {
 	modules: {},
 	modules_dict: {},
 	paths: {},
 	module_functions: {
-	    $P: __publish__,
-	    $L: __load__,
-	    $D: __doc__,
+	    publish: publish,
+	    require: require,
 	    type: type
 	},
 	base: '/', //Where i'm, set this for another place. Default root 
@@ -89,7 +80,7 @@
     };
 
     //Load Modules
-    function __load__(module_name) {
+    function require(module_name) {
     	
         var package = module_name.endswith('.*'),
 	    name = package ? module_name.slice(0, module_name.length - 2) : module_name,
@@ -186,11 +177,9 @@
     object.__bases__ = [];
     object.__subclasses__ = [];
     object.__static__ = {};
-    object.__doc__ = "";
 
     //For de prototype
     object.prototype.__init__ = function __init__(){};
-    object.prototype.__doc__ = "";
     object.prototype.__str__ = function __str__(){ return this['__module__'] + '.' + this['__name__'] };
 
     // Type constructor
@@ -1498,9 +1487,8 @@
 
     /******************** builtin **************************/
     var builtin = ModuleManager.create('__builtin__','built-in', {
-        '$P': __publish__,
-        '$L': __load__,
-        '$D': __doc__,
+        'publish': publish,
+        'require': require,
 	'$Q': query,
 	'object': object,
 	'type': type,
@@ -1706,7 +1694,6 @@
 
     id.current = 0;
     id.next = function () { return id.current += 1; };
-    id.__doc__ = "I'm sorry";
 
     function getattr(object, name, def) {
 	//TODO: validar argumentos
@@ -2069,10 +2056,6 @@
         'flatten': function flatten(array) { 
             return array.reduce(function(a,b) { return a.concat(b); }, []); 
         },
-        'help': function help(module){
-            module = module || this;
-            print(module['__doc__']);
-        },
         'include': function include(object, element){
             if (object == undefined) return false;
             if (callable(object['__contains__'])) return object.__contains__(element);
@@ -2169,8 +2152,8 @@
     ModuleManager.add(ajax);
     ModuleManager.add(dom);
     ModuleManager.add(builtin);
-    __publish__(builtin);
-    __publish__(exception);
+    publish(builtin);
+    publish(exception);
 
     // WHERE
     var scripts = dom.query('script');

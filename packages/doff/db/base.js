@@ -22,7 +22,9 @@ function reset_queries(kwargs) {
 
 var hrs = event.subscribe('request_started', reset_queries);
 
-$P({    'backend': backend,
-        'connection': connection,
-        'DatabaseError': DatabaseError,
-        'IntegrityError': IntegrityError });
+publish({    
+    backend: backend,
+    connection: connection,
+    DatabaseError: DatabaseError,
+    IntegrityError: IntegrityError 
+});

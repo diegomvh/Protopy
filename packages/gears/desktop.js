@@ -1,4 +1,4 @@
-$L('sys');
+require('sys');
 
 if (!sys.browser.features.Gears) {
     alert('Google gears is not installed, please install from http://gears.google.com/, redirecting now.');
@@ -56,7 +56,7 @@ var Shortcut = type('Shortcut', [ object ], {
 });
 
 
-$P({
+publish({
     Icon: Icon,
     IconTheme: IconTheme,
     Shortcut: Shortcut

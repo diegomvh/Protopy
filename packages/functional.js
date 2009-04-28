@@ -12,7 +12,7 @@ function wrap(f, wrapper) {
     }
 }
 
-$P({
-    'curry': curry,
-    'wrap': wrap
+publish({
+    curry: curry,
+    wrap: wrap
     });

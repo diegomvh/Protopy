@@ -1,4 +1,4 @@
-$D("doff.db.models.options");
+/* "doff.db.models.options" */
     
 $L('doff.core.project', 'get_settings');
 $L('doff.db.models.related', 'RelatedObject');
@@ -456,4 +456,6 @@ var Options = type('Options', {
     }
 });
 
-$P({ 'Options': Options });
+publish({ 
+    Options: Options 
+});

@@ -1,7 +1,7 @@
-$L('doff.core.exceptions', 'ImproperlyConfigured'),
-$L('doff.template.*', 'Template', 'Context', 'TemplateDoesNotExist', 'add_to_builtins');
-$L('doff.core.project', 'get_settings', 'get_project');
-$L('logging.*');
+require('doff.core.exceptions', 'ImproperlyConfigured'),
+require('doff.template.base', 'Template', 'Context', 'TemplateDoesNotExist', 'add_to_builtins');
+require('doff.core.project', 'get_settings', 'get_project');
+require('logging.base');
 
 var logger = logging.get_logger(__name__);
 var settings = get_settings();
@@ -20,7 +20,7 @@ function find_template_source(name, dirs) {
             var module = path.substring(0, i);
             var attr = path.substring(i + 1 , path.length);
             try {
-                var mod = $L(module);
+                var mod = require(module);
             } catch (e) {
                 throw new ImproperlyConfigured('Error importing template source loader %s: "%s"'.subs(module, e));
             }
@@ -84,7 +84,7 @@ function select_template(template_name_list) {
 }
 */
 
-$P({ 
+publish({ 
     find_template_source: find_template_source,
     get_template_from_string: get_template_from_string,
     get_template: get_template

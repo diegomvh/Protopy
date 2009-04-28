@@ -1,4 +1,4 @@
-$D('HTML Widget classes');
+/* 'HTML Widget classes' */
 $L('copy', 'copy');
 $L('doff.core.project', 'get_settings');
 $L('doff.forms.util', 'flatatt');
