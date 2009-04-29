@@ -81,7 +81,7 @@ var HttpResponse = type('HttpResponse', {
 
     __init__: function __init__(where, content, status, content_type) {
 	content = content || '';
-	this.where = where || '#content'; //'body'
+	this.where = where || 'body';
         if (!content_type)
             content_type = "%s; charset=%s".subs('text/html', 'utf-8');
         if (!isinstance(content, String) && hasattr(content, '__iter__')) {
@@ -154,9 +154,7 @@ var HttpResponse = type('HttpResponse', {
     //TODO: A better name
     render: function render() {
 	//TODO: quiza evaluar algo de js a lo prototype
-	var elements = $Q(this.where);
-	for each (var element in elements) 
-	    element.innerHTML = this.content;
+	$(this.where).update(this.content);
     }
 });
 

@@ -55,7 +55,7 @@ var ExtendsNode = type('ExtendsNode', [ Node ], {
     },
 
     get_parent: function(context) {
-        var source = null,
+	var source = null,
             parent = null;
         if (this.parent_name_expr)
             this.parent_name = this.parent_name_expr.resolve(context);
@@ -78,9 +78,8 @@ var ExtendsNode = type('ExtendsNode', [ Node ], {
     },
 
     render: function(context){
-        //FIXME: hacer una copia del template, para no modificar definitivamente el que esta cargado
         var compiled_parent = this.get_parent(context);
-        var parent_blocks = {};
+	var parent_blocks = {};
         for each (var n in compiled_parent.nodelist.get_nodes_by_type(BlockNode)) {
             parent_blocks[n.name] = n;
         }

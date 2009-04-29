@@ -47,11 +47,9 @@ function string_url(request, str) {
 
 var html_elements = {
     'form': function form(request, element) {
-	//TODO: manejar merjor el acciont para ver para donde salen disparados, por si se van del dominio.
-	var f = $Q(element);
-	string_url(request, f.action);
-        request.method = f.method;
-	request[f.method] = f.serialize();
+	string_url(request, element.action);
+        request.method = element.method;
+	request[element.method] = element.serialize();
 	return request;
     },
 

@@ -297,7 +297,6 @@
 						document.createElement('form')['__proto__']
 	    }
 	},
-	'script_fragment': '<script[^>]*>([\\S\\s]*?)<\/script>',
 	'get_transport': function() {
 	    if (this.browser.Gecko || this.browser.WebKit)
 		return new XMLHttpRequest();
@@ -957,8 +956,6 @@
 	
     function query( selectorGroups, root, includeRoot, recursed, flat ) {
 	var elements = [];
-	if (!isinstance(selectorGroups, String))
-	    return decorate_elements([selectorGroups])[0];
 	if( !recursed ) {  // TODO: try to clean this up. 
 	    selectorGroups = selectorGroups.replace( reg.trim, "" ) // get rid of leading and trailing spaces 
 		.replace( /(\[)\s+/g, "$1") // remove spaces around '['  of attributes
@@ -986,7 +983,7 @@
 	reg.quickTest.lastIndex = 0;
 	if( reg.quickTest.test( selectorGroups ) ) {
 	    elements = get_context_from_sequence_selector( selectorGroups, root, includeRoot, flat );
-	    return (cache[ cacheKey ] = decorate_elements(elements.slice(0)));
+	    return (cache[ cacheKey ] = elements.slice(0));
 	}
 	    
 	var groupsWorker, 
@@ -1058,7 +1055,7 @@
 	if( groups.length > 1 ) 
 	    elements = filter(elements);
 
-	return ( cache[ cacheKey ] = decorate_elements(elements.slice(0)));
+	return ( cache[ cacheKey ] = elements.slice(0));
     }
 
     function query_combinator( l, r, c ) {
@@ -1067,7 +1064,7 @@
 	    proc = {}, 
 	    succ = {}, 
 	    fail = {}, 
-	    combinatorCheck = simple_selector.combinator[c];
+	    combinatorCheck = Selector.combinator[c];
 		
 	for( var li = 0, le; le = l[ li++ ]; ) {
 	    le.uid = le.uid || _uid++;
@@ -1135,14 +1132,14 @@
 		testFuncArgs[ 1 ] = n[ 1 ] || n[ 0 ];
 		testFuncArgs[ 2 ] = v ? v[ 1 ] : "";
 		testFuncKey = "" + aTest.match( /[~!+*\^$|=]/ );
-		testFuncScope = simple_selector.attribute;	
+		testFuncScope = Selector.attribute;	
 		testFunc = testFuncScope[ testFuncKey ];
 		persistCache[ aTest ] = [ testFuncKey, testFuncScope ].concat( testFuncArgs );
 	    } else { // pseudo
 		var pa = aTest.match( reg.pseudoArgs );
 		testFuncArgs[ 1 ] = pa ? pa[ 1 ] : "";
 		testFuncKey = aTest.match( reg.pseudoName )[ 1 ];
-		testFuncScope = simple_selector.pseudos;
+		testFuncScope = Selector.pseudos;
 		
 		if( /nth-(?!.+only)/i.test( aTest ) ) {
 		    var a, 
@@ -1213,7 +1210,7 @@
 	}
 	return passed;
     }
-    var simple_selector = {
+    var Selector = {
 	attribute: {
 	    "null": function( e, a, v ) { return !!get_attribute(e,a); },
 	    "=" : function( e, a, v ) { return get_attribute(e,a) == v; },
@@ -1321,173 +1318,23 @@
 	    }
 	}
     }
-
-    function decorate_elements(elements) {
-	var decorated = [];
-	//Decorando los elementos
-	for each (var element in elements) {
-	    if (!element.tagName) continue;
-	    var name = element.tagName.toLowerCase();
-	    if (name in TagNames)
-		extend(element, TagNames[name]);
-	    if (element.elements && element.elements.length != 0)
-		decorate_elements(element.elements);
-	    decorated.push(element);
-	}
-	return decorated;
-    }
-
-    var TagNames = {};
-    TagNames['form'] = {
-	'disable': function() {
-	    array(this.elements).forEach(function(e) {e.disable();});
-	},
-	'enable': function() {
-	    array(this.elements).forEach(function(e) {e.enable();});
-	},
-	'serialize': function() {
-	    var elements = array(this.elements);
-	    var data = elements.reduce(function(result, element) {
-		if (!element.disabled && element.name) {
-		    key = element.name; value = element.get_value();
-		    if (value != null && element.type != 'file' && (element.type != 'submit')) {
-			if (key in result) {
-			    // a key is already present; construct an array of values
-			    if (type(result[key]) != Array) 
-				result[key] = [result[key]];
-			    result[key].push(value);
-			} else result[key] = value;
-		    }
-		}
-		return result;
-	    }, {});
-
-	    return data;
-	}
-    };
     
-    TagNames['input'] = TagNames['select'] = TagNames['textarea'] = {
-	serialize: function() {
-	    if (!this.disabled && this.name) {
-		var value = this.get_value();
-		if (value != undefined) {
-		    var pair = { };
-		    pair[this.name] = value;
-		    return pair;
-		}
-	    }
-	    return '';
-	},
-
-	get_value: function() {
-	    var method = this.tagName.toLowerCase();
-	    return Serializers[method](this);
-	},
-
-	set_value: function(value) {
-	    var method = this.tagName.toLowerCase();
-	    Serializers[method](this, value);
-	},
-
-	clear: function() {
-	    this.value = '';
-	},
-
-	present: function() {
-	    return this.value != '';
-	},
-
-	activate: function() {
-	    try {
-		this.focus();
-		if (this.select && (this.tagName.toLowerCase() != 'input' || !include(['button', 'reset', 'submit'], element.type)))
-		    this.select();
-	    } catch (e) { }
-	},
-
-	disable: function() {
-	    this.disabled = true;
-	},
-
-	enable: function() {
-	    this.disabled = false;
-	}
-    }
-
-    var Serializers = {
-	input: function(element, value) {
-	    switch (element.type.toLowerCase()) {
-	    case 'checkbox':
-	    case 'radio':
-		return this.inputSelector(element, value);
-	    default:
-		return this.textarea(element, value);
-	    }
-	},
-
-	inputSelector: function(element, value) {
-	    if (typeof(value) === 'undefined') return element.checked ? element.value : null;
-	    else element.checked = !!value;
-	},
-
-	textarea: function(element, value) {
-	    if (typeof(value) === 'undefined') return element.value;
-	    else element.value = value;
-	},
-
-	select: function(element, value) {
-	    if (typeof(value) === 'undefined')
-	    return this[element.type == 'select-one' ?
-		'selectOne' : 'selectMany'](element);
-	    else {
-	    var opt, currentValue, single = type(value) != Array;
-	    for (var i = 0, length = element.length; i < length; i++) {
-		opt = element.options[i];
-		currentValue = this.optionValue(opt);
-		if (single) {
-		    if (currentValue == value) {
-			opt.selected = true;
-			return;
-		    }
-		} else 
-		    opt.selected = include(value, currentValue);
-	    }
-	    }
-	},
-
-	selectOne: function(element) {
-	    var index = element.selectedIndex;
-	    return index >= 0 ? this.optionValue(element.options[index]) : null;
-	},
-
-	selectMany: function(element) {
-	    var values, length = element.length;
-	    if (!length) return null;
-
-	    for (var i = 0, values = []; i < length; i++) {
-	    var opt = element.options[i];
-	    if (opt.selected) values.push(this.optionValue(opt));
-	    }
-	    return values;
-	},
-
-	optionValue: function(opt) {
-	    return opt.hasAttribute('value') ? opt.value : opt.text;
-	}
-    };
-    // Primer cambio
     var dom = ModuleManager.create('dom', 'built-in', {
-	'query': query, 
+	'query': query,
 	'query_combinator': query_combinator,
-	'query_selector': query_selector,
-	'simple_selector': simple_selector
+	'query_selector': query_selector
     });
 
     /******************** builtin **************************/
     var builtin = ModuleManager.create('__builtin__','built-in', {
         'publish': publish,
         'require': require,
-	'$Q': query,
+	'$': function () { 
+	    var result = array(arguments).map(function (element) { return query(isinstance(element, String)? '#' + element : element)[0]; });
+	    return (len(result) == 1)? result[0] : result; 
+	},
+	'$$': query,
+	'query': query,
 	'object': object,
 	'type': type,
 	'extend': function extend() {return __extend__.apply(this, [false].concat(array(arguments)));},
@@ -2168,10 +2015,10 @@
 (function(){
     //--------------------------------------- String -------------------------------------//
     extend(String, {
-	'interpret': function interpret(value) {
+	scriptfragment: '<script[^>]*>([\\S\\s]*?)<\/script>',
+	interpret: function(value) {
 	    return value == null ? '' : String(value);
 	},
-	
 	specialChar: {
 	    '\b': '\\b',
 	    '\t': '\\t',
@@ -2244,12 +2091,12 @@
 	},
 
 	'stripscripts': function strip_scripts() {
-	    return this.replace(new RegExp(sys.script_fragment, 'img'), '');
+	    return this.replace(new RegExp(String.scriptfragment, 'img'), '');
 	},
 
 	'extractscripts': function extract_scripts() {
-	    var match_all = new RegExp(sys.script_fragment, 'img');
-	    var match_one = new RegExp(sys.script_fragment, 'im');
+	    var match_all = new RegExp(String.scriptfragment, 'img');
+	    var match_one = new RegExp(String.scriptfragment, 'im');
 	    return (this.match(match_all) || []).map(function(script_tag) {
 		return (script_tag.match(match_one) || ['', ''])[1];
 	    });
@@ -2365,5 +2212,265 @@
     });
 
     String.prototype.escapeHTML.div.appendChild(String.prototype.escapeHTML.text);
+    
+    //--------------------------------------- Element -------------------------------------//
+    extend(Element, {
+	iselement: function(object) {
+	    return !!(object && object.nodeType == 1);
+	},
+	_insertionTranslations: {
+	    before: function(element, node) {
+		element.parentNode.insertBefore(node, element);
+	    },
+	    top: function(element, node) {
+		element.insertBefore(node, element.firstChild);
+	    },
+	    bottom: function(element, node) {
+		element.appendChild(node);
+	    },
+	    after: function(element, node) {
+		element.parentNode.insertBefore(node, element.nextSibling);
+	    },
+	    tags: {
+		TABLE:  ['<table>',                '</table>',                   1],
+		TBODY:  ['<table><tbody>',         '</tbody></table>',           2],
+		TR:     ['<table><tbody><tr>',     '</tr></tbody></table>',      3],
+		TD:     ['<table><tbody><tr><td>', '</td></tr></tbody></table>', 4],
+		SELECT: ['<select>',               '</select>',                  1]
+	    }
+	},
+	_getContentFromAnonymousElement: function(tagName, html) {
+	    var div = document.createElement('div'), t = Element._insertionTranslations.tags[tagName];
+	    if (t) {
+		div.innerHTML = t[0] + html + t[1];
+		t[2].times(function() { div = div.firstChild });
+	    } else div.innerHTML = html;
+	    return array(div.childNodes);
+	}
+    });
+    extend(Element.prototype, {
+	visible: function() {
+	    return this.style.display != 'none';
+	},
+	toggle: function() {
+	    this[this.visible() ? 'hide' : 'show']();
+	    return this;
+	},
+	hide: function() {
+	    this.style.display = 'none';
+	    return this;
+	},
+	show: function() {
+	    this.style.display = '';
+	    return this;
+	},
+	remove: function() {
+	    this.parentNode.removeChild(this);
+	    return this;
+	},
+	update: function(content) {
+	    if (Element.iselement(content)) return this.update().insert(content);
+	    this.innerHTML = content.stripscripts();
+	    getattr(content, 'evalscripts')();
+	    return this;
+	},
+	insert: function(insertions) {
+	    if (isinstance(insertions, String) || isinstance(insertions, Number) || Element.iselement(insertions))
+		insertions = {bottom:insertions};
+	    var content, insert, tagName, childNodes, self = this;
+	    for (var position in insertions) {
+		content  = insertions[position];
+		position = position.toLowerCase();
+		insert = Element._insertionTranslations[position];
 
+		if (Element.iselement(content)) {
+		    insert(this, content);
+		    continue;
+		}
+
+		tagName = ((position == 'before' || position == 'after') ? this.parentNode : this).tagName.toUpperCase();
+		childNodes = Element._getContentFromAnonymousElement(tagName, content.stripscripts());
+
+		if (position == 'top' || position == 'after') 
+		    childNodes.reverse();
+		childNodes.forEach(function (e) { insert(self, e); });
+		getattr(content, 'evalscripts')();
+	    }
+	    return this;
+	},
+	select: function(selector) {
+	    return query(selector, this);
+	}
+    });
+
+    //--------------------------------------- Element -------------------------------------//
+    extend(HTMLFormElement.prototype, {
+	disable: function() {
+	    array(this.elements).forEach(function(e) {e.disable();});
+	},
+	enable: function() {
+	    array(this.elements).forEach(function(e) {e.enable();});
+	},
+	serialize: function() {
+	    var elements = array(this.elements);
+	    var data = elements.reduce(function(result, element) {
+		if (!element.disabled && element.name) {
+		    key = element.name; value = element.get_value();
+		    if (value != null && element.type != 'file' && (element.type != 'submit')) {
+			if (key in result) {
+			    // a key is already present; construct an array of values
+			    if (type(result[key]) != Array) 
+				result[key] = [result[key]];
+			    result[key].push(value);
+			} else result[key] = value;
+		    }
+		}
+		return result;
+	    }, {});
+	    return data;
+	}
+    });
+
+    //--------------------------------------- Forms -------------------------------------//
+    
+    var Form = {
+	disable: function() {
+	    array(this.elements).forEach(function(e) {e.disable();});
+	},
+	enable: function() {
+	    array(this.elements).forEach(function(e) {e.enable();});
+	},
+	serialize: function() {
+	    var elements = array(this.elements);
+	    var data = elements.reduce(function(result, element) {
+		if (!element.disabled && element.name) {
+		    key = element.name; value = element.get_value();
+		    if (value != null && element.type != 'file' && (element.type != 'submit')) {
+			if (key in result) {
+			    // a key is already present; construct an array of values
+			    if (type(result[key]) != Array) 
+				result[key] = [result[key]];
+			    result[key].push(value);
+			} else result[key] = value;
+		    }
+		}
+		return result;
+	    }, {});
+	    return data;
+	}
+    }
+    Form.Element = {
+	serialize: function() {
+	    if (!this.disabled && this.name) {
+		var value = this.get_value();
+		if (value != undefined) {
+		    var pair = { };
+		    pair[this.name] = value;
+		    return pair;
+		}
+	    }
+	    return '';
+	},
+
+	get_value: function() {
+	    var method = this.tagName.toLowerCase();
+	    return Form.Serializers[method](this);
+	},
+
+	set_value: function(value) {
+	    var method = this.tagName.toLowerCase();
+	    Form.Serializers[method](this, value);
+	},
+
+	clear: function() {
+	    this.value = '';
+	},
+
+	present: function() {
+	    return this.value != '';
+	},
+
+	activate: function() {
+	    try {
+		this.focus();
+		if (this.select && (this.tagName.toLowerCase() != 'input' || !include(['button', 'reset', 'submit'], element.type)))
+		    this.select();
+	    } catch (e) { }
+	},
+
+	disable: function() {
+	    this.disabled = true;
+	},
+
+	enable: function() {
+	    this.disabled = false;
+	}
+    }
+    
+    Form.Serializers = {
+	input: function(element, value) {
+	    switch (element.type.toLowerCase()) {
+	    case 'checkbox':
+	    case 'radio':
+		return this.inputSelector(element, value);
+	    default:
+		return this.textarea(element, value);
+	    }
+	},
+
+	inputSelector: function(element, value) {
+	    if (typeof(value) === 'undefined') return element.checked ? element.value : null;
+	    else element.checked = !!value;
+	},
+
+	textarea: function(element, value) {
+	    if (typeof(value) === 'undefined') return element.value;
+	    else element.value = value;
+	},
+
+	select: function(element, value) {
+	    if (typeof(value) === 'undefined')
+	    return this[element.type == 'select-one' ?
+		'selectOne' : 'selectMany'](element);
+	    else {
+	    var opt, currentValue, single = type(value) != Array;
+	    for (var i = 0, length = element.length; i < length; i++) {
+		opt = element.options[i];
+		currentValue = this.optionValue(opt);
+		if (single) {
+		    if (currentValue == value) {
+			opt.selected = true;
+			return;
+		    }
+		} else 
+		    opt.selected = include(value, currentValue);
+	    }
+	    }
+	},
+
+	selectOne: function(element) {
+	    var index = element.selectedIndex;
+	    return index >= 0 ? this.optionValue(element.options[index]) : null;
+	},
+
+	selectMany: function(element) {
+	    var values, length = element.length;
+	    if (!length) return null;
+
+	    for (var i = 0, values = []; i < length; i++) {
+	    var opt = element.options[i];
+	    if (opt.selected) values.push(this.optionValue(opt));
+	    }
+	    return values;
+	},
+
+	optionValue: function(opt) {
+	    return opt.hasAttribute('value') ? opt.value : opt.text;
+	}
+    }
+
+    extend(HTMLFormElement.prototype, Form );
+    extend(HTMLInputElement.prototype, Form.Element );
+    extend(HTMLSelectElement.prototype, Form.Element );
+    extend(HTMLTextAreaElement.prototype, Form.Element );
 })();
