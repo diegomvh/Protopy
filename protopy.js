@@ -72,30 +72,42 @@
 	},
 	register_path: function(name, path) {
 	    assert(name.lastIndexOf('.') == -1, 'The module name showld be whitout dots');
-	    path = path.split('/');
-	    //TODO: creo que hay una mejor forma de hacer esto que con un filter, quiza un any o un all o algo de eso
-	    path = path.filter( function (e) { return e; });
+	    path = path.split('/').filter( function (e) { return e; });
+	    if (!bool(path)) {throw new TypeError('where is the path?')}
 	    this.paths[name] = path.join('/');
 	},
+	file: function(name) {
+	    if (isinstance(name, String)) {
+		var index = name.lastIndexOf('.');
+		var [ pkg, filename ] = (index != -1)? [ name.slice(0, index), name.slice(index + 1)] : [ '', name];
+		return this.module_url(pkg, filename + '.js');
+	    } else if (isinstance(name, Object) && name['__file__'])
+		return name['__file__'];
+	    else throw new TypeError('Invalid Argument');
+	},
+	module_url: function(name, postfix) {
+	    var url = name.split('.');
+	    if (this.paths[url[0]]) {
+		url = this.paths[url[0]].split('/').concat(url.slice(1));
+	    } else {
+		url = this.default_path.split('/').concat(url);
+	    }
+	    
+	    if (postfix)
+		url = url.concat(postfix.split('/'));
+	    url = url.filter( function (element) { return element; });
+	    return url.join('/');
+	}
     };
 
     //Load Modules
-    function require(module_name) {
+    function require(name) {
     	
-        var package = module_name.endswith('.*'),
-	    name = package ? module_name.slice(0, module_name.length - 2) : module_name,
-	    names = name.split('.'),
-	    mod = ModuleManager.get(name);
+        var mod = ModuleManager.get(name);
     
         if (!mod) {
             //Only firefox and synchronous, sorry
-	    if (package){
-		var file = sys.module_url(name, '__init__.js');
-	    } else {
-		var index = name.lastIndexOf('.');
-		var [ pkg, filename ] = index != -1? [ name.slice(0, index), name.slice(index + 1)] : [ '', name];
-		var file = sys.module_url(pkg, filename + '.js');
-	    }
+	    var file = ModuleManager.file(name);
             var code = null,
 		request = new XMLHttpRequest();
             request.open('GET', file, false); 
@@ -107,7 +119,7 @@
             mod = ModuleManager.create(name, file);
             mod = ModuleManager.decorate(mod);
             ModuleManager.add(mod);
-	    //Listo el modululo base largo el evento
+	    //The base module are ready, publish the event
 	    event.publish('onModuleCreated', [this, mod]);
             try {
 		with (mod) {
@@ -117,12 +129,14 @@
 		ModuleManager.remove(mod);
 		throw e;
 	    }
+	    // Not clean for lazy require support
             //mod = ModuleManager.clean(mod);
         }
         event.publish('onModuleLoaded', [this, mod]);
         switch (arguments.length) {
             case 1:
                     // Returns module
+		    var names = name.split('.');
                     var last = names[names.length - 1];
                     this[last] = mod;
                     return mod;
@@ -292,25 +306,8 @@
 	'register_module_path': function register_module_path(module, path) { 
 	    ModuleManager.register_path(module, path); 
 	},
-	'module_url': function module_url(module, postfix) {
-	    var url = null;
-	    for (var s in ModuleManager.paths)
-		if (s && module.indexOf(s) == 0) {
-		    url = ModuleManager.paths[s].split('/');
-		    url = url.concat(module.slice(len(s)).split('.'));
-		    break;
-		}
-	    if (!url) {
-		url = ModuleManager.default_path.split('/');
-		url = url.concat(module.split('.'));
-	    }
-	    if (postfix) 
-		url = url.concat(postfix.split('/'));
-	    //Si termina con / se la agrego al final, puese ser un camino y no un archivo
-	    //FIXME: Se puede hacer mejor
-	    var length = len(url) - 1;
-	    url = url.filter( function (element, index) { return len(element) > 0 || (element == '' && index == length) });
-	    return url.join('/');
+	'module_url': function module_url(name, postfix) {
+	    return ModuleManager.module_url(name, postfix);
 	},
 	'modules': ModuleManager.modules,
 	'paths': ModuleManager.paths

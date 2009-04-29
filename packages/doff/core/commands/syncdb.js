@@ -1,6 +1,6 @@
 /* "doff.core.management.commands.syncdb" */
 require('doff.db.base', 'connection');
-require('doff.db.models.base');
+var models = require('doff.db.models.base');
 require('doff.db.transaction');
 require('doff.core.project', 'get_settings');
 

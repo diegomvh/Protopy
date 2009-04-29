@@ -185,7 +185,7 @@ var BaseDatabaseIntrospection = type('BaseDatabaseIntrospection', {
         * that actually exist in the database.
         */
     'doff_table_names': function doff_table_names(only_existing) {
-        var models = require('doff.db.models');
+        var models = require('doff.db.models.base');
         var tables = new Set();
         for each (var app in models.get_apps()) {
             for each (var model in models.get_models(app)) {
@@ -204,7 +204,7 @@ var BaseDatabaseIntrospection = type('BaseDatabaseIntrospection', {
         * Returns a set of all models represented by the provided list of table names.
         */
     'installed_models': function installed_models(tables) {
-        var models = require('doff.db.models');
+        var models = require('doff.db.models.base');
         var all_models = [];
         for each (var app in models.get_apps()) {
             for each (var model in models.get_models(app)) {
@@ -219,7 +219,7 @@ var BaseDatabaseIntrospection = type('BaseDatabaseIntrospection', {
         * Returns a list of information about all DB sequences for all models in all apps.
         */
     'sequence_list': function sequence_list() {
-        var models = require('doff.db.models');
+        var models = require('doff.db.models.base');
         var apps = models.get_apps();
         var sequence_list = [];
 

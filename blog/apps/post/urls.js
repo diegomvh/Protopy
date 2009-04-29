@@ -8,4 +8,6 @@ var urlpatterns = patterns('',
     ['^remove_post/([A-Za-z0-9-]+)/$', views.remove_post]
 );
 
-publish({ 'urlpatterns': urlpatterns })
+publish({ 
+    urlpatterns: urlpatterns 
+});

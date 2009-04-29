@@ -1,7 +1,7 @@
 require('event');
 require('blog.apps.post.models', 'Tag', 'Post');
-require('doff.forms.*');
-require('doff.template.*');
+var forms = require('doff.forms.base');
+var template = require('doff.template.base');
 require('doff.template.default_filters', 'slugify');
 require('doff.template.loader');
 require('doff.template.context', 'RequestContext');
@@ -66,8 +66,9 @@ function add_post(request) {
     return response;
 }
 
-publish({ 'add_tag': add_tag,
-     'add_post': add_post,
-     'remove_tag': remove_tag,
-     'remove_post': remove_post
+publish({ 
+    add_tag: add_tag,
+    add_post: add_post,
+    remove_tag: remove_tag,
+    remove_post: remove_post
 });

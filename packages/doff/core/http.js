@@ -169,7 +169,7 @@ var HttpResponseRedirect = type('HttpResponseRedirect', HttpResponse, {
     },
 
     render: function render() {
-	$L('doff.core.project', 'get_project');
+	require('doff.core.project', 'get_project');
 	var p = get_project();
 	p.handler.handle(this['Location']);
     }
