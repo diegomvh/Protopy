@@ -71,7 +71,8 @@
 	    return this.modules[name] || null;
 	},
 	register_path: function(name, path) {
-	    assert(name.lastIndexOf('.') == -1, 'The module name showld be whitout dots');
+	    assert(name.lastIndexOf('.') == -1, 'The module name should be whitout dots');
+	    assert(!this.paths[name], 'The module is registered');
 	    path = path.split('/').filter( function (e) { return e; });
 	    if (!bool(path)) {throw new TypeError('where is the path?')}
 	    this.paths[name] = path.join('/');
@@ -96,7 +97,7 @@
 	    if (postfix)
 		url = url.concat(postfix.split('/'));
 	    url = url.filter( function (element) { return element; });
-	    return url.join('/');
+	    return this.base + url.join('/');
 	}
     };
 
@@ -297,16 +298,16 @@
 	    }
 	},
 	'script_fragment': '<script[^>]*>([\\S\\s]*?)<\/script>',
-	'get_transport': function get_transport() {
+	'get_transport': function() {
 	    if (this.browser.Gecko || this.browser.WebKit)
 		return new XMLHttpRequest();
 	    return false;
 	},
 	'get_gears': get_gears,
-	'register_module_path': function register_module_path(module, path) { 
+	'register_path': function(module, path) { 
 	    ModuleManager.register_path(module, path); 
 	},
-	'module_url': function module_url(name, postfix) {
+	'module_url': function(name, postfix) {
 	    return ModuleManager.module_url(name, postfix);
 	},
 	'modules': ModuleManager.modules,
@@ -566,7 +567,7 @@
 	    this.options.method = this.options.method.toLowerCase();
 
 	    if (type(this.options.parameters) == String)
-		this.options.parameters = this.options.parameters.to_query_params();
+		this.options.parameters = this.options.parameters.toqueryparams();
 	},
 	
 	'serialize': function serialize(object){
@@ -2156,7 +2157,7 @@
     var scripts = dom.query('script');
     for each (var script in scripts) {
 	if (script.src) {
-	    var m = script.src.match(new RegExp('^.*' + location.host + '/?(.*)/?protopy.js$', 'i'));
+	    var m = script.src.match(new RegExp('^.*' + location.host + '(/?.*/?)protopy.js$', 'i'));
 	    if (m) 
 		ModuleManager.base = m[1];
 	}
@@ -2238,15 +2239,15 @@
 	    return this.replace(/^\s+/, '').replace(/\s+$/, '');
 	},
 
-	'strip_tags': function strip_tags() {
+	'striptags': function strip_tags() {
 	    return this.replace(/<\/?[^>]+>/gi, '');
 	},
 
-	'strip_scripts': function strip_scripts() {
+	'stripscripts': function strip_scripts() {
 	    return this.replace(new RegExp(sys.script_fragment, 'img'), '');
 	},
 
-	'extract_scripts': function extract_scripts() {
+	'extractscripts': function extract_scripts() {
 	    var match_all = new RegExp(sys.script_fragment, 'img');
 	    var match_one = new RegExp(sys.script_fragment, 'im');
 	    return (this.match(match_all) || []).map(function(script_tag) {
@@ -2254,25 +2255,25 @@
 	    });
 	},
 
-	'eval_scripts': function eval_scripts() {
-	    return this.extract_scripts().map(function(script) { return eval(script) });
+	'evalscripts': function eval_scripts() {
+	    return this.extractscripts().map(function(script) { return eval(script) });
 	},
 
-	'escape_HTML': function escape_HTML() {
+	'escapeHTML': function escape_HTML() {
 	    var self = arguments.callee;
 	    self.text.data = this;
 	    return self.div.innerHTML;
 	},
 
-	'unescape_HTML': function unescape_HTML() {
-	    var div = new Element('div');
-	    div.innerHTML = this.stripTags();
+	'unescapeHTML': function unescape_HTML() {
+	    var div = document.createElement('div');
+	    div.innerHTML = this.striptags();
 	    return div.childNodes[0] ? (div.childNodes.length > 1 ?
 	    array(div.childNodes).reduce(function(memo, node) { return memo + node.nodeValue }, '') :
 	    div.childNodes[0].nodeValue) : '';
 	},
 
-	'to_query_params': function to_query_params(separator) {
+	'toqueryparams': function toqueryparams(separator) {
 	    var match = this.strip().match(/([^?#]*)(#.*)?$/);
 	    if (!match) return { };
 
@@ -2356,13 +2357,13 @@
 	return function(match) { return template.evaluate(match) };
     };
 
-    String.prototype.parse_query = String.prototype.to_query_params;
+    String.prototype.parsequery = String.prototype.toqueryparams;
 
-    extend(String.prototype.escape_HTML, {
+    extend(String.prototype.escapeHTML, {
 	div:  document.createElement('div'),
 	text: document.createTextNode('')
     });
 
-    String.prototype.escape_HTML.div.appendChild(String.prototype.escape_HTML.text);
+    String.prototype.escapeHTML.div.appendChild(String.prototype.escapeHTML.text);
 
 })();

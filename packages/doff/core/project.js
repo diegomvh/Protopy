@@ -26,7 +26,7 @@ var Project = type('Project', [object], {
 	this.name = name;
 	this.package = package;
 	this.path = path;
-	sys.register_module_path(this.package, this.path);
+	sys.register_path(this.package, this.path);
 	this.availability_url = sys.module_url(this.package, 'network_check.txt');
 	this.read_settings();
         this.handler = new Handler(this.settings.ROOT_URLCONF);
