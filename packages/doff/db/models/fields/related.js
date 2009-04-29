@@ -5,7 +5,7 @@ require('doff.db.models.fields.base', 'AutoField', 'Field', 'IntegerField', 'Pos
 require('doff.db.models.related', 'RelatedObject');
 require('doff.db.models.query', 'QuerySet');
 require('doff.db.models.query_utils', 'QueryWrapper');
-require('doff.forms.base');
+var forms = require('doff.forms.base');
 require('doff.core.exceptions', 'ValidationError');
 require('doff.db.transaction');
 require('functional', 'curry');

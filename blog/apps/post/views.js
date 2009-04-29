@@ -1,19 +1,18 @@
 require('event');
 require('blog.apps.post.models', 'Tag', 'Post');
-var forms = require('doff.forms.base');
-var template = require('doff.template.base');
+require('doff.forms.base', 'ModelForm');
 require('doff.template.default_filters', 'slugify');
 require('doff.template.loader');
 require('doff.template.context', 'RequestContext');
 require('doff.core.http', 'HttpResponse', 'HttpResponseRedirect');
 
-var PostForm = type('PostForm', forms.ModelForm, {
+var PostForm = type('PostForm', [ ModelForm ], {
     'Meta': {
         'model': Post
     }
 });
 
-var TagForm = type('TagForm', forms.ModelForm, {
+var TagForm = type('TagForm', [ ModelForm ], {
     'Meta': {
         'model': Tag
     }

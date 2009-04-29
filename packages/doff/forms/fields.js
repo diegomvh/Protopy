@@ -21,7 +21,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile as UploadedFile
 var EMPTY_VALUES = [null, ''];
 
 
-var Field = type('Field', {
+var Field = type('Field', [ object ], {
     //Static
     creation_counter: 0
 },{
@@ -850,32 +850,33 @@ var SlugField = type('SlugField', RegexField, {
     }
 });
 
-publish({    'Field': Field,
-        'CharField': CharField,
-        'IntegerField': IntegerField,
-        'DEFAULT_DATE_INPUT_FORMATS': DEFAULT_DATE_INPUT_FORMATS,
-        'DateField': DateField,
-        'DEFAULT_TIME_INPUT_FORMATS': DEFAULT_TIME_INPUT_FORMATS,
-        'TimeField': TimeField,
-        'DEFAULT_DATETIME_INPUT_FORMATS': DEFAULT_DATETIME_INPUT_FORMATS,
-        'DateTimeField': DateTimeField,
-        'TimeField': TimeField,
-        'RegexField': RegexField,
-        'EmailField': EmailField,
-        'FileField': FileField,
-        'ImageField': ImageField,
-        'URLField': URLField,
-        'BooleanField': BooleanField,
-        'NullBooleanField': NullBooleanField,
-        'ChoiceField': ChoiceField,
-        'MultipleChoiceField': MultipleChoiceField,
-        'ComboField': ComboField,
-        'MultiValueField': MultiValueField,
-        'FloatField': FloatField,
-        'DecimalField': DecimalField,
-        'SplitDateTimeField': SplitDateTimeField,
-        'IPAddressField': IPAddressField,
-        'FilePathField': FilePathField,
-        'SlugField': SlugField,
-        'TypedChoiceField': TypedChoiceField
+publish({
+    Field: Field,
+    CharField: CharField,
+    IntegerField: IntegerField,
+    DEFAULT_DATE_INPUT_FORMATS: DEFAULT_DATE_INPUT_FORMATS,
+    DateField: DateField,
+    DEFAULT_TIME_INPUT_FORMATS: DEFAULT_TIME_INPUT_FORMATS,
+    TimeField: TimeField,
+    DEFAULT_DATETIME_INPUT_FORMATS: DEFAULT_DATETIME_INPUT_FORMATS,
+    DateTimeField: DateTimeField,
+    TimeField: TimeField,
+    RegexField: RegexField,
+    EmailField: EmailField,
+    FileField: FileField,
+    ImageField: ImageField,
+    URLField: URLField,
+    BooleanField: BooleanField,
+    NullBooleanField: NullBooleanField,
+    ChoiceField: ChoiceField,
+    MultipleChoiceField: MultipleChoiceField,
+    ComboField: ComboField,
+    MultiValueField: MultiValueField,
+    FloatField: FloatField,
+    DecimalField: DecimalField,
+    SplitDateTimeField: SplitDateTimeField,
+    IPAddressField: IPAddressField,
+    FilePathField: FilePathField,
+    SlugField: SlugField,
+    TypedChoiceField: TypedChoiceField
 });

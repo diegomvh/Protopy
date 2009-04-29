@@ -20,13 +20,13 @@ from formsets import BaseFormSet, formset_factory, DELETION_FIELD_NAME
 function save_instance(form, instance) { 
     arguments = new Arguments(arguments, {'fields':null, 'fail_message':'saved', 'commit':true, 'exclude':null});
     var kwargs = arguments.kwargs;
-    require('doff.db.models');
+    var models = require('doff.db.models.base');
     var opts = instance._meta;
     if (bool(form.errors))
         throw new ValueError("The %s could not be %s because the data didn't validate.".subs(opts.object_name, kwargs['fail_message']));
     var cleaned_data = form.cleaned_data;
     var file_field_list = [];
-    for each (f in opts.fields) {
+    for each (var f in opts.fields) {
         if (!f.editable || isinstance(f, models.AutoField) || !(f.name in cleaned_data))
             continue;
         if (kwargs['fields'] && !include(kwargs['fields'], f.name))
@@ -40,14 +40,14 @@ function save_instance(form, instance) {
         else
             f.save_form_data(instance, cleaned_data[f.name]);
     }
-    for each (f in file_field_list)
+    for each (var f in file_field_list)
         f.save_form_data(instance, cleaned_data[f.name]);
 
     // Wrap up the saving of m2m data as a function.
     function save_m2m() {
         opts = instance._meta;
         cleaned_data = form.cleaned_data;
-        for each (f in opts.many_to_many) {
+        for each (var f in opts.many_to_many) {
             if (kwargs['fields'] && !include(kwargs['fields'], f.name))
                 continue;
             if (include(cleaned_data, f.name))
@@ -104,7 +104,7 @@ function model_to_dict(instance, fields, exclude) {
     require('doff.db.models.fields.related', 'ManyToManyField', 'OneToOneField');
     var opts = instance._meta;
     var data = {};
-    for each (f in opts.fields.concat(opts.many_to_many)) {
+    for each (var f in opts.fields.concat(opts.many_to_many)) {
         if (!f.editable)
             continue;
         if (bool(fields) && !include(fields, f.name))
@@ -187,7 +187,7 @@ var BaseModelForm = type('BaseModelForm', BaseForm, {
     },
 
     validate_unique: function() {
-        require('doff.db.models.fields', 'FieldDoesNotExist');
+        require('doff.db.models.fields.base', 'FieldDoesNotExist');
         
         // Gather a list of checks to perform. We only perform unique checks 
         // for fields present and not None in cleaned_data.  Since this is a 
@@ -734,12 +734,12 @@ var ModelMultipleChoiceField = type('ModelMultipleChoiceField', [ModelChoiceFiel
 });
 
 publish({   
-	'ModelForm': ModelForm,
-        'BaseModelForm': BaseModelForm,
-        'model_to_dict': model_to_dict,
-        'fields_for_model': fields_for_model,
-        'save_instance': save_instance,
-        'form_for_fields': form_for_fields,
-        'ModelChoiceField': ModelChoiceField,
-        'ModelMultipleChoiceField': ModelMultipleChoiceField 
+    ModelForm: ModelForm,
+    BaseModelForm: BaseModelForm,
+    model_to_dict: model_to_dict,
+    fields_for_model: fields_for_model,
+    save_instance: save_instance,
+    form_for_fields: form_for_fields,
+    ModelChoiceField: ModelChoiceField,
+    ModelMultipleChoiceField: ModelMultipleChoiceField 
 });

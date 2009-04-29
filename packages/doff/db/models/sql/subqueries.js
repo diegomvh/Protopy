@@ -380,10 +380,10 @@ var DateQuery = type('DateQuery', Query, {
     'results_iter': function results_iter() {
         var resolve_columns = bool(this['resolve_columns']);
         if (resolve_columns) {
-            var DateTimeField = require('doff.db.models.fields', ['DateTimeField']);
+            var DateTimeField = require('doff.db.models.fields.base', 'DateTimeField');
             var fields = [DateTimeField()];
         } else {
-            var typecast_timestamp = require('doff.db.backends.util', ['typecast_timestamp']);
+            var typecast_timestamp = require('doff.db.backends.util', 'typecast_timestamp');
             var needs_string_cast = this.connection.features.needs_datetime_string_cast;
         }
 
