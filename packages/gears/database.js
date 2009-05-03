@@ -5,7 +5,7 @@ if (!sys.browser.features.Gears) {
     window.location.href = 'http://gears.google.com/';
 }
 
-var Connection = type('Connection', {
+var Connection = type('Connection', object, {
     '__init__': function __init__(options) {
         this.database = options['database'];
         this.detect_types = options['detect_types'];
@@ -24,7 +24,7 @@ var Connection = type('Connection', {
     }
 });
 
-var Cursor = type('Cursor', {
+var Cursor = type('Cursor', object, {
     '__init__': function __init__(connection){
             this.connection = connection;
             this.lastResulSet = null;

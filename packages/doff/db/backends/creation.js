@@ -4,7 +4,7 @@
     * Fields, the SQL used to create and destroy tables, and the creation and
     * destruction of test databases.
     */
-var BaseDatabaseCreation = type('BaseDatabaseCreation', {
+var BaseDatabaseCreation = type('BaseDatabaseCreation', object, {
     data_types: {},
 
     '__init__': function __init__(connection){

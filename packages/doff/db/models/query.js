@@ -19,7 +19,7 @@ var CyclicDependency = type('CyclicDependency', Exception);
  * This is used for the database object deletion routines so that we can
  * calculate the 'leaf' objects which should be deleted first.
  */
-var CollectedObjects = type('CollectedObjects', {
+var CollectedObjects = type('CollectedObjects', object, {
     '__init__': function __init__() {
         this.data = new Dict();
         this.children = new Dict();
@@ -123,7 +123,7 @@ var CollectedObjects = type('CollectedObjects', {
 /*
  * Represents a lazy database lookup for a set of objects.
  */
-var QuerySet = type('QuerySet', {
+var QuerySet = type('QuerySet', object, {
 
     '__init__': function __init__(model, query) {
         this.model = model || null;

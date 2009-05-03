@@ -17,7 +17,7 @@ var subclass_exception = function(name, parent, module) {
     return klass;
 }
     
-var Model = type('Model', {
+var Model = type('Model', object, {
     '__new__': function __new__(name, bases, attrs) {
         if (name == 'Model' && bases[0] == object ) {
             // estoy creando el modelo,

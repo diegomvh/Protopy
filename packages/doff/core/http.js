@@ -76,7 +76,7 @@ var HttpRequest = type ('HttpRequest', [ object ], {
 });
 
 /* A basic HTTP response, with content and dictionary-accessed headers.*/
-var HttpResponse = type('HttpResponse', {
+var HttpResponse = type('HttpResponse', [ object ], {
     status_code: 200,
 
     __init__: function __init__(where, content, status, content_type) {
@@ -158,7 +158,7 @@ var HttpResponse = type('HttpResponse', {
     }
 });
 
-var HttpResponseRedirect = type('HttpResponseRedirect', HttpResponse, {
+var HttpResponseRedirect = type('HttpResponseRedirect', [ HttpResponse ], {
     status_code: 302,
 
     __init__: function __init__(redirect_to) {

@@ -1,5 +1,8 @@
 //******************************* PROTOPY CORE *************************************//
 (function() {
+    /* Copia sobre destiny todos los objetos pasados como argumento.
+     * si safe == false los atribuotos de la forma __<foo>__ no se copian al objeto destino
+     */
     function __extend__(safe, destiny) {
 	for (var i = 2, length = arguments.length; i < length; i++) {
 	    var object = arguments[i];
@@ -23,12 +26,14 @@
 	return destiny;
     }
 
-    //Publish simbols in modules
+    /* Copia en this todos los atribuos del objeto pasado como argumento
+     */
     function publish(object) {
         __extend__(false, this, object);
     }
 
-//memoria ps2 16, cable usb del mp3, auriculares, un cargador y baterias, un pack de dvd
+    /* Administrador de modulos, encargado de la creacion, almacenamiento y otras tareas referidas a los modulos
+     */
     var ModuleManager = {
 	modules: {},
 	modules_dict: {},
@@ -101,11 +106,11 @@
 	}
     };
 
-    //Load Modules
+    /* Funcion "cargadora" de modulos, carga en this el modulo requerido, 
+     * o solo los simbolos de un modulo si mas argumentos son pasados a esta funcion.
+     */
     function require(name) {
-    	
         var mod = ModuleManager.get(name);
-    
         if (!mod) {
             //Only firefox and synchronous, sorry
 	    var file = ModuleManager.file(name);
@@ -130,7 +135,7 @@
 		ModuleManager.remove(mod);
 		throw e;
 	    }
-	    // Not clean for lazy require support
+	    //Not clean for lazy require support
             //mod = ModuleManager.clean(mod);
         }
         event.publish('onModuleLoaded', [this, mod]);
@@ -167,9 +172,9 @@
 	throw 'The wormhole stop here. Please, is just javascript not python :)'; 
     };
 
-    //For the static
+    //Static
     object.__class__ = type;
-    object.__new__ = function __new__(name, bases, attrs) {
+    object.__new__ = function(name, bases, attrs) {
         //Herencia
         var superbase = function() {};
         superbase.prototype = {};
@@ -193,24 +198,24 @@
     object.__subclasses__ = [];
     object.__static__ = {};
 
-    //For de prototype
+    //Prototype
     object.prototype.__init__ = function __init__(){};
     object.prototype.__str__ = function __str__(){ return this['__module__'] + '.' + this['__name__'] };
 
     // Type constructor
     function type(name) {
 	if (name == undefined)
-	    throw new TypeError('Invalid arguments');
+	    throw new TypeError('Invalid arguments, name?');
 	var args = Array.prototype.slice.call(arguments).slice(1);
 	if (args.length == 0)
 	    return name.constructor;
-	if (args[0] instanceof Array && args[0][0] != undefined)
+	if (isinstance(args[0], Array) && args[0].length > 0)
 	    var bases = args.shift();
-	else if (!(args[0] instanceof Array) && args[0] instanceof Function)
+	else if (!isinstance(args[0], Array) && isinstance(args[0], Function))
 	    var bases = [args.shift()];
 	else 
-	    var bases = [object];
-	if (args[0] instanceof Object && args.length == 2) {
+	    throw new TypeError('Invalid arguments, bases?');
+	if (isinstance(args[0], Object) && args.length == 2) {
 	    var classAttrs = args.shift();
 	    var instanceAttrs = args.shift();
 	} else if (args.length == 1) {
@@ -315,7 +320,7 @@
 
     sys.browser.features.Gears = !!get_gears() || false;
     /******************** exception ***********************/
-    var Exception = type('Exception', {
+    var Exception = type('Exception', [ object ], {
         '__init__': function(message) {
             //TODO: Ver como tomar mas informacion de quien larga la exception
             //this.caller = arguments.callee.caller;
@@ -327,13 +332,13 @@
     
     var exception = ModuleManager.create('exceptions', 'built-in', {
         'Exception': Exception,
-        'AssertionError': type('AssertionError', Exception),
-        'AttributeError': type('AttributeError', Exception),
-        'LoadError':  type('LoadError', Exception),
-        'KeyError':  type('KeyError', Exception),
-        'NotImplementedError':  type('NotImplementedError', Exception),
-        'TypeError':  type('TypeError', Exception),
-        'ValueError':  type('ValueError', Exception),
+        'AssertionError': type('AssertionError', [ Exception ]),
+        'AttributeError': type('AttributeError', [ Exception ]),
+        'LoadError':  type('LoadError', [ Exception ]),
+        'KeyError':  type('KeyError', [ Exception ]),
+        'NotImplementedError':  type('NotImplementedError', [ Exception ]),
+        'TypeError':  type('TypeError', [ Exception ]),
+        'ValueError':  type('ValueError', [ Exception ]),
     });
 
     /********************** event **************************/
@@ -552,7 +557,7 @@
     });
 
     //TODO: armar algo para podes pasar parametros.
-    var Base = type('Base', {
+    var Base = type('Base', [ object ], {
 	'__init__': function __init__(options) {
 	    this.options = {
 		method:       'post',
@@ -575,7 +580,7 @@
 	}
     });
 
-    var Request = type('Request', Base, {
+    var Request = type('Request', [ Base ], {
 	_complete: false,
 
 	'__init__': function __init__(url, options) {
@@ -721,7 +726,7 @@
 
     Request.Events = ['Uninitialized', 'Loading', 'Loaded', 'Interactive', 'Complete'];
 
-    var Response = type('Response', {
+    var Response = type('Response', [ object ], {
 	'__init__': function __init__(request){
 	    this.request = request;
 	    var transport  = this.transport  = request.transport,
@@ -1379,7 +1384,7 @@
 	else {
 	    var others = [];
 	    for each (var t in _type) {
-		if (type(object) == t) return true;
+		if (object && type(object) == t) return true;
 		others = others.concat(t.__subclasses__);
 	    }
 	    return isinstance(object, others);
@@ -1403,7 +1408,7 @@
     }
 
     //Arguments wraped, whit esteroids
-    var Arguments = type('Arguments', [object], {
+    var Arguments = type('Arguments', [ object ], {
         '__init__': function __init__(args, def) {
             this.func = args.callee;
             this.collect = Array.prototype.slice.call(args);
@@ -1466,7 +1471,7 @@
         }
     });
 
-    var Template = type('Template', {
+    var Template = type('Template', [ object ], {
         //Static
         'pattern': /(^|.|\r|\n)(%\((.+?)\))s/,
     },{
@@ -2303,36 +2308,7 @@
 	}
     });
 
-    //--------------------------------------- Element -------------------------------------//
-    extend(HTMLFormElement.prototype, {
-	disable: function() {
-	    array(this.elements).forEach(function(e) {e.disable();});
-	},
-	enable: function() {
-	    array(this.elements).forEach(function(e) {e.enable();});
-	},
-	serialize: function() {
-	    var elements = array(this.elements);
-	    var data = elements.reduce(function(result, element) {
-		if (!element.disabled && element.name) {
-		    key = element.name; value = element.get_value();
-		    if (value != null && element.type != 'file' && (element.type != 'submit')) {
-			if (key in result) {
-			    // a key is already present; construct an array of values
-			    if (type(result[key]) != Array) 
-				result[key] = [result[key]];
-			    result[key].push(value);
-			} else result[key] = value;
-		    }
-		}
-		return result;
-	    }, {});
-	    return data;
-	}
-    });
-
-    //--------------------------------------- Forms -------------------------------------//
-    
+    //--------------------------------------- Forms -------------------------------------//    
     var Form = {
 	disable: function() {
 	    array(this.elements).forEach(function(e) {e.disable();});
@@ -2468,7 +2444,8 @@
 	    return opt.hasAttribute('value') ? opt.value : opt.text;
 	}
     }
-
+    
+    //For firefox
     extend(HTMLFormElement.prototype, Form );
     extend(HTMLInputElement.prototype, Form.Element );
     extend(HTMLSelectElement.prototype, Form.Element );

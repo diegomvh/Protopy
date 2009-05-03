@@ -1,7 +1,7 @@
 /* 'A class for storing a tree graph. Primarily used for filter constructs in the ORM.' */
 require('copy', 'deepcopy')
 
-var Node = type('Node', [ object ], {
+var Node = type('Node', object, {
     default_connector: "DEFAULT",
     '__init__': function __init__(children, connector, negated){
         this.children = children || [];

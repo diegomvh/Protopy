@@ -1,6 +1,6 @@
 /* 'doff.db.models.related' */
 
-var BoundRelatedObject = type('BoundRelatedObject', {
+var BoundRelatedObject = type('BoundRelatedObject', object, {
     '__init__': function __init__(related_object, field_mapping, original){
         this.relation = related_object;
         this.field_mappings = field_mapping[related_object.name];
@@ -10,7 +10,7 @@ var BoundRelatedObject = type('BoundRelatedObject', {
     }
 });
 
-var RelatedObject = type('RelatedObject', {
+var RelatedObject = type('RelatedObject', object, {
     '__init__': function __init__(parent_model, model, field){
         this.parent_model = parent_model;
         this.model = model;

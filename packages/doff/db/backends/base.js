@@ -2,7 +2,7 @@
 /*
  * Represents a database connection.
  */
-var BaseDatabaseWrapper = type('BaseDatabaseWrapper', {
+var BaseDatabaseWrapper = type('BaseDatabaseWrapper', object, {
 
     ops: null,
     '__init__': function __init__(settings){
@@ -33,7 +33,7 @@ var BaseDatabaseWrapper = type('BaseDatabaseWrapper', {
     }
 });
 
-var BaseDatabaseFeatures = type('BaseDatabaseFeatures', {
+var BaseDatabaseFeatures = type('BaseDatabaseFeatures', object, {
     
     needs_datetime_string_cast: true,
     uses_custom_query_class: false,
@@ -50,7 +50,7 @@ var BaseDatabaseFeatures = type('BaseDatabaseFeatures', {
     * This class encapsulates all backend-specific differences, such as the way
     * a backend performs ordering or calculates the ID of a recently-inserted row.
     */
-var BaseDatabaseOperations = type('BaseDatabaseOperations', {
+var BaseDatabaseOperations = type('BaseDatabaseOperations', object, {
 
     'autoinc_sql': function autoinc_sql(table, column) { return null; },
 
@@ -150,14 +150,14 @@ var BaseDatabaseOperations = type('BaseDatabaseOperations', {
     }
 });
 
-var BaseDatabaseValidation = type('BaseDatabaseValidation', {
+var BaseDatabaseValidation = type('BaseDatabaseValidation', object, {
     'validate_field': function validate_field(errors, opts, f) {}
 });
 
     /*
     * This class encapsulates all backend-specific introspection utilities
     */
-var BaseDatabaseIntrospection = type('BaseDatabaseIntrospection', {
+var BaseDatabaseIntrospection = type('BaseDatabaseIntrospection', object, {
     data_types_reverse: {},
     '__init__': function __init__(connection) {
         this.connection = connection;

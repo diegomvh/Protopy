@@ -18,7 +18,7 @@ var DEFAULT_NAMES = ['verbose_name', 'db_table', 'ordering', 'unique_together', 
                     'order_with_respect_to', 'app_label', 'db_tablespace',
                     'abstracto'];
 
-var Options = type('Options', {
+var Options = type('Options', object, {
     '__init__': function __init__(meta, app_label) {
         this.local_fields = [];
         this.local_many_to_many = [];

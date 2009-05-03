@@ -9,7 +9,7 @@ var settings = get_settings();
  * A cache that stores installed applications and their models. Used to
  * provide reverse-relations and for app introspection (e.g. admin).
  */
-var AppCache = type('AppCache', {
+var AppCache = type('AppCache', object, {
     '__init__': function __init__() {
         this.app_store = new SortedDict();
 
