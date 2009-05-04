@@ -107,12 +107,12 @@ var Date = type('Date', {
     }
 });
 
-$P({
-    'EmptyResultSet': EmptyResultSet,
-    'FullResultSet': FullResultSet,
-    'MultiJoin': MultiJoin,
-    'RawValue': RawValue,
-    'Aggregate': Aggregate,
-    'Count': Count,
-    'Date': Date
+publish({
+    EmptyResultSet: EmptyResultSet,
+    FullResultSet: FullResultSet,
+    MultiJoin: MultiJoin,
+    RawValue: RawValue,
+    Aggregate: Aggregate,
+    Count: Count,
+    Date: Date
 });

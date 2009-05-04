@@ -1,12 +1,12 @@
-$D('doff.db.models.query');
-$L('doff.db', 'connection', 'IntegrityError');
-$L('doff.db.models.fields.*', 'DateField');
-$L('doff.db.models.query_utils', 'Q', 'select_related_descend');
-$L('doff.utils.datastructures', 'SortedDict');
-$L('doff.db.models.sql.*');
-$L('doff.db.transaction');
-$L('copy', 'copy');
-$L('event');
+/* 'doff.db.models.query' */
+require('doff.db.base', 'connection', 'IntegrityError');
+require('doff.db.models.fields.base', 'DateField');
+require('doff.db.models.query_utils', 'Q', 'select_related_descend');
+require('doff.utils.datastructures', 'SortedDict');
+var sql = require('doff.db.models.sql.base');
+require('doff.db.transaction');
+require('copy', 'copy');
+require('event');
 
 var CHUNK_SIZE = 100;
 var ITER_CHUNK_SIZE = CHUNK_SIZE;
@@ -19,7 +19,7 @@ var CyclicDependency = type('CyclicDependency', Exception);
  * This is used for the database object deletion routines so that we can
  * calculate the 'leaf' objects which should be deleted first.
  */
-var CollectedObjects = type('CollectedObjects', {
+var CollectedObjects = type('CollectedObjects', object, {
     '__init__': function __init__() {
         this.data = new Dict();
         this.children = new Dict();
@@ -123,7 +123,7 @@ var CollectedObjects = type('CollectedObjects', {
 /*
  * Represents a lazy database lookup for a set of objects.
  */
-var QuerySet = type('QuerySet', {
+var QuerySet = type('QuerySet', object, {
 
     '__init__': function __init__(model, query) {
         this.model = model || null;
@@ -937,11 +937,11 @@ var insert_query = function(model, values, return_id, raw_values) {
     return query.execute_sql(return_id);
 }
 
-$P({    
-	'Q': Q,
-	'CollectedObjects': CollectedObjects,
-	'QuerySet': QuerySet,
-        'EmptyQuerySet': EmptyQuerySet,
-	'delete_objects': delete_objects,
-        'insert_query': insert_query   
+publish({    
+    Q: Q,
+    CollectedObjects: CollectedObjects,
+    QuerySet: QuerySet,
+    EmptyQuerySet: EmptyQuerySet,
+    delete_objects: delete_objects,
+    insert_query: insert_query   
 });

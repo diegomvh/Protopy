@@ -1,8 +1,8 @@
-$D("doff.db.backends.__init__");
+/* "doff.db.backends.base" */
 /*
  * Represents a database connection.
  */
-var BaseDatabaseWrapper = type('BaseDatabaseWrapper', {
+var BaseDatabaseWrapper = type('BaseDatabaseWrapper', object, {
 
     ops: null,
     '__init__': function __init__(settings){
@@ -33,7 +33,7 @@ var BaseDatabaseWrapper = type('BaseDatabaseWrapper', {
     }
 });
 
-var BaseDatabaseFeatures = type('BaseDatabaseFeatures', {
+var BaseDatabaseFeatures = type('BaseDatabaseFeatures', object, {
     
     needs_datetime_string_cast: true,
     uses_custom_query_class: false,
@@ -50,7 +50,7 @@ var BaseDatabaseFeatures = type('BaseDatabaseFeatures', {
     * This class encapsulates all backend-specific differences, such as the way
     * a backend performs ordering or calculates the ID of a recently-inserted row.
     */
-var BaseDatabaseOperations = type('BaseDatabaseOperations', {
+var BaseDatabaseOperations = type('BaseDatabaseOperations', object, {
 
     'autoinc_sql': function autoinc_sql(table, column) { return null; },
 
@@ -150,14 +150,14 @@ var BaseDatabaseOperations = type('BaseDatabaseOperations', {
     }
 });
 
-var BaseDatabaseValidation = type('BaseDatabaseValidation', {
+var BaseDatabaseValidation = type('BaseDatabaseValidation', object, {
     'validate_field': function validate_field(errors, opts, f) {}
 });
 
     /*
     * This class encapsulates all backend-specific introspection utilities
     */
-var BaseDatabaseIntrospection = type('BaseDatabaseIntrospection', {
+var BaseDatabaseIntrospection = type('BaseDatabaseIntrospection', object, {
     data_types_reverse: {},
     '__init__': function __init__(connection) {
         this.connection = connection;
@@ -175,7 +175,7 @@ var BaseDatabaseIntrospection = type('BaseDatabaseIntrospection', {
         * Returns a list of names of all tables that exist in the database.
         */
     'table_names': function table_names() {
-        cursor = this.connection.cursor();
+        var cursor = this.connection.cursor();
         return this.get_table_list(cursor);
     },
 
@@ -185,7 +185,7 @@ var BaseDatabaseIntrospection = type('BaseDatabaseIntrospection', {
         * that actually exist in the database.
         */
     'doff_table_names': function doff_table_names(only_existing) {
-        var models = $L('doff.db.models');
+        var models = require('doff.db.models.base');
         var tables = new Set();
         for each (var app in models.get_apps()) {
             for each (var model in models.get_models(app)) {
@@ -204,7 +204,7 @@ var BaseDatabaseIntrospection = type('BaseDatabaseIntrospection', {
         * Returns a set of all models represented by the provided list of table names.
         */
     'installed_models': function installed_models(tables) {
-        var models = $L('doff.db.models');
+        var models = require('doff.db.models.base');
         var all_models = [];
         for each (var app in models.get_apps()) {
             for each (var model in models.get_models(app)) {
@@ -219,7 +219,7 @@ var BaseDatabaseIntrospection = type('BaseDatabaseIntrospection', {
         * Returns a list of information about all DB sequences for all models in all apps.
         */
     'sequence_list': function sequence_list() {
-        var models = $L('doff.db.models');
+        var models = require('doff.db.models.base');
         var apps = models.get_apps();
         var sequence_list = [];
 
@@ -241,8 +241,10 @@ var BaseDatabaseIntrospection = type('BaseDatabaseIntrospection', {
 
 });
 
-$P({    'BaseDatabaseWrapper': BaseDatabaseWrapper,
-        'BaseDatabaseFeatures': BaseDatabaseFeatures,
-        'BaseDatabaseOperations': BaseDatabaseOperations,
-        'BaseDatabaseValidation': BaseDatabaseValidation,
-        'BaseDatabaseIntrospection': BaseDatabaseIntrospection });
+publish({    
+    BaseDatabaseWrapper: BaseDatabaseWrapper,
+    BaseDatabaseFeatures: BaseDatabaseFeatures,
+    BaseDatabaseOperations: BaseDatabaseOperations,
+    BaseDatabaseValidation: BaseDatabaseValidation,
+    BaseDatabaseIntrospection: BaseDatabaseIntrospection 
+});

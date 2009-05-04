@@ -1,7 +1,7 @@
-$L('ajax');
-$L('event');
-$L('logging.*');
-$L('logging.handlers');
+require('ajax');
+require('event');
+var logging = require('logging.base');
+require('logging.handlers');
 
 var hmc = null;
 
@@ -41,7 +41,7 @@ function _install_loggers(cp, hlers) {
     }
     delete llist['root'];
 
-    existing = keys(root.manager.logger_dict);
+    var existing = keys(root.manager.logger_dict);
     
     for (var lname in llist) {
         opts = llist[lname];
@@ -91,6 +91,6 @@ function file_config(fname, defaults) {
     _install_loggers(config, hlers);
 }
 
-$P({
+publish({
     file_config: file_config
 });

@@ -1,9 +1,9 @@
-$L('sys');
-$L('event');
-$L('ajax');
-$L('doff.core.urlhandler', 'Handler');
-$L('logging.config', 'file_config');
-$L('gears.localserver', 'ManagedResourceStore');
+require('sys');
+require('event');
+require('ajax');
+require('doff.core.urlhandler', 'Handler');
+require('logging.config', 'file_config');
+require('gears.localserver', 'ManagedResourceStore');
 
 var Project = type('Project', [object], {
     settings: null,
@@ -12,12 +12,12 @@ var Project = type('Project', [object], {
     availability_url: null,
     going_online: false,
     do_net_checking: true,
-    handler: new Handler(),
+    handler: null,
     system: null,
     project: null,
 
     onLoad: function onLoad() {
-        this.sync_stores();
+        //this.sync_stores();
     },
 
     onNetwork: function(type) {},
@@ -26,9 +26,10 @@ var Project = type('Project', [object], {
 	this.name = name;
 	this.package = package;
 	this.path = path;
-	sys.register_module_path(this.package, this.path);
+	sys.register_path(this.package, this.path);
 	this.availability_url = sys.module_url(this.package, 'network_check.txt');
 	this.read_settings();
+        this.handler = new Handler(this.settings.ROOT_URLCONF);
 	// ManagedStores
 	this.project = new ManagedResourceStore(package + '_project');
 	this.project.manifest_url = sys.module_url(this.package, 'manifests/project.json');
@@ -54,7 +55,7 @@ var Project = type('Project', [object], {
 
     read_settings: function read_settings() {
 	var self = this;
-	var global_settings = $L('doff.conf.settings');
+	var global_settings = require('doff.conf.settings');
 	var url_settings = sys.module_url(this.package, 'settings.js');
 	new ajax.Request(url_settings, {
             method: 'GET',
@@ -159,7 +160,7 @@ function get_settings() {
     return get_project().settings;
 }
 
-$P({
+publish({
     get_project: get_project,
     get_settings: get_settings
 });

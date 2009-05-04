@@ -1,8 +1,8 @@
-$D('Wrapper for loading templates from "template" directories in INSTALLED_APPS packages.');
-$L('doff.template.*', 'TemplateDoesNotExist');
-$L('doff.core.exceptions', 'ImproperlyConfigured');
-$L('doff.core.project', 'get_settings');
-$L('ajax');
+/* 'Wrapper for loading templates from "template" directories in INSTALLED_APPS packages.' */
+require('doff.template.base', 'TemplateDoesNotExist');
+require('doff.core.exceptions', 'ImproperlyConfigured');
+require('doff.core.project', 'get_settings');
+require('ajax');
 
 var settings = get_settings();
 
@@ -35,10 +35,10 @@ function load_template_source(template_name, template_dirs) {
         new Request(path, {
             method: 'GET',
             asynchronous : false,
-            'onSuccess': function onSuccess(transport) {
+            onSuccess: function onSuccess(transport) {
                 template = (transport.responseText);
             },
-            'onFailure': function onFailure(){
+            onFailure: function onFailure(){
                 tried.push(path);
             }
         });
@@ -51,4 +51,6 @@ function load_template_source(template_name, template_dirs) {
     throw new TemplateDoesNotExist(error_msg);
 }
 
-$P({ 'load_template_source': load_template_source });
+publish({ 
+    load_template_source: load_template_source 
+});

@@ -1,5 +1,5 @@
-$L('doff.utils.tree', 'Node');
-$L('copy', 'copy', 'deepcopy');
+require('doff.utils.tree', 'Node');
+require('copy', 'copy', 'deepcopy');
 
 var QueryWrapper = type('QueryWrapper', {
     '__init__': function __init__(sql, params){
@@ -57,6 +57,8 @@ function select_related_descend(field, restricted, requested) {
     return true;
 }
 
-$P({   'QueryWrapper': QueryWrapper,
-       'Q':Q,
-       'select_related_descend': select_related_descend });
+publish({   
+    QueryWrapper: QueryWrapper,
+    Q:Q,
+    select_related_descend: select_related_descend 
+});

@@ -1,5 +1,5 @@
-$L('doff.core.urlresolvers', 'RegexURLPattern', 'RegexURLResolver');
-$L('doff.core.exceptions', 'ImproperlyConfigured');
+require('doff.core.urlresolvers', 'RegexURLPattern', 'RegexURLResolver');
+require('doff.core.exceptions', 'ImproperlyConfigured');
 
 var handler404 = 'django.views.defaults.page_not_found';
 var handler500 = 'django.views.defaults.server_error';
@@ -38,10 +38,10 @@ function url(regex, view, kwargs, name, prefix) {
     }
 }
 
-$P({
-    'handler404': handler404,
-    'handler500': handler500,
-    'include': include,
-    'patterns': patterns,
-    'url': url
+publish({
+    handler404: handler404,
+    handler500: handler500,
+    include: include,
+    patterns: patterns,
+    url: url
 });

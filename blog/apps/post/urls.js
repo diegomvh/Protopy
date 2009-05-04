@@ -1,5 +1,5 @@
-$L('doff.conf.urls', '*');
-$L('blog.apps.post.views');
+require('doff.conf.urls', '*');
+require('blog.apps.post.views');
 
 var urlpatterns = patterns('',
     ['^add_tag/$', 'blog.apps.post.views.add_tag'],
@@ -8,4 +8,6 @@ var urlpatterns = patterns('',
     ['^remove_post/([A-Za-z0-9-]+)/$', views.remove_post]
 );
 
-$P({ 'urlpatterns': urlpatterns })
+publish({ 
+    urlpatterns: urlpatterns 
+});

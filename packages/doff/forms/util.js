@@ -92,7 +92,7 @@ var ValidationError = type('ValidationError', Exception, {
     }
 });
 
-$P({
+publish({
     'flatatt': flatatt,
     'ErrorDict': ErrorDict,
     'ErrorList': ErrorList,

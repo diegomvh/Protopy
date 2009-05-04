@@ -1,9 +1,8 @@
 //******************************* PROTOPY CORE *************************************//
 (function() {
-    var __modules__ = {};
-    var __paths__ = {};
-    
-    //Extend form objects to object
+    /* Copia sobre destiny todos los objetos pasados como argumento.
+     * si safe == false los atribuotos de la forma __<foo>__ no se copian al objeto destino
+     */
     function __extend__(safe, destiny) {
 	for (var i = 2, length = arguments.length; i < length; i++) {
 	    var object = arguments[i];
@@ -27,54 +26,94 @@
 	return destiny;
     }
 
-    //Publish simbols in modules
-    function __publish__(object) {
-        for (var k in object) {
-	    this[k] = object[k];
-        }
+    /* Copia en this todos los atribuos del objeto pasado como argumento
+     */
+    function publish(object) {
+        __extend__(false, this, object);
     }
 
-    //Add simbols to builtins
-    function __builtins__(object) {
-        __extend__(false, __modules__['__builtin__'], object);
-        __extend__(false, __modules__['__main__']['__builtins__'], object);
-        __extend__(false, window, object);
-    }
-    
-    function __doc__(obj, doc) {
-        if ( doc === undefined && type(obj) === String)
-	    this.__doc__ = obj;
-	else if (type(doc) === String)
-	    obj.__doc__ = doc;
-    }
-//memoria ps2 16, cable usb del mp3, auriculares, un cargador y baterias, un pack de dvd
-    //The module concept
-    function Module(name, file, source) {
-        this['__file__'] = file;
-        this['__name__'] = name;
-        if (file == 'built-in') {
-            if (source && source instanceof Object)
-                __extend__(true, this, source);
-        }
-    }
-    
-    //Load Modules
-    function __load__(module_name) {
-    	
-        var package = module_name.endswith('.*'),
-	    name = package ? module_name.slice(0, module_name.length - 2) : module_name,
-	    names = name.split('.'),
-	    mod = __modules__[name];
-    
+    /* Administrador de modulos, encargado de la creacion, almacenamiento y otras tareas referidas a los modulos
+     */
+    var ModuleManager = {
+	modules: {},
+	modules_dict: {},
+	paths: {},
+	module_functions: {
+	    publish: publish,
+	    require: require,
+	    type: type
+	},
+	base: '/', //Where i'm, set this for another place. Default root 
+	default_path: 'packages',
+	add: function(module) {
+	    var name = module['__name__'];
+	    this.modules[name] = module;
+	},
+	remove: function(module) {
+	    var name = module['__name__'];
+	    delete this.modules[name];
+	},
+	create: function(name, file, source) {
+	    var module = this.modules_dict;
+	    for each (var n in name.split('.')) {
+		module = module[n] || (module[n] = new Object());
+	    }
+	    module['__file__'] = file;
+	    module['__name__'] = name;
+	    if (source)
+		__extend__(true, module, source);
+	    return module;
+	},
+	decorate: function(module) {
+	    return __extend__(false, module, this.module_functions);
+	},
+	clean: function(module) {
+	    for (var f in this.module_functions)
+		delete module[f];
+	    return module;
+	},
+	get: function(name) {
+	    return this.modules[name] || null;
+	},
+	register_path: function(name, path) {
+	    assert(name.lastIndexOf('.') == -1, 'The module name should be whitout dots');
+	    assert(!this.paths[name], 'The module is registered');
+	    path = path.split('/').filter( function (e) { return e; });
+	    if (!bool(path)) {throw new TypeError('where is the path?')}
+	    this.paths[name] = path.join('/');
+	},
+	file: function(name) {
+	    if (isinstance(name, String)) {
+		var index = name.lastIndexOf('.');
+		var [ pkg, filename ] = (index != -1)? [ name.slice(0, index), name.slice(index + 1)] : [ '', name];
+		return this.module_url(pkg, filename + '.js');
+	    } else if (isinstance(name, Object) && name['__file__'])
+		return name['__file__'];
+	    else throw new TypeError('Invalid Argument');
+	},
+	module_url: function(name, postfix) {
+	    var url = name.split('.');
+	    if (this.paths[url[0]]) {
+		url = this.paths[url[0]].split('/').concat(url.slice(1));
+	    } else {
+		url = this.default_path.split('/').concat(url);
+	    }
+	    
+	    if (postfix)
+		url = url.concat(postfix.split('/'));
+	    url = url.filter( function (element) { return element; });
+	    return this.base + url.join('/');
+	}
+    };
+
+    /* Funcion "cargadora" de modulos, carga en this el modulo requerido, 
+     * o solo los simbolos de un modulo si mas argumentos son pasados a esta funcion.
+     */
+    function require(name) {
+        var mod = ModuleManager.get(name);
         if (!mod) {
             //Only firefox and synchronous, sorry
-	    if (package){
-		var file = sys.module_url(name, '__init__.js');
-	    } else {
-		var index = name.lastIndexOf('.');
-		var [ pkg, filename ] = index != -1? [ name.slice(0, index), name.slice(index + 1)] : [ '', name];
-		var file = sys.module_url(pkg, filename + '.js');
-	    }
+	    var file = ModuleManager.file(name);
             var code = null,
 		request = new XMLHttpRequest();
             request.open('GET', file, false); 
@@ -83,35 +122,27 @@
 		throw new LoadError(file);
             //Tego el codigo, creo el modulo
 	    var code = '(function(){ ' + request.responseText + '});';
-            mod = new Module(name, file);
-            __modules__[name] = mod;
-            //Decoro el modulo con lo que reuiere para funcionar
-	    mod.$P = __publish__;
-	    mod.$L = __load__;
-	    mod.$B = __builtins__;
-	    mod.$D = __doc__;
-	    mod.type = type;
-	    //Listo el modululo base largo el evento
+            mod = ModuleManager.create(name, file);
+            mod = ModuleManager.decorate(mod);
+            ModuleManager.add(mod);
+	    //The base module are ready, publish the event
 	    event.publish('onModuleCreated', [this, mod]);
             try {
-                with (mod) {
+		with (mod) {
 		    eval(code).call(mod);
-                }
-            } catch (exception) {
-                delete __modules__[name];
-                throw exception;
-            }
-	    //EL modulo esta cargado, quito la decoracion
-	    delete mod.$P;
-	    delete mod.$L;
-	    delete mod.$B;
-	    delete mod.$D;
-	    delete mod.type;
+		}
+	    } catch (e) {
+		ModuleManager.remove(mod);
+		throw e;
+	    }
+	    //Not clean for lazy require support
+            //mod = ModuleManager.clean(mod);
         }
         event.publish('onModuleLoaded', [this, mod]);
         switch (arguments.length) {
             case 1:
                     // Returns module
+		    var names = name.split('.');
                     var last = names[names.length - 1];
                     this[last] = mod;
                     return mod;
@@ -141,9 +172,9 @@
 	throw 'The wormhole stop here. Please, is just javascript not python :)'; 
     };
 
-    //For the static
+    //Static
     object.__class__ = type;
-    object.__new__ = function __new__(name, bases, attrs) {
+    object.__new__ = function(name, bases, attrs) {
         //Herencia
         var superbase = function() {};
         superbase.prototype = {};
@@ -166,27 +197,25 @@
     object.__bases__ = [];
     object.__subclasses__ = [];
     object.__static__ = {};
-    object.__doc__ = "";
 
-    //For de prototype
+    //Prototype
     object.prototype.__init__ = function __init__(){};
-    object.prototype.__doc__ = "";
-    object.prototype.__str__ = function __str__(){ return this.__module__ + '.' + this.__name__ };
+    object.prototype.__str__ = function __str__(){ return this['__module__'] + '.' + this['__name__'] };
 
     // Type constructor
     function type(name) {
-	if (name == undefined || name == null)
-	    throw new TypeError('Invalid arguments');
+	if (name == undefined)
+	    throw new TypeError('Invalid arguments, name?');
 	var args = Array.prototype.slice.call(arguments).slice(1);
 	if (args.length == 0)
 	    return name.constructor;
-	if (args[0] instanceof Array && args[0][0] != undefined)
+	if (isinstance(args[0], Array) && args[0].length > 0)
 	    var bases = args.shift();
-	else if (!(args[0] instanceof Array) && args[0] instanceof Function)
+	else if (!isinstance(args[0], Array) && isinstance(args[0], Function))
 	    var bases = [args.shift()];
 	else 
-	    var bases = [object];
-	if (args[0] instanceof Object && args.length == 2) {
+	    throw new TypeError('Invalid arguments, bases?');
+	if (isinstance(args[0], Object) && args.length == 2) {
 	    var classAttrs = args.shift();
 	    var instanceAttrs = args.shift();
 	} else if (args.length == 1) {
@@ -212,7 +241,7 @@
 
 	//Decorando los atributos
 	classAttrs['__name__'] = instanceAttrs['__name__'] = name;
-	classAttrs['__module__'] = instanceAttrs['__module__'] = this['__name__'];
+	classAttrs['__module__'] = instanceAttrs['__module__'] = this['__name__'] || 'window';
 
 	//Construyendo el tipo
         __extend__(true, new_type.__static__, classAttrs);
@@ -256,8 +285,8 @@
 	return window.google.gears;
     }
     
-    var sys = __modules__['sys'] = new Module('sys', 'built-in', { 
-	'version': '0.05',
+    var sys = ModuleManager.create('sys', 'built-in', { 
+	'version': '0.1',
 	'browser': {
 	    'IE':     !!(window.attachEvent && navigator.userAgent.indexOf('Opera') === -1),
 	    'Opera':  navigator.userAgent.indexOf('Opera') > -1,
@@ -273,43 +302,25 @@
 						document.createElement('form')['__proto__']
 	    }
 	},
-	'script_fragment': '<script[^>]*>([\\S\\s]*?)<\/script>',
-	'get_transport': function get_transport() {
+	'get_transport': function() {
 	    if (this.browser.Gecko || this.browser.WebKit)
 		return new XMLHttpRequest();
 	    return false;
 	},
 	'get_gears': get_gears,
-	'register_module_path': function register_module_path(module, path) { 
-	    __paths__[module] = this.base_url + path; 
+	'register_path': function(module, path) { 
+	    ModuleManager.register_path(module, path); 
 	},
-	'module_url': function module_url(module, postfix) {
-	    var url = null;
-	    for (var s in __paths__)
-		if (s && module.indexOf(s) == 0) {
-		    url = __paths__[s].split('/');
-		    url = url.concat(module.slice(len(s)).split('.'));
-		    break;
-		}
-	    if (!url) {
-		url = __paths__[''].split('/');
-		url = url.concat(module.split('.'));
-	    }
-	    if (postfix) 
-		url = url.concat(postfix.split('/'));
-	    //Si termina con / se la agrego al final, puese ser un camino y no un archivo
-	    //FIXME: Se puede hacer mejor
-	    var length = len(url) - 1;
-	    url = url.filter( function (element, index) { return len(element) > 0 || (element == '' && index == length) });
-	    return url.join('/');
+	'module_url': function(name, postfix) {
+	    return ModuleManager.module_url(name, postfix);
 	},
-	'modules': __modules__,
-	'paths': __paths__
+	'modules': ModuleManager.modules,
+	'paths': ModuleManager.paths
     });
 
     sys.browser.features.Gears = !!get_gears() || false;
     /******************** exception ***********************/
-    var Exception = type('Exception', {
+    var Exception = type('Exception', [ object ], {
         '__init__': function(message) {
             //TODO: Ver como tomar mas informacion de quien larga la exception
             //this.caller = arguments.callee.caller;
@@ -319,15 +330,15 @@
         '__str__': function() { return this.__name__ + ': ' + this.message; }
     });
     
-    var exception = __modules__['exceptions'] = new Module('exceptions', 'built-in', {
+    var exception = ModuleManager.create('exceptions', 'built-in', {
         'Exception': Exception,
-        'AssertionError': type('AssertionError', Exception),
-        'AttributeError': type('AttributeError', Exception),
-        'LoadError':  type('LoadError', Exception),
-        'KeyError':  type('KeyError', Exception),
-        'NotImplementedError':  type('NotImplementedError', Exception),
-        'TypeError':  type('TypeError', Exception),
-        'ValueError':  type('ValueError', Exception),
+        'AssertionError': type('AssertionError', [ Exception ]),
+        'AttributeError': type('AttributeError', [ Exception ]),
+        'LoadError':  type('LoadError', [ Exception ]),
+        'KeyError':  type('KeyError', [ Exception ]),
+        'NotImplementedError':  type('NotImplementedError', [ Exception ]),
+        'TypeError':  type('TypeError', [ Exception ]),
+        'ValueError':  type('ValueError', [ Exception ]),
     });
 
     /********************** event **************************/
@@ -451,7 +462,7 @@
         ([__listener__, __eventlistener__][listener]).remove(obj, event, handle);
     }
 
-    var event = __modules__['event'] = new Module('event', 'built-in', {
+    var event = ModuleManager.create('event', 'built-in', {
         'connect': function connect(obj, event, context, method) {
 	    var a = arguments, args = [], i = 0;
 	    // if a[0] is a String, obj was ommited
@@ -503,7 +514,7 @@
     });
 
     /******************** timer **************************/
-    var timer = __modules__['timer'] = new Module('timer', 'built-in', {
+    var timer = ModuleManager.create('timer', 'built-in', {
 	'setTimeout': window.setTimeout,
 	'setInterval': window.setInterval,
 	'clearTimeout': window.clearTimeout,
@@ -546,7 +557,7 @@
     });
 
     //TODO: armar algo para podes pasar parametros.
-    var Base = type('Base', {
+    var Base = type('Base', [ object ], {
 	'__init__': function __init__(options) {
 	    this.options = {
 		method:       'post',
@@ -560,7 +571,7 @@
 	    this.options.method = this.options.method.toLowerCase();
 
 	    if (type(this.options.parameters) == String)
-		this.options.parameters = this.options.parameters.to_query_params();
+		this.options.parameters = this.options.parameters.toqueryparams();
 	},
 	
 	'serialize': function serialize(object){
@@ -569,7 +580,7 @@
 	}
     });
 
-    var Request = type('Request', Base, {
+    var Request = type('Request', [ Base ], {
 	_complete: false,
 
 	'__init__': function __init__(url, options) {
@@ -715,7 +726,7 @@
 
     Request.Events = ['Uninitialized', 'Loading', 'Loaded', 'Interactive', 'Complete'];
 
-    var Response = type('Response', {
+    var Response = type('Response', [ object ], {
 	'__init__': function __init__(request){
 	    this.request = request;
 	    var transport  = this.transport  = request.transport,
@@ -761,7 +772,7 @@
 	}
     });
 
-    var ajax = __modules__['ajax'] = new Module('ajax', 'built-in', {
+    var ajax = ModuleManager.create('ajax', 'built-in', {
 	'Request': Request,
 	'Response': Response
     });
@@ -950,8 +961,6 @@
 	
     function query( selectorGroups, root, includeRoot, recursed, flat ) {
 	var elements = [];
-	if (!isinstance(selectorGroups, String))
-	    return decorate_elements([selectorGroups])[0];
 	if( !recursed ) {  // TODO: try to clean this up. 
 	    selectorGroups = selectorGroups.replace( reg.trim, "" ) // get rid of leading and trailing spaces 
 		.replace( /(\[)\s+/g, "$1") // remove spaces around '['  of attributes
@@ -979,7 +988,7 @@
 	reg.quickTest.lastIndex = 0;
 	if( reg.quickTest.test( selectorGroups ) ) {
 	    elements = get_context_from_sequence_selector( selectorGroups, root, includeRoot, flat );
-	    return (cache[ cacheKey ] = decorate_elements(elements.slice(0)));
+	    return (cache[ cacheKey ] = elements.slice(0));
 	}
 	    
 	var groupsWorker, 
@@ -1051,7 +1060,7 @@
 	if( groups.length > 1 ) 
 	    elements = filter(elements);
 
-	return ( cache[ cacheKey ] = decorate_elements(elements.slice(0)));
+	return ( cache[ cacheKey ] = elements.slice(0));
     }
 
     function query_combinator( l, r, c ) {
@@ -1060,7 +1069,7 @@
 	    proc = {}, 
 	    succ = {}, 
 	    fail = {}, 
-	    combinatorCheck = simple_selector.combinator[c];
+	    combinatorCheck = Selector.combinator[c];
 		
 	for( var li = 0, le; le = l[ li++ ]; ) {
 	    le.uid = le.uid || _uid++;
@@ -1128,14 +1137,14 @@
 		testFuncArgs[ 1 ] = n[ 1 ] || n[ 0 ];
 		testFuncArgs[ 2 ] = v ? v[ 1 ] : "";
 		testFuncKey = "" + aTest.match( /[~!+*\^$|=]/ );
-		testFuncScope = simple_selector.attribute;	
+		testFuncScope = Selector.attribute;	
 		testFunc = testFuncScope[ testFuncKey ];
 		persistCache[ aTest ] = [ testFuncKey, testFuncScope ].concat( testFuncArgs );
 	    } else { // pseudo
 		var pa = aTest.match( reg.pseudoArgs );
 		testFuncArgs[ 1 ] = pa ? pa[ 1 ] : "";
 		testFuncKey = aTest.match( reg.pseudoName )[ 1 ];
-		testFuncScope = simple_selector.pseudos;
+		testFuncScope = Selector.pseudos;
 		
 		if( /nth-(?!.+only)/i.test( aTest ) ) {
 		    var a, 
@@ -1206,7 +1215,7 @@
 	}
 	return passed;
     }
-    var simple_selector = {
+    var Selector = {
 	attribute: {
 	    "null": function( e, a, v ) { return !!get_attribute(e,a); },
 	    "=" : function( e, a, v ) { return get_attribute(e,a) == v; },
@@ -1314,189 +1323,30 @@
 	    }
 	}
     }
-
-    function decorate_elements(elements) {
-	var decorated = [];
-	//Decorando los elementos
-	for each (var element in elements) {
-	    if (!element.tagName) continue;
-	    var name = element.tagName.toLowerCase();
-	    if (name in TagNames)
-		extend(element, TagNames[name]);
-	    if (element.elements && element.elements.length != 0)
-		decorate_elements(element.elements);
-	    decorated.push(element);
-	}
-	return decorated;
-    }
-
-    var TagNames = {};
-    TagNames['form'] = {
-	'disable': function() {
-	    array(this.elements).forEach(function(e) {e.disable();});
-	},
-	'enable': function() {
-	    array(this.elements).forEach(function(e) {e.enable();});
-	},
-	'serialize': function() {
-	    var elements = array(this.elements);
-	    var data = elements.reduce(function(result, element) {
-		if (!element.disabled && element.name) {
-		    key = element.name; value = element.get_value();
-		    if (value != null && element.type != 'file' && (element.type != 'submit')) {
-			if (key in result) {
-			    // a key is already present; construct an array of values
-			    if (type(result[key]) != Array) 
-				result[key] = [result[key]];
-			    result[key].push(value);
-			} else result[key] = value;
-		    }
-		}
-		return result;
-	    }, {});
-
-	    return data;
-	}
-    };
     
-    TagNames['input'] = TagNames['select'] = TagNames['textarea'] = {
-	serialize: function() {
-	    if (!this.disabled && this.name) {
-		var value = this.get_value();
-		if (value != undefined) {
-		    var pair = { };
-		    pair[this.name] = value;
-		    return pair;
-		}
-	    }
-	    return '';
-	},
-
-	get_value: function() {
-	    var method = this.tagName.toLowerCase();
-	    return Serializers[method](this);
-	},
-
-	set_value: function(value) {
-	    var method = this.tagName.toLowerCase();
-	    Serializers[method](this, value);
-	},
-
-	clear: function() {
-	    this.value = '';
-	},
-
-	present: function() {
-	    return this.value != '';
-	},
-
-	activate: function() {
-	    try {
-		this.focus();
-		if (this.select && (this.tagName.toLowerCase() != 'input' || !include(['button', 'reset', 'submit'], element.type)))
-		    this.select();
-	    } catch (e) { }
-	},
-
-	disable: function() {
-	    this.disabled = true;
-	},
-
-	enable: function() {
-	    this.disabled = false;
-	}
-    }
-
-    var Serializers = {
-	input: function(element, value) {
-	    switch (element.type.toLowerCase()) {
-	    case 'checkbox':
-	    case 'radio':
-		return this.inputSelector(element, value);
-	    default:
-		return this.textarea(element, value);
-	    }
-	},
-
-	inputSelector: function(element, value) {
-	    if (typeof(value) === 'undefined') return element.checked ? element.value : null;
-	    else element.checked = !!value;
-	},
-
-	textarea: function(element, value) {
-	    if (typeof(value) === 'undefined') return element.value;
-	    else element.value = value;
-	},
-
-	select: function(element, value) {
-	    if (typeof(value) === 'undefined')
-	    return this[element.type == 'select-one' ?
-		'selectOne' : 'selectMany'](element);
-	    else {
-	    var opt, currentValue, single = type(value) != Array;
-	    for (var i = 0, length = element.length; i < length; i++) {
-		opt = element.options[i];
-		currentValue = this.optionValue(opt);
-		if (single) {
-		    if (currentValue == value) {
-			opt.selected = true;
-			return;
-		    }
-		} else 
-		    opt.selected = include(value, currentValue);
-	    }
-	    }
-	},
-
-	selectOne: function(element) {
-	    var index = element.selectedIndex;
-	    return index >= 0 ? this.optionValue(element.options[index]) : null;
-	},
-
-	selectMany: function(element) {
-	    var values, length = element.length;
-	    if (!length) return null;
-
-	    for (var i = 0, values = []; i < length; i++) {
-	    var opt = element.options[i];
-	    if (opt.selected) values.push(this.optionValue(opt));
-	    }
-	    return values;
-	},
-
-	optionValue: function(opt) {
-	    return opt.hasAttribute('value') ? opt.value : opt.text;
-	}
-    };
-    // Primer cambio
-    var dom = __modules__['dom'] = new Module('dom', 'built-in', {
-	'query': query, 
+    var dom = ModuleManager.create('dom', 'built-in', {
+	'query': query,
 	'query_combinator': query_combinator,
-	'query_selector': query_selector,
-	'simple_selector': simple_selector
+	'query_selector': query_selector
     });
 
-    /******************** main **************************/
-    var main = __modules__['__main__'] = new Module('__main__','built-in', {'__builtins__': {}, '__doc__': "Welcome to protopy" });
-    
     /******************** builtin **************************/
-    var builtin = __modules__['__builtin__'] = new Module('__builtin__','built-in', {
-        '$P': __publish__,
-        '$L': __load__,
-        '$B': __builtins__,
-	'$D': __doc__,
-	'$Q': query,
+    var builtin = ModuleManager.create('__builtin__','built-in', {
+        'publish': publish,
+        'require': require,
+	'$': function () { 
+	    var result = array(arguments).map(function (element) { return query(isinstance(element, String)? '#' + element : element)[0]; });
+	    return (len(result) == 1)? result[0] : result; 
+	},
+	'$$': query,
+	'query': query,
 	'object': object,
 	'type': type,
 	'extend': function extend() {return __extend__.apply(this, [false].concat(array(arguments)));},
-	'ls': function ls(obj){ return keys(__modules__[(obj && obj['__name__']) || this['__name__']]); },
-	'locals': function locals(){ return __modules__[this['__name__']]; },
-	'globals': function globals(){ return __modules__['__main__']; }
+	//'ls': function ls(obj){ return keys(__modules__[(obj && obj['__name__']) || this['__name__']]); },
+	//'locals': function locals(){ return __modules__[this['__name__']]; },
+	//'globals': function globals(){ return __modules__['__main__']; }
     });
-    /******************** POPULATE **************************/
-    __extend__(true, window, main);
-    __builtins__(builtin);
-    __builtins__(exception);
 
     // ******************************* MORE BUILTINS ************************************* //
     function super(_type, _object) {
@@ -1534,7 +1384,7 @@
 	else {
 	    var others = [];
 	    for each (var t in _type) {
-		if (type(object) == t) return true;
+		if (object && type(object) == t) return true;
 		others = others.concat(t.__subclasses__);
 	    }
 	    return isinstance(object, others);
@@ -1558,7 +1408,7 @@
     }
 
     //Arguments wraped, whit esteroids
-    var Arguments = type('Arguments', [object], {
+    var Arguments = type('Arguments', [ object ], {
         '__init__': function __init__(args, def) {
             this.func = args.callee;
             this.collect = Array.prototype.slice.call(args);
@@ -1579,7 +1429,7 @@
             return len(this.collect);
         },
 
-    '_populate': function _populate() {
+        '_populate': function _populate() {
             this._kwargs = {};
             var haskwargs = false;
             for (var p in this._defaults || {})
@@ -1621,7 +1471,7 @@
         }
     });
 
-    var Template = type('Template', {
+    var Template = type('Template', [ object ], {
         //Static
         'pattern': /(^|.|\r|\n)(%\((.+?)\))s/,
     },{
@@ -1694,7 +1544,6 @@
 
     id.current = 0;
     id.next = function () { return id.current += 1; };
-    id.__doc__ = "I'm sorry";
 
     function getattr(object, name, def) {
 	//TODO: validar argumentos
@@ -1729,384 +1578,7 @@
 	}
     }
 
-    //Populate builtins
-    $B({
-        'super': super,
-        'isinstance': isinstance,
-        'issubclass': issubclass,
-        'Arguments': Arguments,
-        'Template': Template,
-	'hash': hash,
-        'id': id,
-	'getattr': getattr,
-	'setattr': setattr,
-	'hasattr': hasattr,
-        'assert': function assert( test, text ) {
-            if ( test === false )
-                throw new AssertionError( text || 'An assertion failed!');
-            return test;
-        },
-        'bool': function bool(object) {
-            if (object && callable(object['__nonzero__']))
-                return object.__nonzero__();
-            if (object && type(object) == Array)
-                return object.length != 0;
-            if (object && type(object) == Object)
-                return keys(object).length != 0;
-            return Boolean(object);
-        },
-        'callable': function callable(object) {
-            return object && type(object) == Function;
-        },
-        'chr': function chr(number){ 
-	    if (type(number) != Number) throw new TypeError('An integer is required');
-	    return String.fromCharCode(number);
-        },
-        'ord': function ord(ascii) {
-            if (type(number) != String) throw new TypeError('An string is required');
-            return ascii.charCodeAt(0);
-        },
-        'bisect': function bisect(array, element) {
-            var i = 0;
-            for (var length = array.length; i < length; i++)
-                if (array[i].__cmp__(element) > 0) return i;
-            return i;
-        },
-        //no se porque no anda el dir
-        'equal': function equal(object1, object2) {
-            if (callable(object1['__eq__'])) return object1.__eq__(object2);
-            return object1 == object2;
-        },
-        'nequal': function nequal(object1, object2) {
-            if (callable(object1['__ne__'])) return object1.__ne__(object2);
-            return object1 != object2;
-        },
-        'filter': function filter(func, sequence) { 
-    
-        },
-        'float': function float(value) {
-            if (isinstance(value, String) || isinstance(value, Number)) {
-		var number = Number(value);
-		if (isNaN(number))
-		    throw new ValueError('Invalid literal');
-		return number;
-	    }
-	    throw new TypeError('Argument must be a string or number');
-        },
-        'flatten': function flatten(array) { 
-            return array.reduce(function(a,b) { return a.concat(b); }, []); 
-        },
-        'help': function help(module){
-            module = module || this;
-            print(module['__doc__']);
-        },
-        'include': function include(object, element){
-            if (object == undefined) return false;
-            if (callable(object['__contains__'])) return object.__contains__(element);
-            return object.indexOf(element) > -1;
-        },
-        'int': function int(value) {
-            if (isinstance(value, String) || isinstance(value, Number)) {
-		var number = Math.floor(value);
-		if (isNaN(number))
-		    throw new ValueError('Invalid literal');
-		return number;
-	    }
-	    throw new TypeError('Argument must be a string or number');
-        },
-        'len': function len(object) {
-            if (object && callable(object['__len__']))
-                return object.__len__();
-            if (object['length'] != undefined) 
-                return object.length;
-            if (object && type(object) == Object) 
-                return keys(object).length;
-            throw new TypeError("object of type '" + type(object) + "' has no len()");
-        },
-        'array': function array(iterable) {
-            if (!iterable) 
-                return [];
-            if (callable(iterable['__iterator__'])) 
-                return [e for each (e in iterable)];
-            if (iterable.length != undefined)
-                return Array.prototype.slice.call(iterable);
-        },
-        'mult': function mult(array, value) {
-            var result = [];
-            for (var i = 0; i < value; i++)
-                result = result.concat(array);
-            return result;
-        },
-        'print': window.console && window.console.log || function(){},
-        'range': function xrange(start, stop, step){
-            var rstep = step || 1;
-            var rstop = (stop == undefined)? start : stop;
-            var rstart = (stop == undefined)? 0 : start;
-            var ret = [];
-            for (var i = rstart; i < rstop; i += rstep)
-                ret.push(i);
-            return ret;
-        },
-        'str': function str(object) {
-            if (object && callable(object['__str__'])) 
-                return object.__str__();
-            return String(object);
-        },
-        'values': function values(obj){ 
-            return [e for each (e in obj)]
-        },
-        'keys': function keys(object){
-            return [e for (e in object)];
-        },
-	'items': function items(object){
-            return zip(keys(object), values(object));
-        },
-        'unique': function unique(sorted) {
-            return sorted.reduce(function(array, value) {
-                if (!include(array, value))
-                    array.push(value);
-                return array;
-                }, []);
-        },
-        'xrange': function xrange(start, stop, step){
-            var xstep = step || 1;
-            var xstop = (!stop)? start : stop;
-            var xstart = (!stop)? 0 : start;
-            for (var i = xstart; i < xstop; i += xstep)
-                yield i;
-        },
-        'zip': function zip(){
-            var args = array(arguments);
-    
-            var collections = args.map(array);
-            var array1 = collections.shift();
-            return array1.map( function(value, index) { 
-                return [value].concat(collections.map( function (v) {
-                    return v[index];
-                }));
-            });
-        }
-    });
-    
-    // WHERE
-    var scripts = dom.query('script');
-    for each (var script in scripts) {
-	if (script.src) {
-	    var m = script.src.match(new RegExp('^.*' + location.host + '/?(.*)/?protopy.js$', 'i'));
-	    if (m) sys.base_url = m[1];
-	}
-    }
-    __paths__[''] = sys.base_url + '/packages/';
-})();
-
-// ******************************* EXTENDING JAVASCRIPT ************************************* //
-(function(){
-    //--------------------------------------- String -------------------------------------//
-    extend(String, {
-	'interpret': function interpret(value) {
-	    return value == null ? '' : String(value);
-	},
-	
-	specialChar: {
-	    '\b': '\\b',
-	    '\t': '\\t',
-	    '\n': '\\n',
-	    '\f': '\\f',
-	    '\r': '\\r',
-	    '\\': '\\\\'
-	}
-    });
-
-    extend(String.prototype, {
-	'gsub': function gsub(pattern, replacement) {
-	    var result = '', source = this, match;
-	    replacement = arguments.callee.prepare_replacement(replacement);
-
-	    while (source.length > 0) {
-		if (match = source.match(pattern)) {
-		    result += source.slice(0, match.index);
-		    result += String.interpret(replacement(match));
-		    source  = source.slice(match.index + match[0].length);
-		} else {
-		    result += source, source = '';
-		}
-	    }
-	    return result;
-	},
-
-	'sub': function sub(pattern, replacement, count) {
-	    replacement = this.gsub.prepare_replacement(replacement);
-	    count = (!count) ? 1 : count;
-
-	    return this.gsub(pattern, function(match) {
-		if (--count < 0) return match[0];
-		    return replacement(match);
-	    });
-	},
-
-	'scan': function scan(pattern, iterator) {
-	    this.gsub(pattern, iterator);
-	    return String(this);
-	},
-
-	//% operator like python
-	'subs': function subs() {
-	    var args = flatten(array(arguments));
-	    //%% escaped
-	    var string = this.gsub(/%%/, function(match){ return '<ESC%%>'; });
-	    if (args[0] && (type(args[0]) == Object || isinstance(args[0], object)))
-                string = new Template(string, args[1]).evaluate(args[0]);
-	    else
-                string = string.gsub(/%s/, function(match) { 
-                    return (args.length != 0)? str(args.shift()) : match[0]; 
-                });
-	    return string.gsub(/<ESC%%>/, function(match){ return '%'; });
-	},
-
-	'truncate': function truncate(length, truncation) {
-	    length = length || 30;
-	    truncation = (!truncation) ? '...' : truncation;
-	    return this.length > length ?
-	    this.slice(0, length - truncation.length) + truncation : String(this);
-	},
-
-	'strip': function strip() {
-	    return this.replace(/^\s+/, '').replace(/\s+$/, '');
-	},
-
-	'strip_tags': function strip_tags() {
-	    return this.replace(/<\/?[^>]+>/gi, '');
-	},
-
-	'strip_scripts': function strip_scripts() {
-	    return this.replace(new RegExp(sys.script_fragment, 'img'), '');
-	},
-
-	'extract_scripts': function extract_scripts() {
-	    var match_all = new RegExp(sys.script_fragment, 'img');
-	    var match_one = new RegExp(sys.script_fragment, 'im');
-	    return (this.match(match_all) || []).map(function(script_tag) {
-		return (script_tag.match(match_one) || ['', ''])[1];
-	    });
-	},
-
-	'eval_scripts': function eval_scripts() {
-	    return this.extract_scripts().map(function(script) { return eval(script) });
-	},
-
-	'escape_HTML': function escape_HTML() {
-	    var self = arguments.callee;
-	    self.text.data = this;
-	    return self.div.innerHTML;
-	},
-
-	'unescape_HTML': function unescape_HTML() {
-	    var div = new Element('div');
-	    div.innerHTML = this.stripTags();
-	    return div.childNodes[0] ? (div.childNodes.length > 1 ?
-	    array(div.childNodes).reduce(function(memo, node) { return memo + node.nodeValue }, '') :
-	    div.childNodes[0].nodeValue) : '';
-	},
-
-	'to_query_params': function to_query_params(separator) {
-	    var match = this.strip().match(/([^?#]*)(#.*)?$/);
-	    if (!match) return { };
-
-	    return match[1].split(separator || '&').reduce(function(hash, pair) {
-	    if ((pair = pair.split('='))[0]) {
-		var key = decodeURIComponent(pair.shift());
-		var value = pair.length > 1 ? pair.join('=') : pair[0];
-		if (value != undefined) value = decodeURIComponent(value);
-
-		if (key in hash) {
-		    if (type(hash[key]) != Array) hash[key] = [hash[key]];
-		    hash[key].push(value);
-		} else hash[key] = value;
-	    }
-	    return hash;
-	    }, {});
-	},
-
-	'succ': function succ() {
-	    return this.slice(0, this.length - 1) +
-	    String.fromCharCode(this.charCodeAt(this.length - 1) + 1);
-	},
-
-	'times': function times(count) {
-	    return count < 1 ? '' : new Array(count + 1).join(this);
-	},
-
-	'camelize': function camelize() {
-	    var parts = this.split('-'), len = parts.length;
-	    if (len == 1) return parts[0];
-
-	    var camelized = this.charAt(0) == '-'
-	    ? parts[0].charAt(0).toUpperCase() + parts[0].substring(1)
-	    : parts[0];
-
-	    for (var i = 1; i < len; i++)
-	    camelized += parts[i].charAt(0).toUpperCase() + parts[i].substring(1);
-
-	    return camelized;
-	},
-
-	'capitalize': function capitalize() {
-	    return this.charAt(0).toUpperCase() + this.substring(1).toLowerCase();
-	},
-
-	'underscore': function underscore() {
-	    return this.gsub(/::/, '/').gsub(/([A-Z]+)([A-Z][a-z])/,'#{1}_#{2}').gsub(/([a-z\d])([A-Z])/,'#{1}_#{2}').gsub(/-/,'_').toLowerCase();
-	},
-
-	'dasherize': function dasherize() {
-	    return this.gsub(/_/,'-');
-	},
-
-	'inspect': function inspect(useDoubleQuotes) {
-	    var escapedString = this.gsub(/[\x00-\x1f\\]/, function(match) {
-	    var character = String.specialChar[match[0]];
-	    return character ? character : '\\u00' + match[0].charCodeAt().toPaddedString(2, 16);
-	    });
-	    if (useDoubleQuotes) return '"' + escapedString.replace(/"/g, '\\"') + '"';
-	    return "'" + escapedString.replace(/'/g, '\\\'') + "'";
-	},
-
-	'startswith': function startswith(pattern) {
-	    return this.indexOf(pattern) === 0;
-	},
-
-	'endswith': function endswith(pattern) {
-	    var d = this.length - pattern.length;
-	    return d >= 0 && this.lastIndexOf(pattern) === d;
-	},
-
-	'blank': function blank() {
-	    return /^\s*$/.test(this);
-	}
-    });
-
-    String.prototype.gsub.prepare_replacement = function(replacement) {
-	if (callable(replacement)) 
-	    return replacement;
-	var template = new Template(replacement);
-	return function(match) { return template.evaluate(match) };
-    };
-
-    String.prototype.parse_query = String.prototype.to_query_params;
-
-    extend(String.prototype.escape_HTML, {
-	div:  document.createElement('div'),
-	text: document.createTextNode('')
-    });
-
-    String.prototype.escape_HTML.div.appendChild(String.prototype.escape_HTML.text);
-
-})();
-
-//--------------------------------------- More builtins -----------------------------------------//
-//More Data types
-(function(){
-    var Dict = type('Dict', [object], {
+    var Dict = type('Dict', [ object ], {
         '__init__': function __init__(object) {
             this._value = {};
             this._key = {};
@@ -2245,7 +1717,7 @@
         }
     });
 
-    var Set = type('Set', [object], {
+    var Set = type('Set', [ object ], {
         '__init__': function __init__(elements){
             var elements = elements || [];
             if (type(elements) != Array)
@@ -2364,12 +1836,618 @@
             this.elements = set.difference(this).elements;
         }
     });
+
+    //Populate builtins
+    __extend__(false, builtin, {
+        'super': super,
+        'isinstance': isinstance,
+        'issubclass': issubclass,
+        'Arguments': Arguments,
+        'Template': Template,
+        'Dict': Dict,
+        'Set': Set,
+	'hash': hash,
+        'id': id,
+	'getattr': getattr,
+	'setattr': setattr,
+	'hasattr': hasattr,
+        'assert': function assert( test, text ) {
+            if ( test === false )
+                throw new AssertionError( text || 'An assertion failed!');
+            return test;
+        },
+        'bool': function bool(object) {
+            if (object && callable(object['__nonzero__']))
+                return object.__nonzero__();
+            if (object && type(object) == Array)
+                return object.length != 0;
+            if (object && type(object) == Object)
+                return keys(object).length != 0;
+            return Boolean(object);
+        },
+        'callable': function callable(object) {
+            return object && type(object) == Function;
+        },
+        'chr': function chr(number){ 
+	    if (type(number) != Number) throw new TypeError('An integer is required');
+	    return String.fromCharCode(number);
+        },
+        'ord': function ord(ascii) {
+            if (type(number) != String) throw new TypeError('An string is required');
+            return ascii.charCodeAt(0);
+        },
+        'bisect': function bisect(array, element) {
+            var i = 0;
+            for (var length = array.length; i < length; i++)
+                if (array[i].__cmp__(element) > 0) return i;
+            return i;
+        },
+        //no se porque no anda el dir
+        'equal': function equal(object1, object2) {
+            if (callable(object1['__eq__'])) return object1.__eq__(object2);
+            return object1 == object2;
+        },
+        'nequal': function nequal(object1, object2) {
+            if (callable(object1['__ne__'])) return object1.__ne__(object2);
+            return object1 != object2;
+        },
+        'filter': function filter(func, sequence) { 
     
-    $B({'Dict': Dict, 'Set': Set});
+        },
+        'float': function float(value) {
+            if (isinstance(value, String) || isinstance(value, Number)) {
+		var number = Number(value);
+		if (isNaN(number))
+		    throw new ValueError('Invalid literal');
+		return number;
+	    }
+	    throw new TypeError('Argument must be a string or number');
+        },
+        'flatten': function flatten(array) { 
+            return array.reduce(function(a,b) { return a.concat(b); }, []); 
+        },
+        'include': function include(object, element){
+            if (object == undefined) return false;
+            if (callable(object['__contains__'])) return object.__contains__(element);
+            return object.indexOf(element) > -1;
+        },
+        'int': function int(value) {
+            if (isinstance(value, String) || isinstance(value, Number)) {
+		var number = Math.floor(value);
+		if (isNaN(number))
+		    throw new ValueError('Invalid literal');
+		return number;
+	    }
+	    throw new TypeError('Argument must be a string or number');
+        },
+        'len': function len(object) {
+            if (object && callable(object['__len__']))
+                return object.__len__();
+            if (object['length'] != undefined) 
+                return object.length;
+            if (object && type(object) == Object) 
+                return keys(object).length;
+            throw new TypeError("object of type '" + type(object) + "' has no len()");
+        },
+        'array': function array(iterable) {
+            if (!iterable) 
+                return [];
+            if (callable(iterable['__iterator__'])) 
+                return [e for each (e in iterable)];
+            if (iterable.length != undefined)
+                return Array.prototype.slice.call(iterable);
+        },
+        'mult': function mult(array, value) {
+            var result = [];
+            for (var i = 0; i < value; i++)
+                result = result.concat(array);
+            return result;
+        },
+        'print': window.console && window.console.log || function(){},
+        'range': function xrange(start, stop, step){
+            var rstep = step || 1;
+            var rstop = (stop == undefined)? start : stop;
+            var rstart = (stop == undefined)? 0 : start;
+            var ret = [];
+            for (var i = rstart; i < rstop; i += rstep)
+                ret.push(i);
+            return ret;
+        },
+        'str': function str(object) {
+            if (object && callable(object['__str__'])) 
+                return object.__str__();
+            return String(object);
+        },
+        'values': function values(obj){ 
+            return [e for each (e in obj)]
+        },
+        'keys': function keys(object){
+            return [e for (e in object)];
+        },
+	'items': function items(object){
+            return zip(keys(object), values(object));
+        },
+        'unique': function unique(sorted) {
+            return sorted.reduce(function(array, value) {
+                if (!include(array, value))
+                    array.push(value);
+                return array;
+                }, []);
+        },
+        'xrange': function xrange(start, stop, step){
+            var xstep = step || 1;
+            var xstop = (!stop)? start : stop;
+            var xstart = (!stop)? 0 : start;
+            for (var i = xstart; i < xstop; i += xstep)
+                yield i;
+        },
+        'zip': function zip(){
+            var args = array(arguments);
     
-    // These are some simple yet useful aliases, there are most likely to be
-    // used with DOM and Peppy boilerplate code
-    $B({'$f': function (a){return a[0]}, // first item
-        '$l': function (a){return a[a.length -1]} // last item
+            var collections = args.map(array);
+            var array1 = collections.shift();
+            return array1.map( function(value, index) { 
+                return [value].concat(collections.map( function (v) {
+                    return v[index];
+                }));
+            });
+        }
     });
+
+    /******************** POPULATE **************************/
+    ModuleManager.add(sys);
+    ModuleManager.add(exception);
+    ModuleManager.add(event);
+    ModuleManager.add(timer);
+    ModuleManager.add(ajax);
+    ModuleManager.add(dom);
+    ModuleManager.add(builtin);
+    publish(builtin);
+    publish(exception);
+
+    // WHERE
+    var scripts = dom.query('script');
+    for each (var script in scripts) {
+	if (script.src) {
+	    var m = script.src.match(new RegExp('^.*' + location.host + '(/?.*/?)protopy.js$', 'i'));
+	    if (m) 
+		ModuleManager.base = m[1];
+	}
+    }
+})();
+
+// ******************************* EXTENDING JAVASCRIPT ************************************* //
+(function(){
+    //--------------------------------------- String -------------------------------------//
+    extend(String, {
+	scriptfragment: '<script[^>]*>([\\S\\s]*?)<\/script>',
+	interpret: function(value) {
+	    return value == null ? '' : String(value);
+	},
+	specialChar: {
+	    '\b': '\\b',
+	    '\t': '\\t',
+	    '\n': '\\n',
+	    '\f': '\\f',
+	    '\r': '\\r',
+	    '\\': '\\\\'
+	}
+    });
+
+    extend(String.prototype, {
+	'gsub': function gsub(pattern, replacement) {
+	    var result = '', source = this, match;
+	    replacement = arguments.callee.prepare_replacement(replacement);
+
+	    while (source.length > 0) {
+		if (match = source.match(pattern)) {
+		    result += source.slice(0, match.index);
+		    result += String.interpret(replacement(match));
+		    source  = source.slice(match.index + match[0].length);
+		} else {
+		    result += source, source = '';
+		}
+	    }
+	    return result;
+	},
+
+	'sub': function sub(pattern, replacement, count) {
+	    replacement = this.gsub.prepare_replacement(replacement);
+	    count = (!count) ? 1 : count;
+
+	    return this.gsub(pattern, function(match) {
+		if (--count < 0) return match[0];
+		    return replacement(match);
+	    });
+	},
+
+	'scan': function scan(pattern, iterator) {
+	    this.gsub(pattern, iterator);
+	    return String(this);
+	},
+
+	//% operator like python
+	'subs': function subs() {
+	    var args = flatten(array(arguments));
+	    //%% escaped
+	    var string = this.gsub(/%%/, function(match){ return '<ESC%%>'; });
+	    if (args[0] && (type(args[0]) == Object || isinstance(args[0], object)))
+                string = new Template(string, args[1]).evaluate(args[0]);
+	    else
+                string = string.gsub(/%s/, function(match) { 
+                    return (args.length != 0)? str(args.shift()) : match[0]; 
+                });
+	    return string.gsub(/<ESC%%>/, function(match){ return '%'; });
+	},
+
+	'truncate': function truncate(length, truncation) {
+	    length = length || 30;
+	    truncation = (!truncation) ? '...' : truncation;
+	    return this.length > length ?
+	    this.slice(0, length - truncation.length) + truncation : String(this);
+	},
+
+	'strip': function strip() {
+	    return this.replace(/^\s+/, '').replace(/\s+$/, '');
+	},
+
+	'striptags': function strip_tags() {
+	    return this.replace(/<\/?[^>]+>/gi, '');
+	},
+
+	'stripscripts': function strip_scripts() {
+	    return this.replace(new RegExp(String.scriptfragment, 'img'), '');
+	},
+
+	'extractscripts': function extract_scripts() {
+	    var match_all = new RegExp(String.scriptfragment, 'img');
+	    var match_one = new RegExp(String.scriptfragment, 'im');
+	    return (this.match(match_all) || []).map(function(script_tag) {
+		return (script_tag.match(match_one) || ['', ''])[1];
+	    });
+	},
+
+	'evalscripts': function eval_scripts() {
+	    return this.extractscripts().map(function(script) { return eval(script) });
+	},
+
+	'escapeHTML': function escape_HTML() {
+	    var self = arguments.callee;
+	    self.text.data = this;
+	    return self.div.innerHTML;
+	},
+
+	'unescapeHTML': function unescape_HTML() {
+	    var div = document.createElement('div');
+	    div.innerHTML = this.striptags();
+	    return div.childNodes[0] ? (div.childNodes.length > 1 ?
+	    array(div.childNodes).reduce(function(memo, node) { return memo + node.nodeValue }, '') :
+	    div.childNodes[0].nodeValue) : '';
+	},
+
+	'toqueryparams': function toqueryparams(separator) {
+	    var match = this.strip().match(/([^?#]*)(#.*)?$/);
+	    if (!match) return { };
+
+	    return match[1].split(separator || '&').reduce(function(hash, pair) {
+	    if ((pair = pair.split('='))[0]) {
+		var key = decodeURIComponent(pair.shift());
+		var value = pair.length > 1 ? pair.join('=') : pair[0];
+		if (value != undefined) value = decodeURIComponent(value);
+
+		if (key in hash) {
+		    if (type(hash[key]) != Array) hash[key] = [hash[key]];
+		    hash[key].push(value);
+		} else hash[key] = value;
+	    }
+	    return hash;
+	    }, {});
+	},
+
+	'succ': function succ() {
+	    return this.slice(0, this.length - 1) +
+	    String.fromCharCode(this.charCodeAt(this.length - 1) + 1);
+	},
+
+	'times': function times(count) {
+	    return count < 1 ? '' : new Array(count + 1).join(this);
+	},
+
+	'camelize': function camelize() {
+	    var parts = this.split('-'), len = parts.length;
+	    if (len == 1) return parts[0];
+
+	    var camelized = this.charAt(0) == '-'
+	    ? parts[0].charAt(0).toUpperCase() + parts[0].substring(1)
+	    : parts[0];
+
+	    for (var i = 1; i < len; i++)
+	    camelized += parts[i].charAt(0).toUpperCase() + parts[i].substring(1);
+
+	    return camelized;
+	},
+
+	'capitalize': function capitalize() {
+	    return this.charAt(0).toUpperCase() + this.substring(1).toLowerCase();
+	},
+
+	'underscore': function underscore() {
+	    return this.gsub(/::/, '/').gsub(/([A-Z]+)([A-Z][a-z])/,'#{1}_#{2}').gsub(/([a-z\d])([A-Z])/,'#{1}_#{2}').gsub(/-/,'_').toLowerCase();
+	},
+
+	'dasherize': function dasherize() {
+	    return this.gsub(/_/,'-');
+	},
+
+	'inspect': function inspect(useDoubleQuotes) {
+	    var escapedString = this.gsub(/[\x00-\x1f\\]/, function(match) {
+	    var character = String.specialChar[match[0]];
+	    return character ? character : '\\u00' + match[0].charCodeAt().toPaddedString(2, 16);
+	    });
+	    if (useDoubleQuotes) return '"' + escapedString.replace(/"/g, '\\"') + '"';
+	    return "'" + escapedString.replace(/'/g, '\\\'') + "'";
+	},
+
+	'startswith': function startswith(pattern) {
+	    return this.indexOf(pattern) === 0;
+	},
+
+	'endswith': function endswith(pattern) {
+	    var d = this.length - pattern.length;
+	    return d >= 0 && this.lastIndexOf(pattern) === d;
+	},
+
+	'blank': function blank() {
+	    return /^\s*$/.test(this);
+	}
+    });
+
+    String.prototype.gsub.prepare_replacement = function(replacement) {
+	if (callable(replacement)) 
+	    return replacement;
+	var template = new Template(replacement);
+	return function(match) { return template.evaluate(match) };
+    };
+
+    String.prototype.parsequery = String.prototype.toqueryparams;
+
+    extend(String.prototype.escapeHTML, {
+	div:  document.createElement('div'),
+	text: document.createTextNode('')
+    });
+
+    String.prototype.escapeHTML.div.appendChild(String.prototype.escapeHTML.text);
+    
+    //--------------------------------------- Element -------------------------------------//
+    extend(Element, {
+	iselement: function(object) {
+	    return !!(object && object.nodeType == 1);
+	},
+	_insertionTranslations: {
+	    before: function(element, node) {
+		element.parentNode.insertBefore(node, element);
+	    },
+	    top: function(element, node) {
+		element.insertBefore(node, element.firstChild);
+	    },
+	    bottom: function(element, node) {
+		element.appendChild(node);
+	    },
+	    after: function(element, node) {
+		element.parentNode.insertBefore(node, element.nextSibling);
+	    },
+	    tags: {
+		TABLE:  ['<table>',                '</table>',                   1],
+		TBODY:  ['<table><tbody>',         '</tbody></table>',           2],
+		TR:     ['<table><tbody><tr>',     '</tr></tbody></table>',      3],
+		TD:     ['<table><tbody><tr><td>', '</td></tr></tbody></table>', 4],
+		SELECT: ['<select>',               '</select>',                  1]
+	    }
+	},
+	_getContentFromAnonymousElement: function(tagName, html) {
+	    var div = document.createElement('div'), t = Element._insertionTranslations.tags[tagName];
+	    if (t) {
+		div.innerHTML = t[0] + html + t[1];
+		t[2].times(function() { div = div.firstChild });
+	    } else div.innerHTML = html;
+	    return array(div.childNodes);
+	}
+    });
+    extend(Element.prototype, {
+	visible: function() {
+	    return this.style.display != 'none';
+	},
+	toggle: function() {
+	    this[this.visible() ? 'hide' : 'show']();
+	    return this;
+	},
+	hide: function() {
+	    this.style.display = 'none';
+	    return this;
+	},
+	show: function() {
+	    this.style.display = '';
+	    return this;
+	},
+	remove: function() {
+	    this.parentNode.removeChild(this);
+	    return this;
+	},
+	update: function(content) {
+	    if (Element.iselement(content)) return this.update().insert(content);
+	    this.innerHTML = content.stripscripts();
+	    getattr(content, 'evalscripts')();
+	    return this;
+	},
+	insert: function(insertions) {
+	    if (isinstance(insertions, String) || isinstance(insertions, Number) || Element.iselement(insertions))
+		insertions = {bottom:insertions};
+	    var content, insert, tagName, childNodes, self = this;
+	    for (var position in insertions) {
+		content  = insertions[position];
+		position = position.toLowerCase();
+		insert = Element._insertionTranslations[position];
+
+		if (Element.iselement(content)) {
+		    insert(this, content);
+		    continue;
+		}
+
+		tagName = ((position == 'before' || position == 'after') ? this.parentNode : this).tagName.toUpperCase();
+		childNodes = Element._getContentFromAnonymousElement(tagName, content.stripscripts());
+
+		if (position == 'top' || position == 'after') 
+		    childNodes.reverse();
+		childNodes.forEach(function (e) { insert(self, e); });
+		getattr(content, 'evalscripts')();
+	    }
+	    return this;
+	},
+	select: function(selector) {
+	    return query(selector, this);
+	}
+    });
+
+    //--------------------------------------- Forms -------------------------------------//    
+    var Form = {
+	disable: function() {
+	    array(this.elements).forEach(function(e) {e.disable();});
+	},
+	enable: function() {
+	    array(this.elements).forEach(function(e) {e.enable();});
+	},
+	serialize: function() {
+	    var elements = array(this.elements);
+	    var data = elements.reduce(function(result, element) {
+		if (!element.disabled && element.name) {
+		    key = element.name; value = element.get_value();
+		    if (value != null && element.type != 'file' && (element.type != 'submit')) {
+			if (key in result) {
+			    // a key is already present; construct an array of values
+			    if (type(result[key]) != Array) 
+				result[key] = [result[key]];
+			    result[key].push(value);
+			} else result[key] = value;
+		    }
+		}
+		return result;
+	    }, {});
+	    return data;
+	}
+    }
+    Form.Element = {
+	serialize: function() {
+	    if (!this.disabled && this.name) {
+		var value = this.get_value();
+		if (value != undefined) {
+		    var pair = { };
+		    pair[this.name] = value;
+		    return pair;
+		}
+	    }
+	    return '';
+	},
+
+	get_value: function() {
+	    var method = this.tagName.toLowerCase();
+	    return Form.Serializers[method](this);
+	},
+
+	set_value: function(value) {
+	    var method = this.tagName.toLowerCase();
+	    Form.Serializers[method](this, value);
+	},
+
+	clear: function() {
+	    this.value = '';
+	},
+
+	present: function() {
+	    return this.value != '';
+	},
+
+	activate: function() {
+	    try {
+		this.focus();
+		if (this.select && (this.tagName.toLowerCase() != 'input' || !include(['button', 'reset', 'submit'], element.type)))
+		    this.select();
+	    } catch (e) { }
+	},
+
+	disable: function() {
+	    this.disabled = true;
+	},
+
+	enable: function() {
+	    this.disabled = false;
+	}
+    }
+    
+    Form.Serializers = {
+	input: function(element, value) {
+	    switch (element.type.toLowerCase()) {
+	    case 'checkbox':
+	    case 'radio':
+		return this.inputSelector(element, value);
+	    default:
+		return this.textarea(element, value);
+	    }
+	},
+
+	inputSelector: function(element, value) {
+	    if (typeof(value) === 'undefined') return element.checked ? element.value : null;
+	    else element.checked = !!value;
+	},
+
+	textarea: function(element, value) {
+	    if (typeof(value) === 'undefined') return element.value;
+	    else element.value = value;
+	},
+
+	select: function(element, value) {
+	    if (typeof(value) === 'undefined')
+	    return this[element.type == 'select-one' ?
+		'selectOne' : 'selectMany'](element);
+	    else {
+	    var opt, currentValue, single = type(value) != Array;
+	    for (var i = 0, length = element.length; i < length; i++) {
+		opt = element.options[i];
+		currentValue = this.optionValue(opt);
+		if (single) {
+		    if (currentValue == value) {
+			opt.selected = true;
+			return;
+		    }
+		} else 
+		    opt.selected = include(value, currentValue);
+	    }
+	    }
+	},
+
+	selectOne: function(element) {
+	    var index = element.selectedIndex;
+	    return index >= 0 ? this.optionValue(element.options[index]) : null;
+	},
+
+	selectMany: function(element) {
+	    var values, length = element.length;
+	    if (!length) return null;
+
+	    for (var i = 0, values = []; i < length; i++) {
+	    var opt = element.options[i];
+	    if (opt.selected) values.push(this.optionValue(opt));
+	    }
+	    return values;
+	},
+
+	optionValue: function(opt) {
+	    return opt.hasAttribute('value') ? opt.value : opt.text;
+	}
+    }
+    
+    //For firefox
+    extend(HTMLFormElement.prototype, Form );
+    extend(HTMLInputElement.prototype, Form.Element );
+    extend(HTMLSelectElement.prototype, Form.Element );
+    extend(HTMLTextAreaElement.prototype, Form.Element );
 })();

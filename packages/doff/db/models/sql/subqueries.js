@@ -1,7 +1,7 @@
-$L('doff.db.models.sql.query', 'Query');
-$L('doff.db.models.sql.constants', 'GET_ITERATOR_CHUNK_SIZE');
-$L('doff.db.models.sql.where', 'AND', 'OR');
-$L('copy', 'copy');
+require('doff.db.models.sql.query', 'Query');
+require('doff.db.models.sql.constants', 'GET_ITERATOR_CHUNK_SIZE');
+require('doff.db.models.sql.where', 'AND', 'OR');
+require('copy', 'copy');
 
 /*
  * Delete queries are done through this class, since they are more constrained
@@ -315,7 +315,7 @@ var UpdateQuery = type('UpdateQuery', Query, {
         saving models.
         */
     'add_update_fields': function add_update_fields(values_seq) {
-        var Model = $L('doff.db.models.base', ['Model']);
+        var Model = require('doff.db.models.base', ['Model']);
         for each (var element in values_seq) {
             var [field, model, val] = element;
             if (field.rel && isinstance(val, Model))
@@ -380,10 +380,10 @@ var DateQuery = type('DateQuery', Query, {
     'results_iter': function results_iter() {
         var resolve_columns = bool(this['resolve_columns']);
         if (resolve_columns) {
-            var DateTimeField = $L('doff.db.models.fields', ['DateTimeField']);
+            var DateTimeField = require('doff.db.models.fields.base', 'DateTimeField');
             var fields = [DateTimeField()];
         } else {
-            var typecast_timestamp = $L('doff.db.backends.util', ['typecast_timestamp']);
+            var typecast_timestamp = require('doff.db.backends.util', 'typecast_timestamp');
             var needs_string_cast = this.connection.features.needs_datetime_string_cast;
         }
 
@@ -417,8 +417,10 @@ var DateQuery = type('DateQuery', Query, {
     }
 });
 
-$P({	'DeleteQuery': DeleteQuery,
-        'InsertQuery': InsertQuery,
-        'DateQuery': DateQuery,
-        'UpdateQuery': UpdateQuery,
-        'CountQuery': CountQuery });
+publish({	
+    DeleteQuery: DeleteQuery,
+    InsertQuery: InsertQuery,
+    DateQuery: DateQuery,
+    UpdateQuery: UpdateQuery,
+    CountQuery: CountQuery 
+});

@@ -51,8 +51,6 @@ function copy(x) {
     return x;
 }
 
-$D(copy, "Shallow copy operation on arbitrary Protopy objects.");
-
 /* Deepcopy */
 
 var _deepcopy_dispatch = {};
@@ -95,6 +93,7 @@ function deepcopy(x) {
     return copy(x);
 }
 
-$D(deepcopy, "Deep copy operation on arbitrary Protopy objects.");
-
-$P({ 'copy': copy, 'deepcopy': deepcopy });
+publish({ 
+    copy: copy, 
+    deepcopy: deepcopy 
+});

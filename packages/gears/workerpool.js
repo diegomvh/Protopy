@@ -3,7 +3,6 @@
  * and open the template in the editor.
  */
 
-$L('gears');
 var path = __file__.split('/');
 print(path);
 path.pop();
@@ -15,6 +14,6 @@ function create_worker(){
     var protopy = wp.createWorkerFromUrl(protopy_worker);
 }
 
-$P({
+publish({
    create_worker: create_worker
 })

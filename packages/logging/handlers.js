@@ -1,6 +1,6 @@
-$L('logging.*');
+var logging = require('logging.base');
 
-var FirebugHandler = type('FirebugHandler', [logging.Handler], {
+var FirebugHandler = type('FirebugHandler', [ logging.Handler ], {
     functions: {},
 
     '__init__': function __init__() {
@@ -33,13 +33,13 @@ var FirebugHandler = type('FirebugHandler', [logging.Handler], {
     }
 });
 
-var AlertHandler = type('AlertHandler', [logging.Handler], {
+var AlertHandler = type('AlertHandler', [ logging.Handler ], {
     emit: function(record) {
         alert(this.format(record));
     }
 });
 
-$P({
+publish({
     FirebugHandler: FirebugHandler,
     AlertHandler: AlertHandler
 })

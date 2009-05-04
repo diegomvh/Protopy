@@ -1,5 +1,5 @@
-$L('doff.conf.urls', '*');
-$L('blog.views', 'index', 'removedb');
+require('doff.conf.urls', '*');
+require('blog.views', 'index', 'removedb');
 
 var urlpatterns = patterns('',
     // Example:
@@ -9,4 +9,6 @@ var urlpatterns = patterns('',
     ['^blog/', include('blog.apps.post.urls')]
 )
 
-$P({ 'urlpatterns': urlpatterns });
+publish({ 
+    urlpatterns: urlpatterns 
+});

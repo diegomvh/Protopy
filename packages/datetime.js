@@ -44,7 +44,7 @@ Some JavaScript Info:
     map_fields(dt, {'year': pad4, 'month', pad2})
 ***/
 
-datetime = {
+var datetime = {
     /***
         months and days are used in formatting.
         The first three letters can be grabbed and 
@@ -1456,6 +1456,6 @@ datetime = {
     
 ***/
 
-$P({
+publish({
     datetime: datetime
 });

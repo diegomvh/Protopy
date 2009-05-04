@@ -1,12 +1,12 @@
-$D("doff.db.models.options");
+/* "doff.db.models.options" */
     
-$L('doff.core.project', 'get_settings');
-$L('doff.db.models.related', 'RelatedObject');
-$L('doff.db.models.fields.related', 'ManyToManyRel');
-$L('doff.db.models.fields', 'AutoField', 'FieldDoesNotExist');
-$L('doff.db.models.fields.proxy', 'OrderWrt');
-$L('doff.db.models.loading', 'get_models', 'app_cache_ready');
-$L('doff.utils.datastructures', 'SortedDict');
+require('doff.core.project', 'get_settings');
+require('doff.db.models.related', 'RelatedObject');
+require('doff.db.models.fields.related', 'ManyToManyRel');
+require('doff.db.models.fields.base', 'AutoField', 'FieldDoesNotExist');
+require('doff.db.models.fields.proxy', 'OrderWrt');
+require('doff.db.models.loading', 'get_models', 'app_cache_ready');
+require('doff.utils.datastructures', 'SortedDict');
 
 var settings = get_settings();
 
@@ -18,7 +18,7 @@ var DEFAULT_NAMES = ['verbose_name', 'db_table', 'ordering', 'unique_together', 
                     'order_with_respect_to', 'app_label', 'db_tablespace',
                     'abstracto'];
 
-var Options = type('Options', {
+var Options = type('Options', object, {
     '__init__': function __init__(meta, app_label) {
         this.local_fields = [];
         this.local_many_to_many = [];
@@ -51,8 +51,8 @@ var Options = type('Options', {
     },
     
     'contribute_to_class': function contribute_to_class(cls, name) {
-        var connection = $L('doff.db', 'connection');
-        var truncate_name = $L('doff.db.backends.util', 'truncate_name');
+        var connection = require('doff.db.base', 'connection');
+        var truncate_name = require('doff.db.backends.util', 'truncate_name');
         
         cls._meta = this;
         this.installed = include(settings.INSTALLED_APPS, cls.__module__.replace(/\.models$/, ''));
@@ -456,4 +456,6 @@ var Options = type('Options', {
     }
 });
 
-$P({ 'Options': Options });
+publish({ 
+    Options: Options 
+});

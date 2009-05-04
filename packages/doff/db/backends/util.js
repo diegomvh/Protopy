@@ -28,10 +28,12 @@ var format_number = function(value, max_digits, decimal_places) {
     return value;
 };
 
-$P({    'rev_typecast_boolean': rev_typecast_boolean,
-        'rev_typecast_decimal': rev_typecast_decimal,
-        'truncate_name': truncate_name,
-        'format_number': format_number  });
+publish({    
+    rev_typecast_boolean: rev_typecast_boolean,
+    rev_typecast_decimal: rev_typecast_decimal,
+    truncate_name: truncate_name,
+    format_number: format_number  
+});
 
 /*
 class CursorDebugWrapper(object):

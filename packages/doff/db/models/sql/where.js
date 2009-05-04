@@ -1,14 +1,14 @@
-$D('doff.db.models.sql.where');
-$L('doff.utils.tree', 'Node');
-$L('doff.db.models.fields.*', 'Field');
-$L('doff.db.*', 'connection');
-$L('doff.db.models.sql.datastructures', 'EmptyResultSet', 'FullResultSet');
-$L('doff.db.models.query_utils', 'QueryWrapper');
+/* 'doff.db.models.sql.where' */
+require('doff.utils.tree', 'Node');
+require('doff.db.models.fields.base', 'Field');
+require('doff.db.base', 'connection');
+require('doff.db.models.sql.datastructures', 'EmptyResultSet', 'FullResultSet');
+require('doff.db.models.query_utils', 'QueryWrapper');
         
 var AND = 'AND',
     OR = 'OR';
 
-var WhereNode = type('WhereNode', Node, {
+var WhereNode = type('WhereNode', [ Node ], {
 
     default_connector: AND,
 
@@ -191,8 +191,10 @@ var NothingNode = type('NothingNode', {
     }
 });
 
-$P({    'AND': AND,
-        'OR': OR,
-        'WhereNode': WhereNode,
-        'EverythingNode': EverythingNode,
-        'NothingNode': NothingNode });
+publish({    
+    AND: AND,
+    OR: OR,
+    WhereNode: WhereNode,
+    EverythingNode: EverythingNode,
+    NothingNode: NothingNode 
+});

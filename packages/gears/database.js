@@ -1,15 +1,11 @@
-$L('sys');
+require('sys');
 
 if (!sys.browser.features.Gears) {
     alert('Google gears is not installed, please install from http://gears.google.com/, redirecting now.');
     window.location.href = 'http://gears.google.com/';
 }
 
-function connect(options) {
-    return new Connection(options);
-}
-
-var Connection = type('Connection', {
+var Connection = type('Connection', object, {
     '__init__': function __init__(options) {
         this.database = options['database'];
         this.detect_types = options['detect_types'];
@@ -28,7 +24,7 @@ var Connection = type('Connection', {
     }
 });
 
-var Cursor = type('Cursor', {
+var Cursor = type('Cursor', object, {
     '__init__': function __init__(connection){
             this.connection = connection;
             this.lastResulSet = null;
@@ -127,9 +123,9 @@ var Cursor = type('Cursor', {
     }
 });
 
-$P({    
-    'connect': connect,
-    'Cursor': Cursor,
-    'DatabaseError': type('DatabaseError'),
-    'IntegrityError': type('IntegrityError')
+publish({    
+    connect: function(options) { return new Connection(options); },
+    Cursor: Cursor,
+    DatabaseError: type('DatabaseError', [ object ]),
+    IntegrityError: type('IntegrityError', [ object ])
 });

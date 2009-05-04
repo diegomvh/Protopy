@@ -1,4 +1,4 @@
-$L('sys');
+require('sys');
 
 if (!sys.browser.features.Gears) {
     alert('Google gears is not installed, please install from http://gears.google.com/, redirecting now.');
@@ -8,7 +8,7 @@ if (!sys.browser.features.Gears) {
 var localServer = google.gears.factory.create('beta.localserver');
 
 //TODO: Se puede explotar mucho mas este objeto
-var ResourceStore = type ('ResourceStore', {
+var ResourceStore = type ('ResourceStore', object, {
     _store: null,
 
     '__init__': function __init__(name, requiredCookie) {
@@ -88,7 +88,7 @@ var ResourceStore = type ('ResourceStore', {
     }
 });
 
-var ManagedResourceStore = type ('ManagedResourceStore', {
+var ManagedResourceStore = type ('ManagedResourceStore', object, {
     _store: null,
 
     '__init__': function __init__(name, requiredCookie) {
@@ -159,7 +159,7 @@ var ManagedResourceStore = type ('ManagedResourceStore', {
     }
 });
 
-$P({
+publish({
     canServeLocally: localServer.canServeLocally,
     ResourceStore: ResourceStore,
     ManagedResourceStore: ManagedResourceStore

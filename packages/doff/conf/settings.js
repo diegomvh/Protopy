@@ -1,4 +1,4 @@
-$P({
+publish({
         DEBUG: false,
         TEMPLATE_DEBUG: false,
 

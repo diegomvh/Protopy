@@ -1,7 +1,7 @@
-$D("doff.db.models.loading, Utilities for loading models and the modules that contain them.");
-$L('doff.core.project', 'get_settings');
-$L('doff.core.exceptions', 'ImproperlyConfigured');
-$L('doff.utils.datastructures', 'SortedDict');
+/* "doff.db.models.loading, Utilities for loading models and the modules that contain them." */
+require('doff.core.project', 'get_settings');
+require('doff.core.exceptions', 'ImproperlyConfigured');
+require('doff.utils.datastructures', 'SortedDict');
 
 var settings = get_settings();
 
@@ -9,7 +9,7 @@ var settings = get_settings();
  * A cache that stores installed applications and their models. Used to
  * provide reverse-relations and for app introspection (e.g. admin).
  */
-var AppCache = type('AppCache', {
+var AppCache = type('AppCache', object, {
     '__init__': function __init__() {
         this.app_store = new SortedDict();
 
@@ -53,7 +53,7 @@ var AppCache = type('AppCache', {
     'load_app': function load_app(app_name, can_postpone) {
         this.handled[app_name] = null;
         this.nesting_level = this.nesting_level + 1;
-        var mod = $L(app_name + '.models');
+        var mod = require(app_name + '.models');
         this.nesting_level = this.nesting_level - 1;
             /*if not hasattr(mod, 'models'):
             if can_postpone:
@@ -144,7 +144,7 @@ var AppCache = type('AppCache', {
         * Register a set of models as belonging to an app.
         */
     'register_models': function register_models(app_label, models) {
-        var models = (type(models) == Array)?models:[models];
+        var models = (type(models) == Array)? models : [models];
         for each (var model in models) {
             // Store as 'name: model' pair in a dictionary
             // in the app_models dictionary
@@ -159,11 +159,13 @@ var AppCache = type('AppCache', {
 
 var cache = new AppCache();
 
-$P({    'get_apps': getattr(cache, 'get_apps'),
-        'get_app': getattr(cache, 'get_app'),
-        'get_app_errors': getattr(cache, 'get_app_errors'),
-        'get_models': getattr(cache, 'get_models'),
-        'get_model': getattr(cache, 'get_model'),
-        'register_models': getattr(cache, 'register_models'),
-        'load_app': getattr(cache, 'load_app'),
-        'app_cache_ready': getattr(cache, 'app_cache_ready') });
+publish({    
+    get_apps: getattr(cache, 'get_apps'),
+    get_app: getattr(cache, 'get_app'),
+    get_app_errors: getattr(cache, 'get_app_errors'),
+    get_models: getattr(cache, 'get_models'),
+    get_model: getattr(cache, 'get_model'),
+    register_models: getattr(cache, 'register_models'),
+    load_app: getattr(cache, 'load_app'),
+    app_cache_ready: getattr(cache, 'app_cache_ready') 
+});

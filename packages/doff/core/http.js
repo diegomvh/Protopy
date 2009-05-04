@@ -2,10 +2,10 @@ var RESERVED_CHARS = "!*'();:@&=+$,/?%#[]";
 
 var absolute_http_url_re = RegExp("^https?://", 'i');
 
-var Http404 = type('Http404', Exception, {});
+var Http404 = type('Http404', [ Exception ]);
 
 /*A basic HTTP request.*/
-var HttpRequest = type ('HttpRequest', {
+var HttpRequest = type ('HttpRequest', [ object ], {
 
     __init__: function __init__() {
         this.GET = {};
@@ -13,8 +13,8 @@ var HttpRequest = type ('HttpRequest', {
 	this.COOKIES = {};
 	this.META = {};
 	this.FILES = {};
-        this.pathname = '';
-	this.hostname = window.location.hostname;
+        this.path = '';
+	this.host = window.location.hostname;
 	this.port = window.location.port;
 	this.protocol = window.location.protocol;
     },
@@ -24,14 +24,14 @@ var HttpRequest = type ('HttpRequest', {
     },
 	
     get_host: function get_host(){
-	return '%s%s'.subs(this.hostname, (this.port) ? ':' + this.port : ''); 
+	return '%s%s'.subs(this.host, (this.port) ? ':' + this.port : ''); 
     },
 
     build_absolute_uri: function build_absolute_uri(location) {
         if (!location)
             location = this.get_full_path();
         if (!absolute_http_url_re.test(location)) {
-	    var current_uri = '%s//%s%s'.subs(this.protocol, this.get_host(), this.pathname);
+	    var current_uri = '%s//%s%s'.subs(this.protocol, this.get_host(), this.path);
             //TODO: algo para unir urls, quiza tocando un poco module_url
 	    location = current_uri + location;
 	}
@@ -47,7 +47,7 @@ var HttpRequest = type ('HttpRequest', {
     },
     
     valid: function valid() {
-	return !!this.pathname;
+	return !!this.path;
     },
 
     set method(value) {
@@ -76,7 +76,7 @@ var HttpRequest = type ('HttpRequest', {
 });
 
 /* A basic HTTP response, with content and dictionary-accessed headers.*/
-var HttpResponse = type('HttpResponse', {
+var HttpResponse = type('HttpResponse', [ object ], {
     status_code: 200,
 
     __init__: function __init__(where, content, status, content_type) {
@@ -154,13 +154,11 @@ var HttpResponse = type('HttpResponse', {
     //TODO: A better name
     render: function render() {
 	//TODO: quiza evaluar algo de js a lo prototype
-	var elements = $Q(this.where);
-	for each (var element in elements) 
-	    element.innerHTML = this.content;
+	$(this.where).update(this.content);
     }
 });
 
-var HttpResponseRedirect = type('HttpResponseRedirect', HttpResponse, {
+var HttpResponseRedirect = type('HttpResponseRedirect', [ HttpResponse ], {
     status_code: 302,
 
     __init__: function __init__(redirect_to) {
@@ -169,7 +167,7 @@ var HttpResponseRedirect = type('HttpResponseRedirect', HttpResponse, {
     },
 
     render: function render() {
-	$L('doff.core.project', 'get_project');
+	require('doff.core.project', 'get_project');
 	var p = get_project();
 	p.handler.handle(this['Location']);
     }
@@ -212,7 +210,7 @@ var HttpResponseServerError = type('HttpResponseServerError', HttpResponse, {
     status_code: 500
 });
 
-$P({
+publish({
     Http404: Http404,
     HttpRequest: HttpRequest, 
     HttpResponse: HttpResponse, 

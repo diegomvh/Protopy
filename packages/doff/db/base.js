@@ -1,10 +1,10 @@
-$L('doff.core.project', 'get_settings');
-$L('event');
+require('doff.core.project', 'get_settings');
+require('event');
 
 var settings = get_settings();
 
 var _load_path = 'doff.db.backends.';
-var backend = $L('%s%s.base'.subs(_load_path, settings.DATABASE_ENGINE));
+var backend = require('%s%s.base'.subs(_load_path, settings.DATABASE_ENGINE));
 
 var connection = new backend.DatabaseWrapper(settings);
 var DatabaseError = new backend.DatabaseError();
@@ -22,7 +22,9 @@ function reset_queries(kwargs) {
 
 var hrs = event.subscribe('request_started', reset_queries);
 
-$P({    'backend': backend,
-        'connection': connection,
-        'DatabaseError': DatabaseError,
-        'IntegrityError': IntegrityError });
+publish({
+    backend: backend,
+    connection: connection,
+    DatabaseError: DatabaseError,
+    IntegrityError: IntegrityError 
+});

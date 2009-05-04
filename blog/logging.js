@@ -1,8 +1,8 @@
 {
     'loggers': {
         'root': {
-            'level': 'CRITICAL',
-            'handlers': 'alert'
+            'level': 'DEBUG',
+            'handlers': 'firebug'
         },
         'doff.db.models.sql': {
             'level':'DEBUG',

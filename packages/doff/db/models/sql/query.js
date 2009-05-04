@@ -1,15 +1,15 @@
-$D("doff.db.models.sql.query"); 
-$L('doff.utils.tree', 'Node');
-$L('doff.utils.datastructures', 'SortedDict');
-$L('doff.db.*', 'connection');
-$L('doff.db.models.fields.*', 'FieldDoesNotExist');
-$L('doff.db.models.query_utils', 'select_related_descend');
-$L('doff.db.models.sql.datastructures', 'Count', 'EmptyResultSet', 'MultiJoin');
-$L('doff.db.models.sql.where', 'WhereNode', 'EverythingNode', 'AND', 'OR');
-$L('doff.core.exceptions', 'FieldError');
-$L('doff.db.models.sql.constants', '*');
-$L('copy', 'copy', 'deepcopy');
-$L('event');
+/* "doff.db.models.sql.query" */
+require('doff.utils.tree', 'Node');
+require('doff.utils.datastructures', 'SortedDict');
+require('doff.db.base', 'connection');
+require('doff.db.models.fields.base', 'FieldDoesNotExist');
+require('doff.db.models.query_utils', 'select_related_descend');
+require('doff.db.models.sql.datastructures', 'Count', 'EmptyResultSet', 'MultiJoin');
+require('doff.db.models.sql.where', 'WhereNode', 'EverythingNode', 'AND', 'OR');
+require('doff.core.exceptions', 'FieldError');
+require('doff.db.models.sql.constants', '*');
+require('copy', 'copy', 'deepcopy');
+require('event');
 
 /*
  * A single SQL query
@@ -177,7 +177,7 @@ var Query = type('Query', {
         * Performs a COUNT() query using the current filter constraints.
         */
     'get_count': function get_count() {
-        var CountQuery = $L('doff.db.models.sql.subqueries', 'CountQuery');
+        var CountQuery = require('doff.db.models.sql.subqueries', 'CountQuery');
         obj = this.clone();
         obj.clear_ordering(true);
         obj.clear_limits();
@@ -1893,5 +1893,6 @@ function setup_join_cache(cls) {
 
 var hcp = event.subscribe('class_prepared', setup_join_cache);
 
-$P({  'Query': Query  });
-
+publish({  
+    Query: Query  
+});

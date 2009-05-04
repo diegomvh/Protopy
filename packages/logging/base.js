@@ -1,4 +1,4 @@
-$L('datetime', 'datetime');
+require('datetime', 'datetime');
 
 var CRITICAL = 50;
 var FATAL = CRITICAL;
@@ -52,7 +52,7 @@ record also includes information such as when the record was created,
 the source line where the logging call was made, and any exception
 information to be logged.
 */
-var LogRecord = type('LogRecord', {
+var LogRecord = type('LogRecord', object, {
     //Initialize a logging record with interesting information.
     __init__: function __init__(name, level, pathname, lineno, msg, args, kwargs) {
         var ct = new Date();
@@ -101,7 +101,7 @@ var _default_formatter = "%(levelname)s:%(name)s:%(message)s";
 //   Filter classes and functions
 //---------------------------------------------------------------------------
 
-var Filter = type('Filter', {
+var Filter = type('Filter', object, {
     /*
     Filter instances are used to perform arbitrary filtering of LogRecords.
 
@@ -142,7 +142,7 @@ var Filter = type('Filter', {
 });
 
 //A base class for loggers and handlers which allows them to share common code.
-var Filterer = type('Filterer', {
+var Filterer = type('Filterer', object, {
     __init__: function __init__() {
         //Initialize the list of filters to be an empty list.
         this.filters = [];
@@ -183,7 +183,7 @@ var Filterer = type('Filterer', {
 var _handlers = {};  //repository of handlers (for flushing when shutdown called)
 var _handler_list = []; //added to allow handlers to be removed in reverse of order initialized
 
-var Handler = type('Handler', [Filterer], {
+var Handler = type('Handler', [ Filterer ], {
     level: NOTSET,
     formatter: null,
     /*
@@ -253,7 +253,7 @@ var Handler = type('Handler', [Filterer], {
 //   Manager classes and functions
 //---------------------------------------------------------------------------
 
-var Manager = type('Manager', {
+var Manager = type('Manager', object, {
     /*
     There is [under normal circumstances] just one Manager instance, which
     holds the hierarchy of loggers.
@@ -595,7 +595,7 @@ var Logger = type('Logger', [ Filterer ], {
 A root logger is not that different to any other logger, except that
 it must have a logging level and there is only one instance of it in the hierarchy.
 */
-var RootLogger = type('RootLogger', [Logger], {
+var RootLogger = type('RootLogger', [ Logger ], {
     __init__: function __init__(level) {
         //Initialize the logger with the name "root".
         super(Logger, this).__init__("root", level);
@@ -617,7 +617,7 @@ function get_logger(name) {
         return root;
 }
 
-$P({
+publish({
     //levels
     CRITICAL : CRITICAL,
     ERROR : ERROR,

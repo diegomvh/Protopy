@@ -1,31 +1,35 @@
-$L('doff.template.*', 'TemplateSyntaxError', 'TemplateDoesNotExist', 'Variable', 'Library', 'Node', 'TextNode');
-$L('doff.template.loader');
-    
+require('doff.template.base', 'TemplateSyntaxError', 'TemplateDoesNotExist', 'Variable', 'Library', 'Node', 'TextNode');
+require('doff.template.loader');
+
 var register = new Library();
 
-var BlockNode = type('BlockNode', Node, {
-    '__init__': function __init__(name, nodelist, parent){
+/* defo:translate
+ * Nodos para definicion de bloques, carga e inclusion de templates.
+ */
+
+var BlockNode = type('BlockNode', [ Node ], {
+    __init__: function(name, nodelist, parent){
         this.name = name;
         this.nodelist = nodelist;
         this.parent = parent || null;
     },
 
-    'render': function render(context){
+    render: function(context){
         context.push();
         this.context = context;
-        context['block'] = this;
-        result = this.nodelist.render(context);
+        context.set('block', this);
+        var result = this.nodelist.render(context);
         context.pop();
         return result;
     },
 
-    'super': function super(){
+    super: function(){
         if (this.parent)
             return this.parent.render(this.context);
         return '';
     },
 
-    'add_parent': function add_parent(nodelist){
+    add_parent: function(nodelist) {
         if (this.parent)
             this.parent.add_parent(nodelist);
         else
@@ -33,27 +37,25 @@ var BlockNode = type('BlockNode', Node, {
     }
 });
 
-var ExtendsNode = type('ExtendsNode', Node, {
+var ExtendsNode = type('ExtendsNode', [ Node ], {
     must_be_first: true,
-    '__init__': function __init__(nodelist, parent_name, parent_name_expr, template_dirs){
+    __init__: function(nodelist, parent_name, parent_name_expr){
         this.nodelist = nodelist;
         this.parent_name = parent_name;
         this.parent_name_expr = parent_name_expr;
-        this.template_dirs = template_dirs;
     },
 
-    'render': function render(context){
+    render: function(context){
         context.push();
         this.context = context;
-        context['block'] = this;
-        result = this.nodelist.render(context);
+        context.set('block', this);
+        var result = this.nodelist.render(context);
         context.pop();
         return result;
     },
 
-    'get_parent': function get_parent(context) {
-        var source = null,
-            origin = null,
+    get_parent: function(context) {
+	var source = null,
             parent = null;
         if (this.parent_name_expr)
             this.parent_name = this.parent_name_expr.resolve(context);
@@ -65,21 +67,19 @@ var ExtendsNode = type('ExtendsNode', Node, {
             throw new TemplateSyntaxError(error_msg);
         }
         if (parent['render'])
-            return parent
+            return parent;
         try {
-            [source, origin] = loader.find_template_source(parent, this.template_dirs);
+            source = loader.get_template(parent);
+	    return source;
         }
-        catch (e if e instanceof TemplateDoesNotExist) {
+        catch (e if isinstance(e, TemplateDoesNotExist)) {
             throw new TemplateSyntaxError("Template %r cannot be extended, because it doesn't exist".subs(parent));
-        }
-        finally {
-            return loader.get_template_from_string(source, origin, parent);
         }
     },
 
-    'render': function render(context){
+    render: function(context){
         var compiled_parent = this.get_parent(context);
-        var parent_blocks = {};
+	var parent_blocks = {};
         for each (var n in compiled_parent.nodelist.get_nodes_by_type(BlockNode)) {
             parent_blocks[n.name] = n;
         }
@@ -104,8 +104,8 @@ var ExtendsNode = type('ExtendsNode', Node, {
 
 });
 
-var ConstantIncludeNode = type('ConstantIncludeNode', Node, {
-    '__init__': function __init__(template_path){
+var ConstantIncludeNode = type('ConstantIncludeNode', [ Node ], {
+    __init__: function(template_path){
         try {
             var t = loader.get_template(template_path);
             this.template = t;
@@ -114,7 +114,7 @@ var ConstantIncludeNode = type('ConstantIncludeNode', Node, {
         }
     },
 
-    'render': function render(context){
+    render: function(context){
         if (this.template)
             return this.template.render(context);
         else
@@ -122,12 +122,12 @@ var ConstantIncludeNode = type('ConstantIncludeNode', Node, {
     }
 });
 
-var IncludeNode = type('IncludeNode', Node, {
-    '__init__': function __init__(template_name){
+var IncludeNode = type('IncludeNode', [ Node ], {
+    __init__: function(template_name) {
         this.template_name = new Variable(template_name);
     },
 
-    'render': function render(context){
+    render: function(context) {
         try {
             var template_name = this.template_name.resolve(context);
             t = loader.get_template(template_name);
@@ -138,10 +138,12 @@ var IncludeNode = type('IncludeNode', Node, {
         }
     }
 });
-/* -------------------- Registro los nodos ---------------------------- */
 
+/* defo:translate
+ * Funciones que procesan los tokens, generando y retornanodo los nodos correspondientes
+ */
 function do_block(parser, token) {
-    var bits = token.contents.split(/\s+/);
+    var bits = token.split_contents();
     if (bits.length != 2)
         throw new TemplateSyntaxError("'%s' tag takes only one argument".subs(bits[0]));
     var block_name = bits[1];
@@ -153,13 +155,13 @@ function do_block(parser, token) {
     catch (e) {
         parser.__loaded_blocks = [block_name];
     }
-    nodelist = parser.parse(['endblock', 'endblock %s'.subs(block_name)]);
+    var nodelist = parser.parse(['endblock', 'endblock %s'.subs(block_name)]);
     parser.delete_first_token();
     return new BlockNode(block_name, nodelist);
 };
 
 function do_extends(parser, token) {
-    var bits = token.contents.split(/\s+/);
+    var bits = token.split_contents();
     if (bits.length != 2)
         throw new TemplateSyntaxError("'%s' takes one argument".subs(bits[0]));
     var parent_name = null;
@@ -175,8 +177,7 @@ function do_extends(parser, token) {
 };
 
 function do_include(parser, token) {
-
-    var bits = token.contents.split(/\s+/);
+    var bits = token.split_contents();
     if (bits.length != 2)
         throw new TemplateSyntaxError("%s tag takes one argument: the name of the template to be included".subs(bits[0]));
     var path = bits[1];
@@ -185,8 +186,13 @@ function do_include(parser, token) {
     return new IncludeNode(bits[1]);
 };
 
+/* defo:translate
+ * Regsitro los nodos, para su uso en los templates
+ */ 
 register.tag('block', do_block);
 register.tag('extends', do_extends);
 register.tag('include', do_include);
 
-$P({ 'register': register });
+publish({ 
+    register: register
+});

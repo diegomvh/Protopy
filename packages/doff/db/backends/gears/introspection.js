@@ -1,4 +1,4 @@
-$L('doff.db.backends', 'BaseDatabaseIntrospection');
+require('doff.db.backends.base', 'BaseDatabaseIntrospection');
 
 // This light wrapper "fakes" a dictionary interface, because some SQLite data
 // types include variables in them -- e.g. "varchar(30)" -- and can't be matched
@@ -76,6 +76,8 @@ var DatabaseIntrospection = type('DatabaseIntrospection', BaseDatabaseIntrospect
     }
 });
 
-$P({ 'DatabaseIntrospection': DatabaseIntrospection });
+publish({ 
+    DatabaseIntrospection: DatabaseIntrospection 
+});
 
     

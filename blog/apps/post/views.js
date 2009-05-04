@@ -1,19 +1,18 @@
-$L('event');
-$L('blog.apps.post.models', 'Tag', 'Post');
-$L('doff.forms.*');
-$L('doff.template.*');
-$L('doff.template.default_filters', 'slugify');
-$L('doff.template.loader');
-$L('doff.template.context', 'RequestContext');
-$L('doff.core.http', 'HttpResponse', 'HttpResponseRedirect');
+require('event');
+require('blog.apps.post.models', 'Tag', 'Post');
+require('doff.forms.base', 'ModelForm');
+require('doff.template.default_filters', 'slugify');
+require('doff.template.loader');
+require('doff.template.context', 'RequestContext');
+require('doff.core.http', 'HttpResponse', 'HttpResponseRedirect');
 
-var PostForm = type('PostForm', forms.ModelForm, {
+var PostForm = type('PostForm', [ ModelForm ], {
     'Meta': {
         'model': Post
     }
 });
 
-var TagForm = type('TagForm', forms.ModelForm, {
+var TagForm = type('TagForm', [ ModelForm ], {
     'Meta': {
         'model': Tag
     }
@@ -66,8 +65,9 @@ function add_post(request) {
     return response;
 }
 
-$P({ 'add_tag': add_tag,
-     'add_post': add_post,
-     'remove_tag': remove_tag,
-     'remove_post': remove_post
+publish({ 
+    add_tag: add_tag,
+    add_post: add_post,
+    remove_tag: remove_tag,
+    remove_post: remove_post
 });

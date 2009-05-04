@@ -1,15 +1,15 @@
-$D("doff.core.management.commands.syncdb");
+/* "doff.core.management.commands.syncdb" */
+require('doff.db.base', 'connection');
+var models = require('doff.db.models.base');
+require('doff.db.transaction');
+require('doff.core.project', 'get_settings');
 
 function execute() {
-    $L('doff.db.*', 'connection');
-    $L('doff.db.models.*');
-    $L('doff.db.transaction');
-    $L('doff.core.project', 'get_settings');
     var settings = get_settings();
     /* No creo que sea necesario
     for each (var app_name in settings.INSTALLED_APPS) {
 	try {
-	    $L(app_name + '.management');
+	    require(app_name + '.management');
 	} catch (e if e instanceof LoadError) { }
     }
     */
@@ -120,4 +120,6 @@ function execute() {
     //call_command('loaddata', 'initial_data', verbosity=verbosity)
 }
 
-$P({ 'execute': execute });        
+publish({ 
+    execute: execute 
+});
