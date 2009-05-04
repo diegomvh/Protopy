@@ -9,13 +9,25 @@
 #
 
 from django.core.management.base import *
+from django.utils.translation import gettext_lazy as _
+from os.path import abspath, dirname
 
-class Command(NoArgsCommand):
+class Command(AppCommand):
     help = """
         Probando el sistema de comandos de Django.
     """
     requires_model_validation = False
     can_import_settings = True
     
-    def handle_noargs(self, **options):
-        print "Hola mundo"
+    #def handle_noargs(self, **options):
+    #    print "Hola mundo"
+    def handle_app(self, app, **options):
+        print app, options
+        if hasattr(app, '__file__'):
+            path = dirname( abspath( app.__file__ ) ) 
+            print "*" * 40
+            print path
+            
+        else:
+            print _("Can't handle module") 
+        import ipdb; ipdb.set_trace()
