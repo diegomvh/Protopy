@@ -1,7 +1,7 @@
 require('doff.utils.tree', 'Node');
 require('copy', 'copy', 'deepcopy');
 
-var QueryWrapper = type('QueryWrapper', {
+var QueryWrapper = type('QueryWrapper', object, {
     '__init__': function __init__(sql, params){
         this.data = [sql, params];
     }

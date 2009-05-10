@@ -9,7 +9,8 @@ require('doff.db.models.fields.base', '*');
 //var [FileField, ImageField] = require('doff.db.models.fields.files', ['FileField', 'ImageField']);
 require('doff.db.models.fields.related', '*');
 
-publish({    'ObjectDoesNotExist': ObjectDoesNotExist,
+publish({    
+    'ObjectDoesNotExist': ObjectDoesNotExist,
         'ImproperlyConfigured': ImproperlyConfigured,
         'connection': connection,
         'get_apps': get_apps,

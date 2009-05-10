@@ -51,7 +51,7 @@ function do_pending_lookups(sender) {
 
 var hcp = event.subscribe('class_prepared', do_pending_lookups);
 
-var RelatedField = type('RelatedField', Field,  {
+var RelatedField = type('RelatedField', Field, {
     'contribute_to_class': function contribute_to_class(cls, name) {
         super(Field, this).contribute_to_class(cls, name);
 
@@ -123,7 +123,7 @@ var RelatedField = type('RelatedField', Field,  {
     }
 });
 
-var SingleRelatedObjectDescriptor = type('SingleRelatedObjectDescriptor', {
+var SingleRelatedObjectDescriptor = type('SingleRelatedObjectDescriptor', object, {
     '__init__': function __init__(related){
         this.related = related;
         this.cache_name = '_%s_cache'.subs(related.get_accessor_name());
@@ -164,7 +164,7 @@ var SingleRelatedObjectDescriptor = type('SingleRelatedObjectDescriptor', {
     }
 });
 
-var ReverseSingleRelatedObjectDescriptor = type('ReverseSingleRelatedObjectDescriptor', {
+var ReverseSingleRelatedObjectDescriptor = type('ReverseSingleRelatedObjectDescriptor', object, {
     '__init__': function __init__(field_with_rel) {
         this.field = field_with_rel;
     },
@@ -221,7 +221,7 @@ var ReverseSingleRelatedObjectDescriptor = type('ReverseSingleRelatedObjectDescr
     }
 });
 
-var ForeignRelatedObjectsDescriptor = type('ForeignRelatedObjectsDescriptor', {
+var ForeignRelatedObjectsDescriptor = type('ForeignRelatedObjectsDescriptor', object, {
 
     '__init__': function __init__(related){
         this.related = related;
@@ -459,7 +459,7 @@ function create_many_related_manager(superclass, through) {
     return ManyRelatedManager;
 }
 
-var ManyRelatedObjectsDescriptor = type('ManyRelatedObjectsDescriptor', {
+var ManyRelatedObjectsDescriptor = type('ManyRelatedObjectsDescriptor', object, {
     // This class provides the functionality that makes the related-object
     // managers available as attributes on a model class, for fields that have
     // multiple "remote" values and have a ManyToManyField pointed at them by
@@ -512,7 +512,7 @@ var ManyRelatedObjectsDescriptor = type('ManyRelatedObjectsDescriptor', {
     }
 });
 
-var ReverseManyRelatedObjectsDescriptor = type('ReverseManyRelatedObjectsDescriptor', {
+var ReverseManyRelatedObjectsDescriptor = type('ReverseManyRelatedObjectsDescriptor', object, {
     // This class provides the functionality that makes the related-object
     // managers available as attributes on a model class, for fields that have
     // multiple "remote" values and have a ManyToManyField defined in their
@@ -565,7 +565,7 @@ var ReverseManyRelatedObjectsDescriptor = type('ReverseManyRelatedObjectsDescrip
     }
 });
 
-var ManyToOneRel = type('ManyToOneRel', {
+var ManyToOneRel = type('ManyToOneRel', object, {
 
     '__init__': function __init__(to, field_name) {
         arguments = new Arguments(arguments, {'related_name': null, 'limit_choices_to': {}, 'lookup_overrides': {}, 'parent_link': false});
@@ -601,7 +601,7 @@ var OneToOneRel = type('OneToOneRel', ManyToOneRel, {
     }
 });
 
-var ManyToManyRel = type('ManyToManyRel', {
+var ManyToManyRel = type('ManyToManyRel', object, {
     '__init__': function __init__(to) {
         this.to = to;
         arguments = new Arguments(arguments, {'related_name':null, 'limit_choices_to':{}, 'symmetrical':true, 'through': null});

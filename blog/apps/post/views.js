@@ -6,13 +6,13 @@ require('doff.template.loader');
 require('doff.template.context', 'RequestContext');
 require('doff.core.http', 'HttpResponse', 'HttpResponseRedirect');
 
-var PostForm = type('PostForm', [ ModelForm ], {
+var PostForm = type('PostForm', ModelForm, {
     'Meta': {
         'model': Post
     }
 });
 
-var TagForm = type('TagForm', [ ModelForm ], {
+var TagForm = type('TagForm', ModelForm, {
     'Meta': {
         'model': Tag
     }

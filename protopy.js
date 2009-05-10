@@ -168,6 +168,7 @@
     }
     
     /************************** Types and Objects ****************************/
+    /* Base te todos los objetos que crea protopy */
     function object() { 
 	throw 'The wormhole stop here. Please, is just javascript not python :)'; 
     };
@@ -202,7 +203,7 @@
     object.prototype.__init__ = function __init__(){};
     object.prototype.__str__ = function __str__(){ return this['__module__'] + '.' + this['__name__'] };
 
-    // Type constructor
+    // Constructor de tipos o clases
     function type(name) {
 	if (name == undefined)
 	    throw new TypeError('Invalid arguments, name?');
@@ -253,7 +254,9 @@
     }
     
     // ******************************* MODULES ************************************* //
+
     /******************** sys ***********************/
+    /* Retorna el objeto gears, de no existir lo crea en window.google.gears */
     function get_gears(){
 	var factory;
 	
@@ -284,68 +287,65 @@
 	window.google = {}, window.google.gears = {}, window.google.gears.factory = factory;
 	return window.google.gears;
     }
-    
+    /* Modulo: sys - modulo de sistema, proporciona informacion sobre el ambiente y algunas herramientas para interactuar con este */
     var sys = ModuleManager.create('sys', 'built-in', { 
-	'version': '0.1',
-	'browser': {
-	    'IE':     !!(window.attachEvent && navigator.userAgent.indexOf('Opera') === -1),
-	    'Opera':  navigator.userAgent.indexOf('Opera') > -1,
-	    'WebKit': navigator.userAgent.indexOf('AppleWebKit/') > -1,
-	    'Gecko':  navigator.userAgent.indexOf('Gecko') > -1 && navigator.userAgent.indexOf('KHTML') === -1,
-	    'MobileSafari': !!navigator.userAgent.match(/Apple.*Mobile.*Safari/),
-	    'features': {
-		'XPath': !!document.evaluate,
-		'SelectorsAPI': !!document.querySelector,
-		'ElementExtensions': !!window.HTMLElement,
-		'SpecificElementExtensions': document.createElement('div')['__proto__'] &&
+	version: 0.1,
+	browser: {
+	    IE:     !!(window.attachEvent && navigator.userAgent.indexOf('Opera') === -1),
+	    Opera:  navigator.userAgent.indexOf('Opera') > -1,
+	    WebKit: navigator.userAgent.indexOf('AppleWebKit/') > -1,
+	    Gecko:  navigator.userAgent.indexOf('Gecko') > -1 && navigator.userAgent.indexOf('KHTML') === -1,
+	    MobileSafari: !!navigator.userAgent.match(/Apple.*Mobile.*Safari/),
+	    features: {
+		XPath: !!document.evaluate,
+		SelectorsAPI: !!document.querySelector,
+		ElementExtensions: !!window.HTMLElement,
+		SpecificElementExtensions: document.createElement('div')['__proto__'] &&
 						document.createElement('div')['__proto__'] !==
 						document.createElement('form')['__proto__']
 	    }
 	},
-	'get_transport': function() {
-	    if (this.browser.Gecko || this.browser.WebKit)
-		return new XMLHttpRequest();
-	    return false;
-	},
-	'get_gears': get_gears,
-	'register_path': function(module, path) { 
+	get_gears: get_gears,
+	register_path: function(module, path) { 
 	    ModuleManager.register_path(module, path); 
 	},
-	'module_url': function(name, postfix) {
+	module_url: function(name, postfix) {
 	    return ModuleManager.module_url(name, postfix);
 	},
-	'modules': ModuleManager.modules,
-	'paths': ModuleManager.paths
+	modules: ModuleManager.modules,
+	paths: ModuleManager.paths
     });
 
     sys.browser.features.Gears = !!get_gears() || false;
+
     /******************** exception ***********************/
+    /* Modulo: exception, clases o tipos de excepciones que preovee protopy */ 
     var Exception = type('Exception', [ object ], {
-        '__init__': function(message) {
+        __init__: function(message) {
             //TODO: Ver como tomar mas informacion de quien larga la exception
             //this.caller = arguments.callee.caller;
             this.args = arguments;
             this.message = (message && type(message) == String)? message : '';
         },
-        '__str__': function() { return this.__name__ + ': ' + this.message; }
+        __str__: function() { return this.__name__ + ': ' + this.message; }
     });
     
     var exception = ModuleManager.create('exceptions', 'built-in', {
-        'Exception': Exception,
-        'AssertionError': type('AssertionError', [ Exception ]),
-        'AttributeError': type('AttributeError', [ Exception ]),
-        'LoadError':  type('LoadError', [ Exception ]),
-        'KeyError':  type('KeyError', [ Exception ]),
-        'NotImplementedError':  type('NotImplementedError', [ Exception ]),
-        'TypeError':  type('TypeError', [ Exception ]),
-        'ValueError':  type('ValueError', [ Exception ]),
+        Exception: Exception,
+        AssertionError: type('AssertionError', Exception),
+        AttributeError: type('AttributeError', Exception),
+        LoadError:  type('LoadError', Exception),
+        KeyError:  type('KeyError', Exception),
+        NotImplementedError:  type('NotImplementedError', Exception),
+        TypeError:  type('TypeError', Exception),
+        ValueError:  type('ValueError', Exception),
     });
 
     /********************** event **************************/
     // From dojo
-    var __listener__ = {
+    var Listener = {
 	// create a dispatcher function
- 	'get_dispatcher': function get_dispatcher() {
+ 	get_dispatcher: function() {
 	    return function() {
 		var callee = arguments.callee, listeners = callee._listeners, target = callee.target;
 		// return value comes from original target function
@@ -358,7 +358,7 @@
 	    }
 	},
 	// add a listener to an object
-	'add': function add(source, method, listener) {
+	add: function(source, method, listener) {
 	    source = source || window;
 	    // The source method is either null, a dispatcher, or some other function
 	    var func = source[method];
@@ -375,7 +375,7 @@
 	    return func._listeners.push(listener) ;
 	},
 	// remove a listener from an object
-	'remove': function(source, method, handle) {
+	remove: function(source, method, handle) {
 	    var func = ( source || window )[method];
 	    // remember that handle is the index+1 (0 is not a valid handle)
 	    if(func && func._listeners && handle--) {
@@ -384,12 +384,12 @@
 	}
     };
 
-    var __eventlistener__ = {
-	'add': function add(node, name, fp) {
+    var EventListener = {
+	add: function(node, name, fp) {
 	    if(!node)
 		return; 
-	    name = this._normalizeEventName(name);
-	    fp = this._fixCallback(name, fp);
+	    name = this._normalize_event_name(name);
+	    fp = this._fix_callback(name, fp);
 	    var oname = name;
 	    if(!sys.browser.IE && (name == "mouseenter" || name == "mouseleave")) {
 		var ofp = fp;
@@ -406,48 +406,49 @@
 	    node.addEventListener(name, fp, false);
 	    return fp; /*Handle*/
 	},
-	'remove': function remove(node, event, handle) {
+	remove: function(node, event, handle) {
 	    if (node)
-		node.removeEventListener(this._normalizeEventName(event), handle, false);
+		node.removeEventListener(this._normalize_event_name(event), handle, false);
 	},
-	'_normalizeEventName': function _normalizeEventName(name) {
+	_normalize_event_name: function(name) {
 	    // Generally, name should be lower case, unless it is special
 	    // somehow (e.g. a Mozilla DOM event).
 	    // Remove 'on'.
 	    return name.slice(0,2) =="on" ? name.slice(2) : name;
 	},
-	'_fixCallback': function _fixCallback(name, fp) {
+	_fix_callback: function(name, fp) {
 	    // By default, we only invoke _fixEvent for 'keypress'
-	    // If code is added to _fixEvent for other events, we have
+	    // If code is added to _fix_event for other events, we have
 	    // to revisit this optimization.
-	    // This also applies to _fixEvent overrides for Safari and Opera
+	    // This also applies to _fix_event overrides for Safari and Opera
 	    // below.
-	    return name != "keypress" ? fp : function(e) { return fp.call(this, this._fixEvent(e, this)); };
+	    return name != "keypress" ? fp : function(e) { return fp.call(this, this._fix_event(e, this)); };
 	},
-	'_fixEvent': function _fixEvent(evt, sender){
-	    // _fixCallback only attaches us to keypress.
+	_fix_event: function(evt, sender){
+	    // _fix_callback only attaches us to keypress.
 	    // Switch on evt.type anyway because we might 
 	    // be called directly from dojo.fixEvent.
 	    switch(evt.type){
 		    case "keypress":
-			    this._setKeyChar(evt);
+			    this._set_key_char(evt);
 			    break;
 	    }
 	    return evt;
 	},
-	'_setKeyChar': function _setKeyChar(evt){
+	_set_key_char: function(evt){
+	    //FIXME: Esto no va o no esta o es un desastre
 	    evt.keyChar = evt.charCode ? String.fromCharCode(evt.charCode) : '';
 	}
     };
 
-    var __topics__ = {};
+    var Topics = {};
 
-    function __connect__ (obj, event, context, method) {
+    function _connect(obj, event, context, method) {
 	// FIXME: need a more strict test
 	var isNode = obj && (obj.nodeType || obj.attachEvent || obj.addEventListener);
 	// choose one of three listener options: raw (connect.js), DOM event on a Node, custom event on a Node
 	// we need the third option to provide leak prevention on broken browsers (IE)
-	var lid = !isNode ? 0 : 1, l = [__listener__, __eventlistener__][lid];
+	var lid = !isNode ? 0 : 1, l = [Listener, EventListener][lid];
 	// create a listener
 	var h = l.add(obj, event, isinstance(method, String)? getattr(context, method) : method);
 	// formerly, the disconnect package contained "l" directly, but if client code
@@ -458,12 +459,12 @@
 	return [ obj, event, h, lid ];
     }
     
-    function __disconnect__ (obj, event, handle, listener) {
-        ([__listener__, __eventlistener__][listener]).remove(obj, event, handle);
+    function _disconnect(obj, event, handle, listener) {
+        ([Listener, EventListener][listener]).remove(obj, event, handle);
     }
 
     var event = ModuleManager.create('event', 'built-in', {
-        'connect': function connect(obj, event, context, method) {
+        connect: function(obj, event, context, method) {
 	    var a = arguments, args = [], i = 0;
 	    // if a[0] is a String, obj was ommited
 	    args.push(isinstance(a[0], String) ? null : a[i++], a[i++]);
@@ -474,55 +475,55 @@
 	    for (var l = a.length; i < l; i++) 
 		args.push(a[i]);
 	    // do the actual work
-	    return __connect__.apply(this, args); /*Handle*/
+	    return _connect.apply(this, args); /*Handle*/
 	},
-        'disconnect': function disconnect(handle) {
+        disconnect: function(handle) {
 	    if(handle && typeof(handle[0]) !== 'undefined') {
-		__disconnect__.apply(this, handle);
+		_disconnect.apply(this, handle);
 		// let's not keep this reference
 		delete handle[0];
 	    }
 	},
-        'subscribe': function subscribe(topic, context, method) {
-	    return [topic, __listener__.add(__topics__, topic, (method && isinstance(method, String))? getattr(context, method) : context)];
+        subscribe: function(topic, context, method) {
+	    return [topic, Listener.add(Topics, topic, (method && isinstance(method, String))? getattr(context, method) : context)];
 	},
-        'unsubscribe': function unsubscrib(handle) {
+        unsubscribe: function(handle) {
 	    if(handle)
-		__listener__.remove(__topics__, handle[0], handle[1]);
+		Listener.remove(Topics, handle[0], handle[1]);
 	},
-        'publish': function publish(topic, args) {
-	    var func = __topics__[topic];
+        publish: function(topic, args) {
+	    var func = Topics[topic];
 	    if(func)
 		func.apply(this, args || []);
 	},
-        'connectpublisher': function connectpublisher(topic, obj, event) {
+        connectpublisher: function(topic, obj, event) {
 	    var pf = function() { 
 		this.publish(topic, arguments); 
 	    }
 	    return (event) ? this.connect(obj, event, pf) : this.connect(obj, pf); //Handle
 	},
-        'fixevent': function(){},
-        'stopevent': function(){},
-	'keys': {   'BACKSPACE': 8, 'TAB': 9, 'CLEAR': 12, 'ENTER': 13, 'SHIFT': 16, 'CTRL': 17, 'ALT': 18, 'PAUSE': 19, 'CAPS_LOCK': 20, 
-		    'ESCAPE': 27, 'SPACE': 32, 'PAGE_UP': 33, 'PAGE_DOWN': 34, 'END': 35, 'HOME': 36, 'LEFT_ARROW': 37, 'UP_ARROW': 38,
-		    'RIGHT_ARROW': 39, 'DOWN_ARROW': 40, 'INSERT': 45, 'DELETE': 46, 'HELP': 47, 'LEFT_WINDOW': 91, 'RIGHT_WINDOW': 92,
-		    'SELECT': 93, 'NUMPAD_0': 96, 'NUMPAD_1': 97, 'NUMPAD_2': 98, 'NUMPAD_3': 99, 'NUMPAD_4': 100, 'NUMPAD_5': 101,
-		    'NUMPAD_6': 102, 'NUMPAD_7': 103, 'NUMPAD_8': 104, 'NUMPAD_9': 105, 'NUMPAD_MULTIPLY': 106, 'NUMPAD_PLUS': 107,
-		    'NUMPAD_ENTER': 108, 'NUMPAD_MINUS': 109, 'NUMPAD_PERIOD': 110, 'NUMPAD_DIVIDE': 111, 'F1': 112, 'F2': 113, 'F3': 114,
-		    'F4': 115, 'F5': 116, 'F6': 117, 'F7': 118, 'F8': 119, 'F9': 120, 'F10': 121, 'F11': 122, 'F12': 123, 'F13': 124, 
-		    'F14': 125, 'F15': 126, 'NUM_LOCK': 144, 'SCROLL_LOCK': 145 }
+        fixevent: function(){},
+        stopevent: function(){},
+	keys: { BACKSPACE: 8, TAB: 9, CLEAR: 12, ENTER: 13, SHIFT: 16, CTRL: 17, ALT: 18, PAUSE: 19, CAPS_LOCK: 20, 
+		    ESCAPE: 27, SPACE: 32, PAGE_UP: 33, PAGE_DOWN: 34, END: 35, HOME: 36, LEFT_ARROW: 37, UP_ARROW: 38,
+		    RIGHT_ARROW: 39, DOWN_ARROW: 40, INSERT: 45, DELETE: 46, HELP: 47, LEFT_WINDOW: 91, RIGHT_WINDOW: 92,
+		    SELECT: 93, NUMPAD_0: 96, NUMPAD_1: 97, NUMPAD_2: 98, NUMPAD_3: 99, NUMPAD_4: 100, NUMPAD_5: 101,
+		    NUMPAD_6: 102, NUMPAD_7: 103, NUMPAD_8: 104, NUMPAD_9: 105, NUMPAD_MULTIPLY: 106, NUMPAD_PLUS: 107,
+		    NUMPAD_ENTER: 108, NUMPAD_MINUS: 109, NUMPAD_PERIOD: 110, NUMPAD_DIVIDE: 111, F1: 112, F2: 113, F3: 114,
+		    F4: 115, F5: 116, F6: 117, F7: 118, F8: 119, F9: 120, F10: 121, F11: 122, F12: 123, F13: 124, 
+		    F14: 125, F15: 126, NUM_LOCK: 144, SCROLL_LOCK: 145 }
     });
 
     /******************** timer **************************/
     var timer = ModuleManager.create('timer', 'built-in', {
-	'setTimeout': window.setTimeout,
-	'setInterval': window.setInterval,
-	'clearTimeout': window.clearTimeout,
-	'delay': function delay(f) {
+	setTimeout: window.setTimeout,
+	setInterval: window.setInterval,
+	clearTimeout: window.clearTimeout,
+	delay: function(f) {
 	    var __method = f, args = array(arguments).slice(1), timeout = args.shift() * 1000;
-	    return window.setTimeout(function() { return __method.apply(__method, args); }, timeout);
+	    return window.setTimeout(function() { return _method.apply(_method, args); }, timeout);
 	},
-	'defer': function defer(f) {
+	defer: function(f) {
 	    var args = [0.01].concat(array(arguments).slice(1));
 	    return this.delay(f, args);
 	}
@@ -533,14 +534,14 @@
 
     var Responders = {
 	responders: [],
-	'register': function register(responder) {
+	register: function(responder) {
 	    if (this.responders.indexOf(responder) != -1)
 	    this.responders.push(responder);
 	},
-	'unregister': function unregister(responder) {
+	unregister: function(responder) {
 	    this.responders = this.responders.without(responder);
 	},
-	'dispatch': function dispatch(callback, request, transport, json) {
+	dispatch: function(callback, request, transport, json) {
 	    for each (var responder in this.responders) {
 		if (callable(responder[callback])) {
 		    try {
@@ -552,13 +553,13 @@
     };
 
     Responders.register({
-        'onCreate': function onCreate() { activeRequestCount++ },
-        'onComplete': function onComplete() { activeRequestCount-- }
+        onCreate: function() { activeRequestCount++ },
+        onComplete: function() { activeRequestCount-- }
     });
 
     //TODO: armar algo para podes pasar parametros.
-    var Base = type('Base', [ object ], {
-	'__init__': function __init__(options) {
+    var Base = type('Base', object, {
+	__init__: function(options) {
 	    this.options = {
 		method:       'post',
 		asynchronous: true,
@@ -574,7 +575,7 @@
 		this.options.parameters = this.options.parameters.toqueryparams();
 	},
 	
-	'serialize': function serialize(object){
+	serialize: function(object){
 	    //TODO:Serializar
 	    return;
 	}
@@ -582,14 +583,12 @@
 
     var Request = type('Request', [ Base ], {
 	_complete: false,
-
-	'__init__': function __init__(url, options) {
+	__init__: function(url, options) {
 	    super(Base, this).__init__(options);
-	    this.transport = sys.get_transport();
+	    this.transport = new XMLHttpRequest();
 	    this.request(url);
 	},
-
-	'request': function request(url) {
+	request: function(url) {
 	    this.url = url;
 	    this.method = this.options.method;
 	    var params = extend({}, this.options.parameters);
@@ -773,8 +772,8 @@
     });
 
     var ajax = ModuleManager.create('ajax', 'built-in', {
-	'Request': Request,
-	'Response': Response
+	Request: Request,
+	Response: Response
     });
 
     /******************** dom **************************/
@@ -1325,27 +1324,21 @@
     }
     
     var dom = ModuleManager.create('dom', 'built-in', {
-	'query': query,
-	'query_combinator': query_combinator,
-	'query_selector': query_selector
+	query: query,
     });
 
     /******************** builtin **************************/
-    var builtin = ModuleManager.create('__builtin__','built-in', {
-        'publish': publish,
-        'require': require,
-	'$': function () { 
+    var builtin = ModuleManager.create('builtin','built-in', {
+        publish: publish,
+        require: require,
+	$: function () { 
 	    var result = array(arguments).map(function (element) { return query(isinstance(element, String)? '#' + element : element)[0]; });
 	    return (len(result) == 1)? result[0] : result; 
 	},
-	'$$': query,
-	'query': query,
-	'object': object,
-	'type': type,
-	'extend': function extend() {return __extend__.apply(this, [false].concat(array(arguments)));},
-	//'ls': function ls(obj){ return keys(__modules__[(obj && obj['__name__']) || this['__name__']]); },
-	//'locals': function locals(){ return __modules__[this['__name__']]; },
-	//'globals': function globals(){ return __modules__['__main__']; }
+	$$: query,
+	object: object,
+	type: type,
+	extend: function extend() {return __extend__.apply(this, [false].concat(array(arguments)));}
     });
 
     // ******************************* MORE BUILTINS ************************************* //
@@ -1408,8 +1401,8 @@
     }
 
     //Arguments wraped, whit esteroids
-    var Arguments = type('Arguments', [ object ], {
-        '__init__': function __init__(args, def) {
+    var Arguments = type('Arguments', object, {
+        __init__: function(args, def) {
             this.func = args.callee;
             this.collect = Array.prototype.slice.call(args);
             var names = this.func.toString().match(/^[\s\(]*function[^(]*\(([^\)]*)\)/)[1].replace(/\s+/g, '').split(',');
@@ -1420,16 +1413,16 @@
             this.populated = false;
         },
 	
-	'__iter__' : function(){
+	__iter__ : function(){
             for each (var arg in this.collect)
                 yield arg;
         },
 
-	'__len__' : function __len__(){
+	__len__ : function(){
             return len(this.collect);
         },
 
-        '_populate': function _populate() {
+        _populate: function() {
             this._kwargs = {};
             var haskwargs = false;
             for (var p in this._defaults || {})
@@ -1471,17 +1464,17 @@
         }
     });
 
-    var Template = type('Template', [ object ], {
+    var Template = type('Template', object, {
         //Static
-        'pattern': /(^|.|\r|\n)(%\((.+?)\))s/,
+        pattern: /(^|.|\r|\n)(%\((.+?)\))s/,
     },{
 	//Prototype
-	'__init__': function __init__(template, pattern) {
+	__init__: function(template, pattern) {
 	    this.template = str(template);
 	    this.pattern = pattern || Template.pattern;
 	},
 
-	'evaluate': function evaluate(object) {
+	evaluate: function(object) {
 	    if (callable(object.toTemplateReplacements))
 		object = object.toTemplateReplacements();
 
@@ -1578,8 +1571,8 @@
 	}
     }
 
-    var Dict = type('Dict', [ object ], {
-        '__init__': function __init__(object) {
+    var Dict = type('Dict', object, {
+        __init__: function(object) {
             this._value = {};
             this._key = {};
             if (!object || (type(object) == Array && !bool(object))) return;
@@ -1597,8 +1590,7 @@
                     this.set(key, object[key]);
             }
         },
-
-        '__iter__': function __iter__() {
+        __iter__: function() {
             for each (var hash in this._value) {
                 var value = this._value[hash], key = this._key[hash];
                 var pair = [key, value];
@@ -1607,33 +1599,27 @@
                 yield pair;
             }
         },
-
-        '__copy__': function __copy__() {
+        __copy__: function() {
             return new Dict(this);
         },
-
-        '__nonzero__': function __nonzero__(){
+        __nonzero__: function(){
             return bool(this._key);
         },
-
-        '__len__': function __len__() {
+        __len__: function() {
             return len(this._key);
         },
-
-        'set': function set(key, value) {
+        set: function(key, value) {
             var hash = id(key);
             this._key[hash] = key;
             return this._value[hash] = value;
         },
-
-        'setdefault': function setdefault(key, value){
+        setdefault: function(key, value){
             var ret = this.get(key);
             if (ret) 
 		return ret;
             return this.set(key, value);
         },
-
-        'get': function get(key, otherwise) {
+        get: function(key, otherwise) {
             var hash = id(key);
             var value = this._value[hash];
             if (value)
@@ -1641,197 +1627,151 @@
             else otherwise
                 return otherwise;
         },
-
-        'unset': function unset(key) {
+        unset: function(key) {
             var hash = id(key);
             var value = this._value[hash];
             delete this._value[hash];
             delete this._key[hash];
             return value;
         },
-
-        'to_object': function to_object() {
+        to_object: function() {
             return create(this.to_array());
         },
-
-        'keys': function keys() {
+        keys: function() {
             return [k for each (k in this._key)];
         },
-
-        'values': function values() {
+        values: function() {
             return [v for each (v in this._value)];
         },
-
-        'to_array': function to_array() {
+        to_array: function() {
             return zip(this.keys(), this.values());
         },
-
-        'items': function items() {
+        items: function() {
             return this.to_array();
         },
-
-        'index': function index(value) {
+        index: function(value) {
             var match = this.detect(function(pair) {
                 return pair.value === value;
             });
             return match && match.key;
         },
-
-        'update': function update(object) {
+        update: function(object) {
             for (var hash in object._key)
                 this.set(object._key[hash], object._value[hash]);
         },
-
-        'inspect': function inspect() {
-            return '#<Dict:{' + this.map(function(pair) {
-                return pair.map(inspect).join(': ');
-            }).join(', ') + '}>';
-        },
-
-        'to_JSON': function to_JSON() {
-            return to_JSON(this.to_object());
-        },
-
-        'pop': function pop(key) {
+        pop: function(key) {
             var val = this.unset(key);
             if (isundefined(val))
                 throw new KeyError(key);
             return val;
         },
-
-        'popitem': function popitem() {
+        popitem: function() {
             var val = this.unset(key);
             if (isundefined(val))
                 throw new KeyError(key);
             return [key, val];
         },
-
-        'clear': function clear() {
+        clear: function() {
             this._value = {};
             this._key = {};
         },
-
-        'has_key': function has_key(key) {
+        has_key: function(key) {
             var hash = id(key);
             return hash in this._key;
         }
     });
 
-    var Set = type('Set', [ object ], {
-        '__init__': function __init__(elements){
+    var Set = type('Set', object, {
+        __init__: function(elements){
             var elements = elements || [];
             if (type(elements) != Array)
                 throw new TypeError(elements + ' object is not array');
             this.elements = unique(elements);
         },
-
-        '__contains__': function __contains__(element){
+        __contains__: function(element){
             return include(this.elements, element);
         },
-
-        '__nonzero__': function __nonzero__(){
+        __nonzero__: function(){
             return bool(this.elements);
         },
-
-        '__len__': function __len__() {
+        __len__: function() {
             return len(this.elements);
         },
-
-        '__eq__': function __eq__(set) {
+        __eq__: function(set) {
             return true;
         },
-
-        '__ne__': function __ne__(set) {
+        __ne__: function(set) {
             return true;
         },
-
-        '__copy__': function __copy__(){
+        __copy__: function(){
             return this.copy();
         },
-
-        '__deepcopy__': function __deepcopy__(){
+        __deepcopy__: function(){
             return new Set(this.elements.__deepcopy__());
         },
-
-        '__iter__': function __iter__() {
+        __iter__: function() {
             for each (var element in this.elements)
                 yield element;
         },
-
-        'add': function add(element) {
+        add: function(element) {
           if (!include(this.elements, element))
               this.elements.push(element);
         },
-
-        'remove': function remove(element){
+        remove: function(element){
           var index = this.elements.indexOf(element);
           if (index == -1)
               throw new KeyError(element);
           return this.elements.splice(index, 1)[0];
         },
-
-        'discard': function discard(element){
+        discard: function(element){
           try {
               return this.remove(element);
           } catch (e if e instanceof KeyError) {
               return null;
           }
         },
-
-        'pop': function pop(){
+        pop: function(){
             return this.elements.pop();
         },
-
-        'update': function update(set){
+        update: function(set){
             var elements = (type(set) == Array)? set : set.elements;
             this.elements = unique(this.elements.concat(elements));
         },
-
-        'union': function union(set){
+        union: function(set){
             var elements = (type(set) == Array)? set : set.elements;
             return new Set(this.elements.concat(elements));
         },
-
-        'intersection': function intersection(set){
+        intersection: function(set){
             return new Set(this.elements.filter(function(e) { return include(set, e); }));
         },
-
-        'intersection_update':  function(set){
+        intersection_update: function(set){
             this.elements = this.elements.filter(function(e) { return include(set, e); });
         },
-
-        'issubset': function issubset(set){
+        issubset: function(set){
             if (this.length > set.length) return false;
             return this.elements.map(function(e){ return include(set, e) }).every(function(x){ return x });
         },
-
-        'issuperset': function issuperset(set){
+        issuperset: function(set){
             if (this.length < set.length) return false;
             return set.elements.map(function(e){ return include(this, e) }, this).every(function(x){ return x });
         },
-
-        'clear': function clear(){
+        clear: function(){
             return this.elements.clear();
         },
-
-        'copy': function copy(){
+        copy: function(){
             return new Set(this.elements);
         },
-
-        'difference': function difference(set){
+        difference: function(set){
             return new Set(this.elements.filter(function(e) { return !include(set, e); }));
         },
-
-        'difference_update': function difference_update(set){
+        difference_update: function(set){
             this.elements = this.elements.filter(function(e) { return !include(set, e); });
         },
-
-        'symmetric_difference': function symmetric_difference(set){
+        symmetric_difference: function(set){
             var set = this.difference(set);
             return set.difference(this);
         },
-
-        'symmetric_difference_update': function symmetric_difference_update(set){
+        symmetric_difference_update: function(set){
             var set = this.difference(set);
             this.elements = set.difference(this).elements;
         }
@@ -1839,24 +1779,24 @@
 
     //Populate builtins
     __extend__(false, builtin, {
-        'super': super,
-        'isinstance': isinstance,
-        'issubclass': issubclass,
-        'Arguments': Arguments,
-        'Template': Template,
-        'Dict': Dict,
-        'Set': Set,
-	'hash': hash,
-        'id': id,
-	'getattr': getattr,
-	'setattr': setattr,
-	'hasattr': hasattr,
-        'assert': function assert( test, text ) {
+        super: super,
+        isinstance: isinstance,
+        issubclass: issubclass,
+        Arguments: Arguments,
+        Template: Template,
+        Dict: Dict,
+        Set: Set,
+	hash: hash,
+        id: id,
+	getattr: getattr,
+	setattr: setattr,
+	hasattr: hasattr,
+        assert: function(test, text) {
             if ( test === false )
                 throw new AssertionError( text || 'An assertion failed!');
             return test;
         },
-        'bool': function bool(object) {
+        bool: function(object) {
             if (object && callable(object['__nonzero__']))
                 return object.__nonzero__();
             if (object && type(object) == Array)
@@ -1865,36 +1805,36 @@
                 return keys(object).length != 0;
             return Boolean(object);
         },
-        'callable': function callable(object) {
+        callable: function(object) {
             return object && type(object) == Function;
         },
-        'chr': function chr(number){ 
+        chr: function(number){ 
 	    if (type(number) != Number) throw new TypeError('An integer is required');
 	    return String.fromCharCode(number);
         },
-        'ord': function ord(ascii) {
+        ord: function(ascii) {
             if (type(number) != String) throw new TypeError('An string is required');
             return ascii.charCodeAt(0);
         },
-        'bisect': function bisect(array, element) {
+        bisect: function(array, element) {
             var i = 0;
             for (var length = array.length; i < length; i++)
                 if (array[i].__cmp__(element) > 0) return i;
             return i;
         },
         //no se porque no anda el dir
-        'equal': function equal(object1, object2) {
+        equal: function(object1, object2) {
             if (callable(object1['__eq__'])) return object1.__eq__(object2);
             return object1 == object2;
         },
-        'nequal': function nequal(object1, object2) {
+        nequal: function(object1, object2) {
             if (callable(object1['__ne__'])) return object1.__ne__(object2);
             return object1 != object2;
         },
-        'filter': function filter(func, sequence) { 
-    
+        filter: function(func, sequence) { 
+	    //TODO: hacer algo mejor o dejar solo el de los array
         },
-        'float': function float(value) {
+        float: function(value) {
             if (isinstance(value, String) || isinstance(value, Number)) {
 		var number = Number(value);
 		if (isNaN(number))
@@ -1903,15 +1843,15 @@
 	    }
 	    throw new TypeError('Argument must be a string or number');
         },
-        'flatten': function flatten(array) { 
+        flatten: function(array) { 
             return array.reduce(function(a,b) { return a.concat(b); }, []); 
         },
-        'include': function include(object, element){
+        include: function(object, element){
             if (object == undefined) return false;
             if (callable(object['__contains__'])) return object.__contains__(element);
             return object.indexOf(element) > -1;
         },
-        'int': function int(value) {
+        int: function(value) {
             if (isinstance(value, String) || isinstance(value, Number)) {
 		var number = Math.floor(value);
 		if (isNaN(number))
@@ -1920,7 +1860,7 @@
 	    }
 	    throw new TypeError('Argument must be a string or number');
         },
-        'len': function len(object) {
+        len: function(object) {
             if (object && callable(object['__len__']))
                 return object.__len__();
             if (object['length'] != undefined) 
@@ -1929,7 +1869,7 @@
                 return keys(object).length;
             throw new TypeError("object of type '" + type(object) + "' has no len()");
         },
-        'array': function array(iterable) {
+        array: function(iterable) {
             if (!iterable) 
                 return [];
             if (callable(iterable['__iterator__'])) 
@@ -1937,14 +1877,14 @@
             if (iterable.length != undefined)
                 return Array.prototype.slice.call(iterable);
         },
-        'mult': function mult(array, value) {
+        mult: function(array, value) {
             var result = [];
             for (var i = 0; i < value; i++)
                 result = result.concat(array);
             return result;
         },
-        'print': window.console && window.console.log || function(){},
-        'range': function xrange(start, stop, step){
+        print: window.console && window.console.log || function(){},
+        range: function(start, stop, step){
             var rstep = step || 1;
             var rstop = (stop == undefined)? start : stop;
             var rstart = (stop == undefined)? 0 : start;
@@ -1953,36 +1893,36 @@
                 ret.push(i);
             return ret;
         },
-        'str': function str(object) {
+        str: function(object) {
             if (object && callable(object['__str__'])) 
                 return object.__str__();
             return String(object);
         },
-        'values': function values(obj){ 
+        values: function(obj){ 
             return [e for each (e in obj)]
         },
-        'keys': function keys(object){
+        keys: function(object){
             return [e for (e in object)];
         },
-	'items': function items(object){
+	items: function(object){
             return zip(keys(object), values(object));
         },
-        'unique': function unique(sorted) {
+        unique: function(sorted) {
             return sorted.reduce(function(array, value) {
                 if (!include(array, value))
                     array.push(value);
                 return array;
                 }, []);
         },
-        'xrange': function xrange(start, stop, step){
+        xrange: function(start, stop, step){
             var xstep = step || 1;
             var xstop = (!stop)? start : stop;
             var xstart = (!stop)? 0 : start;
             for (var i = xstart; i < xstop; i += xstep)
                 yield i;
         },
-        'zip': function zip(){
-            var args = array(arguments);
+        zip: function(){
+	    var args = array(arguments);
     
             var collections = args.map(array);
             var array1 = collections.shift();
@@ -2035,7 +1975,7 @@
     });
 
     extend(String.prototype, {
-	'gsub': function gsub(pattern, replacement) {
+	gsub: function(pattern, replacement) {
 	    var result = '', source = this, match;
 	    replacement = arguments.callee.prepare_replacement(replacement);
 
@@ -2051,7 +1991,7 @@
 	    return result;
 	},
 
-	'sub': function sub(pattern, replacement, count) {
+	sub: function(pattern, replacement, count) {
 	    replacement = this.gsub.prepare_replacement(replacement);
 	    count = (!count) ? 1 : count;
 
@@ -2061,13 +2001,8 @@
 	    });
 	},
 
-	'scan': function scan(pattern, iterator) {
-	    this.gsub(pattern, iterator);
-	    return String(this);
-	},
-
 	//% operator like python
-	'subs': function subs() {
+	subs: function() {
 	    var args = flatten(array(arguments));
 	    //%% escaped
 	    var string = this.gsub(/%%/, function(match){ return '<ESC%%>'; });
@@ -2080,26 +2015,26 @@
 	    return string.gsub(/<ESC%%>/, function(match){ return '%'; });
 	},
 
-	'truncate': function truncate(length, truncation) {
+	truncate: function(length, truncation) {
 	    length = length || 30;
 	    truncation = (!truncation) ? '...' : truncation;
 	    return this.length > length ?
 	    this.slice(0, length - truncation.length) + truncation : String(this);
 	},
 
-	'strip': function strip() {
+	strip: function() {
 	    return this.replace(/^\s+/, '').replace(/\s+$/, '');
 	},
 
-	'striptags': function strip_tags() {
+	striptags: function() {
 	    return this.replace(/<\/?[^>]+>/gi, '');
 	},
 
-	'stripscripts': function strip_scripts() {
+	stripscripts: function() {
 	    return this.replace(new RegExp(String.scriptfragment, 'img'), '');
 	},
 
-	'extractscripts': function extract_scripts() {
+	extractscripts: function() {
 	    var match_all = new RegExp(String.scriptfragment, 'img');
 	    var match_one = new RegExp(String.scriptfragment, 'im');
 	    return (this.match(match_all) || []).map(function(script_tag) {
@@ -2107,17 +2042,17 @@
 	    });
 	},
 
-	'evalscripts': function eval_scripts() {
+	evalscripts: function() {
 	    return this.extractscripts().map(function(script) { return eval(script) });
 	},
 
-	'escapeHTML': function escape_HTML() {
+	escapeHTML: function() {
 	    var self = arguments.callee;
 	    self.text.data = this;
 	    return self.div.innerHTML;
 	},
 
-	'unescapeHTML': function unescape_HTML() {
+	unescapeHTML: function() {
 	    var div = document.createElement('div');
 	    div.innerHTML = this.striptags();
 	    return div.childNodes[0] ? (div.childNodes.length > 1 ?
@@ -2125,7 +2060,7 @@
 	    div.childNodes[0].nodeValue) : '';
 	},
 
-	'toqueryparams': function toqueryparams(separator) {
+	toqueryparams: function(separator) {
 	    var match = this.strip().match(/([^?#]*)(#.*)?$/);
 	    if (!match) return { };
 
@@ -2144,16 +2079,16 @@
 	    }, {});
 	},
 
-	'succ': function succ() {
+	succ: function() {
 	    return this.slice(0, this.length - 1) +
 	    String.fromCharCode(this.charCodeAt(this.length - 1) + 1);
 	},
 
-	'times': function times(count) {
+	times: function(count) {
 	    return count < 1 ? '' : new Array(count + 1).join(this);
 	},
 
-	'camelize': function camelize() {
+	camelize: function() {
 	    var parts = this.split('-'), len = parts.length;
 	    if (len == 1) return parts[0];
 
@@ -2167,19 +2102,19 @@
 	    return camelized;
 	},
 
-	'capitalize': function capitalize() {
+	capitalize: function() {
 	    return this.charAt(0).toUpperCase() + this.substring(1).toLowerCase();
 	},
 
-	'underscore': function underscore() {
+	underscore: function() {
 	    return this.gsub(/::/, '/').gsub(/([A-Z]+)([A-Z][a-z])/,'#{1}_#{2}').gsub(/([a-z\d])([A-Z])/,'#{1}_#{2}').gsub(/-/,'_').toLowerCase();
 	},
 
-	'dasherize': function dasherize() {
+	dasherize: function() {
 	    return this.gsub(/_/,'-');
 	},
 
-	'inspect': function inspect(useDoubleQuotes) {
+	inspect: function(useDoubleQuotes) {
 	    var escapedString = this.gsub(/[\x00-\x1f\\]/, function(match) {
 	    var character = String.specialChar[match[0]];
 	    return character ? character : '\\u00' + match[0].charCodeAt().toPaddedString(2, 16);
@@ -2188,16 +2123,16 @@
 	    return "'" + escapedString.replace(/'/g, '\\\'') + "'";
 	},
 
-	'startswith': function startswith(pattern) {
+	startswith: function(pattern) {
 	    return this.indexOf(pattern) === 0;
 	},
 
-	'endswith': function endswith(pattern) {
+	endswith: function(pattern) {
 	    var d = this.length - pattern.length;
 	    return d >= 0 && this.lastIndexOf(pattern) === d;
 	},
 
-	'blank': function blank() {
+	blank: function() {
 	    return /^\s*$/.test(this);
 	}
     });
@@ -2223,7 +2158,7 @@
 	iselement: function(object) {
 	    return !!(object && object.nodeType == 1);
 	},
-	_insertionTranslations: {
+	_insertion_translations: {
 	    before: function(element, node) {
 		element.parentNode.insertBefore(node, element);
 	    },
@@ -2244,8 +2179,8 @@
 		SELECT: ['<select>',               '</select>',                  1]
 	    }
 	},
-	_getContentFromAnonymousElement: function(tagName, html) {
-	    var div = document.createElement('div'), t = Element._insertionTranslations.tags[tagName];
+	_get_content_from_anonymous_element: function(tagName, html) {
+	    var div = document.createElement('div'), t = Element._insertion_translations.tags[tagName];
 	    if (t) {
 		div.innerHTML = t[0] + html + t[1];
 		t[2].times(function() { div = div.firstChild });
@@ -2286,7 +2221,7 @@
 	    for (var position in insertions) {
 		content  = insertions[position];
 		position = position.toLowerCase();
-		insert = Element._insertionTranslations[position];
+		insert = Element._insertion_translations[position];
 
 		if (Element.iselement(content)) {
 		    insert(this, content);
@@ -2294,7 +2229,7 @@
 		}
 
 		tagName = ((position == 'before' || position == 'after') ? this.parentNode : this).tagName.toUpperCase();
-		childNodes = Element._getContentFromAnonymousElement(tagName, content.stripscripts());
+		childNodes = Element._get_content_from_anonymous_element(tagName, content.stripscripts());
 
 		if (position == 'top' || position == 'after') 
 		    childNodes.reverse();
@@ -2388,13 +2323,13 @@
 	    switch (element.type.toLowerCase()) {
 	    case 'checkbox':
 	    case 'radio':
-		return this.inputSelector(element, value);
+		return this.input_selector(element, value);
 	    default:
 		return this.textarea(element, value);
 	    }
 	},
 
-	inputSelector: function(element, value) {
+	input_selector: function(element, value) {
 	    if (typeof(value) === 'undefined') return element.checked ? element.value : null;
 	    else element.checked = !!value;
 	},
@@ -2407,12 +2342,12 @@
 	select: function(element, value) {
 	    if (typeof(value) === 'undefined')
 	    return this[element.type == 'select-one' ?
-		'selectOne' : 'selectMany'](element);
+		'select_one' : 'select_many'](element);
 	    else {
 	    var opt, currentValue, single = type(value) != Array;
 	    for (var i = 0, length = element.length; i < length; i++) {
 		opt = element.options[i];
-		currentValue = this.optionValue(opt);
+		currentValue = this.option_value(opt);
 		if (single) {
 		    if (currentValue == value) {
 			opt.selected = true;
@@ -2424,23 +2359,23 @@
 	    }
 	},
 
-	selectOne: function(element) {
+	select_one: function(element) {
 	    var index = element.selectedIndex;
-	    return index >= 0 ? this.optionValue(element.options[index]) : null;
+	    return index >= 0 ? this.option_value(element.options[index]) : null;
 	},
 
-	selectMany: function(element) {
+	select_many: function(element) {
 	    var values, length = element.length;
 	    if (!length) return null;
 
 	    for (var i = 0, values = []; i < length; i++) {
 	    var opt = element.options[i];
-	    if (opt.selected) values.push(this.optionValue(opt));
+	    if (opt.selected) values.push(this.option_value(opt));
 	    }
 	    return values;
 	},
 
-	optionValue: function(opt) {
+	option_value: function(opt) {
 	    return opt.hasAttribute('value') ? opt.value : opt.text;
 	}
     }

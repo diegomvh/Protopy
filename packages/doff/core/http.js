@@ -2,7 +2,7 @@ var RESERVED_CHARS = "!*'();:@&=+$,/?%#[]";
 
 var absolute_http_url_re = RegExp("^https?://", 'i');
 
-var Http404 = type('Http404', [ Exception ]);
+var Http404 = type('Http404', Exception);
 
 /*A basic HTTP request.*/
 var HttpRequest = type ('HttpRequest', [ object ], {
@@ -76,7 +76,7 @@ var HttpRequest = type ('HttpRequest', [ object ], {
 });
 
 /* A basic HTTP response, with content and dictionary-accessed headers.*/
-var HttpResponse = type('HttpResponse', [ object ], {
+var HttpResponse = type('HttpResponse', object, {
     status_code: 200,
 
     __init__: function __init__(where, content, status, content_type) {
@@ -158,7 +158,7 @@ var HttpResponse = type('HttpResponse', [ object ], {
     }
 });
 
-var HttpResponseRedirect = type('HttpResponseRedirect', [ HttpResponse ], {
+var HttpResponseRedirect = type('HttpResponseRedirect', HttpResponse, {
     status_code: 302,
 
     __init__: function __init__(redirect_to) {

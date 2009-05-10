@@ -1,7 +1,7 @@
 require('doff.core.http', 'Http404');
 
-var Resolver404 = type('Resolver404', [ Http404 ]);
-var NoReverseMatch = type('NoReverseMatch', [ Exception ]);
+var Resolver404 = type('Resolver404', Http404);
+var NoReverseMatch = type('NoReverseMatch', Exception);
 
 /*
 Convert a string version of a function name to the callable object.
@@ -48,7 +48,7 @@ function get_mod_func(callback) {
     return [callback.slice(0, dot), callback.slice(dot + 1)];
 }
 
-var RegexURLPattern = type('RegexURLPattern', [object], {
+var RegexURLPattern = type('RegexURLPattern', object, {
     __init__: function __init__(regex, callback, default_args, name) {
         // regex is a string representing a regular expression.
         // callback is either a string like 'foo.views.news.stories.story_detail'
@@ -96,7 +96,7 @@ var RegexURLPattern = type('RegexURLPattern', [object], {
     }
 });
 
-var RegexURLResolver = type('RegexURLResolver', [object], {
+var RegexURLResolver = type('RegexURLResolver', object, {
     __init__: function(regex, urlconf_name, default_kwargs) {
         // regex is a string representing a regular expression.
         // urlconf_name is a string representing the module containing urlconfs.

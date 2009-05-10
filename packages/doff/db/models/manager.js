@@ -16,7 +16,7 @@ function ensure_default_manager(cls) {
 
 var hcp = event.subscribe('class_prepared', ensure_default_manager);
 
-var Manager = type('Manager', {
+var Manager = type('Manager', object, {
         '__init__': function __init__(){
         this._set_creation_counter();
         this.model = null;
@@ -192,7 +192,7 @@ var Manager = type('Manager', {
     });
 Manager.creation_counter = 0;
 
-var ManagerDescriptor = type('ManagerDescriptor', {
+var ManagerDescriptor = type('ManagerDescriptor', object, {
     '__init__': function __init__(manager){
         this.manager = manager;
     },

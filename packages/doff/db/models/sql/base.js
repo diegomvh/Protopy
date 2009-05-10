@@ -3,7 +3,7 @@ require('doff.db.models.sql.subqueries', 'DeleteQuery', 'InsertQuery', 'DateQuer
 require('doff.db.models.sql.where', 'AND', 'OR');
 require('doff.db.models.sql.datastructures', 'EmptyResultSet');
 
-publish({    
+publish({
     Query: Query,
     DeleteQuery: DeleteQuery,
     InsertQuery: InsertQuery,

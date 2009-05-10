@@ -12,7 +12,7 @@ var MultiJoin = type('MultiJoin', Exception, {
     }
 });
 
-var RawValue = type('RawValue', {
+var RawValue = type('RawValue', object, {
     '__init__': function __init__(value) {
         this.value = value;
     }
@@ -21,7 +21,7 @@ var RawValue = type('RawValue', {
 /*
     * Base class for all aggregate-related classes (min, max, avg, count, sum).
     */
-var Aggregate = type('Aggregate', {
+var Aggregate = type('Aggregate', object, {
     /*
         * Relabel the column alias, if necessary. Must be implemented by
         * subclasses.
@@ -80,7 +80,7 @@ var Count = type('Count', Aggregate, {
 /*
     * Add a date selection column.
     */
-var Date = type('Date', {
+var Date = type('Date', object, {
 
     '__init__': function __init__(col, lookup_type, date_sql_func){
         this.col = col;

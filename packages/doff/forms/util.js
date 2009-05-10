@@ -32,7 +32,7 @@ var ErrorDict = type('ErrorDict', Dict, {
 /*
  * A collection of errors that knows how to display itself in various formats.
  */
-var ErrorList = type('ErrorList', {
+var ErrorList = type('ErrorList', object, {
     '__init__': function __init__(errors) {
 	this.errors = errors || [];
     },

@@ -1,0 +1,33 @@
+El desarrollo de un framework en javascript que funcione del lado del cliente presupone gran cantidad de codigo
+viajando de un lado al otro de la conexion. Previendo basicamente este postulado desarrollamos una libreria
+que brinde el soporte a los requerimentos mas basicos.
+Esta librería contituye la base para posteriores contrucciones de objetos mas complejos en el ciente y
+auna herramientas que simplifican el desarrollo client-side.
+
+\subsection*{Tipos o clases}
+Como ya se menciono anteriormente javascript es un lenguaje orientado a prototipos, para acercarnos un poco a la programacion
+de objetos, utilizamos una funcion constructora de tipos o clases a la que denominamos “type”.
+
+var NuevoTipo = type('nombre', bases, [ {} ], {});
+
+\subsection*{Modulos}
+Undo de los principales inconvenientes a los que protopy da solucion es a la inclucion dinamica de funcionalidad bajo demanda,
+esto es logrado mediante los modulos.
+El concepto de modulo esta asociado a un archivo con codigo javascript que recide al igual que todo el codigo en el servidor,
+este archivo es objtenido bajo demanda y ejecutado en el cliente.
+
+Estructura basica de un modulo.
+	//modulo.js
+	funciones
+	objetos
+	etc...
+	publish(...)
+
+
+Modulos:
+	sys
+	exception
+	event
+	ajax
+	builtin
+	timer

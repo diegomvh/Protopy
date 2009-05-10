@@ -87,7 +87,7 @@ function make_instance_save(instance, fields, fail_message) {
 //Returns a Form class for the given list of Django database field instances.
 function form_for_fields(field_list) {
     var fields = new SortedDict([[f.name, f.formfield()] for each (f in field_list) if (f.editable)]);
-    return type('FormForFields', [BaseForm], { 'base_fields': fields});
+    return type('FormForFields', BaseForm, { 'base_fields': fields});
 }
 
 
@@ -154,7 +154,7 @@ function fields_for_model(model, fields, exclude, formfield_callback) {
     return new SortedDict(field_list);
 }
 
-var ModelFormOptions = type('ModelFormOptions', {
+var ModelFormOptions = type('ModelFormOptions', object, {
     __init__: function(options) {
         this.model = getattr(options, 'model', null);
         this.fields = getattr(options, 'fields', null);
@@ -552,7 +552,7 @@ def inlineformset_factory(parent_model, model, form=ModelForm,
 
 */
 // Fields //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-var InlineForeignKeyHiddenInput = type('InlineForeignKeyHiddenInput', [HiddenInput], {
+var InlineForeignKeyHiddenInput = type('InlineForeignKeyHiddenInput', HiddenInput, {
     '_has_changed': function _has_changed(initial, data) {
         return false;
     }
@@ -561,7 +561,7 @@ var InlineForeignKeyHiddenInput = type('InlineForeignKeyHiddenInput', [HiddenInp
 /* 
  * A basic integer field that deals with validating the given value to a given parent instance in an inline.
  */
-var InlineForeignKeyField = type('InlineForeignKeyField', [Field], {
+var InlineForeignKeyField = type('InlineForeignKeyField', Field, {
     default_error_messages: { 'invalid_choice': 'The inline foreign key did not match the parent instance primary key.' },
     
     '__init__': function __init__(parent_instance) {
@@ -592,7 +592,7 @@ var InlineForeignKeyField = type('InlineForeignKeyField', [Field], {
     }
 });
 
-var ModelChoiceIterator = type('ModelChoiceIterator', [object], {
+var ModelChoiceIterator = type('ModelChoiceIterator', object, {
     '__init__': function __init__(field) {
         this.field = field;
         this.queryset = field.queryset;
@@ -628,7 +628,7 @@ var ModelChoiceIterator = type('ModelChoiceIterator', [object], {
 });
 
 // A ChoiceField whose choices are a model QuerySet.
-var ModelChoiceField = type('ModelChoiceField', [ChoiceField], {
+var ModelChoiceField = type('ModelChoiceField', ChoiceField, {
     // This class is a subclass of ChoiceField for purity, but it doesn't
     // actually use any of ChoiceField's implementation.
     default_error_messages: { 'invalid_choice': 'Select a valid choice. That choice is not one of the available choices.' },
@@ -700,7 +700,7 @@ var ModelChoiceField = type('ModelChoiceField', [ChoiceField], {
 });
 
 //A MultipleChoiceField whose choices are a model QuerySet.
-var ModelMultipleChoiceField = type('ModelMultipleChoiceField', [ModelChoiceField], {
+var ModelMultipleChoiceField = type('ModelMultipleChoiceField', ModelChoiceField, {
     widget: SelectMultiple,
     hidden_widget: MultipleHiddenInput,
     default_error_messages: {	'list': 'Enter a list of values.',

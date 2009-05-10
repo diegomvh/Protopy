@@ -16,7 +16,7 @@ var BLANK_CHOICE_NONE = [["", "None"]];
 
 var FieldDoesNotExist = type('FieldDoesNotExist', Exception);
 
-var Field = type('Field', {
+var Field = type('Field', object, {
     creation_counter: 0,
     auto_creation_counter: -1
 },{
@@ -789,7 +789,7 @@ var SlugField = type('SlugField', CharField, {
     }
 });
 
-var SmallIntegerField = type('SmallIntegerField', IntegerField, {});
+var SmallIntegerField = type('SmallIntegerField', IntegerField);
 
 var TextField = type('TextField', Field, {
     'formfield': function formfield() {

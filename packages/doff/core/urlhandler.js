@@ -60,7 +60,7 @@ var html_elements = {
     },
 }
 
-var Handler = type('Handler', [ object ], {
+var Handler = type('Handler', object, {
     handle: function handle(element) {
 	var request = new http.HttpRequest();
         //TODO: vero como determinar si es un elemento del html creo que es algo con el tipo de nodo debe ser 2

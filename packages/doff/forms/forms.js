@@ -49,7 +49,7 @@ function get_declared_fields(bases, attrs, with_base_fields) {
 // class is different than Form. See the comments by the Form class for more
 // information. Any improvements to the form API should be made to *this*
 // class, not to the Form class.
-var BaseForm = type('BaseForm', {
+var BaseForm = type('BaseForm', object, {
     __init__: function() {
         arguments = new Arguments(arguments, {'data':null, 'files':null, 'auto_id':'id_%s', 'prefix':null, 'initial':null, 'error_class':ErrorList, 'label_suffix':':', 'empty_permitted':false});
         var kwargs = arguments.kwargs;
@@ -322,7 +322,7 @@ var Form = type('Form', BaseForm, {
 }, {});
 
 //A Field plus data
-var BoundField = type('BoundField', {
+var BoundField = type('BoundField', object, {
     __init__: function(form, field, name) {
         this.form = form;
         this.field = field;

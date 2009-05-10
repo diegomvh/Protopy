@@ -14,7 +14,7 @@ require('event');
 /*
  * A single SQL query
  */
-var Query = type('Query', {
+var Query = type('Query', object, {
     INNER: 'INNER JOIN',
     LOUTER: 'LEFT OUTER JOIN',
     alias_prefix: 'T',
@@ -113,7 +113,7 @@ var Query = type('Query', {
         var args = arguments.args;
         var kwargs = arguments.kwargs;
 	klass = klass || this.constructor;
-	var obj = type('Empty', {});
+	var obj = type('Empty', object);
         obj.prototype.__proto__ = klass.prototype;
 	obj.prototype.constructor = klass.prototype.constructor;
 	obj = new obj();

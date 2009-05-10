@@ -8,7 +8,7 @@ var ContextPopException = type('ContextPopException', Exception);
 /* defo:translate
  *
  */
-var Context = type('Context', {
+var Context = type('Context', object, {
     __doc__: 'Context for the template rendering\npush the context, pop the context, get elements and set elements',
     __init__: function(_dict, autoescape) {
         _dict = _dict || {};
@@ -100,7 +100,7 @@ function get_standard_processors() {
  * This subclass of template.Context automatically populates itself using the processors defined in TEMPLATE_CONTEXT_PROCESSORS.
  * Additional processors can be specified as a list of callables using the "processors" keyword argument.
  */ 
-var RequestContext = type('RequestContext', [Context], {
+var RequestContext = type('RequestContext', Context, {
     __init__: function(request, dict, processors) {
         super(Context, this).__init__(dict);
         if (!processors)

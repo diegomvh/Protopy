@@ -5,7 +5,7 @@ require('doff.core.urlhandler', 'Handler');
 require('logging.config', 'file_config');
 require('gears.localserver', 'ManagedResourceStore');
 
-var Project = type('Project', [object], {
+var Project = type('Project', object, {
     settings: null,
     is_online: false,
     NET_CHECK: 5,

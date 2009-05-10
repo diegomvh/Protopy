@@ -23,7 +23,7 @@ from urlparse import urljoin
 */
 var MEDIA_TYPES = ['css','js'];
 
-var Media = type('Media', {
+var Media = type('Media', object, {
     __init__: function(media) {
         arguments = new Arguments(arguments);
         if (media)
@@ -131,7 +131,7 @@ function media_property(cls) {
     return _media;
 }
 
-var Widget = type('Widget', {
+var Widget = type('Widget', object, {
     //Static
     '__new__': function __new__(name, bases, attrs) {
         var new_class = super(Widget, this).__new__(name, bases, attrs);
@@ -479,7 +479,7 @@ var SelectMultiple = type('SelectMultiple', Select, {
 /* 
  * An object used by RadioFieldRenderer that represents a single <input type='radio'>.
  */
-var RadioInput = type('RadioInput', {
+var RadioInput = type('RadioInput', object, {
     __init__: function(name, value, attrs, choice, index) {
         this.name = name;
         this.value = value;
@@ -513,7 +513,7 @@ var RadioInput = type('RadioInput', {
 /*
  * An object used by RadioSelect to enable customization of radio widgets.
  */
-var RadioFieldRenderer = type('RadioFieldRenderer', {
+var RadioFieldRenderer = type('RadioFieldRenderer', object, {
     __init__: function(name, value, attrs, choices) {
         this.name = name;
         this.value = value;
