@@ -1,77 +1,91 @@
 require('sys');
 require('event');
 require('ajax');
-require('doff.core.urlhandler', 'Handler');
-require('logging.config', 'file_config');
-require('gears.localserver', 'ManagedResourceStore');
 
 var Project = type('Project', object, {
-    settings: null,
     is_online: false,
     NET_CHECK: 5,
     availability_url: null,
     going_online: false,
     do_net_checking: true,
-    handler: null,
-    system: null,
-    project: null,
 
-    onLoad: function onLoad() {
+    onLoad: function() {
         //this.sync_stores();
+
+	//Add the body element to html
+	var body = $$('body')[0];
+	body.insert('<div id="body" ></div>');
     },
 
-    onNetwork: function(type) {},
+    onNetwork: function(type) {
+	this.status_element.update(type);
+    },
 
-    '__init__': function __init__(name, package, path){
+    __init__: function(name, package, path) {
 	this.name = name;
 	this.package = package;
 	this.path = path;
 	sys.register_path(this.package, this.path);
 	this.availability_url = sys.module_url(this.package, 'network_check.txt');
-	this.read_settings();
-        this.handler = new Handler(this.settings.ROOT_URLCONF);
-	// ManagedStores
+
+	//Inicio el logging
+	require('logging.config', 'file_config');
+        file_config(sys.module_url(this.package, 'logging.js'));
+
+	//Inicio del handler
+	require('doff.core.urlhandler', 'Handler');
+	this.handler = new Handler(this.settings.ROOT_URLCONF);
+
+	//Inicio de los stores
+	require('gears.localserver', 'ManagedResourceStore');
 	this.project = new ManagedResourceStore(package + '_project');
 	this.project.manifest_url = sys.module_url(this.package, 'manifests/project.json');
-        this.system = new ManagedResourceStore(package + '_system');
+	this.system = new ManagedResourceStore(package + '_system');
 	this.system.manifest_url = sys.module_url(this.package, 'manifests/system.json');
-        //Inicio el logging
-        file_config(sys.module_url(this.package, 'logging.js'));
+	//TODO: uno mas para files asi podemos guardar archivos del cliente
+
+	//The toolbar
+	require('doff.utils.toolbar', 'Toolbar');
+	this.toolbar = new Toolbar();
+	this.status_element = this.toolbar.add_item('status');
     },
 
-    //FIXME: Mejorar esto un poco tengo un __init__ y un initialize es como medio cualquiera
-    initialize: function initialize(){
+    run: function initialize(){
 	var self = this;
 	event.connect(window, 'load', function(){
 	    self.onLoad();
 	    self.handler.handle('/');
+	    self.toolbar.show();
 	});
     },
 
-    sync_stores: function sync_stores() {
+    sync_stores: function() {
         this.system.check_for_update();
         this.project.check_for_update();
     },
 
-    read_settings: function read_settings() {
+    get settings() {
+	if (this._settings)
+	    return this._settings;
 	var self = this;
 	var global_settings = require('doff.conf.settings');
 	var url_settings = sys.module_url(this.package, 'settings.js');
 	new ajax.Request(url_settings, {
             method: 'GET',
 	    asynchronous : false,
-	    'onSuccess': function onSuccess(transport) {
+	    onSuccess: function(transport) {
 		var code = '(' + transport.responseText + ');';
 		var project_settings = eval(code);
-		self.settings = extend(global_settings, project_settings);
+		self._settings = extend(global_settings, project_settings);
 	    },
-	    'onException': function onException(obj, exception){
+	    onException: function(obj, exception) {
 		throw exception;
 	    },
-	    'onFailure': function onFailure(transport){
+	    onFailure: function(transport) {
 		throw new Exception("No settings");
 	    }
 	});
+	return this._settings;
     },
 
     go_offline: function(){ 
@@ -98,16 +112,16 @@ var Project = type('Project', object, {
 	var get = new ajax.Request(this._get_availability_url(), {
 	    method: 'GET',
 	    asynchronous : false,
-	    'onSuccess': function onSuccess(transport) {
+	    onSuccess: function(transport) {
 		if(!self.is_online){
 		    self.is_online = true;
 		    self.onNetwork("online");
 		}
 	    },
-	    'onFailure': function onFailure(transport){
+	    onFailure: function(transport){
 		if(self.is_online){
 		    self.is_online = false;
-		    self.sync.is_syncing = false;
+		    //self.sync.is_syncing = false;
 		    self.onNetwork("offline");
 		}
 	    }
@@ -162,5 +176,6 @@ function get_settings() {
 
 publish({
     get_project: get_project,
+    new_project: get_project,
     get_settings: get_settings
 });

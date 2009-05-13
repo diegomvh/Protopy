@@ -46,14 +46,9 @@ function find_template_source(name, dirs) {
 /* defo:translate
  * Carga un template en base a su nombre ejemplo.html
  */
-var _template_cache = {};
-
 function get_template(template_name) {
-    if (!_template_cache[template_name]) {
-	var source = find_template_source(template_name);
-	_template_cache[template_name] = get_template_from_string(source, template_name);
-    }
-    return _template_cache[template_name];
+    var source = find_template_source(template_name);
+    return get_template_from_string(source, template_name);
 }
 
 function get_template_from_string(source, name) {
