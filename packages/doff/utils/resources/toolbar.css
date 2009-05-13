@@ -1,0 +1,70 @@
+div#toolbar {
+    width: 90%;
+    height: 30px;
+    position: fixed;
+    bottom: 0px;
+    margin-left: 5%;
+    background: #EEEEEE;
+    text-align: left;
+    border-top: 1px solid #CCCCCC;
+    border-left: 1px solid #CCCCCC;
+    border-right: 1px solid #CCCCCC;
+}
+
+div#toolbar div {
+    width: 80%;
+    height: 25em;
+    background: #EEEEEE;
+    border-top: 1px solid #CCCCCC;
+    border-left: 1px solid #CCCCCC;
+    border-right: 1px solid #CCCCCC;
+    font-weight:bold;
+    text-indent:15px;
+    position: fixed;
+    bottom: 30px;
+    margin-left: 5%;
+}
+
+div#toolbar ul {
+    border-top: 1px solid #CCCCCC;
+    border-left: 1px solid #CCCCCC;
+    border-right: 1px solid #CCCCCC;
+    margin: 0px;
+    padding: 4px;
+    height: 29px;
+}
+
+div#toolbar ul li {
+    border-right: 1px solid #888888;
+    padding-left: 6px;
+    padding-right: 6px;
+    font-size: 123.1%;
+    display: inline;
+}
+
+div#toolbar ul li:last-child {
+    border-right: none;
+}
+
+/*
+    ul#toolbar {
+	background: white none repeat scroll 0 0;
+	border-top:1px solid #93B2CC;
+	border-left:1px solid #93B2CC;
+	font-weight:bold;
+	text-indent:15px;
+	position: fixed;
+	bottom: 0em;
+	margin: 0;
+	padding: 1px 0;
+	right: 0em;
+    }
+    ul#toolbar li { 
+	border-right:1px solid black;
+	display:inline;
+	font-size:0.7em;
+	margin-right:1em;
+	padding-right:1em;
+    }
+    ul#toolbar li:last-child { border-right: none }
+*/
