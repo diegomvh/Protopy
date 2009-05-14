@@ -1,6 +1,6 @@
 div#toolbar {
     width: 90%;
-    height: 30px;
+    height: 20px;
     position: fixed;
     bottom: 0px;
     margin-left: 5%;
@@ -21,7 +21,7 @@ div#toolbar div {
     font-weight:bold;
     text-indent:15px;
     position: fixed;
-    bottom: 30px;
+    bottom: 20px;
     margin-left: 5%;
 }
 
@@ -38,7 +38,7 @@ div#toolbar ul li {
     border-right: 1px solid #888888;
     padding-left: 6px;
     padding-right: 6px;
-    font-size: 123.1%;
+    font-size: 90%;
     display: inline;
 }
 

@@ -3,7 +3,7 @@ require('ajax');
 
 var DataBaseQuery = type('DataBaseQuery', Panel, {
     __init__: function() {
-        super(Panel, this).__init__();
+        super(Panel, this).__init__('dbquery');
     },
 
     get_template: function() {
@@ -26,7 +26,7 @@ var DataBaseQuery = type('DataBaseQuery', Panel, {
     },
 
     _display: function() {
-        this.div.update(this.get_template());
+        this.content.update(this.get_template());
     },
 });
 

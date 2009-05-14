@@ -2,13 +2,14 @@ require('sys');
 require('event');
 
 var Panel = type('Panel', object, {
-    __init__: function() {
-        this.div = document.createElement('div');
+    __init__: function(id) {
+        this.content = document.createElement('div');
+        this.content.id = id;
         this.hide();
     },
 
     hide: function() {
-	this.div.hide();
+	this.content.hide();
     },
 
     show: function() {
@@ -16,11 +17,11 @@ var Panel = type('Panel', object, {
 	    this._display();
             this.displayed = true;
         }
-	this.div.show();
+	this.content.show();
     },
 
     visible: function() {
-        return this.div.visible();
+        return this.content.visible();
     },
 
     toggle: function() {
@@ -48,7 +49,7 @@ var ToolBar = type('Toolbar', object, {
         item.update(name);
         this.ul.insert(item);
         if (isinstance(panel, Panel)) {
-            this.content.insert(panel.div);
+            this.content.insert(panel.content);
             event.connect(item, 'click', function() { 
                 panel.toggle(); 
             });

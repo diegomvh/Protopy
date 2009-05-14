@@ -49,8 +49,11 @@ var Project = type('Project', object, {
         require('doff.utils.dbquery', 'DataBaseQuery');
 	this.toolbar = new ToolBar();
         var dbquery = new DataBaseQuery();
-	this.status_element = this.toolbar.add('status');
-        this.toolbar.add('query', dbquery);
+	this.status_element = this.toolbar.add('Offline');
+        this.toolbar.add('Query', dbquery);
+        this.toolbar.add('Log');
+        this.toolbar.add('Settings');
+        this.toolbar.add('Help');
     },
 
     run: function initialize(){
