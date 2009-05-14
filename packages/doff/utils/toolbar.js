@@ -5,6 +5,7 @@ var Panel = type('Panel', object, {
     __init__: function(id) {
         this.content = document.createElement('div');
         this.content.id = id;
+	this.content.setAttribute('class', 'panel');
         this.hide();
     },
 

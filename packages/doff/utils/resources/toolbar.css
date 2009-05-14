@@ -11,7 +11,7 @@ div#toolbar {
     border-right: 1px solid #CCCCCC;
 }
 
-div#toolbar div {
+div#toolbar div.panel {
     width: 80%;
     height: 25em;
     background: #EEEEEE;
@@ -23,6 +23,16 @@ div#toolbar div {
     position: fixed;
     bottom: 20px;
     margin-left: 5%;
+}
+
+div#toolbar div.panel h1 {
+    background-color:#E0EDFE;
+    font-size:12pt;
+    font-weight:bold;
+    padding:4px;
+    margin:4px;
+    position:relative;
+    vertical-align:middle;
 }
 
 div#toolbar ul {
@@ -38,7 +48,7 @@ div#toolbar ul li {
     border-right: 1px solid #888888;
     padding-left: 6px;
     padding-right: 6px;
-    font-size: 90%;
+    font-size: 70%;
     display: inline;
 }
 
