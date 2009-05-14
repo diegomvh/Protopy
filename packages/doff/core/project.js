@@ -45,9 +45,12 @@ var Project = type('Project', object, {
 	//TODO: uno mas para files asi podemos guardar archivos del cliente
 
 	//The toolbar
-	require('doff.utils.toolbar', 'Toolbar');
-	this.toolbar = new Toolbar();
-	this.status_element = this.toolbar.add_item('status');
+	require('doff.utils.toolbar', 'ToolBar');
+        require('doff.utils.dbquery', 'DataBaseQuery');
+	this.toolbar = new ToolBar();
+        var dbquery = new DataBaseQuery();
+	this.status_element = this.toolbar.add('status');
+        this.toolbar.add('query', dbquery);
     },
 
     run: function initialize(){

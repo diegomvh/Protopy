@@ -1,0 +1,124 @@
+<style>
+html {
+  overflow: auto;
+  font: icon;
+}
+
+body {
+  margin-top: 2em;
+}
+
+table {
+  border: 1px solid ThreeDShadow;
+}
+
+td, th {
+  font: icon;
+  padding: 2px 5px;
+}
+
+thead {
+  background-color: ThreeDFace;
+}
+
+th {
+  border: 1px solid;
+  border-color: ThreeDHighlight ThreeDShadow ThreeDShadow ThreeDHighlight;
+}
+
+td.even {
+  background-color: #f5f5f5;
+}
+
+#command-area {
+  width: 100%;
+}
+
+#command-area, h3 {
+  border: 0;
+  margin: 5px 0;
+}
+
+#command-area td {
+  vertical-align: top;
+  padding: 0;
+  white-space: nowrap;
+}
+
+h3, textarea, input, label {
+  font: icon;
+  font-size: 15pt !important;
+  border: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* work around IE rendering bug */
+:root textarea {
+  width: 100%;
+}
+
+#ta.label {
+  color: GrayText;
+}
+
+button {
+  font: icon;
+  font-size: 15pt !important;
+}
+
+#active {
+  display: none;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5em;
+}
+
+input {
+  width: 13em;
+}
+
+#login-form {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
+#status-bar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.5em;
+  display: none;
+  cursor: pointer;
+}
+
+#status-bar a {
+  color: blue;
+}
+
+form {
+  float:left;
+  position: relative;
+  top: -50%;
+  left: -50%;
+  height: 100%;
+  text-align: right;
+}
+
+form button {
+  padding-left: 1em;
+  padding-right: 1em;
+}
+</style>
+
+<p>Database Query Tool</p>
+<div id=dbquery-output></div>
+
+<div id=dbquery-active>
+    <textarea id=dbquery-text cols=80 rows=2 spellcheck=false></textarea>
+    <button id=dbquery-execute>Execute</button>
+    <button id=dbquery-clear>Clear</button>
+</div>
