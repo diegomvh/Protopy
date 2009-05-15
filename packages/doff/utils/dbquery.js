@@ -52,7 +52,7 @@ var DataBaseQuery = type('DataBaseQuery', Panel, {
 	this.text_sql.value = 'select * from sqlite_master';
 
         this.bt_execute = $('dbquery-execute');
-        event.connect(this.bt_execute, 'click', getattr(this, 'execute'));
+        event.connect(this.bt_execute, 'click', this, 'execute');
 
 	this.bt_clear = $('dbquery-clear');
 	event.connect(this.bt_clear, 'click', function(event) {
@@ -60,7 +60,7 @@ var DataBaseQuery = type('DataBaseQuery', Panel, {
 	    self.text_sql.value = '';
 	    self.text_sql.focus();
 	});
-	this.output = $('output');
+	this.output = $('dbquery-output');
     },
 
     is_cursor_on_first_line: function() {

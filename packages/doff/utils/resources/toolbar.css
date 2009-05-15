@@ -36,6 +36,10 @@ div#toolbar div.panel h1 {
     vertical-align: middle;
 }
 
+div#toolbar div.panel h1 img {
+    padding-left:86%;
+}
+
 div#toolbar ul {
     border-top: 1px solid #CCCCCC;
     border-left: 1px solid #CCCCCC;

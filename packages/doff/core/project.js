@@ -47,12 +47,13 @@ var Project = type('Project', object, {
 	//The toolbar
 	require('doff.utils.toolbar', 'ToolBar');
         require('doff.utils.dbquery', 'DataBaseQuery');
+        require('doff.utils.logger', 'Logger');
 	this.toolbar = new ToolBar();
         var dbquery = new DataBaseQuery();
+        var logger = new Logger();
 	this.status_element = this.toolbar.add('Offline');
         this.toolbar.add(dbquery);
-	this.toolbar.add(new DataBaseQuery());
-        this.toolbar.add('Logger');
+        this.toolbar.add(logger);
         this.toolbar.add('Settings');
         this.toolbar.add('Help');
     },

@@ -1,0 +1,102 @@
+<style>
+div#logger-output {
+    background-color: #FFFFFF;
+    font-family: monospace;
+    font-weight: normal;
+    text-align:left;
+    border: 1px solid gray;
+    height: 70%;
+    overflow: auto;
+    width: 90%;
+    margin-left: 5%;
+}
+
+div#logger-output p {
+    margin:1px;
+    padding:0.1em;
+}
+
+div#logger-output p span.debug {
+    background-color:#A6C9D7;
+}
+
+div#logger-output p span.info {
+    background-color:#A7CC25;
+}
+
+div#logger-output p span.warn {
+    background-color:#F2E886;
+}
+
+div#logger-output p span.error {
+    background-color:#F58516;
+}
+
+div#logger-output p span.fatal {
+    background-color:#E32F0B;
+}
+
+div#logger-active {
+    margin-top: 10px;
+    margin-left: 2.7%;
+    width: 93%;
+    text-align: center;
+}
+
+div#logger-active span {
+    padding: 20px;
+}
+
+div#logger-active span label.debug {
+    background-color:#A6C9D7;
+}
+
+div#logger-active span label.info {
+    background-color:#A7CC25;
+}
+
+div#logger-active span label.warn {
+    background-color:#F2E886;
+}
+
+div#logger-active span label.error {
+    background-color:#F58516;
+}
+
+div#logger-active span label.fatal {
+    background-color:#E32F0B;
+}
+
+div#logger-active button {
+    border: 1px solid gray;
+    margin:3px;
+    padding:3px;
+}
+</style>
+
+<div id="logger-output"></div>
+
+<div id="logger-active">
+    <span class="logger-filter">
+        <input type="checkbox" id="logger-filter-debug"/>
+        <label for="logger-filter-debug" class="debug">debug</label>
+    </span>
+    <span class="logger-filter">
+        <input type="checkbox" id="logger-filter-info"/>
+        <label for="logger-filter-info" class="info">info</label>
+    </span>
+    <span class="logger-filter">
+        <input type="checkbox" id="logger-filter-warn"/>
+        <label for="logger-filter-warn" class="warn">warn</label>
+    </span>
+    <span class="logger-filter">
+        <input type="checkbox" id="logger-filter-error"/>
+        <label for="logger-filter-error" class="error">error</label>
+    </span>
+    <span class="logger-filter">
+        <input type="checkbox" id="logger-filter-fatal"/>
+        <label for="logger-filter-fatal" class="fatal">fatal</label>
+    </span>
+    <button id="logger-pause">Pause</button>
+    <button id="logger-clear">Clear</button>
+</div>

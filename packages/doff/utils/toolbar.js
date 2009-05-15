@@ -8,6 +8,8 @@ var Panel = type('Panel', object, {
         this.content = document.createElement('div');
         this.content.id = this.id;
 	this.content.setAttribute('class', 'panel');
+        this.close_image = document.createElement('img');
+        this.close_image.src = sys.module_url('doff.utils', 'resources/closebox.gif');
         this.hide();
     },
 
@@ -34,6 +36,8 @@ var Panel = type('Panel', object, {
     render: function(content) {
 	var t = document.createElement('h1');
 	t.update(this.title);
+        t.insert(this.close_image);
+        event.connect(this.close_image, 'click', this, 'hide');
 	this.content.insert(t);
         this.content.insert(content);
     },
@@ -64,13 +68,7 @@ var ToolBar = type('Toolbar', object, {
 	    this.panel_items.push(element);
 	    this.ul.insert(item);
 	    this.content.insert(element.content);
-	    var self = this;
-            event.connect(item, 'click', function() { 
-                for each (var p in self.panel_items) { 
-		    if (p != element) p.hide() 
-		};
-		element.toggle(); 
-            });
+            event.connect(item, 'click', element, 'toggle');
         } else if (isinstance(element, String)) {
 	    var item = document.createElement('li');
 	    item.update(element);
