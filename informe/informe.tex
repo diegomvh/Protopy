@@ -9,7 +9,9 @@
 \usepackage{color}
 \usepackage{xcolor}
 \usepackage{listings}
-\lstset{language=Python,
+\begin{lstset}
+%\lstset{
+	language=Python,
 	keywordstyle=\color{blue},
 	commentstyle=\color{darkgreen},
 	stringstyle=\color{red},
@@ -20,7 +22,8 @@
 	showstringspaces=false,
 	basicstyle=\footnotesize,
 	emph={label}
-}
+%}
+\end{lstset}
 \usepackage{caption}
 \DeclareCaptionFont{white}{\color{white}}
 \DeclareCaptionFormat{listing}{\colorbox{gray}{\parbox{\textwidth}{#1#2#3}}}
@@ -151,7 +154,7 @@ Aca ponemos hasta donde nos vamos a llegar.
 
 \section{Recursos}
 \emph{Acá hablamos brevemente de Mozilla (cuentito de como evuoluciona Javascript), Javascript y como se 
-perfila como estanadar de interconexión de sistemas (mashups), Python y CGI).
+perfila como estanadar de interconexión de sistemas (mashups), Python y CGI).}|
  
 \section{Lenguajes de programación para la web}
 \section{El lenguaje de programación Python}
@@ -324,7 +327,8 @@ ser parete del ámbito de nombres del módulo son:
   \item una expresión lambda
   \item el nombre de otro módulo importado
 \end{itemize}
-}
+
+
 Un número, el llamado a función o el lanzado de una excepción no alteran el ámbito de nombres.
 Un módulo puede ser cargado desde el intérprete interactivo en el ámbito de nombres global
 o desde otro módulo (en su propio espacio de nombres) a través de 
@@ -691,42 +695,28 @@ como el método (GET, POST), los elementos de la query http.
 
 
 \chapter{Tecnologías Web del lado del Cliente}
+\section{Estructura de un navegador}
+\section{Evolución del lenguaje en el cliente}
+\section{Propuesta de extensión de Google Gears}
+\section{Propuesta de extensión y aprovechamiento de los avances en cliente}
+% Acá ponemos por que geraquía de clases
+
+\section{Propuesta de framework MTV en el cliente}
+
+
+\chapter{Integración y metodología de desarrollo con framework web}
+\section{Mecanismos de extension de Django}
+\section{Integración}
+\section{Convivencia}
+
+\chapter{Lineas futuras}
+
+
+
 \section{La libreria protopy}
 \input{desarrollo/protopy.tex}
 \section{El framework doff}
 \input{desarrollo/doff.tex}
-
-\section{Modelo de ejecución en el cliente}
-\section{Liberías de Javascript}
-\emph{Breve explicación de la existencia de tantas librerías de javascript,
-necesidad de utilización de estas librerías para consistencia, modularidad y
-portabilidad del código}
-\subsection{Elementos de una librería de javascript}
-
-
-\subsubsection{Manejo unificado de DOM}
-Problemas con las implementaciones de DOM de cada navegador, sacar material de
-la charla que dio Jhon Reisig (está en Google Techtalks)
-
-
-\subsubsection{Enfoque funcinal (encadenamiento) }
-\subsubsection{Tipos de datos}
-\subsubsection{Eventos}
-\subsubsection{Ajax}
-\subsubsection{Widgets}
-
-
-\section{Javascript 1.7}
-Explicación de Javascript 2.0.
-
-\subsection{Protopy}
-Javascript 1.7 + modularidad + ejecución en contexto
-
-\chapter{Aplicación web desconectada}
-Doff, Django implementado sobre protopy.
-\subsection{Problemas de la traducción del framework a Javascript}
-\subsection{Soporte en Django}
-
 
 \appendix
 
