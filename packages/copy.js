@@ -24,14 +24,14 @@ _copy_dispatch[Object] = function _copy_Object(object) {
     return extend({}, object);
 }
 
-_copy_dispatch['Instance'] = function _copy_Instance(object) {
-    var obj = type('Empty', {});
-    obj.prototype.constructor = object.constructor;
+_copy_dispatch['Instance'] = function _copy_Instance(o) {
+    var obj = type('Empty', object);
+    obj.prototype.constructor = o.constructor;
     obj = new obj();
-    extend(obj, object);
-    obj['__name__'] = object['__name__'];
-    obj['__module__'] = object['__module__'];
-    obj['__class__'] = object['__class__'];
+    extend(obj, o);
+    obj['__name__'] = o['__name__'];
+    obj['__module__'] = o['__module__'];
+    obj['__class__'] = o['__class__'];
     return obj;
 }
 

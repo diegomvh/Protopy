@@ -101,9 +101,13 @@ var Handler = type('Handler', object, {
     },
 
     execute: function execute(request) {
-        var response = this.get_response(request);
-        //TODO: A better name
-        response.render();
+	try {
+	    var response = this.get_response(request);
+	    //TODO: A better name
+	    response.render();
+	} catch (e) {
+	    print(e);
+	}
     }
 });
 

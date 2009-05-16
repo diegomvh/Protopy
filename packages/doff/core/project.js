@@ -50,8 +50,9 @@ var Project = type('Project', object, {
 	this.toolbar = new ToolBar();
         var dbquery = new DataBaseQuery();
 	this.status_element = this.toolbar.add('Offline');
-        this.toolbar.add('Query', dbquery);
-        this.toolbar.add('Log');
+        this.toolbar.add(dbquery);
+	this.toolbar.add(new DataBaseQuery());
+        this.toolbar.add('Logger');
         this.toolbar.add('Settings');
         this.toolbar.add('Help');
     },

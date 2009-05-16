@@ -205,11 +205,13 @@
 
     // Constructor de tipos o clases
     function type(name) {
-	if (name == undefined)
-	    throw new TypeError('Invalid arguments, name?');
+	if (isundefined(name))
+	    throw new TypeError('Invalid arguments');
 	var args = Array.prototype.slice.call(arguments).slice(1);
-	if (args.length == 0)
+	if (args.length == 0) {
+	    if (name === null) return Object;
 	    return name.constructor;
+	}
 	if (isinstance(args[0], Array) && args[0].length > 0)
 	    var bases = args.shift();
 	else if (!isinstance(args[0], Array) && isinstance(args[0], Function))
@@ -1342,6 +1344,7 @@
     });
 
     // ******************************* MORE BUILTINS ************************************* //
+    // For type constructor, super, isundefined, isinstance, issubclass
     function super(_type, _object) {
         //TODO: Validar que sea una instancia a subclase del tipo dado
         //TODO: soportar distintos tipos incluso el mismo tipo de la base que le pase el primero de __bases__
@@ -1367,6 +1370,10 @@
                 return base[name].apply(_object, args);
         };
         return obj;
+    }
+    
+    function isundefined(value) {
+	return typeof(value) === "undefined";
     }
 
     function isinstance(object, _type) {
@@ -1541,10 +1548,10 @@
     function getattr(object, name, def) {
 	//TODO: validar argumentos
         var attr = null;
-        if (object) {
+        if (!isundefined(object)) {
             attr = object[name];
-            if (typeof(attr) !== 'undefined') {
-                if (type(attr) == Function && typeof(attr['__new__']) === 'undefined') {
+            if (!isundefined(attr)) {
+                if (type(attr) == Function && isundefined(attr['__new__'])) {
                     var method = attr, obj = object;
                     return function() { return method.apply(obj, array(arguments)); }
                 } else {
@@ -1552,7 +1559,7 @@
                 }
             }
         }
-        if (typeof(def) === 'undefined')
+        if (isundefined(def))
 	   throw new AttributeError(object + ' has no attribute ' + name);
 	else
 	   return def;
@@ -1780,6 +1787,7 @@
     //Populate builtins
     __extend__(false, builtin, {
         super: super,
+	isundefined: isundefined,
         isinstance: isinstance,
         issubclass: issubclass,
         Arguments: Arguments,

@@ -23,7 +23,7 @@ var SortedDict = type('SortedDict', Dict, {
     
     '__deepcopy__': function __copy__() {
         var obj = new SortedDict();
-        for (hash in this._key) {
+        for (var hash in this._key) {
             obj._key[hash] = deepcopy(this._key[hash]);
             obj._value[hash] = deepcopy(this._value[hash]);
         }

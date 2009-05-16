@@ -2,9 +2,11 @@ require('sys');
 require('event');
 
 var Panel = type('Panel', object, {
-    __init__: function(id) {
+    __init__: function(id, title) {
+	this.id = id;
+	this.title = title;
         this.content = document.createElement('div');
-        this.content.id = id;
+        this.content.id = this.id;
 	this.content.setAttribute('class', 'panel');
         this.hide();
     },
@@ -29,6 +31,13 @@ var Panel = type('Panel', object, {
         this[this.visible() ? 'hide' : 'show']();
     },
 
+    render: function(content) {
+	var t = document.createElement('h1');
+	t.update(this.title);
+	this.content.insert(t);
+        this.content.insert(content);
+    },
+
     _display: function() {}
 
 });
@@ -43,18 +52,30 @@ var ToolBar = type('Toolbar', object, {
         this.stylesheet.rel = "stylesheet";
         this.stylesheet.type = "text/css";
         this.stylesheet.href = sys.module_url('doff.utils', 'resources/toolbar.css');
+	this.panel_items = [];
     },
 
-    add: function(name, panel) {
-        var item = document.createElement('li');
-        item.update(name);
-        this.ul.insert(item);
-        if (isinstance(panel, Panel)) {
-            this.content.insert(panel.content);
+    add: function(element) {
+	if (isinstance(element, Panel)) {
+            var item = document.createElement('li');
+	    item.setAttribute('class', 'panel');
+	    item.panel = element;
+	    item.update(element.title);
+	    this.panel_items.push(element);
+	    this.ul.insert(item);
+	    this.content.insert(element.content);
+	    var self = this;
             event.connect(item, 'click', function() { 
-                panel.toggle(); 
+                for each (var p in self.panel_items) { 
+		    if (p != element) p.hide() 
+		};
+		element.toggle(); 
             });
-        }
+        } else if (isinstance(element, String)) {
+	    var item = document.createElement('li');
+	    item.update(element);
+	    this.ul.insert(item);
+	}
         return item;
     },
 

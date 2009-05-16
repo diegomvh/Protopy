@@ -10,18 +10,27 @@ var Connection = type('Connection', object, {
         this.database = options['database'];
         this.detect_types = options['detect_types'];
         this.factory = options['factory'] || Cursor;
+	try {
+            this.connection = google.gears.factory.create('beta.database');
+            this.connection.open(this.database);
+        } catch(ex) {
+            throw new Exception("couldn`t open database: " + name + " exception: " + ex.message || ex.description || String(ex));
+        }
     },
 
     'cursor': function cursor() {
-        try {
-            var connection = google.gears.factory.create('beta.database');
-            connection.open(this.database);
-        } catch(e) {
-            throw new Exception("couldn`t open database: " + name + " exception: " + e.message);
-        }
-        var cur = new this.factory(connection);
+        var cur = new this.factory(this.connection);
         return cur;
-    }
+    },
+
+    'execute': function execute(query, params) {
+        try {
+            return this.connection.execute(query, params);
+        }
+        catch(ex) {
+            throw new Exception(ex.message || ex.description || String(ex));
+        }
+    },
 });
 
 var Cursor = type('Cursor', object, {

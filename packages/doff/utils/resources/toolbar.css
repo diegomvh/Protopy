@@ -26,13 +26,14 @@ div#toolbar div.panel {
 }
 
 div#toolbar div.panel h1 {
-    background-color:#E0EDFE;
-    font-size:12pt;
-    font-weight:bold;
-    padding:4px;
-    margin:4px;
-    position:relative;
-    vertical-align:middle;
+    background-color: #3A4856;
+    color: #FFFFFF;
+    font-size: 12pt;
+    font-weight: bold;
+    padding: 4px;
+    margin: 4px;
+    position: relative;
+    vertical-align: middle;
 }
 
 div#toolbar ul {
@@ -50,6 +51,10 @@ div#toolbar ul li {
     padding-right: 6px;
     font-size: 70%;
     display: inline;
+}
+
+div#toolbar ul li.panel {
+    cursor:pointer;
 }
 
 div#toolbar ul li:last-child {

@@ -1,33 +1,62 @@
 <style>
 div#output {
-    background-color:#FFFFFF;
-    border:1px solid gray;
+    background-color: #FFFFFF;
+    border: 1px solid gray;
     height: 70%;
-    overflow:auto;
+    overflow: auto;
     width: 90%;
     margin-left: 5%;
 }
+
+div#output h3 {
+    font-size: 150%;
+    padding-bottom: 2px;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+div#output table {
+    background: #F3F5F7 none repeat scroll 0 0;
+    color: #333333;
+    font-size: 85%;
+    margin: 10px;
+    padding: 0;
+}
+
+div#output table thead th {
+    background: #3A4856 none repeat scroll 0 0;
+    color: #FFFFFF;
+    font-weight: normal;
+    padding: 5px 5px;
+    text-align: center;
+}
+
+div#output table tbody tr.odd {
+    background:#F0F2F4 none repeat scroll 0 0;
+}
+
 div#active {
     margin-top: 10px;
-    margin-left: 3.33%;
-    width: 90%;
+    margin-left: 2.7%;
+    width: 93%;
     text-align: center;
 }
 div#active textarea {
-  border: 1px solid gray;
-  padding: 0;
-  overflow: hidden;  
+    border: 1px solid gray;
+    padding: 0;
+    overflow: hidden;  
 }
 div#active button {
-  border: 1px solid gray;  
+    border: 1px solid gray;
+    margin:3px;
+    padding:3px;
 }
 </style>
 
-<h1>Query Tool</h1>
-<div id=output></div>
+<div id="output"></div>
 
-<div id=active>
-    <textarea id=dbquery-sql cols=110 rows=2 spellcheck=false></textarea>
-    <button id=dbquery-execute>Execute</button>
-    <button id=dbquery-clear>Clear</button>
+<div id="active">
+    <textarea id="dbquery-sql" cols=110 rows=2 spellcheck=false></textarea>
+    <button id="dbquery-execute">Execute</button>
+    <button id="dbquery-clear">Clear</button>
 </div>
