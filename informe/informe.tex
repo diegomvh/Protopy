@@ -7,29 +7,53 @@
 
 \usepackage{epigraph} %para los quote en cada capitulo
 \usepackage{color}
+\definecolor{gray90}{gray}{.90}
+
 \usepackage{xcolor}
+
 \usepackage{listings}
-\begin{lstset}
-%\lstset{
-	language=Python,
-	keywordstyle=\color{blue},
-	commentstyle=\color{darkgreen},
-	stringstyle=\color{red},
-	numbers=left,
-	numberstyle=\tiny,
-	numbersep=5pt,
-	breaklines=true,
-	showstringspaces=false,
-	basicstyle=\footnotesize,
-	emph={label}
-%}
-\end{lstset}
+\lstset{
+    frame=Ltb,
+    framerule=0pt,
+    aboveskip=0.5cm,
+    framextopmargin=3pt,
+    framexbottommargin=3pt,
+    framexleftmargin=0.4cm,
+    framesep=0pt,
+    rulesep=.4pt,
+    %
+    showstringspaces = false,
+    basicstyle=\small\ttfamily,
+    %
+    numbers=left,
+    numbersep=10pt,
+    numberstyle=\tiny,
+    breaklines=true,
+    emph={label}
+}
+
+\lstdefinestyle{consola}{
+  basicstyle=\scriptsize\bf\ttfamily,
+  backgroundcolor=\color{gray90},
+  numbers=none
+}
+\lstdefinestyle{python}{
+  language=Python,
+  stringstyle=\color{red}\ttfamily,
+  keywordstyle=\color{black}\bfseries,
+  commentstyle=\color{blue}
+}
+\lstdefinestyle{javascript}{
+  keywords={catch,throw,try,finally,break,continue,do,for,import,new,this,void,case,default,else,function,in,return,typeof,while,comment,delete,export,if,label,switch,var,with}
+  stringstyle=\color{green}\ttfamily,
+  keywordstyle=\color{black}\bfseries,
+  commentstyle=\color{blue}
+}
+
 \usepackage{caption}
 \DeclareCaptionFont{white}{\color{white}}
 \DeclareCaptionFormat{listing}{\colorbox{gray}{\parbox{\textwidth}{#1#2#3}}}
 \captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
-%\usepackage{pythonlisting}
-
 
 \begin{document}
 
@@ -149,6 +173,7 @@ http://es.wikiquote.org/wiki/The_Matrix
 
 Aca ponemos hasta donde nos vamos a llegar.
 
+\chapter{}
 
 \chapter{Tecnologías Web}
 
@@ -223,9 +248,9 @@ desarrollador de Python Tim Peters en \emph{El Zen de Python}
   \end{enumerate}
   Desde la versión 2.1.2, Python incluye estos puntos (en su versión original en inglés) 
   como un huevo de pascua que se muestra al ejecutar 
-  \begin{verbatim}
-    >>> import this
-  \end{verbatim}
+\begin{lstlisting}[style=consola]
+>>> import this
+\end{lstlisting}
 
 \subsection{Desarrollo del lengauje}
 
@@ -251,24 +276,21 @@ tener diferentes tipos. Las tuplas pueden ser accedidas secuencialmente (\emph{i
 acceder al n-ésimo item, pero no puede ser modificadas se generará una excepción debido 
 a que es un tipo de datos estático.
 
-\begin{lstlisting}[label=tuplas-python,caption=Tuplas en Python]
- a = (1, 2, 3) # Una tupla de enteros
-
- b = (1, 1.0, 'pasta') # Una tupla con un conjuto dispar 
-                       # de elementos
-
- c = ( (1, 2), (3, 4), (5, 6)) # Una tupla que tiene 
-                               # por elmentos otras tuplas
+a = (1, 2, 3) # Una tupla de enteros
+b = (1, 1.0, 'pasta') # Una tupla con un conjuto dispar 
+                      # de elementos
+c = ( (1, 2), (3, 4), (5, 6)) # Una tupla que tiene 
+                              # por elmentos otras tuplas
 \end{lstlisting}
 
 Python soprta asinganción a con la sintaxis de tupla, es decir, al colocar un conjunto de nombres 
 separados por comas en el lado derecho de una asingación y un conjunto de valores o variables
 sobre la izquerda, la asingación es posicional.
-\begin{lstlisting}[label=asignacion-python,caption=Asignacion en Python]
- a, b = 1, 2	# Es equivalente a (a, b) = (1, 2)
- a, b = b, a	# Operación de intercambio sin auxiliar
- c = (1, 2, 3, 'bacalao')
- w, x, y, z = c	# Asignación posicional
+\begin{lstlisting}[style=python,label=asignacion-python,caption=Asignacion en Python]
+a, b = 1, 2	# Es equivalente a (a, b) = (1, 2)
+a, b = b, a	# Operación de intercambio sin auxiliar
+c = (1, 2, 3, 'bacalao')
+w, x, y, z = c	# Asignación posicional
 \end{lstlisting}
 
 
@@ -714,7 +736,8 @@ como el método (GET, POST), los elementos de la query http.
 
 
 \section{La libreria protopy}
-\input{desarrollo/protopy.tex}
+\input{
+desarrollo/protopy.tex}
 \section{El framework doff}
 \input{desarrollo/doff.tex}
 

@@ -4,11 +4,69 @@ que brinde el soporte a los requerimentos mas basicos.
 Esta librería contituye la base para posteriores contrucciones mas complejas en el ciente y auna herramientas
 que simplifican el desarrollo client-side.
 
-\subsection*{Tipos o clases}
+\subsection*{Constructor de tipos}
 Como ya se menciono anteriormente javascript es un lenguaje orientado a prototipos, para acercarnos un poco a la programacion
 de objetos, utilizamos una funcion constructora de tipos o clases a la que denominamos “type”.
+\begin{lstlisting}[style=javascript,label=definicion-de-tipos,caption=Definicion de tipos]
+var Animal = type('Animal', object, {
+    contador: 0,
+}, {
+    __init__: function(especie) {
+	this.especie = especie;
+	this.orden = Animal.contador++;
+    }
+});
 
-var NuevoTipo = type('nombre', bases, [ {} ], {});
+var Terrestre = type('Terrestre', Animal, {
+    caminar: function() {
+	console.log(this.especie + ' caminando');
+    }
+});
+
+var Acuatico = type('Acuatico', Animal, {
+    nadar: function() {
+	console.log(this.especie + ' nadando');
+    }
+});
+
+var Anfibio = type('Anfibio', [Terrestre, Acuatico]);
+
+var Piton = type('Piton', Terrestre, {
+    __init__: function(nombre) {
+	super(Terrestre, this).__init__(this.__name__);
+	this.nombre = nombre;
+    },
+    caminar: function() {
+	throw new Exception(this.especie + ' no camina');
+    },
+    reptar: function() {
+	console.log(this.nombre + ' la ' + this.especie.toLowerCase() + ' esta reptando');
+    }
+});
+
+var doris = new Piton('Doris');
+var ballena = new Acuatico('Ballena');
+var rana = new Anfibio('Rana');
+\end{lstlisting}
+
+\begin{lstlisting}[style=consola,label=definicion-de-tipos-test,caption=Test]
+>>> doris
+window.Piton especie=Piton orden=0 nombre=Doris __name__=Piton
+>>> rana
+window.Anfibio especie=Rana orden=2 __name__=Anfibio
+>>> isinstance(rana, Terrestre)
+true
+>>> isinstance(doris, Animal)
+true
+>>> issubclass(Anfibio, Acuatico)
+true
+>>> issubclass(Piton, Animal)
+true
+>>> doris.caminar()
+Exception: Piton no camina args=[1] message=Piton no camina
+>>> doris.reptar()
+Doris la piton esta reptando
+\end{lstlisting}
 
 \subsection*{Modulos}
 Undo de los principales inconvenientes a los que protopy da solucion es a la inclucion dinamica de funcionalidad bajo demanda,
