@@ -12,8 +12,8 @@ div#toolbar {
 }
 
 div#toolbar div.panel {
-    width: 80%;
-    height: 25em;
+    /*width: 80%;
+    height: 25em;*/
     background: #EEEEEE;
     border-top: 1px solid #CCCCCC;
     border-left: 1px solid #CCCCCC;

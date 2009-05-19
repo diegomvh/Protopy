@@ -3,14 +3,27 @@ require('event');
 
 var Panel = type('Panel', object, {
     __init__: function(id, title) {
-	this.id = id;
+        this.id = id;
 	this.title = title;
-        this.content = document.createElement('div');
+        
+	this.content = document.createElement('div');
         this.content.id = this.id;
 	this.content.setAttribute('class', 'panel');
-        this.close_image = document.createElement('img');
+	this.close_image = document.createElement('img');
         this.close_image.src = sys.module_url('doff.utils', 'resources/closebox.gif');
+        
+	//Style and other yerbas
+	this.height = '25em';
+	this.width = '80%';
         this.hide();
+    },
+
+    set height(value) {
+	this.content.style.height = value;
+    },
+    
+    set width(value) {
+	this.content.style.width = value;
     },
 
     hide: function() {
