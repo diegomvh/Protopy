@@ -37,7 +37,9 @@ div#toolbar div.panel h1 {
 }
 
 div#toolbar div.panel h1 img {
-    padding-left:86%;
+    float: right;
+    margin-right: 4px;
+    margin-top: -19px;
 }
 
 div#toolbar ul {

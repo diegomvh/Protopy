@@ -147,13 +147,13 @@ function do_block(parser, token) {
     if (bits.length != 2)
         throw new TemplateSyntaxError("'%s' tag takes only one argument".subs(bits[0]));
     var block_name = bits[1];
-    try {
+    if (isundefined(parser.__loaded_blocks)) {
+        parser.__loaded_blocks = [block_name];
+    }
+    else {
         if (include(parser.__loaded_blocks, block_name))
             throw new TemplateSyntaxError("'%s' tag with name '%s' appears more than once".subs(bits[0], block_name));
         parser.__loaded_blocks.push(block_name);
-    }
-    catch (e) {
-        parser.__loaded_blocks = [block_name];
     }
     var nodelist = parser.parse(['endblock', 'endblock %s'.subs(block_name)]);
     parser.delete_first_token();

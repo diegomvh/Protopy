@@ -33,7 +33,7 @@ var DataBaseQuery = type('DataBaseQuery', Panel, {
     },
 
     _display: function() {
-        this.render(this.get_template());
+        super(Panel, this)._display();
         var self = this;
 
         this.text_sql = $('dbquery-sql');

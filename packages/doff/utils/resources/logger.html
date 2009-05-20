@@ -16,23 +16,23 @@ div#logger-output p {
     padding:0.1em;
 }
 
-div#logger-output p span.debug {
+div#logger-output p span.DEBUG {
     background-color:#A6C9D7;
 }
 
-div#logger-output p span.info {
+div#logger-output p span.INFO {
     background-color:#A7CC25;
 }
 
-div#logger-output p span.warn {
+div#logger-output p span.WARN {
     background-color:#F2E886;
 }
 
-div#logger-output p span.error {
+div#logger-output p span.ERROR {
     background-color:#F58516;
 }
 
-div#logger-output p span.fatal {
+div#logger-output p span.FATAL {
     background-color:#E32F0B;
 }
 
@@ -77,24 +77,25 @@ div#logger-active button {
 <div id="logger-output"></div>
 
 <div id="logger-active">
+    <span>root logger:</span>
     <span class="logger-filter">
-        <input type="checkbox" id="logger-filter-debug"/>
+        <input type="radio" name="level" id="logger-filter-debug" value="DEBUG"/>
         <label for="logger-filter-debug" class="debug">debug</label>
     </span>
     <span class="logger-filter">
-        <input type="checkbox" id="logger-filter-info"/>
+        <input type="radio" name="level" id="logger-filter-info" value="INFO"/>
         <label for="logger-filter-info" class="info">info</label>
     </span>
     <span class="logger-filter">
-        <input type="checkbox" id="logger-filter-warn"/>
+        <input type="radio" name="level" id="logger-filter-warn" value="WARN"/>
         <label for="logger-filter-warn" class="warn">warn</label>
     </span>
     <span class="logger-filter">
-        <input type="checkbox" id="logger-filter-error"/>
+        <input type="radio" name="level" id="logger-filter-error" value="ERROR"/>
         <label for="logger-filter-error" class="error">error</label>
     </span>
     <span class="logger-filter">
-        <input type="checkbox" id="logger-filter-fatal"/>
+        <input type="radio" name="level" id="logger-filter-fatal" value="FATAL"/>
         <label for="logger-filter-fatal" class="fatal">fatal</label>
     </span>
     <button id="logger-pause">Pause</button>

@@ -7,12 +7,12 @@
         'doff.db.models.sql': {
             'level':'DEBUG',
             'handlers':'firebug',
-            'propagate': false
+            'propagate': true
         },
         'doff.db.backends.gears': {
             'level':'DEBUG',
             'handlers':'firebug',
-            'propagate': false
+            'propagate': true
         },
     },
     'handlers': {

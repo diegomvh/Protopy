@@ -31,10 +31,8 @@ var Panel = type('Panel', object, {
     },
 
     show: function() {
-	if (!this.displayed){
+	if (!this.displayed)
 	    this._display();
-            this.displayed = true;
-        }
 	this.content.show();
     },
 
@@ -46,16 +44,18 @@ var Panel = type('Panel', object, {
         this[this.visible() ? 'hide' : 'show']();
     },
 
-    render: function(content) {
-	var t = document.createElement('h1');
-	t.update(this.title);
-        t.insert(this.close_image);
-        event.connect(this.close_image, 'click', this, 'hide');
-	this.content.insert(t);
-        this.content.insert(content);
-    },
+    get_template: function(){ return ""; },
 
-    _display: function() {}
+    _display: function() {
+        var content = this.get_template();
+        var head = document.createElement('h1');
+	head.insert('<span>' + this.title + '</span>');
+        head.insert(this.close_image);
+        event.connect(this.close_image, 'click', this, 'hide');
+	this.content.insert(head);
+        this.content.insert(content);
+        this.displayed = true;
+    }
 
 });
 
