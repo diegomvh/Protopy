@@ -1954,14 +1954,14 @@
     publish(exception);
 
     // WHERE
-    var scripts = dom.query('script');
-    for each (var script in scripts) {
-	if (script.src) {
-	    var m = script.src.match(new RegExp('^.*' + location.host + '(/?.*/?)protopy.js$', 'i'));
-	    if (m) 
-		ModuleManager.base = m[1];
-	}
-    }
+    var script = dom.query('script[src*"protopy.js"]');
+    if (script.length != 1)
+	throw new Exception('Error fatal');
+    var m = script[0].src.match(new RegExp('^.*' + location.host + '(/?.*/?)protopy.js$', 'i'));
+    ModuleManager.base = m[1];
+    var config = script[0].getAttribute('pyconfig');
+    if (config) //TODO: validate config
+	__extend__(false, ModuleManager, eval('({' + config + '})'));
 })();
 
 // ******************************* EXTENDING JAVASCRIPT ************************************* //

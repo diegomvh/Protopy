@@ -1,0 +1,48 @@
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <script type="text/javascript;version=1.7" src="../../protopy.js" pyconfig=""></script>
+    <script type="text/javascript;version=1.7">
+	var Animal = type('Animal', object, {
+	    contador: 0,
+	}, {
+	    __init__: function(especie) {
+		this.especie = especie;
+		this.orden = Animal.contador++;
+	    }
+	});
+
+	var Terrestre = type('Terrestre', Animal, {
+	    caminar: function() {
+		console.log(this.especie + ' caminando');
+	    }
+	});
+	
+	var Acuatico = type('Acuatico', Animal, {
+	    nadar: function() {
+		console.log(this.especie + ' nadando');
+	    }
+	});
+	
+	var Anfibio = type('Anfibio', [Terrestre, Acuatico]);
+
+	var Piton = type('Piton', Terrestre, {
+	    __init__: function(nombre) {
+		super(Terrestre, this).__init__(this.__name__);
+		this.nombre = nombre;
+	    },
+	    caminar: function() {
+		throw new Exception(this.especie + ' no camina');
+	    },
+	    reptar: function() {
+		console.log(this.nombre + ' la ' + this.especie.toLowerCase() + ' esta reptando');
+	    }
+	});
+
+	var doris = new Piton('Doris');
+	var ballena = new Acuatico('Ballena');
+	var rana = new Anfibio('Rana');
+
+    </script>
+</head>
+<body>
+</body>
