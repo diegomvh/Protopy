@@ -106,6 +106,7 @@ except AssertionError:
     INSTALLED_APPS += ('django_extensions', )
 
 
+OFFLINE_ROOT = os.path.join(MEDIA_ROOT, '%s_offline' % os.path.basename(os.getcwd()))
 
 OFFLINE_APPS = {
     'doffproj.blog': {
@@ -116,3 +117,4 @@ OFFLINE_APPS = {
                         
                        }
 }
+
