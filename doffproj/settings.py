@@ -108,13 +108,3 @@ except AssertionError:
 
 OFFLINE_ROOT = os.path.join(MEDIA_ROOT, '%s_offline' % os.path.basename(os.getcwd()))
 
-OFFLINE_APPS = {
-    'doffproj.blog': {
-                        'base_path': '%s/offline_blog'
-#                       'views': '%s/apps/views/' % MERDIA_URL,
-#                       'templates': ('', '', ),
-#                       'urlconf': '%s/urls.js',
-                        
-                       }
-}
-
