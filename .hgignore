@@ -19,6 +19,9 @@ syntax: glob
 *.cpp
 *.svn*
 
+doffproj/static/doffproj_offline/*
+
+
 syntax: regexp
 ^nbproject
 ^.*~$

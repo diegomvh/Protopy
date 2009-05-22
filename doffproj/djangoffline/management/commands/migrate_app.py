@@ -10,15 +10,25 @@
 # * crear {{ OFF_APP_TEMPLATE }}/views.js
 # * crear {{ OFF_APP_TEMPLATE }}/urls.js
 
+from os.path import dirname, abspath, exists, join
+from django.db.models.loading import get_app
+import os
 
 from django.core.management.base import *
 
-class Command(NoArgsCommand):
+class Command(AppCommand):
     help = """
         Probando el sistema de comandos de Django.
     """
     requires_model_validation = False
     can_import_settings = True
     
-    def handle_noargs(self, **options):
-        print "Hola mundo"
+    def handle_app(self, app, **options):
+        print app
+        
+        djangogffilne_path = dirname(abspath(get_app('djangoffline').__file__))
+        project_templates = join(djangogffilne_path, 'conf', 'project_template')
+        
+        assert exists(project_templates), _("Error with templates")
+        
+        project_name = os.environ.get('DJANGO_SETTINGS_MODULE').replace('.settings', '')

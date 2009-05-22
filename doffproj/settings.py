@@ -106,5 +106,8 @@ except AssertionError:
     INSTALLED_APPS += ('django_extensions', )
 
 
-OFFLINE_ROOT = os.path.join(MEDIA_ROOT, '%s_offline' % os.path.basename(os.getcwd()))
+OFFLINE_ROOT = MEDIA_ROOT
 
+# Habría que ver como hacer que las URLs se añadan de manera automática
+# como en django-command-extensions
+OFFLINE_BASE = MEDIA_URL + '/djangoffline'
