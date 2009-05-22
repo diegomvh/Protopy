@@ -42,12 +42,12 @@ var DeleteQuery = type('DeleteQuery', Query, {
                 this.do_query(related.field.m2m_db_table(), where);
             }
         }
-        for each (f in cls._meta.many_to_many) {
+        for each (var f in cls._meta.many_to_many) {
             var w1 = new this.where_class();
             for each (var offset in range(0, pk_list.length)) {
                 var where = new this.where_class();
                 where.add([null, f.m2m_column_name(), f, 'in', pk_list.slice(offset, offset + GET_ITERATOR_CHUNK_SIZE)], AND);
-                if (w1)
+                if (bool(w1))
                     where.add(w1, AND);
                 this.do_query(f.m2m_db_table(), where);
             }
@@ -62,7 +62,7 @@ var DeleteQuery = type('DeleteQuery', Query, {
         */
     'delete_batch': function delete_batch(pk_list) {
 
-        for each (offset in range(0, pk_list.length)) {
+        for each (var offset in range(0, pk_list.length)) {
             var where = new this.where_class();
             var field = this.model._meta.pk;
             where.add([null, field.column, field, 'in', pk_list.slice(offset, offset + GET_ITERATOR_CHUNK_SIZE)], AND);
@@ -265,7 +265,7 @@ var UpdateQuery = type('UpdateQuery', Query, {
             // don't want them to change), or the db backend doesn't support
             // selecting from the updating table (e.g. MySQL).
             var idents = [];
-            for each (rows in query.execute_sql(MULTI))
+            for each (var rows in query.execute_sql(MULTI))
                 idents = idents.concat([r[0] for (r in rows)]);
             this.add_filter(['pk__in', idents]);
             this.related_ids = idents;
@@ -284,7 +284,7 @@ var UpdateQuery = type('UpdateQuery', Query, {
         This is used by the QuerySet.delete_objects() method.
         */
     'clear_related': function clear_related(related_field, pk_list) {
-        for each (offset in range(0, pk_list.length)) {
+        for each (var offset in range(0, pk_list.length)) {
             this.where = new this.where_class();
             var f = this.model._meta.pk;
             this.where.add([null, f.column, f, 'in', pk_list.slice(offset, offset + GET_ITERATOR_CHUNK_SIZE)], AND);
@@ -388,7 +388,7 @@ var DateQuery = type('DateQuery', Query, {
         }
 
         var offset = this.extra_select.length;
-        for each (rows in this.execute_sql(MULTI)) {
+        for each (var rows in this.execute_sql(MULTI)) {
             for each (var row in rows) {
                 var date = row[offset];
                 if (resolve_columns)

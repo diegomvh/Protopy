@@ -91,12 +91,12 @@ var RelatedField = type('RelatedField', Field, {
         function pk_trace(val) {
             var v = val, field = null;
             while (v) {
-            v = v[v._meta.pk.name];
-            field = v._meta.pk;
+                v = v[v._meta.pk.name];
+                field = v._meta.pk;
             }
             if (field) {
-            if (include(['range', 'in'], lookup_type))
-                v = [v];
+                if (include(['range', 'in'], lookup_type))
+                    v = [v];
             v = field.get_db_prep_lookup(lookup_type, v);
             if (type(v) == Array)
                 v = v[0];
