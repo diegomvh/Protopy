@@ -90,16 +90,18 @@ var RelatedField = type('RelatedField', Field, {
     'get_db_prep_lookup': function get_db_prep_lookup(lookup_type, value) {
         function pk_trace(val) {
             var v = val, field = null;
-            while (v) {
-                v = v[v._meta.pk.name];
-                field = v._meta.pk;
-            }
+            try {
+                while (true) {
+                    v = v[v._meta.pk.name];
+                    field = v._meta.pk;
+                }
+            } catch (e) {}
             if (field) {
                 if (include(['range', 'in'], lookup_type))
                     v = [v];
-            v = field.get_db_prep_lookup(lookup_type, v);
-            if (type(v) == Array)
-                v = v[0];
+                v = field.get_db_prep_lookup(lookup_type, v);
+                if (isinstance(v == Array))
+                    v = v[0];
             }
             return v;
         };

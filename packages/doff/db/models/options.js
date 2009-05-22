@@ -341,7 +341,7 @@ var Options = type('Options', object, {
         * Returns a list of (related-object, model) pairs. Similar to get_fields_with_model().
         */
     'get_all_related_objects_with_model': function get_all_related_objects_with_model() {
-        if (!bool(this._related_objects_cache))
+        if (isundefined(this._related_objects_cache))
             this._fill_related_objects_cache();
         return this._related_objects_cache.items();
     },
@@ -367,7 +367,7 @@ var Options = type('Options', object, {
 
     'get_all_related_many_to_many_objects': function get_all_related_many_to_many_objects(local_only) {
         var cache = this._related_many_to_many_cache;
-        if (!bool(cache))
+        if (isundefined(cache))
             cache = this._fill_related_many_to_many_cache();
         if (local_only)
             return [k for each ([k, v] in cache.items()) if (!v)];
@@ -379,7 +379,7 @@ var Options = type('Options', object, {
         */
     'get_all_related_m2m_objects_with_model': function get_all_related_m2m_objects_with_model() {
         var cache = this._related_many_to_many_cache;
-        if (!bool(cache))
+        if (isundefined(cache))
             cache = this._fill_related_many_to_many_cache();
         return cache.items();
     },
