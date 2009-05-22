@@ -73,12 +73,46 @@ Undo de los principales inconvenientes a los que protopy da solucion es a la inc
 esto es logrado mediante los modulos.
 Basicamente un modulo en un archivo con codigo javascript que recide en el servidor y es obtenido y ejecutado en el cliente.
 
-\subsubsection*{Estructura basica de un modulo}
-	//modulo.js
-	funciones
-	objetos
-	etc...
-	publish(...)
+\begin{lstlisting}[style=javascript,label=estructura-modulo,caption=Estructura de un modulo]
+//Archivo: tests/module.js
+require('event');
+
+var h1 = $('titulo');
+
+function set_texto(txt) {
+    h1.update(txt);
+}
+
+function get_texto() {
+    return h1.innerHTML;
+}
+
+event.connect($('titulo'), 'click', function(event) {
+    alert('El texto es: ' + event.target.innerHTML);
+});
+
+publish({
+    set_texto: set_texto,
+    get_texto: get_texto
+});
+\end{lstlisting}
+
+\begin{lstlisting}[style=consola,label=estructura-modulo-test,caption=Test]
+>>> require('tests.module')
+GET http://localhost:8080/tests/protopy/module.js
+Object __file__=/tests/protopy/module.js
+>>> module.get_texto()
+"Test de modulo"
+>>> module.set_texto('Un titulo')
+>>> require('tests.module', 'get_texto')
+get_texto()
+>>> get_texto()
+"Un titulo"
+>>> require('tests.module', '*')
+>>> set_texto('Hola luuu!!!')
+>>> get_texto()
+"Hola luuu!!!"
+\end{lstlisting}
 
 Modulos:
 	sys

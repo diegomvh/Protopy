@@ -1,28 +1,21 @@
-require('timer');
+//Archivo: tests/module.js
+require('event');
 
-var texto = "Este es un modulo modificando la barra de estado.";
-var posicion = 0;
+var h1 = $('titulo');
 
-//funcion para mover el texto de la barra de estado
-function mueve_texto(){
-    if (posicion < texto.length)
-	posicion ++;
-    else
-	posicion = 1;
-    var string = texto.substring(posicion) + texto.substring(0, posicion);
-    window.status = string;
-    setTimeout('mueve_texto()',50);
+function set_texto(txt) {
+    h1.update(txt);
 }
 
-function start() {
-    mueve_texto();
+function get_texto() {
+    return h1.innerHTML;
 }
 
-function stop() {
-    setTimeout(mueve_texto,50);
-}
+event.connect($('titulo'), 'click', function(event) {
+    alert('El texto es: ' + event.target.innerHTML);
+});
 
-publish({ 
-    start:start,
-    stop:stop
-})
+publish({
+    set_texto: set_texto,
+    get_texto: get_texto
+});
