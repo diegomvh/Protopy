@@ -25,11 +25,13 @@
 
 'INSTALLED_APPS': [ 
                     
-                    'blog.apps.post' 
+                    {# 'blog.apps.post' #} 
                     
                     ],
 
-'TEMPLATE_URLS': [ '/blog/templates/' ],
+'TEMPLATE_URLS': [ 
+                   '{{ settings.OFFLINE_BASE }}/templates/' 
+                   ],
 
 'TEMPLATE_STRING_IF_INVALID': '{ { No esta <strong>%s</strong> en el contexto } }',
 

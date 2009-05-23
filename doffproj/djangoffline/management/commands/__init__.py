@@ -19,9 +19,19 @@ def offline_setup_checks():
         sys.exit(3)
 
 
-def get_doffline_path():
+
+
+def get_app_path(app_name):
+    # Returns application root in filesystem
     from django.db.models.loading import get_app
     from os.path import dirname, abspath
-    app = get_app('djangoffline')
+    app = get_app(app_name)
     return abspath(dirname(app.__file__))
+
+def get_doffline_path():
+    # Convenience function
+    return get_app_path('djangoffline')
+
+
+    
     

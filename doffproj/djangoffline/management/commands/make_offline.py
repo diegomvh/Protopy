@@ -38,15 +38,7 @@ class Command(NoArgsCommand):
         
         doffline_path = get_doffline_path()
         
-#        
-#        #else: 
-#        elif exists(join(df_path, 'settings.js')):
-#            # If the pats exists already, don't touch anything
-#            print _("""It seems that an offline project is already set up in %s.
-#                        Please remove the directory and rerun to start over.""" % df_path)
-#        
-#
-#
+
         project_templates = join(doffline_path, 'conf', 'project_template')
         assert exists(project_templates), _("Error with templates")
         
@@ -66,9 +58,7 @@ class Command(NoArgsCommand):
         
 #        #return NoArgsCommand.handle_noargs(self, **options)
 
-    help = """
-        Probando el sistema de comandos de Django.
-    """
+    help = "Makes a project offline"
     requires_model_validation = False
     can_import_settings = True
     
