@@ -10,6 +10,7 @@ import inspect
 from pprint import pformat
 from remotemodels import RemoteModelProxy
 import os
+import re
  
 def create_system_manifest(request):
     version = None
@@ -59,11 +60,12 @@ def export_model_proxy(request):
     return HttpResponse('<pre>%s</pre>' % escape( pformat(models_dict) ))
     
 
-
+INVALID_TEMPLATE_SUFFIXES = re.compile(r'(?:~|#)$')
 def list_templates(request):
+    
     def valid_templates(name):
         ''' Name validation '''
-        return not name.endswith('~')
+        return not INVALID_TEMPLATE_SUFFIXES.match( name )
     
     
     template_files = []
