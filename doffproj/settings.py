@@ -111,4 +111,4 @@ OFFLINE_ROOT = MEDIA_ROOT
 
 # Habría que ver como hacer que las URLs se añadan de manera automática
 # como en django-command-extensions
-OFFLINE_BASE = '/doffline/'
+OFFLINE_BASE = '^doffline/'

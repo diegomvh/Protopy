@@ -26,7 +26,7 @@ urlpatterns = patterns('',
     (r'^blog/', include('doffproj.blog.urls'),),
     
     #     
-    (settings.OFFLINE_BASE, djangoffline.urls, ),
+    (settings.OFFLINE_BASE, include('doffproj.djangoffline.urls'), ),
      
 )
 

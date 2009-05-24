@@ -9,6 +9,7 @@ from django.utils.html import escape
 import inspect
 from pprint import pformat
 from remotemodels import RemoteModelProxy
+import os
  
 def create_system_manifest(request):
     version = None
@@ -16,12 +17,6 @@ def create_system_manifest(request):
 def create_project_manifest(request):
     version = None
 
-MODEL_TEMPLATE =  '''
-
-    <
-    
-
-'''
 
 def conditional_import(name, f):
     e = []
@@ -65,9 +60,15 @@ def export_model_proxy(request):
     
 
 
-"""
- 1) Agregar djangoffline a INSTALLED_APPS
- 2) Agregar djangoffilne.urls a urlconf
- 3) Agregar a settings OFFLINE_APPS con su «basepath»
- 
-"""      
+def list_templates(request):
+    def valid_templates(name):
+        ''' Name validation '''
+        return not name.endswith('~')
+    
+    
+    template_files = []
+    for tmpl_pth in settings.TEMPLATE_DIRS:
+        for root, dirs, files in os.walk(tmpl_pth):
+            template_files += files
+    template_files = filter(valid_templates, template_files)
+    return HttpResponse( '\n'.join(template_files) )
