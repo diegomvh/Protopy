@@ -9,10 +9,6 @@
 //Database
 'DATABASE_ENGINE': 'gears',
 'DATABASE_NAME': '{{ project_name }}_sqlite.db',
-'DATABASE_USER': '',
-'DATABASE_PASSWORD': '',
-'DATABASE_HOST': '',
-'DATABASE_PORT': '',
 'DATABASE_OPTIONS': {},
 
 

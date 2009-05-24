@@ -8,6 +8,7 @@ def offline_setup_checks():
     import sys
     from django.conf import settings
     from os.path import isabs, abspath, exists
+    import os
     
     if not hasattr(settings, 'OFFLINE_ROOT'):
         print _("You must define settings.OFFLINE_ROOT in order to enable project offlinization")
@@ -17,6 +18,17 @@ def offline_setup_checks():
     if not isabs(df_path):
         print _("%s doesn't seem to be an absolute path, please correct this in your project's settings.py")
         sys.exit(3)
+    
+    # Brute force check
+    #module_name = os.environ.get('DJANGO_SETTINGS_MODULE').replace('.settings', '.urls')
+    
+    #project_urlpatterns = getattr(__import__(module_name, {}, {}, ['urlpatterns', ] ), 'urlpatterns')
+     
+    #for patt_obj in project_urlpatterns:
+    #    print patt_obj
+#         
+#    import ipdb; ipdb.set_trace()
+    
 
 
 

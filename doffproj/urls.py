@@ -2,6 +2,8 @@
 from django.conf.urls.defaults import *
 from django.conf import settings
 from doffproj.blog.admin import bolg_admin_site
+import djangoffline
+
 
 # Uncomment the next two lines to enable the admin:
 #from django.contrib import admin
@@ -24,7 +26,11 @@ urlpatterns = patterns('',
     (r'^blog/', include('doffproj.blog.urls'),),
     
     # Incluimos las urls del offlinizador
-    (r'^doff/', include('doffproj.djangoffline.urls'), ), 
+    (r'^doff/', include('doffproj.djangoffline.urls'), ),
+    
+    
+    (settings.OFFLINE_BASE, djangoffline.urls, ),
+     
 )
 
 

@@ -105,9 +105,10 @@ except ImportError:
 except AssertionError:
     INSTALLED_APPS += ('django_extensions', )
 
-
+# No es URL, es absoluto
+#OFFLINE_ROOT = os.path.join(os.getcwd(), 'offline')
 OFFLINE_ROOT = MEDIA_ROOT
 
 # Habría que ver como hacer que las URLs se añadan de manera automática
 # como en django-command-extensions
-OFFLINE_BASE = '%sdoffline' % MEDIA_URL
+OFFLINE_BASE = '/doffline/'

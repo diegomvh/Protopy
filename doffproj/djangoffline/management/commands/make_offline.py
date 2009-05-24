@@ -32,7 +32,14 @@ class Command(NoArgsCommand):
         
         if not exists(offline_project_root):
             print _("Crearing djangoffline project base at %s" % offline_project_root)
-            os.mkdir(offline_project_root)
+            try:
+                os.mkdir(offline_project_root)
+            except OSError, e:
+                import errno
+                if e.errno == errno.ENOENT:
+                    print _("Can't create offline project root, check if location exists and has apporopiate permissions")
+                    sys.exit(e.errno)
+                    
         else:
             print _("Offline project found at: %s" % offline_project_root)
         
