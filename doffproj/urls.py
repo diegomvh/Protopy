@@ -25,10 +25,7 @@ urlpatterns = patterns('',
     
     (r'^blog/', include('doffproj.blog.urls'),),
     
-    # Incluimos las urls del offlinizador
-    (r'^doff/', include('doffproj.djangoffline.urls'), ),
-    
-    
+    #     
     (settings.OFFLINE_BASE, djangoffline.urls, ),
      
 )
