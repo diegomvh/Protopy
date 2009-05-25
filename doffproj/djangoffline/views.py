@@ -59,18 +59,19 @@ def export_model_proxy(request):
     
     return HttpResponse('<pre>%s</pre>' % escape( pformat(models_dict) ))
     
-
+# 
 INVALID_TEMPLATE_SUFFIXES = re.compile(r'(?:~|#)$')
 def list_templates(request):
     
     def valid_templates(name):
         ''' Name validation '''
-        return not INVALID_TEMPLATE_SUFFIXES.match( name )
+        return not INVALID_TEMPLATE_SUFFIXES.search( name )
     
     
     template_files = []
     for tmpl_pth in settings.TEMPLATE_DIRS:
-        for root, dirs, files in os.walk(tmpl_pth):
+        for __root, _dirs, files in os.walk(tmpl_pth):
             template_files += files
     template_files = filter(valid_templates, template_files)
-    return HttpResponse( '\n'.join(template_files) )
+    output = '\n'.join(map(lambda x: '/'.join(['templates', x]), template_files))
+    return HttpResponse( output )
