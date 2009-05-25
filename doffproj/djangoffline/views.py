@@ -59,19 +59,46 @@ def export_model_proxy(request):
     
     return HttpResponse('<pre>%s</pre>' % escape( pformat(models_dict) ))
     
-# 
+# TODO: (nahuel) Use Filsesystem's enconding for names
+
 INVALID_TEMPLATE_SUFFIXES = re.compile(r'(?:~|#)$')
+valid_templates = lambda name: not INVALID_TEMPLATE_SUFFIXES.search( name )
+ 
+def _retrieve_templates_from_path(path):
+    '''
+    '''
+    from os.path import join
+    template_files = [] 
+    for root, _dirs, files in os.walk(path):
+        #template_files += map(lambda f: join(root, f), files)
+        print "Root", root
+        
+        template_files += files
+        #print "***"
+        #print files
+        
+    return filter(valid_templates, template_files)
+    #output = '\n'.join(map(lambda x: '/'.join(['templates', x]), template_files))
+    
+
 def list_templates(request):
     
-    def valid_templates(name):
-        ''' Name validation '''
-        return not INVALID_TEMPLATE_SUFFIXES.search( name )
     
-    
+    # Retrieve template full list
     template_files = []
-    for tmpl_pth in settings.TEMPLATE_DIRS:
-        for __root, _dirs, files in os.walk(tmpl_pth):
-            template_files += files
-    template_files = filter(valid_templates, template_files)
-    output = '\n'.join(map(lambda x: '/'.join(['templates', x]), template_files))
+    for path in settings.TEMPLATE_DIRS:
+        template_files += _retrieve_templates_from_path(path)
+    
+    #output = '\n'.join(map(lambda x: '/'.join(['templates', x]), template_files))
+    
+    # Get per application template list
+    if 'django.template.loaders.app_directories.load_template_source' in settings.TEMPLATE_LOADERS:
+        from django.template.loaders.app_directories import app_template_dirs
+        for path in app_template_dirs:
+            template_files += _retrieve_templates_from_path(path)
+        print template_files
+        print "=" * 30
+    
+    #output = '<br/>'.join(template_files)
+    output = str(template_files)
     return HttpResponse( output )
