@@ -17,7 +17,7 @@
 
 'INSTALLED_APPS': [ 'blog.apps.post' ],
 
-'TEMPLATE_URLS': [ '/blog/templates/' ],
+'TEMPLATE_URLS': [ '/static/blog/templates/' ],
 
 'TEMPLATE_STRING_IF_INVALID': '{{ No esta <strong>%s</strong> en el contexto }}',
 
