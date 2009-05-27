@@ -574,12 +574,7 @@
 	    this.options.method = this.options.method.toLowerCase();
 
 	    if (type(this.options.parameters) == String)
-		this.options.parameters = this.options.parameters.toqueryparams();
-	},
-	
-	serialize: function(object){
-	    //TODO:Serializar
-	    return;
+		this.options.parameters = ajax.toQueryParams(this.options.parameters);
 	}
     });
 
@@ -775,7 +770,56 @@
 
     var ajax = ModuleManager.create('ajax', 'built-in', {
 	Request: Request,
-	Response: Response
+	Response: Response,
+	toQueryParams: function(string, separator) {
+	    var match = string.match(/([^?#]*)(#.*)?$/);
+	    if (!match) return { };
+
+	    return match[1].split(separator || '&').reduce(function(hash, pair) {
+	    if ((pair = pair.split('='))[0]) {
+		var key = decodeURIComponent(pair.shift());
+		var value = pair.length > 1 ? pair.join('=') : pair[0];
+		if (value != undefined) value = decodeURIComponent(value);
+
+		if (key in hash) {
+		    if (type(hash[key]) != Array) hash[key] = [hash[key]];
+		    hash[key].push(value);
+		} else hash[key] = value;
+	    }
+	    return hash;
+	    }, {});
+	},
+	toQueryString: function(params) {
+	    if(!(isinstance(params, Object) || isinstance(params, Array)) || isinstance(params, Date))
+		throw new Exception('You must supply either an array or object type to convert into a query string. You supplied: ' + type(params));
+	    var str = '';
+	    var useHasOwn = {}.hasOwnProperty ? true : false;
+	    for (var key in params){
+		if(useHasOwn && params.hasOwnProperty(key)){
+		    //Process an array
+		    if(isinstance(params[key], Array)){
+			for(var i = 0; i < params[key].length; i++) {
+			    if(str) str += '&';
+			    str += encodeURIComponent(key) + "=";
+			    if(params[key][i] instanceof Date)
+				str += encodeURIComponent(params[key][i].toISO8601());
+			    else if(isinstance(params[key][i], Object))
+				    throw Error('Unable to pass nested arrays nor objects as parameters while in making a cross-site request. The object in question has this constructor: ' + params[key][i].constructor);
+				else str += encodeURIComponent(String(params[key][i]));
+			}
+		    } else {
+			if(str) str += '&';
+			str += encodeURIComponent(key) + "=";
+			if(params[key] instanceof Date)
+			    str += encodeURIComponent(rpc.dateToISO8601(params[key]));
+			else if(params[key] instanceof Object)
+			    throw Error('Unable to pass objects as parameters while in making a cross-site request. The object in question has this constructor: ' + params[key].constructor);
+			else str += encodeURIComponent(String(params[key]));
+		    }
+		}
+	    }
+	    return str;
+	}
     });
 
     /******************** dom **************************/
@@ -1839,10 +1883,17 @@
             if (callable(object1['__ne__'])) return object1.__ne__(object2);
             return object1 != object2;
         },
-        filter: function(func, sequence) { 
-	    //TODO: hacer algo mejor o dejar solo el de los array
+	//TODO: creo que va a ser mejor un number en lugar de float o int
+        number: function(value) {
+            if (isinstance(value, String) || isinstance(value, Number)) {
+		var number = Number(value);
+		if (isNaN(number))
+		    throw new ValueError('Invalid literal');
+		return number;
+	    }
+	    throw new TypeError('Argument must be a string or number');
         },
-        float: function(value) {
+	float: function(value) {
             if (isinstance(value, String) || isinstance(value, Number)) {
 		var number = Number(value);
 		if (isNaN(number))
@@ -1971,14 +2022,6 @@
 	scriptfragment: '<script[^>]*>([\\S\\s]*?)<\/script>',
 	interpret: function(value) {
 	    return value == null ? '' : String(value);
-	},
-	specialChar: {
-	    '\b': '\\b',
-	    '\t': '\\t',
-	    '\n': '\\n',
-	    '\f': '\\f',
-	    '\r': '\\r',
-	    '\\': '\\\\'
 	}
     });
 
@@ -2017,10 +2060,26 @@
 	    if (args[0] && (type(args[0]) == Object || isinstance(args[0], object)))
                 string = new Template(string, args[1]).evaluate(args[0]);
 	    else
-                string = string.gsub(/%s/, function(match) { 
-                    return (args.length != 0)? str(args.shift()) : match[0]; 
+                string = string.gsub(/%(-?\d*|\d*\.\d*)([s,n])/, function(match) {
+		    if (args.length == 0) return match[0];
+		    var value = (match[2] === 's')? str(args.shift()) : number(args.shift());
+		    return  value.format(match[1]); 
                 });
 	    return string.gsub(/<ESC%%>/, function(match){ return '%'; });
+	},
+
+	format: function(f) { 
+	    var pad = (f[0] == '0')? '0' : ' ';
+	    var left = false;
+	    if (f[0] == '-') {
+		left = true;
+		f = f.substr(1);
+	    };
+	    f = Number(f);
+	    var result = this;
+	    while(result.length < f)
+		result = (left)? result + pad: pad + result;
+	    return result;
 	},
 
 	truncate: function(length, truncation) {
@@ -2067,24 +2126,10 @@
 	    array(div.childNodes).reduce(function(memo, node) { return memo + node.nodeValue }, '') :
 	    div.childNodes[0].nodeValue) : '';
 	},
-
-	toqueryparams: function(separator) {
-	    var match = this.strip().match(/([^?#]*)(#.*)?$/);
-	    if (!match) return { };
-
-	    return match[1].split(separator || '&').reduce(function(hash, pair) {
-	    if ((pair = pair.split('='))[0]) {
-		var key = decodeURIComponent(pair.shift());
-		var value = pair.length > 1 ? pair.join('=') : pair[0];
-		if (value != undefined) value = decodeURIComponent(value);
-
-		if (key in hash) {
-		    if (type(hash[key]) != Array) hash[key] = [hash[key]];
-		    hash[key].push(value);
-		} else hash[key] = value;
-	    }
-	    return hash;
-	    }, {});
+    
+	isJSON: function(){
+	    var testStr = this.replace(/\\./g, '@').replace(/"[^"\\\n\r]*"/g, '');
+	    return (/^[,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]*$/).test(testStr);
 	},
 
 	succ: function() {
@@ -2122,15 +2167,6 @@
 	    return this.gsub(/_/,'-');
 	},
 
-	inspect: function(useDoubleQuotes) {
-	    var escapedString = this.gsub(/[\x00-\x1f\\]/, function(match) {
-	    var character = String.specialChar[match[0]];
-	    return character ? character : '\\u00' + match[0].charCodeAt().toPaddedString(2, 16);
-	    });
-	    if (useDoubleQuotes) return '"' + escapedString.replace(/"/g, '\\"') + '"';
-	    return "'" + escapedString.replace(/'/g, '\\\'') + "'";
-	},
-
 	startswith: function(pattern) {
 	    return this.indexOf(pattern) === 0;
 	},
@@ -2152,15 +2188,48 @@
 	return function(match) { return template.evaluate(match) };
     };
 
-    String.prototype.parsequery = String.prototype.toqueryparams;
-
     extend(String.prototype.escapeHTML, {
 	div:  document.createElement('div'),
 	text: document.createTextNode('')
     });
 
     String.prototype.escapeHTML.div.appendChild(String.prototype.escapeHTML.text);
-    
+
+    //--------------------------------------- Number -------------------------------------//
+    extend(Number.prototype, {
+	format: function(f) {
+	    var pad = (f[0] == '0')? '0' : ' ';
+	    var left = false;
+	    if (f[0] == '-') {
+		left = true;
+		f = f.substr(1);
+	    };
+	    var [fe, fd] = f.split('.').map(function (n) {return Number(n);});
+	    if (!isundefined(fd))
+		var result = this.toFixed(fd);
+	    else 
+		var result = str(this);
+	    [e, d] = result.split('.');
+	    while(e.length < fe)
+		e = (left)? e + pad : pad + e;
+	    return e + (!isundefined(d)? '.' + d : '');
+	}
+    });
+
+    //--------------------------------------- Number -------------------------------------//
+    extend(Date.prototype, {
+	//Returns an ISO8601 string *in UTC* for the provided date (Prototype's Date.toJSON() returns localtime)
+	toISO8601: function() {
+	    return this.getUTCFullYear() + '-' +
+	       (this.getUTCMonth() + 1).format('02') + '-' +
+	       this.getUTCDate().format('02') + 'T' +
+	       this.getUTCHours().format('02')   + ':' +
+	       this.getUTCMinutes().format('02') + ':' +
+	       this.getUTCSeconds().format('02') + '.' +
+	       this.getUTCMilliseconds().format('03');
+	}
+    });
+
     //--------------------------------------- Element -------------------------------------//
     extend(Element, {
 	iselement: function(object) {

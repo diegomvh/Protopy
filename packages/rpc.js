@@ -73,6 +73,8 @@
  * });
  */
 
+require('ajax', 'toQueryString');
+
 var rpc = {
     version:"0.8.0.2",	
     requestCount: 0
@@ -243,7 +245,7 @@ rpc.ServiceProxy = type('ServiceProxy', object, {
 						'/' + methodName +
 						'?' + this.__callbackParamName + '=rpc.callbacks.r' + (rpc.requestCount);
 			if(params)
-				src += '&' + rpc.toQueryString(params);
+				src += '&' + toQueryString(params);
 			script.setAttribute('src', src);
 			script.setAttribute('id', 'rpc' + rpc.requestCount);
 			var head = document.getElementsByTagName('head')[0];
@@ -525,7 +527,7 @@ rpc.ServiceProxy = type('ServiceProxy', object, {
 					return c;
 				c = b.charCodeAt();
 				//return "\\u00" + Math.floor(c / 16).toString(16) + (c % 16).toString(16);
-				return '\\u00' + rpc.zeroPad(c.toString(16));
+				return '\\u00' + c.toString(16).format('02');
 			}) + '"';
 		case 'object':
 			if(value === null)
@@ -550,7 +552,7 @@ rpc.ServiceProxy = type('ServiceProxy', object, {
 					case 'ASP.NET':
 						return '"\\/Date(' + value.valueOf() + ')\\/"';
 					default:
-						return '"' + rpc.dateToISO8601(value) + '"';
+						return '"' + value.toISO8601() + '"';
 				}
 			}
 			else if(value instanceof Number || value instanceof String || value instanceof Boolean)
@@ -581,8 +583,8 @@ rpc.ServiceProxy = type('ServiceProxy', object, {
 	json = json.replace(/^\/\*-secure-([\s\S]*)\*\/\s*$/, "$1");
 	var err;
         try {
-		if(!sanitize || rpc.isJSON(json))
-		return eval('(' + json + ')');
+	    if(!sanitize || json.isJSON())
+	    return eval('(' + json + ')');
         }
 	catch(e){err = e;}
         throw new SyntaxError('Badly formed JSON string: ' + json + " ... " + (err ? err.message : ''));
@@ -678,10 +680,10 @@ rpc.ServiceProxy = type('ServiceProxy', object, {
 				xml.push('</data></array>');
 			}
 			else if(value instanceof Date){
-				xml.push('<dateTime.iso8601>' + rpc.dateToISO8601(value) + '</dateTime.iso8601>');
+				xml.push('<dateTime.iso8601>' + value.toISO8601() + '</dateTime.iso8601>');
 			}
 			else if(value instanceof Number || value instanceof String || value instanceof Boolean)
-				return rpc.dateToISO8601(value.valueOf());
+				return value.valueOf().toISO8601();
 			else {
 				xml.push('<struct>');
 				var useHasOwn = {}.hasOwnProperty ? true : false; //From Ext's JSON.js
@@ -860,77 +862,5 @@ rpc.pendingRequests = {};
 //Ad hoc cross-site callback functions keyed by request ID; when a cross-site request
 //   is made, a function is created 
 rpc.callbacks = {};
-
-rpc.isJSON = function(string){ //from Prototype String.isJSON()
-    var testStr = string.replace(/\\./g, '@').replace(/"[^"\\\n\r]*"/g, '');
-    return (/^[,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]*$/).test(testStr);
-};
-
-/*******************************************************************************************
- * Other helper functions
- ******************************************************************************************/
-
-//Takes an array or hash and coverts it into a query string, converting dates to ISO8601
-//   and throwing an exception if nested hashes or nested arrays appear.
-rpc.toQueryString = function(params){
-	if(!(params instanceof Object || params instanceof Array) || params instanceof Date)
-		throw Error('You must supply either an array or object type to convert into a query string. You supplied: ' + params.constructor);
-
-	var str = '';
-	var useHasOwn = {}.hasOwnProperty ? true : false;
-	
-	for(var key in params){
-		if(useHasOwn && params.hasOwnProperty(key)){
-			//Process an array
-			if(params[key] instanceof Array){
-				for(var i = 0; i < params[key].length; i++){
-					if(str)
-						str += '&';
-					str += encodeURIComponent(key) + "=";
-					if(params[key][i] instanceof Date)
-						str += encodeURIComponent(rpc.dateToISO8601(params[key][i]));
-					else if(params[key][i] instanceof Object)
-						throw Error('Unable to pass nested arrays nor objects as parameters while in making a cross-site request. The object in question has this constructor: ' + params[key][i].constructor);
-					else str += encodeURIComponent(String(params[key][i]));
-				}
-			}
-			else {
-				if(str)
-					str += '&';
-				str += encodeURIComponent(key) + "=";
-				if(params[key] instanceof Date)
-					str += encodeURIComponent(rpc.dateToISO8601(params[key]));
-				else if(params[key] instanceof Object)
-					throw Error('Unable to pass objects as parameters while in making a cross-site request. The object in question has this constructor: ' + params[key].constructor);
-				else str += encodeURIComponent(String(params[key]));
-			}
-		}
-	}
-	return str;
-};
-
-//Returns an ISO8601 string *in UTC* for the provided date (Prototype's Date.toJSON() returns localtime)
-rpc.dateToISO8601 = function(date){
-	//var jsonDate = date.toJSON();
-	//return jsonDate.substring(1, jsonDate.length-1); //strip double quotes
-	
-	return date.getUTCFullYear()             + '-' +
-	       rpc.zeroPad(date.getUTCMonth()+1) + '-' +
-		   rpc.zeroPad(date.getUTCDate())    + 'T' +
-	       rpc.zeroPad(date.getUTCHours())   + ':' +
-		   rpc.zeroPad(date.getUTCMinutes()) + ':' +
-		   rpc.zeroPad(date.getUTCSeconds()) + '.' +
-		   //Prototype's Date.toJSON() method does not include milliseconds
-		   rpc.zeroPad(date.getUTCMilliseconds(), 3);
-};
-
-rpc.zeroPad = function(value, width){
-	if(!width)
-		width = 2;
-	value = (value == undefined ? '' : String(value))
-	while(value.length < width)
-		value = '0' + value;
-	return value;
-};
 
 publish(rpc);

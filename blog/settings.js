@@ -5,10 +5,6 @@
 //Database
 'DATABASE_ENGINE': 'gears',
 'DATABASE_NAME': 'blog.db',
-'DATABASE_USER': '',
-'DATABASE_PASSWORD': '',
-'DATABASE_HOST': '',
-'DATABASE_PORT': '',
 'DATABASE_OPTIONS': {},
 
 'MEDIA_URL': '/medios/',

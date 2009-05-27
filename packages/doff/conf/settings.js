@@ -5,10 +5,6 @@ publish({
         // Database connection info.
         DATABASE_ENGINE: 'gears',
         DATABASE_NAME: '',
-        DATABASE_USER: '',
-        DATABASE_PASSWORD: '',
-        DATABASE_HOST: '',
-        DATABASE_PORT: '',
         DATABASE_OPTIONS: {},
 
         // List of strings representing installed apps.
