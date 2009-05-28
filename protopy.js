@@ -1966,6 +1966,11 @@
 	items: function(object){
             return zip(keys(object), values(object));
         },
+        inspect: function(object) {
+            if (isundefined(object)) return 'undefined';
+            if (object === null) return 'null';
+            return callable(object.inspect) ? object.inspect() : String(object);
+        },
         unique: function(sorted) {
             return sorted.reduce(function(array, value) {
                 if (!include(array, value))
@@ -2022,11 +2027,20 @@
 	scriptfragment: '<script[^>]*>([\\S\\s]*?)<\/script>',
 	interpret: function(value) {
 	    return value == null ? '' : String(value);
-	}
+	},
+        special: {    // table of character substitutions
+            '\b': '\\b',
+            '\t': '\\t',
+            '\n': '\\n',
+            '\f': '\\f',
+            '\r': '\\r',
+            '"' : '\\"',
+            '\\': '\\\\'
+        }
     });
 
     extend(String.prototype, {
-	gsub: function(pattern, replacement) {
+        gsub: function(pattern, replacement) {
 	    var result = '', source = this, match;
 	    replacement = arguments.callee.prepare_replacement(replacement);
 
@@ -2076,10 +2090,17 @@
 		f = f.substr(1);
 	    };
 	    f = Number(f);
-	    var result = this;
-	    while(result.length < f)
-		result = (left)? result + pad: pad + result;
+	    var result = (left)? this + pad.times(f - this.length): pad.times(f - this.length) + this;
 	    return result;
+	},
+
+        inspect: function inspect(use_double_quotes) {
+	    var escaped = this.gsub(/[\x00-\x1f\\]/, function(match) {
+                var character = String.special[match[0]];
+                return character ? character : '\\u00' + match[0].charCodeAt().format('02', 16);
+            });
+	    if (use_double_quotes) return '"' + escaped.replace(/"/g, '\\"') + '"';
+	       return "'" + escaped.replace(/'/g, '\\\'') + "'";
 	},
 
 	truncate: function(length, truncation) {
@@ -2181,6 +2202,8 @@
 	}
     });
 
+    String.prototype.__json__ = function() { return this.inspect(true); }
+
     String.prototype.gsub.prepare_replacement = function(replacement) {
 	if (callable(replacement)) 
 	    return replacement;
@@ -2197,7 +2220,7 @@
 
     //--------------------------------------- Number -------------------------------------//
     extend(Number.prototype, {
-	format: function(f) {
+        format: function(f, radix) {
 	    var pad = (f[0] == '0')? '0' : ' ';
 	    var left = false;
 	    if (f[0] == '-') {
@@ -2208,27 +2231,24 @@
 	    if (!isundefined(fd))
 		var result = this.toFixed(fd);
 	    else 
-		var result = str(this);
+		var result = this.toString(radix || 10);
 	    [e, d] = result.split('.');
-	    while(e.length < fe)
-		e = (left)? e + pad : pad + e;
+	    e = (left)? e + pad.times(fe - e.length) : pad.times(fe - e.length) + e;
 	    return e + (!isundefined(d)? '.' + d : '');
 	}
     });
 
-    //--------------------------------------- Number -------------------------------------//
-    extend(Date.prototype, {
-	//Returns an ISO8601 string *in UTC* for the provided date (Prototype's Date.toJSON() returns localtime)
-	toISO8601: function() {
-	    return this.getUTCFullYear() + '-' +
-	       (this.getUTCMonth() + 1).format('02') + '-' +
-	       this.getUTCDate().format('02') + 'T' +
-	       this.getUTCHours().format('02')   + ':' +
-	       this.getUTCMinutes().format('02') + ':' +
-	       this.getUTCSeconds().format('02') + '.' +
-	       this.getUTCMilliseconds().format('03');
-	}
-    });
+    Number.prototype.__json__ = function() { return isFinite(this) ? this.toString() : 'null'; }
+
+    //--------------------------------------- Date -------------------------------------//
+    Date.prototype.__json__ = function() { 
+        return '"' + this.getUTCFullYear() + '-' +
+                (this.getUTCMonth() + 1).format('02') + '-' +
+                this.getUTCDate().format('02') + 'T' +
+                this.getUTCHours().format('02') + ':' +
+                this.getUTCMinutes().format('02') + ':' +
+                this.getUTCSeconds().format('02') + 'Z"'; 
+    }
 
     //--------------------------------------- Element -------------------------------------//
     extend(Element, {
@@ -2463,3 +2483,26 @@
     extend(HTMLSelectElement.prototype, Form.Element );
     extend(HTMLTextAreaElement.prototype, Form.Element );
 })();
+
+var stringify = function (value) {
+
+    switch (typeof value) {
+      case 'undefined':
+      case 'function':
+      case 'unknown': return;
+      case 'boolean': return value.toString();
+    }
+
+    if (value === null) return 'null';
+    if (callable(value.__json__)) return value.__json__();
+    if (Element.iselement(value)) return;
+
+    var results = [];
+    for (var property in value) {
+      var v = stringify(value[property]);
+      if (!isundefined(v))
+        results.push(stringify(property) + ': ' + v);
+    }
+
+    return '{' + results.join(', ') + '}';
+};

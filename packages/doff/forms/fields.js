@@ -179,7 +179,7 @@ var FloatField = type('FloatField', Field, {
             return null;
         try {
             value = number(value);
-        } catch (e if isinstance(e, [ValueError, TypeError]) {
+        } catch (e if isinstance(e, [ValueError, TypeError])) {
             throw new ValidationError(this.error_messages['invalid']);
         }
         if (this.max_value != null && value > this.max_value)
