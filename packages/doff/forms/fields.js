@@ -146,7 +146,7 @@ var IntegerField = type('IntegerField', Field, {
         if (include(EMPTY_VALUES, value))
             return null;
         try {
-            value = int(str(value));
+            value = number(str(value));
         } catch (e if e instanceof ValueError || e instanceof TypeError) {
             throw new ValidationError(this.error_messages['invalid']);
         }
@@ -178,8 +178,8 @@ var FloatField = type('FloatField', Field, {
         if (!this.required && include(EMPTY_VALUES, value))
             return null;
         try {
-            value = float(value);
-        } catch (e if e instanceof ValueError || e instanceof TypeError) {
+            value = number(value);
+        } catch (e if isinstance(e, [ValueError, TypeError]) {
             throw new ValidationError(this.error_messages['invalid']);
         }
         if (this.max_value != null && value > this.max_value)

@@ -213,7 +213,7 @@ var QuerySet = type('QuerySet', object, {
                 if (isinstance(k, Array)) {
                     if (k[1] != null)
                         // Some people insist on passing in strings here.
-                        var bound = int(k[1])
+                        var bound = number(k[1])
                     else
                         var bound = null;
                 } else {
@@ -230,11 +230,11 @@ var QuerySet = type('QuerySet', object, {
         if (isinstance(k, Array)) {
             var qs = this._clone();
             if (k[0] != null)
-                var start = int(k[0]);
+                var start = number(k[0]);
             else
                 var start = null;
             if (k[1] != null)
-                var stop = int(k[1]);
+                var stop = number(k[1]);
             else
                 var stop = null;
             qs.query.set_limits(start, stop);
@@ -359,7 +359,7 @@ var QuerySet = type('QuerySet', object, {
                 obj.save(true, null);
                 transaction.savepoint_commit(sid);
                 return [obj, true];
-            } catch (e if e instanceof IntegrityError) {
+            } catch (e if isinstance(e, IntegrityError)) {
                 transaction.savepoint_rollback(sid);
                 try {
                     return [this.get(kwargs), false];
