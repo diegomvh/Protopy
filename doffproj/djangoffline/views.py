@@ -64,16 +64,29 @@ def export_model_proxy(request):
 INVALID_TEMPLATE_SUFFIXES = re.compile(r'(?:~|#)$')
 valid_templates = lambda name: not INVALID_TEMPLATE_SUFFIXES.search( name )
  
-def _retrieve_templates_from_path(path):
+def _retrieve_templates_from_path(path, template_bases = None):
     '''
     '''
     from os.path import join
+    if not template_bases:
+        template_bases = []
+        
     template_files = [] 
     for root, _dirs, files in os.walk(path):
-        #template_files += map(lambda f: join(root, f), files)
+        for t_base in template_bases:
+            #import ipdb; ipdb.set_trace()
+            
+            if t_base in root:
+                print "####", t_base,'---', root
+                index = root.index(t_base)
+                root = root[index + len(t_base):]
+                print "MODIFICADO", index
+                print root
+        
+        template_files += map(lambda f: join(root, f), files)
         print "Root", root
         
-        template_files += files
+        #template_files += files
         #print "***"
         #print files
         
@@ -82,23 +95,22 @@ def _retrieve_templates_from_path(path):
     
 
 def list_templates(request):
-    
-    
+    from pprint import pformat
     # Retrieve template full list
+    
+    template_dirs = map(lambda s: s.split(os.sep)[-1], settings.TEMPLATE_DIRS)
+     
     template_files = []
     for path in settings.TEMPLATE_DIRS:
-        template_files += _retrieve_templates_from_path(path)
-    
-    #output = '\n'.join(map(lambda x: '/'.join(['templates', x]), template_files))
+        template_files += _retrieve_templates_from_path(path, template_dirs)
+        # Split
     
     # Get per application template list
     if 'django.template.loaders.app_directories.load_template_source' in settings.TEMPLATE_LOADERS:
         from django.template.loaders.app_directories import app_template_dirs
         for path in app_template_dirs:
-            template_files += _retrieve_templates_from_path(path)
-        print template_files
-        print "=" * 30
-    
-    #output = '<br/>'.join(template_files)
-    output = str(template_files)
+            template_files += _retrieve_templates_from_path(path, template_dirs)
+        
+    output = pformat(template_files, 2)
+    output = output.replace('\n', '<br />')
     return HttpResponse( output )
