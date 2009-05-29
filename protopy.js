@@ -291,7 +291,7 @@
     }
     /* Modulo: sys - modulo de sistema, proporciona informacion sobre el ambiente y algunas herramientas para interactuar con este */
     var sys = ModuleManager.create('sys', 'built-in', { 
-	version: 0.1,
+	version: 0.8,
 	browser: {
 	    IE:     !!(window.attachEvent && navigator.userAgent.indexOf('Opera') === -1),
 	    Opera:  navigator.userAgent.indexOf('Opera') > -1,
@@ -336,11 +336,11 @@
         Exception: Exception,
         AssertionError: type('AssertionError', Exception),
         AttributeError: type('AttributeError', Exception),
-        LoadError:  type('LoadError', Exception),
-        KeyError:  type('KeyError', Exception),
-        NotImplementedError:  type('NotImplementedError', Exception),
-        TypeError:  type('TypeError', Exception),
-        ValueError:  type('ValueError', Exception),
+        LoadError: type('LoadError', Exception),
+        KeyError: type('KeyError', Exception),
+        NotImplementedError: type('NotImplementedError', Exception),
+        TypeError: type('TypeError', Exception),
+        ValueError: type('ValueError', Exception),
     });
 
     /********************** event **************************/
@@ -1421,34 +1421,31 @@
     }
 
     function isinstance(object, _type) {
-	if (_type && type(_type) != Array) _type = [_type];
-	if (!_type || (type(_type) == Array && _type[0] == undefined))
-	    // end of recursion
+	if (isundefined(object) || isundefined(_type) || _type === null)
 	    return false;
-	else {
-	    var others = [];
-	    for each (var t in _type) {
-		if (object && type(object) == t) return true;
-		others = others.concat(t.__subclasses__);
-	    }
-	    return isinstance(object, others);
+	if (type(_type) != Array) 
+	    _type = [_type];
+	var others = [];
+	for each (var t in _type) {
+	    if (isundefined(t)) continue;
+	    if (type(object) === t) return true;
+	    others = others.concat(t.__subclasses__);
 	}
+	return (others.length !== 0)? isinstance(object, others) : false;
     }
 
     function issubclass(type2, _type) {
-	if (_type && type(_type) != Array) 
-	    _type = [_type];
-	if (!_type || (type(_type) == Array && _type[0] == undefined))
-	    // end of recursion
+	if (isundefined(type2) || isundefined(_type) || _type === null)
 	    return false;
-	else {
-	    var others = [];
-	    for each (var t in _type) {
-		if (type2 == t) return true;
-		others = others.concat(t.__subclasses__);
-	    }
-	    return issubclass(type2, others);
+	if (type(_type) != Array) 
+	    _type = [_type];
+	var others = [];
+	for each (var t in _type) {
+	    if (isundefined(t)) continue;
+	    if (type2 === t) return true;
+	    others = others.concat(t.__subclasses__);
 	}
+	return (others.length !== 0)? issubclass(type2, others) : false;
     }
 
     //Arguments wraped, whit esteroids
@@ -1883,8 +1880,7 @@
             if (callable(object1['__ne__'])) return object1.__ne__(object2);
             return object1 != object2;
         },
-	//TODO: creo que va a ser mejor un number en lugar de float o int
-        number: function(value) {
+	number: function(value) {
             if (isinstance(value, String) || isinstance(value, Number)) {
 		var number = Number(value);
 		if (isNaN(number))
@@ -1893,31 +1889,13 @@
 	    }
 	    throw new TypeError('Argument must be a string or number');
         },
-	float: function(value) {
-            if (isinstance(value, String) || isinstance(value, Number)) {
-		var number = Number(value);
-		if (isNaN(number))
-		    throw new ValueError('Invalid literal');
-		return number;
-	    }
-	    throw new TypeError('Argument must be a string or number');
-        },
-        flatten: function(array) { 
+	flatten: function(array) { 
             return array.reduce(function(a,b) { return a.concat(b); }, []); 
         },
         include: function(object, element){
             if (object == undefined) return false;
             if (callable(object['__contains__'])) return object.__contains__(element);
             return object.indexOf(element) > -1;
-        },
-        int: function(value) {
-            if (isinstance(value, String) || isinstance(value, Number)) {
-		var number = Math.floor(value);
-		if (isNaN(number))
-		    throw new ValueError('Invalid literal');
-		return number;
-	    }
-	    throw new TypeError('Argument must be a string or number');
         },
         len: function(object) {
             if (object && callable(object['__len__']))
@@ -2147,11 +2125,6 @@
 	    array(div.childNodes).reduce(function(memo, node) { return memo + node.nodeValue }, '') :
 	    div.childNodes[0].nodeValue) : '';
 	},
-    
-	isJSON: function(){
-	    var testStr = this.replace(/\\./g, '@').replace(/"[^"\\\n\r]*"/g, '');
-	    return (/^[,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]*$/).test(testStr);
-	},
 
 	succ: function() {
 	    return this.slice(0, this.length - 1) +
@@ -2202,8 +2175,6 @@
 	}
     });
 
-    String.prototype.__json__ = function() { return this.inspect(true); }
-
     String.prototype.gsub.prepare_replacement = function(replacement) {
 	if (callable(replacement)) 
 	    return replacement;
@@ -2238,21 +2209,21 @@
 	}
     });
 
-    Number.prototype.__json__ = function() { return isFinite(this) ? this.toString() : 'null'; }
-
     //--------------------------------------- Date -------------------------------------//
-    Date.prototype.__json__ = function() { 
-        return '"' + this.getUTCFullYear() + '-' +
-                (this.getUTCMonth() + 1).format('02') + '-' +
-                this.getUTCDate().format('02') + 'T' +
-                this.getUTCHours().format('02') + ':' +
-                this.getUTCMinutes().format('02') + ':' +
-                this.getUTCSeconds().format('02') + 'Z"'; 
-    }
+    extend(Date.prototype, {
+        toISO8601: function() {
+	    return this.getUTCFullYear() + '-' +
+		(this.getUTCMonth() + 1).format('02') + '-' +
+		this.getUTCDate().format('02') + 'T' +
+		this.getUTCHours().format('02') + ':' +
+		this.getUTCMinutes().format('02') + ':' +
+		this.getUTCSeconds().format('02') + 'Z'; 
+	}
+    });
 
     //--------------------------------------- Element -------------------------------------//
     extend(Element, {
-	iselement: function(object) {
+	isElement: function(object) {
 	    return !!(object && object.nodeType == 1);
 	},
 	_insertion_translations: {
@@ -2306,13 +2277,13 @@
 	    return this;
 	},
 	update: function(content) {
-	    if (Element.iselement(content)) return this.update().insert(content);
+	    if (Element.isElement(content)) return this.update().insert(content);
 	    this.innerHTML = content.stripscripts();
 	    getattr(content, 'evalscripts')();
 	    return this;
 	},
 	insert: function(insertions) {
-	    if (isinstance(insertions, String) || isinstance(insertions, Number) || Element.iselement(insertions))
+	    if (isinstance(insertions, String) || isinstance(insertions, Number) || Element.isElement(insertions))
 		insertions = {bottom:insertions};
 	    var content, insert, tagName, childNodes, self = this;
 	    for (var position in insertions) {
@@ -2320,7 +2291,7 @@
 		position = position.toLowerCase();
 		insert = Element._insertion_translations[position];
 
-		if (Element.iselement(content)) {
+		if (Element.isElement(content)) {
 		    insert(this, content);
 		    continue;
 		}
@@ -2483,26 +2454,3 @@
     extend(HTMLSelectElement.prototype, Form.Element );
     extend(HTMLTextAreaElement.prototype, Form.Element );
 })();
-
-var stringify = function (value) {
-
-    switch (typeof value) {
-      case 'undefined':
-      case 'function':
-      case 'unknown': return;
-      case 'boolean': return value.toString();
-    }
-
-    if (value === null) return 'null';
-    if (callable(value.__json__)) return value.__json__();
-    if (Element.iselement(value)) return;
-
-    var results = [];
-    for (var property in value) {
-      var v = stringify(value[property]);
-      if (!isundefined(v))
-        results.push(stringify(property) + ': ' + v);
-    }
-
-    return '{' + results.join(', ') + '}';
-};

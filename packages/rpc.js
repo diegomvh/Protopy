@@ -74,6 +74,7 @@
  */
 
 require('ajax', 'toQueryString');
+require('json');
 
 var rpc = {
     version:"0.8.0.2",	
@@ -103,7 +104,7 @@ rpc.ServiceProxy = type('ServiceProxy', object, {
 	this.__authPassword = null;
 	this.__callbackParamName = 'JSON-response-callback';
 	this.__protocol = 'JSON-RPC';
-	this.__dateEncoding = 'ISO8601'; // ("@timestamp@" || "@ticks@") || "classHinting" || "ASP.NET"
+	json.date_encoding = 'ISO8601'; // ("@timestamp@" || "@ticks@") || "classHinting" || "ASP.NET"
 	this.__decodeISO8601 = true; //JSON only
 	
 	//Get the provided options
@@ -305,7 +306,7 @@ rpc.ServiceProxy = type('ServiceProxy', object, {
 				};
 				if(params)
 					request.params = params;
-				postData = this.__toJSON(request);
+				postData = json.stringify(request);
 			}
 			
 			//XMLHttpRequest chosen (over Ajax.Request) because it propogates uncaught exceptions
@@ -347,7 +348,7 @@ rpc.ServiceProxy = type('ServiceProxy', object, {
 						}
 						//JSON-RPC
 						else {
-							var response = instance.__evalJSON(xhr.responseText, instance.__isResponseSanitized);
+							var response = json.parse(xhr.responseText, instance.__isResponseSanitized);
 							if(!response.id)
 								response.id = requestInfo.id;
 							instance.__doCallback(response);
@@ -365,7 +366,7 @@ rpc.ServiceProxy = type('ServiceProxy', object, {
 				if(this.__protocol == 'XML-RPC')
 					response = this.__getXMLRPCResponse(xhr, rpc.requestCount);
 				else
-					response = this.__evalJSON(xhr.responseText, this.__isResponseSanitized);
+					response = json.parse(xhr.responseText, this.__isResponseSanitized);
 				
 				//Note that this error must be caught with a try/catch block instead of by passing a onException callback
 				if(response.error)
@@ -498,96 +499,6 @@ rpc.ServiceProxy = type('ServiceProxy', object, {
 		err.code = code;	
 		throw err;
 	}
-    },
-
-    /*******************************************************************************************
-     * JSON-RPC Specific Functions
-     ******************************************************************************************/
-    __toJSON: function(value){
-	switch(typeof value){
-		case 'number':
-			return isFinite(value) ? value.toString() : 'null';
-		case 'boolean':
-			return value.toString();
-		case 'string':
-			//Taken from Ext JSON.js
-			var specialChars = {
-				"\b": '\\b',
-				"\t": '\\t',
-				"\n": '\\n',
-				"\f": '\\f',
-				"\r": '\\r',
-				'"' : '\\"',
-				"\\": '\\\\',
-				"/" : '\/'
-			};
-			return '"' + value.replace(/([\x00-\x1f\\"])/g, function(a, b) {
-				var c = specialChars[b];
-				if(c)
-					return c;
-				c = b.charCodeAt();
-				//return "\\u00" + Math.floor(c / 16).toString(16) + (c % 16).toString(16);
-				return '\\u00' + c.toString(16).format('02');
-			}) + '"';
-		case 'object':
-			if(value === null)
-				return 'null';
-			else if(value instanceof Array){
-				var json = ['['];  //Ext's JSON.js reminds me that Array.join is faster than += in MSIE
-				for(var i = 0; i < value.length; i++){
-					if(i)
-						json.push(',');
-					json.push(this.__toJSON(value[i]));
-				}
-				json.push(']');
-				return json.join('');
-			}
-			else if(value instanceof Date){
-				switch(this.__dateEncoding){
-					case 'classHinting': //{"__jsonclass__":["constructor", [param1,...]], "prop1": ...}
-						return '{"__jsonclass__":["Date",[' + value.valueOf() + ']]}';
-					case '@timestamp@':
-					case '@ticks@':
-						return '"@' + value.valueOf() + '@"';
-					case 'ASP.NET':
-						return '"\\/Date(' + value.valueOf() + ')\\/"';
-					default:
-						return '"' + value.toISO8601() + '"';
-				}
-			}
-			else if(value instanceof Number || value instanceof String || value instanceof Boolean)
-				return this.__toJSON(value.valueOf());
-			else {
-				var useHasOwn = {}.hasOwnProperty ? true : false; //From Ext's JSON.js
-				var json = ['{'];
-				for(var key in value){
-					if(!useHasOwn || value.hasOwnProperty(key)){
-						if(json.length > 1)
-							json.push(',');
-						json.push(this.__toJSON(key) + ':' + this.__toJSON(value[key]));
-					}
-				}
-				json.push('}');
-				return json.join('');
-			}
-		//case 'undefined':
-		//case 'function':
-		//case 'unknown':
-		//default:
-	}
-	throw new TypeError('Unable to convert the value of type "' + typeof(value) + '" to JSON.'); //(' + String(value) + ') 
-    },
-
-    __evalJSON: function(json, sanitize){ //from Prototype String.evalJSON()
-	//Remove security comment delimiters
-	json = json.replace(/^\/\*-secure-([\s\S]*)\*\/\s*$/, "$1");
-	var err;
-        try {
-	    if(!sanitize || json.isJSON())
-	    return eval('(' + json + ')');
-        }
-	catch(e){err = e;}
-        throw new SyntaxError('Badly formed JSON string: ' + json + " ... " + (err ? err.message : ''));
     },
 
     //This function iterates over the properties of the passed object and converts them 

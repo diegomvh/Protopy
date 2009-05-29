@@ -315,9 +315,9 @@ var QuerySet = type('QuerySet', object, {
      * keyword arguments.
      */
     'get': function get() {
-	// Si only one argument and is number call to __getitem__
+	// If call whit number then call to __getitem__
         arguments = new Arguments(arguments);
-        if (len(arguments) == 1 && bool(arguments.args) && isinstance(arguments.args[0], Number))
+        if (len(arguments.args) == 1 && isinstance(arguments.args[0], Number))
 	    return this.__getitem__(arguments.args[0]);
 	var clone = this.filter.apply(this, arguments.argskwargs);
         var num = len(clone);
