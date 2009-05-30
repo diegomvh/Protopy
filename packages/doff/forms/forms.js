@@ -127,7 +127,7 @@ var BaseForm = type('BaseForm', object, {
         var top_errors = this.non_field_errors(); // Errors that should be displayed above all fields.
         var output = [];
         var hidden_fields = [];
-        for each ([name, field] in this.fields.items()) {
+        for each (var [name, field] in this.fields.items()) {
             var bf = new BoundField(this, field, name);
             var bf_errors = new this.error_class([conditional_escape(error) for (error in bf.errors)]); // Escape and cache in local variable.
             if (bf.is_hidden) {

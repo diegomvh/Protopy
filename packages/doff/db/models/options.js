@@ -136,7 +136,7 @@ var Options = type('Options', object, {
             collections[target].add(column);
         }
         this.duplicate_targets = {};
-        for each (elt in collections) {
+        for each (var elt in collections) {
             if (elt.length == 1)
                 continue;
             for each (var column in elt)
@@ -149,7 +149,7 @@ var Options = type('Options', object, {
         // the "creation_counter" attribute of the field.
         // Move many-to-many related fields from self.fields into
         // self.many_to_many.
-        if (field.rel && field.rel instanceof ManyToManyRel) {
+        if (field.rel && isinstance(field.rel, ManyToManyRel)) {
             //TODO implementar bisect en base a __cmp__ y usar splice para insertar
             this.local_many_to_many.splice(bisect(this.local_many_to_many, field), 0, field);
             if (this['_m2m_cache'])
@@ -211,7 +211,7 @@ var Options = type('Options', object, {
 
     '_fill_fields_cache': function _fill_fields_cache() {
         var cache = [];
-        for each (parent in this.parents.keys()) {
+        for each (var parent in this.parents.keys()) {
             for each (var [field, model] in parent._meta.get_fields_with_model()) {
                 if (model)
                     cache.push([field, model]);
@@ -242,7 +242,7 @@ var Options = type('Options', object, {
 
     '_fill_m2m_cache': function _fill_m2m_cache() {
         var cache = new SortedDict();
-        for each (parent in this.parents.keys()) {
+        for each (var parent in this.parents.keys()) {
             for each (var [field, model] in parent._meta.get_m2m_with_model()) {
                 if (model)
                     cache.set(field, model);
@@ -250,7 +250,7 @@ var Options = type('Options', object, {
                     cache.set(field, parent);
             }
         }
-        for each (field in this.local_many_to_many)
+        for each (var field in this.local_many_to_many)
             cache.set(field, null);
         this._m2m_cache = cache;
     },
@@ -261,7 +261,7 @@ var Options = type('Options', object, {
     'get_field': function get_field(name, many_to_many) {
         var many_to_many = many_to_many || true;
         var to_search = many_to_many && (this.fields.concat(this.many_to_many)) || this.fields;
-        for each (f in to_search)
+        for each (var f in to_search)
             if (f.name == name)
                 return f;
         throw new FieldDoesNotExist('%s has no field named %s'.subs(this.object_name, name));
@@ -314,13 +314,13 @@ var Options = type('Options', object, {
         var cache = {};
         // We intentionally handle related m2m objects first so that symmetrical
         // m2m accessor names can be overridden, if necessary.
-        for each ([f, model] in this.get_all_related_m2m_objects_with_model())
+        for each (var [f, model] in this.get_all_related_m2m_objects_with_model())
             cache[f.field.related_query_name()] = [f, model, false, true];
-        for each ([f, model] in this.get_all_related_objects_with_model())
+        for each (var [f, model] in this.get_all_related_objects_with_model())
             cache[f.field.related_query_name()] = [f, model, false, false];
-        for each ([f, model] in this.get_m2m_with_model())
+        for each (var [f, model] in this.get_m2m_with_model())
             cache[f.name] = [f, model, true, true];
-        for each ([f, model] in this.get_fields_with_model())
+        for each (var [f, model] in this.get_fields_with_model())
             cache[f.name] = [f, model, true, false];
         if (this.order_with_respect_to)
             cache['_order'] = [new OrderWrt(), null, true, false];
@@ -330,7 +330,7 @@ var Options = type('Options', object, {
     },
 
     'get_all_related_objects': function get_all_related_objects(local_only) {
-        if (!this._related_objects_cache)
+        if (!bool(this._related_objects_cache))
             this._fill_related_objects_cache();
         if (local_only)
             return [k for each ([k, v] in this._related_objects_cache.items()) if (!v)]
@@ -341,7 +341,7 @@ var Options = type('Options', object, {
         * Returns a list of (related-object, model) pairs. Similar to get_fields_with_model().
         */
     'get_all_related_objects_with_model': function get_all_related_objects_with_model() {
-        if (!this._related_objects_cache)
+        if (isundefined(this._related_objects_cache))
             this._fill_related_objects_cache();
         return this._related_objects_cache.items();
     },
@@ -367,7 +367,7 @@ var Options = type('Options', object, {
 
     'get_all_related_many_to_many_objects': function get_all_related_many_to_many_objects(local_only) {
         var cache = this._related_many_to_many_cache;
-        if (!cache)
+        if (isundefined(cache))
             cache = this._fill_related_many_to_many_cache();
         if (local_only)
             return [k for each ([k, v] in cache.items()) if (!v)];
@@ -379,7 +379,7 @@ var Options = type('Options', object, {
         */
     'get_all_related_m2m_objects_with_model': function get_all_related_m2m_objects_with_model() {
         var cache = this._related_many_to_many_cache;
-        if (!cache)
+        if (isundefined(cache))
             cache = this._fill_related_many_to_many_cache();
         return cache.items();
     },
@@ -387,8 +387,8 @@ var Options = type('Options', object, {
     '_fill_related_many_to_many_cache': function _fill_related_many_to_many_cache() {
         var cache = new SortedDict();
         var parent_list = this.get_parent_list();
-        for each (parent in this.parents) {
-            for each ([obj, model] in parent._meta.get_all_related_m2m_objects_with_model()) {
+        for each (var parent in this.parents) {
+            for each (var [obj, model] in parent._meta.get_all_related_m2m_objects_with_model()) {
                 if (obj.field.creation_counter < 0 && include(parent_list, obj.model))
                     continue;
                 if (!model)
@@ -397,8 +397,8 @@ var Options = type('Options', object, {
                     cache.set(obj, model);
             }
         }
-        for each (klass in get_models())
-            for each (f in klass._meta.local_many_to_many)
+        for each (var klass in get_models())
+            for each (var f in klass._meta.local_many_to_many)
                 if (f.rel && type(f.rel.to) != String && this == f.rel.to._meta)
                     cache.set(new RelatedObject(f.rel.to, klass, f), null);
         if (app_cache_ready())
@@ -416,7 +416,7 @@ var Options = type('Options', object, {
             return;
         if (include(this.parents, model))
             return [model];
-        for each (parent in this.parents)
+        for each (var parent in this.parents)
             res = parent._meta.get_base_chain(model);
             if (res)
                 res.push(0, parent);
@@ -430,7 +430,7 @@ var Options = type('Options', object, {
         */
     'get_parent_list': function get_parent_list() {
         var result = new Set();
-        for each (parent in this.parents) {
+        for each (var parent in this.parents) {
             result.add(parent);
             result.update(parent._meta.get_parent_list());
         }

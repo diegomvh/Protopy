@@ -291,7 +291,7 @@
     }
     /* Modulo: sys - modulo de sistema, proporciona informacion sobre el ambiente y algunas herramientas para interactuar con este */
     var sys = ModuleManager.create('sys', 'built-in', { 
-	version: 0.1,
+	version: 0.8,
 	browser: {
 	    IE:     !!(window.attachEvent && navigator.userAgent.indexOf('Opera') === -1),
 	    Opera:  navigator.userAgent.indexOf('Opera') > -1,
@@ -336,11 +336,11 @@
         Exception: Exception,
         AssertionError: type('AssertionError', Exception),
         AttributeError: type('AttributeError', Exception),
-        LoadError:  type('LoadError', Exception),
-        KeyError:  type('KeyError', Exception),
-        NotImplementedError:  type('NotImplementedError', Exception),
-        TypeError:  type('TypeError', Exception),
-        ValueError:  type('ValueError', Exception),
+        LoadError: type('LoadError', Exception),
+        KeyError: type('KeyError', Exception),
+        NotImplementedError: type('NotImplementedError', Exception),
+        TypeError: type('TypeError', Exception),
+        ValueError: type('ValueError', Exception),
     });
 
     /********************** event **************************/
@@ -574,12 +574,7 @@
 	    this.options.method = this.options.method.toLowerCase();
 
 	    if (type(this.options.parameters) == String)
-		this.options.parameters = this.options.parameters.toqueryparams();
-	},
-	
-	serialize: function(object){
-	    //TODO:Serializar
-	    return;
+		this.options.parameters = ajax.toQueryParams(this.options.parameters);
 	}
     });
 
@@ -775,7 +770,56 @@
 
     var ajax = ModuleManager.create('ajax', 'built-in', {
 	Request: Request,
-	Response: Response
+	Response: Response,
+	toQueryParams: function(string, separator) {
+	    var match = string.match(/([^?#]*)(#.*)?$/);
+	    if (!match) return { };
+
+	    return match[1].split(separator || '&').reduce(function(hash, pair) {
+	    if ((pair = pair.split('='))[0]) {
+		var key = decodeURIComponent(pair.shift());
+		var value = pair.length > 1 ? pair.join('=') : pair[0];
+		if (value != undefined) value = decodeURIComponent(value);
+
+		if (key in hash) {
+		    if (type(hash[key]) != Array) hash[key] = [hash[key]];
+		    hash[key].push(value);
+		} else hash[key] = value;
+	    }
+	    return hash;
+	    }, {});
+	},
+	toQueryString: function(params) {
+	    if(!(isinstance(params, Object) || isinstance(params, Array)) || isinstance(params, Date))
+		throw new Exception('You must supply either an array or object type to convert into a query string. You supplied: ' + type(params));
+	    var str = '';
+	    var useHasOwn = {}.hasOwnProperty ? true : false;
+	    for (var key in params){
+		if(useHasOwn && params.hasOwnProperty(key)){
+		    //Process an array
+		    if(isinstance(params[key], Array)){
+			for(var i = 0; i < params[key].length; i++) {
+			    if(str) str += '&';
+			    str += encodeURIComponent(key) + "=";
+			    if(params[key][i] instanceof Date)
+				str += encodeURIComponent(params[key][i].toISO8601());
+			    else if(isinstance(params[key][i], Object))
+				    throw Error('Unable to pass nested arrays nor objects as parameters while in making a cross-site request. The object in question has this constructor: ' + params[key][i].constructor);
+				else str += encodeURIComponent(String(params[key][i]));
+			}
+		    } else {
+			if(str) str += '&';
+			str += encodeURIComponent(key) + "=";
+			if(params[key] instanceof Date)
+			    str += encodeURIComponent(rpc.dateToISO8601(params[key]));
+			else if(params[key] instanceof Object)
+			    throw Error('Unable to pass objects as parameters while in making a cross-site request. The object in question has this constructor: ' + params[key].constructor);
+			else str += encodeURIComponent(String(params[key]));
+		    }
+		}
+	    }
+	    return str;
+	}
     });
 
     /******************** dom **************************/
@@ -1377,34 +1421,31 @@
     }
 
     function isinstance(object, _type) {
-	if (_type && type(_type) != Array) _type = [_type];
-	if (!_type || (type(_type) == Array && _type[0] == undefined))
-	    // end of recursion
+	if (isundefined(object) || isundefined(_type) || _type === null)
 	    return false;
-	else {
-	    var others = [];
-	    for each (var t in _type) {
-		if (object && type(object) == t) return true;
-		others = others.concat(t.__subclasses__);
-	    }
-	    return isinstance(object, others);
+	if (type(_type) != Array) 
+	    _type = [_type];
+	var others = [];
+	for each (var t in _type) {
+	    if (isundefined(t)) continue;
+	    if (type(object) === t) return true;
+	    others = others.concat(t.__subclasses__);
 	}
+	return (others.length !== 0)? isinstance(object, others) : false;
     }
 
     function issubclass(type2, _type) {
-	if (_type && type(_type) != Array) 
-	    _type = [_type];
-	if (!_type || (type(_type) == Array && _type[0] == undefined))
-	    // end of recursion
+	if (isundefined(type2) || isundefined(_type) || _type === null)
 	    return false;
-	else {
-	    var others = [];
-	    for each (var t in _type) {
-		if (type2 == t) return true;
-		others = others.concat(t.__subclasses__);
-	    }
-	    return issubclass(type2, others);
+	if (type(_type) != Array) 
+	    _type = [_type];
+	var others = [];
+	for each (var t in _type) {
+	    if (isundefined(t)) continue;
+	    if (type2 === t) return true;
+	    others = others.concat(t.__subclasses__);
 	}
+	return (others.length !== 0)? issubclass(type2, others) : false;
     }
 
     //Arguments wraped, whit esteroids
@@ -1839,10 +1880,7 @@
             if (callable(object1['__ne__'])) return object1.__ne__(object2);
             return object1 != object2;
         },
-        filter: function(func, sequence) { 
-	    //TODO: hacer algo mejor o dejar solo el de los array
-        },
-        float: function(value) {
+	number: function(value) {
             if (isinstance(value, String) || isinstance(value, Number)) {
 		var number = Number(value);
 		if (isNaN(number))
@@ -1851,22 +1889,13 @@
 	    }
 	    throw new TypeError('Argument must be a string or number');
         },
-        flatten: function(array) { 
+	flatten: function(array) { 
             return array.reduce(function(a,b) { return a.concat(b); }, []); 
         },
         include: function(object, element){
             if (object == undefined) return false;
             if (callable(object['__contains__'])) return object.__contains__(element);
             return object.indexOf(element) > -1;
-        },
-        int: function(value) {
-            if (isinstance(value, String) || isinstance(value, Number)) {
-		var number = Math.floor(value);
-		if (isNaN(number))
-		    throw new ValueError('Invalid literal');
-		return number;
-	    }
-	    throw new TypeError('Argument must be a string or number');
         },
         len: function(object) {
             if (object && callable(object['__len__']))
@@ -1914,6 +1943,11 @@
         },
 	items: function(object){
             return zip(keys(object), values(object));
+        },
+        inspect: function(object) {
+            if (isundefined(object)) return 'undefined';
+            if (object === null) return 'null';
+            return callable(object.inspect) ? object.inspect() : String(object);
         },
         unique: function(sorted) {
             return sorted.reduce(function(array, value) {
@@ -1972,18 +2006,19 @@
 	interpret: function(value) {
 	    return value == null ? '' : String(value);
 	},
-	specialChar: {
-	    '\b': '\\b',
-	    '\t': '\\t',
-	    '\n': '\\n',
-	    '\f': '\\f',
-	    '\r': '\\r',
-	    '\\': '\\\\'
-	}
+        special: {    // table of character substitutions
+            '\b': '\\b',
+            '\t': '\\t',
+            '\n': '\\n',
+            '\f': '\\f',
+            '\r': '\\r',
+            '"' : '\\"',
+            '\\': '\\\\'
+        }
     });
 
     extend(String.prototype, {
-	gsub: function(pattern, replacement) {
+        gsub: function(pattern, replacement) {
 	    var result = '', source = this, match;
 	    replacement = arguments.callee.prepare_replacement(replacement);
 
@@ -2017,10 +2052,33 @@
 	    if (args[0] && (type(args[0]) == Object || isinstance(args[0], object)))
                 string = new Template(string, args[1]).evaluate(args[0]);
 	    else
-                string = string.gsub(/%s/, function(match) { 
-                    return (args.length != 0)? str(args.shift()) : match[0]; 
+                string = string.gsub(/%(-?\d*|\d*\.\d*)([s,n])/, function(match) {
+		    if (args.length == 0) return match[0];
+		    var value = (match[2] === 's')? str(args.shift()) : number(args.shift());
+		    return  value.format(match[1]); 
                 });
 	    return string.gsub(/<ESC%%>/, function(match){ return '%'; });
+	},
+
+	format: function(f) { 
+	    var pad = (f[0] == '0')? '0' : ' ';
+	    var left = false;
+	    if (f[0] == '-') {
+		left = true;
+		f = f.substr(1);
+	    };
+	    f = Number(f);
+	    var result = (left)? this + pad.times(f - this.length): pad.times(f - this.length) + this;
+	    return result;
+	},
+
+        inspect: function inspect(use_double_quotes) {
+	    var escaped = this.gsub(/[\x00-\x1f\\]/, function(match) {
+                var character = String.special[match[0]];
+                return character ? character : '\\u00' + match[0].charCodeAt().format('02', 16);
+            });
+	    if (use_double_quotes) return '"' + escaped.replace(/"/g, '\\"') + '"';
+	       return "'" + escaped.replace(/'/g, '\\\'') + "'";
 	},
 
 	truncate: function(length, truncation) {
@@ -2068,25 +2126,6 @@
 	    div.childNodes[0].nodeValue) : '';
 	},
 
-	toqueryparams: function(separator) {
-	    var match = this.strip().match(/([^?#]*)(#.*)?$/);
-	    if (!match) return { };
-
-	    return match[1].split(separator || '&').reduce(function(hash, pair) {
-	    if ((pair = pair.split('='))[0]) {
-		var key = decodeURIComponent(pair.shift());
-		var value = pair.length > 1 ? pair.join('=') : pair[0];
-		if (value != undefined) value = decodeURIComponent(value);
-
-		if (key in hash) {
-		    if (type(hash[key]) != Array) hash[key] = [hash[key]];
-		    hash[key].push(value);
-		} else hash[key] = value;
-	    }
-	    return hash;
-	    }, {});
-	},
-
 	succ: function() {
 	    return this.slice(0, this.length - 1) +
 	    String.fromCharCode(this.charCodeAt(this.length - 1) + 1);
@@ -2122,15 +2161,6 @@
 	    return this.gsub(/_/,'-');
 	},
 
-	inspect: function(useDoubleQuotes) {
-	    var escapedString = this.gsub(/[\x00-\x1f\\]/, function(match) {
-	    var character = String.specialChar[match[0]];
-	    return character ? character : '\\u00' + match[0].charCodeAt().toPaddedString(2, 16);
-	    });
-	    if (useDoubleQuotes) return '"' + escapedString.replace(/"/g, '\\"') + '"';
-	    return "'" + escapedString.replace(/'/g, '\\\'') + "'";
-	},
-
 	startswith: function(pattern) {
 	    return this.indexOf(pattern) === 0;
 	},
@@ -2152,18 +2182,48 @@
 	return function(match) { return template.evaluate(match) };
     };
 
-    String.prototype.parsequery = String.prototype.toqueryparams;
-
     extend(String.prototype.escapeHTML, {
 	div:  document.createElement('div'),
 	text: document.createTextNode('')
     });
 
     String.prototype.escapeHTML.div.appendChild(String.prototype.escapeHTML.text);
-    
+
+    //--------------------------------------- Number -------------------------------------//
+    extend(Number.prototype, {
+        format: function(f, radix) {
+	    var pad = (f[0] == '0')? '0' : ' ';
+	    var left = false;
+	    if (f[0] == '-') {
+		left = true;
+		f = f.substr(1);
+	    };
+	    var [fe, fd] = f.split('.').map(function (n) {return Number(n);});
+	    if (!isundefined(fd))
+		var result = this.toFixed(fd);
+	    else 
+		var result = this.toString(radix || 10);
+	    [e, d] = result.split('.');
+	    e = (left)? e + pad.times(fe - e.length) : pad.times(fe - e.length) + e;
+	    return e + (!isundefined(d)? '.' + d : '');
+	}
+    });
+
+    //--------------------------------------- Date -------------------------------------//
+    extend(Date.prototype, {
+        toISO8601: function() {
+	    return this.getUTCFullYear() + '-' +
+		(this.getUTCMonth() + 1).format('02') + '-' +
+		this.getUTCDate().format('02') + 'T' +
+		this.getUTCHours().format('02') + ':' +
+		this.getUTCMinutes().format('02') + ':' +
+		this.getUTCSeconds().format('02') + 'Z'; 
+	}
+    });
+
     //--------------------------------------- Element -------------------------------------//
     extend(Element, {
-	iselement: function(object) {
+	isElement: function(object) {
 	    return !!(object && object.nodeType == 1);
 	},
 	_insertion_translations: {
@@ -2217,13 +2277,13 @@
 	    return this;
 	},
 	update: function(content) {
-	    if (Element.iselement(content)) return this.update().insert(content);
+	    if (Element.isElement(content)) return this.update().insert(content);
 	    this.innerHTML = content.stripscripts();
 	    getattr(content, 'evalscripts')();
 	    return this;
 	},
 	insert: function(insertions) {
-	    if (isinstance(insertions, String) || isinstance(insertions, Number) || Element.iselement(insertions))
+	    if (isinstance(insertions, String) || isinstance(insertions, Number) || Element.isElement(insertions))
 		insertions = {bottom:insertions};
 	    var content, insert, tagName, childNodes, self = this;
 	    for (var position in insertions) {
@@ -2231,7 +2291,7 @@
 		position = position.toLowerCase();
 		insert = Element._insertion_translations[position];
 
-		if (Element.iselement(content)) {
+		if (Element.isElement(content)) {
 		    insert(this, content);
 		    continue;
 		}

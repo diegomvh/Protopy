@@ -11,9 +11,6 @@ function conditional_escape(v) { return v; }
 function escape(v) { return v; }
 
 /*
-from django.utils.datastructures import MultiValueDict, MergeDict
-from django.utils.translation import ugettext
-from django.utils.encoding import StrAndUnicode, force_unicode
 from django.utils.safestring import mark_safe
 from django.utils import datetime_safe
 from datetime import time
@@ -269,8 +266,6 @@ var MultipleHiddenInput = type('MultipleHiddenInput', HiddenInput, {
     },
 
     value_from_datadict: function(data, files, name) {
-        if (isinstance(data, [MultiValueDict, MergeDict]))
-            return data.getlist(name);
         return data[name] || null;
     }
 });
@@ -457,9 +452,7 @@ var SelectMultiple = type('SelectMultiple', Select, {
     },
 
     value_from_datadict: function(data, files, name) {
-        if (isinstance(data, [MultiValueDict, MergeDict]))
-            return data.getlist(name);
-        return data.get(name, null);
+        return data[name] || null;
     },
 
     _has_changed: function(initial, data) {
@@ -507,7 +500,7 @@ var RadioInput = type('RadioInput', object, {
         var final_attrs = extend({}, this.attrs, {'type':'radio', 'name':this.name, 'value':this.choice_value});
         if (this.is_checked())
             final_attrs['checked'] = 'checked';
-        return '<input%s />'.subs(flatatt(final_attrs));
+//         return '<input%s />'.subs(flatatt(final_attrs));
     }
 });
 /*

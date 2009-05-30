@@ -213,7 +213,7 @@ var QuerySet = type('QuerySet', object, {
                 if (isinstance(k, Array)) {
                     if (k[1] != null)
                         // Some people insist on passing in strings here.
-                        var bound = int(k[1])
+                        var bound = number(k[1])
                     else
                         var bound = null;
                 } else {
@@ -230,11 +230,11 @@ var QuerySet = type('QuerySet', object, {
         if (isinstance(k, Array)) {
             var qs = this._clone();
             if (k[0] != null)
-                var start = int(k[0]);
+                var start = number(k[0]);
             else
                 var start = null;
             if (k[1] != null)
-                var stop = int(k[1]);
+                var stop = number(k[1]);
             else
                 var stop = null;
             qs.query.set_limits(start, stop);
@@ -315,9 +315,9 @@ var QuerySet = type('QuerySet', object, {
      * keyword arguments.
      */
     'get': function get() {
-	// Si only one argument and is number call to __getitem__
+	// If call whit number then call to __getitem__
         arguments = new Arguments(arguments);
-        if (len(arguments) == 1 && bool(arguments.args) && isinstance(arguments.args[0], Number))
+        if (len(arguments.args) == 1 && isinstance(arguments.args[0], Number))
 	    return this.__getitem__(arguments.args[0]);
 	var clone = this.filter.apply(this, arguments.argskwargs);
         var num = len(clone);
@@ -359,7 +359,7 @@ var QuerySet = type('QuerySet', object, {
                 obj.save(true, null);
                 transaction.savepoint_commit(sid);
                 return [obj, true];
-            } catch (e if e instanceof IntegrityError) {
+            } catch (e if isinstance(e, IntegrityError)) {
                 transaction.savepoint_rollback(sid);
                 try {
                     return [this.get(kwargs), false];

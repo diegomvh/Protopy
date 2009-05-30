@@ -20,7 +20,7 @@
     framexbottommargin=3pt,
     framexleftmargin=0.4cm,
     framesep=0pt,
-    rulesep=.4pt,
+    rulesep=0.4pt,
     %
     showstringspaces = false,
     basicstyle=\small\ttfamily,
@@ -35,7 +35,9 @@
 \lstdefinestyle{consola}{
   basicstyle=\scriptsize\bf\ttfamily,
   backgroundcolor=\color{gray90},
-  numbers=none
+  numbers=none,
+  framexleftmargin=0pt,
+  framexrightmargin=6pt
 }
 \lstdefinestyle{python}{
   language=Python,
@@ -275,7 +277,7 @@ Una tupla puede ser considreada como un arreglo fijo de valores que pueden
 tener diferentes tipos. Las tuplas pueden ser accedidas secuencialmente (\emph{iteradas}) en orden ascendente o descendente, se puede 
 acceder al n-ésimo item, pero no puede ser modificadas se generará una excepción debido 
 a que es un tipo de datos estático.
-
+\begin{lstlisting}[style=python]
 a = (1, 2, 3) # Una tupla de enteros
 b = (1, 1.0, 'pasta') # Una tupla con un conjuto dispar 
                       # de elementos
@@ -293,6 +295,10 @@ c = (1, 2, 3, 'bacalao')
 w, x, y, z = c	# Asignación posicional
 \end{lstlisting}
 
+
+\begin{lstlisting}[style=javascript,label=asignacion-python,caption=Asignacion en Python]
+function pepe(){}
+\end{lstlisting}
 
 Una lista es una coección ordenada de objetos del mismo o diferente tipo que pueden 
 ser modificados. Básicamente la lista se comporta como una tupla mutable.
@@ -731,18 +737,24 @@ como el método (GET, POST), los elementos de la query http.
 \section{Integración}
 \section{Convivencia}
 
+\subsection{Modos de trabajo}
+Los distinotos modos de trabajo de la aplicacion son:
+\subsubsection{Estado online sin soporte offline}
+En este modo la aplicacion trabaja directamente sobre el servidor de aplicacion y depende completamente de una conexion.
+Al activar e implementar el soporte offline para nuestra aplicacion, en el servidor; el cliente debe ser conciente de este cambio y pasar a soportar los modos.
+\subsubsection{Estado online con soporte offline}
+\subsubsection{Estado offline con soporte offline}
+
 \chapter{Lineas futuras}
-
-
-
-\section{La libreria protopy}
-\input{
-desarrollo/protopy.tex}
-\section{El framework doff}
-\input{desarrollo/doff.tex}
+\section{Sitio de administración}
+\section{Historial de navegación}
+\section{Workers con soporte para Javascript 1.7}
 
 \appendix
-
+\chapter{Protopy}
+\input{desarrollo/protopy.tex}
+\chapter{Doff}
+\input{desarrollo/doff.tex}
 \chapter{MIME}
 
 \textbf{MIME} \label{mime}(\textit{\textbf{M}ultipurpose \textbf{I}nternet \textbf{M}ail \textbf{E}xtensions}), 
@@ -849,16 +861,7 @@ contenido en forma de text/plain y text/html)}
 \item{muchas otras construcciones de mensaje}
 \end{itemize}
 
-% \title{Protopy}
-\chapter{Referencia Protopy}
-%\chapter*{Plataforma}
-
-\section{Módulos}
-\subsection{event}
-\begin{description}
-\item[event.connect]{Concetar}
-\end{description}
-\section{Plataforma Mozilla}
+\chapter{Plataforma Mozilla}
 \begin{itemize}
   \item Porque desarrollaron e implementaron Javascript 1.7
   \item Porque javascript 1.7 tomo semántica (y sintaxis???) de Python
@@ -873,9 +876,6 @@ contenido en forma de text/plain y text/html)}
   \end{item}
   \item 
 \end{itemize}
-
-
-
 
 \label{ch:protopy}
 

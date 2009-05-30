@@ -5,10 +5,6 @@
 //Database
 'DATABASE_ENGINE': 'gears',
 'DATABASE_NAME': 'blog.db',
-'DATABASE_USER': '',
-'DATABASE_PASSWORD': '',
-'DATABASE_HOST': '',
-'DATABASE_PORT': '',
 'DATABASE_OPTIONS': {},
 
 'MEDIA_URL': '/medios/',
@@ -17,7 +13,7 @@
 
 'INSTALLED_APPS': [ 'blog.apps.post' ],
 
-'TEMPLATE_URLS': [ '/blog/templates/' ],
+'TEMPLATE_URLS': [ '/static/blog/templates/' ],
 
 'TEMPLATE_STRING_IF_INVALID': '{{ No esta <strong>%s</strong> en el contexto }}',
 

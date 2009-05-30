@@ -73,17 +73,261 @@ Undo de los principales inconvenientes a los que protopy da solucion es a la inc
 esto es logrado mediante los modulos.
 Basicamente un modulo en un archivo con codigo javascript que recide en el servidor y es obtenido y ejecutado en el cliente.
 
-\subsubsection*{Estructura basica de un modulo}
-	//modulo.js
-	funciones
-	objetos
-	etc...
-	publish(...)
+\begin{lstlisting}[style=javascript,label=estructura-modulo,caption=Estructura de un modulo]
+//Archivo: tests/module.js
+require('event');
 
-Modulos:
-	sys
-	exception
-	event
-	ajax
-	builtin
-	timer
+var h1 = $('titulo');
+
+function set_texto(txt) {
+    h1.update(txt);
+}
+
+function get_texto() {
+    return h1.innerHTML;
+}
+
+event.connect($('titulo'), 'click', function(event) {
+    alert('El texto es: ' + event.target.innerHTML);
+});
+
+publish({
+    set_texto: set_texto,
+    get_texto: get_texto
+});
+\end{lstlisting}
+
+\begin{lstlisting}[style=consola,label=estructura-modulo-test,caption=Test]
+>>> require('tests.module')
+GET http://localhost:8080/tests/protopy/module.js
+Object __file__=/tests/protopy/module.js
+>>> module.get_texto()
+"Test de modulo"
+>>> module.set_texto('Un titulo')
+>>> require('tests.module', 'get_texto')
+get_texto()
+>>> get_texto()
+"Un titulo"
+>>> require('tests.module', '*')
+>>> set_texto('Hola luuu!!!')
+>>> get_texto()
+"Hola luuu!!!"
+\end{lstlisting}
+Modulos
+var sys = ModuleManager.create('sys', 'built-in', { 
+	version: 0.8,
+	browser: {
+	    IE:     !!(window.attachEvent && navigator.userAgent.indexOf('Opera') === -1),
+	    Opera:  navigator.userAgent.indexOf('Opera') > -1,
+	    WebKit: navigator.userAgent.indexOf('AppleWebKit/') > -1,
+	    Gecko:  navigator.userAgent.indexOf('Gecko') > -1 && navigator.userAgent.indexOf('KHTML') === -1,
+	    MobileSafari: !!navigator.userAgent.match(/Apple.*Mobile.*Safari/),
+	    features: {
+		XPath: !!document.evaluate,
+		SelectorsAPI: !!document.querySelector,
+		ElementExtensions: !!window.HTMLElement,
+		SpecificElementExtensions: document.createElement('div')['__proto__'] &&
+						document.createElement('div')['__proto__'] !==
+						document.createElement('form')['__proto__']
+	    }
+	},
+	get_gears: get_gears,
+	register_path: function(module, path) { 
+	},
+	module_url: function(name, postfix) {
+	},
+	modules: ModuleManager.modules,
+	paths: ModuleManager.paths
+    });
+
+    sys.browser.features.Gears = !!get_gears() || false;
+
+var exception = ModuleManager.create('exceptions', 'built-in', {
+        Exception: Exception,
+        AssertionError: type('AssertionError', Exception),
+        AttributeError: type('AttributeError', Exception),
+        LoadError: type('LoadError', Exception),
+        KeyError: type('KeyError', Exception),
+        NotImplementedError: type('NotImplementedError', Exception),
+        TypeError: type('TypeError', Exception),
+        ValueError: type('ValueError', Exception),
+    });
+
+
+var event = ModuleManager.create('event', 'built-in', {
+        connect: function(obj, event, context, method) {
+	},
+        disconnect: function(handle) {
+	},
+        subscribe: function(topic, context, method) {
+	},
+        unsubscribe: function(handle) {
+	},
+        publish: function(topic, args) {
+	},
+        connectpublisher: function(topic, obj, event) {
+	},
+        fixevent: function(){},
+        stopevent: function(){},
+	keys: { BACKSPACE: 8, TAB: 9, CLEAR: 12, ENTER: 13, SHIFT: 16, CTRL: 17, ALT: 18, PAUSE: 19, CAPS_LOCK: 20, 
+		    ESCAPE: 27, SPACE: 32, PAGE_UP: 33, PAGE_DOWN: 34, END: 35, HOME: 36, LEFT_ARROW: 37, UP_ARROW: 38,
+		    RIGHT_ARROW: 39, DOWN_ARROW: 40, INSERT: 45, DELETE: 46, HELP: 47, LEFT_WINDOW: 91, RIGHT_WINDOW: 92,
+		    SELECT: 93, NUMPAD_0: 96, NUMPAD_1: 97, NUMPAD_2: 98, NUMPAD_3: 99, NUMPAD_4: 100, NUMPAD_5: 101,
+		    NUMPAD_6: 102, NUMPAD_7: 103, NUMPAD_8: 104, NUMPAD_9: 105, NUMPAD_MULTIPLY: 106, NUMPAD_PLUS: 107,
+		    NUMPAD_ENTER: 108, NUMPAD_MINUS: 109, NUMPAD_PERIOD: 110, NUMPAD_DIVIDE: 111, F1: 112, F2: 113, F3: 114,
+		    F4: 115, F5: 116, F6: 117, F7: 118, F8: 119, F9: 120, F10: 121, F11: 122, F12: 123, F13: 124, 
+		    F14: 125, F15: 126, NUM_LOCK: 144, SCROLL_LOCK: 145 }
+    });
+
+var timer = ModuleManager.create('timer', 'built-in', {
+	setTimeout: window.setTimeout,
+	setInterval: window.setInterval,
+	clearTimeout: window.clearTimeout,
+	delay: function(f) {
+	},
+	defer: function(f) {
+	}
+    });
+
+var ajax = ModuleManager.create('ajax', 'built-in', {
+	Request: Request,
+	Response: Response,
+	toQueryParams: function(string, separator) {
+	},
+	toQueryString: function(params) {
+    });
+
+var dom = ModuleManager.create('dom', 'built-in', {
+	query: query,
+    });
+
+builtin = ModuleManager.create('builtin','built-in', {
+        publish: publish,
+        require: require,
+	$: function () { 
+	    var result = array(arguments).map(function (element) { return query(isinstance(element, String)? '#' + element : element)[0]; });
+	    return (len(result) == 1)? result[0] : result; 
+	},
+	$$: query,
+	object: object,
+	type: type,
+	extend: function extend() {return __extend__.apply(this, [false].concat(array(arguments)));}
+        super: super,
+	isundefined: isundefined,
+        isinstance: isinstance,
+        issubclass: issubclass,
+        Arguments: Arguments,
+        Template: Template,
+        Dict: Dict,
+        Set: Set,
+	hash: hash,
+        id: id,
+	getattr: getattr,
+	setattr: setattr,
+	hasattr: hasattr,
+        assert: function(test, text) {
+        },
+        bool: function(object) {
+        },
+        callable: function(object) {
+        },
+        chr: function(number){ 
+        },
+        ord: function(ascii) {
+        },
+        bisect: function(array, element) {
+        },
+        //no se porque no anda el dir
+        equal: function(object1, object2) {
+        },
+        nequal: function(object1, object2) {
+        },
+	number: function(value) {
+        },
+	flatten: function(array) { 
+        },
+        include: function(object, element){
+        },
+        len: function(object) {
+        },
+        array: function(iterable) {
+        },
+        mult: function(array, value) {
+        },
+        print: window.console && window.console.log || function(){},
+        range: function(start, stop, step){
+        },
+        str: function(object) {
+        },
+        values: function(obj){ 
+        },
+        keys: function(object){
+        },
+	items: function(object){
+        },
+        inspect: function(object) {
+        },
+        unique: function(sorted) {
+        },
+        xrange: function(start, stop, step){
+        },
+        zip: function(){
+});
+
+// ******************************* EXTENDING JAVASCRIPT ************************************* //
+(function(){
+    //--------------------------------------- String -------------------------------------//
+        gsub: function(pattern, replacement) {
+	sub: function(pattern, replacement, count) {
+	subs: function() {
+	format: function(f) { 
+        inspect: function inspect(use_double_quotes) {
+	truncate: function(length, truncation) {
+	strip: function() {
+	striptags: function() {
+	stripscripts: function() {
+	extractscripts: function() {
+	evalscripts: function() {
+	escapeHTML: function() {
+	unescapeHTML: function() {
+	succ: function() {
+	times: function(count) {
+	camelize: function() {
+	capitalize: function() {
+	underscore: function() {
+	dasherize: function() {
+	startswith: function(pattern) {
+	endswith: function(pattern) {
+	blank: function() {
+
+    //--------------------------------------- Number -------------------------------------//
+        format: function(f, radix) {
+
+    //--------------------------------------- Date -------------------------------------//
+        toISO8601: function() {
+
+    //--------------------------------------- Element -------------------------------------//
+	visible: function() {
+	toggle: function() {
+	hide: function() {
+	show: function() {
+	remove: function() {
+	update: function(content) {
+	insert: function(insertions) {
+	select: function(selector) {
+    });
+
+    //--------------------------------------- Forms -------------------------------------//    
+	disable: function() {
+	enable: function() {
+	serialize: function() {
+
+    Form.Element = {
+	serialize: function() {
+	get_value: function() {
+	set_value: function(value) {
+	clear: function() {
+	present: function() {
+	activate: function() {
+	disable: function() {
+	enable: function() {
