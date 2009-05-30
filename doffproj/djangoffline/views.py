@@ -11,6 +11,7 @@ from pprint import pformat
 from remotemodels import RemoteModelProxy
 import os
 import re
+from djangoffline.debug import html_output
  
 def create_system_manifest(request):
     version = None
@@ -64,7 +65,7 @@ def export_model_proxy(request):
 INVALID_TEMPLATE_SUFFIXES = re.compile(r'(?:~|#)$')
 valid_templates = lambda name: not INVALID_TEMPLATE_SUFFIXES.search( name )
  
-def _retrieve_templates_from_path(path, template_bases = None):
+def _retrieve_templates_from_path(path, template_bases = None, strip_first_slash = True):
     '''
     '''
     from os.path import join
@@ -77,21 +78,20 @@ def _retrieve_templates_from_path(path, template_bases = None):
             #import ipdb; ipdb.set_trace()
             
             if t_base in root:
-                print "####", t_base,'---', root
                 index = root.index(t_base)
                 root = root[index + len(t_base):]
-                print "MODIFICADO", index
-                print root
+                
         
         template_files += map(lambda f: join(root, f), files)
-        print "Root", root
         
-        #template_files += files
-        #print "***"
-        #print files
-        
-    return filter(valid_templates, template_files)
-    #output = '\n'.join(map(lambda x: '/'.join(['templates', x]), template_files))
+    templates = filter(valid_templates, template_files)
+    if strip_first_slash:
+        templates = filter(
+                                 lambda f: f.startswith('/') and f[1:] or f, 
+                                 templates)
+    return templates
+
+
     
 
 def list_templates(request):
@@ -111,6 +111,5 @@ def list_templates(request):
         for path in app_template_dirs:
             template_files += _retrieve_templates_from_path(path, template_dirs)
         
-    output = pformat(template_files, 2)
-    output = output.replace('\n', '<br />')
-    return HttpResponse( output )
+    
+    return HttpResponse( html_output(template_files))
