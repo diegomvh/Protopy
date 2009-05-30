@@ -122,7 +122,7 @@ var CharField = type('CharField', Field, {
     'widget_attrs': function widget_attrs(widget) {
         if (this.max_length != null && isinstance(widget, [TextInput, PasswordInput]))
             // The HTML attribute is maxlength, not max_length.
-            return {'maxlength': str(this.max_length)};
+            return {'maxlength': string(this.max_length)};
     }
 });
 
@@ -146,7 +146,7 @@ var IntegerField = type('IntegerField', Field, {
         if (include(EMPTY_VALUES, value))
             return null;
         try {
-            value = number(str(value));
+            value = number(string(value));
         } catch (e if e instanceof ValueError || e instanceof TypeError) {
             throw new ValidationError(this.error_messages['invalid']);
         }

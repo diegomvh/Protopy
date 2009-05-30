@@ -667,7 +667,7 @@
 
 	'getStatus': function getStatus() {
 	    try {
-	    return this.transport.status || 0;
+		return this.transport.status || 0;
 	    } catch (e) { return 0 }
 	},
 
@@ -1518,7 +1518,7 @@
     },{
 	//Prototype
 	__init__: function(template, pattern) {
-	    this.template = str(template);
+	    this.template = string(template);
 	    this.pattern = pattern || Template.pattern;
 	},
 
@@ -1914,12 +1914,6 @@
             if (iterable.length != undefined)
                 return Array.prototype.slice.call(iterable);
         },
-        mult: function(array, value) {
-            var result = [];
-            for (var i = 0; i < value; i++)
-                result = result.concat(array);
-            return result;
-        },
         print: window.console && window.console.log || function(){},
         range: function(start, stop, step){
             var rstep = step || 1;
@@ -1930,7 +1924,7 @@
                 ret.push(i);
             return ret;
         },
-        str: function(object) {
+        string: function(object) {
             if (object && callable(object['__str__'])) 
                 return object.__str__();
             return String(object);
@@ -2054,7 +2048,7 @@
 	    else
                 string = string.gsub(/%(-?\d*|\d*\.\d*)([s,n])/, function(match) {
 		    if (args.length == 0) return match[0];
-		    var value = (match[2] === 's')? str(args.shift()) : number(args.shift());
+		    var value = (match[2] === 's')? string(args.shift()) : number(args.shift());
 		    return  value.format(match[1]); 
                 });
 	    return string.gsub(/<ESC%%>/, function(match){ return '%'; });
@@ -2131,8 +2125,9 @@
 	    String.fromCharCode(this.charCodeAt(this.length - 1) + 1);
 	},
 
-	times: function(count) {
-	    return count < 1 ? '' : new Array(count + 1).join(this);
+	times: function(count, sep) {
+	    sep = sep | '';
+	    return count < 1 ? '' : [this for i in new Array(count + 1)].join(sep);
 	},
 
 	camelize: function() {

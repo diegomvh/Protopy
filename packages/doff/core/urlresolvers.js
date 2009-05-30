@@ -87,10 +87,10 @@ var RegexURLPattern = type('RegexURLPattern', object, {
             this._callback = get_callable(this._callback_str);
         } catch (e if isinstance(e, LoadError)) {
             var [mod_name, none] = get_mod_func(this._callback_str);
-            throw new ViewDoesNotExist("Could not import %s. Error was: %s".subs(mod_name, str(e)));
+            throw new ViewDoesNotExist("Could not import %s. Error was: %s".subs(mod_name, string(e)));
         } catch (e) {
             var [mod_name, func_name] = get_mod_func(this._callback_str);
-            throw new ViewDoesNotExist("Tried %s in module %s. Error was: %s".subs(func_name, mod_name, str(e)));
+            throw new ViewDoesNotExist("Tried %s in module %s. Error was: %s".subs(func_name, mod_name, string(e)));
         }
         return this._callback;
     }
