@@ -5,6 +5,41 @@
 \usepackage[bookmarks=false,colorlinks=true,linkcolor={blue},pdfstartview={XYZ null null 1.22}]{hyperref}
 \usepackage[pdftex]{graphicx}
 
+\usepackage{glossary}
+\makeglossary
+
+
+
+\usepackage{fancyhdr}
+% \pagestyle{fancy}
+% \fancyfoot{}
+
+% \fancyhead[CO,CE]{---Draft---}
+% \fancyfoot[CO,CE]{Confidential}
+% \fancyfoot[RO, LE] {\thepage}
+%\renewcommand{\headrulewidth}{0.4pt}
+% \renewcommand{\footrulewidth}{0.4pt}
+
+
+\title{Sistemas Web Desconectados}
+\author{Defossé Nahuel, van Haaster Diego Marcos}
+\date{\today}
+
+\pagestyle{fancy}
+\fancyhead{}
+\renewcommand\headrulewidth{.1pt}
+\fancyhead[LO,RE]{\footnotesize\sffamily\lite\leftmark}
+\fancyhead[LE,RO]{\footnotesize\sffamily\lite\itshape\rightmark}
+% Esta fuente es muy grande y se pisan los titulos
+%\fancyhead[LO,RE]{\footnotesize\lite\leftmark}
+%\fancyhead[LE,RO]{\footnotesize\lite\itshape\rightmark}
+\fancyfoot[c]{\thepage}
+%\fancyfoot[LE,RO]{\setlength{\fboxsep}{2pt}\ovalbox{\footnotesize\sffamily\thepage}}
+%\fancyfoot[LO,RE]{\footnotesize\sffamily\lite\@title}
+%\fancyfoot[R]{\setlength{\fboxsep}{2pt}{\ovalbox{\footnotesize\sffamily\thepage}}}
+%\fancyfoot[L]{\footnotesize\sffamily\lite\thepage}
+
+
 \usepackage{epigraph} %para los quote en cada capitulo
 \usepackage{color}
 \definecolor{gray90}{gray}{.90}
@@ -59,9 +94,7 @@
 
 \begin{document}
 
-\title{Sistemas Web Desconectados}
-\author{Defossé Nahuel, van Haaster Diego Marcos}
-\date{\today}
+
 
 \maketitle
 
@@ -734,6 +767,62 @@ como el método (GET, POST), los elementos de la query http.
 
 \chapter{Integración y metodología de desarrollo con framework web}
 \section{Mecanismos de extension de Django}
+
+\subsection{Comandos Personalizados}
+
+
+% La interacción con Django se realiza mediante comandos CLI\footnote{
+% \emph{Command Line Interfece}, interfase de linea de comandos, tamién
+% conocidos como comandos de consola o  terminal}. Django posee un set
+% de comandos que permiten crear proyectos, crear aplicaciones, sincronizar
+% la definición del modelo con la base de datos, volcado y recuperación de datos,
+% ejecución del servidor de desarrollo entre otras funcionalidades.
+
+Para poder realizar extensiones sobre la funcionalidad de Django sus
+desarrolladores han añadido la posibilidad de crear comandos
+personalizados. Un comando personalizado se define en un módulo, dentro
+de una aplicación y es ejecutado de manrera similar a cualquer 
+otro comando provisto por el framework(como 
+\emph{syncdb}, \emph{runserver}, \emph{dumpdata}).
+
+De igual manera que los comandos provistos por el framework, los comandos
+personalizados son ejecutados mediante el script de administración
+de proyecto \emph{manage.py} o \emph{django-admin.py}.
+
+Un comando se define dentro de una aplicación. No existen comandos a nivel
+proyecto. Para que estos comandos sean detectados por el módulo de
+administración de poryectos deben  respetar la siguiente estructura dentro del
+directorio de la aplicación 
+\begin{verbatim}
+	management/
+	    __init__.py
+	    commands/
+	        __init__.py
+	        mi_comando.py
+\end{verbatim}
+Además la aplicación debe estar incluida en \textbf{INSTALLED\_APPS}
+dentro de el módulo de configuración de proyecto \textbf{settings.py}.
+
+\begin{lstlisting}[style=python,label=basic-django-command,caption=Comando
+personalizado básico en Django]
+
+from django.core.management.base import NoArgsCommand
+
+class Command(NoArgsCommand):
+  help = '''Descripción del comando '''
+  def handle_noargs(self, **options):
+    print "Soy un comando personalizado"
+
+\end{lstlisting}
+
+Desde el punto de vista del lenguaje, la creación de un comando es la creación
+de un módulo management.commands.nombre_comando, en el cual se extiende 
+a alguna clase base Command (que se encuentran en django.core.management.base).
+
+Las clases base diponible son NoArgsCommand, para la imeplentación de comandos
+que no reciben argumentos; AppLabelCommand para la implementación de comandos
+que reciben como argumento el nombre de una aplicación instalada y 
+
 \section{Integración}
 \section{Convivencia}
 
@@ -912,4 +1001,9 @@ Type sirve para defninir clases.
 	}
 
 \end{thebibliography}
+
+% Probando el glosario
+\glossary{name={entry name}, description={entry description}}
+\printglossary
+
 \end{document}
