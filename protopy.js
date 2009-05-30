@@ -2127,7 +2127,14 @@
 
 	times: function(count, sep) {
 	    sep = sep | '';
-	    return count < 1 ? '' : [this for i in new Array(count + 1)].join(sep);
+	    if (count < 1)
+	    	return '';
+	    var ret = [];
+	    
+	    for (var i = 0; i < count +1; i++)
+	    	ret.push(this.toString());
+	    // FIXME:
+	    return ret.join(sep);
 	},
 
 	camelize: function() {

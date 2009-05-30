@@ -80,7 +80,7 @@ def _retrieve_templates_from_path(path, template_bases = None, strip_first_slash
             if t_base in root:
                 index = root.index(t_base)
                 root = root[index + len(t_base):]
-                
+                break
         
         template_files += map(lambda f: join(root, f), files)
         
@@ -95,7 +95,6 @@ def _retrieve_templates_from_path(path, template_bases = None, strip_first_slash
     
 
 def list_templates(request):
-    from pprint import pformat
     # Retrieve template full list
     
     template_dirs = map(lambda s: s.split(os.sep)[-1], settings.TEMPLATE_DIRS)
@@ -112,4 +111,4 @@ def list_templates(request):
             template_files += _retrieve_templates_from_path(path, template_dirs)
         
     
-    return HttpResponse( html_output(template_files))
+    return HttpResponse( html_output(template_files, indent = 2))
