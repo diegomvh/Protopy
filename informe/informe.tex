@@ -800,6 +800,7 @@ directorio de la aplicación
 	        __init__.py
 	        mi_comando.py
 \end{verbatim}
+
 Además la aplicación debe estar incluida en \textbf{INSTALLED\_APPS}
 dentro de el módulo de configuración de proyecto \textbf{settings.py}.
 
@@ -816,7 +817,7 @@ class Command(NoArgsCommand):
 \end{lstlisting}
 
 Desde el punto de vista del lenguaje, la creación de un comando es la creación
-de un módulo management.commands.nombre_comando, en el cual se extiende 
+de un módulo management.commands.nombre\_comando, en el cual se extiende 
 a alguna clase base Command (que se encuentran en django.core.management.base).
 
 Las clases base diponible son NoArgsCommand, para la imeplentación de comandos
