@@ -12,7 +12,6 @@
 'DATABASE_OPTIONS': {},
 
 
-
 {# Aca tenemos que meter la URL de los medios #}
 'MEDIA_URL': '{{ settings.MEDIA_URL }}',
 
@@ -25,9 +24,12 @@
                     
                     ],
 
+
 'TEMPLATE_URLS': [ 
                    '{{ settings.OFFLINE_BASE }}/templates/' 
                    ],
+                   
+
 
 'TEMPLATE_STRING_IF_INVALID': '{ { No esta <strong>%s</strong> en el contexto } }',
 

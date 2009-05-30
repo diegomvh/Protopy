@@ -11,7 +11,7 @@ publish({
         INSTALLED_APPS: [],
 
         // List of locations of the template source files, in search order.
-        TEMPLATE_URL: '/templates/',
+        TEMPLATE_URL: '/doffline/templates/',
 
         // List of callables that know how to import templates from various sources.
         // See the comments in django/core/template/loader.py for interface
