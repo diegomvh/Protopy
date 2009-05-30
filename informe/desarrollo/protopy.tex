@@ -4,7 +4,171 @@ que brinde el soporte a los requerimentos mas basicos.
 Esta librería contituye la base para posteriores contrucciones mas complejas en el ciente y auna herramientas
 que simplifican el desarrollo client-side.
 
-\subsection*{Constructor de tipos}
+\section{Modulos}
+Undo de los principales inconvenientes a los que protopy da solucion es a la inclucion dinamica de funcionalidad bajo demanda,
+esto es logrado mediante los modulos.
+Basicamente un modulo en un archivo con codigo javascript que recide en el servidor y es obtenido y ejecutado en el cliente.
+
+\begin{lstlisting}[style=javascript,label=estructura-modulo,caption=Estructura de un modulo]
+//Archivo: tests/module.js
+require('event');
+
+var h1 = $('titulo');
+
+function set_texto(txt) {
+    h1.update(txt);
+}
+
+function get_texto() {
+    return h1.innerHTML;
+}
+
+event.connect($('titulo'), 'click', function(event) {
+    alert('El texto es: ' + event.target.innerHTML);
+});
+
+publish({
+    set_texto: set_texto,
+    get_texto: get_texto
+});
+\end{lstlisting}
+
+\begin{lstlisting}[style=consola,label=estructura-modulo-test,caption=Test]
+>>> require('tests.module')
+GET http://localhost:8080/tests/protopy/module.js
+Object __file__=/tests/protopy/module.js
+>>> module.get_texto()
+"Test de modulo"
+>>> module.set_texto('Un titulo')
+>>> require('tests.module', 'get_texto')
+get_texto()
+>>> get_texto()
+"Un titulo"
+>>> require('tests.module', '*')
+>>> set_texto('Hola luuu!!!')
+>>> get_texto()
+"Hola luuu!!!"
+\end{lstlisting}
+
+\subsection{builtin}
+\subsection{sys}
+\subsection{exception}
+\subsection{event}
+\subsection{timer}
+\subsection{ajax}
+\subsection{dom}
+
+\section{sys}
+\subsection*{version}
+version: 0.8,
+\subsection*{browser}
+	browser: {
+	    IE:     !!(window.attachEvent && navigator.userAgent.indexOf('Opera') === -1),
+	    Opera:  navigator.userAgent.indexOf('Opera') > -1,
+	    WebKit: navigator.userAgent.indexOf('AppleWebKit/') > -1,
+	    Gecko:  navigator.userAgent.indexOf('Gecko') > -1 && navigator.userAgent.indexOf('KHTML') === -1,
+	    MobileSafari: !!navigator.userAgent.match(/Apple.*Mobile.*Safari/),
+	    features: {
+		XPath: !!document.evaluate,
+		SelectorsAPI: !!document.querySelector,
+		ElementExtensions: !!window.HTMLElement,
+		SpecificElementExtensions: document.createElement('div')['__proto__'] &&
+						document.createElement('div')['__proto__'] !==
+						document.createElement('form')['__proto__']
+	      Gears = !!get_gears() || false;
+
+	    }
+	},
+\subsection*{get\_gears}
+get\_gears: get_gears,
+\subsection*{register\_path}
+register\_path: function(module, path)
+\subsection*{module\_url}
+module\_url: function(name, postfix) {
+\subsection*{modules}
+modules: ModuleManager.modules,
+\subsection*{paths}
+paths: ModuleManager.paths
+
+\section{exception}
+var exception = ModuleManager.create('exceptions', 'built-in', {
+        Exception: Exception,
+        AssertionError: type('AssertionError', Exception),
+        AttributeError: type('AttributeError', Exception),
+        LoadError: type('LoadError', Exception),
+        KeyError: type('KeyError', Exception),
+        NotImplementedError: type('NotImplementedError', Exception),
+        TypeError: type('TypeError', Exception),
+        ValueError: type('ValueError', Exception),
+    });
+
+\section{event}
+\subsection*{connect}
+connect(object, event, context, method) {
+\subsection*{disconnect}
+disconnect(handle) {
+\subsection*{subscribe}
+subscribe(topic, context, method) {
+\subsection*{unsubscribe}
+unsubscribe(handle) {
+\subsection*{publish}
+publish(topic, args) {
+\subsection*{connectpublisher}
+connectpublisher(topic, obj, event) {
+\subsection*{fixevent}
+fixevent: function(){},
+\subsection*{stopevent}
+stopevent: function(){},
+\subsection*{keys}
+keys: { BACKSPACE: 8, TAB: 9, CLEAR: 12, ENTER: 13, SHIFT: 16, CTRL: 17, ALT: 18, PAUSE: 19, CAPS_LOCK: 20, 
+		    ESCAPE: 27, SPACE: 32, PAGE_UP: 33, PAGE_DOWN: 34, END: 35, HOME: 36, LEFT_ARROW: 37, UP_ARROW: 38,
+		    RIGHT_ARROW: 39, DOWN_ARROW: 40, INSERT: 45, DELETE: 46, HELP: 47, LEFT_WINDOW: 91, RIGHT_WINDOW: 92,
+		    SELECT: 93, NUMPAD_0: 96, NUMPAD_1: 97, NUMPAD_2: 98, NUMPAD_3: 99, NUMPAD_4: 100, NUMPAD_5: 101,
+		    NUMPAD_6: 102, NUMPAD_7: 103, NUMPAD_8: 104, NUMPAD_9: 105, NUMPAD_MULTIPLY: 106, NUMPAD_PLUS: 107,
+		    NUMPAD_ENTER: 108, NUMPAD_MINUS: 109, NUMPAD_PERIOD: 110, NUMPAD_DIVIDE: 111, F1: 112, F2: 113, F3: 114,
+		    F4: 115, F5: 116, F6: 117, F7: 118, F8: 119, F9: 120, F10: 121, F11: 122, F12: 123, F13: 124, 
+		    F14: 125, F15: 126, NUM_LOCK: 144, SCROLL_LOCK: 145 }
+    });
+
+\section{timer}
+\subsection*{setTimeout}
+setTimeout: window.setTimeout,
+\subsection*{setInterval}
+setInterval: window.setInterval,
+\subsection*{clearTimeout}
+clearTimeout: window.clearTimeout,
+\subsection*{delay}
+delay: function(f) {
+\subsection*{defer}
+defer: function(f) {
+
+\section{ajax}
+\subsection*{Request}
+new Request: Request,
+\subsection*{Response}
+new Response: Response,
+\subsection*{toQueryParams}
+toQueryParams(string, separator) -> object
+\subsection*{toQueryString}
+toQueryString(params) -> string
+
+\section{dom}
+\subsection*{query}
+query: query,
+
+\section{builtin}
+\subsection*{publish}
+publish(object)
+\subsection*{require}
+require(module[, object...]) -> module | object
+\subsection*{\$}
+\$(id) -> HTMLElement
+\$(id ...) -> [HTMLElement...]
+\subsection*{\$\$}
+\$\$(cssRule) -> [HTMLElement...]
+\subsection*{type, El constructor de tipos}
+type(name, [base...] [, forType ], forPrototype) -> newType
+
 Como ya se menciono anteriormente javascript es un lenguaje orientado a prototipos, para acercarnos un poco a la programacion
 de objetos, utilizamos una funcion constructora de tipos o clases a la que denominamos “type”.
 \begin{lstlisting}[style=javascript,label=definicion-de-tipos,caption=Definicion de tipos]
@@ -68,266 +232,178 @@ Exception: Piton no camina args=[1] message=Piton no camina
 Doris la piton esta reptando
 \end{lstlisting}
 
-\subsection*{Modulos}
-Undo de los principales inconvenientes a los que protopy da solucion es a la inclucion dinamica de funcionalidad bajo demanda,
-esto es logrado mediante los modulos.
-Basicamente un modulo en un archivo con codigo javascript que recide en el servidor y es obtenido y ejecutado en el cliente.
+\subsection*{extend}
+extend(destiny, source) -> alteredDestiny
+\subsection*{super}
+super(destiny, source) -> alteredDestiny
+\subsection*{isundefined}
+isundefined(destiny, source) -> alteredDestiny
+\subsection*{isinstance}
+isundefined(destiny, source) -> alteredDestiny
+\subsection*{issubclass}
+issubclass(destiny, source) -> alteredDestiny
+\subsection*{Arguments}
+new Arguments(destiny, source) -> alteredDestiny
+\subsection*{Template}
+new Template(destiny, source) -> alteredDestiny
+\subsection*{Dict}
+new Dict(destiny, source) -> alteredDestiny
+\subsection*{Set}
+new Set(destiny, source) -> alteredDestiny
+\subsection*{hash}
+hash(destiny, source) -> alteredDestiny
+\subsection*{id}
+id(destiny, source) -> alteredDestiny
+\subsection*{getattr}
+getattr(destiny, source) -> alteredDestiny
+\subsection*{setattr}
+setattr(destiny, source) -> alteredDestiny
+\subsection*{hasattr}
+hasattr(destiny, source) -> alteredDestiny
+\subsection*{assert}
+assert(destiny, source) -> alteredDestiny
+\subsection*{bool}
+bool(destiny, source) -> alteredDestiny
+\subsection*{callable}
+callable(destiny, source) -> alteredDestiny
+\subsection*{chr}
+chr(destiny, source) -> alteredDestiny
+\subsection*{ord}
+ord(destiny, source) -> alteredDestiny
+\subsection*{bisect}
+bisect(destiny, source) -> alteredDestiny
+\subsection*{equal}
+equal(destiny, source) -> alteredDestiny
+\subsection*{nequal}
+nequal(destiny, source) -> alteredDestiny
+\subsection*{number}
+number(destiny, source) -> alteredDestiny
+\subsection*{flatten}
+flatten(destiny, source) -> alteredDestiny
+\subsection*{include}
+include(destiny, source) -> alteredDestiny
+\subsection*{len}
+len(destiny, source) -> alteredDestiny
+\subsection*{array}
+array(iterable) -> [element...]
+\subsection*{print}
+print(destiny, source) -> alteredDestiny
+\subsection*{range}
+range(destiny, source) -> alteredDestiny
+\subsection*{string}
+string(destiny, source) -> alteredDestiny
+\subsection*{values}
+values(object) -> [value...]
+\subsection*{keys}
+keys(object) -> [key...]
+\subsection*{items}
+items(destiny, source) -> alteredDestiny
+\subsection*{inspect}
+inspect(destiny, source) -> alteredDestiny
+\subsection*{unique}
+unique(destiny, source) -> alteredDestiny
+\subsection*{xrange}
+xrange(destiny, source) -> alteredDestiny
+\subsection*{zip}
+zip(destiny, source) -> alteredDestiny
 
-\begin{lstlisting}[style=javascript,label=estructura-modulo,caption=Estructura de un modulo]
-//Archivo: tests/module.js
-require('event');
+santiago del estero norte 727, tiene un pino grande
 
-var h1 = $('titulo');
+\section{Extendiendo Javascript}
+\subsection{String}
+\subsubsection*{gsub}
+gsub(pattern, replacement) -> string
+\subsubsection*{sub}
+sub(pattern, replacement[, count = 1]) -> string
+\subsubsection*{subs}
+subs(pattern, replacement) -> string
+\subsubsection*{format}
+format(pattern, replacement) -> string
+\subsubsection*{inspect} 
+inspect(use_double_quotes) -> string
+\subsubsection*{truncate}
+truncate(length, truncation) -> string
+\subsubsection*{strip}
+strip() -> string
+\subsubsection*{striptags}
+striptags() -> string
+\subsubsection*{stripscripts}
+stripscripts() -> string
+\subsubsection*{extractscripts}
+extractscripts() -> string
+\subsubsection*{evalscripts}
+evalscripts() -> string
+\subsubsection*{escapeHTML}
+escapeHTML() -> string
+\subsubsection*{unescapeHTML}
+unescapeHTML() -> string
+\subsubsection*{succ}
+succ() -> string
+\subsubsection*{times}
+times(count[, separator = '']) -> string
+\subsubsection*{camelize}
+camelize() -> string
+\subsubsection*{capitalize}
+capitalize() -> string
+\subsubsection*{underscore}
+underscore() -> string
+\subsubsection*{dasherize}
+dasherize() -> string
+\subsubsection*{startswith}
+startswith(pattern) -> string
+\subsubsection*{endswith}
+endswith(pattern) -> string
+\subsubsection*{blank}
+blank() -> string
 
-function set_texto(txt) {
-    h1.update(txt);
-}
+\subsection{Number}
+\subsubsection*{format}
+format(f, radix) -> string
 
-function get_texto() {
-    return h1.innerHTML;
-}
+\subsection{Date}
+\subsubsection*{toISO8601}
+toISO8601() -> string
 
-event.connect($('titulo'), 'click', function(event) {
-    alert('El texto es: ' + event.target.innerHTML);
-});
+\subsection{Element}
+\subsubsection*{visible}
+visible() {
+\subsubsection*{toggle}
+toggle() {
+\subsubsection*{hide}
+hide() {
+\subsubsection*{show}
+show() {
+\subsubsection*{remove}
+remove() {
+\subsubsection*{update}
+update(content) {
+\subsubsection*{insert}
+insert(insertions) {
+\subsubsection*{select}
+select(selector) {
 
-publish({
-    set_texto: set_texto,
-    get_texto: get_texto
-});
-\end{lstlisting}
+\subsection{Forms}
+\subsubsection*{disable}
+disable() {
+\subsubsection*{enable}
+enable() {
+\subsubsection*{serialize}
+serialize() {
 
-\begin{lstlisting}[style=consola,label=estructura-modulo-test,caption=Test]
->>> require('tests.module')
-GET http://localhost:8080/tests/protopy/module.js
-Object __file__=/tests/protopy/module.js
->>> module.get_texto()
-"Test de modulo"
->>> module.set_texto('Un titulo')
->>> require('tests.module', 'get_texto')
-get_texto()
->>> get_texto()
-"Un titulo"
->>> require('tests.module', '*')
->>> set_texto('Hola luuu!!!')
->>> get_texto()
-"Hola luuu!!!"
-\end{lstlisting}
-Modulos
-var sys = ModuleManager.create('sys', 'built-in', { 
-	version: 0.8,
-	browser: {
-	    IE:     !!(window.attachEvent && navigator.userAgent.indexOf('Opera') === -1),
-	    Opera:  navigator.userAgent.indexOf('Opera') > -1,
-	    WebKit: navigator.userAgent.indexOf('AppleWebKit/') > -1,
-	    Gecko:  navigator.userAgent.indexOf('Gecko') > -1 && navigator.userAgent.indexOf('KHTML') === -1,
-	    MobileSafari: !!navigator.userAgent.match(/Apple.*Mobile.*Safari/),
-	    features: {
-		XPath: !!document.evaluate,
-		SelectorsAPI: !!document.querySelector,
-		ElementExtensions: !!window.HTMLElement,
-		SpecificElementExtensions: document.createElement('div')['__proto__'] &&
-						document.createElement('div')['__proto__'] !==
-						document.createElement('form')['__proto__']
-	    }
-	},
-	get_gears: get_gears,
-	register_path: function(module, path) { 
-	},
-	module_url: function(name, postfix) {
-	},
-	modules: ModuleManager.modules,
-	paths: ModuleManager.paths
-    });
-
-    sys.browser.features.Gears = !!get_gears() || false;
-
-var exception = ModuleManager.create('exceptions', 'built-in', {
-        Exception: Exception,
-        AssertionError: type('AssertionError', Exception),
-        AttributeError: type('AttributeError', Exception),
-        LoadError: type('LoadError', Exception),
-        KeyError: type('KeyError', Exception),
-        NotImplementedError: type('NotImplementedError', Exception),
-        TypeError: type('TypeError', Exception),
-        ValueError: type('ValueError', Exception),
-    });
-
-
-var event = ModuleManager.create('event', 'built-in', {
-        connect: function(obj, event, context, method) {
-	},
-        disconnect: function(handle) {
-	},
-        subscribe: function(topic, context, method) {
-	},
-        unsubscribe: function(handle) {
-	},
-        publish: function(topic, args) {
-	},
-        connectpublisher: function(topic, obj, event) {
-	},
-        fixevent: function(){},
-        stopevent: function(){},
-	keys: { BACKSPACE: 8, TAB: 9, CLEAR: 12, ENTER: 13, SHIFT: 16, CTRL: 17, ALT: 18, PAUSE: 19, CAPS_LOCK: 20, 
-		    ESCAPE: 27, SPACE: 32, PAGE_UP: 33, PAGE_DOWN: 34, END: 35, HOME: 36, LEFT_ARROW: 37, UP_ARROW: 38,
-		    RIGHT_ARROW: 39, DOWN_ARROW: 40, INSERT: 45, DELETE: 46, HELP: 47, LEFT_WINDOW: 91, RIGHT_WINDOW: 92,
-		    SELECT: 93, NUMPAD_0: 96, NUMPAD_1: 97, NUMPAD_2: 98, NUMPAD_3: 99, NUMPAD_4: 100, NUMPAD_5: 101,
-		    NUMPAD_6: 102, NUMPAD_7: 103, NUMPAD_8: 104, NUMPAD_9: 105, NUMPAD_MULTIPLY: 106, NUMPAD_PLUS: 107,
-		    NUMPAD_ENTER: 108, NUMPAD_MINUS: 109, NUMPAD_PERIOD: 110, NUMPAD_DIVIDE: 111, F1: 112, F2: 113, F3: 114,
-		    F4: 115, F5: 116, F6: 117, F7: 118, F8: 119, F9: 120, F10: 121, F11: 122, F12: 123, F13: 124, 
-		    F14: 125, F15: 126, NUM_LOCK: 144, SCROLL_LOCK: 145 }
-    });
-
-var timer = ModuleManager.create('timer', 'built-in', {
-	setTimeout: window.setTimeout,
-	setInterval: window.setInterval,
-	clearTimeout: window.clearTimeout,
-	delay: function(f) {
-	},
-	defer: function(f) {
-	}
-    });
-
-var ajax = ModuleManager.create('ajax', 'built-in', {
-	Request: Request,
-	Response: Response,
-	toQueryParams: function(string, separator) {
-	},
-	toQueryString: function(params) {
-    });
-
-var dom = ModuleManager.create('dom', 'built-in', {
-	query: query,
-    });
-
-builtin = ModuleManager.create('builtin','built-in', {
-        publish: publish,
-        require: require,
-	$: function () { 
-	    var result = array(arguments).map(function (element) { return query(isinstance(element, String)? '#' + element : element)[0]; });
-	    return (len(result) == 1)? result[0] : result; 
-	},
-	$$: query,
-	object: object,
-	type: type,
-	extend: function extend() {return __extend__.apply(this, [false].concat(array(arguments)));}
-        super: super,
-	isundefined: isundefined,
-        isinstance: isinstance,
-        issubclass: issubclass,
-        Arguments: Arguments,
-        Template: Template,
-        Dict: Dict,
-        Set: Set,
-	hash: hash,
-        id: id,
-	getattr: getattr,
-	setattr: setattr,
-	hasattr: hasattr,
-        assert: function(test, text) {
-        },
-        bool: function(object) {
-        },
-        callable: function(object) {
-        },
-        chr: function(number){ 
-        },
-        ord: function(ascii) {
-        },
-        bisect: function(array, element) {
-        },
-        //no se porque no anda el dir
-        equal: function(object1, object2) {
-        },
-        nequal: function(object1, object2) {
-        },
-	number: function(value) {
-        },
-	flatten: function(array) { 
-        },
-        include: function(object, element){
-        },
-        len: function(object) {
-        },
-        array: function(iterable) {
-        },
-        mult: function(array, value) {
-        },
-        print: window.console && window.console.log || function(){},
-        range: function(start, stop, step){
-        },
-        str: function(object) {
-        },
-        values: function(obj){ 
-        },
-        keys: function(object){
-        },
-	items: function(object){
-        },
-        inspect: function(object) {
-        },
-        unique: function(sorted) {
-        },
-        xrange: function(start, stop, step){
-        },
-        zip: function(){
-});
-
-// ******************************* EXTENDING JAVASCRIPT ************************************* //
-(function(){
-    //--------------------------------------- String -------------------------------------//
-        gsub: function(pattern, replacement) {
-	sub: function(pattern, replacement, count) {
-	subs: function() {
-	format: function(f) { 
-        inspect: function inspect(use_double_quotes) {
-	truncate: function(length, truncation) {
-	strip: function() {
-	striptags: function() {
-	stripscripts: function() {
-	extractscripts: function() {
-	evalscripts: function() {
-	escapeHTML: function() {
-	unescapeHTML: function() {
-	succ: function() {
-	times: function(count) {
-	camelize: function() {
-	capitalize: function() {
-	underscore: function() {
-	dasherize: function() {
-	startswith: function(pattern) {
-	endswith: function(pattern) {
-	blank: function() {
-
-    //--------------------------------------- Number -------------------------------------//
-        format: function(f, radix) {
-
-    //--------------------------------------- Date -------------------------------------//
-        toISO8601: function() {
-
-    //--------------------------------------- Element -------------------------------------//
-	visible: function() {
-	toggle: function() {
-	hide: function() {
-	show: function() {
-	remove: function() {
-	update: function(content) {
-	insert: function(insertions) {
-	select: function(selector) {
-    });
-
-    //--------------------------------------- Forms -------------------------------------//    
-	disable: function() {
-	enable: function() {
-	serialize: function() {
-
-    Form.Element = {
-	serialize: function() {
-	get_value: function() {
-	set_value: function(value) {
-	clear: function() {
-	present: function() {
-	activate: function() {
-	disable: function() {
-	enable: function() {
+\subsection{Forms.Element}
+\subsubsection*{serialize}
+serialize() {
+\subsubsection*{get\_value}
+get\_value() {
+\subsubsection*{set\_value}
+set\_value(value) {
+\subsubsection*{clear}
+clear() {
+\subsubsection*{present}
+present() {
+\subsubsection*{activate}
+activate() {
+\subsubsection*{disable}
+disable() {
+\subsubsection*{enable}
+enable() {

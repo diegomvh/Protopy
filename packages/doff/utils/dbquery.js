@@ -165,7 +165,7 @@ var DataBaseQuery = type('DataBaseQuery', Panel, {
 	    // headers
 	    cols = rs.fieldCount()
 	    for (i = 0; i < cols; i++) {
-		sb.push('<th>', str(rs.fieldName(i)).escapeHTML(), '</th>');
+		sb.push('<th>', string(rs.fieldName(i)).escapeHTML(), '</th>');
 	    }
 	    sb.push('</tr></thead><tbody>');
 
@@ -173,7 +173,7 @@ var DataBaseQuery = type('DataBaseQuery', Panel, {
 	    while (rs.isValidRow()) {
 	    sb.push('<tr ' + (odd ? 'class="odd"' : '') + '>');
 		for (i = 0; i < cols; i++) {
-		sb.push('<td>', str(rs.field(i)).escapeHTML(), '</td>');
+		sb.push('<td>', string(rs.field(i)).escapeHTML(), '</td>');
 	    }
 	    odd = !odd;
 	    sb.push('</tr>');

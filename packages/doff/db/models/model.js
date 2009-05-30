@@ -426,7 +426,7 @@ var Model = type('Model', object, {
 
     '_get_FIELD_display': function _get_FIELD_display(field) {
         value = this[field.attname];
-        return str(new Dict(field.flatchoices).get(value, value));
+        return string(new Dict(field.flatchoices).get(value, value));
     },
 
     '_get_next_or_previous_by_FIELD': function _get_next_or_previous_by_FIELD(field, is_next) {
