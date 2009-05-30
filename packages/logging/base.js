@@ -47,7 +47,7 @@ A LogRecord instance represents an event being logged.
 LogRecord instances are created every time something is logged. They
 contain all the information pertinent to the event being logged. The
 main information passed in is in msg and args, which are combined
-using str(msg) % args to create the message field of the record. The
+using string(msg) % args to create the message field of the record. The
 record also includes information such as when the record was created,
 the source line where the logging call was made, and any exception
 information to be logged.
@@ -84,7 +84,7 @@ var LogRecord = type('LogRecord', object, {
     get message() {
         var msg = this.msg;
 	if (type(msg) != String)
-	    msg = str(this.msg);
+	    msg = string(this.msg);
         if (this.args)
             msg = msg.subs(this.args);
         return msg;

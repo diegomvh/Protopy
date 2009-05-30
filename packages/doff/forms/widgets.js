@@ -561,7 +561,7 @@ var RadioSelect = type('RadioSelect', Select, {
     get_renderer: function(name, value, attrs, choices) {
         //Returns an instance of the renderer.
         if (!value) value = '';
-        var str_value = str(value); // Normalize to string.
+        var str_value = string(value); // Normalize to string.
         var final_attrs = this.build_attrs(attrs);
         var choices = array(chain(this.choices, choices))
         return this.renderer(name, str_value, final_attrs, choices);

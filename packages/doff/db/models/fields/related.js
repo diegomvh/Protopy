@@ -384,7 +384,7 @@ function create_many_related_manager(superclass, through) {
                 // Add the newly created or already existing objects to the join table.
                 // First find out which items are already added, to avoid adding them twice
                 var cursor = connection.cursor();
-                cursor.execute("SELECT %s FROM %s WHERE %s = %%s AND %s IN (%s)".subs( target_col_name, this.join_table, source_col_name, target_col_name, mult(['%s'], new_ids.elements.length).join(",")), [this._pk_val].concat(new_ids.elements));
+                cursor.execute("SELECT %s FROM %s WHERE %s = %%s AND %s IN (%s)".subs( target_col_name, this.join_table, source_col_name, target_col_name, '%s'.times(new_ids.elements.length, ', ')), [this._pk_val].concat(new_ids.elements));
                 var existing_ids = new Set([row[0] for each (row in cursor.fetchall())]);
 
                 // Add the ones that aren't there already
@@ -413,7 +413,7 @@ function create_many_related_manager(superclass, through) {
             }
             // Remove the specified objects from the join table
             cursor = connection.cursor();
-            cursor.execute("DELETE FROM %s WHERE %s = %%s AND %s IN (%s)".subs(this.join_table, source_col_name, target_col_name, mult(['%s'], old_ids.elements.length).join(",")), [this._pk_val].concat(old_ids.elements));
+            cursor.execute("DELETE FROM %s WHERE %s = %%s AND %s IN (%s)".subs(this.join_table, source_col_name, target_col_name, '%s'.times(old_ids.elements.length, ', ')), [this._pk_val].concat(old_ids.elements));
             transaction.commit_unless_managed();
             }
         },

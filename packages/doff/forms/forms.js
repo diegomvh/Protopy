@@ -133,7 +133,7 @@ var BaseForm = type('BaseForm', object, {
             if (bf.is_hidden) {
                 if (bool(bf_errors))
                     top_errors = top_errors.concat(['(Hidden field %s) %s'.subs(name, e) for each (e in bf_errors)]);
-                hidden_fields.push(str(bf));
+                hidden_fields.push(string(bf));
             } else {
                 if (errors_on_separate_row && bool(bf_errors))
                     output.push(error_row.subs(bf_errors));
@@ -152,7 +152,7 @@ var BaseForm = type('BaseForm', object, {
                     var help_text = help_text_html.subs(field.help_text);
                 else
                     var help_text = '';
-                output.push(normal_row.subs({'errors': bf_errors, 'label': label, 'field': str(bf), 'help_text': help_text}));
+                output.push(normal_row.subs({'errors': bf_errors, 'label': label, 'field': string(bf), 'help_text': help_text}));
             }
         }
         if (bool(top_errors))
@@ -407,7 +407,7 @@ var BoundField = type('BoundField', object, {
         var id_ = widget.attrs['id'] || this.auto_id;
         if (id_) {
             attrs = attrs && flatatt(attrs) || '';
-            contents = '<label for="%s"%s>%s</label>'.subs(widget.__class__.id_for_label(id_), attrs, str(contents));
+            contents = '<label for="%s"%s>%s</label>'.subs(widget.__class__.id_for_label(id_), attrs, string(contents));
         }
         return contents;
     },

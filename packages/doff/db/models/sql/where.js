@@ -137,7 +137,7 @@ var WhereNode = type('WhereNode', Node, {
                 throw new EmptyResultSet();
             if (extra)
                 return ['%s IN %s'.subs(field_sql, extra), params];
-            return ['%s IN (%s)'.subs(field_sql, mult(['%s'], params.length).join(', ')), params];
+            return ['%s IN (%s)'.subs(field_sql, '%s'.times(params.length, ', ')), params];
         }
         else if (include(['range', 'year'], lookup_type))
             return ['%s BETWEEN %%s and %%s'.subs(field_sql), params];
