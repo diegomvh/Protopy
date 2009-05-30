@@ -1,0 +1,13 @@
+#TeXlipse project settings
+#Sat May 30 15:04:59 ART 2009
+builderNum=2
+outputDir=informe/
+makeIndSty=
+bibrefDir=
+outputFormat=pdf
+tempDir=informe
+mainTexFile=informe.tex
+outputFile=informe.pdf
+langSpell=
+markDer=true
+srcDir=informe/

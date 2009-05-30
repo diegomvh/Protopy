@@ -28,7 +28,8 @@ class Command(NoArgsCommand):
         
         project_name = os.environ.get('DJANGO_SETTINGS_MODULE').replace('.settings', '')
         
-        offline_project_root = join(offline_root, '%s_offline' % project_name)
+        #offline_project_root = join(offline_root, '%s_offline' % project_name)
+        offline_project_root = settings.OFFLINE_ROOT
         
         if not exists(offline_project_root):
             print _("Crearing djangoffline project base at %s" % offline_project_root)

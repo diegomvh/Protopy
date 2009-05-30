@@ -7,6 +7,8 @@ sys.path.append(os.path.join(__file__, '..'))
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+LOCAL_DEVELOPMENT = True
+
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
 )
@@ -106,8 +108,8 @@ except AssertionError:
     INSTALLED_APPS += ('django_extensions', )
 
 # No es URL, es absoluto
-#OFFLINE_ROOT = os.path.join(os.getcwd(), 'offline')
-OFFLINE_ROOT = MEDIA_ROOT
+OFFLINE_ROOT = os.path.join(os.getcwd(), 'offline')
+#OFFLINE_ROOT = MEDIA_ROOT
 
 # Habría que ver como hacer que las URLs se añadan de manera automática
 # como en django-command-extensions

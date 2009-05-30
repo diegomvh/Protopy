@@ -4,8 +4,9 @@ from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from django.db.models import get_app, get_apps, get_model, get_models
 from django.core.exceptions import ImproperlyConfigured
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404, HttpResponseNotFound
 from django.utils.html import escape
+from django.template import TemplateDoesNotExist
 import inspect
 from pprint import pformat
 from remotemodels import RemoteModelProxy
@@ -112,3 +113,20 @@ def list_templates(request):
         
     
     return HttpResponse( html_output(template_files, indent = 2))
+
+
+def template_static_serve(request, path):
+    from django.template.loader import find_template_source
+    try:
+        template_source, _origin = find_template_source(path)
+    except TemplateDoesNotExist:
+        return HttpResponseNotFound(u'404: template not found: \"%s\"' % path)
+    return HttpResponse(template_source)
+
+
+def build_manifest(request):
+    return 
+
+def project_static_serve(request, path):
+    return
+

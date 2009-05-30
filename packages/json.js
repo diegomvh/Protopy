@@ -36,7 +36,7 @@ var stringify = function (value) {
 
     if (value === null) return 'null';
     if (callable(value.__json__)) return value.__json__();
-    if (Element.iselement(value)) return;
+    if (Element.isElement(value)) return;
 
     var results = [];
     if (isinstance(value, Array)) {
