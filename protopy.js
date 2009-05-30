@@ -771,8 +771,8 @@
     var ajax = ModuleManager.create('ajax', 'built-in', {
 	Request: Request,
 	Response: Response,
-	toQueryParams: function(string, separator) {
-	    var match = string.match(/([^?#]*)(#.*)?$/);
+	toQueryParams: function(str, separator) {
+	    var match = str.match(/([^?#]*)(#.*)?$/);
 	    if (!match) return { };
 
 	    return match[1].split(separator || '&').reduce(function(hash, pair) {
@@ -2042,16 +2042,16 @@
 	subs: function() {
 	    var args = flatten(array(arguments));
 	    //%% escaped
-	    var string = this.gsub(/%%/, function(match){ return '<ESC%%>'; });
+	    var str = this.gsub(/%%/, function(match){ return '<ESC%%>'; });
 	    if (args[0] && (type(args[0]) == Object || isinstance(args[0], object)))
-                string = new Template(string, args[1]).evaluate(args[0]);
+                str = new Template(str, args[1]).evaluate(args[0]);
 	    else
-                string = string.gsub(/%(-?\d*|\d*\.\d*)([s,n])/, function(match) {
+                str = str.gsub(/%(-?\d*|\d*\.\d*)([s,n])/, function(match) {
 		    if (args.length == 0) return match[0];
 		    var value = (match[2] === 's')? string(args.shift()) : number(args.shift());
 		    return  value.format(match[1]); 
                 });
-	    return string.gsub(/<ESC%%>/, function(match){ return '%'; });
+	    return str.gsub(/<ESC%%>/, function(match){ return '%'; });
 	},
 
 	format: function(f) { 
@@ -2126,14 +2126,12 @@
 	},
 
 	times: function(count, sep) {
-	    sep = sep | '';
+	    sep = sep || '';
 	    if (count < 1)
 	    	return '';
 	    var ret = [];
-	    
 	    for (var i = 0; i < count +1; i++)
 	    	ret.push(this.toString());
-	    // FIXME:
 	    return ret.join(sep);
 	},
 

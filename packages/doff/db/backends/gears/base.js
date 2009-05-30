@@ -121,7 +121,7 @@ var GearsCursorWrapper = type('GearsCursorWrapper', database.Cursor, {
     },
 
     'convert_query': function convert_query(query, num_params){
-        return query.subs(mult(["?"], num_params));
+        return query.subs(['?' for (x in range(num_params))]);
     }
 });
 
