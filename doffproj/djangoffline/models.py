@@ -30,7 +30,11 @@ class Manifest(models.Model):
     
     def __init__(self, *largs, **kwargs):
         super(Manifest, self).__init__(*largs, **kwargs)
-        
+        self.entries = []
     
-    def add_entry(self, url, src = None, redirect = None):
-        pass
+    def add_entry(self, **kwargs):
+        assert kwargs,"Entries can't be null"
+        assert all( lambda x: x in self.VALID_KEYS, kwargs.keys()),\
+            "Ilegal key(s)"
+        self.entries += kwargs
+        
