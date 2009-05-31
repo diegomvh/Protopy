@@ -20,3 +20,17 @@ class Log(models.Model):
     '''
     pass   
 #class BaseModelProxy(m):
+
+
+class Manifest(models.Model):
+    from pickle import dumps, loads
+    version = models.PositiveIntegerField(default = 1)
+    content = models.TextField(editable = False)
+    
+    
+    def __init__(self, *largs, **kwargs):
+        super(Manifest, self).__init__(*largs, **kwargs)
+        
+    
+    def add_entry(self, url, src = None, redirect = None):
+        pass
