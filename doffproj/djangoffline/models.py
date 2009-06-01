@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.db import models
+from django.utils.version import entries
 
 # Create your models here.
 
@@ -23,18 +24,67 @@ class Log(models.Model):
 
 
 class Manifest(models.Model):
-    from pickle import dumps, loads
-    version = models.PositiveIntegerField(default = 1)
-    content = models.TextField(editable = False)
+    '''
+    According to 
+    http://code.google.com/intl/es-AR/apis/gears/api_localserver.html#manifest_file
+    ============================================================================
+    Google Sample Code:
+    {
+      // version of the manifest file format
+      "betaManifestVersion": 1,
     
+      // version of the set of resources described in this manifest file
+      "version": "my_version_string",
+    
+      // optional
+      // If the store specifies a requiredCookie, when a request would hit
+      // an entry contained in the manifest except the requiredCookie is
+      // not present, the local server responds with a redirect to this URL.
+      "redirectUrl":  "login.html",
+    
+      // URLs to be cached (URLs are given relative to the manifest URL)
+      "entries": [
+          { "url": "main.html", "src": "main_offline.html" },
+          { "url": ".", "redirect": "main.html" },
+          { "url": "main.js" }
+          { "url": "formHandler.html", "ignoreQuery": true },
+        ]
+    }
+    '''
+    from pickle import dumps, loads
+    version = models.CharField(max_length=150)
+    content = models.TextField(editable = False)
     
     def __init__(self, *largs, **kwargs):
         super(Manifest, self).__init__(*largs, **kwargs)
-        self.entries = []
+        self._entries = []
+        
+    def entries(): #@NoSelf
+        '''
+        Entries property
+        '''
+        def fget(self):
+            return self._entries
+        def fset(self, value):
+            self.entries = value
+        return locals()
+    entries = property(**entries()) 
     
     def add_entry(self, **kwargs):
+        '''
+        Possible keys are:
+            url: str
+            src: str
+            redirect: str
+            ignoreQuery: bool
+        '''
         assert kwargs,"Entries can't be null"
-        assert all( lambda x: x in self.VALID_KEYS, kwargs.keys()),\
-            "Ilegal key(s)"
+        assert 'url' in kwargs, "url parameter required"
+        assert not ('src' in kwargs and 'redirect' in kwargs), "src and redirect are multually exclusive"
+        assert not 'ignoreQuery' in kwargs or type(kwargs['ignoreQuery']) == bool, "ignoreQuery must be boolean"
+        
+        
         self.entries += kwargs
+        
+
         
