@@ -127,9 +127,14 @@ Doris la piton esta reptando
 \$(id) \rightarrow HTMLElement
 \$(id ...) \rightarrow [HTMLElement...]
 
-\noindent
-Ejemplo:
 \begin{lstlisting}[style=consola]
+>>> $('content')
+<div id="content">
+>>> $('content body')
+>>> $('content', 'body')
+[div#content, div#body]
+>>> $('content', 'body', 'head')
+[div#content, div#body, undefined]
 \end{lstlisting}
 
 \subsubsection*{\$\$}
@@ -138,13 +143,25 @@ Ejemplo:
 \noindent
 Ejemplo:
 \begin{lstlisting}[style=consola]
+>>> $$('div')
+[div#wrap, div#top, div#content, div.header, div.breadcrumbs, div.middle, div, div.right, div#clear, div#footer, div#toolbar]
+>>> $$('div#toolbar')
+[div#toolbar]
+>>> $$('div#toolbar li')
+[li, li.panel, li.panel, li, li]
+>>> $$('div#toolbar li.panel')
+[li.panel, li.panel]
+>>> $$('a:not([href~=google])')
+[a add_post, a add_tag, a removedb, a syncdb]
+>>> $$('a:not([href=google])')
+[a add_post, a add_tag, a#google www.google.com, a removedb, a syncdb]
+>>> $$('div:empty')
+[div#logger.panel, div#dbquery.panel, div#clear, div#top]
 \end{lstlisting}
 
 \subsubsection*{extend}
 extend(destiny, source) \rightarrow alteredDestiny
 
-\noindent
-Ejemplo:
 \begin{lstlisting}[style=consola]
 >>> a = {perro: 4}
 >>> b = {gato: 4}
@@ -168,8 +185,6 @@ issubclass(destiny, source) \rightarrow alteredDestiny
 \subsubsection*{Arguments}
 new Arguments(destiny, source) \rightarrow alteredDestiny
 
-\noindent
-Ejemplo:
 \begin{lstlisting}[style=consola]
 \end{lstlisting}
 
@@ -196,15 +211,31 @@ bool(destiny, source) \rightarrow alteredDestiny
 \subsubsection*{callable}
 callable(destiny, source) \rightarrow alteredDestiny
 \subsubsection*{chr}
-chr(destiny, source) \rightarrow alteredDestiny
+chr(number) \rightarrow character
 \subsubsection*{ord}
-ord(destiny, source) \rightarrow alteredDestiny
-\subsubsection*{bisect}
-bisect(destiny, source) \rightarrow alteredDestiny
+ord(character) \rightarrow number
 
 \noindent
 Ejemplo:
 \begin{lstlisting}[style=consola]
+>>> ord(chr(65))
+65
+>>> chr(ord("A"))
+"A"
+\end{lstlisting}
+
+\subsubsection*{bisect}
+bisect(seq, element) \rightarrow position
+
+\begin{lstlisting}[style=consola]
+>>> a = [1,2,3,4,5]
+>>> bisect(a,6)
+5
+>>> bisect(a,2)
+2
+>>> a[bisect(a,3)] = 3
+>>> a
+[1, 2, 3, 3, 5]
 \end{lstlisting}
 
 \subsubsection*{equal}
@@ -245,8 +276,6 @@ unique(destiny, source) \rightarrow alteredDestiny
 \subsubsection*{range}
 range([begin = 1, ] end[, step = 1]) \rightarrow [number...]
 
-\noindent
-Ejemplo:
 \begin{lstlisting}[style=consola]
 >>> range(10)
 [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -261,8 +290,6 @@ xrange(destiny, source) \rightarrow alteredDestiny
 \subsubsection*{zip}
 zip(seq1 [, seq2 [...]]) \rightarrow [[seq1[0], seq2[0] ...], [...]]
 
-\noindent
-Ejemplo:
 \begin{lstlisting}[style=consola]
 >>> zip([1,2,3,4,5,6], ['a','b','c','d','e','f'])
 [[1, "a"], [2, "b"], [3, "c"], [4, "d"], [5, "e"], [6, "f"]]
@@ -320,21 +347,21 @@ var exception = ModuleManager.create('exceptions', 'built-in', {
 
 \subsection{event}
 \subsubsection*{connect}
-connect(object, event, context, method) {
+connect(object, event, context, method)
 \subsubsection*{disconnect}
-disconnect(handle) {
+disconnect(handle)
 \subsubsection*{subscribe}
-subscribe(topic, context, method) {
+subscribe(topic, context, method)
 \subsubsection*{unsubscribe}
-unsubscribe(handle) {
+unsubscribe(handle)
 \subsubsection*{publish}
-publish(topic, args) {
+publish(topic, args)
 \subsubsection*{connectpublisher}
-connectpublisher(topic, obj, event) {
+connectpublisher(topic, obj, event)
 \subsubsection*{fixevent}
-fixevent: function(){},
+fixevent()
 \subsubsection*{stopevent}
-stopevent: function(){},
+stopevent()
 \subsubsection*{keys}
 keys: { BACKSPACE: 8, TAB: 9, CLEAR: 12, ENTER: 13, SHIFT: 16, CTRL: 17, ALT: 18, PAUSE: 19, CAPS_LOCK: 20, 
 		    ESCAPE: 27, SPACE: 32, PAGE_UP: 33, PAGE_DOWN: 34, END: 35, HOME: 36, LEFT_ARROW: 37, UP_ARROW: 38,
@@ -360,9 +387,9 @@ defer: function(f) {
 
 \subsection{ajax}
 \subsubsection*{Request}
-new Request: Request,
+new Request()
 \subsubsection*{Response}
-new Response: Response,
+new Response()
 \subsubsection*{toQueryParams}
 toQueryParams(string, separator) \rightarrow object
 \subsubsection*{toQueryString}
@@ -370,7 +397,7 @@ toQueryString(params) \rightarrow string
 
 \subsection{dom}
 \subsubsection*{query}
-query: query,
+query(cssRule) \rightarrow [HTMLElement...]
 
 \section{Extendiendo Javascript}
 \subsection{String}
@@ -429,44 +456,59 @@ toISO8601() \rightarrow string
 
 \subsection{Element}
 \subsubsection*{visible}
-visible() {
+visible()
 \subsubsection*{toggle}
-toggle() {
+toggle()
 \subsubsection*{hide}
-hide() {
+hide()
 \subsubsection*{show}
-show() {
+show()
 \subsubsection*{remove}
-remove() {
+remove()
 \subsubsection*{update}
-update(content) {
+update(content)
 \subsubsection*{insert}
-insert(insertions) {
+insert(insertions)
 \subsubsection*{select}
-select(selector) {
+select(selector)
+
+\begin{lstlisting}[style=consola]
+>>> $('PostForm').select('input')
+[input#id_title, input guardar]
+>>> $('content').select('div')
+[div.header, div.breadcrumbs, div.middle, div, div.right, div#clear]
+>>> $('content').select('div.middle')
+[div.middle]
+\end{lstlisting}
 
 \subsection{Forms}
 \subsubsection*{disable}
-disable() {
+disable()
 \subsubsection*{enable}
-enable() {
+enable()
 \subsubsection*{serialize}
-serialize() {
+serialize() \rightarrow object
+\begin{lstlisting}[style=consola]
+>>> $('PostForm')
+<form id="PostForm" method="post" onsubmit="return blog.handler.handle(this);" action="/blog/add_post/">
+>>> $('PostForm').serialize()
+Object title=Hola mundo body=Este es un post tags=[1]
+\end{lstlisting}
 
 \subsection{Forms.Element}
 \subsubsection*{serialize}
-serialize() {
+serialize()
 \subsubsection*{get\_value}
-get\_value() {
+get\_value()
 \subsubsection*{set\_value}
 set\_value(value) {
 \subsubsection*{clear}
-clear() {
+clear()
 \subsubsection*{present}
-present() {
+present()
 \subsubsection*{activate}
-activate() {
+activate()
 \subsubsection*{disable}
-disable() {
+disable()
 \subsubsection*{enable}
-enable() {
+enable()

@@ -1863,13 +1863,17 @@
 	    return String.fromCharCode(number);
         },
         ord: function(ascii) {
-            if (type(number) != String) throw new TypeError('An string is required');
+            if (type(ascii) != String) throw new TypeError('An string is required');
             return ascii.charCodeAt(0);
         },
         bisect: function(array, element) {
             var i = 0;
-            for (var length = array.length; i < length; i++)
-                if (array[i].__cmp__(element) > 0) return i;
+            for (var length = array.length; i < length; i++) {
+                if (callable(array[i].__cmp__) && array[i].__cmp__(element) > 0)
+                    return i;
+                else if (array[i] > element)
+                    return i;
+            }
             return i;
         },
         //no se porque no anda el dir
@@ -2311,7 +2315,7 @@
 	    return this;
 	},
 	select: function(selector) {
-	    return query(selector, this);
+	    return $$(selector, this);
 	}
     });
 
