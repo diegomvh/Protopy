@@ -1917,6 +1917,7 @@
         },
         print: window.console && window.console.log || function(){},
         range: function(start, stop, step){
+            //FIXME Validar que el paso no sea negativo
             var rstep = step || 1;
             var rstop = (stop == undefined)? start : stop;
             var rstart = (stop == undefined)? 0 : start;
@@ -1952,6 +1953,7 @@
                 }, []);
         },
         xrange: function(start, stop, step){
+            //FIXME Validar que el paso no sea negativo
             var xstep = step || 1;
             var xstop = (!stop)? start : stop;
             var xstart = (!stop)? 0 : start;

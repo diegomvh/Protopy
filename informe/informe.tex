@@ -42,7 +42,9 @@
 
 \usepackage{epigraph} %para los quote en cada capitulo
 \usepackage{color}
-\definecolor{gray90}{gray}{.90}
+\definecolor{gray97}{gray}{.97}
+\definecolor{gray80}{gray}{.80}
+\definecolor{gray45}{gray}{.45}
 
 \usepackage{xcolor}
 
@@ -55,36 +57,35 @@
     framexbottommargin=3pt,
     framexleftmargin=0.4cm,
     framesep=0pt,
-    rulesep=0.4pt,
+    rulesep=.4pt,
+    backgroundcolor=\color{gray97},
+    rulesepcolor=\color{black},
     %
+    stringstyle=\ttfamily,
     showstringspaces = false,
     basicstyle=\small\ttfamily,
+    commentstyle=\color{gray45},
+    keywordstyle=\bfseries,
     %
     numbers=left,
-    numbersep=10pt,
+    numbersep=15pt,
     numberstyle=\tiny,
-    breaklines=true,
-    emph={label}
+    numberfirstline = false,
+    breaklines=true
 }
 
 \lstdefinestyle{consola}{
   basicstyle=\scriptsize\bf\ttfamily,
-  backgroundcolor=\color{gray90},
+  backgroundcolor=\color{gray80},
   numbers=none,
   framexleftmargin=0pt,
   framexrightmargin=6pt
 }
 \lstdefinestyle{python}{
-  language=Python,
-  stringstyle=\color{red}\ttfamily,
-  keywordstyle=\color{black}\bfseries,
-  commentstyle=\color{blue}
+  language=Python
 }
 \lstdefinestyle{javascript}{
-  keywords={catch,throw,try,finally,break,continue,do,for,import,new,this,void,case,default,else,function,in,return,typeof,while,comment,delete,export,if,label,switch,var,with}
-  stringstyle=\color{green}\ttfamily,
-  keywordstyle=\color{black}\bfseries,
-  commentstyle=\color{blue}
+  language=Java
 }
 
 \usepackage{caption}

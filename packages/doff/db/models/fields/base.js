@@ -536,7 +536,7 @@ var DateTimeField = type('DateTimeField', DateField, {
 	    return value;
 	if (value instanceof Date)
 	    return value;
-	return new Date(int(value));
+	return new Date(number(value));
     },
 
     'get_db_prep_value': function get_db_prep_value(value) {
