@@ -1,1 +1,1 @@
-../../protopy.js
+../../../protopy.js

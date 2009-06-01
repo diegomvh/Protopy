@@ -42,8 +42,7 @@ function debug(request) {
 }
 
 function media(request) {
-    require('sys');
-    return {'MEDIA_URL': sys.module_url(project.package, settings.MEDIA_URL)};
+    return {'MEDIA_URL': settings.MEDIA_URL};
 }
 
 function request(request) {

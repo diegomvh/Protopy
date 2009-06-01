@@ -1,9 +1,9 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <script type="text/javascript;version=1.7" src="protopy.js"></script>
+    <script type="text/javascript;version=1.7" src="/doffline/protopy/protopy.js"></script>
     <script type="text/javascript;version=1.7">
 	var get_project = require('doff.core.project', 'new_project');
-        var blog = new_project('Simple Blog', 'blog', 'blog');
+        var blog = new_project('Simple Blog', 'blog', '/doffline/project');
 	
 	require('event');
 	event.connect(blog, 'onLoad', function(){ console.log('Arranco el blog');});

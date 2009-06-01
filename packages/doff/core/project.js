@@ -24,8 +24,8 @@ var Project = type('Project', object, {
     __init__: function(name, package, path) {
 	this.name = name;
 	this.package = package;
-	this.path = path;
-	sys.register_path(this.package, this.path);
+	sys.register_path(this.package, path);
+	this.path = sys.paths[this.package];
 	this.availability_url = sys.module_url(this.package, 'network_check.txt');
 
 	//Inicio el logging

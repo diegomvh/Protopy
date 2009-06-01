@@ -1,0 +1,15 @@
+{% extends "index.html" %}
+{% block content %}
+<h1>Todos los Tags</h1>
+<h4>Haga click en un tag para quitarlo</h4>
+{% for tag in tags %}
+    <a href="/blog/remove_tag/{{ tag.slug }}/" onClick="return blog.handler.handle(this);">{{ tag.title }}</a>
+{% endfor %}
+<h1>Inserte un nuevo Tag</h1>
+<div>
+<form id='{{ formpost.__name__ }}' action="/blog/add_post/" onSubmit="return blog.handler.handle(this);" method="post">
+{{ formpost.as_ul }}
+<input type='submit' value='guardar'>
+</from>
+</div>
+{% endblock %}

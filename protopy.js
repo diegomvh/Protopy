@@ -78,9 +78,10 @@
 	register_path: function(name, path) {
 	    assert(name.lastIndexOf('.') == -1, 'The module name should be whitout dots');
 	    assert(!this.paths[name], 'The module is registered');
+	    var absolute = (path[0] === '/');
 	    path = path.split('/').filter( function (e) { return e; });
-	    if (!bool(path)) {throw new TypeError('where is the path?')}
-	    this.paths[name] = path.join('/');
+	    if (!bool(path)) { throw new TypeError('where is the path?') }
+	    this.paths[name] = absolute ? '/' + path.join('/') : this.base + path.join('/');
 	},
 	file: function(name) {
 	    if (isinstance(name, String)) {
@@ -93,16 +94,15 @@
 	},
 	module_url: function(name, postfix) {
 	    var url = name.split('.');
-	    if (this.paths[url[0]]) {
+	    if (!isundefined(url[0]) && !isundefined(this.paths[url[0]]))
 		url = this.paths[url[0]].split('/').concat(url.slice(1));
-	    } else {
+	    else
 		url = this.default_path.split('/').concat(url);
-	    }
 	    
 	    if (postfix)
 		url = url.concat(postfix.split('/'));
 	    url = url.filter( function (element) { return element; });
-	    return this.base + url.join('/');
+	    return '/' + url.join('/');
 	}
     };
 
@@ -315,7 +315,8 @@
 	    return ModuleManager.module_url(name, postfix);
 	},
 	modules: ModuleManager.modules,
-	paths: ModuleManager.paths
+	paths: ModuleManager.paths,
+	manager: ModuleManager
     });
 
     sys.browser.features.Gears = !!get_gears() || false;
@@ -1987,6 +1988,7 @@
 	throw new Exception('Error fatal');
     var m = script[0].src.match(new RegExp('^.*' + location.host + '(/?.*/?)protopy.js$', 'i'));
     ModuleManager.base = m[1];
+    ModuleManager.default_path = m[1] + ModuleManager.default_path;
     var config = script[0].getAttribute('pyconfig');
     if (config) //TODO: validate config
 	__extend__(false, ModuleManager, eval('({' + config + '})'));
