@@ -51,12 +51,14 @@ Probamos el modulo:
 
 \section{Modulos incluidos en el nucleo de protopy}
 \subsection{builtin}
-\subsubsection*{publish, publicando modulos}
-publish(object)
-\subsubsection*{require, importando modulos}
-require(module[, object...]) \rightarrow module | object
-\subsubsection*{type, constructor de tipos}
-type(name, [base...] [, forType ], forPrototype) \rightarrow newType
+\subsubsection*{publish}
+\verb|publish(object)|
+
+\subsubsection*{require}
+\verb|require(module[, object...]) -> module or object|
+
+\subsubsection*{type}
+\verb|type(name, [base...] [, forType ], forPrototype) -> newType|
 
 Como ya se menciono anteriormente javascript es un lenguaje orientado a prototipos, para acercarnos un poco a la programacion
 de objetos, utilizamos una funcion constructora de tipos o clases a la que denominamos “type”.
@@ -103,7 +105,7 @@ var rana = new Anfibio('Rana');
 \end{lstlisting}
 
 \noindent
-Jugamos con los tipos:
+Ejemplos con los tipos definidos:
 \begin{lstlisting}[style=consola]
 >>> doris
 window.Piton especie=Piton orden=0 nombre=Doris __name__=Piton
@@ -160,7 +162,7 @@ Ejemplo:
 \end{lstlisting}
 
 \subsubsection*{extend}
-extend(destiny, source) \rightarrow alteredDestiny
+\verb|extend(destiny, source) -> alteredDestiny|
 
 \begin{lstlisting}[style=consola]
 >>> a = {perro: 4}
