@@ -24,9 +24,10 @@ urlpatterns = patterns('',
     (r'^$', 'doffproj.views.index',  ),
     
     (r'^blog/', include('doffproj.blog.urls'),),
+    (r'^offblog/', 'doffproj.views.run_offline',),
     
     #     
-    (settings.OFFLINE_BASE, include('doffproj.djangoffline.urls'), ),
+    ('^' + settings.OFFLINE_BASE + '/', include('doffproj.djangoffline.urls'), ),
      
 )
 

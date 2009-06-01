@@ -2134,7 +2134,7 @@
 	    if (count < 1)
 	    	return '';
 	    var ret = [];
-	    for (var i = 0; i < count +1; i++)
+	    for (var i = 0; i < count; i++)
 	    	ret.push(this.toString());
 	    return ret.join(sep);
 	},
