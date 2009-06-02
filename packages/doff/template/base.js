@@ -507,7 +507,15 @@ publish({
     NodeList: NodeList,
     Template: Template,
     Library: Library,
-    get_library: get_library 
+    get_library: get_library,
+    BLOCK_TAG_START: BLOCK_TAG_START,
+    BLOCK_TAG_END: BLOCK_TAG_END ,
+    VARIABLE_TAG_START: VARIABLE_TAG_START,
+    VARIABLE_TAG_END: VARIABLE_TAG_END,
+    SINGLE_BRACE_START: SINGLE_BRACE_START,
+    SINGLE_BRACE_END: SINGLE_BRACE_END,
+    COMMENT_TAG_START: COMMENT_TAG_START,
+    COMMENT_TAG_END: COMMENT_TAG_END
 });
 
 add_to_builtins('doff.template.default_tags');

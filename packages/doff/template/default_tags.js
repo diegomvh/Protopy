@@ -1,4 +1,5 @@
 require('doff.template.base', 'Node', 'Variable', 'NodeList', 'Template', 'TemplateSyntaxError', 'VariableDoesNotExist', 'get_library', 'Library', 'InvalidTemplateLibrary');
+require('doff.template.base', 'BLOCK_TAG_START', 'BLOCK_TAG_END', 'VARIABLE_TAG_START', 'VARIABLE_TAG_END', 'SINGLE_BRACE_START', 'SINGLE_BRACE_END', 'COMMENT_TAG_START', 'COMMENT_TAG_END');
 require('doff.template.context', 'Context');
 require('itertools');
 
@@ -227,6 +228,55 @@ var IfNode = type('IfNode', [ Node ], {
     }
 });
 
+var LoadNode = type('LoadNode', [ Node ], {
+    render: function(context) { 
+        return '';
+    }
+});
+
+var NowNode = type('NowNode', [ Node ], {
+    __init__: function(format_string) {
+        this.format_string = format_string;
+    },
+
+    render: function(context) {
+        var datetime = require('datetime', 'datetime');
+        /*from django.utils.dateformat import DateFormat */
+        return datetime.format(new Date(), this.format_string);
+        /*return df.format(this.format_string)*/
+    }
+});
+
+var SpacelessNode = type('SpacelessNode', [ Node ], {
+    __init__: function(nodelist) {
+        this.nodelist = nodelist;
+    },
+    render: function(nodelist){
+        var strip_spaces_between_tags = require('doff.utils.html', 'strip_spaces_between_tags');
+        return strip_spaces_between_tags(this.nodelist.render(context).strip());
+    }
+});
+
+var TemplateTagNode = type('TemplateTagNode', [ Node ], {
+    mapping: {'openblock': BLOCK_TAG_START,
+              'closeblock': BLOCK_TAG_END,
+              'openvariable': VARIABLE_TAG_START,
+              'closevariable': VARIABLE_TAG_END,
+              'openbrace': SINGLE_BRACE_START,
+              'closebrace': SINGLE_BRACE_END,
+              'opencomment': COMMENT_TAG_START,
+              'closecomment': COMMENT_TAG_END,
+              }
+    }, {
+    __init__: function(tagtype) {
+        this.tagtype = tagtype;
+    },
+
+    render: function(nodelist){
+        return TemplateTagNode.mapping[this.tagtype] || '';
+    }
+});
+
 var WithNode = type('WithNode', [ Node ], {
     __init__: function(variable, name, nodelist) {
         this.variable = variable;
@@ -439,6 +489,116 @@ function do_if(parser, token) {
     return new IfNode(boolvars, nodelist_true, nodelist_false, link_type);
 }
 register.tag("if", do_if);
+
+function load(parser, token) {
+/*
+    Loads a custom template tag set.
+
+    For example, to load the template tags in
+    ``django/templatetags/news/photos.py``::
+
+        {% load news.photos %}
+*/
+    require('doff.core.project', 'get_settings');
+    var settings = get_settings();
+    var bits = token.split_contents();
+    for each (var taglib in bits.slice(1)) {
+        // add the library to the parser
+        var lib = null;
+        try {
+            for each (var app in settings.INSTALLED_APPS) {
+                lib = get_library(app + '.templatetags.%s'.subs(taglib));
+                parser.add_library(lib);
+            } 
+        } catch (e if isinstance(e, InvalidTemplateLibrary)) {}
+        if (lib === null)
+            throw new TemplateSyntaxError("'%s' is not a valid tag library".subs(taglib));
+    }
+    return new LoadNode();
+}
+register.tag("load", load);
+
+function now(parser, token) {
+/*
+    Displays the date, formatted according to the given string.
+
+    Uses the same format as PHP's ``date()`` function; see http://php.net/date
+    for all the possible values.
+
+    Sample usage::
+
+        It is {% now "jS F Y H:i" %}
+*/
+    var bits = token.contents.split('"');
+    if (len(bits) != 3)
+        throw new TemplateSyntaxError("'now' statement takes one argument");
+    var format_string = bits[1];
+    return new NowNode(format_string);
+}
+register.tag("now", now);
+
+function spaceless(parser, token) {
+    /*
+    Removes whitespace between HTML tags, including tab and newline characters.
+
+    Example usage::
+
+        {% spaceless %}
+            <p>
+                <a href="foo/">Foo</a>
+            </p>
+        {% endspaceless %}
+
+    This example would return this HTML::
+
+        <p><a href="foo/">Foo</a></p>
+
+    Only space between *tags* is normalized -- not space between tags and text.
+    In this example, the space around ``Hello`` won't be stripped::
+
+        {% spaceless %}
+            <strong>
+                Hello
+            </strong>
+        {% endspaceless %}
+    */
+    var nodelist = parser.parse(['endspaceless']);
+    parser.delete_first_token();
+    return new SpacelessNode(nodelist);
+}
+register.tag("spaceless", spaceless);
+
+function templatetag(parser, token) {
+    /*
+    Outputs one of the bits used to compose template tags.
+
+    Since the template system has no concept of "escaping", to display one of
+    the bits used in template tags, you must use the ``{% templatetag %}`` tag.
+
+    The argument tells which template bit to output:
+
+        ==================  =======
+        Argument            Outputs
+        ==================  =======
+        ``openblock``       ``{%``
+        ``closeblock``      ``%}``
+        ``openvariable``    ``{{``
+        ``closevariable``   ``}}``
+        ``openbrace``       ``{``
+        ``closebrace``      ``}``
+        ``opencomment``     ``{#``
+        ``closecomment``    ``#}``
+        ==================  =======
+*/
+    var bits = token.split_contents();
+    if (len(bits) != 2)
+        throw new TemplateSyntaxError("'templatetag' statement takes one argument");
+    var tag = bits[1];
+    if (!include(TemplateTagNode.mapping, tag))
+        throw new TemplateSyntaxError("Invalid templatetag argument: '%s' Must be one of: %s".subs(tag, keys(TemplateTagNode.mapping)));
+    return new TemplateTagNode(tag);
+}
+register.tag("templatetag", templatetag);
 
 function do_with(parser, token) {
     var bits = token.split_contents();
