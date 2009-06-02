@@ -1,0 +1,570 @@
+\chapter{Protopy}
+El desarrollo de un framework en javascript que funcione del lado del cliente
+presupone gran cantidad de codigo
+viajando de un lado al otro de la conexion. Previendo basicamente este postulado
+desarrollamos una libreria
+que brinde el soporte a los requerimentos mas basicos.
+Esta librería contituye la base para posteriores contrucciones mas complejas en
+el ciente y auna herramientas
+que simplifican el desarrollo client-side.
+
+\section{Modulos}
+Undo de los principales inconvenientes a los que protopy da solucion es a la
+inclucion dinamica de funcionalidad bajo demanda,
+esto es logrado mediante los modulos.
+Basicamente un modulo en un archivo con codigo javascript que recide en el
+servidor y es obtenido y ejecutado en el cliente.
+
+\begin{lstlisting}[style=javascript,label=estructura-modulo,caption=Estructura
+de un modulo]
+//Archivo: tests/module.js
+require('event');
+
+var h1 = $('titulo');
+
+function set_texto(txt) {
+    h1.update(txt);
+}
+
+function get_texto() {
+    return h1.innerHTML;
+}
+
+event.connect($('titulo'), 'click', function(event) {
+    alert('El texto es: ' + event.target.innerHTML);
+});
+
+publish({
+    set_texto: set_texto,
+    get_texto: get_texto
+});
+\end{lstlisting}
+
+\noindent
+Probamos el modulo:
+\begin{lstlisting}[style=consola]
+>>> require('tests.module')
+>>> module.get_texto()
+"Test de modulo"
+>>> module.set_texto('Un titulo')
+>>> require('tests.module', 'get_texto')
+>>> get_texto()
+"Un titulo"
+>>> require('tests.module', '*')
+>>> set_texto('Hola luuu!!!')
+>>> get_texto()
+"Hola luuu!!!"
+\end{lstlisting}
+
+\section{Modulos incluidos en el nucleo de protopy}
+\subsection{builtin}
+
+\subsubsection*{publish}
+\begin{verbatim}
+  publish(object)
+\end{verbatim}
+Publica la funcionalidad de un modulo. 
+Para interactuar con el codigo definido en un modulo es necesario
+exponer una interface de acceso al mismo, de esto se encarga la funcion publish.
+
+\subsubsection*{require}
+\begin{verbatim}
+  require(module[, object...]) -> module
+\end{verbatim} 
+Importa un modulo en el espacio de nombres.
+Al invocar a esta funcion un modulo es cargado desde el servidor y ejecutado en
+el clinete, la forma en que el modulo se presenta en el espacio de nombres
+depende de la invoacion.
+\begin{itemize}
+ \item{var cntx = require('doff.template.context')}
+  Importa el modulo 'doff.template.context' y lo retorna en cntx, dejando
+tambien una referencia en el espacio de nombres llamda 'context', esta dualidad
+en la asociacion del modulo permite imporatar modulos sin asociarlos a una
+variable, simplemente alcanza con asumir que la parte final del nombre es la
+referencia a usar.
+ \item{var cur = require('gears.database', 'cursor')}
+  Importa el modulo 'gears.databse' y retorna en cur el objeto publicado bajo el
+nombre de cursor, similar al caso anterior una referencia se define en el
+espacio de nombres para cursor.  
+ \item{require('doff.db.models', 'model', 'query')}
+  Importa el modulo 'doff.db.models' y define en el espacio de nombres las
+referencias a model y query usando los mismos nombres.
+ \item{require('doff.core.urlpattern', '*')}
+  Importa del modulo 'doff.core.urlpattern' todos los objetos publicados y los publica en el espacio de nombres.
+\end{itemize}
+
+\subsubsection*{type}
+\begin{verbatim}
+  type(name, [base...] [, class ], instance) -> Type
+\end{verbatim} 
+
+Esta funcion es la encargada de la construccion de nuevos tipos.
+\begin{lstlisting}[style=javascript,label=definicion-de-tipos,caption=Definicion
+de tipos]
+var Animal = type('Animal', object, {
+    contador: 0,
+}, {
+    __init__: function(especie) {
+	this.especie = especie;
+	this.orden = Animal.contador++;
+    }
+});
+
+var Terrestre = type('Terrestre', Animal, {
+    caminar: function() {
+	console.log(this.especie + ' caminando');
+    }
+});
+
+var Acuatico = type('Acuatico', Animal, {
+    nadar: function() {
+	console.log(this.especie + ' nadando');
+    }
+});
+
+var Anfibio = type('Anfibio', [Terrestre, Acuatico]);
+
+var Piton = type('Piton', Terrestre, {
+    __init__: function(nombre) {
+	super(Terrestre, this).__init__(this.__name__);
+	this.nombre = nombre;
+    },
+    caminar: function() {
+	throw new Exception(this.especie + ' no camina');
+    },
+    reptar: function() {
+	console.log(this.nombre + ' la ' + this.especie.toLowerCase() + ' esta
+reptando');
+    }
+});
+
+var doris = new Piton('Doris');
+var ballena = new Acuatico('Ballena');
+var rana = new Anfibio('Rana');
+\end{lstlisting}
+
+\noindent
+Ejemplos con los tipos definidos:
+\begin{lstlisting}[style=consola]
+>>> doris
+window.Piton especie=Piton orden=0 nombre=Doris __name__=Piton
+>>> rana
+window.Anfibio especie=Rana orden=2 __name__=Anfibio
+>>> isinstance(rana, Terrestre)
+true
+>>> isinstance(doris, Animal)
+true
+>>> issubclass(Anfibio, Acuatico)
+true
+>>> issubclass(Piton, Animal)
+true
+>>> doris.caminar()
+Exception: Piton no camina args=[1] message=Piton no camina
+>>> doris.reptar()
+Doris la piton esta reptando
+\end{lstlisting}
+
+\subsubsection*{\$}
+\$(id) \rightarrow HTMLElement
+\$(id ...) \rightarrow [HTMLElement...]
+
+\begin{lstlisting}[style=consola]
+>>> $('content')
+<div id="content">
+>>> $('content body')
+>>> $('content', 'body')
+[div#content, div#body]
+>>> $('content', 'body', 'head')
+[div#content, div#body, undefined]
+\end{lstlisting}
+
+\subsubsection*{\$\$}
+\$\$(cssRule) \rightarrow [HTMLElement...]
+
+\noindent
+Ejemplo:
+\begin{lstlisting}[style=consola]
+>>> $$('div')
+[div#wrap, div#top, div#content, div.header, div.breadcrumbs, div.middle, div,
+div.right, div#clear, div#footer, div#toolbar]
+>>> $$('div#toolbar')
+[div#toolbar]
+>>> $$('div#toolbar li')
+[li, li.panel, li.panel, li, li]
+>>> $$('div#toolbar li.panel')
+[li.panel, li.panel]
+>>> $$('a:not([href~=google])')
+[a add_post, a add_tag, a removedb, a syncdb]
+>>> $$('a:not([href=google])')
+[a add_post, a add_tag, a#google www.google.com, a removedb, a syncdb]
+>>> $$('div:empty')
+[div#logger.panel, div#dbquery.panel, div#clear, div#top]
+\end{lstlisting}
+
+\subsubsection*{extend}
+\verb|extend(destiny, source) -> alteredDestiny|
+
+\begin{lstlisting}[style=consola]
+>>> a = {perro: 4}
+>>> b = {gato: 4}
+>>> c = extend(a, b)
+>>> c
+Object perro=4 gato=4
+>>> a
+Object perro=4 gato=4
+>>> b
+Object gato=4
+\end{lstlisting}
+
+\subsubsection*{super}
+super(destiny, source) \rightarrow alteredDestiny
+\subsubsection*{isundefined}
+isundefined(destiny, source) \rightarrow alteredDestiny
+\subsubsection*{isinstance}
+isundefined(destiny, source) \rightarrow alteredDestiny
+\subsubsection*{issubclass}
+issubclass(destiny, source) \rightarrow alteredDestiny
+\subsubsection*{Arguments}
+new Arguments(destiny, source) \rightarrow alteredDestiny
+
+\begin{lstlisting}[style=consola]
+\end{lstlisting}
+
+\subsubsection*{Template}
+new Template(destiny, source) \rightarrow alteredDestiny
+\subsubsection*{Dict}
+new Dict(destiny, source) \rightarrow alteredDestiny
+\subsubsection*{Set}
+new Set(destiny, source) \rightarrow alteredDestiny
+\subsubsection*{hash}
+hash(destiny, source) \rightarrow alteredDestiny
+\subsubsection*{id}
+id(destiny, source) \rightarrow alteredDestiny
+\subsubsection*{getattr}
+getattr(destiny, source) \rightarrow alteredDestiny
+\subsubsection*{setattr}
+setattr(destiny, source) \rightarrow alteredDestiny
+\subsubsection*{hasattr}
+hasattr(destiny, source) \rightarrow alteredDestiny
+\subsubsection*{assert}
+assert(destiny, source) \rightarrow alteredDestiny
+\subsubsection*{bool}
+bool(destiny, source) \rightarrow alteredDestiny
+\subsubsection*{callable}
+callable(destiny, source) \rightarrow alteredDestiny
+\subsubsection*{chr}
+chr(number) \rightarrow character
+\subsubsection*{ord}
+ord(character) \rightarrow number
+
+\noindent
+Ejemplo:
+\begin{lstlisting}[style=consola]
+>>> ord(chr(65))
+65
+>>> chr(ord("A"))
+"A"
+\end{lstlisting}
+
+\subsubsection*{bisect}
+bisect(seq, element) \rightarrow position
+
+\begin{lstlisting}[style=consola]
+>>> a = [1,2,3,4,5]
+>>> bisect(a,6)
+5
+>>> bisect(a,2)
+2
+>>> a[bisect(a,3)] = 3
+>>> a
+[1, 2, 3, 3, 5]
+\end{lstlisting}
+
+\subsubsection*{equal}
+equal(destiny, source) \rightarrow alteredDestiny
+\subsubsection*{nequal}
+nequal(destiny, source) \rightarrow alteredDestiny
+\subsubsection*{number}
+number(destiny, source) \rightarrow alteredDestiny
+\subsubsection*{flatten}
+flatten(destiny, source) \rightarrow alteredDestiny
+\subsubsection*{include}
+include(destiny, source) \rightarrow alteredDestiny
+\subsubsection*{len}
+len(destiny, source) \rightarrow alteredDestiny
+\subsubsection*{array}
+array(iterable) \rightarrow [element...]
+\subsubsection*{print}
+print(destiny, source) \rightarrow alteredDestiny
+\subsubsection*{string}
+string(destiny, source) \rightarrow alteredDestiny
+\subsubsection*{values}
+values(object) \rightarrow [value...]
+\subsubsection*{keys}
+keys(object) \rightarrow [key...]
+\subsubsection*{items}
+items(object) \rightarrow [[key, value]...]
+
+\noindent
+Ejemplo:
+\begin{lstlisting}[style=consola]
+>>> items({'perro': 1, 'gato': 7})
+[["perro", 1], ["gato", 7]]
+\end{lstlisting}
+\subsubsection*{inspect}
+inspect(destiny, source) \rightarrow alteredDestiny
+\subsubsection*{unique}
+unique(destiny, source) \rightarrow alteredDestiny
+\subsubsection*{range}
+range([begin = 1, ] end[, step = 1]) \rightarrow [number...]
+
+\begin{lstlisting}[style=consola]
+>>> range(10)
+[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+>>> range(4, 10)
+[4, 5, 6, 7, 8, 9]
+>>> range(4, 10, 2)
+[4, 6, 8]
+\end{lstlisting}
+
+\subsubsection*{xrange}
+xrange(destiny, source) \rightarrow alteredDestiny
+\subsubsection*{zip}
+zip(seq1 [, seq2 [...]]) \rightarrow [[seq1[0], seq2[0] ...], [...]]
+
+\begin{lstlisting}[style=consola]
+>>> zip([1,2,3,4,5,6], ['a','b','c','d','e','f'])
+[[1, "a"], [2, "b"], [3, "c"], [4, "d"], [5, "e"], [6, "f"]]
+>>> zip([1,2,3,4,5,6], ['a','b','c','d','e','f','g','h'])
+[[1, "a"], [2, "b"], [3, "c"], [4, "d"], [5, "e"], [6, "f"]]
+>>> zip([1,2,3,4,5,6], ['a','b','c','d'])
+[[1, "a"], [2, "b"], [3, "c"], [4, "d"], [5, undefined], [6, undefined]]
+>>> zip([1,2,3,4,5,6], ['a','b','c','d','e','f'], [10,11,12,13,14,15,16])
+[[1, "a", 10], [2, "b", 11], [3, "c", 12], [4, "d", 13], [5, "e", 14], [6, "f",
+15]]
+\end{lstlisting}
+
+\subsection{sys}
+\subsubsection*{version}
+version: 0.8,
+\subsubsection*{browser}
+	browser: {
+	    IE:     !!(window.attachEvent &&
+navigator.userAgent.indexOf('Opera') === -1),
+	    Opera:  navigator.userAgent.indexOf('Opera') > -1,
+	    WebKit: navigator.userAgent.indexOf('AppleWebKit/') > -1,
+	    Gecko:  navigator.userAgent.indexOf('Gecko') > -1 &&
+navigator.userAgent.indexOf('KHTML') === -1,
+	    MobileSafari: !!navigator.userAgent.match(/Apple.*Mobile.*Safari/),
+	    features: {
+		XPath: !!document.evaluate,
+		SelectorsAPI: !!document.querySelector,
+		ElementExtensions: !!window.HTMLElement,
+		SpecificElementExtensions:
+document.createElement('div')['__proto__'] &&
+					
+document.createElement('div')['__proto__'] !==
+					
+document.createElement('form')['__proto__']
+	      Gears = !!get_gears() || false;
+
+	    }
+	},
+\subsubsection*{get\_gears}
+get\_gears: get_gears,
+\subsubsection*{register\_path}
+register\_path: function(module, path)
+\subsubsection*{module\_url}
+module\_url: function(name, postfix) {
+\subsubsection*{modules}
+modules: ModuleManager.modules,
+\subsubsection*{paths}
+paths: ModuleManager.paths
+
+\subsection{exception}
+var exception = ModuleManager.create('exceptions', 'built-in', {
+        Exception: Exception,
+        AssertionError: type('AssertionError', Exception),
+        AttributeError: type('AttributeError', Exception),
+        LoadError: type('LoadError', Exception),
+        KeyError: type('KeyError', Exception),
+        NotImplementedError: type('NotImplementedError', Exception),
+        TypeError: type('TypeError', Exception),
+        ValueError: type('ValueError', Exception),
+    });
+
+\subsection{event}
+\subsubsection*{connect}
+connect(object, event, context, method)
+\subsubsection*{disconnect}
+disconnect(handle)
+\subsubsection*{subscribe}
+subscribe(topic, context, method)
+\subsubsection*{unsubscribe}
+unsubscribe(handle)
+\subsubsection*{publish}
+publish(topic, args)
+\subsubsection*{connectpublisher}
+connectpublisher(topic, obj, event)
+\subsubsection*{fixevent}
+fixevent()
+\subsubsection*{stopevent}
+stopevent()
+\subsubsection*{keys}
+keys: { BACKSPACE: 8, TAB: 9, CLEAR: 12, ENTER: 13, SHIFT: 16, CTRL: 17, ALT:
+18, PAUSE: 19, CAPS_LOCK: 20, 
+		    ESCAPE: 27, SPACE: 32, PAGE_UP: 33, PAGE_DOWN: 34, END: 35,
+HOME: 36, LEFT_ARROW: 37, UP_ARROW: 38,
+		    RIGHT_ARROW: 39, DOWN_ARROW: 40, INSERT: 45, DELETE: 46,
+HELP: 47, LEFT_WINDOW: 91, RIGHT_WINDOW: 92,
+		    SELECT: 93, NUMPAD_0: 96, NUMPAD_1: 97, NUMPAD_2: 98,
+NUMPAD_3: 99, NUMPAD_4: 100, NUMPAD_5: 101,
+		    NUMPAD_6: 102, NUMPAD_7: 103, NUMPAD_8: 104, NUMPAD_9: 105,
+NUMPAD_MULTIPLY: 106, NUMPAD_PLUS: 107,
+		    NUMPAD_ENTER: 108, NUMPAD_MINUS: 109, NUMPAD_PERIOD: 110,
+NUMPAD_DIVIDE: 111, F1: 112, F2: 113, F3: 114,
+		    F4: 115, F5: 116, F6: 117, F7: 118, F8: 119, F9: 120, F10:
+121, F11: 122, F12: 123, F13: 124, 
+		    F14: 125, F15: 126, NUM_LOCK: 144, SCROLL_LOCK: 145 }
+    });
+
+\subsection{timer}
+\subsubsection*{setTimeout}
+setTimeout: window.setTimeout,
+\subsubsection*{setInterval}
+setInterval: window.setInterval,
+\subsubsection*{clearTimeout}
+clearTimeout: window.clearTimeout,
+\subsubsection*{delay}
+delay: function(f) {
+\subsubsection*{defer}
+defer: function(f) {
+
+\subsection{ajax}
+\subsubsection*{Request}
+new Request()
+\subsubsection*{Response}
+new Response()
+\subsubsection*{toQueryParams}
+toQueryParams(string, separator) \rightarrow object
+\subsubsection*{toQueryString}
+toQueryString(params) \rightarrow string
+
+\subsection{dom}
+\subsubsection*{query}
+query(cssRule) \rightarrow [HTMLElement...]
+
+\section{Extendiendo Javascript}
+\subsection{String}
+\subsubsection*{gsub}
+gsub(pattern, replacement) \rightarrow string
+\subsubsection*{sub}
+sub(pattern, replacement[, count = 1]) \rightarrow string
+\subsubsection*{subs}
+subs(pattern, replacement) \rightarrow string
+\subsubsection*{format}
+format(pattern, replacement) \rightarrow string
+\subsubsection*{inspect} 
+inspect(use_double_quotes) \rightarrow string
+\subsubsection*{truncate}
+truncate(length, truncation) \rightarrow string
+\subsubsection*{strip}
+strip() \rightarrow string
+\subsubsection*{striptags}
+striptags() \rightarrow string
+\subsubsection*{stripscripts}
+stripscripts() \rightarrow string
+\subsubsection*{extractscripts}
+extractscripts() \rightarrow string
+\subsubsection*{evalscripts}
+evalscripts() \rightarrow string
+\subsubsection*{escapeHTML}
+escapeHTML() \rightarrow string
+\subsubsection*{unescapeHTML}
+unescapeHTML() \rightarrow string
+\subsubsection*{succ}
+succ() \rightarrow string
+\subsubsection*{times}
+times(count[, separator = '']) \rightarrow string
+\subsubsection*{camelize}
+camelize() \rightarrow string
+\subsubsection*{capitalize}
+capitalize() \rightarrow string
+\subsubsection*{underscore}
+underscore() \rightarrow string
+\subsubsection*{dasherize}
+dasherize() \rightarrow string
+\subsubsection*{startswith}
+startswith(pattern) \rightarrow string
+\subsubsection*{endswith}
+endswith(pattern) \rightarrow string
+\subsubsection*{blank}
+blank() \rightarrow string
+
+\subsection{Number}
+\subsubsection*{format}
+format(f, radix) \rightarrow string
+
+\subsection{Date}
+\subsubsection*{toISO8601}
+toISO8601() \rightarrow string
+
+\subsection{Element}
+\subsubsection*{visible}
+visible()
+\subsubsection*{toggle}
+toggle()
+\subsubsection*{hide}
+hide()
+\subsubsection*{show}
+show()
+\subsubsection*{remove}
+remove()
+\subsubsection*{update}
+update(content)
+\subsubsection*{insert}
+insert(insertions)
+\subsubsection*{select}
+select(selector)
+
+\begin{lstlisting}[style=consola]
+>>> $('PostForm').select('input')
+[input#id_title, input guardar]
+>>> $('content').select('div')
+[div.header, div.breadcrumbs, div.middle, div, div.right, div#clear]
+>>> $('content').select('div.middle')
+[div.middle]
+\end{lstlisting}
+
+\subsection{Forms}
+\subsubsection*{disable}
+disable()
+\subsubsection*{enable}
+enable()
+\subsubsection*{serialize}
+serialize() \rightarrow object
+\begin{lstlisting}[style=consola]
+>>> $('PostForm')
+<form id="PostForm" method="post" onsubmit="return blog.handler.handle(this);"
+action="/blog/add_post/">
+>>> $('PostForm').serialize()
+Object title=Hola mundo body=Este es un post tags=[1]
+\end{lstlisting}
+
+\subsection{Forms.Element}
+\subsubsection*{serialize}
+serialize()
+\subsubsection*{get\_value}
+get\_value()
+\subsubsection*{set\_value}
+set\_value(value) {
+\subsubsection*{clear}
+clear()
+\subsubsection*{present}
+present()
+\subsubsection*{activate}
+activate()
+\subsubsection*{disable}
+disable()
+\subsubsection*{enable}
+enable()
