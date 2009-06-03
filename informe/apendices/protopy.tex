@@ -40,8 +40,6 @@ publish({
 });
 \end{lstlisting}
 
-\noindent
-Probamos el modulo:
 \begin{lstlisting}[style=consola]
 >>> require('tests.module')
 >>> module.get_texto()
@@ -58,6 +56,10 @@ Probamos el modulo:
 
 \section{Modulos incluidos en el nucleo de protopy}
 \subsection{builtin}
+Este modulo contiene la principal funcionalidad de protopy, en el se encuentran
+las funciones y contructores para realizar la mayoria de las tareas, no es
+necesario importarlo en el espacio de nombres ya que su funcionalidad esta
+disponible desde que protopy se carga.
 
 \subsubsection*{publish}
 \begin{verbatim}
@@ -99,12 +101,17 @@ publica en el espacio de nombres.
   type(name, [base...] [, class ], instance) -> Type
 \end{verbatim} 
 Funcion encargada de la construccion de nuevos tipos o clases.
-Retorna una funcion constructora que al ser invocada disparara el metodo
-__init__, este metodo es el que representar nuesto contructor de tipo. Otros
-metos son de especial interes en estas funciones como __str__, __iter__,
-__cmp__, etc.
+Una vez definido un nuevo tipo este puede ser utilizado para la contruccion
+indiscriminada de objetos de ese tipo mediante el operador new.
 Como argumentos admite, el nombre del nuevo tipo, las bases de la cual hereda,
-opcionalmente los atribuots de clase y los atributos para la instancia.
+opcionalmente los atributos y metodos de clase y los atributos y metodos para la
+instancia.
+
+La funcion constructor de los objetos tiene por nombre __init__ y es disparada
+en el momento de la construccion del objeto; en conjunto con otros metodos que
+se mencionaran a lo largo del texto estas funciones resultan de especial interes
+para interactuar con nuestros objetos y existen operadores en protopy para
+manejarlas, esto es, no debieran ser invocadas o llamadas directamente.
 \begin{lstlisting}[style=javascript,label=definicion-de-tipos,caption=Definicion
 de tipos]
 var Animal = type('Animal', object, {
@@ -267,7 +274,9 @@ type2 la evalucion se reliza para cada una de las clases incluidas en el mismo.
 
 %Arguments
 \subsubsection*{Arguments}
-new Arguments(destiny, source) \rightarrow alteredDestiny
+\begin{verbatim}
+  new Arguments(arguments) -> Arguments
+\end{verbatim}
 
 \begin{lstlisting}[style=consola]
 \end{lstlisting}
@@ -275,6 +284,7 @@ new Arguments(destiny, source) \rightarrow alteredDestiny
 %Template
 \subsubsection*{Template}
 new Template(destiny, source) \rightarrow alteredDestiny
+
 \subsubsection*{Dict}
 \begin{verbatim}
   new Dict(object) -> Dict
@@ -304,6 +314,9 @@ more...], 50]]
 \begin{verbatim}
   new Set(array) -> Set
 \end{verbatim}
+Un set es una coleccion de elementos unicos, similar a conjuntos este tipo de
+objeto brinda funcionalidad util a la momento de trabajar con los elementos,
+como son la interseccion la union la diferencia, etc.
 \begin{lstlisting}[style=consola]
 >>> set = new Set([1,2,3,4,5,6,7,8,9,3,6,1,4,7])
 >>> len(set)
@@ -326,24 +339,64 @@ teronran los mismos valores de hash.
 
 \subsubsection*{id}
 \begin{verbatim}
-  id(object) -> number
+  id(value) -> number
 \end{verbatim}
-Asigna y retorna un identificador unico para el objeto pasado como argumento,
-una vez que el objeto es identificado las posteriores llamadas en las que sea
-pasado a esta funcion retornara el mismo identificador.
+Asigna y retorna un identificador unico para el valor pasado como argumento.
+Al pasar un valor que sea de tipo objeto la funcion id modificara la
+estructura interna agregando el atributo __hash__ para ``etiquetar''
+el objeto y en posteriores llamadas retornara el mismo identificador.
 
+%getattr
 \subsubsection*{getattr}
-getattr(destiny, source) \rightarrow alteredDestiny
+\begin{verbatim}
+  getattr(object, name, default) -> value
+\end{verbatim}
+Obtiene un atributo de un objeto mediante su nombre, en caso de pasar un valor
+por defecto este es retornado si el atributo buscado no esta definido en el
+objeto, en caso contrario una excepcion es lanzada.
+
+%setattr
 \subsubsection*{setattr}
-setattr(destiny, source) \rightarrow alteredDestiny
+\begin{verbatim}
+  setattr(object, name, value)
+\end{verbatim}
+Establece un atributo en un objeto con el nombre pasado. El valor establecido
+pasa a formar parte del objeto.
+
+%hasattr
 \subsubsection*{hasattr}
-hasattr(destiny, source) \rightarrow alteredDestiny
+\begin{verbatim}
+  hasattr(object, name) -> boolean
+\end{verbatim}
+Retrona verdadero en caso de que el objeto tenga un atributo con el nombre
+correspondiente, falso en caso contrario.
+
+%assert
 \subsubsection*{assert}
-assert(destiny, source) \rightarrow alteredDestiny
+\begin{verbatim}
+  assert(boolean, mesage)
+\end{verbatim}
+Chequea que el valor de verdad pasado sea verdadero en caso contrario retorna
+una excepcion conteniendo el mensaje pasado.
+
+%bool
 \subsubsection*{bool}
-bool(destiny, source) \rightarrow alteredDestiny
+\begin{verbatim}
+  bool(object)
+\end{verbatim}
+Determina el valor de verdad de un objeto pasado, los valores de verdad son como
+sigue: arreglos, objetos y cadenas vacias en conjunto con los valores null y
+undefined son falsos; todos los demas casos son verdaderos.
+En el caso particular de que un objeto defina el metodo __nonzero__ este es
+invocado para determinar el valor de verdad.
+
+%callable
 \subsubsection*{callable}
-callable(destiny, source) \rightarrow alteredDestiny
+\begin{verbatim}
+  callable(value) -> boolean
+\end{verbatim}
+Retorna verdadero en caso de que el valor pasado sea instancia de una funcion
+osea pueda ser llamado, falso en caso contrario.
 
 %chr
 \subsubsection*{chr}
@@ -381,14 +434,22 @@ bisect(seq, element) \rightarrow position
 %equal
 \subsubsection*{equal}
 \begin{verbatim}
-  equal(object, object) -> boolean
+  equal(object1, object2) -> boolean
 \end{verbatim}
+Compara dos objetos determinando el valor de igual para los mismos, verdadero es
+retornado en caso de ser los dos objetos iguales.
+En caso de que object1 implemente el metodo __eq__ este es invocado con object2
+pasado como parametro.
 
 %nequal
 \subsubsection*{nequal}
 \begin{verbatim}
   nequal(object, object) -> boolean
 \end{verbatim}
+Compara dos objetos determinando el valor de igual para los mismos, verdadero es
+retornado en caso de ser los dos objetos distintos.
+En caso de que object1 implemente el metodo __ne__ este es invocado con object2
+pasado como parametro.
 
 %number
 \subsubsection*{number}
@@ -404,23 +465,27 @@ flatten(destiny, source) \rightarrow alteredDestiny
 \begin{verbatim}
   include(object, element) -> boolean
 \end{verbatim}
+__contains__
 
 %len
 \subsubsection*{len}
 \begin{verbatim}
   len(object) -> boolean
 \end{verbatim}
+__len__
 
 \subsubsection*{array}
 \begin{verbatim}
   array(iterable) -> [element...]
 \end{verbatim}
+__iter__
 
 \subsubsection*{print}
 print(destiny, source) \rightarrow alteredDestiny
 
 \subsubsection*{string}
 string(destiny, source) \rightarrow alteredDestiny
+__str__
 
 \subsubsection*{values}
 \begin{verbatim}
@@ -439,7 +504,8 @@ Retorna un arreglo con las claves del objeto pasado como argumento.
 \begin{verbatim}
   items(object) -> [[key, value]...]
 \end{verbatim}
-De un objeto dado retorna en forma de arreglo cada dupla de clave y valor.
+Retorna en forma de arreglo cada pareja clave, valor de un objeto pasado como
+argumento.
 \begin{lstlisting}[style=consola]
 >>> items({'perro': 1, 'gato': 7})
 [["perro", 1], ["gato", 7]]
@@ -503,53 +569,43 @@ secuencias queda acotada a la longitud de la secuencia mas corta.
 \end{lstlisting}
 
 \subsection{sys}
+Este modulo provee acceso a algunos objetos mantenidos por protopy y funciones
+que resultan de utilidad para interactuar con el ambiente de ejecucion.
 \subsubsection*{version}
-version: 0.8,
+Es la version de protopy.
 \subsubsection*{browser}
-	browser: {
-	    IE:     !!(window.attachEvent &&
-navigator.userAgent.indexOf('Opera') === -1),
-	    Opera:  navigator.userAgent.indexOf('Opera') > -1,
-	    WebKit: navigator.userAgent.indexOf('AppleWebKit/') > -1,
-	    Gecko:  navigator.userAgent.indexOf('Gecko') > -1 &&
-navigator.userAgent.indexOf('KHTML') === -1,
-	    MobileSafari: !!navigator.userAgent.match(/Apple.*Mobile.*Safari/),
-	    features: {
-		XPath: !!document.evaluate,
-		SelectorsAPI: !!document.querySelector,
-		ElementExtensions: !!window.HTMLElement,
-		SpecificElementExtensions:
-document.createElement('div')['__proto__'] &&
-					
-document.createElement('div')['__proto__'] !==
-					
-document.createElement('form')['__proto__']
-	      Gears = !!get_gears() || false;
+Este objeto provee informacion sobre el navegador en el cual protopy se cargo.
+\begin{itemize}
+ \item{IE} Si el navegador es Internet Explorer.
+ \item{Opera} Si el navegador es Opera.
+ \item{WebKit} Si el navegador es AppleWebKit.
+ \item{Geck} Si el navegador es Gecko.
+ \item{MobileSafari} Si el navegador es Apple Mobile Safari.
+ \item{fatures} Algunas herramientas que el navegador proveea, por ejemplo
+XPath, un selector de css, y otras extensiones.
+\end{itemize}
 
-	    }
-	},
 \subsubsection*{get\_gears}
-get\_gears: get_gears,
+Mediante esta funcion obtenemos el objeto gears para interactuar con el plugin
+de google gears para el navegador.
 \subsubsection*{register\_path}
-register\_path: function(module, path)
+Registra una ruta en el servidor para un paquete, de este modo, las imporaciones
+de modulos dependientes de de ese paquete se realizaran sobre la ruta asociada. 
 \subsubsection*{module\_url}
-module\_url: function(name, postfix) {
+Retorna la ruta correspondiente al nombre de modulo pasado.
 \subsubsection*{modules}
-modules: ModuleManager.modules,
+Un objeto para asociar los nombres de modulos con los modulos propiamente dicho
+que se van cargando bajo demanda.
 \subsubsection*{paths}
-paths: ModuleManager.paths
+Las rutas registradas para la carga de modulos.
 
 \subsection{exception}
-var exception = ModuleManager.create('exceptions', 'built-in', {
-        Exception: Exception,
-        AssertionError: type('AssertionError', Exception),
-        AttributeError: type('AttributeError', Exception),
-        LoadError: type('LoadError', Exception),
-        KeyError: type('KeyError', Exception),
-        NotImplementedError: type('NotImplementedError', Exception),
-        TypeError: type('TypeError', Exception),
-        ValueError: type('ValueError', Exception),
-    });
+Este modulo reune todas las excepciones que protopy provee a la hora de mostrar
+errores, estas son:
+Exception, AssertionError, AttributeError, LoadError, KeyError,
+NotImplementedError, TypeError, ValueError.
+El modulo de excepciones es cargado en el ambiente de trabajo cuando protopy
+inicia, no siendo necesario su llamada posterior.
 
 \subsection{event}
 \subsubsection*{connect}
@@ -610,9 +666,13 @@ toQueryString(params) \rightarrow string
 
 \subsection{dom}
 \subsubsection*{query}
-query(cssRule) \rightarrow [HTMLElement...]
+\begin{verbatim}
+  query(cssRule) -> [HTMLElement...]
+\end{verbatim}
 
 \section{Extendiendo Javascript}
+Protopy no solo aporta modulos utiles para el trabjo de desarrollo, sino que
+tambien extiende los objetos de javascript agregando funcionalidad a los mismos.
 \subsection{String}
 \subsubsection*{gsub}
 gsub(pattern, replacement) \rightarrow string
@@ -653,11 +713,22 @@ underscore() \rightarrow string
 \subsubsection*{dasherize}
 dasherize() \rightarrow string
 \subsubsection*{startswith}
-startswith(pattern) \rightarrow string
+\begin{verbatim}
+  startswith(pattern) -> boolean
+\end{verbatim}
+Si la cadena de texto inicia con un patron.
+
 \subsubsection*{endswith}
-endswith(pattern) \rightarrow string
+\begin{verbatim}
+  endswith(pattern) -> boolean
+\end{verbatim}
+Si la cadena de texto termina con un patron.
+
 \subsubsection*{blank}
-blank() \rightarrow string
+\begin{verbatim}
+  blank() -> boolean
+\end{verbatim}
+Valor de verdad asociado a si la cadena solo pose espacios osea esta en blanco.
 
 \subsection{Number}
 \subsubsection*{format}

@@ -560,7 +560,6 @@
         onComplete: function() { activeRequestCount-- }
     });
 
-    //TODO: armar algo para podes pasar parametros.
     var Base = type('Base', object, {
 	__init__: function(options) {
 	    this.options = {
@@ -1876,7 +1875,6 @@
             }
             return i;
         },
-        //no se porque no anda el dir
         equal: function(object1, object2) {
             if (callable(object1['__eq__'])) return object1.__eq__(object2);
             return object1 == object2;
