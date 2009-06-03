@@ -69,7 +69,7 @@ exponer una interface de acceso al mismo, de esto se encarga la funcion publish.
 
 \subsubsection*{require}
 \begin{verbatim}
-  require(module[, object...]) -> module
+  require(module[, object...]) -> module | object
 \end{verbatim} 
 Importa un modulo en el espacio de nombres.
 Al invocar a esta funcion un modulo es cargado desde el servidor y ejecutado en
@@ -90,15 +90,21 @@ espacio de nombres para cursor.
   Importa el modulo 'doff.db.models' y define en el espacio de nombres las
 referencias a model y query usando los mismos nombres.
  \item{require('doff.core.urlpattern', '*')}
-  Importa del modulo 'doff.core.urlpattern' todos los objetos publicados y los publica en el espacio de nombres.
+  Importa del modulo 'doff.core.urlpattern' todos los objetos publicados y los
+publica en el espacio de nombres.
 \end{itemize}
 
 \subsubsection*{type}
 \begin{verbatim}
   type(name, [base...] [, class ], instance) -> Type
 \end{verbatim} 
-
-Esta funcion es la encargada de la construccion de nuevos tipos.
+Funcion encargada de la construccion de nuevos tipos o clases.
+Retorna una funcion constructora que al ser invocada disparara el metodo
+__init__, este metodo es el que representar nuesto contructor de tipo. Otros
+metos son de especial interes en estas funciones como __str__, __iter__,
+__cmp__, etc.
+Como argumentos admite, el nombre del nuevo tipo, las bases de la cual hereda,
+opcionalmente los atribuots de clase y los atributos para la instancia.
 \begin{lstlisting}[style=javascript,label=definicion-de-tipos,caption=Definicion
 de tipos]
 var Animal = type('Animal', object, {
@@ -142,9 +148,6 @@ var doris = new Piton('Doris');
 var ballena = new Acuatico('Ballena');
 var rana = new Anfibio('Rana');
 \end{lstlisting}
-
-\noindent
-Ejemplos con los tipos definidos:
 \begin{lstlisting}[style=consola]
 >>> doris
 window.Piton especie=Piton orden=0 nombre=Doris __name__=Piton
@@ -165,9 +168,15 @@ Doris la piton esta reptando
 \end{lstlisting}
 
 \subsubsection*{\$}
-\$(id) \rightarrow HTMLElement
-\$(id ...) \rightarrow [HTMLElement...]
-
+\begin{verbatim}
+  $(id) -> HTMLElement
+  $(id[, id...]) -> [HTMLElement...]
+\end{verbatim}
+Esta funcion recibe una cadena de texto y retorna un elemento del documento cuyo
+id se corresponda con la cadena. En conjunto con la funcion \$\$ constituyen dos
+herramientas muy utiles para recuperar elementos e interactuar con el arbol DOM.
+Si mas de un argumento es pasado, la forma de retorno es mediante un arreglo,
+permitiendo asi la iteracion sobre los mismos.
 \begin{lstlisting}[style=consola]
 >>> $('content')
 <div id="content">
@@ -179,10 +188,11 @@ Doris la piton esta reptando
 \end{lstlisting}
 
 \subsubsection*{\$\$}
-\$\$(cssRule) \rightarrow [HTMLElement...]
-
-\noindent
-Ejemplo:
+\begin{verbatim}
+  $$(cssRule) -> [HTMLElement...]
+\end{verbatim}
+Recupera elementos del documento, pero en lugar de hacerlo mediante un
+identificador, lo realiza utilizando las reglas de css o hoja de estilos.
 \begin{lstlisting}[style=consola]
 >>> $$('div')
 [div#wrap, div#top, div#content, div.header, div.breadcrumbs, div.middle, div,
@@ -201,9 +211,14 @@ div.right, div#clear, div#footer, div#toolbar]
 [div#logger.panel, div#dbquery.panel, div#clear, div#top]
 \end{lstlisting}
 
+%extend
 \subsubsection*{extend}
-\verb|extend(destiny, source) -> alteredDestiny|
-
+\begin{verbatim}
+  extend(destiny, source) -> alteredDestiny
+\end{verbatim}
+Extiende sobre un objeto destino todos los objetos pasados como argumentos a
+continuacion, copiando cada uno de los atributos correspondientes, el objeto
+destino es retornado modificado.
 \begin{lstlisting}[style=consola]
 >>> a = {perro: 4}
 >>> b = {gato: 4}
@@ -216,30 +231,107 @@ Object perro=4 gato=4
 Object gato=4
 \end{lstlisting}
 
+%super
 \subsubsection*{super}
-super(destiny, source) \rightarrow alteredDestiny
+\begin{verbatim}
+  super(tipo, objeto) -> boundedObject
+\end{verbatim}
+Enlaza un objeto con un tipo de objeto, de este modo la invocacion sobre una
+funcion del tipo se realizara sobre el objeto enlazado.
+Normalemnte esta funcion es utilizada para llamar a metodos de un tipo base.
+
+%isundefined
 \subsubsection*{isundefined}
-isundefined(destiny, source) \rightarrow alteredDestiny
+\begin{verbatim}
+  isundefined(object) -> boolean
+\end{verbatim}
+Determina si un objeto no esta definido o asociado a un valor. Retorna un valor
+de verdad correspondiente.
+
+%isinstance
 \subsubsection*{isinstance}
-isundefined(destiny, source) \rightarrow alteredDestiny
+\begin{verbatim}
+  isinstance(object, type | [type...]) -> boolean
+\end{verbatim}
+Retorna verdadero si el objeto es una instancia del tipo, si un arreglo de tipos
+es pasado como segundo argumento el valor de verdad surge de preguntar por cada
+uno de ellos.
+
+%issubclass 
 \subsubsection*{issubclass}
-issubclass(destiny, source) \rightarrow alteredDestiny
+\begin{verbatim}
+  issubclass(type1, type2 | [type...]) -> boolean
+\end{verbatim}
+Retorna si type1 es una subclase de type2, cuando se pasa un arrgelo en lugar de
+type2 la evalucion se reliza para cada una de las clases incluidas en el mismo.
+
+%Arguments
 \subsubsection*{Arguments}
 new Arguments(destiny, source) \rightarrow alteredDestiny
 
 \begin{lstlisting}[style=consola]
 \end{lstlisting}
 
+%Template
 \subsubsection*{Template}
 new Template(destiny, source) \rightarrow alteredDestiny
 \subsubsection*{Dict}
-new Dict(destiny, source) \rightarrow alteredDestiny
+\begin{verbatim}
+  new Dict(object) -> Dict
+\end{verbatim}
+\begin{lstlisting}[style=consola]
+>>> dic = new Dict({'db': 5, 'template': 2, 'core': 9})
+>>> obj = {'un': 'objeto'}
+>>> dic.set(obj, 10)
+>>> arreglo = [1,2,3,4,obj]
+>>> dic.set(arreglo, 50)
+>>> dic.get('template')
+2
+>>> dic.get(arreglo)
+50
+>>> dic.get(obj)
+10
+>>> dic.items()
+[["db", 5], ["template", 2], ["core", 9], [Object un=objeto, 10], [[1, 2, 3, 2
+more...], 50]]
+>>> dic.keys()
+["db", "template", "core", Object un=objeto, [1, 2, 3, 2 more...]]
+>>> dic.values()
+[5, 2, 9, 10, 50]
+\end{lstlisting}
+
 \subsubsection*{Set}
-new Set(destiny, source) \rightarrow alteredDestiny
+\begin{verbatim}
+  new Set(array) -> Set
+\end{verbatim}
+\begin{lstlisting}[style=consola]
+>>> set = new Set([1,2,3,4,5,6,7,8,9,3,6,1,4,7])
+>>> len(set)
+9
+>>> set.add(6)
+>>> len(set)
+9
+>>> set2 = set.intersection([1,3,5,6])
+>>> set2.elements
+[1, 3, 5, 6]
+\end{lstlisting}
+
+%hash
 \subsubsection*{hash}
-hash(destiny, source) \rightarrow alteredDestiny
+\begin{verbatim}
+  hash(string | number) -> number
+\end{verbatim}
+Retorna un valor de hash para el argumento dado, para los mismos argumentos se
+teronran los mismos valores de hash.
+
 \subsubsection*{id}
-id(destiny, source) \rightarrow alteredDestiny
+\begin{verbatim}
+  id(object) -> number
+\end{verbatim}
+Asigna y retorna un identificador unico para el objeto pasado como argumento,
+una vez que el objeto es identificado las posteriores llamadas en las que sea
+pasado a esta funcion retornara el mismo identificador.
+
 \subsubsection*{getattr}
 getattr(destiny, source) \rightarrow alteredDestiny
 \subsubsection*{setattr}
@@ -252,13 +344,20 @@ assert(destiny, source) \rightarrow alteredDestiny
 bool(destiny, source) \rightarrow alteredDestiny
 \subsubsection*{callable}
 callable(destiny, source) \rightarrow alteredDestiny
-\subsubsection*{chr}
-chr(number) \rightarrow character
-\subsubsection*{ord}
-ord(character) \rightarrow number
 
-\noindent
-Ejemplo:
+%chr
+\subsubsection*{chr}
+\begin{verbatim}
+  chr(number) -> character
+\end{verbatim}
+Retorna el caracter correspondiente al numero ordinal pasado.
+
+%ord
+\subsubsection*{ord}
+\begin{verbatim}
+  ord(character) -> number
+\end{verbatim}
+Retorna un numero correspondiente al caracter pasado.
 \begin{lstlisting}[style=consola]
 >>> ord(chr(65))
 65
@@ -268,7 +367,6 @@ Ejemplo:
 
 \subsubsection*{bisect}
 bisect(seq, element) \rightarrow position
-
 \begin{lstlisting}[style=consola]
 >>> a = [1,2,3,4,5]
 >>> bisect(a,6)
@@ -280,44 +378,86 @@ bisect(seq, element) \rightarrow position
 [1, 2, 3, 3, 5]
 \end{lstlisting}
 
+%equal
 \subsubsection*{equal}
-equal(destiny, source) \rightarrow alteredDestiny
+\begin{verbatim}
+  equal(object, object) -> boolean
+\end{verbatim}
+
+%nequal
 \subsubsection*{nequal}
-nequal(destiny, source) \rightarrow alteredDestiny
+\begin{verbatim}
+  nequal(object, object) -> boolean
+\end{verbatim}
+
+%number
 \subsubsection*{number}
-number(destiny, source) \rightarrow alteredDestiny
+\begin{verbatim}
+  number(object) -> number
+\end{verbatim}
+
 \subsubsection*{flatten}
 flatten(destiny, source) \rightarrow alteredDestiny
+
+%include
 \subsubsection*{include}
-include(destiny, source) \rightarrow alteredDestiny
+\begin{verbatim}
+  include(object, element) -> boolean
+\end{verbatim}
+
+%len
 \subsubsection*{len}
-len(destiny, source) \rightarrow alteredDestiny
+\begin{verbatim}
+  len(object) -> boolean
+\end{verbatim}
+
 \subsubsection*{array}
-array(iterable) \rightarrow [element...]
+\begin{verbatim}
+  array(iterable) -> [element...]
+\end{verbatim}
+
 \subsubsection*{print}
 print(destiny, source) \rightarrow alteredDestiny
+
 \subsubsection*{string}
 string(destiny, source) \rightarrow alteredDestiny
+
 \subsubsection*{values}
 values(object) \rightarrow [value...]
+
 \subsubsection*{keys}
 keys(object) \rightarrow [key...]
-\subsubsection*{items}
-items(object) \rightarrow [[key, value]...]
 
-\noindent
-Ejemplo:
+%items
+\subsubsection*{items}
+\begin{verbatim}
+  items(object) -> [[key, value]...]
+\end{verbatim}
 \begin{lstlisting}[style=consola]
 >>> items({'perro': 1, 'gato': 7})
 [["perro", 1], ["gato", 7]]
 \end{lstlisting}
-\subsubsection*{inspect}
-inspect(destiny, source) \rightarrow alteredDestiny
-\subsubsection*{unique}
-unique(destiny, source) \rightarrow alteredDestiny
-\subsubsection*{range}
-range([begin = 1, ] end[, step = 1]) \rightarrow [number...]
 
+\subsubsection*{inspect}
+\begin{verbatim}
+  inspect(object) -> string
+\end{verbatim}
+
+%unique
+\subsubsection*{unique}
+\begin{verbatim}
+  unique(array) -> [element...]
+\end{verbatim}
+
+%range
+\subsubsection*{range}
+\begin{verbatim}
+  range([begin = 0, ] end[, step = 1]) -> [number...]
+\end{verbatim}
+Retorna un arreglo conteniendo una progresion aritmetica de numeros enteros.
+Los parametros son variables y en su invocacion mas simple se pasa solo el final
+de la secuencia de numeros a generar, asumiendo para ello un inicio en 0 y un
+incremento en una unidad, estos valores pueden ser modificados.
 \begin{lstlisting}[style=consola]
 >>> range(10)
 [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -327,11 +467,22 @@ range([begin = 1, ] end[, step = 1]) \rightarrow [number...]
 [4, 6, 8]
 \end{lstlisting}
 
+%xrange
 \subsubsection*{xrange}
-xrange(destiny, source) \rightarrow alteredDestiny
-\subsubsection*{zip}
-zip(seq1 [, seq2 [...]]) \rightarrow [[seq1[0], seq2[0] ...], [...]]
+\begin{verbatim}
+  xrange([begin = 0, ] end[, step = 1]) -> generator
+\end{verbatim}
+Similar a range pero en lugar de retornar un arrglo retorna un objeto que
+generar los valores bajo demanda.
 
+%zip
+\subsubsection*{zip}
+\begin{verbatim}
+  zip(seq1 [, seq2 [...]]) \rightarrow [[seq1[0], seq2[0] ...], [...]]
+\end{verbatim}
+Retorna un arreglo en donde cada secuencia contenida es el resultado de combinar
+cada una de las secuencias que se pasaron como argumento, la longitud de las
+secuencias queda acotada a la longitud de la secuencia mas corta.
 \begin{lstlisting}[style=consola]
 >>> zip([1,2,3,4,5,6], ['a','b','c','d','e','f'])
 [[1, "a"], [2, "b"], [3, "c"], [4, "d"], [5, "e"], [6, "f"]]

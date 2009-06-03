@@ -1947,7 +1947,7 @@
         inspect: function(object) {
             if (isundefined(object)) return 'undefined';
             if (object === null) return 'null';
-            return callable(object.inspect) ? object.inspect() : String(object);
+            return callable(object.inspect) ? object.inspect() : string(object);
         },
         unique: function(sorted) {
             return sorted.reduce(function(array, value) {
