@@ -95,8 +95,6 @@
 
 \begin{document}
 
-
-
 \maketitle
 
 \pagenumbering{roman}
@@ -203,13 +201,11 @@ la web.
 
 Luego un análisis de las tecnologías del cliente, haciendo hincapié en ...
 
-http://es.wikiquote.org/wiki/The_Matrix
+http://es.wikiquote.org/wiki/The\_Matrix
 
 \section{Alcance}
 
 Aca ponemos hasta donde nos vamos a llegar.
-
-\chapter{}
 
 \chapter{Tecnologías Web}
 
@@ -329,17 +325,12 @@ c = (1, 2, 3, 'bacalao')
 w, x, y, z = c	# Asignación posicional
 \end{lstlisting}
 
-
-\begin{lstlisting}[style=javascript,label=asignacion-python,caption=Asignacion en Python]
-function pepe(){}
-\end{lstlisting}
-
 Una lista es una coección ordenada de objetos del mismo o diferente tipo que pueden 
 ser modificados. Básicamente la lista se comporta como una tupla mutable.
-\begin{python}
+\begin{lstlisting}[style=python]
  a = [1, 2, 3, 4 ]
  b[0] = 4
-\end{python}
+\end{lstlisting}
 
 Los \emph{bloques} en Python son conjuntos de sentencias que se encuentran a 
 bajo un cierto nivel de inetación. Un bloque comienza con dos puntos (:)
@@ -348,16 +339,12 @@ ejemplos de bloques con las sentencias de control de flujo.
 
 \subsubsection*{Bloques y estructuras de control}
 La esentencia \emph{if} ejecuta el 
-\begin{python}
+\begin{lstlisting}[style=python]
 if condicion:
     bloque_si_condicion_verdadera
 else:
     bloque_si_codicion_falsa
-\end{python}
-
-
-
-
+\end{lstlisting}
 
 \subsection{Espacio de nombres en Python}
 Cuando comenzamos a ejecutar el intérprete de Python de forma interactiva o cuando
@@ -395,9 +382,9 @@ Un número, el llamado a función o el lanzado de una excepción no alteran el �
 Un módulo puede ser cargado desde el intérprete interactivo en el ámbito de nombres global
 o desde otro módulo (en su propio espacio de nombres) a través de 
 la sentencia \emph{import}
-\begin{python}
+\begin{lstlisting}[style=python]
 import os
-\end{python}
+\end{lstlisting}
 En este caso, el intérprete buscará secuencialmente en el PYTHONPATH un módulo llamado \textbf{os}, 
 en caso de encontrarlo, lo cargará y en el ámbito de nombres actual generará una referencia con el 
 nombre ``os''. A esta actividad se la llama importación y el interprete garantiza que un módulo
@@ -407,46 +394,46 @@ El resto de las sentencias import solamente generan referencias a la primera ``i
 
 La sentencia import permite a su vez hacer una importación selectiva de símbolos de un módulo, 
 por ejemplo:
-\begin{python}
- from os import path
-\end{python}
+\begin{lstlisting}[style=python]
+from os import path
+\end{lstlisting}
 En este caso, import crea la instancia del módulo en la máquina virtual, pero no expone todo el contenido
 al ámbito de nombres local, sino que únicamente genera una referencia al símbolo \emph{path}.
 
 El comodín \textbf{*} permite importar todos los símbolos definidos en un módulo al espacio de nombres local.
-\begin{python}
- from os import *
-\end{python}
+\begin{lstlisting}[style=python]
+from os import *
+\end{lstlisting}
 
 Está técnica debe ser utilizada con cuidado, debido a que ``contamina'' el ámbito de nombres local. Para
 mitigar este problma, puede definirse una variable \textbf{\_\_all\_\_} al comienzo del archivo, con una tupla
 en la cual se definen los símbolos que se desean exportar. Suponendo que el siguiente código se encuentra
 en el módulo promedio:
 
-\begin{python}
+\begin{lstlisting}[style=python]
 __all__ = ('calcular_promedio', )
 
 def calular_promedio(numeros):
     return suma (numeros) / len( numeros )
 def suma(lista):
     return float( sum( lista ) ) 
-\end{python}
+\end{lstlisting}
 
 Al realizar
-\begin{python}
+\begin{lstlisting}[style=python]
  from promedio import *
-\end{python}
+\end{lstlisting}
 
 El único símbolo que encontraremos en nuestro espacio de nombres será, \emph{calcular\_promedio}.
 \subsection{Sobrecarga de operadores}
 
 \subsection{Funciones en Python}
 En python, una función se define de la sieguiente manera:
-\begin{python}
+\begin{lstlisting}[style=python]
 def funcion(argumento1, argumento2):
   ''' Doc de la funcion '''
   print argumento1, argumento2
-\end{python}
+\end{lstlisting}
 Python soporta lo que se ha dadon en llamar \emph{empaquetado de argumentos } tanto en la 
 definición como en la invocación de una función.
 
@@ -454,7 +441,7 @@ El empaquetado más simple es el del tipo lista, que consiste en la hablidad de 
 recibir argumentos variables en formato lista. Para usar esta caractrística es necesrio utilizar
 una signatura especial (agregando un asterisco).
 
-\begin{python}
+\begin{lstlisting}[style=python]
 def promedio(*lista):
   ''' Calcula promedio '''
   return sum(lista) / float(len(lista)) # utilizando 
@@ -464,20 +451,20 @@ def promedio(*lista):
 >>> promedio(1, 2, 4, 5, 5)
 3.3999999999999999
 
-\end{python}
+\end{lstlisting}
 Esta signatura de argumentos se puede combinar con argumentos posicionales.
-\begin{python}
+\begin{lstlisting}[style=python]
 def dividir_suma_por( numero, *lista ):
   return sum(lista) / numero
-\end{python}
+\end{lstlisting}
 La capiacidad de recibir listas puede ser utilizada a la inversa. Es decir, conociendo que una función
 recibe una cantidad de argumentos, ``acomodar'' en una lista los argumentos que se desean utilizar.
-\begin{python}
+\begin{lstlisting}[style=python]
 # Utilizanodo la funcion promedio anterior
 >>> lista = [1, 2, 4, 6, 7]
 >>> promedio( *lista )
 4.0
-\end{python}
+\end{lstlisting}
 
 
 \subsection{Clases en Python}
@@ -602,7 +589,7 @@ programming language. The latest version 3.0 of Python, released in December
 Historically Python web application frameworks have been a problem for new
 Python users because, generally speaking, the choice of web framework would
 limit the choice of usable web servers, and vice versa. Python applications were
-often designed for either CGI, FastCGI, mod_python or even custom API interfaces
+often designed for either CGI, FastCGI, mod\_python or even custom API interfaces
 of specific web-servers.
 
 WSGI\footnote{\href{http://www.python.org/dev/peps/pep-0333/}{PEP 333}, Python Web Server Gateway Interface v1.0} 
@@ -795,13 +782,12 @@ proyecto. Para que estos comandos sean detectados por el módulo de
 administración de poryectos deben  respetar la siguiente estructura dentro del
 directorio de la aplicación 
 \begin{verbatim}
-	management/
-	    __init__.py
-	    commands/
-	        __init__.py
-	        mi_comando.py
+  management/
+    __init__.py
+    commands/
+	__init__.py
+	mi_comando.py
 \end{verbatim}
-
 
 Además la aplicación debe estar incluida en \textbf{INSTALLED\_APPS}
 dentro de el módulo de configuración de proyecto \textbf{settings.py}.

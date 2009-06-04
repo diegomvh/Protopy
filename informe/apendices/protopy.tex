@@ -112,8 +112,7 @@ en el momento de la construccion del objeto; en conjunto con otros metodos que
 se mencionaran a lo largo del texto estas funciones resultan de especial interes
 para interactuar con nuestros objetos y existen operadores en protopy para
 manejarlas, esto es, no debieran ser invocadas o llamadas directamente.
-\begin{lstlisting}[style=javascript,label=definicion-de-tipos,caption=Definicion
-de tipos]
+\begin{lstlisting}[style=javascript,label=definicion-de-tipos,caption=Definicion de tipos]
 var Animal = type('Animal', object, {
     contador: 0,
 }, {
@@ -283,7 +282,9 @@ type2 la evalucion se reliza para cada una de las clases incluidas en el mismo.
 
 %Template
 \subsubsection*{Template}
-new Template(destiny, source) \rightarrow alteredDestiny
+\begin{verbatim}
+    new Template(destiny, source) -> Template
+\end{verbatim}
 
 \subsubsection*{Dict}
 \begin{verbatim}
