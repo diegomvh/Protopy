@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.db import models
-from django.utils.version import entries
-
-# Create your models here.
+from django.utils.datastructures import SortedDict
+import simplejson
 
 MAX_APP_NAME_LENGTH = 160
 
@@ -66,7 +65,7 @@ class Manifest(models.Model):
         def fget(self):
             return self._entries
         def fset(self, value):
-            self.entries = value
+            self._entries = value
         return locals()
     entries = property(**entries()) 
     
@@ -82,9 +81,11 @@ class Manifest(models.Model):
         assert 'url' in kwargs, "url parameter required"
         assert not ('src' in kwargs and 'redirect' in kwargs), "src and redirect are multually exclusive"
         assert not 'ignoreQuery' in kwargs or type(kwargs['ignoreQuery']) == bool, "ignoreQuery must be boolean"
+        print kwargs
         
+        self.entries.append(kwargs)
         
-        self.entries += kwargs
-        
-
+    def dump_manifest(self):
+        simplejson.dumps(None)
+        pass
         
