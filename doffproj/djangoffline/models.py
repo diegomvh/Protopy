@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from django.utils.datastructures import SortedDict
-import simplejson
+from simplejson import loads, dumps
 
 MAX_APP_NAME_LENGTH = 160
 
@@ -50,19 +50,26 @@ class Manifest(models.Model):
         ]
     }
     '''
-    from pickle import dumps, loads
+    
     version = models.CharField(max_length=150)
-    content = models.TextField(editable = False)
+    content = models.TextField(editable = False, null = True, blank = True)
     
     def __init__(self, *largs, **kwargs):
         super(Manifest, self).__init__(*largs, **kwargs)
-        self._entries = []
+        self._entries = None
         
     def entries(): #@NoSelf
         '''
         Entries property
         '''
         def fget(self):
+            if self._entries == None:
+                # May raise ValueError
+                if self.content:
+                    self._entries = loads( self.content )
+                else:
+                    self._entries = []
+                
             return self._entries
         def fset(self, value):
             self._entries = value
@@ -86,6 +93,18 @@ class Manifest(models.Model):
         self.entries.append(kwargs)
         
     def dump_manifest(self):
-        simplejson.dumps(None)
-        pass
+        # Json guarantee
+        return dumps({
+            "betaManifestVersion": 1,
+            "version": self.version,
+            "entries": dumps( self.entries )
+        })
+        #dumps(None)
+        #pass
+    
+    def save(self, *largs, **kwargs):
+        
+        self.content = dumps( self.entries )
+        super(Manifest, self).save(*largs, **kwargs)
+    
         
