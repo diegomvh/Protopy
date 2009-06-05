@@ -25,12 +25,12 @@ var Project = type('Project', object, {
         return this.handler.handle(value);
     },
 
-    __init__: function(name, package, path) {
-	this.name = name;
+    __init__: function(package, offline_support) {
 	this.package = package;
-	sys.register_path(this.package, path);
+	//Registro la ruta al proyecto, la cual es absoluta
+	sys.register_path(this.package, '/' + offline_support + '/project');
 	this.path = sys.paths[this.package];
-	this.availability_url = sys.module_url(this.package, 'network_check.txt');
+	this.availability_url = '/' + offline_support + '/network_check';
 
 	//Inicio el logging
 	require('logging.config', 'file_config');
@@ -47,9 +47,9 @@ var Project = type('Project', object, {
 	//Inicio de los stores
 	require('gears.localserver', 'ManagedResourceStore');
 	this.project = new ManagedResourceStore(package + '_project');
-	this.project.manifest_url = sys.module_url(this.package, 'manifests/project.json');
+	this.project.manifest_url = '/' + offline_support + '/manifests/project.json';
 	this.system = new ManagedResourceStore(package + '_system');
-	this.system.manifest_url = sys.module_url(this.package, 'manifests/system.json');
+	this.system.manifest_url = '/' + offline_support + '/manifests/system.json';
 	//TODO: uno mas para files asi podemos guardar archivos del cliente
 
 	//The toolbar
