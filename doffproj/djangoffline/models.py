@@ -17,8 +17,6 @@ class Log(models.Model):
     Log:
         Uso para la sincronización.
     '''
-
-            
     pass
 
 #class BaseModelProxy(m):
@@ -52,7 +50,10 @@ class Manifest(models.Model):
         ]
     }
     '''
+    # Gears internals
+    MANIFEST_VERSION = 1
     
+    # Version string
     version = models.CharField(max_length=150)
     content = models.TextField(editable = False, null = True, blank = True)
     
@@ -90,14 +91,17 @@ class Manifest(models.Model):
         assert 'url' in kwargs, "url parameter required"
         assert not ('src' in kwargs and 'redirect' in kwargs), "src and redirect are multually exclusive"
         assert not 'ignoreQuery' in kwargs or type(kwargs['ignoreQuery']) == bool, "ignoreQuery must be boolean"
-        print kwargs
+        #print kwargs
         
         self.entries.append(kwargs)
         
     def dump_manifest(self):
+        '''
+        Generates a gears' managed store compatible manifest
+        '''
         # Json guarantee
         return dumps({
-            "betaManifestVersion": 1,
+            "betaManifestVersion": self.MANIFEST_VERSION,
             "version": self.version,
             "entries": dumps( self.entries )
         })
