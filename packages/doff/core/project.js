@@ -1,5 +1,6 @@
 require('sys');
 require('event');
+require('dom');
 require('ajax');
 
 var Project = type('Project', object, {
@@ -8,6 +9,7 @@ var Project = type('Project', object, {
     availability_url: null,
     going_online: false,
     do_net_checking: true,
+    _events_handlers: [],
 
     onLoad: function() {
         //this.sync_stores();
@@ -22,16 +24,35 @@ var Project = type('Project', object, {
     },
 
     handle: function(value) {
-	value = isinstance(value, MouseEvent)? value.target : value;
-	var _elements = {'FORM': 'onsubmit', 'A': 'onclick'}
-	var response = this.handler.handle(value);
-	this.target.update(response.content);
+        var _elements = {'FORM': 'onsubmit', 'A': 'onclick'}
+
+        var isEvent = !isundefined(value.target);
+        if(isEvent)
+            event.stopEvent(value);
+	var element = isEvent? value.target : value;
+        
+        //Obtengo la respuesta
+	var response = this.handler.handle(element);
+        
+        //Limpio los eventos que quedaron y la cache del selector
+        var ehdl;
+        while (ehdl = this._events_handlers.pop())
+            event.disconnect(ehdl);
+        dom.clearCache();
+
+        //Trato el response
+        if (response.status_code == 200)
+            this.target.update(response.content);
+        else if (response.status_code == 302)
+	   this.handle(response['Location']);
+    
+        //Preparo los elementos y los eventos
 	var re = [];
 	for each (var e in keys(_elements))
 	    re = re.concat(this.target.select(e));
 	for each (var e in re)
-	    event.connect(e, _elements[e.tagName], getattr(this, 'handle'));
-	return false;
+	    this._events_handlers.push(event.connect(e, _elements[e.tagName], getattr(this, 'handle')));
+        return false;
     },
 
     __init__: function(name, package, path) {

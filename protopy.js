@@ -348,7 +348,7 @@
     // From dojo
     var Listener = {
 	// create a dispatcher function
- 	get_dispatcher: function() {
+ 	getDispatcher: function() {
 	    return function() {
 		var callee = arguments.callee, listeners = callee._listeners, target = callee.target;
 		// return value comes from original target function
@@ -367,7 +367,7 @@
 	    var func = source[method];
 	    // Ensure a dispatcher
 	    if(!func || !func._listeners) {
-		var dispatcher = this.get_dispatcher();
+		var dispatcher = this.getDispatcher();
 		// original target function is special
 		dispatcher.target = func;
 		// dispatcher holds a list of listeners
@@ -391,8 +391,8 @@
 	add: function(node, name, fp) {
 	    if(!node)
 		return; 
-	    name = this._normalize_event_name(name);
-	    fp = this._fix_callback(name, fp);
+	    name = this._normalizeEventName(name);
+	    fp = this._fixCallback(name, fp);
 	    var oname = name;
 	    if(!sys.browser.IE && (name == "mouseenter" || name == "mouseleave")) {
 		var ofp = fp;
@@ -411,36 +411,36 @@
 	},
 	remove: function(node, event, handle) {
 	    if (node)
-		node.removeEventListener(this._normalize_event_name(event), handle, false);
+		node.removeEventListener(this._normalizeEventName(event), handle, false);
 	},
-	_normalize_event_name: function(name) {
+	_normalizeEventName: function(name) {
 	    // Generally, name should be lower case, unless it is special
 	    // somehow (e.g. a Mozilla DOM event).
 	    // Remove 'on'.
 	    return name.slice(0,2) =="on" ? name.slice(2) : name;
 	},
-	_fix_callback: function(name, fp) {
+	_fixCallback: function(name, fp) {
 	    // By default, we only invoke _fixEvent for 'keypress'
 	    // If code is added to _fix_event for other events, we have
 	    // to revisit this optimization.
 	    // This also applies to _fix_event overrides for Safari and Opera
 	    // below.
-	    return name != "keypress" ? fp : function(e) { return fp.call(this, this._fix_event(e, this)); };
+	    return name != "keypress" ? fp : function(e) { return fp.call(this, this._fixEvent(e, this)); };
 	},
-	_fix_event: function(evt, sender){
-	    // _fix_callback only attaches us to keypress.
+	_fixEvent: function(evt, sender){
+	    // _fixCallback only attaches us to keypress.
 	    // Switch on evt.type anyway because we might 
 	    // be called directly from dojo.fixEvent.
 	    switch(evt.type){
 		    case "keypress":
-			    this._set_key_char(evt);
+			    this._setKeyChar(evt);
 			    break;
 	    }
 	    return evt;
 	},
-	_set_key_char: function(evt){
-	    //FIXME: Esto no va o no esta o es un desastre
-	    evt.keyChar = evt.charCode ? String.fromCharCode(evt.charCode) : '';
+	_setKeyChar: function(evt){
+            evt.keyChar = evt.charCode ? String.fromCharCode(evt.charCode) : '';
+	    evt.charOrCode = evt.keyChar || evt.keyCode;
 	}
     };
 
@@ -499,14 +499,19 @@
 	    if(func)
 		func.apply(this, args || []);
 	},
-        connectpublisher: function(topic, obj, event) {
+        connectPublisher: function(topic, obj, event) {
 	    var pf = function() { 
 		this.publish(topic, arguments); 
 	    }
 	    return (event) ? this.connect(obj, event, pf) : this.connect(obj, pf); //Handle
 	},
-        fixevent: function(){},
-        stopevent: function(){},
+        fixEvent: function(evt, sender) {
+            return EventListener._fixEvent(evt, sender);
+        },
+        stopEvent: function(evt){
+            evt.preventDefault();
+	    evt.stopPropagation();
+        },
 	keys: { BACKSPACE: 8, TAB: 9, CLEAR: 12, ENTER: 13, SHIFT: 16, CTRL: 17, ALT: 18, PAUSE: 19, CAPS_LOCK: 20, 
 		    ESCAPE: 27, SPACE: 32, PAGE_UP: 33, PAGE_DOWN: 34, END: 35, HOME: 36, LEFT_ARROW: 37, UP_ARROW: 38,
 		    RIGHT_ARROW: 39, DOWN_ARROW: 40, INSERT: 45, DELETE: 46, HELP: 47, LEFT_WINDOW: 91, RIGHT_WINDOW: 92,
@@ -1371,6 +1376,9 @@
     
     var dom = ModuleManager.create('dom', 'built-in', {
 	query: query,
+        clearCache: function() {
+            cache = {};
+        }
     });
 
     /******************** builtin **************************/

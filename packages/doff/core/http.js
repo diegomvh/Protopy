@@ -156,12 +156,6 @@ var HttpResponseRedirect = type('HttpResponseRedirect', HttpResponse, {
     __init__: function __init__(redirect_to) {
         super(HttpResponse, this).__init__();
         this['Location'] = redirect_to;
-    },
-
-    render: function render() {
-	require('doff.core.project', 'get_project');
-	var p = get_project();
-	p.handler.handle(this['Location']);
     }
 });
 
