@@ -79,9 +79,8 @@ var HttpRequest = type ('HttpRequest', [ object ], {
 var HttpResponse = type('HttpResponse', object, {
     status_code: 200,
 
-    __init__: function __init__(where, content, status, content_type) {
+    __init__: function __init__(content, status, content_type) {
 	content = content || '';
-	this.where = where || 'body';
         if (!content_type)
             content_type = "%s; charset=%s".subs('text/html', 'utf-8');
         if (!isinstance(content, String) && hasattr(content, '__iter__')) {
@@ -99,7 +98,6 @@ var HttpResponse = type('HttpResponse', object, {
     },
 
     __str__: function __str__() {
-        /*Full HTTP message, including headers.*/
         return this.content;
     },
     
@@ -149,12 +147,6 @@ var HttpResponse = type('HttpResponse', object, {
         if (!this._is_string)
             throw new Exception("This %s instance is not writable".subs(this.__class__));
         this._container.push(content);
-    },
-
-    //TODO: A better name
-    render: function render() {
-	//TODO: quiza evaluar algo de js a lo prototype
-	$(this.where).update(this.content);
     }
 });
 

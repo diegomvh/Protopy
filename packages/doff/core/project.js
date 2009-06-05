@@ -14,11 +14,24 @@ var Project = type('Project', object, {
 
 	//Add the body element to html
 	var body = $$('body')[0];
-	body.insert('<div id="body" ></div>');
+	body.insert(this.target);
     },
 
     onNetwork: function(type) {
 	this.status_element.update(type);
+    },
+
+    handle: function(value) {
+	value = isinstance(value, MouseEvent)? value.target : value;
+	var _elements = {'FORM': 'onsubmit', 'A': 'onclick'}
+	var response = this.handler.handle(value);
+	this.target.update(response.content);
+	var re = [];
+	for each (var e in keys(_elements))
+	    re = re.concat(this.target.select(e));
+	for each (var e in re)
+	    event.connect(e, _elements[e.tagName], getattr(this, 'handle'));
+	return false;
     },
 
     __init__: function(name, package, path) {
@@ -31,6 +44,10 @@ var Project = type('Project', object, {
 	//Inicio el logging
 	require('logging.config', 'file_config');
         file_config(sys.module_url(this.package, 'logging.js'));
+
+	//Creo el elemento contenedor
+	this.target = document.createElement('div');
+	this.target.id = 'body';
 
 	//Inicio del handler
 	require('doff.core.urlhandler', 'Handler');
@@ -65,7 +82,7 @@ var Project = type('Project', object, {
 	var self = this;
 	event.connect(window, 'load', function(){
 	    self.onLoad();
-	    self.handler.handle('/');
+	    self.handle('/');
 	    self.toolbar.show();
 	});
     },

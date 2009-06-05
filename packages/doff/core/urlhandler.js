@@ -73,9 +73,11 @@ var Handler = type('Handler', object, {
 	} else {
 	    request = string_url(request, element);
 	}
-	if (request.valid())
-	    this.execute(request);
-	return false;
+	var response;
+	if (request.valid()) {
+	    var response = this.get_response(request);
+	}
+	return response;
     },
 
     __init__: function(urlconf) {
@@ -97,16 +99,6 @@ var Handler = type('Handler', object, {
         } catch (e if isinstance(e, http.Http404)) {
             var [callback, param_dict] = this._resolver.resolve404();
             return callback(request, param_dict);
-	}
-    },
-
-    execute: function execute(request) {
-	try {
-	    var response = this.get_response(request);
-	    //TODO: A better name
-	    response.render();
-	} catch (e) {
-	    print(e);
 	}
     }
 });
