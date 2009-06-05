@@ -79,7 +79,7 @@ var HttpRequest = type ('HttpRequest', [ object ], {
 var HttpResponse = type('HttpResponse', object, {
     status_code: 200,
 
-    __init__: function __init__(content, status, content_type) {
+    __init__: function __init__(content, content_type) {
 	content = content || '';
         if (!content_type)
             content_type = "%s; charset=%s".subs('text/html', 'utf-8');
@@ -91,8 +91,6 @@ var HttpResponse = type('HttpResponse', object, {
             this._is_string = true;
 	}
         this.cookies = {};
-        if (status)
-            this.status_code = status;
 
         this._headers = {'content-type': ['Content-Type', content_type]};
     },
@@ -100,7 +98,7 @@ var HttpResponse = type('HttpResponse', object, {
     __str__: function __str__() {
         return this.content;
     },
-    
+
     has_header: function has_header(header) {
         return !!this._headers[header.toLowerCase()];
     },

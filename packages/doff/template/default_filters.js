@@ -21,6 +21,11 @@ function slugify(value) {
 }
 register.filter(slugify);
 
+function escape(value) {
+    return value.escapeHTML();
+}
+register.filter(escape);
+
 publish({
     register: register,
     slugify: slugify
