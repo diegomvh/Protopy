@@ -2,7 +2,7 @@
 {% block middle %}
 <h1>Inserte un nuevo Tag</h1>
 <div>
-    <form id='{{ formpost.__name__ }}' action="/blog/add_post/" onSubmit="return blog.handler.handle(this);" method="post">
+    <form id='{{ formpost.__name__ }}' action="/blog/add_post/" method="post">
         {{ formpost.as_ul }}
         <input type='submit' value='guardar'/>
     </form>
