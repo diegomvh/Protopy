@@ -2,9 +2,9 @@
 
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
-from django.db.models import get_app, get_apps, get_model, get_models
+from django.db.models import get_app, get_models
 from django.core.exceptions import ImproperlyConfigured
-from django.http import HttpResponse, Http404, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseNotFound
 from django.utils.html import escape
 from django.template import TemplateDoesNotExist
 from django.shortcuts import render_to_response
@@ -16,11 +16,6 @@ import os
 import re
 from djangoffline.debug import html_output
  
-def create_system_manifest(request):
-    version = None
-
-def create_project_manifest(request):
-    version = None
 
 
 def conditional_import(name, f):
@@ -139,7 +134,7 @@ def index(request):
     return render_to_response('djangoffline/index.html', data)
 
 def get_manifest(request):
-    latest_manifest = Manifest.objects.latest('version')
+    latest_manifest = Manifest.objects.latest('version') #@UndefinedVariable
     output = latest_manifest.dump_manifest()
     output = output.replace(', ', ',\n')
     return HttpResponse( output, 'text/plain' )
