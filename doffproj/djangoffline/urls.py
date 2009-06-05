@@ -28,3 +28,12 @@ if settings.LOCAL_DEVELOPMENT:
         (r'protopy/(?P<path>.*)', 'serve', {"document_root": protopy_path,
                                             "show_indexes": True}),
     )
+    
+    # Databrowse
+    from django.contrib import databrowse
+    from django.db.models.loading import get_models
+    map( databrowse.site.register, get_models())
+    #databrowse.site.register(SomeModel)
+    urlpatterns += patterns('',
+        (r'^databrowse/(.*)', databrowse.site.root),
+    )

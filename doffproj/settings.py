@@ -83,6 +83,12 @@ TEMPLATE_DIRS = (
     os.path.join(os.path.dirname(__file__), 'templates'),
 )
 
+if LOCAL_DEVELOPMENT:
+    # Enable databrowse
+    import django
+    django_dir = os.path.dirname(os.path.abspath(django.__file__))
+    TEMPLATE_DIRS = (TEMPLATE_DIRS, os.path.join(django_dir, 'contrib/databrowse/templates' ))
+
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
