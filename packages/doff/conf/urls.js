@@ -1,8 +1,8 @@
 require('doff.core.urlresolvers', 'RegexURLPattern', 'RegexURLResolver');
 require('doff.core.exceptions', 'ImproperlyConfigured');
 
-var handler404 = 'django.views.defaults.page_not_found';
-var handler500 = 'django.views.defaults.server_error';
+var handler404 = 'doff.views.defaults.page_not_found';
+var handler500 = 'doff.views.defaults.server_error';
 
 function include(urlconf_module) {
     return [urlconf_module];

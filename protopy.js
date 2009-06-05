@@ -2322,7 +2322,48 @@
 	},
 	select: function(selector) {
 	    return $$(selector, this);
-	}
+	},
+        empty: function() {
+            return this.innerHTML.blank();
+        },
+
+        getStyle: function(style) {
+            style = style == 'float' ? 'cssFloat' : style.camelize();
+            var value = this.style[style];
+            if (!value) {
+                var css = document.defaultView.getComputedStyle(element, null);
+                value = css ? css[style] : null;
+            }
+            if (style == 'opacity') return value ? parseFloat(value) : 1.0;
+            return value == 'auto' ? null : value;
+        },
+
+        getOpacity: function(element) {
+            return this.getStyle('opacity');
+        },
+
+        setStyle: function(styles) {
+            var elementStyle = this.style, match;
+            if (isinstance(styles, String)) {
+                this.style.cssText += ';' + styles;
+                return styles.include('opacity') ?
+                this.setOpacity(styles.match(/opacity:\s*(\d?\.?\d*)/)[1]) : element;
+            }
+            for (var property in styles)
+                if (property == 'opacity') this.setOpacity(styles[property]);
+                else
+                    elementStyle[(property == 'float' || property == 'cssFloat') ?
+                    (isundefined(elementStyle.styleFloat) ? 'cssFloat' : 'styleFloat') :
+                    property] = styles[property];
+
+            return this;
+        },
+
+        setOpacity: function(value) {
+            this.style.opacity = (value == 1 || value === '') ? '' :
+            (value < 0.00001) ? 0 : value;
+            return this;
+        }
     });
 
     //--------------------------------------- Forms -------------------------------------//    
