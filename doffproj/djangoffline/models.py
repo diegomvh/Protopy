@@ -2,6 +2,7 @@
 from django.db import models
 from django.utils.datastructures import SortedDict
 from simplejson import loads, dumps
+import os
 
 MAX_APP_NAME_LENGTH = 160
 
@@ -127,3 +128,22 @@ class Manifest(models.Model):
     def __unicode__(self):
         return self.version
     
+    def add_uris_from_pathwalk(self, path, uri_base, exclude_callback = None, followlinks = True):
+        '''
+        Recursively adds a path walk served statically behind a uri_base
+        to the manifest's entries.
+        '''
+        file_list = []
+        for pth, _dirs, files in os.walk( path, followlinks = followlinks ):
+            tmp_list = map( lambda n: os.path.join( pth, n), files)
+            if callable(exclude_callback):
+                tmp_list = filter(exclude_callback, tmp_list)
+            
+            tmp_list = map( lambda n: '%s/%s' % (
+                            uri_base,                     
+                            n[ n.index(path) + len(path) + 1: ]      
+                            ),
+                            tmp_list)
+            file_list += tmp_list
+        map( self.add_entry, file_list )
+        

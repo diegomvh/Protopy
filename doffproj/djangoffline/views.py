@@ -145,33 +145,35 @@ def get_manifest(request):
     output = output.replace(', ', ',\n')
     return HttpResponse( output, 'text/plain' )
 
+import random, string
+random_string = lambda length: ''.join( [ random.choice(string.letters) for _ in range(length) ] ) 
+
+
 
 def get_project_manifest(request):
-    import random, string
+    
     m = Manifest()
     # genreate random version string
-    m.version = ''.join( [ random.choice(string.letters) for _ in range(32) ] )
-    
-    def uris_from_pathwalk(path, uri_base, exclude_callback = None ):
-        file_list = []
-        for pth, _dirs, files in os.walk(path):
-            tmp_list = map( lambda n: os.path.join( pth, n), files)
-            if callable(exclude_callback):
-                tmp_list = filter(exclude_callback, tmp_list)
-            
-            tmp_list = map( lambda n: '%s/%s' % (
-                            uri_base,                     
-                            n[ n.index(path) + len(path) + 1: ]      
-                            ),
-                            tmp_list)
-            file_list += tmp_list
-        return file_list
-    
-    for uri in uris_from_pathwalk(settings.OFFLINE_ROOT, '/%s' % settings.OFFLINE_BASE):
-        m.add_entry(uri) 
+    m.version = random_string(32)
+    m.add_uris_from_pathwalk(settings.OFFLINE_ROOT, '/%s' % settings.OFFLINE_BASE)
+     
     json = m.dump_manifest()
     
     if 'human' in request.GET:
         json = json.replace(', ', ',\n')
     
     return HttpResponse( json, 'text/plain' )
+
+def dynamic_manifest_from_fs(request, path, base_uri, version = None, exclude_callback = None):
+    '''
+    Generic view
+    '''
+    if not version:
+        version = random_string(32)
+    m = Manifest( version = version )
+    m.add_uris_from_pathwalk(path, base_uri, exclude_callback)
+    json = m.dump_manifest()
+    if 'human' in request.GET:
+        json = json.replace(', ', ',\n').replace("\\", "")
+    return HttpResponse( json, 'text/plain' )
+    
