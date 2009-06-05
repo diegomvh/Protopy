@@ -13,7 +13,23 @@ urlpatterns = patterns('',
     (r'^templates/(.*)', views.template_static_serve, ),
     # Manifest test
     (r'^manifest.json', views.get_manifest),
-    (r'project/manifests/project.json', views.get_project_manifest, ),
+    #(r'project/manifests/project.json', views.get_project_manifest, ),
+)
+
+urlpatterns += patterns('djangoffline.views',
+    # Project
+    (r'project/manifests/project.json', 'dynamic_manifest_from_fs', 
+     {
+        'path': settings.OFFLINE_ROOT, 
+        'base_uri': '/%s/project' % settings.OFFLINE_BASE                               
+     }),
+     
+     # System
+     (r'project/manifests/project.json', 'dynamic_manifest_from_fs', 
+     {
+        'path': settings.OFFLINE_ROOT, 
+        'base_uri': '/%s' % settings.OFFLINE_BASE                               
+     }),
 )
 
 
