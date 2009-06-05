@@ -75,19 +75,19 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'doffproj.urls'
 
-TEMPLATE_DIRS = (
+TEMPLATE_DIRS = [
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     
     os.path.join(os.path.dirname(__file__), 'templates'),
-)
+]
 
 if LOCAL_DEVELOPMENT:
     # Enable databrowse
     import django
     django_dir = os.path.dirname(os.path.abspath(django.__file__))
-    TEMPLATE_DIRS = (TEMPLATE_DIRS, os.path.join(django_dir, 'contrib/databrowse/templates' ))
+    TEMPLATE_DIRS.append( os.path.join(django_dir, 'contrib/databrowse/templates' ) )
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -109,7 +109,7 @@ try:
     import django_extensions
     assert 'django_extensions' in INSTALLED_APPS
 except ImportError:
-    print "No tengo django extenions, no pasa nada."
+    pass
 except AssertionError:
     INSTALLED_APPS += ('django_extensions', )
 

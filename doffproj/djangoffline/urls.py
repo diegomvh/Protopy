@@ -5,14 +5,15 @@ import views
 import sync
 
 urlpatterns = patterns('',
+    (r'^$', views.index, ),
     # TODO: Mejorar esto
-    (r'^show_models', views.export_model_proxy),
+    (r'^show_models/', views.export_model_proxy),
     (r'^list_templates/', views.list_templates, ), 
     (r'^sync', sync.rpc_handler),
     (r'^templates/(.*)', views.template_static_serve, ),
-    (r'^$', views.index, ),
-    # Manifest
-    (r'^manifest.json', views.get_manifest)
+    # Manifest test
+    (r'^manifest.json', views.get_manifest),
+    (r'project/manifests/project.json', views.get_project_manifest, ),
 )
 
 

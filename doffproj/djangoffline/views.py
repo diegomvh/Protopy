@@ -144,3 +144,13 @@ def get_manifest(request):
     output = latest_manifest.dump_manifest()
     output = output.replace(', ', ',\n')
     return HttpResponse( output, 'text/plain' )
+
+
+def get_project_manifest(request):
+    import random, string
+    m = Manifest()
+    # genreate random version string
+    m.version = ''.join( [ random.choice(string.letters) for _ in range(32) ] )
+    
+    
+    return HttpResponse( m.dump_manifest(), 'text/plain' )
