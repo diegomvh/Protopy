@@ -116,7 +116,7 @@ class Manifest(models.Model):
         return dumps({
             "betaManifestVersion": self.MANIFEST_VERSION,
             "version": self.version,
-            "entries": dumps( self.entries )
+            "entries": self.entries 
         })
     
     def save(self, *largs, **kwargs):

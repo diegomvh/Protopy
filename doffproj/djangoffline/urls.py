@@ -15,18 +15,18 @@ urlpatterns = patterns('',
     # Manifest test
     (r'^manifest.json', views.get_manifest),
     
-    #(r'project/manifests/project.json', views.get_project_manifest, ),
+    (r'manifests/project.json', views.get_project_manifest, ),
     
     (r'network_check', views.network_check), 
 )
 
 urlpatterns += patterns('djangoffline.views',
     # Project
-    (r'manifests/project.json', 'dynamic_manifest_from_fs', 
-     {
-        'path': settings.OFFLINE_ROOT, 
-        'base_uri': '/%s/project' % settings.OFFLINE_BASE                               
-     }),
+#    (r'manifests/project.json', 'dynamic_manifest_from_fs', 
+#     {
+#        'path': settings.OFFLINE_ROOT, 
+#        'base_uri': '/%s/project' % settings.OFFLINE_BASE                               
+#     }),
      
      # System
 #     (r'manifests/system.json', 'dynamic_manifest_from_fs', 

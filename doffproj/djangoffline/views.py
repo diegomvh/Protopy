@@ -95,11 +95,7 @@ def _retrieve_templates_from_path(path, template_bases = None, strip_first_slash
     return templates
 
 
-    
-
-def list_templates(request):
-    # Retrieve template full list
-    
+def full_template_list(exclude_apps = None, exclude_callable = None):
     template_dirs = map(lambda s: s.split(os.sep)[-1], settings.TEMPLATE_DIRS)
      
     template_files = []
@@ -112,9 +108,12 @@ def list_templates(request):
         from django.template.loaders.app_directories import app_template_dirs
         for path in app_template_dirs:
             template_files += _retrieve_templates_from_path(path, template_dirs)
-        
-    
-    return HttpResponse( html_output(template_files, indent = 2))
+    return template_files
+
+
+def list_templates(request):
+    # Retrieve template full list
+    return HttpResponse( html_output(full_template_list(), indent = 2))
 
 
 def template_static_serve(request, path):
@@ -156,7 +155,10 @@ def get_project_manifest(request):
     # genreate random version string
     m.version = random_string(32)
     m.add_uris_from_pathwalk(settings.OFFLINE_ROOT, '/%s' % settings.OFFLINE_BASE)
-     
+    # Add templates
+    map( m.add_entry, map( lambda t: '/%s/templates%s'% (settings.OFFLINE_BASE, t), 
+                           full_template_list()))
+    
     json = m.dump_manifest()
     
     if 'human' in request.GET:
