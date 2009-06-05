@@ -1,6 +1,7 @@
 from django.conf.urls.defaults import *
 from django.conf import settings
 from django.db.models.loading import get_app
+import os
 import views
 import sync
 
@@ -18,23 +19,24 @@ urlpatterns = patterns('',
 
 urlpatterns += patterns('djangoffline.views',
     # Project
-    (r'project/manifests/project.json', 'dynamic_manifest_from_fs', 
+    (r'manifests/project.json', 'dynamic_manifest_from_fs', 
      {
         'path': settings.OFFLINE_ROOT, 
         'base_uri': '/%s/project' % settings.OFFLINE_BASE                               
      }),
      
      # System
-     (r'project/manifests/project.json', 'dynamic_manifest_from_fs', 
-     {
-        'path': settings.OFFLINE_ROOT, 
-        'base_uri': '/%s' % settings.OFFLINE_BASE                               
-     }),
+#     (r'manifests/system.json', 'dynamic_manifest_from_fs', 
+#     {
+#        'path': os.path.join( settings.OFFLINE_ROOT, '../protopy'), 
+#        'base_uri': '/%s/' % settings.OFFLINE_BASE                               
+#     }),
 )
 
 
 
 if settings.LOCAL_DEVELOPMENT:
+    
     from os.path import abspath, dirname, join
     protopy_path = getattr(get_app('djangoffline'), '__file__')
     protopy_path = join(abspath(dirname(protopy_path)), 'protopy')
@@ -54,3 +56,12 @@ if settings.LOCAL_DEVELOPMENT:
     urlpatterns += patterns('',
         (r'^databrowse/(.*)', databrowse.site.root),
     )
+    
+    urlpatterns += patterns('djangoffline.views',
+        (r'manifests/system.json', 'dynamic_manifest_from_fs',
+         {
+            'path': protopy_path, 
+            'base_uri': '/%s/protopy' % settings.OFFLINE_BASE                               
+        }),
+    )
+    
