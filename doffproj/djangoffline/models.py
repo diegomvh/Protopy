@@ -10,7 +10,6 @@ class OfflineApp(models.Model):
     This model holds information about the offline apps
     '''
     app_name = models.CharField(max_length = MAX_APP_NAME_LENGTH)
-    
  
  
 class Log(models.Model):
@@ -18,7 +17,10 @@ class Log(models.Model):
     Log:
         Uso para la sincronización.
     '''
-    pass   
+
+            
+    pass
+
 #class BaseModelProxy(m):
 
 
@@ -99,12 +101,12 @@ class Manifest(models.Model):
             "version": self.version,
             "entries": dumps( self.entries )
         })
-        #dumps(None)
-        #pass
     
     def save(self, *largs, **kwargs):
+        
         
         self.content = dumps( self.entries )
         super(Manifest, self).save(*largs, **kwargs)
     
-        
+
+    
