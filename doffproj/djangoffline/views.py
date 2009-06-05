@@ -177,3 +177,5 @@ def dynamic_manifest_from_fs(request, path, base_uri, version = None, exclude_ca
         json = json.replace(', ', ',\n').replace("\\", "")
     return HttpResponse( json, 'text/plain' )
     
+def network_check(request):
+    return HttpResponse("")

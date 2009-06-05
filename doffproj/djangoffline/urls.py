@@ -14,7 +14,10 @@ urlpatterns = patterns('',
     (r'^templates/(.*)', views.template_static_serve, ),
     # Manifest test
     (r'^manifest.json', views.get_manifest),
+    
     #(r'project/manifests/project.json', views.get_project_manifest, ),
+    
+    (r'network_check', views.network_check), 
 )
 
 urlpatterns += patterns('djangoffline.views',

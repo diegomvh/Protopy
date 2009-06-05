@@ -134,16 +134,39 @@ class Manifest(models.Model):
         to the manifest's entries.
         '''
         file_list = []
-        for pth, _dirs, files in os.walk( path, followlinks = followlinks ):
-            tmp_list = map( lambda n: os.path.join( pth, n), files)
-            if callable(exclude_callback):
-                tmp_list = filter(exclude_callback, tmp_list)
+        for f in abswalk_with_simlinks( path ):
+            #tmp_list = map( lambda n: os.path.join( pth, n), files)
+            if callable(exclude_callback) and exclude_callback(f):
+                #tmp_list = filter(exclude_callback, tmp_list)
+                continue
             
-            tmp_list = map( lambda n: '%s/%s' % (
-                            uri_base,                     
-                            n[ n.index(path) + len(path) + 1: ]      
-                            ),
-                            tmp_list)
-            file_list += tmp_list
+#            tmp_list = map( lambda n: '%s/%s' % (
+#                            uri_base,                     
+#                            n[ n.index(path) + len(path) + 1: ]      
+#                            ),
+#                            tmp_list)
+#            file_list += tmp_list
+            file_list.append('%s/%s' % ( uri_base,                     
+                                        f[ f.index(path) + len(path) + 1: ]
+                            ))
         map( self.add_entry, file_list )
+        
+        
+def abswalk_with_simlinks(path):
+    '''
+    Python <2.6 version walk(followlinks = True)
+    '''
+     
+    for path, subdirs, files in os.walk(path):
+        
+        files = map( lambda n: os.path.join( path, n), files )
+        for f in files:
+                yield f
+        for dirname in subdirs:
+            full_dir_path = os.path.join(path, dirname)
+            if os.path.islink( full_dir_path ):
+                for f in abswalk_with_simlinks( full_dir_path ):
+                    yield f
+                
+        
         
