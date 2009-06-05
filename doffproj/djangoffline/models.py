@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.db import models
-
-# Create your models here.
+from django.utils.datastructures import SortedDict
+from simplejson import loads, dumps
 
 MAX_APP_NAME_LENGTH = 160
 
@@ -10,7 +10,6 @@ class OfflineApp(models.Model):
     This model holds information about the offline apps
     '''
     app_name = models.CharField(max_length = MAX_APP_NAME_LENGTH)
-    
  
  
 class Log(models.Model):
@@ -18,23 +17,100 @@ class Log(models.Model):
     Log:
         Uso para la sincronización.
     '''
-    pass   
+    pass
+
 #class BaseModelProxy(m):
 
 
 class Manifest(models.Model):
-    from pickle import dumps, loads
-    version = models.PositiveIntegerField(default = 1)
-    content = models.TextField(editable = False)
+    '''
+    According to 
+    http://code.google.com/intl/es-AR/apis/gears/api_localserver.html#manifest_file
+    ============================================================================
+    Google Sample Code:
+    {
+      // version of the manifest file format
+      "betaManifestVersion": 1,
     
+      // version of the set of resources described in this manifest file
+      "version": "my_version_string",
+    
+      // optional
+      // If the store specifies a requiredCookie, when a request would hit
+      // an entry contained in the manifest except the requiredCookie is
+      // not present, the local server responds with a redirect to this URL.
+      "redirectUrl":  "login.html",
+    
+      // URLs to be cached (URLs are given relative to the manifest URL)
+      "entries": [
+          { "url": "main.html", "src": "main_offline.html" },
+          { "url": ".", "redirect": "main.html" },
+          { "url": "main.js" }
+          { "url": "formHandler.html", "ignoreQuery": true },
+        ]
+    }
+    '''
+    # Gears internals
+    MANIFEST_VERSION = 1
+    
+    # Version string
+    version = models.CharField(max_length=150)
+    content = models.TextField(editable = False, null = True, blank = True)
     
     def __init__(self, *largs, **kwargs):
         super(Manifest, self).__init__(*largs, **kwargs)
-        self.entries = []
+        self._entries = None
+        
+    def entries(): #@NoSelf
+        '''
+        Entries property
+        '''
+        def fget(self):
+            if self._entries == None:
+                # May raise ValueError
+                if self.content:
+                    self._entries = loads( self.content )
+                else:
+                    self._entries = []
+                
+            return self._entries
+        def fset(self, value):
+            self._entries = value
+        return locals()
+    entries = property(**entries()) 
     
     def add_entry(self, **kwargs):
+        '''
+        Possible keys are:
+            url: str
+            src: str
+            redirect: str
+            ignoreQuery: bool
+        '''
         assert kwargs,"Entries can't be null"
-        assert all( lambda x: x in self.VALID_KEYS, kwargs.keys()),\
-            "Ilegal key(s)"
-        self.entries += kwargs
+        assert 'url' in kwargs, "url parameter required"
+        assert not ('src' in kwargs and 'redirect' in kwargs), "src and redirect are multually exclusive"
+        assert not 'ignoreQuery' in kwargs or type(kwargs['ignoreQuery']) == bool, "ignoreQuery must be boolean"
+        #print kwargs
         
+        self.entries.append(kwargs)
+        
+    def dump_manifest(self):
+        '''
+        Generates a gears' managed store compatible manifest
+        '''
+        # Json guarantee
+        return dumps({
+            "betaManifestVersion": self.MANIFEST_VERSION,
+            "version": self.version,
+            "entries": dumps( self.entries )
+        })
+    
+    def save(self, *largs, **kwargs):
+        
+        
+        self.content = dumps( self.entries )
+        super(Manifest, self).save(*largs, **kwargs)
+    
+
+    
