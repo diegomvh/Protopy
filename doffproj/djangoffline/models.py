@@ -54,8 +54,11 @@ class Manifest(models.Model):
     MANIFEST_VERSION = 1
     
     # Version string
-    version = models.CharField(max_length=150)
+    version = models.CharField(max_length=150, blank = False)
     content = models.TextField(editable = False, null = True, blank = True)
+    
+    class Meta:
+        unique_together = (('version'), )
     
     def __init__(self, *largs, **kwargs):
         super(Manifest, self).__init__(*largs, **kwargs)
@@ -79,21 +82,30 @@ class Manifest(models.Model):
         return locals()
     entries = property(**entries()) 
     
-    def add_entry(self, **kwargs):
+    def add_entry(self, url, src = None, redirect = None, ignoreQuery = None):
+        #TODO: Update docs
         '''
+        
         Possible keys are:
             url: str
             src: str
             redirect: str
             ignoreQuery: bool
         '''
-        assert kwargs,"Entries can't be null"
-        assert 'url' in kwargs, "url parameter required"
-        assert not ('src' in kwargs and 'redirect' in kwargs), "src and redirect are multually exclusive"
-        assert not 'ignoreQuery' in kwargs or type(kwargs['ignoreQuery']) == bool, "ignoreQuery must be boolean"
-        #print kwargs
+        if src and redirect:
+            raise Exception("src and redirect are mutually excluding")
+        if ignoreQuery:
+            assert type(ignoreQuery) == bool, "ignoreQuery must be null"
+        entry = dict( url = url )
         
-        self.entries.append(kwargs)
+        if src:
+            entry.update( src = src )
+        if redirect:
+            entry.update( redirect = redirect )
+        if ignoreQuery:
+            entry.update( ignoreQuery = ignoreQuery )
+            
+        self.entries.append( entry )
         
     def dump_manifest(self):
         '''
@@ -108,9 +120,10 @@ class Manifest(models.Model):
     
     def save(self, *largs, **kwargs):
         
-        
-        self.content = dumps( self.entries )
+        assert self.version is not None, "version can't be null"
+        self.content = dumps( self.entries )    
         super(Manifest, self).save(*largs, **kwargs)
     
-
+    def __unicode__(self):
+        return self.version
     

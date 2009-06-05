@@ -10,8 +10,12 @@ urlpatterns = patterns('',
     (r'^list_templates/', views.list_templates, ), 
     (r'^sync', sync.rpc_handler),
     (r'^templates/(.*)', views.template_static_serve, ),
-
+    (r'^$', views.index, ),
+    # Manifest
+    (r'^manifest.json', views.get_manifest)
 )
+
+
 
 if settings.LOCAL_DEVELOPMENT:
     from os.path import abspath, dirname, join

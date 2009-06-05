@@ -21,7 +21,7 @@ urlpatterns = patterns('',
     (r'^admin/(.*)', bolg_admin_site.root),
     
     # TODO: Reemplazar por un generic view.
-    (r'^$', 'doffproj.views.index',  ),
+    #(r'^$', 'doffproj.views.index',  ),
     
     (r'^blog/', include('doffproj.blog.urls'),),
     (r'^offblog/', 'doffproj.views.run_offline',),
@@ -31,11 +31,16 @@ urlpatterns = patterns('',
      
 )
 
+# index
+urlpatterns += patterns('django.views.generic.simple',
+    (r'^$', 'redirect_to', {'url': '/%s/' % settings.OFFLINE_BASE}),
+)
 
-# Medios estáticos
+
+# static media
 
 urlpatterns += patterns('django.views.static',
     (r'^%s/(?P<path>.*)$' % settings.MEDIA_URL[1:-1], 
             'serve', {'document_root': settings.MEDIA_ROOT,
                       'show_indexes': True, }),
-)
+) 

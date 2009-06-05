@@ -7,6 +7,8 @@ from django.core.exceptions import ImproperlyConfigured
 from django.http import HttpResponse, Http404, HttpResponseNotFound
 from django.utils.html import escape
 from django.template import TemplateDoesNotExist
+from django.shortcuts import render_to_response
+from djangoffline.models import Manifest
 import inspect
 from pprint import pformat
 from remotemodels import RemoteModelProxy
@@ -130,3 +132,15 @@ def build_manifest(request):
 def project_static_serve(request, path):
     return
 
+def index(request):
+    keys = 'OFFLINE_BASE', 'OFFLINE_ROOT'
+    # Filter some settings values
+    data = dict( map(lambda n: (n, getattr(settings, n, None)), keys ) )
+    
+    return render_to_response('djangoffline/index.html', data)
+
+def get_manifest(request):
+    latest_manifest = Manifest.objects.latest('version')
+    output = latest_manifest.dump_manifest()
+    output = output.replace(', ', ',\n')
+    return HttpResponse( output, 'text/plain' )
