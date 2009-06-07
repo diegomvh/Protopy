@@ -1,14 +1,14 @@
+// Top level offline url-to-view mapping.
+
 require('doff.conf.urls', '*');
-require('blog.views', 'index', 'removedb');
+
 
 var urlpatterns = patterns('',
-    // Example:
-    ['^$', index],
-    ['^syncdb/$', 'blog.views.syncdb'],
-    ['^removedb/$', removedb],
-    ['^blog/', include('blog.apps.post.urls')]
+
 )
 
+
+// Don't touch this line
 publish({ 
     urlpatterns: urlpatterns 
 });

@@ -24,10 +24,10 @@ class Command(AppCommand):
     can_import_settings = True
     
     def handle_app(self, app, **options):
-        print app
+        app_name = os.path.dirname( app.__file__ ).split( os.sep )[-1]
         
         djangogffilne_path = dirname(abspath(get_app('djangoffline').__file__))
-        project_templates = join(djangogffilne_path, 'conf', 'project_template')
+        project_templates = join(djangogffilne_path, 'conf', 'remote_project_template')
         
         assert exists(project_templates), _("Error with templates")
         

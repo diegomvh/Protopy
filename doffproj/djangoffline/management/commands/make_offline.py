@@ -47,7 +47,7 @@ class Command(NoArgsCommand):
         doffline_path = get_doffline_path()
         
 
-        project_templates = join(doffline_path, 'conf', 'project_template')
+        project_templates = join(doffline_path, 'conf', 'remote_project_template')
         assert exists(project_templates), _("Error with templates")
         
         for fname in glob("%s%s*" % (project_templates, os.sep)):
