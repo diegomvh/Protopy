@@ -12,7 +12,7 @@
 
 from os.path import dirname, abspath, exists, join
 from django.db.models.loading import get_app
-import os
+import os, shutil
 
 from django.core.management.base import *
 
@@ -24,11 +24,26 @@ class Command(AppCommand):
     can_import_settings = True
     
     def handle_app(self, app, **options):
+        from django.conf import settings
         app_name = os.path.dirname( app.__file__ ).split( os.sep )[-1]
         
         djangogffilne_path = dirname(abspath(get_app('djangoffline').__file__))
         project_templates = join(djangogffilne_path, 'conf', 'remote_project_template')
+        app_templates = join(djangogffilne_path, 'conf', 'app_template')
+        remote_app_templates = join(djangogffilne_path, 'conf', 'remote_app_template')
+        
         
         assert exists(project_templates), _("Error with templates")
         
         project_name = os.environ.get('DJANGO_SETTINGS_MODULE').replace('.settings', '')
+        
+        app_path = os.path.join(settings.OFFLINE_ROOT, app_name)
+        if os.path.exists(app_path):
+            sys.stderr.write("""
+                App %s seems to be already migrated
+            """ % app_name)
+            sys.exit(2)
+        os.path.mkdir(app_path)
+        
+             
+                
