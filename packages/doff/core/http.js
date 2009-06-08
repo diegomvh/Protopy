@@ -4,49 +4,85 @@ var absolute_http_url_re = RegExp("^https?://", 'i');
 
 var Http404 = type('Http404', Exception);
 
+//Parsers para armar el request
+function parse_uri(str) {
+    var options = {
+        strictMode: false,
+        key: ["source","protocol","authority","userInfo","user","password","host","port","relative","path","directory","file","query","anchor"],
+        q: {
+            name:   "queryKey",
+            parser: /(?:^|&)([^&=]*)=?([^&]*)/g
+        },
+        parser: {
+            strict: /^(?:([^:\/?#]+):)?(?:\/\/((?:(([^:@]*):?([^:@]*))?@)?([^:\/?#]*)(?::(\d*))?))?((((?:[^?#\/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/,
+            loose:  /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*):?([^:@]*))?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/
+        }
+    }
+    var	m   = options.parser[options.strictMode ? "strict" : "loose"].exec(str),
+        uri = {},
+        i   = 14;
+
+    while (i--) 
+        uri[options.key[i]] = m[i] || "";
+
+    uri[options.q.name] = {};
+    uri[options.key[12]].replace(options.q.parser, function ($0, $1, $2) {
+        if ($1) 
+            uri[options.q.name][$1] = $2;
+    });
+    return uri;
+};
+
+
 /*A basic HTTP request.*/
 var HttpRequest = type ('HttpRequest', [ object ], {
 
-    __init__: function __init__() {
+    __init__: function __init__(uri) {
         this.GET = {};
 	this.POST  = {};
 	this.COOKIES = {};
 	this.META = {};
 	this.FILES = {};
-        this.path = '';
-	this.host = window.location.hostname;
-	this.port = window.location.port;
-	this.protocol = window.location.protocol;
+        extend(this, parse_uri(uri));
     },
 
-    get_full_path: function get_full_path() {
+    get_full_path: function() {
         return '';
     },
 	
-    get_host: function get_host(){
+    get_host: function(){
 	return '%s%s'.subs(this.host, (this.port) ? ':' + this.port : ''); 
     },
 
-    build_absolute_uri: function build_absolute_uri(location) {
+    build_absolute_uri: function(location) {
         if (!location)
             location = this.get_full_path();
         if (!absolute_http_url_re.test(location)) {
-	    var current_uri = '%s//%s%s'.subs(this.protocol, this.get_host(), this.path);
+	    var current_uri = '%s://%s%s'.subs(this.protocol, this.get_host(), this.path);
             //TODO: algo para unir urls, quiza tocando un poco module_url
 	    location = current_uri + location;
 	}
 	return location;
     },
 
-    is_secure: function is_secure(){
-        return this.protocol == "https:";
+    is_secure: function(){
+        return this.protocol == "https";
     },
 
-    is_ajax: function is_ajax() {
+    is_same_origin: function() {
+        var m = '%s//%s'.subs(this.protocol, this.get_host());
+        return !m || (m == '%(protocol)s//%(domain)s%(port)s'.subs({
+            protocol: location.protocol,
+            domain: document.domain,
+            port: location.port ? ':' + location.port : ''
+        }));
+    },
+
+    is_ajax: function() {
         return this.META['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
     },
     
-    valid: function valid() {
+    is_valid: function() {
 	return !!this.path;
     },
 

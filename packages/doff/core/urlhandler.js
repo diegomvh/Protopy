@@ -14,24 +14,24 @@ var Handler = type('Handler', object, {
     },
 
     handle: function handle(value) {
-	var request = new http.HttpRequest();
+        var request;
 	if (Element.isElement(value)) {
             //Es un elemento del html
 	    var name = 'parse_' + value.tagName.toLowerCase();
 	    if (callable(this[name]))
-		request = this[name](request, value);
+		request = this[name](value);
 	    else 
 		throw new NotImplementedError('%s not implemented'.subs(name));
 	} else if (isinstance(value, String)) {
             //Es una cadena
-            request = extend(request, this.parse_uri(value));
+            request = new http.HttpRequest(value);
 	} else if (!isundefined(value.target)) {
             //Es un evento
             event.stopEvent(value);
             return this.handle(value.target);
         }
 
-	if (request.valid()) {
+	if (!isundefined(request) && request.is_valid()) {
 	    var response = this.get_response(request);
             //Trato el response
             if (response.status_code == 200) {
@@ -86,44 +86,15 @@ var Handler = type('Handler', object, {
         dom.clearCache();
     },
 
-    //Parsers para armar el request
-    parse_uri: function(str) {
-        var options = {
-            strictMode: false,
-            key: ["source","protocol","authority","userInfo","user","password","host","port","relative","path","directory","file","query","anchor"],
-            q: {
-                name:   "queryKey",
-                parser: /(?:^|&)([^&=]*)=?([^&]*)/g
-            },
-            parser: {
-                strict: /^(?:([^:\/?#]+):)?(?:\/\/((?:(([^:@]*):?([^:@]*))?@)?([^:\/?#]*)(?::(\d*))?))?((((?:[^?#\/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/,
-                loose:  /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*):?([^:@]*))?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/
-            }
-        }
-        var	m   = options.parser[options.strictMode ? "strict" : "loose"].exec(str),
-            uri = {},
-            i   = 14;
-    
-        while (i--) 
-            uri[options.key[i]] = m[i] || "";
-    
-        uri[options.q.name] = {};
-        uri[options.key[12]].replace(options.q.parser, function ($0, $1, $2) {
-            if ($1) 
-                uri[options.q.name][$1] = $2;
-        });
-        return uri;
-    },
-
-    parse_form: function form(request, element) {
-	request = extend(request, this.parse_uri(element.action));
-        request.method = element.method;
+    parse_form: function form(element) {
+        var request = new http.HttpRequest(element.action);
+	request.method = element.method;
 	request[element.method] = element.serialize();
 	return request;
     },
 
-    parse_a: function a(request, element) {
-        request = extend(request, this.parse_uri(element.href));
+    parse_a: function a(element) {
+        var request = new http.HttpRequest(element.href);
 	request.method = 'get';
 	return request;
     }

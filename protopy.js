@@ -628,13 +628,13 @@
 	    }
 	},
 
-	'onStateChange': function onStateChange() {
+	onStateChange: function() {
 	    var readyState = this.transport.readyState;
 	    if (readyState > 1 && !((readyState == 4) && this._complete))
 	    this.respondToReadyState(this.transport.readyState);
 	},
 
-	'setRequestHeaders': function setRequestHeaders() {
+	setRequestHeaders: function() {
 	    var headers = {
 		'X-Requested-With': 'XMLHttpRequest',
 		'X-Protopy-Version': sys.version,
@@ -665,18 +665,18 @@
 		this.transport.setRequestHeader(name, headers[name]);
 	},
 
-	'success': function success() {
+	success: function() {
 	    var status = this.getStatus();
 	    return !status || (status >= 200 && status < 300);
 	},
 
-	'getStatus': function getStatus() {
+	getStatus: function() {
 	    try {
 		return this.transport.status || 0;
 	    } catch (e) { return 0 }
 	},
 
-	'respondToReadyState': function respondToReadyState(readyState) {
+	respondToReadyState: function(readyState) {
 	    var state = Request.Events[readyState], response = new Response(this);
 
 	    if (state == 'Complete') {
@@ -704,22 +704,22 @@
 	    }
 	},
 
-	'isSameOrigin': function isSameOrigin() {
+	isSameOrigin: function() {
 	    var m = this.url.match(/^\s*https?:\/\/[^\/]*/);
-	    return !m || (m[0] == '#{protocol}//#{domain}#{port}'.interpolate({
+	    return !m || (m[0] == '%(protocol)s//%(domain)s%(port)s'.subs({
 		protocol: location.protocol,
 		domain: document.domain,
 		port: location.port ? ':' + location.port : ''
 	    }));
 	},
 
-	'getHeader': function getHeader(name) {
+	getHeader: function(name) {
 	    try {
 	    return this.transport.getResponseHeader(name) || null;
 	    } catch (e) { return null }
 	},
 
-	'dispatchException': function dispatchException(exception) {
+	dispatchException: function(exception) {
 	    (this.options.onException || function(){})(this, exception);
 	    Responders.dispatch('onException', this, exception);
 	}
@@ -728,7 +728,7 @@
     Request.Events = ['Uninitialized', 'Loading', 'Loaded', 'Interactive', 'Complete'];
 
     var Response = type('Response', [ object ], {
-	'__init__': function __init__(request){
+	__init__: function(request){
 	    this.request = request;
 	    var transport  = this.transport  = request.transport,
 		readyState = this.readyState = transport.readyState;
@@ -750,7 +750,7 @@
 
 	getStatus: Request.prototype.getStatus,
 
-	'getStatusText': function getStatusText() {
+	getStatusText: function() {
 	    try {
 		return this.transport.statusText || '';
 	    } catch (e) { return '' }
@@ -758,17 +758,17 @@
 
 	getHeader: Request.prototype.getHeader,
 
-	'getAllHeaders': function getAllHeaders() {
+	getAllHeaders: function() {
 	    try {
 	    return this.getAllResponseHeaders();
 	    } catch (e) { return null }
 	},
 
-	'getResponseHeader': function getResponseHeader(name) {
+	getResponseHeader: function(name) {
 	    return this.transport.getResponseHeader(name);
 	},
 
-	'getAllResponseHeaders': function getAllResponseHeaders() {
+	getAllResponseHeaders: function() {
 	    return this.transport.getAllResponseHeaders();
 	}
     });
