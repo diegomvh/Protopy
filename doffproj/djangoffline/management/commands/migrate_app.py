@@ -20,7 +20,7 @@ class Command(AppCommand):
     help = """
         Probando el sistema de comandos de Django.
     """
-    requires_model_validation = False
+    requires_model_validation = True
     can_import_settings = True
     
     def handle_app(self, app, **options):
@@ -43,7 +43,8 @@ class Command(AppCommand):
                 App %s seems to be already migrated
             """ % app_name)
             sys.exit(2)
-        os.path.mkdir(app_path)
+        print app_path
+        #os.mkdir(app_path)
         
              
                 
