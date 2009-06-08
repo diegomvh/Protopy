@@ -32,17 +32,22 @@ var Handler = type('Handler', object, {
         }
 
 	if (!isundefined(request) && request.is_valid()) {
-	    var response = this.get_response(request);
-            //Trato el response
-            if (response.status_code == 200) {
-                this.clear_hooks();
-                this.target.update(response.content);
-                this.hook_events();
-            } else if (response.status_code == 302) {
-	        return this.handle(response['Location']);
-            } else if (response.status_code == 404) {
-                value.setOpacity(0.2);
-	        return null;
+            if (!request.is_same_origin()) //kickoff
+                window.location = request.source;
+            else {
+                var response = this.get_response(request);
+                //Trato el response
+                if (response.status_code == 200) {
+                    this.clear_hooks();
+                    this.target.update(response.content);
+                    this.hook_events();
+                } else if (response.status_code == 302) {
+                    return this.handle(response['Location']);
+                } else if (response.status_code == 404) {
+                    //Agregar a las url no manjeadas
+                    value.setOpacity(0.2);
+                    return null;
+                }
             }
         }
     },

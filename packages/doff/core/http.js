@@ -33,17 +33,29 @@ function parse_uri(str) {
     return uri;
 };
 
-
 /*A basic HTTP request.*/
 var HttpRequest = type ('HttpRequest', [ object ], {
 
     __init__: function __init__(uri) {
         this.GET = {};
 	this.POST  = {};
-	this.COOKIES = {};
 	this.META = {};
 	this.FILES = {};
         extend(this, parse_uri(uri));
+        if (!this.host) {
+            this.host = location.hostname;
+            this.protocol = location.protocol.substr(0, location.protocol.length - 1);
+            this.port = location.port;
+        }
+    },
+
+    get_cookie: function( cookie_name ) {
+        var results = document.cookie.match ( '(^|;) ?' + cookie_name + '=([^;]*)(;|$)' );
+
+        if ( results )
+            return ( unescape ( results[2] ) );
+        else
+            return null;
     },
 
     get_full_path: function() {
@@ -70,7 +82,7 @@ var HttpRequest = type ('HttpRequest', [ object ], {
     },
 
     is_same_origin: function() {
-        var m = '%s//%s'.subs(this.protocol, this.get_host());
+        var m = '%s://%s'.subs(this.protocol, this.get_host());
         return !m || (m == '%(protocol)s//%(domain)s%(port)s'.subs({
             protocol: location.protocol,
             domain: document.domain,
@@ -149,23 +161,25 @@ var HttpResponse = type('HttpResponse', object, {
         return this._headers[header.toLowerCase()] || alternate;
     },
 
-    set_cookie: function set_cookie(key, value, max_age, expires, path, domain, secure) {
-        this.cookies[key] = value || '';
-	//TODO: logica de cookies
-        if (max_age != undefined)
-            this.cookies[key]['max-age'] = max_age;
-        if (expires != undefined)
-            this.cookies[key]['expires'] = expires;
-        if (path != undefined)
-            this.cookies[key]['path'] = path || '/';
-        if (domain != undefined)
-            this.cookies[key]['domain'] = domain;
-        if (secure)
-            this.cookies[key]['secure'] = true;
+    set_cookie: function( key, value, max_age, expires, path, domain, secure ) {
+        var cookie_string = key + "=" + escape ( value );
+        if ( max_age )
+            cookie_string += "; max_age=" + max_age.toGMTString();
+        if ( expires )
+            cookie_string += "; expires=" + expires.toGMTString();
+        if ( path )
+            cookie_string += "; path=" + escape ( path );
+        if ( domain )
+            cookie_string += "; domain=" + escape ( domain );
+        if ( secure )
+            cookie_string += "; secure";
+        document.cookie = cookie_string;
     },
 
-    delete_cookie: function delete_cookie(key, path, domain) {
-        this.set_cookie(key, null, 0, path || '/', domain, 'Thu, 01-Jan-1970 00:00:00 GMT', false);
+    delete_cookie: function( cookie_name ) {
+        var cookie_date = new Date ();  // current date & time
+        cookie_date.setTime ( cookie_date.getTime() - 1 );
+        document.cookie = cookie_name += "=; expires=" + cookie_date.toGMTString();
     },
 
     get content() {
