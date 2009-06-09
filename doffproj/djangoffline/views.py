@@ -120,6 +120,15 @@ def template_static_serve(request, path):
     return HttpResponse(template_source)
 
 
+def get_app_remote_model(request, app_name):
+    #TODO: Esto!!!
+    #from django.db.models.loading import get_app
+    
+    return render_to_response('djangoffline/models.js', locals(),
+                              mimetype = 'text/javascript')
+    
+    #return HttpResponse(template, 'text/javascript')
+
 def build_manifest(request):
     return 
 
@@ -141,8 +150,6 @@ def get_manifest(request):
 
 import random, string
 random_string = lambda length: ''.join( [ random.choice(string.letters) for _ in range(length) ] ) 
-
-
 
 def get_project_manifest(request):
     

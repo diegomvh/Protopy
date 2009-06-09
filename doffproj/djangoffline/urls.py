@@ -12,12 +12,13 @@ urlpatterns = patterns('',
     (r'^list_templates/', views.list_templates, ), 
     (r'^sync', sync.rpc_handler),
     (r'^templates/(.*)', views.template_static_serve, ),
+    (r'^export/(?P<app_name>.*)/models.js$', views.get_app_remote_model, ),
     # Manifest test
     (r'^manifest.json', views.get_manifest),
     
-    (r'manifests/project.json', views.get_project_manifest, ),
+    (r'^manifests/project.json', views.get_project_manifest, ),
     
-    (r'network_check', views.network_check), 
+    (r'^network_check', views.network_check), 
 )
 
 urlpatterns += patterns('djangoffline.views',

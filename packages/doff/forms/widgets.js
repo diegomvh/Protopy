@@ -1,9 +1,9 @@
 /* 'HTML Widget classes' */
 require('copy', 'copy');
-require('doff.core.project', 'get_settings');
 require('doff.forms.util', 'flatatt');
 require('itertools', 'chain');
 
+require('doff.core.project', 'get_settings');
 var settings = get_settings();
 
 //from django.utils.html import escape, conditional_escape

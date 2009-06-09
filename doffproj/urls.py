@@ -20,7 +20,7 @@ urlpatterns = patterns('',
     # index
     (r'^$', include('doffproj.blog.urls'),),
 
-    ('^' + settings.OFFLINE_BASE + '/', include('doffproj.djangoffline.urls'), ),
+    (r'^' + settings.OFFLINE_BASE + '/', include('doffproj.djangoffline.urls'), ),
 )
 
 # static media
