@@ -29,7 +29,7 @@ class Command(AppCommand):
     def handle_app(self, app, **options):
         from django.conf import settings
         from django.db.models.loading import get_model, get_models, get_apps
-        from djangoffline.management.commands import fill_templates
+        from djangoffline.management.commands import fill_templates, get_template_colision
         
         app_name = os.path.dirname( app.__file__ ).split( os.sep )[-1]
         
@@ -66,49 +66,29 @@ class Command(AppCommand):
                        app_path,
                        locals()
                        )
-        
-        sys.exit()
-        # ----------------------------------------------------------------------
-        for fname in remote_app_templates:
-            f = open(fname, 'r')
-            raw_template = f.read()
-            f.close()
-            
-            template = Template(raw_template)
-            context = Context(locals())
-            
-            base_name = basename(fname)
-            
-            dst = join(app_path, base_name)
-            f = open(dst, 'w')
-            try:
-                f.write(template.render(context))
-            except Exception, e:
-                print "Error en el template %s" % e
-            f.close()
-            print "%s written" % dst
             
         app_templates = glob.glob( '%s%s*' % (app_template, os.sep) )
-        #files_to_copy = dict(map( , app_templates))
         
-        for fname in app_templates:
-            f = open(fname, 'r')
-            raw_template = f.read()
-            f.close()
-            
-            template = Template(raw_template)
-            context = Context(locals())
-            
-            base_name = basename(fname)
-            
-            dst = join(app_path, base_name)
-            f = open(dst, 'w')
-            try:
-                f.write(template.render(context))
-            except Exception, e:
-                print "Error en el template %s" % e
-            f.close()
-            print "%s written" % dst
+        fill_templates(app_templates, app_path, locals() )
+        
+#        for fname in app_templates:
+#            f = open(fname, 'r')
+#            raw_template = f.read()
+#            f.close()
+#            
+#            template = Template(raw_template)
+#            context = Context(locals())
+#            
+#            base_name = basename(fname)
+#            
+#            dst = join(app_path, base_name)
+#            f = open(dst, 'w')
+#            try:
+#                f.write(template.render(context))
+#            except Exception, e:
+#                print "Error en el template %s" % e
+#            f.close()
+#            print "%s written" % dst
         
         
              

@@ -45,7 +45,7 @@ def get_doffline_path():
     return get_app_path('djangoffline')
 
 
-def fill_templates(path_from, path_to, template_context, overwrite = False):
+def fill_templates(path_from, path_to, template_context):
     '''
     '''
     
@@ -58,13 +58,6 @@ def fill_templates(path_from, path_to, template_context, overwrite = False):
     else:
         files_from = path_from
     files_from = dict( map( lambda fname: (basename(fname), fname), files_from ) )
-    
-    
-    for f_basename in files_from:
-        if exists(join(path_to, f_basename)):
-            sys.stdout.write('File "%s" already exists in "%s"\nRemove the file\n' % (f_basename, path_to))
-            sys.exit(-3)
-        
     
     for base_fname, full_path in files_from.iteritems():
         f = open(full_path, 'r')
@@ -83,16 +76,15 @@ def fill_templates(path_from, path_to, template_context, overwrite = False):
         f.close()
         print "%s written" % dst
         
-        #print base_fname, full_path
-        #print path_to
-        
-    
-    
-    
-    
-    
-    
-
-
-    
+def get_template_colision(files_from, path_to):
+    '''
+    Checks if a set of templates may be written to a destination
+    checking wether the destination file exists or not.
+    '''
+    from os.path import basename, exists, join
+    for fname in files_from:
+        if exists(join(path_to, basename(fname))):
+            return fname  
+    return None
+            
     
