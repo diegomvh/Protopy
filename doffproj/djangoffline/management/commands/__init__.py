@@ -1,4 +1,4 @@
-
+import sys
 # Some common code 
 
 def offline_setup_checks():
@@ -45,5 +45,46 @@ def get_doffline_path():
     return get_app_path('djangoffline')
 
 
+def fill_templates(path_from, path_to, template_context):
+    '''
+    '''
     
+    from glob import glob
+    from os.path import join, exists, basename
+    from django.template import Template, Context
+    
+    if type(path_from) == str:
+        files_from = glob( path_from )
+    else:
+        files_from = path_from
+    files_from = dict( map( lambda fname: (basename(fname), fname), files_from ) )
+    
+    for base_fname, full_path in files_from.iteritems():
+        f = open(full_path, 'r')
+        raw_template = f.read()
+        f.close()
+            
+        template = Template(raw_template)
+        context = Context(template_context)
+            
+        dst = join(path_to, base_fname)
+        f = open(dst, 'w')
+        try:
+            f.write(template.render(context))
+        except Exception, e:
+            print "Error en el template %s" % e
+        f.close()
+        print "%s written" % dst
+        
+def get_template_colision(files_from, path_to):
+    '''
+    Checks if a set of templates may be written to a destination
+    checking wether the destination file exists or not.
+    '''
+    from os.path import basename, exists, join
+    for fname in files_from:
+        if exists(join(path_to, basename(fname))):
+            return fname  
+    return None
+            
     
