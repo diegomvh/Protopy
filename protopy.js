@@ -291,7 +291,7 @@
     }
     /* Modulo: sys - modulo de sistema, proporciona informacion sobre el ambiente y algunas herramientas para interactuar con este */
     var sys = ModuleManager.create('sys', 'built-in', { 
-	version: 0.8,
+	version: 0.95,
 	browser: {
 	    IE:     !!(window.attachEvent && navigator.userAgent.indexOf('Opera') === -1),
 	    Opera:  navigator.userAgent.indexOf('Opera') > -1,
