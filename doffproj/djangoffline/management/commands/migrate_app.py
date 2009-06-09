@@ -34,12 +34,12 @@ class Command(AppCommand):
         app_name = os.path.dirname( app.__file__ ).split( os.sep )[-1]
         
         djangogffilne_path = dirname(abspath(get_app('djangoffline').__file__))
-        project_templates = join(djangogffilne_path, 'conf', 'remote_project_template')
-        app_templates = join(djangogffilne_path, 'conf', 'app_template')
-        remote_app_templates = join(djangogffilne_path, 'conf', 'remote_app_template')
+        project_template = join(djangogffilne_path, 'conf', 'remote_project_template')
+        app_template = join(djangogffilne_path, 'conf', 'app_template')
+        remote_app_template = join(djangogffilne_path, 'conf', 'remote_app_template')
         
         
-        assert exists(project_templates), _("Error with templates")
+        assert exists(project_template), _("Error with templates")
         
         project_name = os.environ.get('DJANGO_SETTINGS_MODULE').replace('.settings', '')
         
@@ -58,7 +58,9 @@ class Command(AppCommand):
         models = get_models(get_app(app_name))
         models = dict ( map (lambda m: (m._meta.object_name, m), models ))
         
-        for fname in glob.glob( '%s%s*'  % (remote_app_templates, os.sep)):
+        remote_app_templates = glob.glob( '%s%s*'  % (remote_app_template, os.sep))
+        
+        for fname in remote_app_templates:
             f = open(fname, 'r')
             raw_template = f.read()
             f.close()
@@ -67,7 +69,7 @@ class Command(AppCommand):
             context = Context(locals())
             
             base_name = basename(fname)
-            print "Generando", fname
+            
             dst = join(app_path, base_name)
             f = open(dst, 'w')
             try:
@@ -75,7 +77,30 @@ class Command(AppCommand):
             except Exception, e:
                 print "Error en el template %s" % e
             f.close()
-            print "%s written" % dst 
+            print "%s written" % dst
+            
+        app_templates = glob.glob( '%s%s*' % (app_template, os.sep) )
+        #files_to_copy = dict(map( , app_templates))
+        
+        for fname in app_templates:
+            f = open(fname, 'r')
+            raw_template = f.read()
+            f.close()
+            
+            template = Template(raw_template)
+            context = Context(locals())
+            
+            base_name = basename(fname)
+            
+            dst = join(app_path, base_name)
+            f = open(dst, 'w')
+            try:
+                f.write(template.render(context))
+            except Exception, e:
+                print "Error en el template %s" % e
+            f.close()
+            print "%s written" % dst
+        
         
              
             

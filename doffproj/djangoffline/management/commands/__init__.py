@@ -45,5 +45,13 @@ def get_doffline_path():
     return get_app_path('djangoffline')
 
 
+def fill_templates(path_from, path_to, template_context, overwrite = False):
+    '''
+    '''
+    files_from = None
+    
+    
+    pass
+
     
     
