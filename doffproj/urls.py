@@ -10,37 +10,22 @@ import djangoffline
 #admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Example:
-    # (r'^doffproj/', include('doffproj.foo.urls')),
-
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
     # to INSTALLED_APPS to enable admin documentation:
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
     (r'^admin/(.*)', bolg_admin_site.root),
-    
-    # TODO: Reemplazar por un generic view.
-    #(r'^$', 'doffproj.views.index',  ),
-    
-    (r'^blog/', include('doffproj.blog.urls'),),
-    (r'^offblog/', 'doffproj.views.run_offline',),
-    
-    #     
+
+    # index
+    (r'^$', include('doffproj.blog.urls'),),
+
     ('^' + settings.OFFLINE_BASE + '/', include('doffproj.djangoffline.urls'), ),
-     
 )
-
-# index
-urlpatterns += patterns('django.views.generic.simple',
-    (r'^$', 'redirect_to', {'url': '/%s/' % settings.OFFLINE_BASE}),
-)
-
 
 # static media
-
 urlpatterns += patterns('django.views.static',
     (r'^%s/(?P<path>.*)$' % settings.MEDIA_URL[1:-1], 
             'serve', {'document_root': settings.MEDIA_ROOT,
                       'show_indexes': True, }),
-) 
+)

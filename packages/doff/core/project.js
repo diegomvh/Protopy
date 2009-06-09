@@ -10,8 +10,6 @@ var Project = type('Project', object, {
     do_net_checking: true,
 
     onLoad: function() {
-        //this.sync_stores();
-
 	//Add the body element to html
 	var body = $$('body')[0];
 	body.insert(this.target);
@@ -27,10 +25,14 @@ var Project = type('Project', object, {
 
     __init__: function(package, offline_support) {
 	this.package = package;
-	//Registro la ruta al proyecto, la cual es absoluta
-	sys.register_path(this.package, '/' + offline_support + '/project');
+	//Registro la ruta absoluta al soporte offline
+	sys.register_path(offline_support, '/' + offline_support);
+        //Registro la ruta absoluta al proyecto
+        sys.register_path(this.package, sys.module_url(offline_support, '/project'));
 	this.path = sys.paths[this.package];
-	this.availability_url = '/' + offline_support + '/network_check';
+	
+        //Url para ver si estoy conectado
+        this.availability_url = sys.module_url(offline_support, '/network_check');
 
 	//Inicio el logging
 	require('logging.config', 'file_config');
@@ -47,11 +49,10 @@ var Project = type('Project', object, {
 	//Inicio de los stores
 	require('gears.localserver', 'ManagedResourceStore');
 	this.project = new ManagedResourceStore(package + '_project');
-	this.project.manifest_url = '/' + offline_support + '/manifests/project.json';
+	this.project.manifest_url = sys.module_url(offline_support, '/manifests/project.json');
 	this.system = new ManagedResourceStore(package + '_system');
-	this.system.manifest_url = '/' + offline_support + '/manifests/system.json';
-	//TODO: uno mas para files asi podemos guardar archivos del cliente
-
+	this.system.manifest_url = sys.module_url(offline_support, '/manifests/system.json');
+	
 	//The toolbar
 	require('doff.utils.toolbar', 'ToolBar');
         
@@ -69,7 +70,7 @@ var Project = type('Project', object, {
         this.toolbar.add('Help');
     },
 
-    run: function initialize(){
+    bootstrap: function(){
 	var self = this;
 	event.connect(window, 'load', function(){
 	    self.onLoad();
@@ -151,7 +152,6 @@ var Project = type('Project', object, {
 	if(!this.do_net_checking){
 	    return;
 	}
-	
 	this.thread = window.setInterval(getattr(this, 'network_check'), this.NET_CHECK * 1000);
     },
 
@@ -164,16 +164,9 @@ var Project = type('Project', object, {
 
     _get_availability_url: function(){
 	var url = this.availability_url;
-	
-	// bust the browser's cache to make sure we are really talking to
-	// the server
-	if(url.indexOf("?") == -1){
-		url += "?";
-	}else{
-		url += "&";
-	}
+	// bust the browser's cache to make sure we are really talking to the server
+	url += (url.indexOf("?") == -1)? "?" : "&";
 	url += "browserbust=" + new Date().getTime();
-	
 	return url;
     }
 });
@@ -193,6 +186,30 @@ function get_settings() {
     return get_project().settings;
 }
 
+/* Ideas que tengo que agregar
+
+if (!google.gears.factory.hasPermission) {
+    var siteName = 'My Site';
+    var icon = 'images/myIcon.png';
+    var msg = 'This site would like to use Google Gears to enable fast, '
+            + 'as-you-type searching of its documents.';
+    
+    var allowed = google.gears.factory.getPermission(siteName, icon, msg);
+}
+
+--Detectar si esta gears y mostrar el link para instalacion
+!sys.browser.features.Gears
+var message = 'To enable fast client-side search of this website '
+            + 'please install Gears';
+var url = 'http://gears.google.com/?action=install'
+            + '&message=' + encodeURIComponent(message)
+            + '&return=' + encodeURIComponent(window.location.href);
+widget.innerHTML = '<a href="' + url + '">Install '
+                + 'Gears to enable fast search!</a>';
+return false;
+
+
+*/
 publish({
     get_project: get_project,
     new_project: get_project,
