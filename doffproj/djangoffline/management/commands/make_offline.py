@@ -21,7 +21,7 @@ class Command(NoArgsCommand):
 
     def handle_noargs(self, **options):
         from django.conf import settings
-
+        from djangoffline.management.commands import fill_templates
         offline_setup_checks()
         
         offline_root = abspath(settings.OFFLINE_ROOT)
@@ -50,20 +50,10 @@ class Command(NoArgsCommand):
         project_templates = join(doffline_path, 'conf', 'remote_project_template')
         assert exists(project_templates), _("Error with templates")
         
+        project_templates = "%s%s*" % (project_templates, os.sep)
         
-        for fname in glob("%s%s*" % (project_templates, os.sep)):
-            f = open(fname, 'r')
-            raw_template = f.read()
-            f.close()
-            template = Template(raw_template)
-            context = Context(locals())
-            
-            base_name = basename(fname)
-            dst = join(offline_project_root, base_name)
-            f = open(dst, 'w')
-            f.write(template.render(context))
-            f.close()
-            print "%s written" % dst 
+        fill_templates(project_templates, offline_project_root, locals())
+        
         
 #        #return NoArgsCommand.handle_noargs(self, **options)
 
