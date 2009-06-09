@@ -26,6 +26,37 @@ function escape(value) {
 }
 register.filter(escape);
 
+function yesno(value, arg) {
+    /*
+    Given a string mapping values for true, false and (optionally) None,
+    returns one of those strings accoding to the value:
+
+    ==========  ======================  ==================================
+    Value       Argument                Outputs
+    ==========  ======================  ==================================
+    ``True``    ``"yeah,no,maybe"``     ``yeah``
+    ``False``   ``"yeah,no,maybe"``     ``no``
+    ``None``    ``"yeah,no,maybe"``     ``maybe``
+    ``None``    ``"yeah,no"``           ``"no"`` (converts None to False
+                                        if no mapping for None is given.
+    ==========  ======================  ==================================
+    */
+    if (isundefined(arg))
+        arg = 'yes,no,maybe';
+    var bits = arg.split(',')
+    if (len(bits) < 2)
+        return value; // Invalid arg.
+    var [yes, no, maybe] = bits;
+    if (isundefined(maybe))
+        maybe = no;
+    if (isundefined(value))
+        return maybe;
+    if (value)
+        return yes;
+    return no;
+}
+register.filter(yesno);
+
 publish({
     register: register,
     slugify: slugify

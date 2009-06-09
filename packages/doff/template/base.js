@@ -378,7 +378,7 @@ var FilterExpression = type('FilterExpression', [ object ], {
             } else {
                 if (settings.TEMPLATE_STRING_IF_INVALID) {
                     if (include(settings.TEMPLATE_STRING_IF_INVALID, '%s'))
-                        return settings.TEMPLATE_STRING_IF_INVALID.subs(this.value);
+                        return settings.TEMPLATE_STRING_IF_INVALID.subs(this.value.value);
                     return settings.TEMPLATE_STRING_IF_INVALID;
                 } else {
                     obj = settings.TEMPLATE_STRING_IF_INVALID;
