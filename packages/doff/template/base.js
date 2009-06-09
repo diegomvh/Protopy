@@ -122,7 +122,7 @@ var VariableNode = type('VariableNode', [ Node ], {
 });
 
 /* ---------------- Template ----------------- */
-function compile_string(template_string){
+function compile_string(template_string) {
     var lexer = new Lexer(template_string);
     var parser = new Parser(lexer.tokenize());
     return parser.parse();
@@ -196,6 +196,11 @@ var Parser = type('Parser', [ object ], {
         this.tokens = tokens;
         this.tags = {};
         this.filters = {};
+        //Si no estan cargados los builtins los cargo
+        if (!bool(builtins)) {
+            for each (var module_name in ['doff.template.default_tags', 'doff.template.loader_tags', 'doff.template.default_filters'])
+                builtins.push(get_library(module_name));
+        }
         for each (var lib in builtins)
             this.add_library(lib);
     },
@@ -491,10 +496,6 @@ function get_library(module_name){
     return lib;
 };
 
-function add_to_builtins(module_name){
-    builtins.push(get_library(module_name));
-};
-
 publish({ 
     TemplateSyntaxError: TemplateSyntaxError,
     TemplateDoesNotExist: TemplateDoesNotExist,
@@ -517,7 +518,3 @@ publish({
     COMMENT_TAG_START: COMMENT_TAG_START,
     COMMENT_TAG_END: COMMENT_TAG_END
 });
-
-add_to_builtins('doff.template.default_tags');
-add_to_builtins('doff.template.loader_tags');
-add_to_builtins('doff.template.default_filters');

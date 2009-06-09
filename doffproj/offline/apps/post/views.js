@@ -1,7 +1,6 @@
 require('event');
 require('blog.apps.post.models', 'Tag', 'Post');
 require('doff.forms.base', 'ModelForm');
-require('doff.template.default_filters', 'slugify');
 require('doff.template.loader');
 require('doff.template.context', 'RequestContext');
 require('doff.core.http', 'HttpResponse', 'HttpResponseRedirect');
@@ -22,7 +21,7 @@ function add_tag(request){
     if (request.method == 'POST') {
 	var formtag = new TagForm({ data: request.POST });
 	if (formtag.is_valid()) {
-	    var [obj, crated] = Tag.objects.get_or_create({'slug':slugify(request.POST['title']), 'defaults': {'title':request.POST['title']}});
+	    formtag.save();
 	    return new HttpResponseRedirect('/');
 	}
     } else {
@@ -50,10 +49,7 @@ function add_post(request) {
     if (request.method == 'POST') {
 	var formpost = new PostForm({ data: request.POST });
 	if (formpost.is_valid()) {
-	    var [post, created] = Post.objects.get_or_create({'slug': slugify(request.post.title),
-						     'defaults': {'title':request.post.title, 'slug':slugify(request.post.title), 
-						     'body':request.post.body, 'date': new Date()}});
-	    post.tags.add.apply(post.tags, request.post.tags);
+            formpost.save();
 	    return new HttpResponseRedirect('/');
 	}
     } else {
