@@ -1,4 +1,4 @@
-
+import sys
 # Some common code 
 
 def offline_setup_checks():
@@ -48,10 +48,51 @@ def get_doffline_path():
 def fill_templates(path_from, path_to, template_context, overwrite = False):
     '''
     '''
-    files_from = None
+    
+    from glob import glob
+    from os.path import join, exists, basename
+    from django.template import Template, Context
+    
+    if type(path_from) == str:
+        files_from = glob( path_from )
+    else:
+        files_from = path_from
+    files_from = dict( map( lambda fname: (basename(fname), fname), files_from ) )
     
     
-    pass
+    for f_basename in files_from:
+        if exists(join(path_to, f_basename)):
+            sys.stdout.write('File "%s" already exists in "%s"\nRemove the file\n' % (f_basename, path_to))
+            sys.exit(-3)
+        
+    
+    for base_fname, full_path in files_from.iteritems():
+        f = open(full_path, 'r')
+        raw_template = f.read()
+        f.close()
+            
+        template = Template(raw_template)
+        context = Context(template_context)
+            
+        dst = join(path_to, base_fname)
+        f = open(dst, 'w')
+        try:
+            f.write(template.render(context))
+        except Exception, e:
+            print "Error en el template %s" % e
+        f.close()
+        print "%s written" % dst
+        
+        #print base_fname, full_path
+        #print path_to
+        
+    
+    
+    
+    
+    
+    
+
 
     
     

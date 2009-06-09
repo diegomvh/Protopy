@@ -17,7 +17,6 @@ from django.template.context import Context
 import os, glob
 from os.path import basename
 
-
 from django.core.management.base import *
 
 class Command(AppCommand):
@@ -29,7 +28,8 @@ class Command(AppCommand):
     
     def handle_app(self, app, **options):
         from django.conf import settings
-        from django.db.models.loading import *
+        from django.db.models.loading import get_model, get_models, get_apps
+        from djangoffline.management.commands import fill_templates
         
         app_name = os.path.dirname( app.__file__ ).split( os.sep )[-1]
         
@@ -60,6 +60,15 @@ class Command(AppCommand):
         
         remote_app_templates = glob.glob( '%s%s*'  % (remote_app_template, os.sep))
         
+        
+        fill_templates(
+                       remote_app_templates,
+                       app_path,
+                       locals()
+                       )
+        
+        sys.exit()
+        # ----------------------------------------------------------------------
         for fname in remote_app_templates:
             f = open(fname, 'r')
             raw_template = f.read()
