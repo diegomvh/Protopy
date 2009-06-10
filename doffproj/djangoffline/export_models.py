@@ -31,14 +31,15 @@ class FieldIntrospection(object):
     
     __repr__ = __str__ 
     
-
-model_class_fields = []
+    def get_init_args(self, field):
+        for f in self._arg_spec:
+            pass
 
 def get_model_class_fields():
     '''
     Loads Django ORM's fields
     '''
-    global model_class_fields
+    #global model_class_fields
     from django.db.models import Field
     filter_field = lambda c: isclass(c) and issubclass(c, Field)
     mod = __import__('django.db.models.fields', {}, {}, ['*'])
@@ -48,7 +49,31 @@ def get_model_class_fields():
     model_class_fields = SortedDict() 
     for name, class_ in classes:
         model_class_fields[name] = FieldIntrospection(class_)
-    #print model_class_fields
-     
-get_model_class_fields()
+    return model_class_fields
 
+# Cache
+model_class_fields = get_model_class_fields()
+
+def export_model_class(_class):
+    fields = _class._meta.fields + _class._meta.many_to_many
+    
+    
+    return fields
+
+def export_models(models):
+    processed_models = SortedDict()
+    for model in models:
+        name = model._meta.object_name
+        fields = model._meta.fields + model._meta.many_to_many
+        processed_fields = SortedDict()
+        for f in fields:
+            field_type = f.__class__.__name__
+            try:
+                f_introspect = model_class_fields[field_type]
+                processed_fields[f.name] = (field_type, f_introspect.get_init_args(f))
+            except KeyError:
+                #TODO: Implement for more fields
+                processed_fields[f.name] = (field_type, "Unsupported")
+        
+        processed_models[name] = processed_fields
+    return processed_models

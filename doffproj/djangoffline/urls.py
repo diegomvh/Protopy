@@ -12,7 +12,10 @@ urlpatterns = patterns('',
     (r'^list_templates/', views.list_templates, ), 
     (r'^sync', sync.rpc_handler),
     (r'^templates/(.*)', views.template_static_serve, ),
+    # DMvH tests
     (r'^export/(?P<app_name>.*)/models.js$', views.get_app_remote_model, ),
+    # WIP D3f0
+    (r'^export_/(?P<app_name>.*)/models.js$', views.get_app_remote_model_, ),
     # Manifest test
     (r'^manifest.json', views.get_manifest),
     

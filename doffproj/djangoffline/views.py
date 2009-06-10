@@ -9,6 +9,7 @@ from django.utils.html import escape
 from django.template import TemplateDoesNotExist
 from django.shortcuts import render_to_response
 from djangoffline.models import Manifest
+from djangoffline.export_models import export_model_class
 import inspect
 from pprint import pformat
 from remotemodels import RemoteModelProxy
@@ -128,7 +129,20 @@ def get_app_remote_model(request, app_name):
                               mimetype = 'text/javascript')
     
     #return HttpResponse(template, 'text/javascript')
-
+    
+def get_app_remote_model_(request, app_name):
+    from django.db.models.loading import get_app, get_models
+    from djangoffline.export_models import export_models
+    from pprint import pformat
+    try:
+        app = get_app(app_name)
+        models = get_models(app)
+        return HttpResponse(pformat(export_models(models), width = 80), 'text/plain')
+    
+    except ImproperlyConfigured, e:
+        return HttpResponseNotFound()
+        
+    
 def build_manifest(request):
     return 
 
