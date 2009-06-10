@@ -1,10 +1,17 @@
 require('doff.template.base', 'Variable', 'Library');
 var register = new Library();
 
-function capitalize(value){ 
-    return value.capitalize(); 
+function capfirst(value) {
+    /*Capitalizes the first character of the value.*/
+    return (value) ?  value.capitalize() : '';
 }
-register.filter(capitalize);
+register.filter(capfirst);
+
+function lower(value) {
+    /*Converts a string into all lowercase.*/
+    return value.toLowerCase();
+}
+register.filter(lower);
 
 function join(value, arg) {
     return array(value).join(arg);

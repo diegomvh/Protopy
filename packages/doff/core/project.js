@@ -176,9 +176,11 @@ var Project = type('Project', object, {
 */
 var project = null;
 
-function get_project(name, package, path){
-    if (!name && !project) throw new Exception('No project');
-    if (!project) project = new Project(name, package, path);
+function get_project(package, offline_support){
+    if (!package && !project) 
+	throw new Exception('No project');
+    if (!project) 
+	project = new Project(package, offline_support);
     return project;
 }
 
