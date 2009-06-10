@@ -32,8 +32,15 @@ class FieldIntrospection(object):
     __repr__ = __str__ 
     
     def get_init_args(self, field):
-        for f in self._arg_spec:
-            pass
+        args = SortedDict()
+        #args = []
+        # We start from 1: since we want to skip 
+        for index, f_name in enumerate(self._arg_spec.args[1:]):
+            f_value = getattr(field, f_name, None)
+            if self._arg_spec.defaults:
+                if f_value and f_value != self._arg_spec.defaults[index]:
+                    args[f_name] = f_value
+        return args
 
 def get_model_class_fields():
     '''
@@ -42,7 +49,7 @@ def get_model_class_fields():
     #global model_class_fields
     from django.db.models import Field
     filter_field = lambda c: isclass(c) and issubclass(c, Field)
-    mod = __import__('django.db.models.fields', {}, {}, ['*'])
+    mod = __import__('django.db.models', {}, {}, ['*'])
     classes = [ (name, class_) for name, class_ in mod.__dict__.items() 
                     if filter_field(class_)
               ]
@@ -61,6 +68,9 @@ def export_model_class(_class):
     return fields
 
 def export_models(models):
+    '''
+    Export model definition
+    '''
     processed_models = SortedDict()
     for model in models:
         name = model._meta.object_name
