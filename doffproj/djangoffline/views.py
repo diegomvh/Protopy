@@ -9,7 +9,6 @@ from django.utils.html import escape
 from django.template import TemplateDoesNotExist
 from django.shortcuts import render_to_response
 from djangoffline.models import Manifest
-from djangoffline.export_models import export_model_class
 import inspect
 from pprint import pformat
 from remotemodels import RemoteModelProxy
