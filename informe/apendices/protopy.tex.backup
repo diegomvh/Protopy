@@ -714,6 +714,7 @@ Este modulo brinda el soporte para el manejo del DOM de una forma simple para el
 \section{Extendiendo Javascript}
 Protopy no solo aporta modulos y funciones utiles al desarrollo, sino que
 tambien agrega nueva funcionalidad a los objetos de javascript.
+
 \subsection{String}
 \subsubsection*{sub}
 \begin{verbatim}
@@ -759,43 +760,43 @@ Quita las etiquetas HTML de una cadena.
 \begin{verbatim}
   string.stripscripts() -> string
 \end{verbatim}
-Strips a string of anything that looks like an HTML script block.
+Quita todos los bloques ''strips'' de una cadena.
 
 \subsubsection*{extractscripts}
 \begin{verbatim}
-  string.extractscripts() -> string
+  string.extractscripts() -> [ string... ]
 \end{verbatim}
-Exctracts the content of any script block present in the string and returns them as an array of strings.
+Extrae todos los scripts contenidos en la cadena y los retorna en un arreglo.
 
 \subsubsection*{evalscripts}
 \begin{verbatim}
-  string.evalscripts() -> string
+  string.evalscripts() -> [ value... ]
 \end{verbatim}
-Evaluates the content of any script block present in the string. Returns an array containing the value returned by each script.
+Evalua todos los scripts contenidos en la cadena y retorna un arreglos con los resultados de cada evaluacion.
 
 \subsubsection*{escapeHTML}
 \begin{verbatim}
   string.escapeHTML() -> string
 \end{verbatim}
-Converts HTML special characters to their entity equivalents. 
+Convierte los caracteres especiales del HTML a sus entidades equivalentes.
 
 \subsubsection*{unescapeHTML}
 \begin{verbatim}
   string.unescapeHTML() -> string
 \end{verbatim}
-Strips tags and converts the entity forms of special HTML characters to their normal form.
+Convierte las entidades de caracteres especiales del HTML a sus respectivos simbolos.
 
 \subsubsection*{succ}
 \begin{verbatim}
   string.succ() -> string
 \end{verbatim}
-Used internally by ObjectRange. Converts the last character of the string to the following character in the Unicode alphabet.
+Convierte un caracter en el caracter siguiente segun la tabla de caracteres Unicode.
 
 \subsubsection*{times}
 \begin{verbatim}
   string.times(count[, separator = '']) -> string
 \end{verbatim}
-Concatenates the string count times.
+Concatena una cadena tantas veces como se indique, si se pasa un separador, este es utilizado para intercalar.
 
 \subsubsection*{camelize}
 \begin{verbatim}
@@ -844,6 +845,7 @@ Chequea si una cadena esta en blanco, esto es si esta vacia o solo contiene espa
 \begin{verbatim}
   number.format(f, radix) -> string
 \end{verbatim}
+Da formato a un numero en base a una cadena de texto pasada, al estilo C.
 
 \subsection{Date}
 \subsubsection*{toISO8601}
@@ -862,31 +864,31 @@ Returns a Boolean indicating whether or not element is visible (i.e. whether its
 \begin{verbatim}
   HTMLElement.toggle() -> HTMLElement
 \end{verbatim}
-Toggles the visibility of element.
+Alterna la visibilidad del elemento.
 
 \subsubsection*{hide}
 \begin{verbatim}
   HTMLElement.hide() -> HTMLElement
 \end{verbatim}
-Hides and returns element.
+Oculta el elemento.
 
 \subsubsection*{show}
 \begin{verbatim}
   HTMLElement.show() -> HTMLElement
 \end{verbatim}
-Displays and returns element.
+Muestra el elemento.
 
 \subsubsection*{remove}
 \begin{verbatim}
   HTMLElement.remove() -> HTMLElement
 \end{verbatim}
-Completely removes element from the document and returns it.
+Quita el elemento del documento y lo retorna.
 
 \subsubsection*{update}
 \begin{verbatim}
   HTMLElement.update(content) -> HTMLElement
 \end{verbatim}
-Replaces the content of element with the provided newContent argument and returns element.
+Reemplaza el contendio del elemento con el argumento pasado y terorna el elemento.
 
 \subsubsection*{insert}
 \begin{verbatim}
@@ -899,7 +901,7 @@ Inserts content before, after, at the top of, or at the bottom of element, as sp
 \begin{verbatim}
   HTMLElement.select(selector) -> HTMLElement
 \end{verbatim}
-Takes an arbitrary number of CSS selectors (strings) and returns an array of extended descendants of element that match any of them.
+Toma un numero arbitrario de selectores CSS y retorna un arreglo con los elementos que concuerden con estos y esten dentro del elemento al que se aplica la funcion.
 
 \begin{lstlisting}[style=consola]
 >>> $('PostForm').select('input')
@@ -915,19 +917,19 @@ Takes an arbitrary number of CSS selectors (strings) and returns an array of ext
 \begin{verbatim}
   HTMLFormElement.disable() -> HTMLFormElement
 \end{verbatim}
-Disables the form as whole. Form controls will be visible but uneditable.
+Deshabilita todos los elementos de este formulario para el ingreso de valores.
 
 \subsubsection*{enable}
 \begin{verbatim}
   HTMLFormElement.enable() -> HTMLFormElement
 \end{verbatim}
-Enables a fully or partially disabled form.
+Habilita todo los elementos del formulario para el ingreso de valores.
 
 \subsubsection*{serialize}
 \begin{verbatim}
   HTMLFormElement.serialize() -> object
 \end{verbatim}
-Serialize form data to a string suitable for Ajax requests (default behavior) or, if optional getHash evaluates to true, an object hash where keys are form control names and values are data.
+Retorna un objeto conteniendo todos los elementos del formulario serializados con sus respectivos valores.
 
 \begin{lstlisting}[style=consola]
 >>> $('PostForm')
@@ -941,45 +943,46 @@ Object title=Hola mundo body=Este es un post tags=[1]
 \begin{verbatim}
   HTMLElement.serialize() -> string
 \end{verbatim}
-Creates an URL-encoded string representation of a form control in the name=value format.
+Retorna una cadena representando la pareja clave=valor del elemento.
 
 \subsubsection*{get\_value}
 \begin{verbatim}
   HTMLElement.get_value() -> value
 \end{verbatim}
-Returns the current value of a form control. A string is returned for most controls; only multiple select boxes return an array of values. The global shortcut for this method is.
+Retorna el valor actual del elemento del formulario. Una cadena de texto es retornada en la mayoria de los casos excepto en el caso de un select multiple en que se retorna un arreglo con los valores.
 
 \subsubsection*{set\_value}
 \begin{verbatim}
-  HTMLElement.set_value(value)
+  HTMLElement.set_value(value) -> HTMLElement
 \end{verbatim}
+Fija el valor de un elemento.
 
 \subsubsection*{clear}
 \begin{verbatim}
   HTMLElement.clear() -> HTMLElement
 \end{verbatim}
-Clears the contents of a text input.
+Limpia el elemento quitando el valor ingresado.
 
 \subsubsection*{present}
 \begin{verbatim}
   HTMLElement.present() -> boolean
 \end{verbatim}
-Returns true if a text input has contents, false otherwise.
+Retorna verdadero si el elemento de ingreso de datos tiene un valor, falso en otro caso.
 
 \subsubsection*{activate}
 \begin{verbatim}
   HTMLElement.activate() -> HTMLElement
 \end{verbatim}
-Gives focus to a form control and selects its contents if it is a text input.
+Pone el foco sobre el elemento.
 
 \subsubsection*{disable}
 \begin{verbatim}
   HTMLElement.disable() -> HTMLElement
 \end{verbatim}
-Disables a form control, effectively preventing its value to be changed until it is enabled again.
+Deshabilita el elemento para el ingreso de valores.
 
 \subsubsection*{enable}
 \begin{verbatim}
   HTMLElement.enable() -> HTMLElement
 \end{verbatim}
-Enables a previously disabled form control.
+Habilita el elemento para el ingreso de valores.
