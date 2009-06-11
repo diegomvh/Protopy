@@ -13,6 +13,32 @@
 from inspect import isclass, getargspec
 from django.utils.datastructures import SortedDict
 
+import sys
+python_version = map(int, sys.version.split(' ')[0].split('.'))
+if python_version < (2, 6, 0):
+    from djangoffline.utils import namedtuple
+    import inspect
+    ArgSpec = namedtuple('ArgSpec', 'args varargs keywords defaults')
+    
+    def getargspec(func):
+        """Get the names and default values of a function's arguments.
+    
+        A tuple of four things is returned: (args, varargs, varkw, defaults).
+        'args' is a list of the argument names (it may contain nested lists).
+        'varargs' and 'varkw' are the names of the * and ** arguments or None.
+        'defaults' is an n-tuple of the default values of the last n arguments.
+        """
+    
+        if inspect.ismethod(func):
+            func = func.im_func
+        if not inspect.isfunction(func):
+            raise TypeError('arg is not a Python function')
+        args, varargs, varkw = inspect.getargs(func.func_code)
+        return ArgSpec(args, varargs, varkw, func.func_defaults)
+    
+else:
+    from inspect import getargspec
+
 class FieldIntrospection(object):
     '''
     Helper for introspection issues
@@ -61,11 +87,6 @@ def get_model_class_fields():
 # Cache
 model_class_fields = get_model_class_fields()
 
-def export_model_class(_class):
-    fields = _class._meta.fields + _class._meta.many_to_many
-    
-    
-    return fields
 
 def export_models(models):
     '''
