@@ -105,13 +105,12 @@ Como argumentos admite, el nombre del nuevo tipo, las bases de la cual hereda,
 opcionalmente los atributos y metodos de clase y los atributos y metodos para la
 instancia.
 
-La funcion constructor de los objetos tiene por nombre __init__ y es disparada
+La funcion constructor de los objetos tiene por nombre \verb|__init__| y es disparada
 en el momento de la construccion del objeto; en conjunto con otros metodos que
 se mencionaran a lo largo del texto estas funciones resultan de especial interes
 para interactuar con nuestros objetos y existen operadores en protopy para
 manejarlas, esto es, no debieran ser invocadas o llamadas directamente.
-\begin{lstlisting}[style=javascript,label=definicion-de-tipos,caption=Definicion
-de tipos]
+\begin{lstlisting}[style=javascript,label=definicion-de-tipos,caption=Definicion de tipos]
 var Animal = type('Animal', object, {
     contador: 0,
 }, {
@@ -320,7 +319,7 @@ Un set es una coleccion de elementos unicos, de forma similar a los conjuntos es
 >>> len(set)
 9
 >>> set.add(6)
->>> len(set)
+>>> set)
 9
 >>> set2 = set.intersection([1,3,5,6])
 >>> set2.elements
@@ -649,22 +648,22 @@ Este es el modulo encargado de encapsular la logica de eventos requerida tanto p
 \begin{verbatim}
   publish(topic, args)
 \end{verbatim}
-publish(topic, args)
+
 \subsubsection*{connectpublisher}
 \begin{verbatim}
-  xrange([begin = 0, ] end[, step = 1]) -> generator
+  connectpublisher(topic, obj, event)
 \end{verbatim}
-connectpublisher(topic, obj, event)
+
 \subsubsection*{fixevent}
 \begin{verbatim}
-  xrange([begin = 0, ] end[, step = 1]) -> generator
+  fixevent()
 \end{verbatim}
-fixevent()
+
 \subsubsection*{stopevent}
 \begin{verbatim}
-  xrange([begin = 0, ] end[, step = 1]) -> generator
+  stopevent()
 \end{verbatim}
-stopevent()
+
 \subsubsection*{keys}
 Objeto que encapsula los codigos de las teclas de funcion y control.
 
@@ -683,19 +682,31 @@ delay: function(f) {
 defer: function(f) {
 
 \subsection{ajax}
-
+Este modulo contiene funcionalidad propia del ajax, para el manejo de peticiones asincronicas al servidor.
 \paragraph{Funciones}
 \subsubsection*{Request}
+\begin{verbatim}
+  stopevent()
+\end{verbatim}
 new Request()
 \subsubsection*{Response}
+\begin{verbatim}
+  stopevent()
+\end{verbatim}
 new Response()
 \subsubsection*{toQueryParams}
+\begin{verbatim}
+  stopevent()
+\end{verbatim}
 toQueryParams(string, separator) \rightarrow object
 \subsubsection*{toQueryString}
+\begin{verbatim}
+  stopevent()
+\end{verbatim}
 toQueryString(params) \rightarrow string
 
 \subsection{dom}
-
+Este modulo brinda el soporte para el manejo del DOM de una forma simple para el usuario.
 \paragraph{Funciones}
 \subsubsection*{query}
 \begin{verbatim}

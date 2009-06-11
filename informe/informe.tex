@@ -26,10 +26,10 @@
 \date{\today}
 
 \pagestyle{fancy}
-\fancyhead{}
+%\fancyhead{}
 \renewcommand\headrulewidth{.1pt}
-\fancyhead[LO,RE]{\footnotesize\sffamily\lite\leftmark}
-\fancyhead[LE,RO]{\footnotesize\sffamily\lite\itshape\rightmark}
+%\fancyhead[LO,RE]{\footnotesize\sffamily\lite\leftmark}
+%\fancyhead[LE,RO]{\footnotesize\sffamily\lite\itshape\rightmark}
 % Esta fuente es muy grande y se pisan los titulos
 %\fancyhead[LO,RE]{\footnotesize\lite\leftmark}
 %\fancyhead[LE,RO]{\footnotesize\lite\itshape\rightmark}
@@ -71,7 +71,9 @@
     numbersep=15pt,
     numberstyle=\tiny,
     numberfirstline = false,
-    breaklines=true
+    breaklines=true,                % sets automatic line breaking
+    breakatwhitespace=false,        % sets if automatic breaks should only happen at whitespace
+    escapeinside={\%*}{*)}          % if you want to add a comment within your code
 }
 
 \lstdefinestyle{consola}{
@@ -109,9 +111,9 @@ A nuestros familiares
 % 
 % A Michael Trier por su mantenernos actualizados sobre lo que ocurre en la comunidad con
 % su \emph{podcast} \textbf{This Week in Django}
-\begin{abstract}
+%\begin{abstract}
 
-\end{abstract}
+%\end{abstract}
 
 \pagenumbering{arabic}
 
@@ -160,7 +162,6 @@ son desarrolladas las aplicaciones web son generalmente OpenSource, como e PHP,
 Python, Ruby, Perl y Java. Los frameworks web escritos sobre estos lenguajes
 utilizan alguna licencia OpenSource para su distribución; incluso frameworks
 basados en lenguajes propietarios son liberados bajo licencias OpenSource.
-
 \section{Objetivos}
 Podemos decir que las aplicaciones tradicionales, que no hacen uso de la web,
 son más robustas ya que no dependen de una conexión.
@@ -583,7 +584,7 @@ Variables de entorno que se intercambian de servidor a CGI:
 The Web Server Gateway Interface defines a simple and universal interface
 between web servers and web applications or frameworks for the Python
 programming language. The latest version 3.0 of Python, released in December
-2008, is already supported by mod_wsgi (a module for the Apache Web server).
+2008, is already supported by mod\_wsgi (a module for the Apache Web server).
 
 \subsubsection{¿Por qué WSGI?}
 Historically Python web application frameworks have been a problem for new
@@ -792,8 +793,9 @@ directorio de la aplicación
 Además la aplicación debe estar incluida en \textbf{INSTALLED\_APPS}
 dentro de el módulo de configuración de proyecto \textbf{settings.py}.
 
-\begin{lstlisting}[style=python,label=basic-django-command,caption=Comando
-personalizado básico en Django]
+\begin{lstlisting}[style=python,
+		   label=basic-django-command,
+		   caption=Comando personalizado básico en Django]
 
 from django.core.management.base import NoArgsCommand
 

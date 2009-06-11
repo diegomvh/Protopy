@@ -524,9 +524,6 @@
 
     /******************** timer **************************/
     var timer = ModuleManager.create('timer', 'built-in', {
-	setTimeout: window.setTimeout,
-	setInterval: window.setInterval,
-	clearTimeout: window.clearTimeout,
 	delay: function(f) {
 	    var __method = f, args = array(arguments).slice(1), timeout = args.shift() * 1000;
 	    return window.setTimeout(function() { return _method.apply(_method, args); }, timeout);
@@ -1522,7 +1519,7 @@
 
     var Template = type('Template', object, {
         //Static
-        pattern: /(^|.|\r|\n)(%\((.+?)\))s/,
+        pattern: /(^|.|\r|\n)?(%\((.+?)\))s/g,
     },{
 	//Prototype
 	__init__: function(template, pattern) {
@@ -1534,22 +1531,22 @@
 	    if (callable(object.toTemplateReplacements))
 		object = object.toTemplateReplacements();
 
-	    return this.template.gsub(this.pattern, function(match) {
+	    return this.template.replace(this.pattern, function(str, p1, p2, p3) {
 		if (object == null) 
 		    return '';
 
-		var before = match[1] || '';
+		var before = p1 || '';
 		if (before == '\\') 
-		    return match[2];
+		    return p2;
 
-		var ctx = object, expr = match[3];
+		var ctx = object, expr = p3;
 		var pattern = /^([^.[]+|\[((?:.*?[^\\])?)\])(\.|\[|$)/;
 		match = pattern.exec(expr);
 		if (match == null) 
 		    return before;
 
 		while (match != null) {
-		    var comp = match[1].startswith('[') ? match[2].gsub('\\\\]', ']') : match[1];
+		    var comp = match[1].startswith('[') ? match[2].replace('\\\\]', ']', 'g') : match[1];
 		    ctx = ctx[comp];
 		    if (null == ctx || '' == match[3]) break;
 		    expr = expr.substring('[' == match[3] ? match[1].length : match[0].length);
@@ -2026,46 +2023,29 @@
     });
 
     extend(String.prototype, {
-        gsub: function(pattern, replacement) {
-	    var result = '', source = this, match;
-	    replacement = arguments.callee.prepare_replacement(replacement);
-
-	    while (source.length > 0) {
-		if (match = source.match(pattern)) {
-		    result += source.slice(0, match.index);
-		    result += String.interpret(replacement(match));
-		    source  = source.slice(match.index + match[0].length);
-		} else {
-		    result += source, source = '';
-		}
-	    }
-	    return result;
-	},
-
-	sub: function(pattern, replacement, count) {
-	    replacement = this.gsub.prepare_replacement(replacement);
+        sub: function(pattern, replacement, count) {
 	    count = (!count) ? 1 : count;
 
-	    return this.gsub(pattern, function(match) {
-		if (--count < 0) return match[0];
-		    return replacement(match);
-	    });
+	    return this.replace(pattern, function(str) {
+		if (--count < 0) return str;
+		    return replacement;
+	    }, 'g');
 	},
 
 	//% operator like python
 	subs: function() {
 	    var args = flatten(array(arguments));
 	    //%% escaped
-	    var str = this.gsub(/%%/, function(match){ return '<ESC%%>'; });
+	    var str = this.replace(/%%/g, function(str, p){ return '<ESC%%>'; });
 	    if (args[0] && (type(args[0]) == Object || isinstance(args[0], object)))
                 str = new Template(str, args[1]).evaluate(args[0]);
 	    else
-                str = str.gsub(/%(-?\d*|\d*\.\d*)([s,n])/, function(match) {
-		    if (args.length == 0) return match[0];
-		    var value = (match[2] === 's')? string(args.shift()) : number(args.shift());
-		    return  value.format(match[1]); 
+                str = str.replace(/%(-?\d*|\d*\.\d*)([s,n])/g, function(str, f, t) {
+		    if (args.length == 0) return str;
+		    var value = (t === 's')? string(args.shift()) : number(args.shift());
+		    return value.format(f); 
                 });
-	    return str.gsub(/<ESC%%>/, function(match){ return '%'; });
+	    return str.replace(/<ESC%%>/g, function(str, p){ return '%'; });
 	},
 
 	format: function(f) { 
@@ -2081,9 +2061,9 @@
 	},
 
         inspect: function inspect(use_double_quotes) {
-	    var escaped = this.gsub(/[\x00-\x1f\\]/, function(match) {
-                var character = String.special[match[0]];
-                return character ? character : '\\u00' + match[0].charCodeAt().format('02', 16);
+	    var escaped = this.replace(/[\x00-\x1f\\]/g, function(str) {
+                var character = String.special[str];
+                return character ? character : '\\u00' + str.charCodeAt().format('02', 16);
             });
 	    if (use_double_quotes) return '"' + escaped.replace(/"/g, '\\"') + '"';
 	       return "'" + escaped.replace(/'/g, '\\\'') + "'";
@@ -2168,11 +2148,11 @@
 	},
 
 	underscore: function() {
-	    return this.gsub(/::/, '/').gsub(/([A-Z]+)([A-Z][a-z])/,'#{1}_#{2}').gsub(/([a-z\d])([A-Z])/,'#{1}_#{2}').gsub(/-/,'_').toLowerCase();
+	    return this.replace(/::/g, '/').replace(/([A-Z]+)([A-Z][a-z])/g,'$1_$2').replace(/([a-z\d])([A-Z])/g,'$1_$2').replace(/-/g,'_').toLowerCase();
 	},
 
 	dasherize: function() {
-	    return this.gsub(/_/,'-');
+	    return this.replace(/_/g,'-');
 	},
 
 	startswith: function(pattern) {
@@ -2188,13 +2168,6 @@
 	    return /^\s*$/.test(this);
 	}
     });
-
-    String.prototype.gsub.prepare_replacement = function(replacement) {
-	if (callable(replacement)) 
-	    return replacement;
-	var template = new Template(replacement);
-	return function(match) { return template.evaluate(match) };
-    };
 
     extend(String.prototype.escapeHTML, {
 	div:  document.createElement('div'),

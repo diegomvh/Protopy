@@ -105,13 +105,12 @@ Como argumentos admite, el nombre del nuevo tipo, las bases de la cual hereda,
 opcionalmente los atributos y metodos de clase y los atributos y metodos para la
 instancia.
 
-La funcion constructor de los objetos tiene por nombre __init__ y es disparada
+La funcion constructor de los objetos tiene por nombre \verb|__init__| y es disparada
 en el momento de la construccion del objeto; en conjunto con otros metodos que
 se mencionaran a lo largo del texto estas funciones resultan de especial interes
 para interactuar con nuestros objetos y existen operadores en protopy para
 manejarlas, esto es, no debieran ser invocadas o llamadas directamente.
-\begin{lstlisting}[style=javascript,label=definicion-de-tipos,caption=Definicion
-de tipos]
+\begin{lstlisting}[style=javascript,label=definicion-de-tipos,caption=Definicion de tipos]
 var Animal = type('Animal', object, {
     contador: 0,
 }, {
@@ -320,7 +319,7 @@ Un set es una coleccion de elementos unicos, de forma similar a los conjuntos es
 >>> len(set)
 9
 >>> set.add(6)
->>> len(set)
+>>> set)
 9
 >>> set2 = set.intersection([1,3,5,6])
 >>> set2.elements
@@ -341,7 +340,7 @@ teronran los mismos valores de hash.
 \end{verbatim}
 Asigna y retorna un identificador unico para el valor pasado como argumento.
 Al pasar un valor que sea de tipo objeto la funcion id modificara la
-estructura interna agregando el atributo __hash__ para ``etiquetar''
+estructura interna agregando el atributo \verb|__hash__| para ``etiquetar''
 el objeto y en posteriores llamadas retornara el mismo identificador.
 
 %getattr
@@ -385,7 +384,7 @@ una excepcion conteniendo el mensaje pasado.
 Determina el valor de verdad de un objeto pasado, los valores de verdad son como
 sigue: arreglos, objetos y cadenas vacias en conjunto con los valores null y
 undefined son falsos; todos los demas casos son verdaderos.
-En el caso particular de que un objeto defina el metodo __nonzero__ este es
+En el caso particular de que un objeto defina el metodo \verb|__nonzero__| este es
 invocado para determinar el valor de verdad.
 
 %callable
@@ -421,7 +420,7 @@ Retorna un numero correspondiente al caracter pasado.
   bisect(seq, element) -> position
 \end{verbatim}
 Dada una secuencia ordenada y un elemento la funcion bisect retorna un numero referenciando a la posicion en que el elemnto debe ser insertado en la secuencia, para que esta conseve su orden.
-Si los elementos de la secuencia definen el metodo ``__cmp__'' este es invocado para determinar la posicion a retornar.
+Si los elementos de la secuencia definen el metodo \verb|__cmp__| este es invocado para determinar la posicion a retornar.
 \begin{lstlisting}[style=consola]
 >>> a = [1,2,3,4,5]
 >>> bisect(a,6)
@@ -440,7 +439,7 @@ Si los elementos de la secuencia definen el metodo ``__cmp__'' este es invocado 
 \end{verbatim}
 Compara dos objetos determinando el valor de igual para los mismos, verdadero es
 retornado en caso de ser los dos objetos iguales.
-En caso de que object1 defina el metodo ``__eq__'' este es invocado con object2
+En caso de que object1 defina el metodo \verb|__eq__| este es invocado con object2
 pasado como parametro para determinar la igualdad.
 
 %nequal
@@ -450,7 +449,7 @@ pasado como parametro para determinar la igualdad.
 \end{verbatim}
 Compara dos objetos determinando el valor de igual para los mismos, verdadero es
 retornado en caso de ser los dos objetos distintos.
-En caso de que object1 defina el metodo ``__ne__'' este es invocado con object2
+En caso de que object1 defina el metodo \verb|__ne__| este es invocado con object2
 pasado como parametro para determinar la no igualdad.
 
 %number
@@ -471,20 +470,20 @@ Aplana un arreglo de modo que el resultado sea un unico arreglo conteniendo todo
 \begin{verbatim}
   include(object, element) -> boolean
 \end{verbatim}
-__contains__
+\verb|__contains__|
 
 %len
 \subsubsection*{len}
 \begin{verbatim}
   len(object) -> boolean
 \end{verbatim}
-__len__
+\verb|__len__|
 
 \subsubsection*{array}
 \begin{verbatim}
   array(iterable) -> [element...]
 \end{verbatim}
-__iter__
+\verb|__iter__|
 
 \subsubsection*{print}
 \begin{verbatim}
@@ -497,7 +496,7 @@ Si la consola de firebug esta instalada este metodo imprime el texto pasado por 
   string(object)
 \end{verbatim}
 Retorna una reprecentacion en texto del objeto pasado como argumento.
-Si el objeto define el metodo ``__str__'' este es invocado para obtener la reprecentacion.
+Si el objeto define el metodo \verb|__str__| este es invocado para obtener la reprecentacion.
 
 \subsubsection*{values}
 \begin{verbatim}
@@ -564,7 +563,7 @@ generar los valores bajo demanda.
 %zip
 \subsubsection*{zip}
 \begin{verbatim}
-  zip(seq1 [, seq2 [...]]) \rightarrow [[seq1[0], seq2[0] ...], [...]]
+  zip(seq1 [, seq2 [...]]) -> [[seq1[0], seq2[0] ...], [...]]
 \end{verbatim}
 Retorna un arreglo en donde cada secuencia contenida es el resultado de combinar
 cada una de las secuencias que se pasaron como argumento, la longitud de las
@@ -671,16 +670,15 @@ Objeto que encapsula los codigos de las teclas de funcion y control.
 \subsection{timer}
 
 \paragraph{Funciones}
-\subsubsection*{setTimeout}
-setTimeout: window.setTimeout,
-\subsubsection*{setInterval}
-setInterval: window.setInterval,
-\subsubsection*{clearTimeout}
-clearTimeout: window.clearTimeout,
 \subsubsection*{delay}
-delay: function(f) {
+\begin{verbatim}
+  delay(function)
+\end{verbatim}
+
 \subsubsection*{defer}
-defer: function(f) {
+\begin{verbatim}
+  defer(function)
+\end{verbatim}
 
 \subsection{ajax}
 Este modulo contiene funcionalidad propia del ajax, para el manejo de peticiones asincronicas al servidor.
@@ -697,14 +695,13 @@ new Request()
 new Response()
 \subsubsection*{toQueryParams}
 \begin{verbatim}
-  stopevent()
+  toQueryParams(string, separator) -> object
 \end{verbatim}
-toQueryParams(string, separator) \rightarrow object
 \subsubsection*{toQueryString}
 \begin{verbatim}
-  stopevent()
+  toQueryString(params) -> string
 \end{verbatim}
-toQueryString(params) \rightarrow string
+
 
 \subsection{dom}
 Este modulo brinda el soporte para el manejo del DOM de una forma simple para el usuario.
@@ -718,44 +715,96 @@ Este modulo brinda el soporte para el manejo del DOM de una forma simple para el
 Protopy no solo aporta modulos utiles para el trabjo de desarrollo, sino que
 tambien extiende los objetos de javascript agregando funcionalidad a los mismos.
 \subsection{String}
-\subsubsection*{gsub}
-gsub(pattern, replacement) \rightarrow string
 \subsubsection*{sub}
-sub(pattern, replacement[, count = 1]) \rightarrow string
+\begin{verbatim}
+  sub(pattern, replacement[, count = 1]) -> string
+\end{verbatim}
+
 \subsubsection*{subs}
-subs(pattern, replacement) \rightarrow string
+\begin{verbatim}
+  subs(pattern, replacement) -> string
+\end{verbatim}
+
 \subsubsection*{format}
-format(pattern, replacement) \rightarrow string
+\begin{verbatim}
+  format(pattern, replacement) -> string
+\end{verbatim}
+
 \subsubsection*{inspect} 
-inspect(use_double_quotes) \rightarrow string
+\begin{verbatim}
+  inspect(use_double_quotes) -> string
+\end{verbatim}
+
 \subsubsection*{truncate}
-truncate(length, truncation) \rightarrow string
+\begin{verbatim}
+  truncate(length, truncation) -> string
+\end{verbatim}
+
 \subsubsection*{strip}
-strip() \rightarrow string
+\begin{verbatim}
+  strip() -> string
+\end{verbatim}
+
 \subsubsection*{striptags}
-striptags() \rightarrow string
+\begin{verbatim}
+  striptags() -> string
+\end{verbatim}
+
 \subsubsection*{stripscripts}
-stripscripts() \rightarrow string
+\begin{verbatim}
+  stripscripts() -> string
+\end{verbatim}
+
 \subsubsection*{extractscripts}
-extractscripts() \rightarrow string
+\begin{verbatim}
+  extractscripts() -> string
+\end{verbatim}
+
 \subsubsection*{evalscripts}
-evalscripts() \rightarrow string
+\begin{verbatim}
+  evalscripts() -> string
+\end{verbatim}
+
 \subsubsection*{escapeHTML}
-escapeHTML() \rightarrow string
+\begin{verbatim}
+  escapeHTML() -> string
+\end{verbatim}
+
 \subsubsection*{unescapeHTML}
-unescapeHTML() \rightarrow string
+\begin{verbatim}
+  unescapeHTML() -> string
+\end{verbatim}
+
 \subsubsection*{succ}
-succ() \rightarrow string
+\begin{verbatim}
+  succ() -> string
+\end{verbatim}
+
 \subsubsection*{times}
-times(count[, separator = '']) \rightarrow string
+\begin{verbatim}
+  times(count[, separator = '']) -> string
+\end{verbatim}
+
 \subsubsection*{camelize}
-camelize() \rightarrow string
+\begin{verbatim}
+  camelize() -> string
+\end{verbatim}
+
 \subsubsection*{capitalize}
-capitalize() \rightarrow string
+\begin{verbatim}
+   capitalize() -> string
+\end{verbatim}
+
 \subsubsection*{underscore}
-underscore() \rightarrow string
+\begin{verbatim}
+  underscore() -> string
+\end{verbatim}
+
 \subsubsection*{dasherize}
-dasherize() \rightarrow string
+\begin{verbatim}
+  dasherize() -> string
+\end{verbatim}
+
 \subsubsection*{startswith}
 \begin{verbatim}
   startswith(pattern) -> boolean
@@ -776,29 +825,56 @@ Valor de verdad asociado a si la cadena solo pose espacios osea esta en blanco.
 
 \subsection{Number}
 \subsubsection*{format}
-format(f, radix) \rightarrow string
+\begin{verbatim}
+  format(f, radix) -> string
+\end{verbatim}
 
 \subsection{Date}
 \subsubsection*{toISO8601}
-toISO8601() \rightarrow string
+\begin{verbatim}
+  toISO8601() -> string
+\end{verbatim}
 
 \subsection{Element}
 \subsubsection*{visible}
-visible()
+\begin{verbatim}
+  visible()
+\end{verbatim}
+
 \subsubsection*{toggle}
-toggle()
+\begin{verbatim}
+  toggle()
+\end{verbatim}
+
 \subsubsection*{hide}
-hide()
+\begin{verbatim}
+  hide()
+\end{verbatim}
+
 \subsubsection*{show}
-show()
+\begin{verbatim}
+  show()
+\end{verbatim}
+
 \subsubsection*{remove}
-remove()
+\begin{verbatim}
+  remove()
+\end{verbatim}
+
 \subsubsection*{update}
-update(content)
+\begin{verbatim}
+  update(content)
+\end{verbatim}
+
 \subsubsection*{insert}
-insert(insertions)
+\begin{verbatim}
+  insert(insertions)
+\end{verbatim}
+
 \subsubsection*{select}
-select(selector)
+\begin{verbatim}
+  select(selector) ->
+\end{verbatim}
 
 \begin{lstlisting}[style=consola]
 >>> $('PostForm').select('input')
@@ -811,11 +887,20 @@ select(selector)
 
 \subsection{Forms}
 \subsubsection*{disable}
-disable()
+\begin{verbatim}
+  disable()
+\end{verbatim}
+
 \subsubsection*{enable}
-enable()
+\begin{verbatim}
+  enable()
+\end{verbatim}
+
 \subsubsection*{serialize}
-serialize() \rightarrow object
+\begin{verbatim}
+  serialize() -> object
+\end{verbatim}
+
 \begin{lstlisting}[style=consola]
 >>> $('PostForm')
 <form id="PostForm" method="post" onsubmit="return blog.handler.handle(this);"
@@ -826,18 +911,41 @@ Object title=Hola mundo body=Este es un post tags=[1]
 
 \subsection{Forms.Element}
 \subsubsection*{serialize}
-serialize()
+\begin{verbatim}
+  serialize() -> object
+\end{verbatim}
+
 \subsubsection*{get\_value}
-get\_value()
+\begin{verbatim}
+  get_value() -> value
+\end{verbatim}
+
 \subsubsection*{set\_value}
-set\_value(value) {
+\begin{verbatim}
+  set_value(value)
+\end{verbatim}
+
 \subsubsection*{clear}
-clear()
+\begin{verbatim}
+  clear()
+\end{verbatim}
+
 \subsubsection*{present}
-present()
+\begin{verbatim}
+  present()
+\end{verbatim}
+
 \subsubsection*{activate}
-activate()
+\begin{verbatim}
+  activate()
+\end{verbatim}
+
 \subsubsection*{disable}
-disable()
+\begin{verbatim}
+  disable()
+\end{verbatim}
+
 \subsubsection*{enable}
-enable()
+\begin{verbatim}
+  enable()
+\end{verbatim}
