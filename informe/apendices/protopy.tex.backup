@@ -340,7 +340,7 @@ teronran los mismos valores de hash.
 \end{verbatim}
 Asigna y retorna un identificador unico para el valor pasado como argumento.
 Al pasar un valor que sea de tipo objeto la funcion id modificara la
-estructura interna agregando el atributo __hash__ para ``etiquetar''
+estructura interna agregando el atributo \verb|__hash__| para ``etiquetar''
 el objeto y en posteriores llamadas retornara el mismo identificador.
 
 %getattr
@@ -384,7 +384,7 @@ una excepcion conteniendo el mensaje pasado.
 Determina el valor de verdad de un objeto pasado, los valores de verdad son como
 sigue: arreglos, objetos y cadenas vacias en conjunto con los valores null y
 undefined son falsos; todos los demas casos son verdaderos.
-En el caso particular de que un objeto defina el metodo __nonzero__ este es
+En el caso particular de que un objeto defina el metodo \verb|__nonzero__| este es
 invocado para determinar el valor de verdad.
 
 %callable
@@ -420,7 +420,7 @@ Retorna un numero correspondiente al caracter pasado.
   bisect(seq, element) -> position
 \end{verbatim}
 Dada una secuencia ordenada y un elemento la funcion bisect retorna un numero referenciando a la posicion en que el elemnto debe ser insertado en la secuencia, para que esta conseve su orden.
-Si los elementos de la secuencia definen el metodo ``__cmp__'' este es invocado para determinar la posicion a retornar.
+Si los elementos de la secuencia definen el metodo \verb|__cmp__| este es invocado para determinar la posicion a retornar.
 \begin{lstlisting}[style=consola]
 >>> a = [1,2,3,4,5]
 >>> bisect(a,6)
@@ -439,7 +439,7 @@ Si los elementos de la secuencia definen el metodo ``__cmp__'' este es invocado 
 \end{verbatim}
 Compara dos objetos determinando el valor de igual para los mismos, verdadero es
 retornado en caso de ser los dos objetos iguales.
-En caso de que object1 defina el metodo ``__eq__'' este es invocado con object2
+En caso de que object1 defina el metodo \verb|__eq__| este es invocado con object2
 pasado como parametro para determinar la igualdad.
 
 %nequal
@@ -449,7 +449,7 @@ pasado como parametro para determinar la igualdad.
 \end{verbatim}
 Compara dos objetos determinando el valor de igual para los mismos, verdadero es
 retornado en caso de ser los dos objetos distintos.
-En caso de que object1 defina el metodo ``__ne__'' este es invocado con object2
+En caso de que object1 defina el metodo \verb|__ne__| este es invocado con object2
 pasado como parametro para determinar la no igualdad.
 
 %number
@@ -470,20 +470,20 @@ Aplana un arreglo de modo que el resultado sea un unico arreglo conteniendo todo
 \begin{verbatim}
   include(object, element) -> boolean
 \end{verbatim}
-__contains__
+\verb|__contains__|
 
 %len
 \subsubsection*{len}
 \begin{verbatim}
   len(object) -> boolean
 \end{verbatim}
-__len__
+\verb|__len__|
 
 \subsubsection*{array}
 \begin{verbatim}
   array(iterable) -> [element...]
 \end{verbatim}
-__iter__
+\verb|__iter__|
 
 \subsubsection*{print}
 \begin{verbatim}
@@ -496,7 +496,7 @@ Si la consola de firebug esta instalada este metodo imprime el texto pasado por 
   string(object)
 \end{verbatim}
 Retorna una reprecentacion en texto del objeto pasado como argumento.
-Si el objeto define el metodo ``__str__'' este es invocado para obtener la reprecentacion.
+Si el objeto define el metodo \verb|__str__| este es invocado para obtener la reprecentacion.
 
 \subsubsection*{values}
 \begin{verbatim}
@@ -563,7 +563,7 @@ generar los valores bajo demanda.
 %zip
 \subsubsection*{zip}
 \begin{verbatim}
-  zip(seq1 [, seq2 [...]]) \rightarrow [[seq1[0], seq2[0] ...], [...]]
+  zip(seq1 [, seq2 [...]]) -> [[seq1[0], seq2[0] ...], [...]]
 \end{verbatim}
 Retorna un arreglo en donde cada secuencia contenida es el resultado de combinar
 cada una de las secuencias que se pasaron como argumento, la longitud de las
@@ -670,40 +670,38 @@ Objeto que encapsula los codigos de las teclas de funcion y control.
 \subsection{timer}
 
 \paragraph{Funciones}
-\subsubsection*{setTimeout}
-setTimeout: window.setTimeout,
-\subsubsection*{setInterval}
-setInterval: window.setInterval,
-\subsubsection*{clearTimeout}
-clearTimeout: window.clearTimeout,
 \subsubsection*{delay}
-delay: function(f) {
+\begin{verbatim}
+  delay(function)
+\end{verbatim}
+
 \subsubsection*{defer}
-defer: function(f) {
+\begin{verbatim}
+  defer(function)
+\end{verbatim}
 
 \subsection{ajax}
 Este modulo contiene funcionalidad propia del ajax, para el manejo de peticiones asincronicas al servidor.
 \paragraph{Funciones}
 \subsubsection*{Request}
 \begin{verbatim}
-  stopevent()
+  new Request()
 \end{verbatim}
 new Request()
 \subsubsection*{Response}
 \begin{verbatim}
-  stopevent()
+  new Response()
 \end{verbatim}
 new Response()
 \subsubsection*{toQueryParams}
 \begin{verbatim}
-  stopevent()
+  toQueryParams(string, separator) -> object
 \end{verbatim}
-toQueryParams(string, separator) \rightarrow object
 \subsubsection*{toQueryString}
 \begin{verbatim}
-  stopevent()
+  toQueryString(params) -> string
 \end{verbatim}
-toQueryString(params) \rightarrow string
+
 
 \subsection{dom}
 Este modulo brinda el soporte para el manejo del DOM de una forma simple para el usuario.
@@ -714,90 +712,194 @@ Este modulo brinda el soporte para el manejo del DOM de una forma simple para el
 \end{verbatim}
 
 \section{Extendiendo Javascript}
-Protopy no solo aporta modulos utiles para el trabjo de desarrollo, sino que
-tambien extiende los objetos de javascript agregando funcionalidad a los mismos.
+Protopy no solo aporta modulos y funciones utiles al desarrollo, sino que
+tambien agrega nueva funcionalidad a los objetos de javascript.
 \subsection{String}
-\subsubsection*{gsub}
-gsub(pattern, replacement) \rightarrow string
 \subsubsection*{sub}
-sub(pattern, replacement[, count = 1]) \rightarrow string
+\begin{verbatim}
+  string.sub(pattern, replacement[, count = 1]) -> string
+\end{verbatim}
+Returns a string with the first count occurrences of pattern replaced by either a regular string, the returned value of a function or a Template string. pattern can be a string or a regular expression.
+
 \subsubsection*{subs}
-subs(pattern, replacement) \rightarrow string
+\begin{verbatim}
+  string.subs(pattern, replacement) -> string
+\end{verbatim}
+
 \subsubsection*{format}
-format(pattern, replacement) \rightarrow string
+\begin{verbatim}
+  string.format(pattern, replacement) -> string
+\end{verbatim}
+
 \subsubsection*{inspect} 
-inspect(use_double_quotes) \rightarrow string
+\begin{verbatim}
+  string.inspect(use_double_quotes) -> string
+\end{verbatim}
+Retorna una verion de debug de la cadena, esta puede ser con comillas simples o con comillas dobles.
+
 \subsubsection*{truncate}
-truncate(length, truncation) \rightarrow string
+\begin{verbatim}
+  string.truncate([length = 30[, suffix = '...']]) -> string
+\end{verbatim}
+Recorta una cadena recortada en la longitud indicada o 30 caracteres por defecto, si se pasa un sufijo este es utilizado para indicar el recorte, sino los ''...'' son utilizados.
+
 \subsubsection*{strip}
-strip() \rightarrow string
+\begin{verbatim}
+  string.strip() -> string
+\end{verbatim}
+Quita los espacios en blanco al principio y al final de una cadena.
+
 \subsubsection*{striptags}
-striptags() \rightarrow string
+\begin{verbatim}
+  string.striptags() -> string
+\end{verbatim}
+Quita las etiquetas HTML de una cadena.
+
 \subsubsection*{stripscripts}
-stripscripts() \rightarrow string
+\begin{verbatim}
+  string.stripscripts() -> string
+\end{verbatim}
+Strips a string of anything that looks like an HTML script block.
+
 \subsubsection*{extractscripts}
-extractscripts() \rightarrow string
+\begin{verbatim}
+  string.extractscripts() -> string
+\end{verbatim}
+Exctracts the content of any script block present in the string and returns them as an array of strings.
+
 \subsubsection*{evalscripts}
-evalscripts() \rightarrow string
+\begin{verbatim}
+  string.evalscripts() -> string
+\end{verbatim}
+Evaluates the content of any script block present in the string. Returns an array containing the value returned by each script.
+
 \subsubsection*{escapeHTML}
-escapeHTML() \rightarrow string
+\begin{verbatim}
+  string.escapeHTML() -> string
+\end{verbatim}
+Converts HTML special characters to their entity equivalents. 
+
 \subsubsection*{unescapeHTML}
-unescapeHTML() \rightarrow string
+\begin{verbatim}
+  string.unescapeHTML() -> string
+\end{verbatim}
+Strips tags and converts the entity forms of special HTML characters to their normal form.
+
 \subsubsection*{succ}
-succ() \rightarrow string
+\begin{verbatim}
+  string.succ() -> string
+\end{verbatim}
+Used internally by ObjectRange. Converts the last character of the string to the following character in the Unicode alphabet.
+
 \subsubsection*{times}
-times(count[, separator = '']) \rightarrow string
+\begin{verbatim}
+  string.times(count[, separator = '']) -> string
+\end{verbatim}
+Concatenates the string count times.
+
 \subsubsection*{camelize}
-camelize() \rightarrow string
+\begin{verbatim}
+  string.camelize() -> string
+\end{verbatim}
+Convierte una cadena separada por guiones medios ("-") a una nueva cadena tipo ''camello''. Por ejemplo, 'foo-bar' pasa a ser 'fooBar'.
+
 \subsubsection*{capitalize}
-capitalize() \rightarrow string
+\begin{verbatim}
+   string.capitalize() -> string
+\end{verbatim}
+Pasa a mayuscula la primera letra y el resto de la cadena a minusculas.
+
 \subsubsection*{underscore}
-underscore() \rightarrow string
+\begin{verbatim}
+  string.underscore() -> string
+\end{verbatim}
+Convierte una cadena tipo ''camello'' a una nueva cadena separada por guiones bajos ("_").
+
 \subsubsection*{dasherize}
-dasherize() \rightarrow string
+\begin{verbatim}
+  string.dasherize() -> string
+\end{verbatim}
+Remplaza cada ocurrencia de un guion bajo ("_") por un guion medio ("-").
+
 \subsubsection*{startswith}
 \begin{verbatim}
-  startswith(pattern) -> boolean
+  string.startswith(pattern) -> boolean
 \end{verbatim}
-Si la cadena de texto inicia con un patron.
+Chequea si la cadena inicie con el patron pasado.
 
 \subsubsection*{endswith}
 \begin{verbatim}
-  endswith(pattern) -> boolean
+  string.endswith(pattern) -> boolean
 \end{verbatim}
-Si la cadena de texto termina con un patron.
+Chequea si la cadena termina con el patron pasado.
 
 \subsubsection*{blank}
 \begin{verbatim}
-  blank() -> boolean
+  string.blank() -> boolean
 \end{verbatim}
-Valor de verdad asociado a si la cadena solo pose espacios osea esta en blanco.
+Chequea si una cadena esta en blanco, esto es si esta vacia o solo contiene espacios en blanco.
 
 \subsection{Number}
 \subsubsection*{format}
-format(f, radix) \rightarrow string
+\begin{verbatim}
+  number.format(f, radix) -> string
+\end{verbatim}
 
 \subsection{Date}
 \subsubsection*{toISO8601}
-toISO8601() \rightarrow string
+\begin{verbatim}
+  date.toISO8601() -> string
+\end{verbatim}
 
 \subsection{Element}
 \subsubsection*{visible}
-visible()
+\begin{verbatim}
+  HTMLElement.visible() -> HTMLElement
+\end{verbatim}
+Returns a Boolean indicating whether or not element is visible (i.e. whether its inline style property is set to "display: none;").
+
 \subsubsection*{toggle}
-toggle()
+\begin{verbatim}
+  HTMLElement.toggle() -> HTMLElement
+\end{verbatim}
+Toggles the visibility of element.
+
 \subsubsection*{hide}
-hide()
+\begin{verbatim}
+  HTMLElement.hide() -> HTMLElement
+\end{verbatim}
+Hides and returns element.
+
 \subsubsection*{show}
-show()
+\begin{verbatim}
+  HTMLElement.show() -> HTMLElement
+\end{verbatim}
+Displays and returns element.
+
 \subsubsection*{remove}
-remove()
+\begin{verbatim}
+  HTMLElement.remove() -> HTMLElement
+\end{verbatim}
+Completely removes element from the document and returns it.
+
 \subsubsection*{update}
-update(content)
+\begin{verbatim}
+  HTMLElement.update(content) -> HTMLElement
+\end{verbatim}
+Replaces the content of element with the provided newContent argument and returns element.
+
 \subsubsection*{insert}
-insert(insertions)
+\begin{verbatim}
+  HTMLElement.insert({ position: content }) -> HTMLElement
+  HTMLElement.insert(content) -> HTMLElement
+\end{verbatim}
+Inserts content before, after, at the top of, or at the bottom of element, as specified by the position property of the second argument. If the second argument is the content itself, insert will append it to element.
+
 \subsubsection*{select}
-select(selector)
+\begin{verbatim}
+  HTMLElement.select(selector) -> HTMLElement
+\end{verbatim}
+Takes an arbitrary number of CSS selectors (strings) and returns an array of extended descendants of element that match any of them.
 
 \begin{lstlisting}[style=consola]
 >>> $('PostForm').select('input')
@@ -810,33 +912,74 @@ select(selector)
 
 \subsection{Forms}
 \subsubsection*{disable}
-disable()
+\begin{verbatim}
+  HTMLFormElement.disable() -> HTMLFormElement
+\end{verbatim}
+Disables the form as whole. Form controls will be visible but uneditable.
+
 \subsubsection*{enable}
-enable()
+\begin{verbatim}
+  HTMLFormElement.enable() -> HTMLFormElement
+\end{verbatim}
+Enables a fully or partially disabled form.
+
 \subsubsection*{serialize}
-serialize() \rightarrow object
+\begin{verbatim}
+  HTMLFormElement.serialize() -> object
+\end{verbatim}
+Serialize form data to a string suitable for Ajax requests (default behavior) or, if optional getHash evaluates to true, an object hash where keys are form control names and values are data.
+
 \begin{lstlisting}[style=consola]
 >>> $('PostForm')
-<form id="PostForm" method="post" onsubmit="return blog.handler.handle(this);"
-action="/blog/add_post/">
+<form id="PostForm" method="post" action="/blog/add_post/">
 >>> $('PostForm').serialize()
 Object title=Hola mundo body=Este es un post tags=[1]
 \end{lstlisting}
 
 \subsection{Forms.Element}
 \subsubsection*{serialize}
-serialize()
+\begin{verbatim}
+  HTMLElement.serialize() -> string
+\end{verbatim}
+Creates an URL-encoded string representation of a form control in the name=value format.
+
 \subsubsection*{get\_value}
-get\_value()
+\begin{verbatim}
+  HTMLElement.get_value() -> value
+\end{verbatim}
+Returns the current value of a form control. A string is returned for most controls; only multiple select boxes return an array of values. The global shortcut for this method is.
+
 \subsubsection*{set\_value}
-set\_value(value) {
+\begin{verbatim}
+  HTMLElement.set_value(value)
+\end{verbatim}
+
 \subsubsection*{clear}
-clear()
+\begin{verbatim}
+  HTMLElement.clear() -> HTMLElement
+\end{verbatim}
+Clears the contents of a text input.
+
 \subsubsection*{present}
-present()
+\begin{verbatim}
+  HTMLElement.present() -> boolean
+\end{verbatim}
+Returns true if a text input has contents, false otherwise.
+
 \subsubsection*{activate}
-activate()
+\begin{verbatim}
+  HTMLElement.activate() -> HTMLElement
+\end{verbatim}
+Gives focus to a form control and selects its contents if it is a text input.
+
 \subsubsection*{disable}
-disable()
+\begin{verbatim}
+  HTMLElement.disable() -> HTMLElement
+\end{verbatim}
+Disables a form control, effectively preventing its value to be changed until it is enabled again.
+
 \subsubsection*{enable}
-enable()
+\begin{verbatim}
+  HTMLElement.enable() -> HTMLElement
+\end{verbatim}
+Enables a previously disabled form control.

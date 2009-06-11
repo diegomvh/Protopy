@@ -685,12 +685,12 @@ Este modulo contiene funcionalidad propia del ajax, para el manejo de peticiones
 \paragraph{Funciones}
 \subsubsection*{Request}
 \begin{verbatim}
-  stopevent()
+  new Request()
 \end{verbatim}
 new Request()
 \subsubsection*{Response}
 \begin{verbatim}
-  stopevent()
+  new Response()
 \end{verbatim}
 new Response()
 \subsubsection*{toQueryParams}
@@ -712,169 +712,194 @@ Este modulo brinda el soporte para el manejo del DOM de una forma simple para el
 \end{verbatim}
 
 \section{Extendiendo Javascript}
-Protopy no solo aporta modulos utiles para el trabjo de desarrollo, sino que
-tambien extiende los objetos de javascript agregando funcionalidad a los mismos.
+Protopy no solo aporta modulos y funciones utiles al desarrollo, sino que
+tambien agrega nueva funcionalidad a los objetos de javascript.
 \subsection{String}
 \subsubsection*{sub}
 \begin{verbatim}
-  sub(pattern, replacement[, count = 1]) -> string
+  string.sub(pattern, replacement[, count = 1]) -> string
 \end{verbatim}
+Returns a string with the first count occurrences of pattern replaced by either a regular string, the returned value of a function or a Template string. pattern can be a string or a regular expression.
 
 \subsubsection*{subs}
 \begin{verbatim}
-  subs(pattern, replacement) -> string
+  string.subs(pattern, replacement) -> string
 \end{verbatim}
 
 \subsubsection*{format}
 \begin{verbatim}
-  format(pattern, replacement) -> string
+  string.format(pattern, replacement) -> string
 \end{verbatim}
 
 \subsubsection*{inspect} 
 \begin{verbatim}
-  inspect(use_double_quotes) -> string
+  string.inspect(use_double_quotes) -> string
 \end{verbatim}
+Retorna una verion de debug de la cadena, esta puede ser con comillas simples o con comillas dobles.
 
 \subsubsection*{truncate}
 \begin{verbatim}
-  truncate(length, truncation) -> string
+  string.truncate([length = 30[, suffix = '...']]) -> string
 \end{verbatim}
+Recorta una cadena recortada en la longitud indicada o 30 caracteres por defecto, si se pasa un sufijo este es utilizado para indicar el recorte, sino los ''...'' son utilizados.
 
 \subsubsection*{strip}
 \begin{verbatim}
-  strip() -> string
+  string.strip() -> string
 \end{verbatim}
+Quita los espacios en blanco al principio y al final de una cadena.
 
 \subsubsection*{striptags}
 \begin{verbatim}
-  striptags() -> string
+  string.striptags() -> string
 \end{verbatim}
+Quita las etiquetas HTML de una cadena.
 
 \subsubsection*{stripscripts}
 \begin{verbatim}
-  stripscripts() -> string
+  string.stripscripts() -> string
 \end{verbatim}
+Quita todos los bloques ''strips'' de una cadena.
 
 \subsubsection*{extractscripts}
 \begin{verbatim}
-  extractscripts() -> string
+  string.extractscripts() -> [ string... ]
 \end{verbatim}
+Extrae todos los scripts contenidos en la cadena y los retorna en un arreglo.
 
 \subsubsection*{evalscripts}
 \begin{verbatim}
-  evalscripts() -> string
+  string.evalscripts() -> [ value... ]
 \end{verbatim}
+Evalua todos los scripts contenidos en la cadena y retorna un arreglos con los resultados de cada evaluacion.
 
 \subsubsection*{escapeHTML}
 \begin{verbatim}
-  escapeHTML() -> string
+  string.escapeHTML() -> string
 \end{verbatim}
+Convierte los caracteres especiales del HTML a sus entidades equivalentes.
 
 \subsubsection*{unescapeHTML}
 \begin{verbatim}
-  unescapeHTML() -> string
+  string.unescapeHTML() -> string
 \end{verbatim}
+Convierte las entidades de caracteres especiales del HTML a sus respectivos simbolos.
 
 \subsubsection*{succ}
 \begin{verbatim}
-  succ() -> string
+  string.succ() -> string
 \end{verbatim}
+Convierte un caracter en el caracter siguiente segun la tabla de caracteres Unicode.
 
 \subsubsection*{times}
 \begin{verbatim}
-  times(count[, separator = '']) -> string
+  string.times(count[, separator = '']) -> string
 \end{verbatim}
+Concatena una cadena tantas veces como se indique, si se pasa un separador, este es utilizado para intercalar.
 
 \subsubsection*{camelize}
 \begin{verbatim}
-  camelize() -> string
+  string.camelize() -> string
 \end{verbatim}
+Convierte una cadena separada por guiones medios ("-") a una nueva cadena tipo ''camello''. Por ejemplo, 'foo-bar' pasa a ser 'fooBar'.
 
 \subsubsection*{capitalize}
 \begin{verbatim}
-   capitalize() -> string
+   string.capitalize() -> string
 \end{verbatim}
+Pasa a mayuscula la primera letra y el resto de la cadena a minusculas.
 
 \subsubsection*{underscore}
 \begin{verbatim}
-  underscore() -> string
+  string.underscore() -> string
 \end{verbatim}
+Convierte una cadena tipo ''camello'' a una nueva cadena separada por guiones bajos ("_").
 
 \subsubsection*{dasherize}
 \begin{verbatim}
-  dasherize() -> string
+  string.dasherize() -> string
 \end{verbatim}
+Remplaza cada ocurrencia de un guion bajo ("_") por un guion medio ("-").
 
 \subsubsection*{startswith}
 \begin{verbatim}
-  startswith(pattern) -> boolean
+  string.startswith(pattern) -> boolean
 \end{verbatim}
-Si la cadena de texto inicia con un patron.
+Chequea si la cadena inicie con el patron pasado.
 
 \subsubsection*{endswith}
 \begin{verbatim}
-  endswith(pattern) -> boolean
+  string.endswith(pattern) -> boolean
 \end{verbatim}
-Si la cadena de texto termina con un patron.
+Chequea si la cadena termina con el patron pasado.
 
 \subsubsection*{blank}
 \begin{verbatim}
-  blank() -> boolean
+  string.blank() -> boolean
 \end{verbatim}
-Valor de verdad asociado a si la cadena solo pose espacios osea esta en blanco.
+Chequea si una cadena esta en blanco, esto es si esta vacia o solo contiene espacios en blanco.
 
 \subsection{Number}
 \subsubsection*{format}
 \begin{verbatim}
-  format(f, radix) -> string
+  number.format(f, radix) -> string
 \end{verbatim}
 
 \subsection{Date}
 \subsubsection*{toISO8601}
 \begin{verbatim}
-  toISO8601() -> string
+  date.toISO8601() -> string
 \end{verbatim}
 
 \subsection{Element}
 \subsubsection*{visible}
 \begin{verbatim}
-  visible()
+  HTMLElement.visible() -> HTMLElement
 \end{verbatim}
+Returns a Boolean indicating whether or not element is visible (i.e. whether its inline style property is set to "display: none;").
 
 \subsubsection*{toggle}
 \begin{verbatim}
-  toggle()
+  HTMLElement.toggle() -> HTMLElement
 \end{verbatim}
+Alterna la visibilidad del elemento.
 
 \subsubsection*{hide}
 \begin{verbatim}
-  hide()
+  HTMLElement.hide() -> HTMLElement
 \end{verbatim}
+Oculta el elemento.
 
 \subsubsection*{show}
 \begin{verbatim}
-  show()
+  HTMLElement.show() -> HTMLElement
 \end{verbatim}
+Muestra el elemento.
 
 \subsubsection*{remove}
 \begin{verbatim}
-  remove()
+  HTMLElement.remove() -> HTMLElement
 \end{verbatim}
+Quita el elemento del documento y lo retorna.
 
 \subsubsection*{update}
 \begin{verbatim}
-  update(content)
+  HTMLElement.update(content) -> HTMLElement
 \end{verbatim}
+Reemplaza el contendio del elemento con el argumento pasado y terorna el elemento.
 
 \subsubsection*{insert}
 \begin{verbatim}
-  insert(insertions)
+  HTMLElement.insert({ position: content }) -> HTMLElement
+  HTMLElement.insert(content) -> HTMLElement
 \end{verbatim}
+Inserts content before, after, at the top of, or at the bottom of element, as specified by the position property of the second argument. If the second argument is the content itself, insert will append it to element.
 
 \subsubsection*{select}
 \begin{verbatim}
-  select(selector) ->
+  HTMLElement.select(selector) -> HTMLElement
 \end{verbatim}
+Toma un numero arbitrario de selectores CSS y retorna un arreglo con los elementos que concuerden con estos y esten dentro del elemento al que se aplica la funcion.
 
 \begin{lstlisting}[style=consola]
 >>> $('PostForm').select('input')
@@ -888,23 +913,25 @@ Valor de verdad asociado a si la cadena solo pose espacios osea esta en blanco.
 \subsection{Forms}
 \subsubsection*{disable}
 \begin{verbatim}
-  disable()
+  HTMLFormElement.disable() -> HTMLFormElement
 \end{verbatim}
+Disables the form as whole. Form controls will be visible but uneditable.
 
 \subsubsection*{enable}
 \begin{verbatim}
-  enable()
+  HTMLFormElement.enable() -> HTMLFormElement
 \end{verbatim}
+Enables a fully or partially disabled form.
 
 \subsubsection*{serialize}
 \begin{verbatim}
-  serialize() -> object
+  HTMLFormElement.serialize() -> object
 \end{verbatim}
+Serialize form data to a string suitable for Ajax requests (default behavior) or, if optional getHash evaluates to true, an object hash where keys are form control names and values are data.
 
 \begin{lstlisting}[style=consola]
 >>> $('PostForm')
-<form id="PostForm" method="post" onsubmit="return blog.handler.handle(this);"
-action="/blog/add_post/">
+<form id="PostForm" method="post" action="/blog/add_post/">
 >>> $('PostForm').serialize()
 Object title=Hola mundo body=Este es un post tags=[1]
 \end{lstlisting}
@@ -912,40 +939,47 @@ Object title=Hola mundo body=Este es un post tags=[1]
 \subsection{Forms.Element}
 \subsubsection*{serialize}
 \begin{verbatim}
-  serialize() -> object
+  HTMLElement.serialize() -> string
 \end{verbatim}
+Creates an URL-encoded string representation of a form control in the name=value format.
 
 \subsubsection*{get\_value}
 \begin{verbatim}
-  get_value() -> value
+  HTMLElement.get_value() -> value
 \end{verbatim}
+Returns the current value of a form control. A string is returned for most controls; only multiple select boxes return an array of values. The global shortcut for this method is.
 
 \subsubsection*{set\_value}
 \begin{verbatim}
-  set_value(value)
+  HTMLElement.set_value(value)
 \end{verbatim}
 
 \subsubsection*{clear}
 \begin{verbatim}
-  clear()
+  HTMLElement.clear() -> HTMLElement
 \end{verbatim}
+Clears the contents of a text input.
 
 \subsubsection*{present}
 \begin{verbatim}
-  present()
+  HTMLElement.present() -> boolean
 \end{verbatim}
+Returns true if a text input has contents, false otherwise.
 
 \subsubsection*{activate}
 \begin{verbatim}
-  activate()
+  HTMLElement.activate() -> HTMLElement
 \end{verbatim}
+Gives focus to a form control and selects its contents if it is a text input.
 
 \subsubsection*{disable}
 \begin{verbatim}
-  disable()
+  HTMLElement.disable() -> HTMLElement
 \end{verbatim}
+Disables a form control, effectively preventing its value to be changed until it is enabled again.
 
 \subsubsection*{enable}
 \begin{verbatim}
-  enable()
+  HTMLElement.enable() -> HTMLElement
 \end{verbatim}
+Enables a previously disabled form control.
