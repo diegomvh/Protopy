@@ -1,4 +1,16 @@
+'''
+In order to generate Javascript representation of Django models
+doff analyzes Field subclasses constructors. Each contructor has
+a set of arguments that are stored as instance attributes in almost
+every django.db.models.fields.Field subclass.
 
+This module scans for Field definitions in every app listed in
+settings.INSTALLED_APPS. Also it tries to discover Field subclasses.
+
+Thre are some parameters that can't be guessed from constructor arguments,
+in those cases a ModelProxy class should be defined.
+
+'''
 
 #FIELD_DATA = {
 #    'BaseField': 
@@ -10,10 +22,12 @@
 #              
 #}
 
-from inspect import isclass, getargspec
-from django.utils.datastructures import SortedDict
 
+from django.utils.datastructures import SortedDict
 import sys
+from django.conf import settings
+from inspect import isclass, ismodule
+
 python_version = map(int, sys.version.split(' ')[0].split('.'))
 if python_version < (2, 6, 0):
     from djangoffline.utils import namedtuple
@@ -38,6 +52,11 @@ if python_version < (2, 6, 0):
     
 else:
     from inspect import getargspec
+
+# Filter field
+from django.db.models import Field
+filter_field = lambda c: isclass(c) and issubclass(c, Field)
+
 
 class FieldIntrospection(object):
     '''
@@ -76,9 +95,7 @@ def get_model_class_fields():
     '''
     Loads Django ORM's fields
     '''
-    #global model_class_fields
-    from django.db.models import Field
-    filter_field = lambda c: isclass(c) and issubclass(c, Field)
+    
     mod = __import__('django.db.models', {}, {}, ['*'])
     classes = [ (name, class_) for name, class_ in mod.__dict__.items() 
                     if filter_field(class_)
@@ -113,20 +130,25 @@ def export_models(models):
         processed_models[name] = processed_fields
     return processed_models
 
-from inspect import ismodule
+
 
 SYSTEM_MODULES = ['os', 'sys', 'type', ]
 
 def module_explore(mod, filter_callback = None):
     assert ismodule(mod), "No es un modulo"
-    for element in mod.__dict__.values():
+    for name, element in mod.__dict__.iteritems():
+        if name.startswith('__'):
+            print "Skip", name
+            continue
+        
         if ismodule(element) and not element.__name__ not in SYSTEM_MODULES:
             try:
                 for el in module_explore(element, filter_callback):
                     yield el
             except RuntimeError:
                 #print element.__name__
-                pass
+                print "Runtime error in %s" % mod
+                
             continue
         
         if callable(filter_callback):
@@ -134,8 +156,10 @@ def module_explore(mod, filter_callback = None):
                 yield element
         else:
             yield element
-        
-def modules_explore(modules, filter_callback = None):
+app_models = map(lambda s: "%s.models" % s, settings.INSTALLED_APPS)
+ 
+def modules_explore(modules = app_models, 
+                    filter_callback = filter_field ):
     '''
     Returns the elemements contained in modules filtered by
     the callback funcion.
@@ -145,48 +169,39 @@ def modules_explore(modules, filter_callback = None):
     # Check which modules have already been visited
     modules_explored = set()
     for mod in modules:
+        print mod
         if not ismodule(mod):
-            mod = __import__(mod, {}, {}, ['*', ] )
+            try:
+                mod = __import__(mod, {}, {}, ['*', ] )
+            except ImportError, err:
+                print "No existe %s" % err 
         if mod in modules_explored:
             continue
         
         for element in module_explore(mod, filter_callback):
             yield element
         modules_explored.add(mod)
+
+def analize_mod(mod, filter_callback = None):
+    
+    assert ismodule(mod), "Must receive a module, got %s instead" % type(mod)
+    pass
         
-        
-def get_model_fields_by_class():
+def get_fields_from_apps(filter_callback = filter_field):
     '''
     Loads Django ORM's fields
     '''
-    from django.conf import settings
-    from django.db.models import Field
-    
-    filter_field = lambda c: isclass(c) and issubclass(c, Field)
-    
-    field_instrospect = SortedDict()
-    
-    for app in settings.INSTALLED_APPS:
-        models_mod_name = app + '.models'
-        try:
-            print models_mod_name
-            mod = __import__(models_mod_name, {}, {}, ['*'])
-        except ImportError, e:
-            pass
-        else:
-            print mod.__dict__.items()
-            classes = list( module_explore(mod, filter_field) )
-            print classes
-            
-    
-    return
+    from django.db.models.loading import get_apps
+    for app in get_apps():
+        #print app
+        for name, element in app.__dict__.iteritems():
+            if ismodule(element):
+                if not name in SYSTEM_MODULES:
+                    print name
+                    
+            if filter_field(element):
+                print name
+            else:
+                print type(element)
     
     
-    mod = __import__('django.db.models', {}, {}, ['*'])
-    classes = [ (name, class_) for name, class_ in mod.__dict__.items() 
-                    if filter_field(class_)
-              ]
-    model_class_fields = SortedDict() 
-    for name, class_ in classes:
-        model_class_fields[name] = FieldIntrospection(class_)
-    return model_class_fields
