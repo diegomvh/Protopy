@@ -68,6 +68,10 @@ class FieldIntrospection(object):
                     args[f_name] = f_value
         return args
 
+
+    
+    
+
 def get_model_class_fields():
     '''
     Loads Django ORM's fields
@@ -108,3 +112,81 @@ def export_models(models):
         
         processed_models[name] = processed_fields
     return processed_models
+
+from inspect import ismodule
+
+SYSTEM_MODULES = ['os', 'sys', 'type', ]
+
+def module_explore(mod, filter_callback = None):
+    assert ismodule(mod), "No es un modulo"
+    for element in mod.__dict__.values():
+        if ismodule(element) and not element.__name__ not in SYSTEM_MODULES:
+            try:
+                for el in module_explore(element, filter_callback):
+                    yield el
+            except RuntimeError:
+                #print element.__name__
+                pass
+            continue
+        
+        if callable(filter_callback):
+            if filter_callback(element):
+                yield element
+        else:
+            yield element
+        
+def modules_explore(modules, filter_callback = None):
+    '''
+    Returns the elemements contained in modules filtered by
+    the callback funcion.
+    @param moduules: List of modules or module names
+    @param filter_callback:
+    '''
+    # Check which modules have already been visited
+    modules_explored = set()
+    for mod in modules:
+        if not ismodule(mod):
+            mod = __import__(mod, {}, {}, ['*', ] )
+        if mod in modules_explored:
+            continue
+        
+        for element in module_explore(mod, filter_callback):
+            yield element
+        modules_explored.add(mod)
+        
+        
+def get_model_fields_by_class():
+    '''
+    Loads Django ORM's fields
+    '''
+    from django.conf import settings
+    from django.db.models import Field
+    
+    filter_field = lambda c: isclass(c) and issubclass(c, Field)
+    
+    field_instrospect = SortedDict()
+    
+    for app in settings.INSTALLED_APPS:
+        models_mod_name = app + '.models'
+        try:
+            print models_mod_name
+            mod = __import__(models_mod_name, {}, {}, ['*'])
+        except ImportError, e:
+            pass
+        else:
+            print mod.__dict__.items()
+            classes = list( module_explore(mod, filter_field) )
+            print classes
+            
+    
+    return
+    
+    
+    mod = __import__('django.db.models', {}, {}, ['*'])
+    classes = [ (name, class_) for name, class_ in mod.__dict__.items() 
+                    if filter_field(class_)
+              ]
+    model_class_fields = SortedDict() 
+    for name, class_ in classes:
+        model_class_fields[name] = FieldIntrospection(class_)
+    return model_class_fields
