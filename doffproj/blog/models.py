@@ -2,6 +2,9 @@ from django.db import models
 '''
 Models del blog
 '''
+class FooField(models.Field):
+    pass
+
 class Tag(models.Model):
     slug = models.SlugField(help_text = 'Automatically buit from the title', primary_key = True)
     title = models.CharField('Title', max_length = 30)

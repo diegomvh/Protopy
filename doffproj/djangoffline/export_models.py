@@ -182,26 +182,47 @@ def modules_explore(modules = app_models,
             yield element
         modules_explored.add(mod)
 
-def analize_mod(mod, filter_callback = None):
-    
+def analize_mod(mod, filter_callback = None, analized = None):
     assert ismodule(mod), "Must receive a module, got %s instead" % type(mod)
-    pass
+    if not analized:
+        analized = []
+    
+    findings = []
+    print mod
+    for name, el in mod.__dict__.iteritems():
+        if name.startswith('_'):
+            continue
+        elif filter_callback(el):
+            findings.append(el)
+        
+#        elif ismodule(el):
+#            if el in analized or name in SYSTEM_MODULES:
+#                continue
+#            if name.startswith('_'):
+#                continue
+#            print "Recursive entry for %s" % name
+#            findings += analize_mod(el, filter_callback, analized)
+#            analized.append( el )
+    return findings
         
 def get_fields_from_apps(filter_callback = filter_field):
     '''
     Loads Django ORM's fields
     '''
     from django.db.models.loading import get_apps
+    fields = set()
+    
     for app in get_apps():
         #print app
-        for name, element in app.__dict__.iteritems():
-            if ismodule(element):
-                if not name in SYSTEM_MODULES:
-                    print name
-                    
-            if filter_field(element):
-                print name
-            else:
-                print type(element)
+        fields.update( analize_mod(app, filter_callback))
+#        for name, element in app.__dict__.iteritems():
+#            if ismodule(element):
+#                if not name in SYSTEM_MODULES and element not in analized:
+#                    fields.update( analize_mod(element, filter_callback) )
+#                    analized.append( element )
+#            elif filter_field(element):
+#                fields.add(element)
+            
+    print fields
     
     
