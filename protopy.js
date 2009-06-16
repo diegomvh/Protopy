@@ -1373,9 +1373,9 @@
     
     var dom = ModuleManager.create('dom', 'built-in', {
 	query: query,
-        clearCache: function() {
-            cache = {};
-        }
+        cache: function(value) {
+	  cacheOn = value;
+	}
     });
 
     /******************** builtin **************************/
@@ -2234,11 +2234,13 @@
 		SELECT: ['<select>',               '</select>',                  1]
 	    }
 	},
+
 	_get_content_from_anonymous_element: function(tagName, html) {
 	    var div = document.createElement('div'), t = Element._insertion_translations.tags[tagName];
 	    if (t) {
 		div.innerHTML = t[0] + html + t[1];
-		t[2].times(function() { div = div.firstChild });
+		for (var i = 0; i < t[2]; i++)
+		  div = div.firstChild;
 	    } else div.innerHTML = html;
 	    return array(div.childNodes);
 	}
@@ -2265,6 +2267,7 @@
 	},
 	update: function(content) {
 	    if (Element.isElement(content)) return this.update().insert(content);
+	    content = String.interpret(content);
 	    this.innerHTML = content.stripscripts();
 	    getattr(content, 'evalscripts')();
 	    return this;

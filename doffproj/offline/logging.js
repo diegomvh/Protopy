@@ -1,10 +1,10 @@
 {
     'loggers': {
         'root': {
-            'level': 'DEBUG',
+            'level': 'ERROR',
             'handlers': 'firebug'
         },
-        'doff.db.models.sql': {
+        /*'doff.db.models.sql': {
             'level':'DEBUG',
             'handlers':'firebug',
             'propagate': true
@@ -13,7 +13,7 @@
             'level':'DEBUG',
             'handlers':'firebug',
             'propagate': true
-        },
+        },*/
     },
     'handlers': {
         'firebug': {
@@ -22,11 +22,11 @@
             'formatter': '%(time)s %(name)s(%(levelname)s):\n%(message)s',
             'args': []
         },
-	'alert': {
+	/*'alert': {
             'class': 'AlertHandler',
             'level':'DEBUG',
             'formatter': '%(levelname)s:\n%(message)s',
             'args': []
-        }
+        }*/
     }
 }

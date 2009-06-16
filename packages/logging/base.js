@@ -266,6 +266,7 @@ var Manager = type('Manager', object, {
         this.disable = 0;
         this.emittedNoHandlerWarning = 0;
         this.logger_dict = {};
+	this.loggers = [];
     },
 
     get_logger: function get_logger(name) {
@@ -295,6 +296,7 @@ var Manager = type('Manager', object, {
 	    rv.manager = this;
 	    this.logger_dict[name] = rv;
 	    this._fixup_parents(rv);
+	    this.loggers.push(rv);
         }
         return rv;
     },

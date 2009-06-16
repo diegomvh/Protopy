@@ -10,6 +10,9 @@ var Handler = type('Handler', object, {
     _element_event: {'FORM': 'onsubmit', 'A': 'onclick'},
     __init__: function(urlconf, target) {
         this.target = target;
+	//Apagando la chache del selector
+	dom.cache(false);
+	//Crear el resolver
         this._resolver = new urlresolvers.RegexURLResolver('^/', urlconf);
     },
 
@@ -88,7 +91,6 @@ var Handler = type('Handler', object, {
         this._events_handlers.forEach(function(hler) {
             event.disconnect(hler);
         });
-        dom.clearCache();
     },
 
     parse_form: function form(element) {

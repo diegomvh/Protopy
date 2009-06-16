@@ -1,4 +1,5 @@
 \chapter{Protopy}
+\label{ch:apendiceProtopy}
 Protopy es una librería en JavaScript que simplifica el desarrollo de
 aplicaciones web dinámicas.
 Agregando un enfoque modular para la inclusión de código, orientación a objetos,
@@ -50,7 +51,11 @@ publish({
 "Hola luuu!!!"
 \end{lstlisting}
 
-\section{Módulos incluidos en el núcleo de Protopy}
+\section{Módulos incluidos}
+Estos modulos estan incluidos en el nucleo de Protopy, es decir que estan
+disponibles con la sola inclucion de la libreria en el documento.
+Los modulos que a continuacion se detallan engloban las herramientas basicas
+requeridas para el desarrollo del lado del cliente.
 \subsection{builtin}
 Este modulo contiene las funciones principales de Protopy, en el se encuentran
 las herramientas basicas para relizar la mayoia de las tareas.
@@ -61,7 +66,7 @@ en el mismo.
 \paragraph{Funciones}
 \subsubsection*{publish}
 \begin{verbatim}
-  publish(object)
+  publish(simbols: Object)
 \end{verbatim}
 Publica la funcionalidad de un modulo.
 Para interactuar con el codigo definido en un modulo es necesario
@@ -69,7 +74,7 @@ exponer una interface de acceso al mismo, de esto se encarga la funcion publish.
 
 \subsubsection*{require}
 \begin{verbatim}
-  require(module[, object...]) -> module | object
+  require(module_name: String[, simbol: String...]) -> module: Object | simbol
 \end{verbatim} 
 Importa un modulo en el espacio de nombres.
 Al invocar a esta funcion un modulo es cargado desde el servidor y ejecutado en
@@ -96,7 +101,8 @@ publica en el espacio de nombres.
 
 \subsubsection*{type}
 \begin{verbatim}
-  type(name, [base...] [, class ], instance) -> Type
+  type(name: String, [bases: Array ] [, class: Object ], instance: Object) ->
+Type
 \end{verbatim} 
 Funcion encargada de la construccion de nuevos tipos o clases.
 Una vez definido un nuevo tipo este puede ser utilizado para la contruccion
@@ -105,12 +111,14 @@ Como argumentos admite, el nombre del nuevo tipo, las bases de la cual hereda,
 opcionalmente los atributos y metodos de clase y los atributos y metodos para la
 instancia.
 
-La funcion constructor de los objetos tiene por nombre \verb|__init__| y es disparada
+La funcion constructor de los objetos tiene por nombre \verb|__init__| y es
+disparada
 en el momento de la construccion del objeto; en conjunto con otros metodos que
 se mencionaran a lo largo del texto estas funciones resultan de especial interes
 para interactuar con nuestros objetos y existen operadores en protopy para
 manejarlas, esto es, no debieran ser invocadas o llamadas directamente.
-\begin{lstlisting}[style=javascript,label=definicion-de-tipos,caption=Definicion de tipos]
+\begin{lstlisting}[style=javascript,label=definicion-de-tipos,caption=Definicion
+de tipos]
 var Animal = type('Animal', object, {
     contador: 0,
 }, {
@@ -173,8 +181,8 @@ Doris la piton esta reptando
 
 \subsubsection*{\$}
 \begin{verbatim}
-  $(id) -> HTMLElement
-  $(id[, id...]) -> [HTMLElement...]
+  $(id: String) -> HTMLElement
+  $(id: String[, id...]) -> [HTMLElement...]
 \end{verbatim}
 Esta funcion recibe una cadena de texto y retorna un elemento del documento cuyo
 id se corresponda con la cadena. En conjunto con la funcion \$\$ constituyen dos
@@ -193,7 +201,7 @@ permitiendo asi la iteracion sobre los mismos.
 
 \subsubsection*{\$\$}
 \begin{verbatim}
-  $$(cssRule) -> [HTMLElement...]
+  $$(cssRule: String) -> [HTMLElement...]
 \end{verbatim}
 Recupera elementos del documento, pero en lugar de hacerlo mediante un
 identificador, lo realiza utilizando las reglas de css o hoja de estilos.
@@ -218,7 +226,7 @@ div.right, div#clear, div#footer, div#toolbar]
 %extend
 \subsubsection*{extend}
 \begin{verbatim}
-  extend(destiny, source) -> alteredDestiny
+  extend(destiny: Object, source: Object) -> alteredDestiny: Object
 \end{verbatim}
 Extiende sobre un objeto destino todos los objetos pasados como argumentos a
 continuacion, copiando cada uno de los atributos correspondientes, el objeto
@@ -238,7 +246,7 @@ Object gato=4
 %super
 \subsubsection*{super}
 \begin{verbatim}
-  super(tipo, objeto) -> boundedObject
+  super(type: Type, instance: Object) -> boundedObject: Object
 \end{verbatim}
 Enlaza un objeto con un tipo de objeto, de este modo la invocacion sobre una
 funcion del tipo se realizara sobre el objeto enlazado.
@@ -247,7 +255,7 @@ Normalemnte esta funcion es utilizada para llamar a metodos de un tipo base.
 %isundefined
 \subsubsection*{isundefined}
 \begin{verbatim}
-  isundefined(object) -> boolean
+  isundefined(object: Object) -> boolean
 \end{verbatim}
 Determina si un objeto no esta definido o asociado a un valor. Retorna un valor
 de verdad correspondiente.
@@ -274,6 +282,21 @@ type2 la evalucion se reliza para cada una de las clases incluidas en el mismo.
 \begin{verbatim}
   new Arguments(arguments) -> Arguments
 \end{verbatim}
+
+\begin{lstlisting}[style=javascript,label=objeto-arguments,caption=Uniformando argumentos]
+function UnaFuncion(arg1, arg2, arg3) { 
+  var todos = new Arguments(arguments);
+  print('Argumento 1: %s o %s o %s', arg1, todos[0], todos.arg1);
+  print('Argumento 2: %s o %s o %s', arg2, todos[1], todos.arg2);
+  print('Argumento 3: %s o %s o %s', arg3, todos[2], todos.arg3);
+  print('Otros argumentos: %s', todos.args);
+  print('Argumentos pasados por objeto: %o', todos.kwargs);
+}
+\end{lstlisting}
+
+\begin{lstlisting}[style=consola]
+>>> UnaFuncion('uno', 2, null, 3, 4, 5, {nombre: 'Diego', apellido: 'van Haaster'})
+\end{lstlisting}
 
 \begin{lstlisting}[style=consola]
 \end{lstlisting}
@@ -313,7 +336,9 @@ more...], 50]]
 \begin{verbatim}
   new Set(array) -> Set
 \end{verbatim}
-Un set es una coleccion de elementos unicos, de forma similar a los conjuntos este objeto soporta intersecciones, uniones y otros metodos tipicos con sus elementos.
+Un set es una coleccion de elementos unicos, de forma similar a los conjuntos
+este objeto soporta intersecciones, uniones y otros metodos tipicos con sus
+elementos.
 \begin{lstlisting}[style=consola]
 >>> set = new Set([1,2,3,4,5,6,7,8,9,3,6,1,4,7])
 >>> len(set)
@@ -384,7 +409,8 @@ una excepcion conteniendo el mensaje pasado.
 Determina el valor de verdad de un objeto pasado, los valores de verdad son como
 sigue: arreglos, objetos y cadenas vacias en conjunto con los valores null y
 undefined son falsos; todos los demas casos son verdaderos.
-En el caso particular de que un objeto defina el metodo \verb|__nonzero__| este es
+En el caso particular de que un objeto defina el metodo \verb|__nonzero__| este
+es
 invocado para determinar el valor de verdad.
 
 %callable
@@ -419,8 +445,11 @@ Retorna un numero correspondiente al caracter pasado.
 \begin{verbatim}
   bisect(seq, element) -> position
 \end{verbatim}
-Dada una secuencia ordenada y un elemento la funcion bisect retorna un numero referenciando a la posicion en que el elemnto debe ser insertado en la secuencia, para que esta conseve su orden.
-Si los elementos de la secuencia definen el metodo \verb|__cmp__| este es invocado para determinar la posicion a retornar.
+Dada una secuencia ordenada y un elemento la funcion bisect retorna un numero
+referenciando a la posicion en que el elemnto debe ser insertado en la
+secuencia, para que esta conseve su orden.
+Si los elementos de la secuencia definen el metodo \verb|__cmp__| este es
+invocado para determinar la posicion a retornar.
 \begin{lstlisting}[style=consola]
 >>> a = [1,2,3,4,5]
 >>> bisect(a,6)
@@ -439,7 +468,8 @@ Si los elementos de la secuencia definen el metodo \verb|__cmp__| este es invoca
 \end{verbatim}
 Compara dos objetos determinando el valor de igual para los mismos, verdadero es
 retornado en caso de ser los dos objetos iguales.
-En caso de que object1 defina el metodo \verb|__eq__| este es invocado con object2
+En caso de que object1 defina el metodo \verb|__eq__| este es invocado con
+object2
 pasado como parametro para determinar la igualdad.
 
 %nequal
@@ -449,7 +479,8 @@ pasado como parametro para determinar la igualdad.
 \end{verbatim}
 Compara dos objetos determinando el valor de igual para los mismos, verdadero es
 retornado en caso de ser los dos objetos distintos.
-En caso de que object1 defina el metodo \verb|__ne__| este es invocado con object2
+En caso de que object1 defina el metodo \verb|__ne__| este es invocado con
+object2
 pasado como parametro para determinar la no igualdad.
 
 %number
@@ -463,40 +494,49 @@ Convierte un objeto a su representacion numerica.
 \begin{verbatim}
   flatten(array) -> flattenArray
 \end{verbatim}
-Aplana un arreglo de modo que el resultado sea un unico arreglo conteniendo todos los elementos que se pasaron en multiples arreglos a la funcion.
+Aplana un arreglo de modo que el resultado sea un unico arreglo conteniendo
+todos los elementos que se pasaron en multiples arreglos a la funcion.
 
 %include
 \subsubsection*{include}
 \begin{verbatim}
-  include(object, element) -> boolean
+  include(seq, element) -> boolean
 \end{verbatim}
-\verb|__contains__|
+Determina si un elemento esta incluido en una secuencia o coleccion de objetos,
+si la coleccion implementa el metodo \verb|__contains__|, este es utilizado para
+determinar la pertenencia del elemento.
 
 %len
 \subsubsection*{len}
 \begin{verbatim}
-  len(object) -> boolean
+  len(seq) -> boolean
 \end{verbatim}
-\verb|__len__|
+Retorna un valor numerico representando la cantidad de elementos contenidos en
+la secuencia o coleccion, si la coleccion implementa el metodo \verb|__len__|,
+este es utilizado para determinar la cantidad de elementos.
 
 \subsubsection*{array}
 \begin{verbatim}
-  array(iterable) -> [element...]
+  array(seq) -> [element...]
 \end{verbatim}
-\verb|__iter__|
+Genera un arreglo en base a la secuencia pasada, si la secuencia implementa el
+metodo \verb|__iter__|, este es utilizado para llenar el arrgelo con los
+elementos.
 
 \subsubsection*{print}
 \begin{verbatim}
   print(text...)
 \end{verbatim}
-Si la consola de firebug esta instalada este metodo imprime el texto pasado por consola.
+Si la consola de firebug esta instalada este metodo imprime el texto pasado por
+consola.
 
 \subsubsection*{string}
 \begin{verbatim}
   string(object)
 \end{verbatim}
 Retorna una reprecentacion en texto del objeto pasado como argumento.
-Si el objeto define el metodo \verb|__str__| este es invocado para obtener la reprecentacion.
+Si el objeto define el metodo \verb|__str__| este es invocado para obtener la
+reprecentacion.
 
 \subsubsection*{values}
 \begin{verbatim}
@@ -532,7 +572,8 @@ argumento.
 \begin{verbatim}
   unique(array) -> [element...]
 \end{verbatim}
-Dado un arreglo con elementos repetidos retorna un nuevo arreglo que se compone de los elementos unicos encontrados.
+Dado un arreglo con elementos repetidos retorna un nuevo arreglo que se compone
+de los elementos unicos encontrados.
 
 %range
 \subsubsection*{range}
@@ -621,48 +662,64 @@ El modulo de excepciones es cargado en el ambiente de trabajo cuando protopy
 inicia, no siendo necesario su llamada posterior.
 
 \subsection{event}
-Este es el modulo encargado de encapsular la logica de eventos requerida tanto por los elementos del DOM como la de usuario.
+Este es el modulo encargado de encapsular la logica de eventos requerida tanto
+por los elementos del DOM como la de usuario.
 
 \paragraph{Funciones}
 \subsubsection*{connect}
 \begin{verbatim}
-  connect(object, event, context, method) -> handle
+  connect(obj: Object|null, event: String, context: Object|null, method:
+String|Function, dontFix: Boolean) -> handle: Handle 
 \end{verbatim}
+Provee un mecanimos para conectar la ejecucion de una funcion a otra o a un
+evento del DOM.  
 
 \subsubsection*{disconnect}
 \begin{verbatim}
-  disconnect(handle)
+  disconnect(handle: Handle)
 \end{verbatim}
+Quita el la relacion establecida por ''connect''.
 
 \subsubsection*{subscribe}
 \begin{verbatim}
-  subscribe(topic, context, method) -> handle
+  subscribe(topic: String, context: Object|null, method: String|Function) ->
+handle: Handle
 \end{verbatim}
+Subscribe una funcion a un evento de usuario expresado como un texto, cuando el
+evento ocurra la funcion se ejecuta.
 
 \subsubsection*{unsubscribe}
 \begin{verbatim}
-  unsubscribe(handle)
+  unsubscribe(handle: Handle)
 \end{verbatim}
+Quita la relacion de la funcion con el evento. 
 
 \subsubsection*{publish}
 \begin{verbatim}
-  publish(topic, args)
+  publish(topic: String, arguments: Array)
 \end{verbatim}
+Emite el evento de usuario, provocando la ejecucion de las funciones subscriptas
+y pasando los argumentos correspondientes.
 
-\subsubsection*{connectpublisher}
+\subsubsection*{connectPublisher}
 \begin{verbatim}
-  connectpublisher(topic, obj, event)
+  connectPublisher(topic: String, obj: Object, event: String) -> handle: Handle
 \end{verbatim}
+Conecta un evento a un evento de usuario asegurando que cada vez que el evento
+se produsca se llamara a la funcion registrada para el evento de usuario.
 
-\subsubsection*{fixevent}
+\subsubsection*{fixEvent}
 \begin{verbatim}
-  fixevent()
+  fixEvent(evt: Event, sender: DOMNode)
 \end{verbatim}
+Normaliza las propiedades de un evento, tanto pulsasiones del teclado como
+posiciones x/y del raton.
 
-\subsubsection*{stopevent}
+\subsubsection*{stopEvent}
 \begin{verbatim}
-  stopevent()
+  stopEvent(evt: Event)
 \end{verbatim}
+Detiene el evento, evitando la propagacion y la accion por defecto.
 
 \subsubsection*{keys}
 Objeto que encapsula los codigos de las teclas de funcion y control.
@@ -681,7 +738,8 @@ Objeto que encapsula los codigos de las teclas de funcion y control.
 \end{verbatim}
 
 \subsection{ajax}
-Este modulo contiene funcionalidad propia del ajax, para el manejo de peticiones asincronicas al servidor.
+Este modulo contiene funcionalidad propia del ajax, para el manejo de peticiones
+asincronicas al servidor.
 \paragraph{Funciones}
 \subsubsection*{Request}
 \begin{verbatim}
@@ -704,7 +762,8 @@ new Response()
 
 
 \subsection{dom}
-Este modulo brinda el soporte para el manejo del DOM de una forma simple para el usuario.
+Este modulo brinda el soporte para el manejo del DOM de una forma simple para el
+usuario.
 \paragraph{Funciones}
 \subsubsection*{query}
 \begin{verbatim}
@@ -720,29 +779,38 @@ tambien agrega nueva funcionalidad a los objetos de javascript.
 \begin{verbatim}
   string.sub(pattern, replacement[, count = 1]) -> string
 \end{verbatim}
-Returns a string with the first count occurrences of pattern replaced by either a regular string, the returned value of a function or a Template string. pattern can be a string or a regular expression.
+Returns a string with the first count occurrences of pattern replaced by either
+a regular string, the returned value of a function or a Template string. pattern
+can be a string or a regular expression.
 
 \subsubsection*{subs}
 \begin{verbatim}
-  string.subs(pattern, replacement) -> string
+  string.subs(value...) -> string
 \end{verbatim}
+Substitulle cada patron encontrado en la cadena por los valores
+correspondientes, si el primer valor es un objeto, se espera un patron del tipo
+clave en la cadena para su reemplazo.
 
 \subsubsection*{format}
 \begin{verbatim}
-  string.format(pattern, replacement) -> string
+  string.format(f) -> string
 \end{verbatim}
+Da formato a una cadena de texto, al estilo C.
 
 \subsubsection*{inspect} 
 \begin{verbatim}
   string.inspect(use_double_quotes) -> string
 \end{verbatim}
-Retorna una verion de debug de la cadena, esta puede ser con comillas simples o con comillas dobles.
+Retorna una verion de debug de la cadena, esta puede ser con comillas simples o
+con comillas dobles.
 
 \subsubsection*{truncate}
 \begin{verbatim}
   string.truncate([length = 30[, suffix = '...']]) -> string
 \end{verbatim}
-Recorta una cadena recortada en la longitud indicada o 30 caracteres por defecto, si se pasa un sufijo este es utilizado para indicar el recorte, sino los ''...'' son utilizados.
+Recorta una cadena recortada en la longitud indicada o 30 caracteres por
+defecto, si se pasa un sufijo este es utilizado para indicar el recorte, sino
+los ''...'' son utilizados.
 
 \subsubsection*{strip}
 \begin{verbatim}
@@ -772,7 +840,8 @@ Extrae todos los scripts contenidos en la cadena y los retorna en un arreglo.
 \begin{verbatim}
   string.evalscripts() -> [ value... ]
 \end{verbatim}
-Evalua todos los scripts contenidos en la cadena y retorna un arreglos con los resultados de cada evaluacion.
+Evalua todos los scripts contenidos en la cadena y retorna un arreglos con los
+resultados de cada evaluacion.
 
 \subsubsection*{escapeHTML}
 \begin{verbatim}
@@ -784,25 +853,29 @@ Convierte los caracteres especiales del HTML a sus entidades equivalentes.
 \begin{verbatim}
   string.unescapeHTML() -> string
 \end{verbatim}
-Convierte las entidades de caracteres especiales del HTML a sus respectivos simbolos.
+Convierte las entidades de caracteres especiales del HTML a sus respectivos
+simbolos.
 
 \subsubsection*{succ}
 \begin{verbatim}
   string.succ() -> string
 \end{verbatim}
-Convierte un caracter en el caracter siguiente segun la tabla de caracteres Unicode.
+Convierte un caracter en el caracter siguiente segun la tabla de caracteres
+Unicode.
 
 \subsubsection*{times}
 \begin{verbatim}
   string.times(count[, separator = '']) -> string
 \end{verbatim}
-Concatena una cadena tantas veces como se indique, si se pasa un separador, este es utilizado para intercalar.
+Concatena una cadena tantas veces como se indique, si se pasa un separador, este
+es utilizado para intercalar.
 
 \subsubsection*{camelize}
 \begin{verbatim}
   string.camelize() -> string
 \end{verbatim}
-Convierte una cadena separada por guiones medios ("-") a una nueva cadena tipo ''camello''. Por ejemplo, 'foo-bar' pasa a ser 'fooBar'.
+Convierte una cadena separada por guiones medios (``-'') a una nueva cadena tipo
+''camello''. Por ejemplo, 'foo-bar' pasa a ser 'fooBar'.
 
 \subsubsection*{capitalize}
 \begin{verbatim}
@@ -814,13 +887,14 @@ Pasa a mayuscula la primera letra y el resto de la cadena a minusculas.
 \begin{verbatim}
   string.underscore() -> string
 \end{verbatim}
-Convierte una cadena tipo ''camello'' a una nueva cadena separada por guiones bajos ("_").
+Convierte una cadena tipo ''camello'' a una nueva cadena separada por guiones
+bajos (``\_'').
 
 \subsubsection*{dasherize}
 \begin{verbatim}
   string.dasherize() -> string
 \end{verbatim}
-Remplaza cada ocurrencia de un guion bajo ("_") por un guion medio ("-").
+Remplaza cada ocurrencia de un guion bajo (``\_'') por un guion medio (``-'').
 
 \subsubsection*{startswith}
 \begin{verbatim}
@@ -838,27 +912,30 @@ Chequea si la cadena termina con el patron pasado.
 \begin{verbatim}
   string.blank() -> boolean
 \end{verbatim}
-Chequea si una cadena esta en blanco, esto es si esta vacia o solo contiene espacios en blanco.
+Chequea si una cadena esta en blanco, esto es si esta vacia o solo contiene
+espacios en blanco.
 
 \subsection{Number}
 \subsubsection*{format}
 \begin{verbatim}
   number.format(f, radix) -> string
 \end{verbatim}
-Da formato a un numero en base a una cadena de texto pasada, al estilo C.
+Da formato a un numero en base a una cadena de texto, al estilo C.
 
 \subsection{Date}
 \subsubsection*{toISO8601}
 \begin{verbatim}
   date.toISO8601() -> string
 \end{verbatim}
+Retorna una representacion de la fecha en ISO8601.
 
 \subsection{Element}
 \subsubsection*{visible}
 \begin{verbatim}
   HTMLElement.visible() -> HTMLElement
 \end{verbatim}
-Returns a Boolean indicating whether or not element is visible (i.e. whether its inline style property is set to "display: none;").
+Returns a Boolean indicating whether or not element is visible (i.e. whether its
+inline style property is set to "display: none;").
 
 \subsubsection*{toggle}
 \begin{verbatim}
@@ -888,20 +965,25 @@ Quita el elemento del documento y lo retorna.
 \begin{verbatim}
   HTMLElement.update(content) -> HTMLElement
 \end{verbatim}
-Reemplaza el contendio del elemento con el argumento pasado y terorna el elemento.
+Reemplaza el contendio del elemento con el argumento pasado y terorna el
+elemento.
 
 \subsubsection*{insert}
 \begin{verbatim}
   HTMLElement.insert({ position: content }) -> HTMLElement
   HTMLElement.insert(content) -> HTMLElement
 \end{verbatim}
-Inserts content before, after, at the top of, or at the bottom of element, as specified by the position property of the second argument. If the second argument is the content itself, insert will append it to element.
+Inserts content before, after, at the top of, or at the bottom of element, as
+specified by the position property of the second argument. If the second
+argument is the content itself, insert will append it to element.
 
 \subsubsection*{select}
 \begin{verbatim}
   HTMLElement.select(selector) -> HTMLElement
 \end{verbatim}
-Toma un numero arbitrario de selectores CSS y retorna un arreglo con los elementos que concuerden con estos y esten dentro del elemento al que se aplica la funcion.
+Toma un numero arbitrario de selectores CSS y retorna un arreglo con los
+elementos que concuerden con estos y esten dentro del elemento al que se aplica
+la funcion.
 
 \begin{lstlisting}[style=consola]
 >>> $('PostForm').select('input')
@@ -929,7 +1011,8 @@ Habilita todo los elementos del formulario para el ingreso de valores.
 \begin{verbatim}
   HTMLFormElement.serialize() -> object
 \end{verbatim}
-Retorna un objeto conteniendo todos los elementos del formulario serializados con sus respectivos valores.
+Retorna un objeto conteniendo todos los elementos del formulario serializados
+con sus respectivos valores.
 
 \begin{lstlisting}[style=consola]
 >>> $('PostForm')
@@ -949,7 +1032,9 @@ Retorna una cadena representando la pareja clave=valor del elemento.
 \begin{verbatim}
   HTMLElement.get_value() -> value
 \end{verbatim}
-Retorna el valor actual del elemento del formulario. Una cadena de texto es retornada en la mayoria de los casos excepto en el caso de un select multiple en que se retorna un arreglo con los valores.
+Retorna el valor actual del elemento del formulario. Una cadena de texto es
+retornada en la mayoria de los casos excepto en el caso de un select multiple en
+que se retorna un arreglo con los valores.
 
 \subsubsection*{set\_value}
 \begin{verbatim}
@@ -967,7 +1052,8 @@ Limpia el elemento quitando el valor ingresado.
 \begin{verbatim}
   HTMLElement.present() -> boolean
 \end{verbatim}
-Retorna verdadero si el elemento de ingreso de datos tiene un valor, falso en otro caso.
+Retorna verdadero si el elemento de ingreso de datos tiene un valor, falso en
+otro caso.
 
 \subsubsection*{activate}
 \begin{verbatim}

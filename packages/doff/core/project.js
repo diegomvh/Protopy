@@ -8,11 +8,12 @@ var Project = type('Project', object, {
     availability_url: null,
     going_online: false,
     do_net_checking: true,
+    target_element: document.createElement('div'),
 
     onLoad: function() {
-	//Add the body element to html
+	//Add the target element to html
 	var body = $$('body')[0];
-	body.insert(this.target);
+	body.update(this.target_element);
     },
 
     onNetwork: function(type) {
@@ -34,17 +35,9 @@ var Project = type('Project', object, {
         //Url para ver si estoy conectado
         this.availability_url = sys.module_url(offline_support, '/network_check');
 
-	//Inicio el logging
-	require('logging.config', 'file_config');
-        file_config(sys.module_url(this.package, 'logging.js'));
-
-	//Creo el elemento contenedor
-	this.target = document.createElement('div');
-	this.target.id = 'body';
-
-	//Inicio del handler
+	//Inicio del handler para las url
 	require('doff.core.urlhandler', 'Handler');
-	this.handler = new Handler(this.settings.ROOT_URLCONF, this.target);
+	this.handler = new Handler(this.settings.ROOT_URLCONF, this.target_element);
 
 	//Inicio de los stores
 	require('gears.localserver', 'ManagedResourceStore');
@@ -53,6 +46,14 @@ var Project = type('Project', object, {
 	this.system = new ManagedResourceStore(package + '_system');
 	this.system.manifest_url = sys.module_url(offline_support, '/manifests/system.json');
 	
+	//Inicio el logging
+	require('logging.config', 'file_config');
+        file_config(sys.module_url(this.package, 'logging.js'));
+
+	this._create_toolbar();
+    },
+
+    _create_toolbar: function(){
 	//The toolbar
 	require('doff.utils.toolbar', 'ToolBar');
         

@@ -44,7 +44,7 @@ div#logger-active {
 }
 
 div#logger-active span {
-    padding: 20px;
+    padding: 5px;
 }
 
 div#logger-active span label.debug {
@@ -77,7 +77,7 @@ div#logger-active button {
 <div id="logger-output"></div>
 
 <div id="logger-active">
-    <span>root logger:</span>
+    <span>Root level</span>
     <span class="logger-filter">
         <input type="radio" name="level" id="logger-filter-debug" value="DEBUG"/>
         <label for="logger-filter-debug" class="debug">debug</label>
@@ -97,6 +97,11 @@ div#logger-active button {
     <span class="logger-filter">
         <input type="radio" name="level" id="logger-filter-fatal" value="FATAL"/>
         <label for="logger-filter-fatal" class="fatal">fatal</label>
+    </span>
+    <span class="logger-filter">
+	<label for="logger-filter-modulo">Modulo</label>
+        <select id="logger-filter-modulo">
+	</select>
     </span>
     <button id="logger-pause">Pause</button>
     <button id="logger-clear">Clear</button>
