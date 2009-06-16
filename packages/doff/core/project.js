@@ -13,7 +13,7 @@ var Project = type('Project', object, {
     onLoad: function() {
 	//Add the target element to html
 	var body = $$('body')[0];
-	body.insert(this.target_element);
+	body.update(this.target_element);
     },
 
     onNetwork: function(type) {

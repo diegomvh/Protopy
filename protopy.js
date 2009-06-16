@@ -1373,9 +1373,9 @@
     
     var dom = ModuleManager.create('dom', 'built-in', {
 	query: query,
-        clearCache: function() {
-            cache = {};
-        }
+        cache: function(value) {
+	  cacheOn = value;
+	}
     });
 
     /******************** builtin **************************/
@@ -2267,6 +2267,7 @@
 	},
 	update: function(content) {
 	    if (Element.isElement(content)) return this.update().insert(content);
+	    content = String.interpret(content);
 	    this.innerHTML = content.stripscripts();
 	    getattr(content, 'evalscripts')();
 	    return this;
