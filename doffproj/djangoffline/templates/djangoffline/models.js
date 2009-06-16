@@ -29,8 +29,8 @@ var models = require('doff.db.models.base');
 var {{ model_name }} = type("{{ model_name }}", models.Model, {
 	{% for field_name, arguments in fields.iteritems %}
 	{% spaceless %}
-	{{ field_name }}: new models.{{ arguments|first }}("{{ arguments|last|dict_popkey:"verbose_name" }}", 
-			{{ arguments|last|safe }}){% if not forloop.last %},{% endif %}
+	{{ field_name }}: new models.{{ arguments|first }}("{{ arguments|last|get_key:"verbose_name" }}", 
+			{{ arguments|last|dict2json_filter:"verbose_name" }}){% if not forloop.last %},{% endif %}
 	{% endspaceless %}
 	{% endfor %}
 });
