@@ -52,13 +52,13 @@ publish({
 \end{lstlisting}
 
 \section{Módulos incluidos}
-Estos modulos estan incluidos en el nucleo de Protopy, es decir que estan
-disponibles con la sola inclucion de la libreria en el documento.
-Los modulos que a continuacion se detallan engloban las herramientas basicas
+Estos módulos están incluidos en el núcleo de Protopy, es decir que están
+disponibles con la sola inclusión de la librería en el documento.
+Los módulos que a continuación se detallan engloban las herramientas básicas
 requeridas para el desarrollo del lado del cliente.
 \subsection{builtin}
 Este modulo contiene las funciones principales de Protopy, en el se encuentran
-las herramientas basicas para relizar la mayoia de las tareas.
+las herramientas básicas para realizar la mayoría de las tareas.
 No es necesario requerir este modulo en el espacio de nombres principal
 (``window''), ya que su funcionalidad esta disponible desde la carga de Protopy
 en el mismo.
@@ -69,22 +69,22 @@ en el mismo.
   publish(simbols: Object)
 \end{verbatim}
 Publica la funcionalidad de un modulo.
-Para interactuar con el codigo definido en un modulo es necesario
-exponer una interface de acceso al mismo, de esto se encarga la funcion publish.
+Para interactuar con el código definido en un modulo es necesario
+exponer una interfase de acceso al mismo, de esto se encarga la función publish.
 
 \subsubsection*{require}
 \begin{verbatim}
   require(module_name: String[, simbol: String...]) -> module: Object | simbol
 \end{verbatim} 
 Importa un modulo en el espacio de nombres.
-Al invocar a esta funcion un modulo es cargado desde el servidor y ejecutado en
-el clinete, la forma en que el modulo se presenta en el espacio de nombres
-depende de la invoacion.
+Al invocar a esta función un modulo es cargado desde el servidor y ejecutado en
+el cliente, la forma en que el modulo se presenta en el espacio de nombres
+depende de la invocación.
 \begin{itemize}
  \item{var cntx = require('doff.template.context')}
   Importa el modulo 'doff.template.context' y lo retorna en cntx, dejando
-tambien una referencia en el espacio de nombres llamda 'context', esta dualidad
-en la asociacion del modulo permite imporatar modulos sin asociarlos a una
+también una referencia en el espacio de nombres llamado 'context', esta dualidad
+en la asociación del modulo permite importar módulos sin asociarlos a una
 variable, simplemente alcanza con asumir que la parte final del nombre es la
 referencia a usar.
  \item{var cur = require('gears.database', 'cursor')}
@@ -104,17 +104,17 @@ publica en el espacio de nombres.
   type(name: String, [bases: Array ] [, class: Object ], instance: Object) ->
 Type
 \end{verbatim} 
-Funcion encargada de la construccion de nuevos tipos o clases.
-Una vez definido un nuevo tipo este puede ser utilizado para la contruccion
+Función encargada de la construcción de nuevos tipos o clases.
+Una vez definido un nuevo tipo este puede ser utilizado para la contracción
 indiscriminada de objetos de ese tipo mediante el operador new.
 Como argumentos admite, el nombre del nuevo tipo, las bases de la cual hereda,
 opcionalmente los atributos y metodos de clase y los atributos y metodos para la
 instancia.
 
-La funcion constructor de los objetos tiene por nombre \verb|__init__| y es
+La función constructor de los objetos tiene por nombre \verb|__init__| y es
 disparada
-en el momento de la construccion del objeto; en conjunto con otros metodos que
-se mencionaran a lo largo del texto estas funciones resultan de especial interes
+en el momento de la construcción del objeto; en conjunto con otros metodos que
+se mencionaran a lo largo del texto estas funciones resultan de especial interés
 para interactuar con nuestros objetos y existen operadores en protopy para
 manejarlas, esto es, no debieran ser invocadas o llamadas directamente.
 \begin{lstlisting}[style=javascript,label=definicion-de-tipos,caption=Definicion
@@ -184,11 +184,11 @@ Doris la piton esta reptando
   $(id: String) -> HTMLElement
   $(id: String[, id...]) -> [HTMLElement...]
 \end{verbatim}
-Esta funcion recibe una cadena de texto y retorna un elemento del documento cuyo
-id se corresponda con la cadena. En conjunto con la funcion \$\$ constituyen dos
-herramientas muy utiles para recuperar elementos e interactuar con el arbol DOM.
+Esta función recibe una cadena de texto y retorna un elemento del documento cuyo
+id se corresponda con la cadena. En conjunto con la función \$\$ constituyen dos
+herramientas muy útiles para recuperar elementos e interactuar con el árbol DOM.
 Si mas de un argumento es pasado, la forma de retorno es mediante un arreglo,
-permitiendo asi la iteracion sobre los mismos.
+permitiendo así la iteración sobre los mismos.
 \begin{lstlisting}[style=consola]
 >>> $('content')
 <div id="content">
@@ -229,7 +229,7 @@ div.right, div#clear, div#footer, div#toolbar]
   extend(destiny: Object, source: Object) -> alteredDestiny: Object
 \end{verbatim}
 Extiende sobre un objeto destino todos los objetos pasados como argumentos a
-continuacion, copiando cada uno de los atributos correspondientes, el objeto
+continuación, copiando cada uno de los atributos correspondientes, el objeto
 destino es retornado modificado.
 \begin{lstlisting}[style=consola]
 >>> a = {perro: 4}
@@ -248,9 +248,9 @@ Object gato=4
 \begin{verbatim}
   super(type: Type, instance: Object) -> boundedObject: Object
 \end{verbatim}
-Enlaza un objeto con un tipo de objeto, de este modo la invocacion sobre una
-funcion del tipo se realizara sobre el objeto enlazado.
-Normalemnte esta funcion es utilizada para llamar a metodos de un tipo base.
+Enlaza un objeto con un tipo de objeto, de este modo la invocación sobre una
+función del tipo se realizara sobre el objeto enlazado.
+Normalmente esta función es utilizada para llamar a metodos de un tipo base.
 
 %isundefined
 \subsubsection*{isundefined}
@@ -274,8 +274,8 @@ uno de ellos.
 \begin{verbatim}
   issubclass(type1, type2 | [type...]) -> boolean
 \end{verbatim}
-Retorna si type1 es una subclase de type2, cuando se pasa un arrgelo en lugar de
-type2 la evalucion se reliza para cada una de las clases incluidas en el mismo.
+Retorna si type1 es una subclase de type2, cuando se pasa un arreglo en lugar de
+type2 la evaluación se realiza para cada una de las clases incluidas en el mismo.
 
 %Arguments
 \subsubsection*{Arguments}
@@ -283,7 +283,7 @@ type2 la evalucion se reliza para cada una de las clases incluidas en el mismo.
   new Arguments(arguments) -> Arguments
 \end{verbatim}
 En JavaScript 
-El objeto para los argumentos asociativos debe ir al final de la invocacion
+El objeto para los argumentos asociativos debe ir al final de la invocación
 \begin{lstlisting}[style=javascript,label=objeto-arguments,caption=Uniformando argumentos]
 function unaFuncion(arg1, arg2, arg3) { 
   var todos = new Arguments(arguments);
