@@ -121,8 +121,18 @@ def template_static_serve(request, path):
 
 
 def get_app_remote_model(request, app_name):
-    #TODO: Esto!!!
-    #from django.db.models.loading import get_app
+    from django.db.models.loading import get_app, get_models
+    from djangoffline.export_models import export_models
+    try:
+        app = get_app(app_name)
+        app_models = get_models(app)
+        models = export_models(app_models)
+        render_to_response('djangoffline/models.js', 
+                           locals(),
+                           mimetype = 'text/javascript')
+        
+    except ImproperlyConfigured, e:
+        return HttpResponseNotFound(str(e))
     
     return render_to_response('djangoffline/models.js', locals(),
                               mimetype = 'text/javascript')
@@ -136,7 +146,9 @@ def get_app_remote_model_(request, app_name):
     try:
         app = get_app(app_name)
         models = get_models(app)
-        return HttpResponse(pformat(export_models(models), width = 80), 'text/plain')
+        text = pformat(export_models(models), width = 80)
+         
+        return HttpResponse(text.replace('\n', '<br />'))#, 'text/plain')
     
     except ImproperlyConfigured, e:
         return HttpResponseNotFound()

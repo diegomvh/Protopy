@@ -10,6 +10,13 @@ settings.INSTALLED_APPS. Also it tries to discover Field subclasses.
 Thre are some parameters that can't be guessed from constructor arguments,
 in those cases a ModelProxy class should be defined.
 
+First Approach:
+Store a dictionary of every possible attribute
+
+
+Last Approach:
+Get django field definition letting the user to register his/her custom
+models.
 '''
 
 #FIELD_DATA = {
@@ -72,12 +79,18 @@ class FieldIntrospection(object):
             return getattr(self._arg_spec, name)
         
     def __str__(self):
-        return str(self._arg_spec)
+        #return str(self._arg_spec) # Demaciado verboragico
+        return "<Argsec for %s>" % self._class.__name__
+        
     
     __repr__ = __str__ 
     
     def get_init_args(self, field):
         args = SortedDict()
+        
+        
+            
+        
         #args = []
         # We start from 1: since we want to skip 
         for index, f_name in enumerate(self._arg_spec.args[1:]):
@@ -87,9 +100,29 @@ class FieldIntrospection(object):
                     args[f_name] = f_value
         return args
 
-
-    
-    
+def get_class_bases(cls, results = None):
+    #if not isclass(cls):
+    #    cls = cls.__class__
+        
+    # First run, include me and my parents
+    if not results:
+        results = [ cls, ]
+        
+    results += list(cls.__bases__)
+    #print results
+    # Got to roots?
+#    if len(cls.__bases__) == 1 and type(cls.__bases__[0]) in [object, type]:
+#        print "Coratando por llegar a type, estamos en %s" % cls
+#        
+#        return results
+    # Try this code
+    for parent_cls in cls.__bases__:
+        if parent_cls in (type, object):
+            continue
+        get_class_bases(parent_cls, results)
+    return filter(lambda obj: obj not in (type, object), results)
+        
+     
 
 def get_model_class_fields():
     '''
@@ -102,11 +135,13 @@ def get_model_class_fields():
               ]
     model_class_fields = SortedDict() 
     for name, class_ in classes:
-        model_class_fields[name] = FieldIntrospection(class_)
+        model_class_fields[class_] = FieldIntrospection(class_)
+    print model_class_fields
     return model_class_fields
 
 # Cache
 model_class_fields = get_model_class_fields()
+
 
 
 def export_models(models):
@@ -121,7 +156,7 @@ def export_models(models):
         for f in fields:
             field_type = f.__class__.__name__
             try:
-                f_introspect = model_class_fields[field_type]
+                f_introspect = model_class_fields[f.__class__]
                 processed_fields[f.name] = (field_type, f_introspect.get_init_args(f))
             except KeyError:
                 #TODO: Implement for more fields
@@ -130,8 +165,13 @@ def export_models(models):
         processed_models[name] = processed_fields
     return processed_models
 
+def register_model_class(class_):
+    pass
 
 
+#===============================================================================
+# Broken Code, 
+#===============================================================================
 SYSTEM_MODULES = ['os', 'sys', 'type', ]
 
 def module_explore(mod, filter_callback = None):

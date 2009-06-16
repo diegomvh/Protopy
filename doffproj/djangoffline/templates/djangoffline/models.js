@@ -1,3 +1,4 @@
+{% comment %}
 var models = require('doff.db.models.base');
 
 var Tag = type('Tag', models.Model, {
@@ -20,3 +21,17 @@ publish({
     Tag: Tag,
     Post: Post
 });
+{% endcomment %}
+{% load model_export %}
+var models = require('doff.db.models.base');
+
+{% for model_name, fields in models.iteritems %}
+var {{ model_name }} = type("{{ model_name }}", models.Model, {
+	{% for field_name, arguments in fields.iteritems %}
+	{% spaceless %}
+	{{ field_name }}: new models.{{ arguments|first }}("{{ arguments|last|dict_popkey:"verbose_name" }}", 
+			{{ arguments|last|safe }}){% if not forloop.last %},{% endif %}
+	{% endspaceless %}
+	{% endfor %}
+});
+{% endfor %}
