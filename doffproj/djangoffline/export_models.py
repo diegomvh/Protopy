@@ -36,6 +36,7 @@ from django.conf import settings
 from inspect import isclass, ismodule
 
 python_version = map(int, sys.version.split(' ')[0].split('.'))
+
 if python_version < (2, 6, 0):
     from djangoffline.utils import namedtuple
     import inspect
@@ -87,10 +88,6 @@ class FieldIntrospection(object):
     
     def get_init_args(self, field):
         args = SortedDict()
-        
-        
-            
-        
         #args = []
         # We start from 1: since we want to skip 
         for index, f_name in enumerate(self._arg_spec.args[1:]):
@@ -101,8 +98,8 @@ class FieldIntrospection(object):
         return args
 
 def get_class_bases(cls, results = None):
-    #if not isclass(cls):
-    #    cls = cls.__class__
+    if not isclass(cls):
+        cls = cls.__class__
         
     # First run, include me and my parents
     if not results:
@@ -156,13 +153,22 @@ def export_models(models):
         for f in fields:
             field_type = f.__class__.__name__
             try:
-                f_introspect = model_class_fields[f.__class__]
-                processed_fields[f.name] = (field_type, f_introspect.get_init_args(f))
+                bases = get_class_bases(f)
+                args = SortedDict()
+                for base in bases:
+                    
+                    f_introspect = model_class_fields[base]
+                    args.update( f_introspect.get_init_args(f) )
+                processed_fields[f.name] = (field_type, args )
+                #f_introspect = model_class_fields[f.__class__]
+                #processed_fields[f.name] = (field_type, f_introspect.get_init_args(f))
             except KeyError:
                 #TODO: Implement for more fields
-                processed_fields[f.name] = (field_type, "Unsupported")
+                print "***"
+                processed_fields[f.name] = (field_type, {})
         
         processed_models[name] = processed_fields
+    #print processed_models
     return processed_models
 
 def register_model_class(class_):
