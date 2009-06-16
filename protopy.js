@@ -2234,11 +2234,13 @@
 		SELECT: ['<select>',               '</select>',                  1]
 	    }
 	},
+
 	_get_content_from_anonymous_element: function(tagName, html) {
 	    var div = document.createElement('div'), t = Element._insertion_translations.tags[tagName];
 	    if (t) {
 		div.innerHTML = t[0] + html + t[1];
-		t[2].times(function() { div = div.firstChild });
+		for (var i = 0; i < t[2]; i++)
+		  div = div.firstChild;
 	    } else div.innerHTML = html;
 	    return array(div.childNodes);
 	}

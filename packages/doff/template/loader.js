@@ -55,30 +55,6 @@ function get_template_from_string(source, name) {
     return new Template(source, name);
 }
 
-/* Candidato a la borrada
-function render_to_string(template_name, dictionary, context_instance) {
-    var dictionary = dictionary || {};
-    if (template_name instanceof Array)
-        t = select_template(template_name);
-    else
-        t = get_template(template_name);
-    if (context_instance)
-        context_instance.update(dictionary);
-    else
-        context_instance = Context(dictionary);
-    return t.render(context_instance);
-}
-
-function select_template(template_name_list) {
-    for(var i = 0; template_name = template_name_list[i]; i++) {
-        try {
-            return get_template(template_name);
-        } catch (e if e instanceof TemplateDoesNotExist) { continue; }
-    }
-    throw new TemplateDoesNotExist(template_name_list.join(', '));
-}
-*/
-
 publish({ 
     find_template_source: find_template_source,
     get_template_from_string: get_template_from_string,

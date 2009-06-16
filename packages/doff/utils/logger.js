@@ -3,8 +3,6 @@ require('logging.base', 'get_logger', 'get_level', 'Handler');
 require('ajax');
 require('event');
 
-//http://www.comesfa.org/es/node/14805
-
 var Logger = type('Logger', [Panel, Handler], {
     __init__: function() {
         super(Panel, this).__init__('logger', 'Logger');
@@ -63,6 +61,12 @@ var Logger = type('Logger', [Panel, Handler], {
                 self.root.set_level(get_level(e.target.value));
             });
         });
+
+	this.select_module = $('logger-filter-modulo');
+	this.select_module.insert('<option value="---">---</option>');
+	for each (var l in this.root.manager.loggers)
+	  this.select_module.insert('<option value="' + l.name + '">' + l.name + '</option>');
+	print(this.select_module.serialize());
 	this.output = $('logger-output');
     }
 });
