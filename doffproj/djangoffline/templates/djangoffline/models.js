@@ -21,17 +21,21 @@ publish({
     Tag: Tag,
     Post: Post
 });
-{% endcomment %}
-{% load model_export %}
-var models = require('doff.db.models.base');
 
+{% endcomment %} {% load model_export %}
+{% spaceless %}
+var models = require('doff.db.models.base');
 {% for model_name, fields in models.iteritems %}
 var {{ model_name }} = type("{{ model_name }}", models.Model, {
 	{% for field_name, arguments in fields.iteritems %}
-	{% spaceless %}
-	{{ field_name }}: new models.{{ arguments|first }}("{{ arguments|last|get_key:"verbose_name" }}", 
-			{{ arguments|last|dict2json_filter:"verbose_name" }}){% if not forloop.last %},{% endif %}
-	{% endspaceless %}
+	{{ field_name }}: new models.{{ arguments|first }}({% get_model_definition arguments %}){% if not forloop.last %},{% endif %}
 	{% endfor %}
 });
 {% endfor %}
+
+publish({
+{% for name, _ in models.iteritems %}
+	{{ name }}: {{ name }}{% if not forloop.last %},{% endif %}
+{% endfor %}
+});
+{% endspaceless %}

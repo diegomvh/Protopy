@@ -63,6 +63,7 @@ else:
 
 # Filter field
 from django.db.models import Field
+#from django.db.models.related import 
 filter_field = lambda c: isclass(c) and issubclass(c, Field)
 
 
@@ -81,9 +82,8 @@ class FieldIntrospection(object):
         
     def __str__(self):
         #return str(self._arg_spec) # Demaciado verboragico
-        return "<Argsec for %s>" % self._class.__name__
+        return "<Argspec for %s>" % self._class.__name__
         
-    
     __repr__ = __str__ 
     
     def get_init_args(self, field):
@@ -120,20 +120,22 @@ def get_class_bases(cls, results = None):
     return filter(lambda obj: obj not in (type, object), results)
         
      
-
+FIELD_LOOKUP_MODULES = ('django.db.models', 'django.db.models.fields.related', )
 def get_model_class_fields():
     '''
     Loads Django ORM's fields
     '''
-    
-    mod = __import__('django.db.models', {}, {}, ['*'])
-    classes = [ (name, class_) for name, class_ in mod.__dict__.items() 
+    model_class_fields = SortedDict()
+    for mod_name in FIELD_LOOKUP_MODULES:
+        print "lookup %s" % mod_name
+        mod = __import__(mod_name, {}, {}, ['*'])
+        classes = [ (name, class_) for name, class_ in mod.__dict__.items() 
                     if filter_field(class_)
-              ]
-    model_class_fields = SortedDict() 
-    for name, class_ in classes:
-        model_class_fields[class_] = FieldIntrospection(class_)
-    print model_class_fields
+                    ]
+         
+        for name, class_ in classes:
+            model_class_fields[class_] = FieldIntrospection(class_)
+    
     return model_class_fields
 
 # Cache
@@ -162,9 +164,9 @@ def export_models(models):
                 processed_fields[f.name] = (field_type, args )
                 #f_introspect = model_class_fields[f.__class__]
                 #processed_fields[f.name] = (field_type, f_introspect.get_init_args(f))
-            except KeyError:
+            except KeyError, e:
                 #TODO: Implement for more fields
-                print "***"
+                print "Error", e
                 processed_fields[f.name] = (field_type, {})
         
         processed_models[name] = processed_fields

@@ -2,6 +2,7 @@ from django import template
 from simplejson import dumps
 from copy import copy
 from django.utils.safestring import SafeString
+from django.utils.datastructures import SortedDict
 
 register = template.Library()
 
@@ -46,3 +47,19 @@ def get_key(h, key):
         return h[key]
     except KeyError:
         return key
+
+@register.simple_tag
+def get_model_definition(init_args):
+    field_type, args = init_args
+    verbose = ''
+    my_args = SortedDict()
+    for k, v in args.iteritems():
+        if k == 'verbose_name':
+            verbose = '"%s"' % v
+        else:
+            my_args[k] = v
+        
+    dump = u",".join([verbose, dumps(my_args)])
+    dump = dump.strip(',')
+    return SafeString(dump)
+
