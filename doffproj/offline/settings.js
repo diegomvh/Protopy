@@ -7,6 +7,11 @@
 'DATABASE_NAME': 'blog.db',
 'DATABASE_OPTIONS': {},
 
+//Project for the installer
+'PROJECT': {'NAME': 'El blog',
+	    'DESCRIPTION': 'Este es un ejemplo de un blog, creado para desarrollar un engendro demoniaco llamado doff',
+	    'IMAGE': '/static/weeds.png' },
+
 'MEDIA_URL': '/static/',
 
 'ROOT_URLCONF': 'blog.urls',

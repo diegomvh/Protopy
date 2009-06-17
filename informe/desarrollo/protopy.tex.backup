@@ -1,0 +1,74 @@
+\chapter{Protopy}
+
+\section{que}
+El desarrollo de un framework en JavaScript funcionando dentro del navegador
+Firefox, deja entrever una gran cantidad de detalles que no resultan triviales
+al momento de desarrollar.
+\begin{itemize}
+ \item Se requieren varias lineas de codigo para implementar un framework.
+ \item Como llega el codigo al navegador y se inicia su ejecucion.
+ \item La cara visible o vista debe ser fasilmente manipulable por la aplicacion
+de usuario.
+ \item Como los datos generados en el cliente son informados al servidor.
+ \item El framework debe brindar soporte a la aplicacion de usuario de una forma
+natural y transparente.
+ \item Se debe promover al reuso y la extension de funcionalidad del framework.
+ \item Como se ponen en marcha los mecanimos o acciones que la aplicacion de
+usuario define.
+ \item ...
+\end{itemize} 
+Si bien el desarrollo de Protopy se mantuvo en paralelo a la del
+framework, existen aspectos basicos a los que esta brinda soporte y permiten
+presentarla en un apartado separado como una ''Libreria JavaScript''. Esta
+libreria constituye la base para posteriores construcciones y auna
+herramientas que simplifican el desarrollo client-side.
+
+\textit{proto}type + \textit{py}thon = \textit{protopy}
+
+``La creación nace del caos'', Protopy no escapa a esta afirmacion y nace de la
+integracion de la libreria Prototype con las primeras funciones para lograr
+la modularizacion; con el correr de las lineas de codigo\footnote{Forma en que
+los informaticos miden el paso del tiempo} el desarrollo del framework torna
+el enfoque inicial poco sustentable, requiriendo este de funciones mas
+Python-compatibles se desecha buena parte de la libreria base y se continua con
+un enfoque mas ``pythonico''.
+
+En este capitulo se explicara como Protopy da solucion a los items expuestos con
+anterioridad. Para una explicacion completa de la API remitace al apandice
+\fullref{ch:apendiceProtopy}.
+
+%El desarrollo de un framework en javascript que funcione del lado del cliente
+%presupone gran cantidad de codigo
+%viajando de un lado al otro de la conexion. Previendo basicamente este
+postulado
+%desarrollamos una libreria
+%que brinde el soporte a los requerimentos mas basicos.
+\subsubsection*{Protopy}
+\textit{Protopy es una libreria JavaScript para el desarrollo de aplicaciones
+web dinamicas. Aporta un enfoque modular para la inclusión de código,
+orientación a objetos, manejo de AJAX, DOM y eventos.}
+
+\section{como}
+
+\section{Organizando el codigo}
+Undo de los principales inconvenientes a los que Protopy da solucion es a la
+inclucion dinamica de funcionalidad bajo demanda, esto es logrado mediante
+``modulos''.
+Tradicionalmente la forma de incluir codigo javascript es mediante la
+incorporation de una etiqueta ``script'' con un atributo de referencia
+al archivo que contiene la funcionalidad. Mas tarde cuando el navegador descarga
+el documento y comienza su lectura al encontrar esta etiqueta solicita
+al servidor el archivo referenciado y lo interpreta, para continuar luego con la
+lectura del resto de las etiquetas.
+Este enfoque es sustentable en el desarrollo tradicional, en donde el lenguaje
+brinda mayormente soporte a la interaccion con el usuario y los fragmentos de
+codigo a incluir son bien conocidos por el desarrollador.
+
+Basicamente un modulo en un archivo con codigo javascript que recide en el
+servidor y es obtenido y ejecutado en el cliente.
+
+\section{Orientacion a objetos}
+
+\section{Modificando el DOM}
+
+\section{Manejo de eventos}
