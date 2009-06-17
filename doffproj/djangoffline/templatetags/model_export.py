@@ -3,6 +3,10 @@ from simplejson import dumps
 from copy import copy
 from django.utils.safestring import SafeString
 from django.utils.datastructures import SortedDict
+from simplejson.encoder import JSONEncoder
+from django.utils.functional import Promise
+from django.utils.encoding import force_unicode
+from django.db.models.fields.related import ManyToManyRel
 
 register = template.Library()
 
@@ -48,6 +52,16 @@ def get_key(h, key):
     except KeyError:
         return key
 
+class LazyEncoder(JSONEncoder):
+    def default(self, o):
+        if isinstance(o, Promise):
+            return force_unicode(o)
+        elif isinstance(o, ManyToManyRel):
+            return force_unicode(o.to._meta.object_name)
+        else:
+            return super(LazyEncoder, self).default(o)
+
+
 @register.simple_tag
 def get_model_definition(init_args):
     field_type, args = init_args
@@ -59,7 +73,7 @@ def get_model_definition(init_args):
         else:
             my_args[k] = v
         
-    dump = u",".join([verbose, dumps(my_args)])
+    dump = u",".join([verbose, dumps(my_args, cls = LazyEncoder)])
     dump = dump.strip(',')
     return SafeString(dump)
 

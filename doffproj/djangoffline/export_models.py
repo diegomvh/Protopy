@@ -158,19 +158,22 @@ def export_models(models):
                 bases = get_class_bases(f)
                 args = SortedDict()
                 for base in bases:
-                    
-                    f_introspect = model_class_fields[base]
-                    args.update( f_introspect.get_init_args(f) )
+                    try:
+                        f_introspect = model_class_fields[base]
+                    except:
+                        pass
+                    else:
+                        args.update( f_introspect.get_init_args(f) )
+                
                 processed_fields[f.name] = (field_type, args )
                 #f_introspect = model_class_fields[f.__class__]
                 #processed_fields[f.name] = (field_type, f_introspect.get_init_args(f))
             except KeyError, e:
                 #TODO: Implement for more fields
-                print "Error", e
                 processed_fields[f.name] = (field_type, {})
         
         processed_models[name] = processed_fields
-    #print processed_models
+    print processed_models
     return processed_models
 
 def register_model_class(class_):
