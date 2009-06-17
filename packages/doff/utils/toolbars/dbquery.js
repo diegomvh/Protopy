@@ -2,8 +2,6 @@ require('doff.utils.toolbar', 'Panel');
 require('ajax');
 require('event');
 
-//http://www.comesfa.org/es/node/14805
-
 var DataBaseQuery = type('DataBaseQuery', Panel, {
     __init__: function() {
         super(Panel, this).__init__('dbquery', 'Query Tool');

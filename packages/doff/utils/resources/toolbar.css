@@ -1,4 +1,6 @@
 div#toolbar {
+    font-family: "Trebuchet MS" Verdana, Arial, sans-serif;
+    font-size: .9em;
     width: 90%;
     height: 20px;
     position: fixed;
@@ -57,35 +59,11 @@ div#toolbar ul li {
     padding-right: 6px;
     font-size: 70%;
     display: inline;
-}
-
-div#toolbar ul li.panel {
+    color: #112ABB;
+    text-decoration: underline;
     cursor:pointer;
 }
 
 div#toolbar ul li:last-child {
     border-right: none;
 }
-
-/*
-    ul#toolbar {
-	background: white none repeat scroll 0 0;
-	border-top:1px solid #93B2CC;
-	border-left:1px solid #93B2CC;
-	font-weight:bold;
-	text-indent:15px;
-	position: fixed;
-	bottom: 0em;
-	margin: 0;
-	padding: 1px 0;
-	right: 0em;
-    }
-    ul#toolbar li { 
-	border-right:1px solid black;
-	display:inline;
-	font-size:0.7em;
-	margin-right:1em;
-	padding-right:1em;
-    }
-    ul#toolbar li:last-child { border-right: none }
-*/

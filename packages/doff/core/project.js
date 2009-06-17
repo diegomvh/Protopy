@@ -58,10 +58,12 @@ var Project = type('Project', object, {
 	require('doff.utils.toolbar', 'ToolBar');
         
 	this.toolbar = new ToolBar();
-	this.status_element = this.toolbar.add('Offline');
+	require('doff.utils.toolbars.offline', 'Offline');
+	var offline = new Offline(false, this.settings['PROJECT']);
+        this.toolbar.add(offline);
         if (this.settings['DEBUG']) {
-	    require('doff.utils.dbquery', 'DataBaseQuery');
-            require('doff.utils.logger', 'Logger');
+	    require('doff.utils.toolbars.dbquery', 'DataBaseQuery');
+            require('doff.utils.toolbars.logger', 'Logger');
 	    var dbquery = new DataBaseQuery();
             var logger = new Logger();
             this.toolbar.add(dbquery);
@@ -75,7 +77,7 @@ var Project = type('Project', object, {
 	var self = this;
 	event.connect(window, 'load', function(){
 	    self.onLoad();
-	    self.handle('/');
+	    //self.handle('/');
 	    self.toolbar.show();
 	});
     },

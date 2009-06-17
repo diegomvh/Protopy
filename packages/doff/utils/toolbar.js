@@ -2,9 +2,10 @@ require('sys');
 require('event');
 
 var Panel = type('Panel', object, {
-    __init__: function(id, title) {
+    __init__: function(id, name, title) {
         this.id = id;
-	this.title = title;
+	this.name = name;
+	this.title = title || name;
         
 	this.content = document.createElement('div');
         this.content.id = this.id;
@@ -75,12 +76,12 @@ var ToolBar = type('Toolbar', object, {
     add: function(element) {
 	if (isinstance(element, Panel)) {
             var item = document.createElement('li');
-	    item.setAttribute('class', 'panel');
-	    item.panel = element;
-	    item.update(element.title);
+	    item.update(element.name);
 	    this.panel_items.push(element);
 	    this.ul.insert(item);
 	    this.content.insert(element.content);
+	    //TODO: Mejorar el sistema de paneles
+	    event.connect(item, 'click', this, 'show_panel');
             event.connect(item, 'click', element, 'toggle');
         } else if (isinstance(element, String)) {
 	    var item = document.createElement('li');
@@ -88,6 +89,10 @@ var ToolBar = type('Toolbar', object, {
 	    this.ul.insert(item);
 	}
         return item;
+    },
+
+    show_panel: function() {
+	this.panel_items.forEach(function(element) { element.hide(); });
     },
 
     hide: function() {
