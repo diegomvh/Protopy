@@ -22,7 +22,7 @@ publish({
     Post: Post
 });
 
-{% endcomment %} {% load model_export %}
+{% endcomment %} {% load export_models %}
 {% spaceless %}
 var models = require('doff.db.models.base');
 {% for model_name, fields in models.iteritems %}
