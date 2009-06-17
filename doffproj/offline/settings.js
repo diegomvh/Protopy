@@ -1,4 +1,13 @@
 {
+
+//For toolbar offline menu
+'ADMINS': [['Diego van Haaster', 'diegomvh@gmail.com'],
+           ['Nahuel Defosse', 'nahuel.defosse@gmail.com'] ],
+
+'PROJECT_NAME': 'El blog',
+'PROJECT_DESCRIPTION': 'Este es un ejemplo de un blog, creado para desarrollar un engendro demoniaco llamado doff',
+'PROJECT_IMAGE': '/static/weeds.png',
+
 'DEBUG': true,
 'TEMPLATE_DEBUG': this.DEBUG,
 
@@ -6,11 +15,6 @@
 'DATABASE_ENGINE': 'gears',
 'DATABASE_NAME': 'blog.db',
 'DATABASE_OPTIONS': {},
-
-//Project for the installer
-'PROJECT': {'NAME': 'El blog',
-	    'DESCRIPTION': 'Este es un ejemplo de un blog, creado para desarrollar un engendro demoniaco llamado doff',
-	    'IMAGE': '/static/weeds.png' },
 
 'MEDIA_URL': '/static/',
 

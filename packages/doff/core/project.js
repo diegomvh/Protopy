@@ -59,15 +59,12 @@ var Project = type('Project', object, {
         
 	this.toolbar = new ToolBar();
 	require('doff.utils.toolbars.offline', 'Offline');
-	var offline = new Offline(false, this.settings['PROJECT']);
-        this.toolbar.add(offline);
+	this.toolbar.add(new Offline(this));
         if (this.settings['DEBUG']) {
 	    require('doff.utils.toolbars.dbquery', 'DataBaseQuery');
             require('doff.utils.toolbars.logger', 'Logger');
-	    var dbquery = new DataBaseQuery();
-            var logger = new Logger();
-            this.toolbar.add(dbquery);
-            this.toolbar.add(logger);
+	    this.toolbar.add(new DataBaseQuery());
+            this.toolbar.add(new Logger());
 	}	
         this.toolbar.add('Settings');
         this.toolbar.add('Help');

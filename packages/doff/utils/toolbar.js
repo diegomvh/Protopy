@@ -6,13 +6,13 @@ var Panel = type('Panel', object, {
         this.id = id;
 	this.name = name;
 	this.title = title || name;
-        
+
 	this.content = document.createElement('div');
         this.content.id = this.id;
 	this.content.setAttribute('class', 'panel');
 	this.close_image = document.createElement('img');
         this.close_image.src = sys.module_url('doff.utils', 'resources/closebox.gif');
-        
+
 	//Style and other yerbas
 	this.height = '25em';
 	this.width = '80%';
@@ -70,29 +70,23 @@ var ToolBar = type('Toolbar', object, {
         this.stylesheet.rel = "stylesheet";
         this.stylesheet.type = "text/css";
         this.stylesheet.href = sys.module_url('doff.utils', 'resources/toolbar.css');
-	this.panel_items = [];
+	this.panels = [];
     },
 
     add: function(element) {
+        //Toolbar tab
+        var tab = document.createElement('li');
 	if (isinstance(element, Panel)) {
-            var item = document.createElement('li');
-	    item.update(element.name);
-	    this.panel_items.push(element);
-	    this.ul.insert(item);
+	    tab.update(element.name);
+            element.tab = tab;
+	    this.panels.push(element);
 	    this.content.insert(element.content);
 	    //TODO: Mejorar el sistema de paneles
-	    event.connect(item, 'click', this, 'show_panel');
-            event.connect(item, 'click', element, 'toggle');
-        } else if (isinstance(element, String)) {
-	    var item = document.createElement('li');
-	    item.update(element);
-	    this.ul.insert(item);
-	}
-        return item;
-    },
-
-    show_panel: function() {
-	this.panel_items.forEach(function(element) { element.hide(); });
+	    event.connect(tab, 'click', element, 'toggle');
+        } else if (isinstance(element, String))
+	    tab.update(element);
+        this.ul.insert(tab);
+        return tab;
     },
 
     hide: function() {
