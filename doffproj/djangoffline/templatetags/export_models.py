@@ -6,7 +6,7 @@ from django.utils.datastructures import SortedDict
 from simplejson.encoder import JSONEncoder
 from django.utils.functional import Promise
 from django.utils.encoding import force_unicode
-from django.db.models.fields.related import ManyToManyRel
+from django.db.models.fields.related import ManyToManyRel, ManyToManyField
 
 register = template.Library()
 
@@ -61,22 +61,32 @@ class LazyEncoder(JSONEncoder):
         else:
             return super(LazyEncoder, self).default(o)
 
-SKIP_KEYS = ('name', )
+SKIP_KEYS = ('name', 'rel', )
 
 @register.simple_tag
 def get_model_definition(init_args):
     field_type, args = init_args
-    verbose = ''
+    first_arg = ''
     my_args = SortedDict()
-    for k, v in args.iteritems():
-        if k in SKIP_KEYS:
-            pass
-        elif k == 'verbose_name':
-            verbose = '"%s"' % v
-        else:
-            my_args[k] = v
+    
+    if field_type == 'ManyToManyField':
+        first_arg = unicode(args['rel'].to._meta.object_name)
         
-    dump = u",".join([verbose, dumps(my_args, cls = LazyEncoder)])
+        for k, v in args.iteritems():
+            if k in SKIP_KEYS:
+                pass
+            else:
+                my_args[k] = v
+    else:
+        for k, v in args.iteritems():
+            if k in SKIP_KEYS:
+                pass
+            elif k == 'verbose_name':
+                first_arg = '"%s"' % v
+            else:
+                my_args[k] = v
+            
+    dump = u", ".join([first_arg, dumps(my_args, cls = LazyEncoder)])
     dump = dump.strip(',')
     return SafeString(dump)
 
