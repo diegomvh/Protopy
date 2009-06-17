@@ -61,6 +61,7 @@ class LazyEncoder(JSONEncoder):
         else:
             return super(LazyEncoder, self).default(o)
 
+SKIP_KEYS = ('name', )
 
 @register.simple_tag
 def get_model_definition(init_args):
@@ -68,7 +69,9 @@ def get_model_definition(init_args):
     verbose = ''
     my_args = SortedDict()
     for k, v in args.iteritems():
-        if k == 'verbose_name':
+        if k in SKIP_KEYS:
+            pass
+        elif k == 'verbose_name':
             verbose = '"%s"' % v
         else:
             my_args[k] = v
