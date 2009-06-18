@@ -8,6 +8,7 @@ import djangoffline
 # Uncomment the next two lines to enable the admin:
 #from django.contrib import admin
 #admin.autodiscover()
+from doffproj.blog.remote import site
 
 urlpatterns = patterns('',
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
@@ -21,6 +22,9 @@ urlpatterns = patterns('',
     (r'^$', include('doffproj.blog.urls'),),
 
     (r'^' + settings.OFFLINE_BASE + '/', include('doffproj.djangoffline.urls'), ),
+    
+    
+    (r'^remote/(.*)', site.root ),
 )
 
 # static media
