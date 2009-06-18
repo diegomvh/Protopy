@@ -20,6 +20,9 @@ syntax: glob
 *.svn*
 *.glo
 *.ist
+*.orig
+bundle*
+*bundle
 
 doffproj/static/doffproj_offline/*
 
