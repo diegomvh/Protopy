@@ -38,8 +38,13 @@ var Logger = type('Logger', [Panel, Handler], {
     },
 
     emit: function(record) {
-        if (!isundefined(this.output) && !this.paused)
+        print(record);
+        if (!isundefined(this.output) && !this.paused && (this.name == 'root' || record.name == this.name))
             this.output.insert(this.format(record));
+    },
+
+    set_name: function(event){
+        this.name = event.target.value;
     },
 
     _display: function() {
@@ -63,11 +68,14 @@ var Logger = type('Logger', [Panel, Handler], {
         });
 
 	this.select_module = $('logger-filter-modulo');
-	this.select_module.insert('<option value="---">---</option>');
+	this.select_module.insert('<option value="root">root</option>');
 	for each (var l in this.root.manager.loggers)
 	  this.select_module.insert('<option value="' + l.name + '">' + l.name + '</option>');
-	print(this.select_module.serialize());
-	this.output = $('logger-output');
+	event.connect(this.select_module, 'change', this, 'set_name');
+        this.select_module.selectedIndex = 0;
+        this.name = 'root';
+	
+        this.output = $('logger-output');
     }
 });
 

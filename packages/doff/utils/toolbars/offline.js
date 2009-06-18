@@ -14,7 +14,7 @@ var install_template =
         div#offline-content img {
             position: absolute;
             right: 8px;
-            top: 38px;
+            top: 7px;
         }
     </style>
     <div id="offline-content"></div>
@@ -27,7 +27,7 @@ var install_template =
 var Offline = type('Offline', [ Panel ], {
     __init__: function(project) {
 	this.config = project.settings;
-        super(Panel, this).__init__('logger', 'Offline', 'Install offline access for ' + this.config['PROJECT_NAME']);
+        super(Panel, this).__init__('offline', 'Offline', 'Install offline access for ' + this.config['PROJECT_NAME']);
 	this.height = '20em';
 	this.width = '40%';
     },
