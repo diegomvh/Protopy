@@ -18,6 +18,8 @@ syntax: glob
 *.c
 *.cpp
 *.svn*
+*.glo
+*.ist
 
 doffproj/static/doffproj_offline/*
 

@@ -744,9 +744,38 @@ como el método (GET, POST), los elementos de la query http.
 \end{figure}
 
 
-
-
 \chapter{Tecnologías Web en el cliente}
+
+\section{Google Gears}
+Google Gears es un plug-in para los navegadores: Mozilla Firefox, Internet
+Explorer y IE Mobile, Opera y Opera Mobile, Safari y Google Chrome. Gears es
+un proyecto de código abierto y añade 3 componentes básicos al navegador.
+\begin{itemize}
+  \item {\textbf{Local Server:} Permite almacenar en caché y proporcionar
+  recursos de aplicaciones (HTML, JavaScript, imágenes, etc.) de forma local. }
+  \item {\textbf{Database:} Permite almacenar datos localmente en una base
+  de datos relacional en la que se pueden realizar búsquedas. }
+  \item { \textbf{Worker Pool:} Permite realizar tareas que utilizan
+  intensamente el CPU de forma similar a ``procesos'' en un sistema operativo, de manera de que el 
+  las aplicaciones tengan mejor respuesta.}
+\end{itemize}
+Estos componentes estan enfocados en permitir al programador de aplicaciones web
+ejecutar sus aplicaciones cuando el navegador no está conectado al servidor.
+
+Vale aclarar que la aplicación debe ser transferida de manera previa al cliente.
+
+\subsection{Componentes adicionales de Google Gears}
+A partir de la versión 0.4 del Gears
+\begin{itemize}
+  \item{API para GIS, que permite acceder a la posición geográfica del usuario.}
+  \item {El API Blob, que permite gestionar bloques de datos binarios.}
+  \item {Accede a archivos en el equipo cliente a través del API de Google
+  Desktop.}
+  \item {Permite enviar y recibir Blobs con el API HttpRequest.}
+  \item {Localización de los cuadros de diálogo de Gears en varios idiomas.}  
+\end{itemize}
+
+
 
 \section{Estructura de un navegador}
 
@@ -760,6 +789,10 @@ como el método (GET, POST), los elementos de la query http.
 \input{desarrollo/protopy.tex}
 \input{desarrollo/doff.tex}
 
+
+%----------------------------------------------------------------------------
+% Capitulo 
+%----------------------------------------------------------------------------
 \chapter{Integración y metodología de desarrollo con framework web}
 \section{Mecanismos de extension de Django}
 
@@ -789,11 +822,11 @@ proyecto. Para que estos comandos sean detectados por el módulo de
 administración de poryectos deben  respetar la siguiente estructura dentro del
 directorio de la aplicación 
 \begin{verbatim}
-  management/
+management/
     __init__.py
     commands/
-	__init__.py
-	mi_comando.py
+        __init__.py
+        mi_comando.py
 \end{verbatim}
 
 Además la aplicación debe estar incluida en \textbf{INSTALLED\_APPS}
@@ -821,6 +854,10 @@ que no reciben argumentos; AppLabelCommand para la implementación de comandos
 que reciben como argumento el nombre de una aplicación instalada y 
 
 \section{Integración}
+Se decide utilizar un ManagedStore para almacenar la aplicación y los médios
+estáticos y uno para almacenar el Framework.
+
+ 
 \section{Convivencia}
 
 \subsection{Modos de trabajo}
@@ -833,9 +870,23 @@ Al activar e implementar el soporte offline para nuestra aplicacion, en el servi
 
 \chapter{Lineas futuras}
 \section{Sitio de administración}
+Django se caracteriza por brindar una aplicación (\textit{django.contrib.admin})
+de admnistración que permite realizar CRUD (\textit{Create}, \textit{Retrieve}
+\textit{Update}, \textit{Delete}) sobre los modelos de las aplicaciones de
+usuario, interactuando con la aplicación \textit{django.contrib.auth} que provee
+usuarios, grupos y permisos.
+ 
 \section{Historial de navegación}
-\section{Workers con soporte para Javascript 1.7}
 
+\section{Workers con soporte para Javascript 1.7}
+Google Gears provee un mecanismo de ejecución de código en el cliente de manera
+concurrente llamado Worker Pool. De esta manera tareas que demandan tiempo de
+CPU pueden ser envaidas a segundo plano, de manera de no entorpecer el refresco 
+de la GUI.
+Una caractersística de los worker pools, es que se ejecutan en un ámbito de 
+nombres diferente al del ``hilo principal''. Es decir, existe encapsulamiento
+de su estado.
+ 
 \appendix
 \input{apendices/protopy.tex}
 \input{apendices/doff.tex}
