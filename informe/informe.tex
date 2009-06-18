@@ -8,8 +8,7 @@
 \usepackage{glossary}
 \usepackage{fancyhdr}
 \usepackage{epigraph} %para los quote en cada capitulo
-\usepackage{color}
-\usepackage{xcolor}
+\usepackage[usenames,dvipsnames]{color}
 \usepackage{listings}
 \usepackage{caption}
 
@@ -63,11 +62,11 @@
     backgroundcolor=\color{gray97},
     rulesepcolor=\color{black},
     %
-    stringstyle=\ttfamily,
+    stringstyle=\color{ForestGreen}\ttfamily,
     showstringspaces = false,
     basicstyle=\small\ttfamily,
     commentstyle=\color{gray45},
-    keywordstyle=\bfseries,
+    keywordstyle=\color{RedOrange}\bfseries,
     %
     numbers=left,
     numbersep=15pt,
@@ -83,18 +82,21 @@
   backgroundcolor=\color{gray80},
   numbers=none,
   framexleftmargin=0pt,
-  framexrightmargin=6pt
+  framexrightmargin=6pt,
+  keywordstyle=\color{NavyBlue}\bfseries,
+  otherkeywords={>>>}
 }
 \lstdefinestyle{python}{
   language=Python
 }
 \lstdefinestyle{javascript}{
-  language=Java
+  language=Java,
+  otherkeywords={function,var,\$,\$\$}
 }
 
 %Formato de los titulos en el codigo
 \DeclareCaptionFont{white}{\color{white}}
-\DeclareCaptionFormat{listing}{\colorbox{gray}{\parbox{\textwidth}{#1#2#3}}}
+\DeclareCaptionFormat{listing}{\colorbox{gray45}{\parbox{\textwidth}{#1#2#3}}}
 \captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
 
 \begin{document}
