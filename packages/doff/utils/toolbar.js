@@ -7,11 +7,25 @@ var Panel = type('Panel', object, {
 	this.name = name;
 	this.title = title || name;
 
+        this.body = document.createElement('div');
+        this.body.id = this.id;
+        this.body.setAttribute('class', 'panel');
+
+        //Header
+        this.header = document.createElement('h1');
+        this.header.setAttribute('class', 'header');
+	this.header.insert('<span>' + this.title + '</span>');
+        var close_image = document.createElement('img');
+        close_image.src = sys.module_url('doff.utils', 'resources/closebox.gif');
+        this.header.insert(close_image);
+        event.connect(close_image, 'click', this, 'hide');
+	
+        //Content
 	this.content = document.createElement('div');
-        this.content.id = this.id;
-	this.content.setAttribute('class', 'panel');
-	this.close_image = document.createElement('img');
-        this.close_image.src = sys.module_url('doff.utils', 'resources/closebox.gif');
+	this.content.setAttribute('class', 'content');
+
+        this.body.insert(this.header);
+        this.body.insert(this.content);
 
 	//Style and other yerbas
 	this.height = '25em';
@@ -20,25 +34,25 @@ var Panel = type('Panel', object, {
     },
 
     set height(value) {
-	this.content.style.height = value;
+	this.body.style.height = value;
     },
     
     set width(value) {
-	this.content.style.width = value;
+	this.body.style.width = value;
     },
 
     hide: function() {
-	this.content.hide();
+	this.body.hide();
     },
 
     show: function() {
 	if (!this.displayed)
 	    this._display();
-	this.content.show();
+	this.body.show();
     },
 
     visible: function() {
-        return this.content.visible();
+        return this.body.visible();
     },
 
     toggle: function() {
@@ -49,12 +63,7 @@ var Panel = type('Panel', object, {
 
     _display: function() {
         var content = this.get_template();
-        var head = document.createElement('h1');
-	head.insert('<span>' + this.title + '</span>');
-        head.insert(this.close_image);
-        event.connect(this.close_image, 'click', this, 'hide');
-	this.content.insert(head);
-        this.content.insert(content);
+        this.content.update(content);
         this.displayed = true;
     }
 
@@ -77,10 +86,10 @@ var ToolBar = type('Toolbar', object, {
         //Toolbar tab
         var tab = document.createElement('li');
 	if (isinstance(element, Panel)) {
-	    tab.update(element.name);
+            tab.update(element.name);
             element.tab = tab;
 	    this.panels.push(element);
-	    this.content.insert(element.content);
+	    this.content.insert(element.body);
 	    //TODO: Mejorar el sistema de paneles
 	    event.connect(tab, 'click', element, 'toggle');
         } else if (isinstance(element, String))

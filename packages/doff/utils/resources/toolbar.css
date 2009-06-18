@@ -1,6 +1,6 @@
 div#toolbar {
     font-family: "Trebuchet MS" Verdana, Arial, sans-serif;
-    font-size: .9em;
+    font-size: 1em;
     width: 90%;
     height: 20px;
     position: fixed;
@@ -14,8 +14,6 @@ div#toolbar {
 }
 
 div#toolbar div.panel {
-    /*width: 80%;
-    height: 25em;*/
     background: #EEEEEE;
     border-top: 1px solid #CCCCCC;
     border-left: 1px solid #CCCCCC;
@@ -27,7 +25,7 @@ div#toolbar div.panel {
     margin-left: 5%;
 }
 
-div#toolbar div.panel h1 {
+div#toolbar div.panel h1.header {
     background-color: #3A4856;
     color: #FFFFFF;
     font-size: 12pt;
@@ -38,11 +36,19 @@ div#toolbar div.panel h1 {
     vertical-align: middle;
 }
 
-div#toolbar div.panel h1 img {
+div#toolbar div.panel h1.header img {
     float: right;
     margin-right: 4px;
     margin-top: -19px;
 }
+
+div#toolbar div.panel div.content {
+    text-indent: 0;
+    margin: 4px;
+    position: relative;
+    vertical-align: middle;
+}
+
 
 div#toolbar ul {
     border-top: 1px solid #CCCCCC;

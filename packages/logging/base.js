@@ -54,7 +54,7 @@ information to be logged.
 */
 var LogRecord = type('LogRecord', object, {
     //Initialize a logging record with interesting information.
-    __init__: function __init__(name, level, pathname, lineno, msg, args, kwargs) {
+    __init__: function(name, level, pathname, lineno, msg, args, kwargs) {
         var ct = new Date();
         this.name = name;
         this.msg = msg;
@@ -73,7 +73,7 @@ var LogRecord = type('LogRecord', object, {
         this.relative_created = datetime.datetime((this.created - _start_time));
     },
 
-    __str__: function __str__() {
+    __str__: function() {
         return '<LogRecord: %s, %s, %s, %s, "%s">'.subs(this.name, this.levelno, this.pathname, this.lineno, this.msg);
     },
 
@@ -112,7 +112,7 @@ var Filter = type('Filter', object, {
     "A.B.C", "A.B.C.D", "A.B.D" etc. but not "A.BB", "B.A.B" etc. If
     initialized with the empty string, all events are passed.
     */
-    __init__: function __init__(name) {
+    __init__: function(name) {
         /*
         Initialize a filter.
 
@@ -124,7 +124,7 @@ var Filter = type('Filter', object, {
         this.nlen = len(name);
     },
 
-    filter: function filter(record) {
+    filter: function(record) {
         /*
         Determine if the specified record is to be logged.
 
@@ -143,25 +143,25 @@ var Filter = type('Filter', object, {
 
 //A base class for loggers and handlers which allows them to share common code.
 var Filterer = type('Filterer', object, {
-    __init__: function __init__() {
+    __init__: function() {
         //Initialize the list of filters to be an empty list.
         this.filters = [];
     },
 
-    add_filter: function add_filter(filter) {
+    add_filter: function(filter) {
         //Add the specified filter to this handler.
         if (!include(this.filters, filter))
             this.filters.push(filter);
     },
 
-    remove_filter: function remove_filter(filter) {
+    remove_filter: function(filter) {
         //Remove the specified filter from this handler.
         var index = this.filters.indexOf(filter);
 	if (index != -1)
             delete this.filters[index];
     },
 
-    filter: function filter(record) {
+    filter: function(record) {
         /*
         Determine if a record is loggable by consulting all the filters.
 
@@ -203,11 +203,11 @@ var Handler = type('Handler', [ Filterer ], {
         this.level = level;
     },
 
-    set_level: function (level) {
+    set_level: function(level) {
         this.level = level;
     },
 
-    set_formatter: function (formatter) {
+    set_formatter: function(formatter) {
         this.formatter = formatter;
     },
 
@@ -233,7 +233,7 @@ var Handler = type('Handler', [ Filterer ], {
         throw new NotImplementedError('emit must be implemented by Handler subclasses');
     },
 
-    handle: function handle(record) {
+    handle: function(record) {
         /*
         Conditionally emit the specified logging record.
 
@@ -258,7 +258,7 @@ var Manager = type('Manager', object, {
     There is [under normal circumstances] just one Manager instance, which
     holds the hierarchy of loggers.
     */
-    __init__: function __init__(rootnode) {
+    __init__: function(rootnode) {
         /*
         Initialize the manager with the root node of the logger hierarchy.
         */
@@ -269,7 +269,7 @@ var Manager = type('Manager', object, {
 	this.loggers = [];
     },
 
-    get_logger: function get_logger(name) {
+    get_logger: function(name) {
         /*
         Get a logger with the specified name (channel name), creating it
         if it doesn't yet exist. This name is a dot-separated hierarchical
@@ -301,7 +301,7 @@ var Manager = type('Manager', object, {
         return rv;
     },
 
-    _fixup_parents: function _fixup_parents(alogger) {
+    _fixup_parents: function(alogger) {
         /*
         Ensure that there are either loggers or placeholders all the way
         from the specified logger to the root of the logger hierarchy.
@@ -387,11 +387,11 @@ var Logger = type('Logger', [ Filterer ], {
 
         logger.debug("Houston, we have a %s", "thorny problem", exc_info=1)
         */
-	arguments = new Arguments(arguments);
+        var _arg = new Arguments(arguments);
         if (this.manager.disable >= DEBUG)
             return;
         if (DEBUG >= this.get_effective_level())
-            this._log(DEBUG, msg, arguments.args, arguments.kwargs);
+            this._log(DEBUG, msg, _arg.args, _arg.kwargs);
     },
 
     info: function info(msg) {

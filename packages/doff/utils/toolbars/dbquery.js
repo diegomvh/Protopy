@@ -4,7 +4,7 @@ require('event');
 
 var DataBaseQuery = type('DataBaseQuery', Panel, {
     __init__: function() {
-        super(Panel, this).__init__('dbquery', 'Query Tool');
+        super(Panel, this).__init__('dbquery', 'Query Tool', 'Consultas sobre la base de datos');
         this.current_command_index = 0;
         this.command_history = [];
 	//Black magic, the first time init the db
