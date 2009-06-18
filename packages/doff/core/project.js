@@ -74,7 +74,7 @@ var Project = type('Project', object, {
 	var self = this;
 	event.connect(window, 'load', function(){
 	    self.onLoad();
-	    //self.handle('/');
+	    self.handle('/');
 	    self.toolbar.show();
 	});
     },
