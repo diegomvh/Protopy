@@ -2,6 +2,9 @@
 Remote model proxy for remote models in gears client.
 '''
 from django.http import HttpResponse, HttpResponseRedirect
+from django.http import Http404
+from django.core.urlresolvers import Resolver404
+from django.utils.encoding import smart_str
 
 __all__ = ('RemoteModelProxy', 
            
@@ -21,31 +24,42 @@ class RemoteSite(object):
         self.name = "cosas"
         
     def get_urls(self):
-        from django.conf.urls.defaults import patterns, url, include
-        urlpatterns = patterns('',
-            (r'^$', self.index),
-        )
-        
-        return urlpatterns
-    
-    urls = property( lambda s: s.get_urls() )
-    
-    def root(self, request, url):
-        ''' Pegarle al get_urls '''
-        # dispatchear...
-        if request.method == 'GET' and not request.path.endswith('/'):
-            return HttpResponseRedirect(request.path + '/')
-        
-        url = url.rstrip('/') # Trim trailing slash, if it exists.
+        from django.conf.urls.defaults import patterns, url
 
-        if url == '':
-            return HttpResponse("La url es: %s" % url)
-        elif url == 'project_manifest':
-            pass
-        
-            
-        return self.index(request)
-    
-    def index(self, request):
-        return HttpResponse('Hola')
-    
+        urlpatterns = patterns('',
+            url(r'^$',
+                self.index,
+                kwargs={'p1': 'Pepe'}, 
+                name='%sadmin_index' % self.name),
+            url(r'^(?P<app_label>\w+)/$',
+                self.app_index,
+                kwargs={'p1': 'Pepe'}, 
+                name='%sadmin_app_list' % self.name),
+        )
+
+        return urlpatterns
+
+    urlpatterns = property(get_urls)
+
+    def root(self, request, url):
+        for pattern in self.urlpatterns:
+            try:
+                sub_match = pattern.resolve(url)
+            except Resolver404, e:
+                pass
+            else:
+                if sub_match:
+                    sub_match_dict = {}
+                    for k, v in sub_match[2].iteritems():
+                        sub_match_dict[smart_str(k)] = v
+                    callback = sub_match[0]
+                    callback_args = sub_match[1]
+                    callback_kwargs = sub_match_dict
+                    return callback(request, *callback_args, **callback_kwargs)
+        raise Http404()
+
+    def index(self, request, p1):
+        return HttpResponse('Hola %s' % name)
+
+    def app_index(self, request, app_label, p1):
+        return HttpResponse('Hola %s - %s' % (app_label, p1))
