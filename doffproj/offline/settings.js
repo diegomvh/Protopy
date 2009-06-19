@@ -1,9 +1,5 @@
 {
 
-//For toolbar offline menu
-'ADMINS': [['Diego van Haaster', 'diegomvh@gmail.com'],
-           ['Nahuel Defosse', 'nahuel.defosse@gmail.com'] ],
-
 'PROJECT_NAME': 'El blog',
 'PROJECT_DESCRIPTION': 'Este es un ejemplo de un blog, creado para desarrollar un engendro demoniaco llamado doff',
 'PROJECT_IMAGE': '/static/weeds.png',

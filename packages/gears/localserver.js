@@ -7,15 +7,19 @@ if (!sys.browser.features.Gears) {
 
 var localServer = google.gears.factory.create('beta.localserver');
 
+function can_serve_locally(url) {
+    return localServer.canServeLocally(url);
+}
+
 //TODO: Se puede explotar mucho mas este objeto
 var ResourceStore = type ('ResourceStore', object, {
     _store: null,
 
-    '__init__': function __init__(name, requiredCookie) {
+    __init__: function(name, requiredCookie) {
 	this._store = localServer.createStore(name, requiredCookie);
     },
 
-    'delete': function delete() {
+    delete: function() {
 	localServer.removeStore(this.name, this.required_cookie);
     },
 
@@ -91,14 +95,14 @@ var ResourceStore = type ('ResourceStore', object, {
 var ManagedResourceStore = type ('ManagedResourceStore', object, {
     _store: null,
 
-    '__init__': function __init__(name, requiredCookie) {
+    __init__: function(name, requiredCookie) {
 	this._store = localServer.createManagedStore(name, requiredCookie);
 	this._store.onerror = getattr(this, 'onSyncError');
         this._store.oncomplete = getattr(this, 'onSyncComplete');
 	this._store.onprogress = getattr(this, 'onSyncProgress');
     },
 
-    'delete': function delete() {
+    delete: function() {
 	localServer.removeManagedStore(this.name, this.required_cookie);
     },
 
@@ -160,7 +164,7 @@ var ManagedResourceStore = type ('ManagedResourceStore', object, {
 });
 
 publish({
-    canServeLocally: localServer.canServeLocally,
+    can_serve_locally: can_serve_locally,
     ResourceStore: ResourceStore,
     ManagedResourceStore: ManagedResourceStore
 });

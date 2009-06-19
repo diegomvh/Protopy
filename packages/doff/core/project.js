@@ -43,11 +43,12 @@ var Project = type('Project', object, {
         //Url para ver si estoy conectado
         this.availability_url = sys.module_url(offline_support, '/network_check');
 
-	//Inicio de los stores
-	require('gears.localserver', 'ManagedResourceStore');
-	this.project = new ManagedResourceStore(package + '_project');
+	//Inicio de los stores y determino la instalacion
+	var localserver = require('gears.localserver');
+        this.is_installed = localserver.can_serve_locally('/');
+	this.project = new localserver.ManagedResourceStore(package + '_project');
 	this.project.manifest_url = sys.module_url(offline_support, '/manifests/project.json');
-	this.system = new ManagedResourceStore(package + '_system');
+	this.system = new localserver.ManagedResourceStore(package + '_system');
 	this.system.manifest_url = sys.module_url(offline_support, '/manifests/system.json');
 	
 	//Inicio el logging
@@ -60,8 +61,9 @@ var Project = type('Project', object, {
 	require('doff.utils.toolbar', 'ToolBar');
         
 	this.toolbar = new ToolBar(this.html);
-	require('doff.utils.toolbars.offline', 'Offline');
-	this.toolbar.add(new Offline(this));
+        //The status and installer bar
+	require('doff.utils.toolbars.status', 'Status');
+	this.toolbar.add(new Status(this));
         if (this.settings['DEBUG']) {
 	    require('doff.utils.toolbars.dbquery', 'DataBaseQuery');
             require('doff.utils.toolbars.logger', 'Logger');
@@ -118,17 +120,16 @@ var Project = type('Project', object, {
 	var self = this;
 	var get = new ajax.Request(this._get_availability_url(), {
 	    method: 'GET',
-	    onSuccess: function(transport) {
-		if(!self.is_online){
-		    self.is_online = true;
-		    self.onNetwork("online");
-		}
-	    },
-	    onException: function(transport){
-		if(self.is_online) {
+            onComplete: function(transport) {
+	       if (200 == transport.status) {
+	           if(!self.is_online) {
+		      self.is_online = true;
+		      self.onNetwork("online");
+                   }
+	       } else if(self.is_online) {
 		    self.is_online = false;
 		    self.onNetwork("offline");
-		}
+	       }
 	    }
 	});
     },
