@@ -59,7 +59,7 @@ class RemoteSite(object):
         raise Http404()
 
     def index(self, request, p1):
-        return HttpResponse('Hola %s' % name)
+        return HttpResponse('Hola %s' % p1)
 
     def app_index(self, request, app_label, p1):
         return HttpResponse('Hola %s - %s' % (app_label, p1))
