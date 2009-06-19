@@ -8,8 +8,8 @@ require('doff.core.http');
 var Handler = type('Handler', object, {
     _events_handlers: [],
     _element_event: {'FORM': 'onsubmit', 'A': 'onclick'},
-    __init__: function(urlconf, target) {
-        this.target = target;
+    __init__: function(urlconf, html) {
+        this.html = html;
 	//Apagando la chache del selector
 	dom.cache(false);
 	//Crear el resolver
@@ -42,7 +42,7 @@ var Handler = type('Handler', object, {
                 //Trato el response
                 if (response.status_code == 200) {
                     this.clear_hooks();
-                    this.target.update(response.content);
+                    this.html['body'].update(response.content);
                     this.hook_events();
                 } else if (response.status_code == 302) {
                     return this.handle(response['Location']);
@@ -81,7 +81,7 @@ var Handler = type('Handler', object, {
     hook_events: function(){
         var self = this;
 	var re = keys(this._element_event).reduce(
-            function(previous, current) { return previous.concat(self.target.select(current)); }, []);
+            function(previous, current) { return previous.concat(self.html['body'].select(current)); }, []);
 	re.forEach(function(e) {
             self._events_handlers.push(event.connect(e, self._element_event[e.tagName], getattr(self, 'handle')));
         });

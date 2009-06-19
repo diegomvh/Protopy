@@ -8,16 +8,24 @@ var Project = type('Project', object, {
     availability_url: null,
     going_online: false,
     do_net_checking: true,
-    target_element: document.createElement('div'),
 
     onLoad: function() {
-	//Add the target element to html
-	var body = $$('body')[0];
-	body.update(this.target_element);
+        //Tiro cables al html
+        this.html = {'head': $$('head')[0], 'body': $$('body')[0]};
+
+        //Inicio del handler para las url
+	require('doff.core.urlhandler', 'Handler');
+	this.handler = new Handler(this.settings.ROOT_URLCONF, this.html);
+
+        this._create_toolbar();
+
+        this._start_network_thread();
+
     },
 
     onNetwork: function(type) {
-	this.status_element.update(type);
+        var m = 'go_' + type;
+	this[m]();
     },
 
     handle: function(value) {
@@ -31,13 +39,9 @@ var Project = type('Project', object, {
         //Registro la ruta absoluta al proyecto
         sys.register_path(this.package, sys.module_url(offline_support, '/project'));
 	this.path = sys.paths[this.package];
-	
+
         //Url para ver si estoy conectado
         this.availability_url = sys.module_url(offline_support, '/network_check');
-
-	//Inicio del handler para las url
-	require('doff.core.urlhandler', 'Handler');
-	this.handler = new Handler(this.settings.ROOT_URLCONF, this.target_element);
 
 	//Inicio de los stores
 	require('gears.localserver', 'ManagedResourceStore');
@@ -49,15 +53,13 @@ var Project = type('Project', object, {
 	//Inicio el logging
 	require('logging.config', 'file_config');
         file_config(sys.module_url(this.package, 'logging.js'));
-
-	this._create_toolbar();
     },
 
     _create_toolbar: function(){
 	//The toolbar
 	require('doff.utils.toolbar', 'ToolBar');
         
-	this.toolbar = new ToolBar();
+	this.toolbar = new ToolBar(this.html);
 	require('doff.utils.toolbars.offline', 'Offline');
 	this.toolbar.add(new Offline(this));
         if (this.settings['DEBUG']) {
@@ -68,15 +70,11 @@ var Project = type('Project', object, {
 	}	
         this.toolbar.add('Settings');
         this.toolbar.add('Help');
+        this.toolbar.show();
     },
 
     bootstrap: function(){
-	var self = this;
-	event.connect(window, 'load', function(){
-	    self.onLoad();
-	    self.handle('/');
-	    self.toolbar.show();
-	});
+	event.connect(window, 'load', this, 'onLoad');
     },
 
     sync_stores: function() {
@@ -108,40 +106,27 @@ var Project = type('Project', object, {
 	return this._settings;
     },
 
-    go_offline: function(){ 
-	if((this.sync.is_syncing)||(this.going_online)){ 
-	    return; 
-	}
-	this.going_online = false;
-	this.is_online = false;
+    go_offline: function() { 
+        this.handler.hook_events();
     },
 	
-    go_online: function(callback){
-	if(this.sync.is_syncing || this.going_online){
-	    return;
-	}
-	this.going_online = true;
-	this.is_online = false;
-	
-	// see if can reach our web application's web site
-	this._is_site_available(callback);
+    go_online: function(callback) {
+        this.handler.clear_hooks();
     },
 	
     network_check: function network_check(){
 	var self = this;
 	var get = new ajax.Request(this._get_availability_url(), {
 	    method: 'GET',
-	    asynchronous : false,
 	    onSuccess: function(transport) {
 		if(!self.is_online){
 		    self.is_online = true;
 		    self.onNetwork("online");
 		}
 	    },
-	    onFailure: function(transport){
-		if(self.is_online){
+	    onException: function(transport){
+		if(self.is_online) {
 		    self.is_online = false;
-		    //self.sync.is_syncing = false;
 		    self.onNetwork("offline");
 		}
 	    }
