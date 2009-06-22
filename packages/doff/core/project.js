@@ -18,9 +18,6 @@ var Project = type('Project', object, {
 	this.handler = new Handler(this.settings.ROOT_URLCONF, this.html);
 
         this._create_toolbar();
-
-        this._start_network_thread();
-
     },
 
     onNetwork: function(type) {
@@ -34,32 +31,36 @@ var Project = type('Project', object, {
 
     __init__: function(package, offline_support) {
 	this.package = package;
-	//Registro la ruta absoluta al soporte offline
-	sys.register_path(offline_support, '/' + offline_support);
+        this.offline_support = offline_support;
+	
+        //Registro la ruta absoluta al soporte offline
+	sys.register_path(this.offline_support, '/' + offline_support);
         //Registro la ruta absoluta al proyecto
-        sys.register_path(this.package, sys.module_url(offline_support, '/project'));
+        sys.register_path(this.package, sys.module_url(this.offline_support, '/project'));
 	this.path = sys.paths[this.package];
 
         //Url para ver si estoy conectado
         this.availability_url = sys.module_url(offline_support, '/network_check');
 
-	//Inicio de los stores y determino la instalacion
-	var localserver = require('gears.localserver');
-        this.is_installed = localserver.can_serve_locally('/');
-	this.project = new localserver.ManagedResourceStore(package + '_project');
-	this.project.manifest_url = sys.module_url(offline_support, '/manifests/project.json');
-	this.system = new localserver.ManagedResourceStore(package + '_system');
-	this.system.manifest_url = sys.module_url(offline_support, '/manifests/system.json');
-	
+        this.is_gears = !!sys.gears;
+        if (this.is_gears && sys.gears.factory.hasPermission) {
+            //Inicio de los stores
+            this._create_stores();
+        }
+
 	//Inicio el logging
 	require('logging.config', 'file_config');
-        file_config(sys.module_url(this.package, 'logging.js'));
+        try {
+            file_config(sys.module_url(this.package, 'logging.js'));
+        } catch (except) {}
+
+        this._start_network_thread();
     },
 
     _create_toolbar: function(){
 	//The toolbar
 	require('doff.utils.toolbar', 'ToolBar');
-        
+
 	this.toolbar = new ToolBar(this.html);
         //The status and installer bar
 	require('doff.utils.toolbars.status', 'Status');
@@ -69,19 +70,23 @@ var Project = type('Project', object, {
             require('doff.utils.toolbars.logger', 'Logger');
 	    this.toolbar.add(new DataBaseQuery());
             this.toolbar.add(new Logger());
-	}	
-        this.toolbar.add('Settings');
+	}
         this.toolbar.add('Help');
         this.toolbar.show();
     },
 
-    bootstrap: function(){
-	event.connect(window, 'load', this, 'onLoad');
+    _create_stores: function(){
+	//The toolbar
+	var localserver = require('gears.localserver');
+
+	this.project = new localserver.ManagedResourceStore(this.package + '_project');
+        this.project.manifest_url = sys.module_url(this.offline_support, '/manifests/project.json');
+        this.system = new localserver.ManagedResourceStore(this.package + '_system');
+        this.system.manifest_url = sys.module_url(this.offline_support, '/manifests/system.json');
     },
 
-    sync_stores: function() {
-        this.system.check_for_update();
-        this.project.check_for_update();
+    bootstrap: function(){
+	event.connect(window, 'load', this, 'onLoad');
     },
 
     get settings() {
@@ -115,7 +120,50 @@ var Project = type('Project', object, {
     go_online: function(callback) {
         this.handler.clear_hooks();
     },
-	
+
+    install_gears: function() {
+        var message = 'To enable fast client-side search of this website '
+            + 'please install Gears';
+        var url = 'http://gears.google.com/?action=install'
+            + '&message=' + encodeURIComponent(message)
+            + '&return=' + encodeURIComponent(window.location.href);
+        window.location.href = url;
+        //Goodbye blue sky
+    },
+
+    get is_allowed() {
+        if (!this.is_gears) this.install_gears();
+        this._allowed = sys.gears.factory.hasPermission;
+        if (this._allowed)
+            return this._allowed;
+        var site_name = this.settings.PROJECT_NAME;
+        var icon = this.settings.PROJECT_IMAGE;
+        var msg = this.settings.PROJECT_DESCRIPTION
+            + 'This site would like to use Google Gears to enable fast, '
+            + 'as-you-type searching of its documents.';
+
+        this._allowed = sys.gears.factory.getPermission(site_name, icon, msg);
+        return this._allowed;
+    },
+
+    get is_installed() {
+        if (this._installed)
+            return this._installed;
+        var localserver = require('gears.localserver');
+        this._installed = localserver.can_serve_locally('/');
+        return this._installed;
+    },
+
+    install: function() {
+        if (!this.is_allowed) return;
+
+        this.system.check_for_update();
+        this.project.check_for_update();
+    },
+
+    /********************************
+     * Network Check
+     */
     network_check: function network_check(){
 	var self = this;
 	var get = new ajax.Request(this._get_availability_url(), {
@@ -174,30 +222,6 @@ function get_settings() {
     return get_project().settings;
 }
 
-/* Ideas que tengo que agregar
-
-if (!google.gears.factory.hasPermission) {
-    var siteName = 'My Site';
-    var icon = 'images/myIcon.png';
-    var msg = 'This site would like to use Google Gears to enable fast, '
-            + 'as-you-type searching of its documents.';
-    
-    var allowed = google.gears.factory.getPermission(siteName, icon, msg);
-}
-
---Detectar si esta gears y mostrar el link para instalacion
-!sys.browser.features.Gears
-var message = 'To enable fast client-side search of this website '
-            + 'please install Gears';
-var url = 'http://gears.google.com/?action=install'
-            + '&message=' + encodeURIComponent(message)
-            + '&return=' + encodeURIComponent(window.location.href);
-widget.innerHTML = '<a href="' + url + '">Install '
-                + 'Gears to enable fast search!</a>';
-return false;
-
-
-*/
 publish({
     get_project: get_project,
     new_project: get_project,

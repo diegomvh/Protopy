@@ -1,10 +1,13 @@
 {% extends "index.html" %}
 {% block middle %}
-<h1>Inserte un nuevo Tag</h1>
+<h1 id="titulo">Inserte un nuevo Tag</h1>
 <div>
     <form id='{{ formpost.__name__ }}' action="/blog/add_post/" method="post">
         {{ formpost.as_ul }}
         <input type='submit' value='guardar'/>
     </form>
 </div>
+<script type="text/javascript">
+$('titulo').setOpacity(0.4);
+</script>
 {% endblock %}

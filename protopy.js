@@ -307,7 +307,7 @@
 						document.createElement('form')['__proto__']
 	    }
 	},
-	get_gears: get_gears,
+        gears: get_gears(),
 	register_path: function(module, path) { 
 	    ModuleManager.register_path(module, path); 
 	},
@@ -319,7 +319,7 @@
 	manager: ModuleManager
     });
 
-    sys.browser.features.Gears = !!get_gears() || false;
+    //sys.browser.Gears = get_gears();
 
     /******************** exception ***********************/
     /* Modulo: exception, clases o tipos de excepciones que preovee protopy */ 

@@ -1,6 +1,6 @@
 require('sys');
 
-if (!sys.browser.features.Gears) {
+if (!sys.gears) {
     alert('Google gears is not installed, please install from http://gears.google.com/, redirecting now.');
     window.location.href = 'http://gears.google.com/';
 }
@@ -146,19 +146,19 @@ var ManagedResourceStore = type ('ManagedResourceStore', object, {
 	return this._store.currentVersion;
     },
 
-    onSyncProgress: function onSyncProgress(event) {
+    onSyncProgress: function(event) {
 	print(Math.ceil(((event.filesComplete / event.filesTotal) * 100)) + "%");
     },
 
-    onSyncComplete: function onSyncComplete() {
+    onSyncComplete: function() {
 	print("Sync Complete.");
     },
 
-    onSyncError: function onSyncError(event) {
+    onSyncError: function(event) {
 	print("Error Syncing.");
     },
 
-    check_for_update: function check_for_update(){
+    check_for_update: function(){
 	this._store.checkForUpdate();
     }
 });

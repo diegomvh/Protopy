@@ -24,9 +24,7 @@ var uninstalled_template =
     <h3>Motor: %(DATABASE_ENGINE)s</h3><br>
     <h3>Base de Datos: %(DATABASE_NAME)s</h3><br>
     <img src="%(PROJECT_IMAGE)s" width="100"/>
-    </div>
-    <div id="status-buttons">
-        <button id="status-button-enable">Enable offline access</button>
+    <button id="status-button-enable">Enable offline access</button>
     </div>
 ]]></r>).toString();
 
@@ -46,9 +44,8 @@ var installed_template =
             top: 7px;
         }
     </style>
-    <div id="status-content"></div>
-    <div id="status-buttons">
-        <button id="status-button-disable">Disable offline access</button>
+    <div id="status-content">
+    <button id="status-button-disable">Disable offline access</button>
     </div>
 ]]></r>).toString();
 
@@ -92,11 +89,15 @@ var Status = type('Status', [ Panel ], {
         else
             return uninstalled_template.subs(this.config);
     },
-    _display: function(){
+
+    _display: function() {
         super(Panel, this)._display();
 
-        event.connect($('status-button-enable'), 'click', this, 'go_install');
-        event.connect($('status-button-disable'), 'click', this, 'go_uninstall');
+        if (this.project.is_installed) {
+            event.connect($('status-button-disable'), 'click', this.project, 'uninstall');
+        } else {
+            event.connect($('status-button-enable'), 'click', this.project, 'install');
+        }
     }
 });
 
