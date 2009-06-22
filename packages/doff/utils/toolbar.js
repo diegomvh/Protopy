@@ -70,7 +70,8 @@ var Panel = type('Panel', object, {
 });
 
 var ToolBar = type('Toolbar', object, {
-    __init__: function() {
+    __init__: function(html) {
+        this.html = html;
         this.content = document.createElement('div');
         this.content.id = 'toolbar';
         this.ul = document.createElement('ul');
@@ -111,9 +112,8 @@ var ToolBar = type('Toolbar', object, {
     },
 
     _display: function () {
-	var body = $$('body')[0];
-        body.insert(this.stylesheet);
-	body.insert(this.content);
+	this.html['head'].insert(this.stylesheet);
+	this.html['body'].insert(this.content);
     }
     
 });

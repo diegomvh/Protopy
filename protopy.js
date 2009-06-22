@@ -526,7 +526,7 @@
     var timer = ModuleManager.create('timer', 'built-in', {
 	delay: function(f) {
 	    var __method = f, args = array(arguments).slice(1), timeout = args.shift() * 1000;
-	    return window.setTimeout(function() { return _method.apply(_method, args); }, timeout);
+	    return window.setTimeout(function() { return __method.apply(__method, args); }, timeout);
 	},
 	defer: function(f) {
 	    var args = [0.01].concat(array(arguments).slice(1));

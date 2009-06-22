@@ -18,8 +18,8 @@ div#toolbar div.panel {
     border-top: 1px solid #CCCCCC;
     border-left: 1px solid #CCCCCC;
     border-right: 1px solid #CCCCCC;
-    font-weight:bold;
-    text-indent:15px;
+    font-weight: bold;
+    text-indent: 15px;
     position: fixed;
     bottom: 20px;
     margin-left: 5%;
