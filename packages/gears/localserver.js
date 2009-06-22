@@ -1,10 +1,5 @@
 require('sys');
 
-if (!sys.gears) {
-    alert('Google gears is not installed, please install from http://gears.google.com/, redirecting now.');
-    window.location.href = 'http://gears.google.com/';
-}
-
 var localServer = google.gears.factory.create('beta.localserver');
 
 function can_serve_locally(url) {
@@ -146,9 +141,7 @@ var ManagedResourceStore = type ('ManagedResourceStore', object, {
 	return this._store.currentVersion;
     },
 
-    onSyncProgress: function(event) {
-	print(Math.ceil(((event.filesComplete / event.filesTotal) * 100)) + "%");
-    },
+    onSyncProgress: function(event) {},
 
     onSyncComplete: function() {
 	print("Sync Complete.");

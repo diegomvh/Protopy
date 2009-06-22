@@ -6,7 +6,6 @@ var Project = type('Project', object, {
     is_online: false,
     NET_CHECK: 5,
     availability_url: null,
-    going_online: false,
     do_net_checking: true,
 
     onLoad: function() {
@@ -14,16 +13,25 @@ var Project = type('Project', object, {
         this.html = {'head': $$('head')[0], 'body': $$('body')[0]};
 
         //Inicio del handler para las url
-	require('doff.core.urlhandler', 'Handler');
-	this.handler = new Handler(this.settings.ROOT_URLCONF, this.html);
+        require('doff.core.urlhandler', 'Handler');
+        this.handler = new Handler(this.settings.ROOT_URLCONF, this.html);
+
+        //Inicio el logging
+        require('logging.config', 'file_config');
+        try {
+            file_config(sys.module_url(this.package, 'logging.js'));
+        } catch (except) {}
 
         this._create_toolbar();
+        //this._start_network_thread();
     },
 
     onNetwork: function(type) {
         var m = 'go_' + type;
-	this[m]();
+        this[m]();
     },
+    
+    onCreateStore: function(store) {},
 
     handle: function(value) {
         return this.handler.handle(value);
@@ -41,20 +49,6 @@ var Project = type('Project', object, {
 
         //Url para ver si estoy conectado
         this.availability_url = sys.module_url(offline_support, '/network_check');
-
-        this.is_gears = !!sys.gears;
-        if (this.is_gears && sys.gears.factory.hasPermission) {
-            //Inicio de los stores
-            this._create_stores();
-        }
-
-	//Inicio el logging
-	require('logging.config', 'file_config');
-        try {
-            file_config(sys.module_url(this.package, 'logging.js'));
-        } catch (except) {}
-
-        this._start_network_thread();
     },
 
     _create_toolbar: function(){
@@ -73,16 +67,6 @@ var Project = type('Project', object, {
 	}
         this.toolbar.add('Help');
         this.toolbar.show();
-    },
-
-    _create_stores: function(){
-	//The toolbar
-	var localserver = require('gears.localserver');
-
-	this.project = new localserver.ManagedResourceStore(this.package + '_project');
-        this.project.manifest_url = sys.module_url(this.offline_support, '/manifests/project.json');
-        this.system = new localserver.ManagedResourceStore(this.package + '_system');
-        this.system.manifest_url = sys.module_url(this.offline_support, '/manifests/system.json');
     },
 
     bootstrap: function(){
@@ -121,18 +105,8 @@ var Project = type('Project', object, {
         this.handler.clear_hooks();
     },
 
-    install_gears: function() {
-        var message = 'To enable fast client-side search of this website '
-            + 'please install Gears';
-        var url = 'http://gears.google.com/?action=install'
-            + '&message=' + encodeURIComponent(message)
-            + '&return=' + encodeURIComponent(window.location.href);
-        window.location.href = url;
-        //Goodbye blue sky
-    },
-
     get is_allowed() {
-        if (!this.is_gears) this.install_gears();
+        if (!sys.gears.installed) sys.gears.install();
         this._allowed = sys.gears.factory.hasPermission;
         if (this._allowed)
             return this._allowed;
@@ -149,16 +123,27 @@ var Project = type('Project', object, {
     get is_installed() {
         if (this._installed)
             return this._installed;
-        var localserver = require('gears.localserver');
-        this._installed = localserver.can_serve_locally('/');
-        return this._installed;
+        try {
+            var localserver = require('gears.localserver');
+            this._installed = localserver.can_serve_locally('/');
+            return this._installed;
+        } catch (e) { return false; }
     },
 
     install: function() {
         if (!this.is_allowed) return;
+	var localserver = require('gears.localserver');
 
-        this.system.check_for_update();
-        this.project.check_for_update();
+        var system = new localserver.ManagedResourceStore(this.package + '_system');
+        system.manifest_url = sys.module_url(this.offline_support, '/manifests/system.json');
+        this.onCreateStore(system);
+
+	var project = new localserver.ManagedResourceStore(this.package + '_project');
+        project.manifest_url = sys.module_url(this.offline_support, '/manifests/project.json');
+        this.onCreateStore(project);
+
+        system.check_for_update();
+        project.check_for_update();
     },
 
     /********************************
