@@ -63,3 +63,6 @@ class RemoteSite(object):
 
     def app_index(self, request, app_label, p1):
         return HttpResponse('Hola %s - %s' % (app_label, p1))
+    
+    def get_templates(self, request):
+        return None

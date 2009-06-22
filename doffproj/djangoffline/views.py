@@ -11,7 +11,7 @@ from django.shortcuts import render_to_response
 from djangoffline.models import Manifest
 import inspect
 from pprint import pformat
-from remotemodels import RemoteModelProxy
+#from remotemodels import RemoteModelProxy
 import os
 import re
 from djangoffline.debug import html_output
