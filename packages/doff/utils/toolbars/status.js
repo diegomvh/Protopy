@@ -93,14 +93,15 @@ var Status = type('Status', [ Panel ], {
         
         e.target.remove();
         $('status-content').insert('<div id="status_store_bar"><div id="status_store_progress"/></div>');
-        event.connect(this.project.system_store, 'onSyncProgress', function(event) {
-            var val1 = Math.ceil((event.filesComplete / event.filesTotal) * 50);
-            $('status_store_progress').style.width = val1 + "%";
-        });
-        event.connect(this.project.project_store, 'onSyncProgress', function(event) {
-            var val2 = Number($('status_store_progress').style.width.slice(0,2)) + Math.ceil((event.filesComplete / event.filesTotal) * 50);
-            $('status_store_progress').style.width = val2 + "%";
-        });
+        var c = len(this.project.managed_stores);
+        for (var i = 0; i < c; i++)
+            event.connect(this.project.managed_stores[i], 'onSyncProgress', function(event) {
+                var cantidad = c;
+                var indice = i;
+                var valor = ((100 / cantidad) * indice) + Math.ceil((event.filesComplete / event.filesTotal) * ( 100 / cantidad ));
+                print(valor);
+                $('status_store_progress').style.width = valor + "%";
+            });
         this.project.install();
     },
 
