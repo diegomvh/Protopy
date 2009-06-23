@@ -73,7 +73,7 @@ MIDDLEWARE_CLASSES = (
     
 )
 
-ROOT_URLCONF = 'doffproj.urls'
+ROOT_URLCONF = 'blog.urls'
 
 TEMPLATE_DIRS = [
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
@@ -98,10 +98,10 @@ INSTALLED_APPS = (
     
     # Ver si queda global y se instala con setuptools o 
     # si se copia dentro de la aplicación...
-    'doffproj.djangoffline',
+    'offline',
     
     # Aplicaciones de prueba
-    'doffproj.blog',
+    'blog.post',
     
 )
 

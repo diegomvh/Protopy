@@ -1,14 +1,14 @@
 # coding: utf-8
 from django.conf.urls.defaults import *
 from django.conf import settings
-from doffproj.blog.admin import bolg_admin_site
-import djangoffline
+from blog.post.admin import bolg_admin_site
+import offline
 
 
 # Uncomment the next two lines to enable the admin:
 #from django.contrib import admin
 #admin.autodiscover()
-from doffproj.blog.remote import site
+from blog.post.remote import site
 
 urlpatterns = patterns('',
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
@@ -19,9 +19,9 @@ urlpatterns = patterns('',
     (r'^admin/(.*)', bolg_admin_site.root),
 
     # index
-    (r'^$', include('doffproj.blog.urls'),),
+    (r'^$', include('blog.post.urls'),),
 
-    (r'^' + settings.OFFLINE_BASE + '/', include('doffproj.djangoffline.urls'), ),
+    (r'^' + settings.OFFLINE_BASE + '/', include('offline.urls'), ),
     
     
     (r'^remote/(.*)', site.root ),

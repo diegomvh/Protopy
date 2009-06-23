@@ -2,8 +2,8 @@
 Remote models for doff app
 '''
 
-from doffproj.blog.models import *
-from djangoffline.remote import RemoteSite 
+from blog.post.models import *
+from offline.remote import RemoteSite 
 from django.db import models
 
 #class TagRemote(RemoteModelProxy):

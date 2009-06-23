@@ -8,13 +8,13 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.utils.html import escape
 from django.template import TemplateDoesNotExist
 from django.shortcuts import render_to_response
-from djangoffline.models import Manifest
+from offline.models import Manifest
 import inspect
 from pprint import pformat
 #from remotemodels import RemoteModelProxy
 import os
 import re
-from djangoffline.debug import html_output
+from offline.debug import html_output
  
 
 

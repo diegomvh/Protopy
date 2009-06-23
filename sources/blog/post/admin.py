@@ -1,6 +1,6 @@
 from django.contrib import admin 
 
-from doffproj.blog.models import Tag, Post
+from blog.post.models import Tag, Post
 
 bolg_admin_site = admin.AdminSite()
 

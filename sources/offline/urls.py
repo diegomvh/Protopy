@@ -24,7 +24,7 @@ urlpatterns = patterns('',
     (r'^network_check', views.network_check), 
 )
 
-urlpatterns += patterns('djangoffline.views',
+urlpatterns += patterns('offline.views',
     # Project
 #    (r'manifests/project.json', 'dynamic_manifest_from_fs', 
 #     {
@@ -45,7 +45,7 @@ urlpatterns += patterns('djangoffline.views',
 if settings.LOCAL_DEVELOPMENT:
     
     from os.path import abspath, dirname, join
-    protopy_path = getattr(get_app('djangoffline'), '__file__')
+    protopy_path = getattr(get_app('offline'), '__file__')
     protopy_path = join(abspath(dirname(protopy_path)), 'protopy')
     
     urlpatterns += patterns('django.views.static',
@@ -64,7 +64,7 @@ if settings.LOCAL_DEVELOPMENT:
         (r'^databrowse/(.*)', databrowse.site.root),
     )
     
-    urlpatterns += patterns('djangoffline.views',
+    urlpatterns += patterns('offline.views',
         (r'manifests/system.json', 'dynamic_manifest_from_fs',
          {
             'path': protopy_path, 
