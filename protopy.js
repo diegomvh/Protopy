@@ -262,11 +262,13 @@
     function get_gears(){
 	var factory;
 	
-	if (window.google && window.google.gears) { return window.google.gears; } // already defined elsewhere
+	if (window.google && window.google.gears) { 
+            return window.google.gears; 
+        } // already defined elsewhere
 	
 	if(typeof GearsFactory != "undefined"){ // Firefox
 		factory = new GearsFactory();
-	}else{
+	} else {
 		if(sys.browser.IE){
 			try{
 				factory = new ActiveXObject("Gears.Factory");
@@ -284,11 +286,22 @@
 		}
 	}
 
-	if(!factory){ return null; }
-	
-	window.google = {}, window.google.gears = {}, window.google.gears.factory = factory;
+        window.google = {}, window.google.gears = {'installed': !!factory};
+	if(factory) {
+            window.google.gears.factory = factory;  
+        } else {
+            window.google.gears.install = function (message) {
+                 message = message || 'To enable fast client-side search of this website please install Gears';
+                 var url = 'http://gears.google.com/?action=install'
+                        + '&message=' + encodeURIComponent(message)
+                        + '&return=' + encodeURIComponent(window.location.href);
+                 window.location.href = url;
+            }
+        }
+
 	return window.google.gears;
     }
+
     /* Modulo: sys - modulo de sistema, proporciona informacion sobre el ambiente y algunas herramientas para interactuar con este */
     var sys = ModuleManager.create('sys', 'built-in', { 
 	version: 0.95,
@@ -307,7 +320,6 @@
 						document.createElement('form')['__proto__']
 	    }
 	},
-	get_gears: get_gears,
 	register_path: function(module, path) { 
 	    ModuleManager.register_path(module, path); 
 	},
@@ -319,7 +331,7 @@
 	manager: ModuleManager
     });
 
-    sys.browser.features.Gears = !!get_gears() || false;
+    sys.gears = get_gears();
 
     /******************** exception ***********************/
     /* Modulo: exception, clases o tipos de excepciones que preovee protopy */ 

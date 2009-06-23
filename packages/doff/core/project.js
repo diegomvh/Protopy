@@ -6,7 +6,6 @@ var Project = type('Project', object, {
     is_online: false,
     NET_CHECK: 5,
     availability_url: null,
-    going_online: false,
     do_net_checking: true,
 
     onLoad: function() {
@@ -14,98 +13,98 @@ var Project = type('Project', object, {
         this.html = {'head': $$('head')[0], 'body': $$('body')[0]};
 
         //Inicio del handler para las url
-	require('doff.core.urlhandler', 'Handler');
-	this.handler = new Handler(this.settings.ROOT_URLCONF, this.html);
+        require('doff.core.urlhandler', 'Handler');
+        this.handler = new Handler(this.settings.ROOT_URLCONF, this.html);
+
+        //Inicio el logging, si no hay hay archivo de configuracion no pasa nada
+        require('logging.config', 'file_config');
+        try {
+            file_config(sys.module_url(this.package, 'logging.js'));
+        } catch (except) {}
 
         this._create_toolbar();
-
-        this._start_network_thread();
-
+        //this._start_network_thread();
     },
 
     onNetwork: function(type) {
         var m = 'go_' + type;
-	this[m]();
+        this[m]();
     },
-
+    
     handle: function(value) {
         return this.handler.handle(value);
     },
 
     __init__: function(package, offline_support) {
-	this.package = package;
-	//Registro la ruta absoluta al soporte offline
-	sys.register_path(offline_support, '/' + offline_support);
+        this.package = package;
+        this.offline_support = offline_support;
+	
+        //Registro la ruta absoluta al soporte offline
+        sys.register_path(this.offline_support, '/' + offline_support);
         //Registro la ruta absoluta al proyecto
-        sys.register_path(this.package, sys.module_url(offline_support, '/project'));
-	this.path = sys.paths[this.package];
+        sys.register_path(this.package, sys.module_url(this.offline_support, '/project'));
+        this.path = sys.paths[this.package];
 
         //Url para ver si estoy conectado
         this.availability_url = sys.module_url(offline_support, '/network_check');
-
-	//Inicio de los stores y determino la instalacion
-	var localserver = require('gears.localserver');
-        this.is_installed = localserver.can_serve_locally('/');
-	this.project = new localserver.ManagedResourceStore(package + '_project');
-	this.project.manifest_url = sys.module_url(offline_support, '/manifests/project.json');
-	this.system = new localserver.ManagedResourceStore(package + '_system');
-	this.system.manifest_url = sys.module_url(offline_support, '/manifests/system.json');
-	
-	//Inicio el logging
-	require('logging.config', 'file_config');
-        file_config(sys.module_url(this.package, 'logging.js'));
+        if (sys.gears.installed && sys.gears.factory.hasPermission)
+            this._create_stores();
     },
 
     _create_toolbar: function(){
-	//The toolbar
-	require('doff.utils.toolbar', 'ToolBar');
-        
-	this.toolbar = new ToolBar(this.html);
+        require('doff.utils.toolbar', 'ToolBar');
+
+        this.toolbar = new ToolBar(this.html);
         //The status and installer bar
-	require('doff.utils.toolbars.status', 'Status');
-	this.toolbar.add(new Status(this));
+        require('doff.utils.toolbars.status', 'Status');
+        this.toolbar.add(new Status(this));
         if (this.settings['DEBUG']) {
-	    require('doff.utils.toolbars.dbquery', 'DataBaseQuery');
+            require('doff.utils.toolbars.dbquery', 'DataBaseQuery');
             require('doff.utils.toolbars.logger', 'Logger');
-	    this.toolbar.add(new DataBaseQuery());
+            this.toolbar.add(new DataBaseQuery());
             this.toolbar.add(new Logger());
-	}	
-        this.toolbar.add('Settings');
+        }
         this.toolbar.add('Help');
         this.toolbar.show();
     },
 
-    bootstrap: function(){
-	event.connect(window, 'load', this, 'onLoad');
+    _create_stores: function(){
+        var localserver = require('gears.localserver');
+        this.managed_stores = [];
+        var s = new localserver.ManagedResourceStore(this.package + '_system');
+        s.manifest_url = sys.module_url(this.offline_support, '/manifests/system.json');
+        this.managed_stores.push(s);
+        s = new localserver.ManagedResourceStore(this.package + '_project');
+        s.manifest_url = sys.module_url(this.offline_support, '/manifests/project.json');
+        this.managed_stores.push(s);
     },
 
-    sync_stores: function() {
-        this.system.check_for_update();
-        this.project.check_for_update();
+    bootstrap: function(){
+        event.connect(window, 'load', this, 'onLoad');
     },
 
     get settings() {
-	if (this._settings)
-	    return this._settings;
-	var self = this;
-	var global_settings = require('doff.conf.settings');
-	var url_settings = sys.module_url(this.package, 'settings.js');
-	new ajax.Request(url_settings, {
+        if (this._settings)
+            return this._settings;
+        var self = this;
+        var global_settings = require('doff.conf.settings');
+        var url_settings = sys.module_url(this.package, 'settings.js');
+        new ajax.Request(url_settings, {
             method: 'GET',
-	    asynchronous : false,
-	    onSuccess: function(transport) {
-		var code = '(' + transport.responseText + ');';
-		var project_settings = eval(code);
-		self._settings = extend(global_settings, project_settings);
-	    },
-	    onException: function(obj, exception) {
-		throw exception;
-	    },
-	    onFailure: function(transport) {
-		throw new Exception("No settings");
-	    }
-	});
-	return this._settings;
+            asynchronous : false,
+            onSuccess: function(transport) {
+                var code = '(' + transport.responseText + ');';
+                var project_settings = eval(code);
+                self._settings = extend(global_settings, project_settings);
+            },
+            onException: function(obj, exception) {
+                throw exception;
+            },
+            onFailure: function(transport) {
+                throw new Exception("No settings");
+            }
+        });
+        return this._settings;
     },
 
     go_offline: function() { 
@@ -115,7 +114,40 @@ var Project = type('Project', object, {
     go_online: function(callback) {
         this.handler.clear_hooks();
     },
-	
+
+    get_permission: function() {
+        if (sys.gears.factory.hasPermission)
+            return true;
+        var site_name = this.settings.PROJECT_NAME;
+        var icon = this.settings.PROJECT_IMAGE;
+        var msg = this.settings.PROJECT_DESCRIPTION
+            + 'This site would like to use Google Gears to enable fast, '
+            + 'as-you-type searching of its documents.';
+
+        return sys.gears.factory.getPermission(site_name, icon, msg);
+    },
+
+    get is_installed() {
+        //TODO: Un cache
+        try {
+            var localserver = require('gears.localserver');
+            return localserver.can_serve_locally('/');
+        } catch (e) { return false; }
+    },
+
+    install: function() {
+        if (!sys.gears.installed) sys.gears.install();
+        if (!this.get_permission()) return;
+        if (isundefined(this.managed_stores))
+            this._create_stores();
+
+        for each (var store in this.managed_stores)
+            store.check_for_update();
+    },
+
+    /********************************
+     * Network Check
+     */
     network_check: function network_check(){
 	var self = this;
 	var get = new ajax.Request(this._get_availability_url(), {
@@ -174,30 +206,6 @@ function get_settings() {
     return get_project().settings;
 }
 
-/* Ideas que tengo que agregar
-
-if (!google.gears.factory.hasPermission) {
-    var siteName = 'My Site';
-    var icon = 'images/myIcon.png';
-    var msg = 'This site would like to use Google Gears to enable fast, '
-            + 'as-you-type searching of its documents.';
-    
-    var allowed = google.gears.factory.getPermission(siteName, icon, msg);
-}
-
---Detectar si esta gears y mostrar el link para instalacion
-!sys.browser.features.Gears
-var message = 'To enable fast client-side search of this website '
-            + 'please install Gears';
-var url = 'http://gears.google.com/?action=install'
-            + '&message=' + encodeURIComponent(message)
-            + '&return=' + encodeURIComponent(window.location.href);
-widget.innerHTML = '<a href="' + url + '">Install '
-                + 'Gears to enable fast search!</a>';
-return false;
-
-
-*/
 publish({
     get_project: get_project,
     new_project: get_project,

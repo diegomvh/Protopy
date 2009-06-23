@@ -1,6 +1,7 @@
 require('doff.utils.toolbar', 'Panel');
 require('ajax');
 require('event');
+require('sys');
 
 var uninstalled_template = 
 (<r><![CDATA[
@@ -17,6 +18,21 @@ var uninstalled_template =
             right: 8px;
             top: 7px;
         }
+        div#status_store_bar {
+	    background:white none repeat scroll 0 0;
+            border: 1px solid #949DAD;
+            height: 0.5em;
+            margin: 5px;
+            overflow: hidden;
+            padding: 1px;
+            width: 300px;
+        }
+        div#status_store_bar div#status_store_progress {
+            background: #D4E4FF none repeat scroll 0 0;
+            font-size: 0;
+            height: 100%;
+            width: 0;
+        }
     </style>
     <div id="status-content">
     <h2>%(PROJECT_NAME)s</h2><br>
@@ -24,9 +40,7 @@ var uninstalled_template =
     <h3>Motor: %(DATABASE_ENGINE)s</h3><br>
     <h3>Base de Datos: %(DATABASE_NAME)s</h3><br>
     <img src="%(PROJECT_IMAGE)s" width="100"/>
-    </div>
-    <div id="status-buttons">
-        <button id="status-button-enable">Enable offline access</button>
+    <button id="status-button-enable">Enable offline access</button>
     </div>
 ]]></r>).toString();
 
@@ -46,8 +60,7 @@ var installed_template =
             top: 7px;
         }
     </style>
-    <div id="status-content"></div>
-    <div id="status-buttons">
+    <div id="status-content">
         <button id="status-button-disable">Disable offline access</button>
     </div>
 ]]></r>).toString();
@@ -64,8 +77,6 @@ var Status = type('Status', [ Panel ], {
         this.height = '20em';
 
         event.connect(project, 'onNetwork', this, 'set_status');
-        event.connect(project, 'onInstall', this, 'go_install');
-        event.connect(project, 'onUninstall', this, 'go_uninstall');
     },
 
     set_status: function(status) {
@@ -74,16 +85,24 @@ var Status = type('Status', [ Panel ], {
         }
     },
 
-    go_install: function() {
-        this.tab.update('Online');
-        this.project.is_installed = true;
-        this._display();
-    },
-
-    go_uninstall: function() {
-        this.tab.update('Offline Support');
-        this.project.is_installed = false;
-        this._display();
+    install: function(e) {
+        if (!sys.gears.factory.hasPermission && !this.project.get_permission())
+            return;
+        if (isundefined(this.project.system))
+            this.project._create_stores();
+        
+        e.target.remove();
+        $('status-content').insert('<div id="status_store_bar"><div id="status_store_progress"/></div>');
+        var c = len(this.project.managed_stores);
+        for (var i = 0; i < c; i++)
+            event.connect(this.project.managed_stores[i], 'onSyncProgress', function(event) {
+                var cantidad = c;
+                var indice = i;
+                var valor = ((100 / cantidad) * indice) + Math.ceil((event.filesComplete / event.filesTotal) * ( 100 / cantidad ));
+                print(valor);
+                $('status_store_progress').style.width = valor + "%";
+            });
+        this.project.install();
     },
 
     get_template: function() {
@@ -92,11 +111,15 @@ var Status = type('Status', [ Panel ], {
         else
             return uninstalled_template.subs(this.config);
     },
-    _display: function(){
+
+    _display: function() {
         super(Panel, this)._display();
 
-        event.connect($('status-button-enable'), 'click', this, 'go_install');
-        event.connect($('status-button-disable'), 'click', this, 'go_uninstall');
+        if (this.project.is_installed) {
+            event.connect($('status-button-disable'), 'click', this.project, 'uninstall');
+        } else {
+            event.connect($('status-button-enable'), 'click', this, 'install');
+        }
     }
 });
 
