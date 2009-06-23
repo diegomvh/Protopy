@@ -15,6 +15,21 @@ __all__ = ('RemoteModelProxy',
 #
 #class ModelRemote(object):
 #    __metaclass__ = ModelRemoteBase
+ 
+class expose(object):
+    '''
+    Taken from turbogears
+    '''
+    def __init__(self, url):
+        #import ipdb; ipdb.set_trace()
+        self.url = url
+        
+    def __call__(self, func):
+        def wrapped(*largs, **kwargs):
+            val = func(*largs, **kwargs)
+            return val
+        return wrapped
+    
     
 class RemoteSite(object):
     '''
@@ -35,6 +50,7 @@ class RemoteSite(object):
                 self.app_index,
                 kwargs={'p1': 'Pepe'}, 
                 name='%sadmin_app_list' % self.name),
+            
         )
 
         return urlpatterns
@@ -57,12 +73,14 @@ class RemoteSite(object):
                     callback_kwargs = sub_match_dict
                     return callback(request, *callback_args, **callback_kwargs)
         raise Http404()
-
+    
+    @expose(r'^get_templates/(?P<app_name>\s)')
+    def get_templates(self, request, app_name):
+        return HttpResponse("Some day tamplates will be served from here")
+    
     def index(self, request, p1):
         return HttpResponse('Hola %s' % p1)
 
     def app_index(self, request, app_label, p1):
         return HttpResponse('Hola %s - %s' % (app_label, p1))
     
-    def get_templates(self, request):
-        return None
