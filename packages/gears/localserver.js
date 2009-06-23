@@ -92,9 +92,6 @@ var ManagedResourceStore = type ('ManagedResourceStore', object, {
 
     __init__: function(name, requiredCookie) {
 	this._store = localServer.createManagedStore(name, requiredCookie);
-	this._store.onerror = getattr(this, 'onSyncError');
-        this._store.oncomplete = getattr(this, 'onSyncComplete');
-	this._store.onprogress = getattr(this, 'onSyncProgress');
     },
 
     delete: function() {
@@ -141,7 +138,7 @@ var ManagedResourceStore = type ('ManagedResourceStore', object, {
 	return this._store.currentVersion;
     },
 
-    onSyncProgress: function(event) {},
+    onSyncProgress: function() {},
 
     onSyncComplete: function() {
 	print("Sync Complete.");
@@ -151,7 +148,10 @@ var ManagedResourceStore = type ('ManagedResourceStore', object, {
 	print("Error Syncing.");
     },
 
-    check_for_update: function(){
+    check_for_update: function() {
+	this._store.onerror = getattr(this, 'onSyncError');
+    this._store.oncomplete = getattr(this, 'onSyncComplete');
+	this._store.onprogress = getattr(this, 'onSyncProgress');
 	this._store.checkForUpdate();
     }
 });

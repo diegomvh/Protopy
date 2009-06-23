@@ -7,9 +7,11 @@ var Panel = type('Panel', object, {
 	this.name = name;
 	this.title = title || name;
 
+	//The body element, panel and hide
         this.body = document.createElement('div');
         this.body.id = this.id;
         this.body.setAttribute('class', 'panel');
+	this.body.hide();
 
         //Header
         this.header = document.createElement('h1');
@@ -18,7 +20,7 @@ var Panel = type('Panel', object, {
         var close_image = document.createElement('img');
         close_image.src = sys.module_url('doff.utils', 'resources/closebox.gif');
         this.header.insert(close_image);
-        event.connect(close_image, 'click', this, 'hide');
+	event.connect(close_image, 'click', this, 'hide');
 	
         //Content
 	this.content = document.createElement('div');
@@ -26,11 +28,10 @@ var Panel = type('Panel', object, {
 
         this.body.insert(this.header);
         this.body.insert(this.content);
-
+	
 	//Style and other yerbas
 	this.height = '25em';
 	this.width = '80%';
-        this.hide();
     },
 
     set height(value) {
@@ -43,12 +44,14 @@ var Panel = type('Panel', object, {
 
     hide: function() {
 	this.body.hide();
+	this.bar.active_panel = null;
     },
 
     show: function() {
 	if (!this.displayed)
 	    this._display();
 	this.body.show();
+	this.bar.active_panel = this;
     },
 
     visible: function() {
@@ -56,7 +59,9 @@ var Panel = type('Panel', object, {
     },
 
     toggle: function() {
-        this[this.visible() ? 'hide' : 'show']();
+	if (this.bar.active_panel && this.bar.active_panel !== this && this.bar.active_panel.visible())
+	    this.bar.active_panel.hide();
+	this[this.visible() ? 'hide' : 'show']();
     },
 
     get_template: function(){ return ""; },
@@ -80,7 +85,7 @@ var ToolBar = type('Toolbar', object, {
         this.stylesheet.rel = "stylesheet";
         this.stylesheet.type = "text/css";
         this.stylesheet.href = sys.module_url('doff.utils', 'resources/toolbar.css');
-	this.panels = [];
+	this.active_panel = null;
     },
 
     add: function(element) {
@@ -89,9 +94,8 @@ var ToolBar = type('Toolbar', object, {
 	if (isinstance(element, Panel)) {
             tab.update(element.name);
             element.tab = tab;
-	    this.panels.push(element);
+	    element.bar = this;
 	    this.content.insert(element.body);
-	    //TODO: Mejorar el sistema de paneles
 	    event.connect(tab, 'click', element, 'toggle');
         } else if (isinstance(element, String))
 	    tab.update(element);

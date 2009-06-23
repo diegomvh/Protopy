@@ -1,6 +1,7 @@
 require('doff.utils.toolbar', 'Panel');
 require('ajax');
 require('event');
+require('sys');
 
 var uninstalled_template = 
 (<r><![CDATA[
@@ -17,19 +18,20 @@ var uninstalled_template =
             right: 8px;
             top: 7px;
         }
-        div.status_store_bar {
+        div#status_store_bar {
+	    background:white none repeat scroll 0 0;
             border: 1px solid #949DAD;
             height: 0.5em;
             margin: 5px;
             overflow: hidden;
-            padding: 1 px;
-            width: 300 px;
+            padding: 1px;
+            width: 300px;
         }
-        div.status_store_bar div.progress {
-            background:#D4E4FF none repeat scroll 0 0;
-            font-size:0;
-            height:100%;
-            width:0;
+        div#status_store_bar div#status_store_progress {
+            background: #D4E4FF none repeat scroll 0 0;
+            font-size: 0;
+            height: 100%;
+            width: 0;
         }
     </style>
     <div id="status-content">
@@ -75,7 +77,6 @@ var Status = type('Status', [ Panel ], {
         this.height = '20em';
 
         event.connect(project, 'onNetwork', this, 'set_status');
-        event.connect(project, 'onCreateStore', this, 'hook_store');
     },
 
     set_status: function(status) {
@@ -84,16 +85,22 @@ var Status = type('Status', [ Panel ], {
         }
     },
 
-    hook_store: function(store){
-        $('status-content').insert('<div class="status_store_bar"><div id="' + store.name + '_progress" class="progress"></div></div>');
-        var p = $(store.name + '_progress');
-        event.connect(store, 'onSyncProgress', function(event){
-            p.width = Math.ceil(((event.filesComplete / event.filesTotal) * 100)) + "%";
-        })
-    },
-
-    install: function(event) {
-        event.target.remove();
+    install: function(e) {
+        if (!sys.gears.factory.hasPermission && !this.project.get_permission())
+            return;
+        if (isundefined(this.project.system))
+            this.project._create_stores();
+        
+        e.target.remove();
+        $('status-content').insert('<div id="status_store_bar"><div id="status_store_progress"/></div>');
+        event.connect(this.project.system_store, 'onSyncProgress', function(event) {
+            var val1 = Math.ceil((event.filesComplete / event.filesTotal) * 50);
+            $('status_store_progress').style.width = val1 + "%";
+        });
+        event.connect(this.project.project_store, 'onSyncProgress', function(event) {
+            var val2 = Number($('status_store_progress').style.width.slice(0,2)) + Math.ceil((event.filesComplete / event.filesTotal) * 50);
+            $('status_store_progress').style.width = val2 + "%";
+        });
         this.project.install();
     },
 

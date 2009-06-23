@@ -2,12 +2,12 @@
 require('copy', 'copy', 'deepcopy');
 
 var SortedDict = type('SortedDict', Dict, {
-    '__init__': function __init__(object) {
+    __init__: function(object) {
         this.keyOrder = (object && isinstance(object, SortedDict))? copy(object.keyOrder) : [];
         super(Dict, this).__init__(object);
     },
     
-    '__iter__': function __iter__() {
+    __iter__: function() {
         for each (var key in this.keyOrder) {
             var value = this.get(key);
             var pair = [key, value];
@@ -17,11 +17,11 @@ var SortedDict = type('SortedDict', Dict, {
         }
     },
 
-    '__copy__': function __copy__() {
+    __copy__: function() {
         return new SortedDict(this);
     },
     
-    '__deepcopy__': function __copy__() {
+    __deepcopy__: function() {
         var obj = new SortedDict();
         for (var hash in this._key) {
             obj._key[hash] = deepcopy(this._key[hash]);
@@ -31,12 +31,12 @@ var SortedDict = type('SortedDict', Dict, {
         return obj;
     },
 
-    'set': function set(key, value) {
+    set: function(key, value) {
         this.keyOrder.push(key);
         return super(Dict, this).set(key, value);
     },
 
-    'unset': function unset(key) {
+    unset: function(key) {
         this.keyOrder.without(key);
         return super(Dict, this).unset(key);
     },
@@ -44,7 +44,7 @@ var SortedDict = type('SortedDict', Dict, {
      /* 
       * Returns the value of the item at the given zero-based index.
       */
-    'value_for_index': function value_for_index(index) {
+    value_for_index: function(index) {
         return this.get(this.keyOrder[index]);
     }
 });
