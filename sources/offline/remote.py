@@ -6,8 +6,8 @@ from django.http import Http404
 from django.core.urlresolvers import Resolver404
 from django.utils.encoding import smart_str
 
-__all__ = ('RemoteModelProxy', 
-           
+__all__ = ('RemoteSite', 
+           'expose',
            )
 
 #class ModelRemoteBase(object):
@@ -16,24 +16,33 @@ __all__ = ('RemoteModelProxy',
 #class ModelRemote(object):
 #    __metaclass__ = ModelRemoteBase
  
-class expose(object):
-    '''
-    Taken from turbogears
-    '''
-    def __init__(self, url):
-        #import ipdb; ipdb.set_trace()
-        self.url = url
-        
-    def __call__(self, func):
-        def wrapped(*largs, **kwargs):
-            val = func(*largs, **kwargs)
-            return val
-        return wrapped
-    
-    
+def expose(url, *args, **kwargs):
+    def decorator(func):
+        def new_function(*args, **kwargs):
+            return func(*args, **kwargs)
+        new_function.expose = (url, args, kwargs)
+        return new_function
+    return decorator
+
+class RemoteSiteBase(type):
+    def __new__(cls, name, bases, attrs):
+        #TODO: de los parents sacamos las otras urls
+        #parents = [b for b in bases if isinstance(b, RemoteSiteBase)]
+        new_class = super(RemoteSiteBase, cls).__new__(cls, name, bases, attrs)
+        urls = []
+        for ns in [attrs, ] + [ e.__dict__ for e in bases ]:
+            for name, obj in ns.iteritems():
+                if hasattr(obj, 'expose'):
+                    urls.append(obj.expose)
+        if urls:
+            new_class._urls = urls
+        return new_class
+
+  
+
 class RemoteSite(object):
-    '''
-    '''
+    __metaclass__ = RemoteSiteBase
+    
     def __init__(self):
         self.registry = {}
         self.name = "cosas"
@@ -58,7 +67,7 @@ class RemoteSite(object):
     urlpatterns = property(get_urls)
 
     def root(self, request, url):
-        for pattern in self.urlpatterns:
+        for pattern in self._urls:
             try:
                 sub_match = pattern.resolve(url)
             except Resolver404, e:
@@ -84,3 +93,18 @@ class RemoteSite(object):
     def app_index(self, request, app_label, p1):
         return HttpResponse('Hola %s - %s' % (app_label, p1))
     
+    
+    
+
+class MySite(RemoteSite):
+    @expose(r'index$', kwargs = {'algo': 'algo'}, name = 'index')
+    def index(self):
+        return "Hello world!"
+        
+    @expose(r'app_index/', name='app_index')
+    def app_index(self, request):
+        return 'otra'
+
+if __name__ == "__main__":
+    m = MySite()
+    print m
