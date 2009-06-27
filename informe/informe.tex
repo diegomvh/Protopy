@@ -5,7 +5,7 @@
 \usepackage[spanish]{babel}
 \usepackage[bookmarks=false,colorlinks=true,linkcolor={blue},pdfstartview={XYZ null null 1.22}]{hyperref}
 \usepackage[pdftex]{graphicx}
-\usepackage{glossary}
+\usepackage[style=list]{glossary}
 \usepackage{fancyhdr}
 \usepackage{epigraph} %para los quote en cada capitulo
 \usepackage[usenames,dvipsnames]{color}
@@ -26,7 +26,6 @@
 \author{Defossé Nahuel, van Haaster Diego Marcos}
 \date{\today}
 
-\makeglossary
 \pagestyle{fancy}
 %\fancyhead{}
 \renewcommand\headrulewidth{.1pt}
@@ -43,6 +42,9 @@
 
 %Comandos
 \newcommand{\fullref}[1]{\ref{#1} de la página \pageref{#1}}
+
+%Crear el glosario
+\makeglossary
 
 %Colores
 \definecolor{gray97}{gray}{.97}
@@ -282,9 +284,9 @@ desarrollador de Python Tim Peters en \emph{El Zen de Python}
   \item {Si la implementación es dificil de explicar, es una mala idea.}
   \item {Si la implementacion es fácil de explicar, puede que sea una buena idea}
   \item {Los espacios de nombres (namespaces) son una gran idea ¡Hagamos más de esas cosas!}
-  \end{enumerate}
-  Desde la versión 2.1.2, Python incluye estos puntos (en su versión original en inglés) 
-  como un huevo de pascua que se muestra al ejecutar 
+\end{enumerate}
+Desde la versión 2.1.2, Python incluye estos puntos (en su versión original en inglés) 
+como un huevo de pascua que se muestra al ejecutar.
 \begin{lstlisting}[style=consola]
 >>> import this
 \end{lstlisting}
@@ -910,44 +912,24 @@ de su estado.
   \item 
 \end{itemize}
 
-\label{ch:protopy}
-
-Protopy persigue acercar la semántica del Javascript 1.7 a la del lenguaje
-Python. Las funcionalidades principales son las siguientes:
-\begin{itemize}
-  \item Ámbito de nombres
-  \begin{item}
-  Semántica de objetos, dentro de la cual se hace una adaptación de
-  \begin{itemize}
-  	\item Iteradores
-  	\item Generadores  
-  \end{itemize}
-  \end{item}
-  
-  
-  \item Iteradores
-  \item Generadores
-  
-  \item Tipos básicos de la librería estándar de python, entre los que se
-  encuentran: $ bool, $
-\end{itemize}
-
-
-\begin{description}
-\item[type]{
-Type sirve para defninir clases.
-}
 \end{description}
 \begin{thebibliography}{99}
-
-	\bibitem{javascript_versions}{\href{http://ejohn.org/blog/versions-of-javascript/}
-		{Versiones de Javascript, Jhon Reisig}
-	}
-
+  \bibitem[JavaScript]{javascript_versions}{\href{http://ejohn.org/blog/versions-of-javascript/}{Versiones de Javascript, Jhon Reisig}}
+  \bibitem[DOM]{DOM}{\href{http://es.wikipedia.org/wiki/DOM}{Modelo en Objetos para la representación de Documentos}}
+  \bibitem[AJAX]{AJAX}{\href{http://es.wikipedia.org/wiki/AJAX}{JavaScript asíncrono y XML}}
 \end{thebibliography}
 
-% Probando el glosario
-\glossary{name={entry name}, description={entry description}}
+% Ejemplos de entradas en el glosario
+\glossary{name={Tesis}, description={Trabajo interminable}}
+\newacronym{GNU}{GNU's Not Unix}{description={A computer operating system composed entirely of free software.}}
+\storeglosentry{linux}{name={Linux}, description={Any Unix-like computer operating system that uses the Linux kernel.}}
+\gls{linux} % displays name field of the linux entry (in this case "Linux")
+\useGlosentry{linux}{GNU/Linux} % displays "GNU/Linux"
+\GNU % displays "GNU's Not Unix (GNU)" the first time this is used
+\GNU % displays "GNU" all subsequent times
+% NB: remember to use \GNU\ if want to retain the space after the acronym
+
 \printglossary
+\addcontentsline{toc}{chapter}{Glossary}
 
 \end{document}

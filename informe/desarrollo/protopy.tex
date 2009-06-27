@@ -1,7 +1,7 @@
+\chapter{Una libreria en JavaScript}
 
-\chapter{Protopy}
-
-\section{que}
+%que
+\section{Inicio}
 El desarrollo de un framework en JavaScript funcionando dentro del navegador
 Firefox, deja entrever una gran cantidad de detalles que no resultan triviales
 al momento de desarrollar.
@@ -49,11 +49,11 @@ anterioridad. Para una explicacion completa de la API remitace al apandice
 web dinamicas. Aporta un enfoque modular para la inclusión de código,
 orientación a objetos, manejo de AJAX, DOM y eventos.}
 
-\section{como}
-
+%como
 \section{Organizando el codigo}
 Undo de los principales inconvenientes a los que Protopy da solucion es a la
-inclucion dinamica de funcionalidad bajo demanda, esto se logra con los ``modulos''.
+inclucion dinamica de funcionalidad bajo demanda, esto se logra con los
+``modulos''.
 Tradicionalmente la forma de incluir codigo javascript es mediante la
 incorporation de una etiqueta ``script'' con un atributo de referencia
 al archivo que contiene la funcionalidad. Mas tarde cuando el navegador descarga
@@ -69,13 +69,38 @@ servidor y es obtenido y ejecutado en el cliente.
 ...
 
 \section{Creando tipos de objeto}
-En la programación basada en prototipos las ``clases'' no están presentes, y la re-utilización de procesos se obtiene a través de la clonación de objetos ya existentes. 
-Protopy agrega el concepto de clases al desarrollo, mediante un contructor de ``tipos de objeto''. De esta forma los objetos pueden ser de dos tipos, las clases y las instancias. Las clases definen la disposición y la funcionalidad básicas de los objetos, y las instancias son objetos ``utilizables'' basados en los patrones de una clase particular.
+En la programación basada en prototipos las ``clases'' no están presentes, y la
+re-utilización de procesos se obtiene a través de la clonación de objetos ya
+existentes. 
+Protopy agrega el concepto de clases al desarrollo, mediante un contructor de
+``tipos de objeto''. De esta forma los objetos pueden ser de dos tipos, las
+clases y las instancias. Las clases definen la disposición y la funcionalidad
+básicas de los objetos, y las instancias son objetos ``utilizables'' basados en
+los patrones de una clase particular.
 ...
 
 Sets
 Diccionarios
 
+% Protopy persigue acercar la semántica del Javascript 1.7 a la del lenguaje
+% Python. Las funcionalidades principales son las siguientes:
+% \begin{itemize}
+%   \item Ámbito de nombres
+%   \begin{item}
+%   Semántica de objetos, dentro de la cual se hace una adaptación de
+%   \begin{itemize}
+%   	\item Iteradores
+%   	\item Generadores  
+%   \end{itemize}
+%   \end{item}
+%   
+%   
+%   \item Iteradores
+%   \item Generadores
+%   
+%   \item Tipos básicos de la librería estándar de python, entre los que se
+%   encuentran: $ bool, $
+% \end{itemize}
 \section{Manipulando el DOM}
 
 \section{Interactuando con el servidor}
