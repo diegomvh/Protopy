@@ -1,9 +1,10 @@
+#coding: utf-8
 '''
 Remote model proxy for remote models in gears client.
 '''
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http import Http404
-from django.core.urlresolvers import Resolver404
+from django.core.urlresolvers import Resolver404, RegexURLPattern
 from django.utils.encoding import smart_str
 
 __all__ = ('RemoteSite', 
@@ -34,9 +35,12 @@ class RemoteSiteBase(type):
         for ns in [attrs, ] + [ e.__dict__ for e in bases ]:
             for name, obj in ns.iteritems():
                 if hasattr(obj, 'expose'):
-                    urls.append(obj.expose)
+                    #urls.append(obj.expose)
+                    regex, largs, kwargs = obj.expose
+                    urls.append(RegexURLPattern(regex, obj, kwargs, ''))
         if urls:
             new_class._urls = urls
+        print urls
         return new_class
 
 
@@ -74,24 +78,29 @@ class RemoteSite(object):
                 pass
             else:
                 if sub_match:
+                    print "***", sub_match
                     sub_match_dict = {}
                     for k, v in sub_match[2].iteritems():
                         sub_match_dict[smart_str(k)] = v
                     callback = sub_match[0]
                     callback_args = sub_match[1]
                     callback_kwargs = sub_match_dict
-                    return callback(request, *callback_args, **callback_kwargs)
-        raise Http404()
+                    # El binding de la funcion se hizo en ámbito estatico
+                    # por lo tanto no tiene el curry de self :)
+                    return callback(self, request, *callback_args, **callback_kwargs)
+        raise Http404(u"No url for «%s»" % url)
     
-    @expose(r'^get_templates/(?P<app_name>\s)')
+    @expose(r'^get_templates/(?P<app_name>\w*)/$')
     def get_templates(self, request, app_name):
         return HttpResponse("Some day tamplates will be served from here")
     
-    def index(self, request, p1):
-        return HttpResponse('Hola %s' % p1)
-
-    def app_index(self, request, app_label, p1):
-        return HttpResponse('Hola %s - %s' % (app_label, p1))
+    @expose(r'^$')
+    def index(self, request):
+        return HttpResponse('Hola %s')
+    
+    @expose(r'^app_index/(?P<app_label>\w+)/$')
+    def app_index(self, request, app_label):
+        return HttpResponse('App index %s' % app_label)
     
     
     
