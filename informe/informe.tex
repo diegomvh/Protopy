@@ -212,14 +212,20 @@ http://es.wikiquote.org/wiki/The\_Matrix
 
 Aca ponemos hasta donde nos vamos a llegar.
 
-\chapter{Tecnologías Web en el servidor}
+\chapter{Servidores Web}
 
 \section{Recursos}
 \emph{Acá hablamos brevemente de Mozilla (cuentito de como evuoluciona Javascript), Javascript y como se 
 perfila como estanadar de interconexión de sistemas (mashups), Python y CGI).}|
  
 \section{Lenguajes de programación para la web}
-\section{El lenguaje de programación Python}
+CGI es una tecnología que permite a un navegador web solicitar datos de un
+programa ejecutado en un servidor web.
+CGI establece un estandard para la transferencia de datos entre el cliente web y
+el servidor. El resultado de la ejecución de un CGI es un objeto MIME.
+
+
+\section{El lenguaje Python}
 \label{lang:python}
 % Esto está scado de la wikipedia 
 El lenguaje de programación Python fue creado por Guido van Rossum en el año 1991.
@@ -363,7 +369,6 @@ Pueden verse en el interprete interactivo mediante
 \end{verbatim}
 
 
-
 Un \emph{ámbito de nombres} en Python es un mapeo de nombres a objetos. La mayoría de 
 los ámbitos de nombres están implementados mediante diccionarios, but that's normally not noticeable in any
 way (except for performance), y podría cambiar en el futuro. Otros ejemplos de ámbitos de nombre
@@ -479,10 +484,13 @@ de tipo de dato primitivo \emph{(como en java)}. Las clases definidas por el usu
 son a su vez objetos.
 A partir de la versión 2.2 del lenguaje, aparecen new-style-classes que permiten 
 utilizar descriptores (base para implemetnación de propiedades) y metaclases.
-Una metaclase es una clase que define la estructura de otra clase y es una forma dinámica de 
-definir la estructura de una clase. Esta característica es considerada compleja, pero es 
-utilizada en varios componentes de Django (como la generación de formularios a partir de la definición
-de un modelo o la generación de interfases de CRUD en la administración integrada).
+Una metaclase es una clase que define la estructura de otra clase.
+Esta característica es a veces considerada
+compleja\footnote{\href{http://www.ibm.com/developerworks/linux/library/l-pymeta.html\#h3}
+{Metaclasses: a solution looking for a problem?}},
+pero es utilizada en varios componentes de Django 
+(como la generación de formularios a partir de la definición de un modelo o
+ la generación de interfases de CRUD en la administración integrada).
 
 \subsubsection*{Instanciacion de una clase}
 En Python no existe el conceto de constructor como en los lenguajes C++, Objective-C o 
@@ -746,7 +754,7 @@ como el método (GET, POST), los elementos de la query http.
 \end{figure}
 
 
-\chapter{Tecnologías Web en el cliente}
+\chapter{El cliente Web}
 
 \section{Google Gears}
 Google Gears es un plug-in para los navegadores: Mozilla Firefox, Internet

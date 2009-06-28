@@ -26,8 +26,9 @@ def expose(url, *args, **kwargs):
 
 class RemoteSiteBase(type):
     def __new__(cls, name, bases, attrs):
-        #TODO: de los parents sacamos las otras urls
-        #parents = [b for b in bases if isinstance(b, RemoteSiteBase)]
+        '''
+        Generate the class attribute with the urls.
+        '''
         new_class = super(RemoteSiteBase, cls).__new__(cls, name, bases, attrs)
         urls = []
         for ns in [attrs, ] + [ e.__dict__ for e in bases ]:
@@ -38,7 +39,6 @@ class RemoteSiteBase(type):
             new_class._urls = urls
         return new_class
 
-  
 
 class RemoteSite(object):
     __metaclass__ = RemoteSiteBase
@@ -106,5 +106,6 @@ class MySite(RemoteSite):
         return 'otra'
 
 if __name__ == "__main__":
+    from pprint import pprint
     m = MySite()
-    print m
+    pprint(m._urls)
