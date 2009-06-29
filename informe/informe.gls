@@ -1,14 +1,10 @@
-\begin{theglossary}\glogroupG
+\begin{theglossary}\glogroupA
 
-\gloitem {\glosslabel{glo:GNU}{GNU's Not Unix\ (\noexpand \acronymfont {GNU})}}A computer operating system composed entirely of free software.\relax
+\gloitem {\glosslabel{glo:API}{\textbf {A}pplication \textbf {P}rogramming \textbf {I}nterface\ (\noexpand \acronymfont {API})}}Una interfaz de programación de aplicaciones es el conjunto de funciones y procedimientos (o métodos, si se refiere a programación orientada a objetos) que ofrece cierta biblioteca para ser utilizado por otro software como una capa de abstracción.\relax
 \glodelim 
-		\glsnumformat{52}\delimT \gloskip \glogroupL
+		\glsnumformat{19}\delimT \gloskip \glogroupD
 
-\gloitem {\glosslabel{glo:Linux}{Linux}}Any Unix-like computer operating system that uses the Linux kernel.\relax
+\gloitem {\glosslabel{glo:DOM}{\textbf {D}ocument \textbf {O}bject \textbf {M}odel\ (\noexpand \acronymfont {DOM})}}EL Modelo en Objetos para la representación de Documentos o tambien Modelo de Objetos del Documento es esencialmente una interfaz de programación de aplicaciones que proporciona un conjunto estándar de objetos para representar documentos HTML y XML, un modelo estándar sobre cómo pueden combinarse dichos objetos, y una interfaz estándar para acceder a ellos y manipularlos.\relax
 \glodelim 
-		\glsnumformat{52}\delimT \gloskip \glogroupT
-
-\gloitem {\glosslabel{glo:Tesis}{Tesis}}Trabajo interminable\relax
-\glodelim 
-		\glsnumformat{52}\delimT 
+		\glsnumformat{19}\delimT 
 \end{theglossary}
