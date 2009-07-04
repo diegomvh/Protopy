@@ -12,6 +12,7 @@ from django.utils.safestring import SafeString
 from offline.debug import html_output
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
+from django.contrib.admin.sites import AlreadyRegistered
 import os, re
 from pprint import pformat
 
@@ -51,7 +52,6 @@ class RemoteSiteBase(type):
                     urls.append(RegexURLPattern(regex, obj, kwargs, ''))
         if urls:
             new_class._urls = urls
-        print urls
         return new_class
 
 import random, string
@@ -247,20 +247,35 @@ class RemoteSite(RemoteBaseSite):
     
     @expose(r'^export/(?P<app_name>.*)/models.json$')
     def export_models_for_app(self, request, app_name):
+        '''
+        Generates the javascript output from the model definition.
+        Each model must have beer registered with the register method.
+        Client vision oaver the server model may be configured with a 
+        RemoteProxy class.
+        '''
         from django.db.models.loading import get_app, get_models
-        models = get_models(get_app(app_name))
-        print models
+        #models = get_models(get_app(app_name))
+        models = filter(lambda m: m._meta.app_label == app_name, self._registry)
+        
         return HttpResponse("Response %s" % unicode(models))
+
 
     def register(self, model, remote_proxy = None):
         '''
         Register a proxy for a model
         '''
         assert issubclass(model, models.Model), "%s is not a Models subclass" % model
+        
+        if model in self._registry:
+            raise AlreadyRegistered("%s is already registered" % model)
+        
         if not remote_proxy:
-            remote_proxy = type('%sRemote' % model._meta.object_name, 
-                       (RemoteModelProxy, ), 
-                       {'Meta': RemoteOptions(model)} )
+            # If no class is given, create a basic one based on the model
+            name = model._meta.object_name
+            basic_meta = type('%sMeta' % name, (object,), {'model': model})
+            remote_proxy = type('%sRemote' % name, 
+                                (RemoteModelProxy, ), 
+                                {'Meta': RemoteOptions(basic_meta)} )
         
         self._registry[model] = remote_proxy
             
@@ -271,14 +286,13 @@ class RemoteModelMetaclass(type):
         '''
         Generate the class 
         '''
-        from inspect import isclass
-        print attrs
         meta = attrs.pop('Meta', None)
         if not meta:
             if name is not "RemoteModelProxy":
                 raise ImproperlyConfigured("%s has no Meta" % name)
         else:
-            pass
+            attrs['_meta'] = meta
+            
         new_class = super(RemoteModelMetaclass, cls).__new__(cls, name, bases, attrs)
         return new_class
 
@@ -287,7 +301,10 @@ class RemoteModelProxy(object):
     
 class RemoteOptions(object):
     def __init__(self, class_, **options):
-        self.model = class_
+        self.model = getattr(class_, 'model')
+        
+        if not self.model or not issubclass(self.model, models.Model):
+            raise ImproperlyConfigured("Invalid model %s" % self.model)
         
     def __str__(self):
         return unicode("<RemoteOptions for %s>" % self.model._meta.object_name)
