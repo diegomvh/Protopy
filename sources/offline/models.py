@@ -135,17 +135,8 @@ class Manifest(models.Model):
         '''
         file_list = []
         for f in abswalk_with_simlinks( path ):
-            #tmp_list = map( lambda n: os.path.join( pth, n), files)
             if callable(exclude_callback) and exclude_callback(f):
-                #tmp_list = filter(exclude_callback, tmp_list)
                 continue
-            
-#            tmp_list = map( lambda n: '%s/%s' % (
-#                            uri_base,                     
-#                            n[ n.index(path) + len(path) + 1: ]      
-#                            ),
-#                            tmp_list)
-#            file_list += tmp_list
             file_list.append('%s/%s' % ( uri_base,                     
                                         f[ f.index(path) + len(path) + 1: ]
                             ))

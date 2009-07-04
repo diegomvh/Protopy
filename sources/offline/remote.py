@@ -31,6 +31,8 @@ def expose(url, *args, **kwargs):
         return new_function
     return decorator
 
+
+
 class RemoteSiteBase(type):
     def __new__(cls, name, bases, attrs):
         '''
@@ -49,9 +51,21 @@ class RemoteSiteBase(type):
         print urls
         return new_class
 
-INVALID_TEMPLATE_SUFFIXES = re.compile(r'(:?.*\.svn.*)?(?:~|#)$')
+import random, string
+random_string = lambda length: ''.join( [ random.choice(string.letters) for _ in range(length) ] )
 
-valid_templates = lambda name: not INVALID_TEMPLATE_SUFFIXES.search( name )
+
+INVALID_TEMPLATE_SUFFIXES = re.compile(r'(:?.*\.svn.*)?(?:~|#)$')
+#valid_templates = lambda name: not INVALID_TEMPLATE_SUFFIXES.search( name )
+SCM_FOLDER_PATTERNS = ('.hg', '.git', '.svn', )
+
+def valid_templates(name):
+    if INVALID_TEMPLATE_SUFFIXES.search(name):
+        return False
+    if any(map(lambda n: name.count(n) > 0, SCM_FOLDER_PATTERNS)):
+        return False
+    return True
+    
     
 def _retrieve_templates_from_path(path, template_bases = None, strip_first_slash = True):
     '''
@@ -134,7 +148,6 @@ class RemoteSite(object):
                 pass
             else:
                 if sub_match:
-                    print "***", sub_match
                     sub_match_dict = {}
                     for k, v in sub_match[2].iteritems():
                         sub_match_dict[smart_str(k)] = v
@@ -144,12 +157,13 @@ class RemoteSite(object):
                     # El binding de la funcion se hizo en ámbito estatico
                     # por lo tanto no tiene el curry de self :)
                     return callback(self, request, *callback_args, **callback_kwargs)
-        text = ''
-        if settings.DEBUG:
-            # Build a nice message when an url isn't found
-            text = '\n'.join([str(x.regex) for x in self._urls])
-            text = SafeString(text)
-        raise Http404(u"No url for «%s»<br/>%s" % (url, text))
+        
+        #TODO: Imprimir un mensaje con el listado de URLs en el 404
+#        if settings.DEBUG:
+#            # Build a nice message when an url isn't found
+#            text = '\n'.join([str(x.regex) for x in self._urls])
+#            text = SafeString(text)
+        raise Http404(u"No url for «%s»" % (url, ))
     
     @expose(r'^get_templates/(?P<app_name>\w*)/$')
     def get_templates(self, request, app_name):
@@ -197,13 +211,25 @@ class RemoteSite(object):
     @expose(r'^template_list/$')
     def template_list(self, request): 
         return HttpResponse( html_output(full_template_list(), indent = 2))
+    
+    @expose(r'^network_check/$')
+    def network_check(self, request):
+        return HttpResponse()
 
-class MySite(RemoteSite):
-    @expose(r'index$', kwargs = {'algo': 'algo'}, name = 'index')
-    def index(self):
-        return "Hello world!"
+    @expose(r'^manifests/project.json$')
+    def project_manifest(self, request):
+        from django.conf import settings
+        m = Manifest()
+        # genreate random version string
+        m.version = random_string(32)
+        m.add_uris_from_pathwalk(settings.OFFLINE_ROOT, '/%s' % settings.OFFLINE_BASE)
+        # Add templates
+        map( m.add_entry, map( lambda t: '/%s/templates%s'% (settings.OFFLINE_BASE, t), 
+                               full_template_list()))
         
-    @expose(r'app_index/', name='app_index')
-    def app_index(self, request):
-        return 'otra'
-
+        json = m.dump_manifest()
+        
+        if 'human' in request.GET:
+            json = json.replace(', ', ',\n')
+        
+        return HttpResponse( json, 'text/plain' )
