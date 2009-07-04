@@ -8,7 +8,10 @@ from django.core.urlresolvers import Resolver404, RegexURLPattern
 from django.utils.encoding import smart_str
 from offline.models import Manifest
 from django.template import TemplateDoesNotExist
+from django.utils.safestring import SafeString
+from offline.debug import html_output
 import os, re
+from pprint import pformat
 
 __all__ = ('RemoteSite', 
            'expose',
@@ -123,6 +126,7 @@ class RemoteSite(object):
 #    urlpatterns = property(get_urls)
 
     def root(self, request, url):
+        from django.conf import settings
         for pattern in self._urls:
             try:
                 sub_match = pattern.resolve(url)
@@ -140,7 +144,12 @@ class RemoteSite(object):
                     # El binding de la funcion se hizo en ámbito estatico
                     # por lo tanto no tiene el curry de self :)
                     return callback(self, request, *callback_args, **callback_kwargs)
-        raise Http404(u"No url for «%s»" % url)
+        text = ''
+        if settings.DEBUG:
+            # Build a nice message when an url isn't found
+            text = '\n'.join([str(x.regex) for x in self._urls])
+            text = SafeString(text)
+        raise Http404(u"No url for «%s»<br/>%s" % (url, text))
     
     @expose(r'^get_templates/(?P<app_name>\w*)/$')
     def get_templates(self, request, app_name):
@@ -183,7 +192,11 @@ class RemoteSite(object):
             template_source, _origin = find_template_source(path)
         except TemplateDoesNotExist:
             return HttpResponseNotFound(u'404: template not found: \"%s\"' % path)
-        return HttpResponse(template_source)        
+        return HttpResponse(template_source)
+    
+    @expose(r'^template_list/$')
+    def template_list(self, request): 
+        return HttpResponse( html_output(full_template_list(), indent = 2))
 
 class MySite(RemoteSite):
     @expose(r'index$', kwargs = {'algo': 'algo'}, name = 'index')
@@ -194,7 +207,3 @@ class MySite(RemoteSite):
     def app_index(self, request):
         return 'otra'
 
-if __name__ == "__main__":
-    from pprint import pprint
-    m = MySite()
-    pprint(m._urls)
