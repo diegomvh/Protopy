@@ -5,8 +5,9 @@ Remote models for doff app
 from blog.post.models import *
 from offline.remote import RemoteSite 
 from django.db import models
+from offline.remote import RemoteModelProxy
 
-#class TagRemote(RemoteModelProxy):
+class TagRemote(RemoteModelProxy):
 #    
 #    p = models.DateField('Fecha de creacion')
 #    
@@ -17,9 +18,9 @@ from django.db import models
 #    def sync(self, data):
 #        raise NotImplementedError("No funca")
 #    
-#    class Meta:
-#        model = Tag
-#        exclude = ('fecha', )
+    class Meta:
+        model = Tag
+        exclude = ('fecha', )
 #        
 #
 #class PostRemote(RemoteModelProxy):
@@ -29,3 +30,5 @@ from django.db import models
 
 
 site = RemoteSite()
+site.register(Post)
+site.register(Tag, TagRemote)

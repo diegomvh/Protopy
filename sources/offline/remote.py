@@ -10,11 +10,14 @@ from offline.models import Manifest
 from django.template import TemplateDoesNotExist
 from django.utils.safestring import SafeString
 from offline.debug import html_output
+from django.core.exceptions import ImproperlyConfigured
+from django.db import models
 import os, re
 from pprint import pformat
 
 __all__ = ('RemoteSite', 
            'expose',
+           'RemoteModelProxy',
            )
 
 #class ModelRemoteBase(object):
@@ -113,13 +116,12 @@ def full_template_list(exclude_apps = None, exclude_callable = None):
 
 
 
-class RemoteSite(object):
+class RemoteBaseSite(object):
+    '''
+    For each offline application, there's a offline base
+    '''
     __metaclass__ = RemoteSiteBase
     
-    def __init__(self):
-        self.registry = {}
-        self.name = "cosas"
-        
 #    def get_urls(self):
 #        from django.conf.urls.defaults import patterns, url
 #
@@ -165,6 +167,15 @@ class RemoteSite(object):
 #            text = SafeString(text)
         raise Http404(u"No url for «%s»" % (url, ))
     
+class RemoteSite(RemoteBaseSite):
+    '''
+    Manages offline project support.
+    @expose decorator indicates how URLs are mapped
+    '''
+    
+    def __init__(self):
+        self._registry = {}
+        
     @expose(r'^get_templates/(?P<app_name>\w*)/$')
     def get_templates(self, request, app_name):
         return HttpResponse("Some day tamplates will be served from here")
@@ -233,3 +244,51 @@ class RemoteSite(object):
             json = json.replace(', ', ',\n')
         
         return HttpResponse( json, 'text/plain' )
+    
+    @expose(r'^export/(?P<app_name>.*)/models.json$')
+    def export_models_for_app(self, request, app_name):
+        from django.db.models.loading import get_app, get_models
+        models = get_models(get_app(app_name))
+        print models
+        return HttpResponse("Response %s" % unicode(models))
+
+    def register(self, model, remote_proxy = None):
+        '''
+        Register a proxy for a model
+        '''
+        assert issubclass(model, models.Model), "%s is not a Models subclass" % model
+        if not remote_proxy:
+            remote_proxy = type('%sRemote' % model._meta.object_name, 
+                       (RemoteModelProxy, ), 
+                       {'Meta': RemoteOptions(model)} )
+        
+        self._registry[model] = remote_proxy
+            
+    
+    
+class RemoteModelMetaclass(type):
+    def __new__(cls, name, bases, attrs):
+        '''
+        Generate the class 
+        '''
+        from inspect import isclass
+        print attrs
+        meta = attrs.pop('Meta', None)
+        if not meta:
+            if name is not "RemoteModelProxy":
+                raise ImproperlyConfigured("%s has no Meta" % name)
+        else:
+            pass
+        new_class = super(RemoteModelMetaclass, cls).__new__(cls, name, bases, attrs)
+        return new_class
+
+class RemoteModelProxy(object):
+    __metaclass__ = RemoteModelMetaclass
+    
+class RemoteOptions(object):
+    def __init__(self, class_, **options):
+        self.model = class_
+        
+    def __str__(self):
+        return unicode("<RemoteOptions for %s>" % self.model._meta.object_name)
+    
