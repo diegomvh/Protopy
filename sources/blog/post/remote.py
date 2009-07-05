@@ -20,7 +20,7 @@ class TagRemote(RemoteModelProxy):
 #    
     class Meta:
         model = Tag
-        exclude = ('fecha', )
+        exclude = ('title', )
 #        
 #
 #class PostRemote(RemoteModelProxy):

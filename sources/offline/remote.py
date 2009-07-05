@@ -291,7 +291,7 @@ class RemoteModelMetaclass(type):
             if name is not "RemoteModelProxy":
                 raise ImproperlyConfigured("%s has no Meta" % name)
         else:
-            attrs['_meta'] = meta
+            attrs['_meta'] = RemoteOptions(meta)
             
         new_class = super(RemoteModelMetaclass, cls).__new__(cls, name, bases, attrs)
         return new_class
@@ -299,12 +299,29 @@ class RemoteModelMetaclass(type):
 class RemoteModelProxy(object):
     __metaclass__ = RemoteModelMetaclass
     
+    
+    def dump(self):
+        pass
+    def sync(self):
+        pass
+    
+    
 class RemoteOptions(object):
     def __init__(self, class_, **options):
         self.model = getattr(class_, 'model')
         
         if not self.model or not issubclass(self.model, models.Model):
             raise ImproperlyConfigured("Invalid model %s" % self.model)
+        
+        if hasattr(class_, 'exclude'):
+            print "Excluyendo campos"
+            exclude_fields = getattr(class_, 'exclude')
+            model_field_names = map(lambda f: f.name, self.model._meta.fields +
+                                                        self.model._meta.many_to_many
+                                                    )
+            for name in exclude_fields:
+                if name not in model_field_names:
+                    raise ImproperlyConfigured("%s has no %s field" % (self.model, name)) 
         
     def __str__(self):
         return unicode("<RemoteOptions for %s>" % self.model._meta.object_name)

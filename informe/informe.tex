@@ -941,6 +941,16 @@ A partir de la versión 0.4 del Gears
 %----------------------------------------------------------------------------
 \chapter{Integración y metodología de desarrollo con framework web}
 \section{Mecanismos de extension de Django}
+Para brindar soporte a las aplicaciones web en un cliente desconectado de 
+manera organizada, integraremos un conjunto de componetes y mecanismos
+de django, con una libería de javascript en el cliente.
+Hemos visto que existen varias características del lenguaje de porogramación
+Python que están ausentes en un navegador web convecional y por lo tanto
+han sido implementadas equivalencias en la librería Portopy.
+La estructura básica del proyecto en el servidor se mantendrá de manera similar
+en el clinete, solo que el código de las vistas y de los modelos deberá ser
+reescrito.
+
 
 \subsection{Comandos Personalizados}
 
@@ -950,7 +960,7 @@ A partir de la versión 0.4 del Gears
 % conocidos como comandos de consola o  terminal}. Django posee un set
 % de comandos que permiten crear proyectos, crear aplicaciones, sincronizar
 % la definición del modelo con la base de datos, volcado y recuperación de
-datos,
+% datos,
 % ejecución del servidor de desarrollo entre otras funcionalidades.
 
 Para poder realizar extensiones sobre la funcionalidad de Django sus
@@ -1000,10 +1010,50 @@ Las clases base diponible son NoArgsCommand, para la imeplentación de comandos
 que no reciben argumentos; AppLabelCommand para la implementación de comandos
 que reciben como argumento el nombre de una aplicación instalada y 
 
-\section{Integración}
-Se decide utilizar un ManagedStore para almacenar la aplicación y los médios
-estáticos y uno para almacenar el Framework.
+\section{Migración de una aplicación}
+\subsection{Restricciones}
+\subsection{Pasos para la migración}
+Para migrar una aplicación que cunple con las restricciones xxx se debe realizar
+el siguiente procedimiento:
+\subsubsection{Modificación del módulo settings.py y urls.py}
+Definir en el módulo \textbf{settings.py} del proyecto las constantes
+\textbf{OFFLINE\_BASE} y \textbf{OFFLINE\_ROOT}. La constante
+\textbf{OFFLINE\_BASE} es la URI relativa al proyecto offline, mientras que 
+\textbf{OFFLINE\_ROOT} es una ruta accesible en el sistema de archivos donde
+se vuelca el código que ser llevará al clinete.
+Además se debe agregar a \textbf{INSTALLED\_APPS} la aplicación offline.
+Además de agergar estas constantes a la configuración, es necesario crear
+una instancia de un objeto RemoteSite. Este objeto es el encargado de realizar
+la transferecia al browser de la lógica y los datos, además de proveer
+mecanismos de sincronización. Lo recomendable es crear un modulo remote en 
+la raíz del proyecto con el siguiente código:
+\begin{lstlisting}[style=python,
+		   label=offlineization-site,
+		   caption=Creando el sitio remoto]
 
+from offline.remote import RemoteSite
+
+site = RemoteSite()
+\end{lstlisting}
+
+\subsubsection{Creación de los RemoteProxy y\/o registro en el sitio remoto}
+Es necesario indicar al sitio remoto que modelos se desan exponer offline y
+como. Para esto existe una clase encargada, llamada RemoteProxy. 
+La instancia del sitio remoto tiene un método register() similar al que poseen
+las insntancias de los sitios de aministración de django.contrib.admin.
+
+
+
+
+\subsubsection{Migración del poryecto mediante el comando migrate\_project}
+Una vez modificado el archvio de configuración, se debe ejecutar el comando
+\textbf{manage.py migrate\_project} dentro de la raíz del proyecto. Esto creara
+la estructura del proyecto offline.
+
+\subsubsection{Migración individual de aplicaciones}
+Por cada aplicación que se desee migrar deberá invocarse el comando 
+\textbf{manage.py migrate\_app <nombre_de_aplicacion>} en la raíz del proyecto.
+Esto crea la estructura 
  
 \section{Convivencia}
 

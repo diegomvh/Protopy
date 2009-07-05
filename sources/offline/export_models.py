@@ -38,7 +38,7 @@ from inspect import isclass, ismodule
 python_version = map(int, sys.version.split(' ')[0].split('.'))
 
 if python_version < (2, 6, 0):
-    from djangoffline.utils import namedtuple
+    from offline.utils import namedtuple
     import inspect
     ArgSpec = namedtuple('ArgSpec', 'args varargs keywords defaults')
     

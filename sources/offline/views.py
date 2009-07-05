@@ -122,7 +122,7 @@ def template_static_serve(request, path):
 
 def get_app_remote_model(request, app_name):
     from django.db.models.loading import get_app, get_models
-    from djangoffline.export_models import export_models
+    from offline.export_models import export_models
     try:
         app = get_app(app_name)
         app_models = get_models(app)
@@ -141,7 +141,7 @@ def get_app_remote_model(request, app_name):
     
 def get_app_remote_model_(request, app_name):
     from django.db.models.loading import get_app, get_models
-    from djangoffline.export_models import export_models
+    from offlnie.export_models import export_models
     from pprint import pformat
     try:
         app = get_app(app_name)
