@@ -4,26 +4,26 @@
      * si safe == false los atribuotos de la forma __<foo>__ no se copian al objeto destino
      */
     function __extend__(safe, destiny) {
-	for (var i = 2, length = arguments.length; i < length; i++) {
-	    var object = arguments[i];
-	    var back_iter = object['__iterator__'];
-	    delete object['__iterator__'];
-	    for (var name in object) {
-		if (safe || name.search(/^__.*__$/) == -1) {
-		    var getter = object.__lookupGetter__(name);
-		    var setter = object.__lookupSetter__(name);
-		    if (getter)
-			destiny.__defineGetter__(name, getter);
-		    if (setter)
-			destiny.__defineSetter__(name, setter);
-		    if (getter || setter) continue;
-		    destiny[name] = object[name];
+    	for (var i = 2, length = arguments.length; i < length; i++) {
+		    var object = arguments[i];
+		    var back_iter = object['__iterator__'];
+		    delete object['__iterator__'];
+		    for (var name in object) {
+			if (safe || name.search(/^__.*__$/) == -1) {
+			    var getter = object.__lookupGetter__(name);
+			    var setter = object.__lookupSetter__(name);
+			    if (getter)
+				destiny.__defineGetter__(name, getter);
+			    if (setter)
+				destiny.__defineSetter__(name, setter);
+			    if (getter || setter) continue;
+			    destiny[name] = object[name];
+			}
+		    }
+		    if (back_iter)
+			object['__iterator__'] = back_iter;
 		}
-	    }
-	    if (back_iter)
-		object['__iterator__'] = back_iter;
-	}
-	return destiny;
+		return destiny;
     }
 
     /* Copia en this todos los atribuos del objeto pasado como argumento
@@ -2072,7 +2072,7 @@
 	    return result;
 	},
 
-        inspect: function inspect(use_double_quotes) {
+	inspect: function inspect(use_double_quotes) {
 	    var escaped = this.replace(/[\x00-\x1f\\]/g, function(str) {
                 var character = String.special[str];
                 return character ? character : '\\u00' + str.charCodeAt().format('02', 16);
@@ -2430,65 +2430,65 @@
     }
     
     Form.Serializers = {
-	input: function(element, value) {
-	    switch (element.type.toLowerCase()) {
-	    case 'checkbox':
-	    case 'radio':
-		return this.input_selector(element, value);
-	    default:
-		return this.textarea(element, value);
-	    }
-	},
+    input: function(element, value) {
+    	switch (element.type.toLowerCase()) {
+    	case 'checkbox':
+    	case 'radio':
+    		return this.input_selector(element, value);
+    	default:
+    		return this.textarea(element, value);
+    	}
+    },
 
-	input_selector: function(element, value) {
-	    if (typeof(value) === 'undefined') return element.checked ? element.value : null;
-	    else element.checked = !!value;
-	},
+    input_selector: function(element, value) {
+    	if (typeof(value) === 'undefined') return element.checked ? element.value : null;
+    	else element.checked = !!value;
+    },
 
-	textarea: function(element, value) {
-	    if (typeof(value) === 'undefined') return element.value;
-	    else element.value = value;
-	},
+    textarea: function(element, value) {
+    	if (typeof(value) === 'undefined') return element.value;
+    	else element.value = value;
+    },
 
-	select: function(element, value) {
-	    if (typeof(value) === 'undefined')
-	    return this[element.type == 'select-one' ?
-		'select_one' : 'select_many'](element);
-	    else {
-	    var opt, currentValue, single = type(value) != Array;
-	    for (var i = 0, length = element.length; i < length; i++) {
-		opt = element.options[i];
-		currentValue = this.option_value(opt);
-		if (single) {
-		    if (currentValue == value) {
-			opt.selected = true;
-			return;
-		    }
-		} else 
-		    opt.selected = include(value, currentValue);
-	    }
-	    }
-	},
+    select: function(element, value) {
+    	if (typeof(value) === 'undefined')
+    		return this[element.type == 'select-one' ?
+    				'select_one' : 'select_many'](element);
+    	else {
+    		var opt, currentValue, single = type(value) != Array;
+    		for (var i = 0, length = element.length; i < length; i++) {
+    			opt = element.options[i];
+    			currentValue = this.option_value(opt);
+    			if (single) {
+    				if (currentValue == value) {
+    					opt.selected = true;
+    					return;
+    				}
+    			} else 
+    				opt.selected = include(value, currentValue);
+    		}
+    	}
+    },
 
-	select_one: function(element) {
-	    var index = element.selectedIndex;
-	    return index >= 0 ? this.option_value(element.options[index]) : null;
-	},
+    select_one: function(element) {
+    	var index = element.selectedIndex;
+    	return index >= 0 ? this.option_value(element.options[index]) : null;
+    },
 
-	select_many: function(element) {
-	    var values, length = element.length;
-	    if (!length) return null;
+    select_many: function(element) {
+    	var values, length = element.length;
+    	if (!length) return null;
 
-	    for (var i = 0, values = []; i < length; i++) {
-	    var opt = element.options[i];
-	    if (opt.selected) values.push(this.option_value(opt));
-	    }
-	    return values;
-	},
+    	for (var i = 0, values = []; i < length; i++) {
+    		var opt = element.options[i];
+    		if (opt.selected) values.push(this.option_value(opt));
+    	}
+    	return values;
+    },
 
-	option_value: function(opt) {
-	    return opt.hasAttribute('value') ? opt.value : opt.text;
-	}
+    option_value: function(opt) {
+    	return opt.hasAttribute('value') ? opt.value : opt.text;
+    }
     }
     
     //For firefox

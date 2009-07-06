@@ -1,17 +1,15 @@
-
 \chapter{Protopy}
 \label{ch:apendiceProtopy}
 Protopy es una librería en JavaScript que simplifica el desarrollo de
-aplicaciones web dinámicas.
-Agregando un enfoque modular para la inclusión de código, orientación a objetos,
-soporte para AJAX, manipulación del DOM y eventos.
+aplicaciones web dinámicas. Agregando un enfoque modular para la inclusión de
+código, orientación a objetos, soporte para AJAX, manipulación del DOM y
+eventos.
 
 \section{Módulos}
-Uno de los principales inconvenientes a los que protopy da solución es a la
-inclusión dinámica de funcionalidad bajo demanda,
-esto es logrado mediante los módulos.
-Básicamente un modulo en un archivo con código javascript que recide en el
-servidor y es obtenido y ejecutado en el cliente.
+Uno de los principales inconvenientes a los que Protopy da solución es a la
+inclusión dinámica de funcionalidad bajo demanda, esto es logrado mediante los
+módulos. Básicamente un modulo en un archivo con código javascript que recide
+en el servidor y es obtenido y ejecutado en el cliente.
 
 \begin{lstlisting}[style=javascript,label=estructura-modulo,caption=Estructura
 de un modulo]
@@ -70,8 +68,8 @@ en el mismo.
   publish(simbols: Object)
 \end{verbatim}
 Publica la funcionalidad de un modulo.
-Para interactuar con el código definido en un modulo es necesario
-exponer una interfase de acceso al mismo, de esto se encarga la función publish.
+Para interactuar con el código definido en un modulo es necesario exponer una
+interfase de acceso al mismo, de esto se encarga la función publish.
 
 \subsubsection*{require}
 \begin{verbatim}
@@ -82,22 +80,22 @@ Al invocar a esta función un modulo es cargado desde el servidor y ejecutado en
 el cliente, la forma en que el modulo se presenta en el espacio de nombres
 depende de la invocación.
 \begin{itemize}
- \item{var cntx = require('doff.template.context')}
-  Importa el modulo 'doff.template.context' y lo retorna en cntx, dejando
-también una referencia en el espacio de nombres llamado 'context', esta dualidad
-en la asociación del modulo permite importar módulos sin asociarlos a una
-variable, simplemente alcanza con asumir que la parte final del nombre es la
-referencia a usar.
- \item{var cur = require('gears.database', 'cursor')}
-  Importa el modulo 'gears.databse' y retorna en cur el objeto publicado bajo el
-nombre de cursor, similar al caso anterior una referencia se define en el
-espacio de nombres para cursor.  
+  \item {var cntx = require('doff.template.context')} Importa el modulo
+  'doff.template.context' y lo retorna en cntx, dejando también una referencia
+  en el espacio de nombres llamado 'context', esta dualidad en la asociación
+  del modulo permite importar módulos sin asociarlos a una variable,
+  simplemente alcanza con asumir que la parte final del nombre es la referencia
+  a usar.
+ \item{var cur = require('gears.database', 'cursor')} Importa el modulo
+ 'gears.databse' y retorna en cur el objeto publicado bajo el nombre de cursor,
+ similar al caso anterior una referencia se define en el espacio de nombres
+ para cursor.
  \item{require('doff.db.models', 'model', 'query')}
   Importa el modulo 'doff.db.models' y define en el espacio de nombres las
 referencias a model y query usando los mismos nombres.
- \item{require('doff.core.urlpattern', '*')}
-  Importa del modulo 'doff.core.urlpattern' todos los objetos publicados y los
-publica en el espacio de nombres.
+ \item{require('doff.core.urlpattern', '*')} Importa del modulo
+ 'doff.core.urlpattern' todos los objetos publicados y los publica en el
+ espacio de nombres.
 \end{itemize}
 
 \subsubsection*{type}
@@ -105,21 +103,19 @@ publica en el espacio de nombres.
   type(name: String, [bases: Array ] [, class: Object ], instance: Object) ->
 Type
 \end{verbatim} 
-Función encargada de la construcción de nuevos tipos o clases.
-Una vez definido un nuevo tipo este puede ser utilizado para la contracción
-indiscriminada de objetos de ese tipo mediante el operador new.
-Como argumentos admite, el nombre del nuevo tipo, las bases de la cual hereda,
-opcionalmente los atributos y metodos de clase y los atributos y metodos para la
-instancia.
-
-La función constructor de los objetos tiene por nombre \verb|__init__| y es
-disparada
-en el momento de la construcción del objeto; en conjunto con otros metodos que
-se mencionaran a lo largo del texto estas funciones resultan de especial interés
-para interactuar con nuestros objetos y existen operadores en protopy para
-manejarlas, esto es, no debieran ser invocadas o llamadas directamente.
-\begin{lstlisting}[style=javascript,label=definicion-de-tipos,caption=Definicion
-de tipos]
+Función encargada de la construcción de nuevos tipos de objeto o
+simplemente clases.
+Una vez definido un nuevo tipo este puede ser utilizado para la construcción
+de instancias mediante el operador ``new''.
+Los argumentos para la funcion ``type" son, el nombre para el nuevo tipo de
+objeto, los tipos base de los cuales se hereda funcionalidad, opcionalmente los
+atributos y/o metodos de clase y los atributos y/o metodos para la instancia.
+La función que inicializa los objetos tiene por nombre \verb|__init__| y es
+llamada en el momento de la construcción; en conjunto con otros metodos que se
+mencionaran a lo largo del texto estas funciones resultan de especial interés
+para interactuar con nuestros objetos y existen operadores en Protopy para
+manejarlas; esto es, no debieran ser invocadas o llamadas directamente.
+\begin{lstlisting}[style=javascript,label=definicion-de-tipos,caption=Definicion de tipos]
 var Animal = type('Animal', object, {
     contador: 0,
 }, {
@@ -185,11 +181,11 @@ Doris la piton esta reptando
   $(id: String) -> HTMLElement
   $(id: String[, id...]) -> [HTMLElement...]
 \end{verbatim}
-Esta función recibe una cadena de texto y retorna un elemento del documento cuyo
-id se corresponda con la cadena. En conjunto con la función \$\$ constituyen dos
-herramientas muy útiles para recuperar elementos e interactuar con el árbol DOM.
-Si mas de un argumento es pasado, la forma de retorno es mediante un arreglo,
-permitiendo así la iteración sobre los mismos.
+Esta función recibe una cadena de texto y retorna el elemento del documento
+cuyo ``id'' se corresponda con la cadena. En conjunto con la función \$\$
+constituyen dos herramientas muy útiles para recuperar elementos e interactuar
+con el árbol DOM. Si mas de un argumento es pasado, la forma de retorno es
+mediante un arreglo, permitiendo así la iteración sobre los mismos.
 \begin{lstlisting}[style=consola]
 >>> $('content')
 <div id="content">
@@ -204,10 +200,9 @@ permitiendo así la iteración sobre los mismos.
 \begin{verbatim}
   $$(cssRule: String) -> [HTMLElement...]
 \end{verbatim}
-Recupera elementos del documento, pero en lugar de hacerlo mediante un
-identificador, lo realiza utilizando las reglas de css o hoja de estilos.
-\begin{lstlisting}[style=consola]
->>> $$('div')
+Recupera elementos del documento, basando las reglas de seleccion en las
+reglas de css o hoja de estilos.
+\begin{lstlisting}[style=consola] >>> $$('div')
 [div#wrap, div#top, div#content, div.header, div.breadcrumbs, div.middle, div,
 div.right, div#clear, div#footer, div#toolbar]
 >>> $$('div#toolbar')
@@ -363,8 +358,7 @@ more...], 50]]
   new Set(array) -> Set
 \end{verbatim}
 Un set es una coleccion de elementos unicos, de forma similar a los conjuntos
-este objeto soporta intersecciones, uniones y otros metodos tipicos con sus
-elementos.
+este objeto soporta intersecciones, uniones, restas, etc.
 \begin{lstlisting}[style=consola]
 >>> set = new Set([1,2,3,4,5,6,7,8,9,3,6,1,4,7])
 >>> len(set)
@@ -436,8 +430,7 @@ Determina el valor de verdad de un objeto pasado, los valores de verdad son como
 sigue: arreglos, objetos y cadenas vacias en conjunto con los valores null y
 undefined son falsos; todos los demas casos son verdaderos.
 En el caso particular de que un objeto defina el metodo \verb|__nonzero__| este
-es
-invocado para determinar el valor de verdad.
+es invocado para determinar el valor de verdad.
 
 %callable
 \subsubsection*{callable}
@@ -495,8 +488,7 @@ invocado para determinar la posicion a retornar.
 Compara dos objetos determinando el valor de igual para los mismos, verdadero es
 retornado en caso de ser los dos objetos iguales.
 En caso de que object1 defina el metodo \verb|__eq__| este es invocado con
-object2
-pasado como parametro para determinar la igualdad.
+object2 pasado como parametro para determinar la igualdad.
 
 %nequal
 \subsubsection*{nequal}
@@ -506,8 +498,7 @@ pasado como parametro para determinar la igualdad.
 Compara dos objetos determinando el valor de igual para los mismos, verdadero es
 retornado en caso de ser los dos objetos distintos.
 En caso de que object1 defina el metodo \verb|__ne__| este es invocado con
-object2
-pasado como parametro para determinar la no igualdad.
+object2 pasado como parametro para determinar la no igualdad.
 
 %number
 \subsubsection*{number}
@@ -648,10 +639,10 @@ secuencias queda acotada a la longitud de la secuencia mas corta.
 \end{lstlisting}
 
 \subsection{sys}
-Este modulo provee acceso a algunos objetos mantenidos por protopy y funciones
-que resultan de utilidad para interactuar con el ambiente de ejecucion.
+Este modulo provee acceso a algunos objetos y funciones mantenidas por Protopy y
+que resultan de utilidad para interactuar con el ambiente.
 \subsubsection*{version}
-Es la version de protopy.
+Version de Protopy.
 \subsubsection*{browser}
 Este objeto provee informacion sobre el navegador en el cual protopy se cargo.
 \begin{itemize}
@@ -681,17 +672,17 @@ que se van cargando bajo demanda.
 Las rutas registradas para la carga de modulos.
 
 \subsection{exception}
-Este modulo reune todas las excepciones que Protopy provee a la hora de mostrar
-errores.
+Modulo que reune todas las excepciones que Protopy provee a la hora de mostrar
+errores, este modulo es cargado en el ambiente cuando Protopy inicia, no siendo
+necesario su requerimiento posteriormente.
+
 \paragraph{Excepciones}
 Exception, AssertionError, AttributeError, LoadError, KeyError,
 NotImplementedError, TypeError, ValueError.
-El modulo de excepciones es cargado en el ambiente de trabajo cuando protopy
-inicia, no siendo necesario su llamada posterior.
 
 \subsection{event}
 Este es el modulo encargado de encapsular la logica de eventos requerida tanto
-por los elementos del DOM como la de usuario.
+por los elementos del DOM como por el usuario.
 
 \paragraph{Funciones}
 \subsubsection*{connect}
@@ -706,7 +697,7 @@ evento del DOM.
 \begin{verbatim}
   disconnect(handle: Handle)
 \end{verbatim}
-Quita el la relacion establecida por ''connect''.
+Quita el la relacion establecida por ``connect''.
 
 \subsubsection*{subscribe}
 \begin{verbatim}
@@ -802,21 +793,22 @@ Protopy no solo aporta modulos y funciones utiles al desarrollo, sino que
 tambien agrega nueva funcionalidad a los objetos de javascript.
 
 \subsection{String}
+Estos metodos amplian las herramientas para el manejo de cadenas de texto.
 \subsubsection*{sub}
 \begin{verbatim}
   string.sub(pattern, replacement[, count = 1]) -> string
 \end{verbatim}
-Returns a string with the first count occurrences of pattern replaced by either
-a regular string, the returned value of a function or a Template string. pattern
-can be a string or a regular expression.
+Retorna una cadena donde la primera ocurrencia del patron pasado es reemplazado
+por la cadena o cada uno de los valores retornados por la funcion pasada como
+segundo argumento. El patron puede ser una exprecion regular o una cadena.
 
 \subsubsection*{subs}
 \begin{verbatim}
   string.subs(value...) -> string
 \end{verbatim}
 Substitulle cada patron encontrado en la cadena por los valores
-correspondientes, si el primer valor es un objeto, se espera un patron del tipo
-clave en la cadena para su reemplazo.
+correspondientes, si el primer valor es un objeto, se espera un patron del
+tipo clave en la cadena para su reemplazo.
 
 \subsubsection*{format}
 \begin{verbatim}
@@ -828,7 +820,7 @@ Da formato a una cadena de texto, al estilo C.
 \begin{verbatim}
   string.inspect(use_double_quotes) -> string
 \end{verbatim}
-Retorna una verion de debug de la cadena, esta puede ser con comillas simples o
+Retorna una version de debug de la cadena, esta puede ser con comillas simples o
 con comillas dobles.
 
 \subsubsection*{truncate}
@@ -927,7 +919,7 @@ Remplaza cada ocurrencia de un guion bajo (``\_'') por un guion medio (``-'').
 \begin{verbatim}
   string.startswith(pattern) -> boolean
 \end{verbatim}
-Chequea si la cadena inicie con el patron pasado.
+Chequea si la cadena inicia con el patron pasado.
 
 \subsubsection*{endswith}
 \begin{verbatim}
@@ -943,6 +935,7 @@ Chequea si una cadena esta en blanco, esto es si esta vacia o solo contiene
 espacios en blanco.
 
 \subsection{Number}
+Estos metodos agregan funcionalidad sobre los objetos numericos.
 \subsubsection*{format}
 \begin{verbatim}
   number.format(f, radix) -> string
@@ -957,12 +950,14 @@ Da formato a un numero en base a una cadena de texto, al estilo C.
 Retorna una representacion de la fecha en ISO8601.
 
 \subsection{Element}
+Extencion sobre los elementos del DOM, simplificando trabajos comunes de
+desarrollo.
 \subsubsection*{visible}
 \begin{verbatim}
-  HTMLElement.visible() -> HTMLElement
+  HTMLElement.visible() -> Boolean
 \end{verbatim}
-Returns a Boolean indicating whether or not element is visible (i.e. whether its
-inline style property is set to "display: none;").
+Retorna un valor de verdad que determina si el elemento esta visible al
+usuario, verificando el atributo de estilo ``display''.
 
 \subsubsection*{toggle}
 \begin{verbatim}
@@ -974,7 +969,7 @@ Alterna la visibilidad del elemento.
 \begin{verbatim}
   HTMLElement.hide() -> HTMLElement
 \end{verbatim}
-Oculta el elemento.
+Oculta el elemento al usuario, modificando el atributo de estilo.
 
 \subsubsection*{show}
 \begin{verbatim}
@@ -1000,9 +995,11 @@ elemento.
   HTMLElement.insert({ position: content }) -> HTMLElement
   HTMLElement.insert(content) -> HTMLElement
 \end{verbatim}
-Inserts content before, after, at the top of, or at the bottom of element, as
-specified by the position property of the second argument. If the second
-argument is the content itself, insert will append it to element.
+Inserta conentido al principio, al final, sobre o debajo del
+elemento, para definir la poscicion de la insercion el argumento se debe pasar
+en forma de objeto, donde la clave es la pocicion y el valor el contenido a
+insertar; si el argumento es contenido a insertar este se inserta al final
+del elemento.
 
 \subsubsection*{select}
 \begin{verbatim}
@@ -1021,24 +1018,35 @@ la funcion.
 [div.middle]
 \end{lstlisting}
 
+%Faltan, estoy mal con la forma de los nombres :( CamelCase camel_case
+% Camelcase camelcase HAAAAAAAAA!
+%empty: function()
+%getStyle: function(style)
+%getOpacity: function(element)
+%setStyle: function(styles)
+%setOpacity: function(value)
+
 \subsection{Forms}
+Estos metodos decoran a los elementos del tipo formulario, agregando
+funcionalidad sobre los mismos y sobre los campos que contienen.
 \subsubsection*{disable}
 \begin{verbatim}
   HTMLFormElement.disable() -> HTMLFormElement
 \end{verbatim}
-Deshabilita todos los elementos de este formulario para el ingreso de valores.
+Deshabilita todos los campos de este formulario para el ingreso de
+valores.
 
 \subsubsection*{enable}
 \begin{verbatim}
   HTMLFormElement.enable() -> HTMLFormElement
 \end{verbatim}
-Habilita todo los elementos del formulario para el ingreso de valores.
+Habilita todo campos del formulario para el ingreso de valores.
 
 \subsubsection*{serialize}
 \begin{verbatim}
   HTMLFormElement.serialize() -> object
 \end{verbatim}
-Retorna un objeto conteniendo todos los elementos del formulario serializados
+Retorna un objeto conteniendo todos campos del formulario serializados
 con sus respectivos valores.
 
 \begin{lstlisting}[style=consola]
@@ -1049,56 +1057,67 @@ Object title=Hola mundo body=Este es un post tags=[1]
 \end{lstlisting}
 
 \subsection{Forms.Element}
+Los metodos que a continuación se presentan decoran a los elementos o campos de
+un formulario, simplificando y agilizando el trabajo con los mismos.
 \subsubsection*{serialize}
 \begin{verbatim}
   HTMLElement.serialize() -> string
 \end{verbatim}
-Retorna una cadena representando la pareja clave=valor del elemento.
+Crea una cadena en URL-encoding representando el contenido del
+campo expresado como clave=valor, para su uso en una peticion AJAX por
+ejemplo.
+Este atributo trabaja sobre un unico campo, si en lugar de esto se requiere
+serializar todo el formulario vea Form.serialize().
+Si se requiere es el valor del campo en lugar de la pareja clave=valor, vea
+get\_value().
 
 \subsubsection*{get\_value}
 \begin{verbatim}
   HTMLElement.get_value() -> value
 \end{verbatim}
-Retorna el valor actual del elemento del formulario. Una cadena de texto es
-retornada en la mayoria de los casos excepto en el caso de un select multiple en
-que se retorna un arreglo con los valores.
+Retorna el valor actual del campo. Una cadena de texto es retornada en la
+mayoria de los casos excepto en el caso de un select multiple, en que se retorna
+un arreglo con los valores.
 
 \subsubsection*{set\_value}
 \begin{verbatim}
   HTMLElement.set_value(value) -> HTMLElement
 \end{verbatim}
-Fija el valor de un elemento.
+Establese el valor de un campo.
 
 \subsubsection*{clear}
 \begin{verbatim}
   HTMLElement.clear() -> HTMLElement
 \end{verbatim}
-Limpia el elemento quitando el valor ingresado.
+Limpia un campo de texto asignando como valor la cadena vacia.
 
 \subsubsection*{present}
 \begin{verbatim}
   HTMLElement.present() -> boolean
 \end{verbatim}
-Retorna verdadero si el elemento de ingreso de datos tiene un valor, falso en
-otro caso.
+Retorna verdadero si el campo de texto tiene un valor asignado, falso en otro
+caso.
 
 \subsubsection*{activate}
 \begin{verbatim}
   HTMLElement.activate() -> HTMLElement
 \end{verbatim}
-Pone el foco sobre el elemento.
+Pone el cursor sobre el campo y selecciona el valor si el campo es del tipo
+texto.
 
 \subsubsection*{disable}
 \begin{verbatim}
   HTMLElement.disable() -> HTMLElement
 \end{verbatim}
-Deshabilita el elemento para el ingreso de valores.
+Deshabilita el campo, impidiendo de este modo que se modifique su valor hasta
+que sea habilitado nuevamente.
+Los campos de un formulario que esten deshabilitados no se serializan.
 
 \subsubsection*{enable}
 \begin{verbatim}
   HTMLElement.enable() -> HTMLElement
 \end{verbatim}
-Habilita el elemento para el ingreso de valores.
+Habilita un campo, previamente deshabilitado, para el ingreso de valores.
 
 \section{Otros modulos}
 \subsection{gears}
