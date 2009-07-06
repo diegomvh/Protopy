@@ -1,59 +1,7 @@
-\chapter{Propuesta de framework MTV en el cliente}
+\chapter{El framework MTV}
 
-\section{que}
-El desarrollo de un framework en JavaScript funcionando dentro del navegador
-Firefox, deja entrever una gran cantidad de detalles que no resultan triviales
-al momento de desarrollar.
-\begin{itemize}
- \item Se requieren varias lineas de codigo para implementar un framework.
- \item Como llega el codigo al navegador y se inicia su ejecucion.
- \item La cara visible o vista debe ser fasilmente manipulable por la aplicacion
-de usuario.
- \item Como los datos generados en el cliente son informados al servidor.
- \item El framework debe brindar soporte a la aplicacion de usuario de una forma
-natural y transparente.
- \item Se debe promover al reuso y la extension de funcionalidad del framework.
- \item Como se ponen en marcha los mecanimos o acciones que la aplicacion de
-usuario define.
- \item ...
-\end{itemize} 
-Si bien el desarrollo de Protopy se mantuvo en paralelo a la del
-framework, existen aspectos basicos a los que esta brinda soporte y permiten
-presentarla en un apartado separado como una ''Libreria JavaScript''.
+\section{Percistencia}
 
-\textit{proto}type + \textit{py}thon = \textit{protopy}
+\section{Generando HTML}
 
-``La creación nace del caos'', Protopy no escapa a esta afirmacion y nace de la
-integracion de la libreria Prototype con las primeras funciones para lograr
-la modularizacion; con el correr de las lineas de codigo\footnote{Forma en que
-los informaticos miden el paso del tiempo} el desarrollo del framework convierte
-el enfoque inicial en poco sustentable, requiriendo este de funciones mas
-Python-compatibles se desecha buena parte de la libreria base y se continua con
-un enfoque mas ``pythonico''.
-
-En este capitulo se explicara como Protopy da solucion a los items expuestos y
-terminando una definicion.
-
-\textit{Protopy es una libreria JavaScript para el desarrollo de aplicaciones
-web dinamicas. Aporta un enfoque modular para la inclusión de código,
-orientación a objetos, manejo de AJAX, DOM y eventos.}
-
-% llamaron para papa, llamar a este numero 0800-666-1153 rio 
-\section{como}
-
-El desarrollo de un framework en javascript que funcione del lado del cliente
-presupone gran cantidad de codigo
-viajando de un lado al otro de la conexion. Previendo basicamente este postulado
-desarrollamos una libreria
-que brinde el soporte a los requerimentos mas basicos.
-Esta librería contituye la base para posteriores contrucciones mas complejas en
-el ciente y auna herramientas
-que simplifican el desarrollo client-side.
-
-
-\section{Modulos}
-Undo de los principales inconvenientes a los que protopy da solucion es a la
-inclucion dinamica de funcionalidad bajo demanda,
-esto es logrado mediante los modulos.
-Basicamente un modulo en un archivo con codigo javascript que recide en el
-servidor y es obtenido y ejecutado en el cliente.
+\section{Capturando datos}
