@@ -13,6 +13,7 @@ from offline.debug import html_output
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.contrib.admin.sites import AlreadyRegistered
+from django.shortcuts import render_to_response
 import os, re
 from pprint import pformat
 from django.db.models.loading import get_app
@@ -312,12 +313,16 @@ class RemoteSite(RemoteBaseSite):
         Client vision oaver the server model may be configured with a 
         RemoteProxy class.
         '''
-        from django.db.models.loading import get_app, get_models
-        #models = get_models(get_app(app_name))
-        models = filter(lambda m: m._meta.app_label == app_name, self._registry)
-        
-        return HttpResponse("Response %s" % unicode(models))
-
+#        from django.db.models.loading import get_app, get_models
+#        #models = get_models(get_app(app_name))
+#        models = filter(lambda m: m._meta.app_label == app_name, self._registry)
+#        
+#        return HttpResponse("Response %s" % unicode(models))
+        #app = get_app(app_name).__file__
+    
+        #return HttpResponse(app)
+        #HttpResponse(content, mimetype, status, content_type)
+        return render_to_response('djangoffline/models_example.js', mimetype = 'text/javascript')
     
 
     def register(self, model, remote_proxy = None):
