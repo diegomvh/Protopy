@@ -4,7 +4,7 @@ from django.conf import settings
 register = template.Library()
 
 offline_template = '''
-<script type="text/javascript;version=1.7" src="/%(OFFLINE_SUPPORT)s/protopy/protopy.js"></script>
+<script type="text/javascript;version=1.7" src="/%(OFFLINE_SUPPORT)s/system/protopy.js"></script>
 <script type="text/javascript;version=1.7">
     require('doff.core.project', 'new_project');
     var %(PROJECT_PACKAGE)s = new_project('%(PROJECT_PACKAGE)s', '%(OFFLINE_SUPPORT)s');

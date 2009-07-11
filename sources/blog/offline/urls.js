@@ -6,7 +6,7 @@ var urlpatterns = patterns('',
     ['^$', index],
     ['^syncdb/$', 'blog.views.syncdb'],
     ['^removedb/$', removedb],
-    ['^blog/', include('blog.blog.urls')]
+    ['^blog/', include('blog.post.urls')]
 )
 
 publish({ 

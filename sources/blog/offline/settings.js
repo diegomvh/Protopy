@@ -16,7 +16,7 @@
 
 'ROOT_URLCONF': 'blog.urls',
 
-'INSTALLED_APPS': [ 'blog.blog' ],
+'INSTALLED_APPS': [ 'blog.post' ],
 
 'TEMPLATE_URL': '/doffline/templates/',
 

@@ -1,5 +1,5 @@
 require('event');
-require('blog.blog.models', 'Tag', 'Post');
+require('blog.post.models', 'Tag', 'Post');
 require('doff.forms.base', 'ModelForm');
 require('doff.template.loader');
 require('doff.template.context', 'RequestContext');

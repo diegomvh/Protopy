@@ -1,4 +1,4 @@
-require('doffline.export.blog.models', '*');
+require('doffline.export.post.models', '*');
 require('doff.db.models.base', 'Model');
 require('doff.template.default_filters', 'slugify');
 
