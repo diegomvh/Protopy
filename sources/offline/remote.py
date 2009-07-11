@@ -271,7 +271,7 @@ class RemoteSite(RemoteBaseSite):
     
         if not version:
             version = random_string(32)
-        version = 'beta'
+        version = 'system_beta_1'
         
         m = Manifest( version = version )
         m.add_uris_from_pathwalk(self.protpy_root, 
@@ -290,7 +290,7 @@ class RemoteSite(RemoteBaseSite):
         m = Manifest()
         # genreate random version string
         m.version = random_string(32)
-        m.version = 'beta'
+        m.version = 'project_beta_2'
         
         m.add_uris_from_pathwalk(self.offline_root, '/%s/project' % self.offline_base)
         # Add templates
@@ -324,7 +324,11 @@ class RemoteSite(RemoteBaseSite):
         #HttpResponse(content, mimetype, status, content_type)
         return render_to_response('djangoffline/models_example.js', mimetype = 'text/javascript')
     
-
+    @expose(r'^export_/(?P<app_name>.*)/models.js$')
+    def export_models_for_app_(self, request, app_name):
+        return HttpResponse('a', mimetype = 'text/javascript')
+    
+    
     def register(self, model, remote_proxy = None):
         '''
         Register a proxy for a model
