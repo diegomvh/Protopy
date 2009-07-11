@@ -297,6 +297,10 @@ class RemoteSite(RemoteBaseSite):
         for t in full_template_list():
             m.add_entry( '/%s' % '/'.join( filter(bool, template_base + t.split(os.sep))))
             
+        app_labels = set(map( lambda model: model._meta.app_label, self._registry))
+        
+        for app in app_labels:
+            m.add_entry('/%s/export/%s/models.js' % (self.offline_base, app))
         
         json = m.dump_manifest()
         
