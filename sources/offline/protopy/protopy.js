@@ -113,29 +113,31 @@
         var mod = ModuleManager.get(name);
         if (!mod) {
             //Only firefox and synchronous, sorry
-	    var file = ModuleManager.file(name);
+        	var file = ModuleManager.file(name);
             var code = null,
-		request = new XMLHttpRequest();
+            request = new XMLHttpRequest();
             request.open('GET', file, false); 
             request.send(null);
             if(request.status != 200)
-		throw new LoadError(file);
+            	throw new LoadError(file);
             //Tego el codigo, creo el modulo
-	    var code = '(function(){ ' + request.responseText + '});';
+            var code = '(function(){ ' + request.responseText + '});';
             mod = ModuleManager.create(name, file);
+            //TODO: Hacer que los modulos se decoren en funcion de sus necesidades, si tiene un requiere, o si tiene un type mas que nada
+            //if (bool(code.match(/require\('.*'\);/)))
             mod = ModuleManager.decorate(mod);
             ModuleManager.add(mod);
-	    //The base module are ready, publish the event
-	    event.publish('onModuleCreated', [this, mod]);
+            //The base module are ready, publish the event
+            event.publish('onModuleCreated', [this, mod]);
             try {
-		with (mod) {
-		    eval(code).call(mod);
-		}
-	    } catch (e) {
-		ModuleManager.remove(mod);
-		throw e;
-	    }
-	    //Not clean for lazy require support
+            	with (mod) {
+            		eval(code).call(mod);
+            	}
+            } catch (e) {
+            	ModuleManager.remove(mod);
+            	throw e;
+            }
+            //Not clean for lazy require support
             //mod = ModuleManager.clean(mod);
         }
         event.publish('onModuleLoaded', [this, mod]);

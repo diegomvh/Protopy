@@ -132,16 +132,31 @@ def rpc_handler(request):
 	response['Content-length'] = str(len(response.content))
 	return response
 
-def multiply(a, b):
-	"""
-	Multiplication is fun!
-	Takes two arguments, which are multiplied together.
-	Returns the result of the multiplication!
-	"""
-	return a*b
-
-# you have to manually register all functions that are xml-rpc-able with the dispatcher
-# the dispatcher then maps the args down.
-# The first argument is the actual method, the second is what to call it from the XML-RPC side...
+class MyFuncs:
+    def _listMethods(self):
+        # this method must be present for system.listMethods
+        # to work
+        return ['add', 'pow']
+    def _methodHelp(self, method):
+        # this method must be present for system.methodHelp
+        # to work
+        if method == 'add':
+            return "add(2,3) => 5"
+        elif method == 'pow':
+            return "pow(x, y[, z]) => number"
+        else:
+            # By convention, return empty
+            # string if no help is available
+            return ""
+    def _dispatch(self, method, params):
+        if method == 'pow':
+            return pow(*params)
+        elif method == 'add':
+            return params[0] + params[1]
+        else:
+            raise 'bad method'
+ 
+#server = SimpleXMLRPCServer(("localhost", 8000))
 dispatcher.register_introspection_functions()
-dispatcher.register_function(multiply, 'multiply')
+dispatcher.register_instance(MyFuncs())
+#dispatcher.serve_forever()

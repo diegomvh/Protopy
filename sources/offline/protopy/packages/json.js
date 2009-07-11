@@ -1,10 +1,12 @@
 String.prototype.__json__ = function() { 
     return this.inspect(true); 
 }
+
 String.prototype.isJSON = function(){
     var testStr = this.replace(/\\./g, '@').replace(/"[^"\\\n\r]*"/g, '');
     return (/^[,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]*$/).test(testStr);
 }
+
 Number.prototype.__json__ = function() { 
     return isFinite(this) ? this.toString() : 'null'; 
 }
@@ -21,7 +23,7 @@ Date.prototype.__json__ = function() {
 	case 'ASP.NET':
 	    return '"\\/Date(' + this.valueOf() + ')\\/"';
 	default:
-	return '"' + this.toISO8601() + '"';
+		return '"' + this.toISO8601() + '"';
     }
 }
 
@@ -29,8 +31,8 @@ var stringify = function (value) {
 
     switch (typeof value) {
       case 'undefined':
-      case 'function':
       case 'unknown': return;
+      case 'function':  return value.toSource(); /* no lo veo util, pero bueno vemos que pasa */
       case 'boolean': return value.toString();
     }
 
@@ -54,13 +56,13 @@ var stringify = function (value) {
 };
 
 var parse = function (value, sanitize) {
-    value = value.replace(/^\/\*-secure-([\s\S]*)\*\/\s*$/, "$1");
+	value = value.replace(/^\/\*-secure-([\s\S]*)\*\/\s*$/, "$1");
     try {
-	if(!sanitize || value.isJSON())
-	    return eval('(' + value + ')');
+    	if(!sanitize || value.isJSON())
+    		return eval('(' + value + ')');
     }
     catch(e){ 
-	throw new SyntaxError('Badly formed JSON string: ' + value + " ... " + (e ? e.message : '')); 
+    	throw new SyntaxError('Badly formed JSON string: ' + value + " ... " + (e ? e.message : '')); 
     }
 }
 

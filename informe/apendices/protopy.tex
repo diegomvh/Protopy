@@ -1125,5 +1125,72 @@ Habilita un campo, previamente deshabilitado, para el ingreso de valores.
 \subsection{logging}
 ---
 \subsection{json}
----
+\begin{lstlisting}[style=consola]
+>>> require('json')
+>>> toJson = {'numero': 1, 'cadena': 'texto', 'arreglo': [1,2,3,4,5,6], 'objeto': {'clave': 'valor'}, 'logico': true}
+>>> toSend = json.stringify(toJson)
+"{"numero": 1, "cadena": "texto", "arreglo": [1, 2, 3, 4, 5, 6], "objeto": {"clave": "valor"}, "logico": true}"
+>>> fromJson = json.parse(toSend)
+Object numero=1 cadena=texto arreglo=[6] objeto=Object
+\end{lstlisting}
 \subsection{rpc}
+
+class MyFuncs:
+    def _listMethods(self):
+        # this method must be present for system.listMethods
+        # to work
+        return ['add', 'pow']
+    def _methodHelp(self, method):
+        # this method must be present for system.methodHelp
+        # to work
+        if method == 'add':
+            return "add(2,3) => 5"
+        elif method == 'pow':
+            return "pow(x, y[, z]) => number"
+        else:
+            # By convention, return empty
+            # string if no help is available
+            return ""
+    def _dispatch(self, method, params):
+        if method == 'pow':
+            return pow(*params)
+        elif method == 'add':
+            return params[0] + params[1]
+        else:
+            raise 'bad method'
+ 
+server = SimpleXMLRPCServer(("localhost", 8000))
+dispatcher.register_introspection_functions()
+dispatcher.register_instance(MyFuncs())
+#dispatcher.serve_forever()
+
+\begin{lstlisting}[style=consola]
+>>> require('rpc')
+>>> funcs = new rpc.ServiceProxy('rpc/test', {asynchronous: false})
+>>> funcs.system.listMethods()
+["add", "pow", "system.listMethods", "system.methodHelp", "system.methodSignature"]
+>>> for each (m in funcs.system.listMethods())
+				print(m + ': ' + funcs.system.methodHelp(m));
+add: add(2,3) => 5
+pow: pow(x, y[, z]) => number
+system.listMethods: system.listMethods() => ['add', 'subtract', 'multiple']
+	Returns a list of the methods supported by the server.
+system.methodHelp: system.methodHelp('add') => "Adds two integers together"
+	Returns a string containing documentation for the specified method.
+system.methodSignature: system.methodSignature('add') => [double, int, int]
+	Returns a list describing the signature of the method. In the above example,
+the add method takes two integers as arguments and returns a double result.
+	This server does NOT support system.methodSignature.
+>>> funcs.add(24,4)
+28
+>>> funcs.pow(2,4)
+16
+\end{lstlisting}
+
+Add
+\rightarrow \verb|{"version": "1.1", "method": "add", "id": 1, "params": [24,4]}|
+\rightarrow \verb|{"id":1,"result":28}|
+
+Pow
+\rightarrow \verb|{"version": "1.1", "method": "pow", "id": 2, "params": [2,4]}|
+\leftarrow \verb|{"id":2,"result":16}|
