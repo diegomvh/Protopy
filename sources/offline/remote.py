@@ -261,7 +261,7 @@ class RemoteSite(RemoteBaseSite):
     
         
         
-    @expose(r'^network_check/$')
+    @expose(r'^network_check/?$')
     def network_check(self, request):
         return HttpResponse()
     
