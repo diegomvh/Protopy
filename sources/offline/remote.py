@@ -173,7 +173,19 @@ class RemoteSite(RemoteBaseSite):
     @expose decorator indicates how URLs are mapped
     '''
     
-    def __init__(self):
+    def __init__(self, offline_root = None, offline_base = None):
+        from django.conf import settings
+        if not offline_root:
+            assert hasattr(settings, "OFFLINE_ROOT"), \
+                "You must define OFFLINE_ROOT in your project settings file, please check protopy docs"
+                
+            self.offline_root = settings.OFFLINE_ROOT
+            
+        if not offline_base:
+            assert hasattr(settings, "OFFLINE_BASE"), \
+                "You must define OFFLINE_BASE in your project settings file, please check protopy docs"
+            self.offline_base = settings.OFFLINE_BASE
+             
         self._registry = {}
         
     @expose(r'^get_templates/(?P<app_name>\w*)/$')
@@ -195,12 +207,11 @@ class RemoteSite(RemoteBaseSite):
     #@expose(r'')
     def get_prject_manifest(self, request):
         import random, string
-        from django.conf import settings
         random_string = lambda length: ''.join( [ random.choice(string.letters) for _ in range(length) ] )  
         m = Manifest()
         m.version = random_string(32)
-        m.add_uris_from_pathwalk(settings.OFFLINE_ROOT, '/%s' % settings.OFFLINE_BASE)
-        map( m.add_entry, map( lambda t: '/%s/templates%s'% (settings.OFFLINE_BASE, t), 
+        m.add_uris_from_pathwalk(self.offline_root, '/%s' % self.offline_base)
+        map( m.add_entry, map( lambda t: '/%s/templates%s'% (self.offline_base, t), 
                            full_template_list()))
         
         json = m.dump_manifest()
@@ -220,7 +231,10 @@ class RemoteSite(RemoteBaseSite):
         return HttpResponse(template_source)
     
     @expose(r'^template_list/$')
-    def template_list(self, request): 
+    def template_list(self, request):
+        '''
+        Debug
+        ''' 
         return HttpResponse( html_output(full_template_list(), indent = 2))
     
     @expose(r'^network_check/$')
@@ -229,13 +243,13 @@ class RemoteSite(RemoteBaseSite):
 
     @expose(r'^manifests/project.json$')
     def project_manifest(self, request):
-        from django.conf import settings
+        
         m = Manifest()
         # genreate random version string
         m.version = random_string(32)
-        m.add_uris_from_pathwalk(settings.OFFLINE_ROOT, '/%s' % settings.OFFLINE_BASE)
+        m.add_uris_from_pathwalk(self.offline_root, '/%s' % self.offline_base)
         # Add templates
-        map( m.add_entry, map( lambda t: '/%s/templates%s'% (settings.OFFLINE_BASE, t), 
+        map( m.add_entry, map( lambda t: '/%s/templates%s'% (self.offline_base, t), 
                                full_template_list()))
         
         json = m.dump_manifest()
@@ -245,7 +259,7 @@ class RemoteSite(RemoteBaseSite):
         
         return HttpResponse( json, 'text/plain' )
     
-    @expose(r'^export/(?P<app_name>.*)/models.json$')
+    @expose(r'^export/(?P<app_name>.*)/models.js$')
     def export_models_for_app(self, request, app_name):
         '''
         Generates the javascript output from the model definition.

@@ -21,10 +21,11 @@ urlpatterns = patterns('',
     # index
     (r'^$', include('blog.post.urls'),),
 
-    (r'^' + settings.OFFLINE_BASE + '/', include('offline.urls'), ),
+    # OLD CODE
+    #(r'^' + settings.OFFLINE_BASE + '/', include('offline.urls'), ),
     
     
-    (r'^remote/(.*)', site.root ),
+    (r'^%s/(.*)' % settings.OFFLINE_BASE, site.root ),
 )
 
 # static media
