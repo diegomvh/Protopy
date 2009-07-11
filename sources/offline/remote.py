@@ -270,6 +270,8 @@ class RemoteSite(RemoteBaseSite):
     
         if not version:
             version = random_string(32)
+        version = 'beta'
+        
         m = Manifest( version = version )
         m.add_uris_from_pathwalk(self.protpy_root, 
                                  "%s/system" % self.offline_base, 
@@ -287,6 +289,8 @@ class RemoteSite(RemoteBaseSite):
         m = Manifest()
         # genreate random version string
         m.version = random_string(32)
+        m.version = 'beta'
+        
         m.add_uris_from_pathwalk(self.offline_root, '/%s/project' % self.offline_base)
         # Add templates
         for t in full_template_list():
