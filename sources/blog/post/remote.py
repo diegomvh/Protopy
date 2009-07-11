@@ -9,7 +9,7 @@ from offline.remote import RemoteModelProxy
 
 class TagRemote(RemoteModelProxy):
 #    
-#    p = models.DateField('Fecha de creacion')
+#    fecha_x = models.DateField('Fecha de creacion' )
 #    
 #    def dump(self):
 #        user = get_user()
@@ -21,7 +21,8 @@ class TagRemote(RemoteModelProxy):
     class Meta:
         model = Tag
         exclude = ('title', )
-#        
+        #manager = Tag.objects
+
 #
 #class PostRemote(RemoteModelProxy):
 #    class Meta:

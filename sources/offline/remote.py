@@ -15,6 +15,7 @@ from django.db import models
 from django.contrib.admin.sites import AlreadyRegistered
 import os, re
 from pprint import pformat
+from django.db.models.loading import get_app
 
 __all__ = ('RemoteSite', 
            'expose',
@@ -173,19 +174,29 @@ class RemoteSite(RemoteBaseSite):
     @expose decorator indicates how URLs are mapped
     '''
     
-    def __init__(self, offline_root = None, offline_base = None):
+    def __init__(self, offline_root = None, offline_base = None, 
+                 protopy_root = None):
+        
         from django.conf import settings
         if not offline_root:
             assert hasattr(settings, "OFFLINE_ROOT"), \
                 "You must define OFFLINE_ROOT in your project settings file, please check protopy docs"
                 
-            self.offline_root = settings.OFFLINE_ROOT
-            
+            offline_root = settings.OFFLINE_ROOT
+        self.offline_root = offline_root    
+        
         if not offline_base:
             assert hasattr(settings, "OFFLINE_BASE"), \
                 "You must define OFFLINE_BASE in your project settings file, please check protopy docs"
-            self.offline_base = settings.OFFLINE_BASE
-             
+            offline_base = settings.OFFLINE_BASE
+        self.offline_base = offline_base
+        
+        if not protopy_root:
+            from os.path import abspath, dirname, join
+            protopy_root = getattr(get_app('offline'), '__file__')
+            protopy_root = join(abspath(dirname(protopy_root)), 'protopy')
+        self.protpy_root = protopy_root
+        
         self._registry = {}
         
     @expose(r'^get_templates/(?P<app_name>\w*)/$')
@@ -237,20 +248,50 @@ class RemoteSite(RemoteBaseSite):
         ''' 
         return HttpResponse( html_output(full_template_list(), indent = 2))
     
+    @expose('^system/(.*)$')
+    def system_static_serve(self, request, path):
+        from django.views.static import serve
+        return serve(request, path, self.protpy_root, show_indexes = True)
+    
+    @expose('^project/(.*)$')
+    def project_static_serve(self, request, path):
+        from django.views.static import serve
+        return serve(request, path, self.offline_root, show_indexes = True)
+    
+        
+        
     @expose(r'^network_check/$')
     def network_check(self, request):
         return HttpResponse()
-
+    
+    @expose(r'^manifests/system.json$')
+    def system_manifest(self, request, version = None, exclude_callback = None):
+    #def dynamic_manifest_from_fs(request, path, base_uri, version = None, exclude_callback = None):
+    
+        if not version:
+            version = random_string(32)
+        m = Manifest( version = version )
+        m.add_uris_from_pathwalk(self.protpy_root, 
+                                 "%s/system" % self.offline_base, 
+                                 exclude_callback)
+        json = m.dump_manifest()
+        if 'human' in request.GET:
+            json = json.replace(', ', ',\n').replace("\\", "")
+        return HttpResponse( json, 'text/plain' )
+    
+    
     @expose(r'^manifests/project.json$')
     def project_manifest(self, request):
         
+        template_base = self.offline_base.split('/') + ['templates', ] 
         m = Manifest()
         # genreate random version string
         m.version = random_string(32)
-        m.add_uris_from_pathwalk(self.offline_root, '/%s' % self.offline_base)
+        m.add_uris_from_pathwalk(self.offline_root, '/%s/project' % self.offline_base)
         # Add templates
-        map( m.add_entry, map( lambda t: '/%s/templates%s'% (self.offline_base, t), 
-                               full_template_list()))
+        for t in full_template_list():
+            m.add_entry( '/%s' % '/'.join( filter(bool, template_base + t.split(os.sep))))
+            
         
         json = m.dump_manifest()
         
@@ -273,6 +314,7 @@ class RemoteSite(RemoteBaseSite):
         
         return HttpResponse("Response %s" % unicode(models))
 
+    
 
     def register(self, model, remote_proxy = None):
         '''

@@ -133,13 +133,20 @@ class Manifest(models.Model):
         Recursively adds a path walk served statically behind a uri_base
         to the manifest's entries.
         '''
+        uri_base = filter(bool, uri_base.split('/'))
         file_list = []
         for f in abswalk_with_simlinks( path ):
             if callable(exclude_callback) and exclude_callback(f):
                 continue
-            file_list.append('%s/%s' % ( uri_base,                     
-                                        f[ f.index(path) + len(path) + 1: ]
-                            ))
+            pth = f[ f.index(path) + len(path) + 1: ]
+            pth = pth.split(os.sep)
+            pth = '/%s' % '/'.join( uri_base + pth)
+            file_list.append(pth)
+            
+#            file_list.append('%s/%s' % ( uri_base,                     
+#                                        f[ f.index(path) + len(path) + 1: ]
+#                            ))
+
         map( self.add_entry, file_list )
         
         
