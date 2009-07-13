@@ -3,7 +3,7 @@ require('event');
 require('ajax');
 
 var Project = type('Project', object, {
-    is_online: false,
+    is_online: true,
     NET_CHECK: 5,
     availability_url: null,
     do_net_checking: true,
@@ -23,7 +23,8 @@ var Project = type('Project', object, {
         } catch (except) {}
 
         this._create_toolbar();
-        //this._start_network_thread();
+        this.network_check();
+        this._start_network_thread();
     },
 
     onNetwork: function(type) {

@@ -1914,10 +1914,15 @@
 	flatten: function(array) { 
             return array.reduce(function(a,b) { return a.concat(b); }, []); 
         },
-        include: function(object, element){
-            if (object == undefined) return false;
-            if (callable(object['__contains__'])) return object.__contains__(element);
-            return object.indexOf(element) > -1;
+        include: function(obj, element){
+            if (isundefined(obj)) return false;
+            if (isinstance(obj, Object))
+                return element in obj;
+            if (callable(obj['__contains__']))
+                return obj.__contains__(element);
+            if (callable(obj['indexOf']))
+                return obj.indexOf(element) > -1;
+            return false;
         },
         len: function(object) {
             if (object && callable(object['__len__']))
