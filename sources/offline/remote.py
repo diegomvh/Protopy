@@ -6,7 +6,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.http import Http404
 from django.core.urlresolvers import Resolver404, RegexURLPattern
 from django.utils.encoding import smart_str
-from offline.models import Manifest
+from offline.models import Manifest, SyncLog
 from django.template import TemplateDoesNotExist
 from django.utils.safestring import SafeString
 from offline.debug import html_output
@@ -14,6 +14,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.contrib.admin.sites import AlreadyRegistered
 from django.shortcuts import render_to_response
+from django.db.models.fields import AutoField
 import os, re
 from pprint import pformat
 from django.db.models.loading import get_app
@@ -364,31 +365,61 @@ class RemoteModelMetaclass(type):
             if name is not "RemoteModelProxy":
                 raise ImproperlyConfigured("%s has no Meta" % name)
         else:
-            attrs['_meta'] = RemoteOptions(meta)
+            opts = RemoteOptions(meta)
+            #server_id_class = type(opts.model.pk)
             
+            attrs['server_pk'] = opts.model._meta.pk 
+            if not isinstance(opts.model._meta.pk, AutoField):
+                pk_name = opts.model._meta.pk.name
+                attrs[ pk_name ] = opts.model._meta.pk 
+            
+            attrs['_meta'] = opts
+        
         new_class = super(RemoteModelMetaclass, cls).__new__(cls, name, bases, attrs)
         return new_class
 
+
 class RemoteModelProxy(object):
     __metaclass__ = RemoteModelMetaclass
+    STATUS_CHOICES = (
+                      ('s', 'Synced'),
+                      ('c', 'Created'),
+                      ('m', 'Modified'),
+                      ('d', 'Deleted'),
+                      # Otro cliente modifico la MISMA instancia y la comprobación de igualdad 
+                      # dio falso.
+                      ('b', 'Bogus'),
+    )
+    # Client ID
+    #remote_id_column = models.CharField(max_length = 160, default = 'id')
+    #_created_at = models.DateTimeField(editable = False)
+    #_updated_at = models.DateTimeField(editable = False)
+    _sync_log = models.ForeignKey(SyncLog, blank = True, null = True)
+    _active = models.BooleanField(editable = False, default = True)
+    _status = models.CharField(choices = STATUS_CHOICES, max_length = 1)
+    #id_start = models.PositiveIntegerField()
+    #_synced_at = models.DateTimeField(editable = False)
     
     
     def dump(self):
+        '''
+        '''
         pass
+    
     def sync(self):
         pass
     
     
 class RemoteOptions(object):
-    def __init__(self, class_, **options):
-        self.model = getattr(class_, 'model')
+    def __init__(self, class_meta, **options):
+        self.model = getattr(class_meta, 'model')
         
         if not self.model or not issubclass(self.model, models.Model):
             raise ImproperlyConfigured("Invalid model %s" % self.model)
         
-        if hasattr(class_, 'exclude'):
+        if hasattr(class_meta, 'exclude'):
             print "Excluyendo campos"
-            exclude_fields = getattr(class_, 'exclude')
+            exclude_fields = getattr(class_meta, 'exclude')
             model_field_names = map(lambda f: f.name, self.model._meta.fields +
                                                         self.model._meta.many_to_many
                                                     )

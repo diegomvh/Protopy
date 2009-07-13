@@ -2,6 +2,8 @@
 from django.db import models
 from django.utils.datastructures import SortedDict
 from simplejson import loads, dumps
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes import generic
 import os
 
 MAX_APP_NAME_LENGTH = 160
@@ -12,16 +14,6 @@ class OfflineApp(models.Model):
     '''
     app_name = models.CharField(max_length = MAX_APP_NAME_LENGTH)
  
- 
-class Log(models.Model):
-    '''
-    Log:
-        Uso para la sincronización.
-    '''
-    pass
-
-#class BaseModelProxy(m):
-
 
 class Manifest(models.Model):
     '''
@@ -167,4 +159,23 @@ def abswalk_with_simlinks(path):
                     yield f
                 
         
+class SyncData(models.Model):
+    '''
+    Saves some data taken from 
+    http://trimpath.googlecode.com/svn/trunk/junction_docs/files/junction_doc_sync-txt.html
+    '''
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    content_object = generic.GenericForeignKey('content_type', 'object_id')
+    
+    # Indica si el registro fue borrado en algun cliente
+    active = models.BooleanField()
+    synced_at = models.DateTimeField()
+    
+class SyncLog(models.Model):
+    '''
+    This is a client side only model
+    '''
+    synced_at = models.DateTimeField()
+    sync_id = models.CharField(max_length = 512)
         

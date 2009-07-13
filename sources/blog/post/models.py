@@ -4,7 +4,8 @@ Models del blog
 '''
 
 class Tag(models.Model):
-    slug = models.SlugField(help_text = 'Automatically buit from the title', primary_key = True, editable = False)
+    #slug = models.SlugField(help_text = 'Automatically buit from the title', primary_key = True, editable = False)
+    slug = models.SlugField(help_text = 'Automatically buit from the title')
     title = models.CharField('Title', max_length = 30)
     def __unicode__(self):
         return self.title
