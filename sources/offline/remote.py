@@ -332,16 +332,16 @@ class RemoteSite(RemoteBaseSite):
     @expose(r'^export_/(?P<app_name>.*)/models.js$')
     def export_models_for_app_(self, request, app_name):
         from django.db.models.loading import get_app, get_models
-        from offline.export_models import export_models
+        from offline.export_models import export_remotes
         
         try:
             
-            model_remotes = filter(lambda x: x._meta.model._meta.app_label == app_name, self._registry.values())
-            print model_remotes
-            app = get_app(app_name)
+            model_remotes = filter(lambda x: x._meta.app_label == app_name, self._registry.values())
+            #print model_remotes
+            #app = get_app(app_name)
             
-            app_models = get_models(app)
-            models = export_models(app_models)
+            #app_models = get_models(app)
+            models = export_remotes(model_remotes)
             
             return render_to_response('djangoffline/models.js', 
                            locals(),
@@ -397,6 +397,13 @@ class RemoteModelMetaclass(type):
                 attrs[ pk_name ] = opts.model._meta.pk 
             
             attrs['_meta'] = opts
+            opts.fields = []
+            
+            for f_name, field in attrs.iteritems():
+                if isinstance(field, models.Field):
+                    field.name = f_name
+                    opts.fields.append(field)
+                    #print "Agregando field interno", f_name
         
         new_class = super(RemoteModelMetaclass, cls).__new__(cls, name, bases, attrs)
         return new_class
@@ -437,6 +444,9 @@ class RemoteOptions(object):
     def __init__(self, class_meta, **options):
         self.model = getattr(class_meta, 'model')
         
+        #TODO: __module__ ???
+        
+        
         if not self.model or not issubclass(self.model, models.Model):
             raise ImproperlyConfigured("Invalid model %s" % self.model)
         
@@ -448,7 +458,9 @@ class RemoteOptions(object):
             for name in exclude_fields:
                 if name not in model_field_names:
                     raise ImproperlyConfigured("%s has no %s field" % (self.model, name)) 
-        
+    
+    app_label = property(lambda s: s.model._meta.app_label, doc="Points to model app_label")
+    
     def __str__(self):
         return unicode("<RemoteOptions for %s>" % self.model._meta.object_name)
     

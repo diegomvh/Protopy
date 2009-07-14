@@ -166,9 +166,38 @@ def export_models(models):
     #print processed_models
     return processed_models
 
-def register_model_class(class_):
-    pass
-
+def export_remotes(remotes):
+    processed_models = SortedDict()
+    for remote in remotes:
+        print remote
+        model = remote._meta.model
+        name = model._meta.object_name
+        fields = model._meta.fields + model._meta.many_to_many + remote._meta.fields
+        print ">>>", remote._meta.fields
+        processed_fields = SortedDict()
+        for f in fields:
+            field_type = f.__class__.__name__
+            try:
+                bases = get_class_bases(f)
+                args = SortedDict()
+                for base in bases:
+                    try:
+                        f_introspect = model_class_fields[base]
+                    except:
+                        pass
+                    else:
+                        args.update( f_introspect.get_init_args(f) )
+                
+                processed_fields[f.name] = (field_type, args )
+                #f_introspect = model_class_fields[f.__class__]
+                #processed_fields[f.name] = (field_type, f_introspect.get_init_args(f))
+            except KeyError, e:
+                #TODO: Implement for more fields
+                processed_fields[f.name] = (field_type, {})
+        
+        processed_models[name] = processed_fields
+    #print processed_models
+    return processed_models
 
 #===============================================================================
 # Broken Code, 
