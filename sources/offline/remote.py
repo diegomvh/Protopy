@@ -19,16 +19,13 @@ import os, re
 from pprint import pformat
 from django.db.models.loading import get_app
 
+import SimpleXMLRPCServer
+from offline.rpc.SimpleJSONRPCServer import SimpleJSONRPCDispatcher
+
 __all__ = ('RemoteSite', 
            'expose',
            'RemoteModelProxy',
            )
-
-#class ModelRemoteBase(object):
-#    pass
-#
-#class ModelRemote(object):
-#    __metaclass__ = ModelRemoteBase
  
 def expose(url, *args, **kwargs):
     def decorator(func):
@@ -38,7 +35,12 @@ def expose(url, *args, **kwargs):
         return new_function
     return decorator
 
-
+def jsonrpc(func):
+    def new_function(*args, **kwargs):
+        return func(*args, **kwargs)
+    new_function.jsonrpc = func
+    new_function.__doc__ = func.__doc__
+    return new_function
 
 class RemoteSiteBase(type):
     def __new__(cls, name, bases, attrs):
@@ -47,14 +49,19 @@ class RemoteSiteBase(type):
         '''
         new_class = super(RemoteSiteBase, cls).__new__(cls, name, bases, attrs)
         urls = []
+        jsonrpc = []
         for ns in [attrs, ] + [ e.__dict__ for e in bases ]:
             for name, obj in ns.iteritems():
                 if hasattr(obj, 'expose'):
                     #urls.append(obj.expose)
                     regex, largs, kwargs = obj.expose
                     urls.append(RegexURLPattern(regex, obj, kwargs, ''))
+                elif hasattr(obj, 'jsonrpc'):
+                    jsonrpc.append(obj.jsonrpc.__name__)  
         if urls:
             new_class._urls = urls
+        if jsonrpc:
+            new_class._jsonrpc = jsonrpc
         return new_class
 
 import random, string
@@ -116,9 +123,6 @@ def full_template_list(exclude_apps = None, exclude_callable = None):
             template_files += _retrieve_templates_from_path(path, template_dirs)
     return template_files
 
-
-
-
 class RemoteBaseSite(object):
     '''
     For each offline application, there's a offline base
@@ -176,8 +180,7 @@ class RemoteSite(RemoteBaseSite):
     @expose decorator indicates how URLs are mapped
     '''
     
-    def __init__(self, offline_root = None, offline_base = None, 
-                 protopy_root = None):
+    def __init__(self, offline_root = None, offline_base = None, protopy_root = None):
         
         from django.conf import settings
         if not offline_root:
@@ -199,40 +202,17 @@ class RemoteSite(RemoteBaseSite):
             protopy_root = join(abspath(dirname(protopy_root)), 'protopy')
         self.protpy_root = protopy_root
         
+        # Create a Dispatcher; this handles the calls and translates info to function maps
+        #self.rpc_dispatcher = SimpleJSONRPCDispatcher() # Python 2.4
+        self.rpc_dispatcher = SimpleJSONRPCDispatcher(allow_none=False, encoding=None) # Python 2.5
+        self.rpc_dispatcher.register_introspection_functions() #Un poco de azucar
+        self.rpc_dispatcher.register_instance(self)
+        
         self._registry = {}
         
-    @expose(r'^get_templates/(?P<app_name>\w*)/$')
-    def get_templates(self, request, app_name):
-        return HttpResponse("Some day tamplates will be served from here")
-    
     @expose(r'^$')
     def index(self, request):
-        return HttpResponse('Hola %s')
-    
-    @expose(r'^app_index/(?P<app_label>\w+)/$')
-    def app_index(self, request, app_label):
-        return HttpResponse('App index %s' % app_label)
-    
-    @expose(r'^manifest\.json$')
-    def manifest(self, request):
-        return HttpResponse("Manifest")
-    
-    #@expose(r'')
-    def get_prject_manifest(self, request):
-        import random, string
-        random_string = lambda length: ''.join( [ random.choice(string.letters) for _ in range(length) ] )  
-        m = Manifest()
-        m.version = random_string(32)
-        m.add_uris_from_pathwalk(self.offline_root, '/%s' % self.offline_base)
-        map( m.add_entry, map( lambda t: '/%s/templates%s'% (self.offline_base, t), 
-                           full_template_list()))
-        
-        json = m.dump_manifest()
-        
-        if 'human' in request.GET:
-            json = json.replace(', ', ',\n')
-    
-        return HttpResponse( json, 'text/plain' )
+        return HttpResponse('Yo soy el RemoteSite %s' % self.offline_base)
     
     @expose(r'^templates/(.*)$')
     def templates_static_serve(self, request, path):
@@ -259,12 +239,71 @@ class RemoteSite(RemoteBaseSite):
     def project_static_serve(self, request, path):
         from django.views.static import serve
         return serve(request, path, self.offline_root, show_indexes = True)
-    
-        
         
     @expose(r'^network_check/?$')
     def network_check(self, request):
         return HttpResponse()
+    
+    @expose(r'^jsonrpc/?$')
+    def jsonrpc_handler(self, request):
+        """
+        the actual handler:
+        if you setup your urls.py properly, all calls to the xml-rpc service
+        should be routed through here.
+        If post data is defined, it assumes it's XML-RPC and tries to process as such
+        Empty post assumes you're viewing from a browser and tells you about the service.
+        """
+    
+        response = HttpResponse()
+        if len(request.POST):
+            response.write(self.rpc_dispatcher._marshaled_dispatch(request.raw_post_data))
+        else:
+            response.write("<b>This is an JSON-RPC Service.</b><br>")
+            response.write("You need to invoke it using an JSON-RPC Client!<br>")
+            response.write("The following methods are available:<ul>")
+            methods = self.rpc_dispatcher.system_listMethods()
+    
+            for method in methods:
+                # right now, my version of SimpleXMLRPCDispatcher always
+                # returns "signatures not supported"... :(
+                # but, in an ideal world it will tell users what args are expected
+                sig = self.rpc_dispatcher.system_methodSignature(method)
+    
+                # this just reads your docblock, so fill it in!
+                help =  self.rpc_dispatcher.system_methodHelp(method)
+    
+                response.write("<li><b>%s</b>: [%s] %s" % (method, sig, help))
+    
+            response.write("</ul>")
+            response.write('<a href="http://www.djangoproject.com/"> <img src="http://media.djangoproject.com/img/badges/djangomade124x25_grey.gif" border="0" alt="Made with Django." title="Made with Django."></a>')
+    
+        response['Content-length'] = str(len(response.content))
+        return response
+    
+    def _listMethods(self):
+        # this method must be present for system.listMethods to work
+        return self._jsonrpc or []
+    
+    def _methodHelp(self, method):
+        # this method must be present for system.methodHelp to work
+        methods = self._jsonrpc or []
+        if method in methods:
+            return getattr(self, method).__doc__
+        return ""
+        
+    def _dispatch(self, method, params):
+        methods = self._jsonrpc or []
+        if method in methods:
+            return getattr(self, method)(*params)
+        else:
+            raise 'bad method'
+    
+    @jsonrpc
+    def suma(self, a, b):
+        '''
+        suma(a, b) => Retorna la suma de los numeros a y b
+        '''
+        return a + b
     
     @expose(r'^manifests/system.json$')
     def system_manifest(self, request, version = None, exclude_callback = None):
@@ -282,7 +321,6 @@ class RemoteSite(RemoteBaseSite):
         if 'human' in request.GET:
             json = json.replace(', ', ',\n').replace("\\", "")
         return HttpResponse( json, 'text/plain' )
-    
     
     @expose(r'^manifests/project.json$')
     def project_manifest(self, request):
@@ -309,24 +347,9 @@ class RemoteSite(RemoteBaseSite):
             json = json.replace(', ', ',\n')
         
         return HttpResponse( json, 'text/plain' )
-    
+
     @expose(r'^export/(?P<app_name>.*)/models.js$')
     def export_models_for_app(self, request, app_name):
-        '''
-        Generates the javascript output from the model definition.
-        Each model must have beer registered with the register method.
-        Client vision oaver the server model may be configured with a 
-        RemoteProxy class.
-        '''
-#        from django.db.models.loading import get_app, get_models
-#        #models = get_models(get_app(app_name))
-#        models = filter(lambda m: m._meta.app_label == app_name, self._registry)
-#        
-#        return HttpResponse("Response %s" % unicode(models))
-        #app = get_app(app_name).__file__
-    
-        #return HttpResponse(app)
-        #HttpResponse(content, mimetype, status, content_type)
         return render_to_response('djangoffline/models_example.js', mimetype = 'text/javascript')
     
     @expose(r'^export_/(?P<app_name>.*)/models.js$')
@@ -356,7 +379,6 @@ class RemoteSite(RemoteBaseSite):
 #        
 #        return HttpResponse('a', mimetype = 'text/javascript')
     
-    
     def register(self, model, remote_proxy = None):
         '''
         Register a proxy for a model
@@ -375,8 +397,6 @@ class RemoteSite(RemoteBaseSite):
                                 {'Meta': RemoteOptions(basic_meta)} )
         
         self._registry[model] = remote_proxy
-            
-    
     
 class RemoteModelMetaclass(type):
     def __new__(cls, name, bases, attrs):
