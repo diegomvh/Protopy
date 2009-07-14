@@ -397,11 +397,24 @@ class RemoteModelMetaclass(type):
                 attrs[ pk_name ] = opts.model._meta.pk 
             
             attrs['_meta'] = opts
+            #print attrs
+            class_fields = {}
+            
+            field_check = lambda field: isinstance(field, models.Field)
+            
             opts.fields = []
+            
+            for base in bases:
+                for f_name, field in base.__dict__.iteritems():
+                    if field_check(field):
+                        if field.name != f_name:
+                            field.name = f_name
+                        opts.fields.append(field)
             
             for f_name, field in attrs.iteritems():
                 if isinstance(field, models.Field):
-                    field.name = f_name
+                    if field.name != f_name:
+                        field.name = f_name
                     opts.fields.append(field)
                     #print "Agregando field interno", f_name
         
@@ -452,6 +465,7 @@ class RemoteOptions(object):
         
         if hasattr(class_meta, 'exclude'):
             exclude_fields = getattr(class_meta, 'exclude')
+            # model_field_names is for checking purposes only
             model_field_names = map(lambda f: f.name, self.model._meta.fields +
                                                         self.model._meta.many_to_many
                                                     )
