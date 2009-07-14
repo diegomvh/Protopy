@@ -141,10 +141,11 @@ def get_app_remote_model(request, app_name):
     
 def get_app_remote_model_(request, app_name):
     from django.db.models.loading import get_app, get_models
-    from offlnie.export_models import export_models
+    from offline.export_models import export_models
     from pprint import pformat
     try:
         app = get_app(app_name)
+        print app
         models = get_models(app)
         text = pformat(export_models(models), width = 80)
          

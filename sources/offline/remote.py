@@ -331,7 +331,30 @@ class RemoteSite(RemoteBaseSite):
     
     @expose(r'^export_/(?P<app_name>.*)/models.js$')
     def export_models_for_app_(self, request, app_name):
-        return HttpResponse('a', mimetype = 'text/javascript')
+        from django.db.models.loading import get_app, get_models
+        from offline.export_models import export_models
+        
+        try:
+            
+            model_remotes = filter(lambda x: x._meta.model._meta.app_label == app_name, self._registry.values())
+            print model_remotes
+            app = get_app(app_name)
+            
+            app_models = get_models(app)
+            models = export_models(app_models)
+            
+            return render_to_response('djangoffline/models.js', 
+                           locals(),
+                           mimetype = 'text/javascript')
+        
+        except ImproperlyConfigured, e:
+            return HttpResponseNotFound(str(e))
+    
+#        return render_to_response('djangoffline/models.js', locals(),
+#                              mimetype = 'text/javascript')
+#        
+#        
+#        return HttpResponse('a', mimetype = 'text/javascript')
     
     
     def register(self, model, remote_proxy = None):
@@ -418,7 +441,6 @@ class RemoteOptions(object):
             raise ImproperlyConfigured("Invalid model %s" % self.model)
         
         if hasattr(class_meta, 'exclude'):
-            print "Excluyendo campos"
             exclude_fields = getattr(class_meta, 'exclude')
             model_field_names = map(lambda f: f.name, self.model._meta.fields +
                                                         self.model._meta.many_to_many

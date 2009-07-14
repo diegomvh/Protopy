@@ -17,18 +17,10 @@ Store a dictionary of every possible attribute
 Last Approach:
 Get django field definition letting the user to register his/her custom
 models.
+
+Lastest Approach:
+
 '''
-
-#FIELD_DATA = {
-#    'BaseField': 
-#                  ['required', 'widget', 'label', 'initial', 'help_text', 
-#                   'error_messages', 'show_hidden_initial'],
-#    'CharField': [ 'max_length', 'min_length', ],
-#    'IntegerField': ['max_value', 'min_value'],
-#    'FloatField' 
-#              
-#}
-
 
 from django.utils.datastructures import SortedDict
 import sys
@@ -127,7 +119,7 @@ def get_model_class_fields():
     '''
     model_class_fields = SortedDict()
     for mod_name in FIELD_LOOKUP_MODULES:
-        print "lookup %s" % mod_name
+        #print "lookup %s" % mod_name
         mod = __import__(mod_name, {}, {}, ['*'])
         classes = [ (name, class_) for name, class_ in mod.__dict__.items() 
                     if filter_field(class_)
@@ -140,8 +132,6 @@ def get_model_class_fields():
 
 # Cache
 model_class_fields = get_model_class_fields()
-
-
 
 def export_models(models):
     '''
@@ -173,7 +163,7 @@ def export_models(models):
                 processed_fields[f.name] = (field_type, {})
         
         processed_models[name] = processed_fields
-    print processed_models
+    #print processed_models
     return processed_models
 
 def register_model_class(class_):
@@ -220,7 +210,7 @@ def modules_explore(modules = app_models,
     # Check which modules have already been visited
     modules_explored = set()
     for mod in modules:
-        print mod
+        #print mod
         if not ismodule(mod):
             try:
                 mod = __import__(mod, {}, {}, ['*', ] )
@@ -239,21 +229,12 @@ def analize_mod(mod, filter_callback = None, analized = None):
         analized = []
     
     findings = []
-    print mod
+    #print mod
     for name, el in mod.__dict__.iteritems():
         if name.startswith('_'):
             continue
         elif filter_callback(el):
             findings.append(el)
-        
-#        elif ismodule(el):
-#            if el in analized or name in SYSTEM_MODULES:
-#                continue
-#            if name.startswith('_'):
-#                continue
-#            print "Recursive entry for %s" % name
-#            findings += analize_mod(el, filter_callback, analized)
-#            analized.append( el )
     return findings
         
 def get_fields_from_apps(filter_callback = filter_field):
@@ -264,16 +245,7 @@ def get_fields_from_apps(filter_callback = filter_field):
     fields = set()
     
     for app in get_apps():
-        #print app
         fields.update( analize_mod(app, filter_callback))
-#        for name, element in app.__dict__.iteritems():
-#            if ismodule(element):
-#                if not name in SYSTEM_MODULES and element not in analized:
-#                    fields.update( analize_mod(element, filter_callback) )
-#                    analized.append( element )
-#            elif filter_field(element):
-#                fields.add(element)
-            
-    print fields
+    #print fields
     
     
