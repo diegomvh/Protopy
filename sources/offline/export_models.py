@@ -173,7 +173,7 @@ def export_remotes(remotes):
         model = remote._meta.model
         name = model._meta.object_name
         fields = model._meta.fields + model._meta.many_to_many + remote._meta.fields
-        print ">>>", map(lambda n: n.name, remote._meta.fields)
+        
         processed_fields = SortedDict()
         for f in fields:
             field_type = f.__class__.__name__

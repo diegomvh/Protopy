@@ -18,7 +18,7 @@ from django.db.models.fields import AutoField
 import os, re
 from pprint import pformat
 from django.db.models.loading import get_app
-
+import copy
 import SimpleXMLRPCServer
 from offline.rpc.SimpleJSONRPCServer import SimpleJSONRPCDispatcher
 
@@ -410,8 +410,26 @@ class RemoteModelMetaclass(type):
         else:
             opts = RemoteOptions(meta)
             #server_id_class = type(opts.model.pk)
+#            server_pk = copy.copy(opts.model._meta.pk)
+#            server_pk.primary_key = False
+#            server_pk.blank = True
+#            server_pk.null = True
+#            server_pk.help_text = 
+#            attrs['server_pk'] = server_pk
+            server_pk_type = type(opts.model._meta.pk)
+            if server_pk_type is AutoField:
+                server_pk_type = models.PositiveIntegerField
+            server_pk = server_pk_type(
+                                      name = "server_pk",
+                                      #help_text = "Server ID",
+                                      primary_key = False,
+                                      null = True,
+                                      blank = True
+            )
+            attrs['server_pk'] = server_pk
+            #attrs['server_pk'] = copy.copy(opts.model._meta.pk)
+            #attrs['server_pk'] = opts.model._meta.pk
             
-            attrs['server_pk'] = opts.model._meta.pk 
             if not isinstance(opts.model._meta.pk, AutoField):
                 pk_name = opts.model._meta.pk.name
                 attrs[ pk_name ] = opts.model._meta.pk 
