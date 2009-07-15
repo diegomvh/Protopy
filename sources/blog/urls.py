@@ -19,7 +19,7 @@ urlpatterns = patterns('',
     (r'^admin/(.*)', bolg_admin_site.root),
 
     # index
-    (r'^$', include('blog.post.urls'),),
+    (r'^offblog/offline.html$', include('blog.post.urls'),),
 
     (r'^%s/(.*)' % settings.OFFLINE_BASE, site.root ),
 

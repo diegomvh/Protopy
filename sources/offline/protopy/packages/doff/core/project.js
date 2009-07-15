@@ -39,7 +39,8 @@ var Project = type('Project', object, {
     __init__: function(package, offline_support) {
         this.package = package;
         this.offline_support = offline_support;
-	
+        this.start_url = location.pathname;
+
         //Registro la ruta absoluta al soporte offline
         sys.register_path(this.offline_support, '/' + offline_support);
         //Registro la ruta absoluta al proyecto
@@ -69,14 +70,14 @@ var Project = type('Project', object, {
         this.toolbar.show();
     },
 
-    _create_stores: function(){
-        var localserver = require('gears.localserver');
+    _create_stores: function() {
+    	var localserver = require('gears.localserver');
         this.managed_stores = [];
         var s = new localserver.ManagedResourceStore(this.package + '_system');
         s.manifest_url = sys.module_url(this.offline_support, '/manifests/system.json');
         this.managed_stores.push(s);
         s = new localserver.ManagedResourceStore(this.package + '_project');
-        s.manifest_url = sys.module_url(this.offline_support, '/manifests/project.json');
+        s.manifest_url = sys.module_url(this.offline_support, '/manifests/project.json?refered=' + this.start_url);
         this.managed_stores.push(s);
     },
 
@@ -182,11 +183,11 @@ var Project = type('Project', object, {
     },
 
     _get_availability_url: function(){
-	var url = this.availability_url;
-	// bust the browser's cache to make sure we are really talking to the server
-	url += (url.indexOf("?") == -1)? "?" : "&";
-	url += "browserbust=" + new Date().getTime();
-	return url;
+    	var url = this.availability_url;
+    	// bust the browser's cache to make sure we are really talking to the server
+    	url += (url.indexOf("?") == -1)? "?" : "&";
+    	url += "browserbust=" + new Date().getTime();
+    	return url;
     }
 });
 
