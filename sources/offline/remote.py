@@ -341,6 +341,8 @@ class RemoteSite(RemoteBaseSite):
         for app in app_labels:
             m.add_entry('/%s/export/%s/models.js' % (self.offline_base, app))
         
+        #import ipdb; ipdb.set_trace()
+        #m.add_entry('/', redirect='')
         json = m.dump_manifest()
         
         if 'human' in request.GET:
