@@ -22,6 +22,8 @@ import copy
 import SimpleXMLRPCServer
 from offline.rpc.SimpleJSONRPCServer import SimpleJSONRPCDispatcher
 from datetime import datetime
+from django.db.models.loading import get_app, get_models
+from offline.export_models import export_remotes
 
 
 __all__ = ('RemoteSite', 
@@ -56,7 +58,7 @@ class RemoteSiteBase(type):
             for name, obj in ns.iteritems():
                 if hasattr(obj, 'expose'):
                     #urls.append(obj.expose)
-                    regex, largs, kwargs = obj.expose
+                    regex, _largs, kwargs = obj.expose
                     urls.append(RegexURLPattern(regex, obj, kwargs, ''))
                 elif hasattr(obj, 'jsonrpc'):
                     jsonrpc.append(obj.jsonrpc.__name__)  
@@ -412,8 +414,7 @@ class RemoteSite(RemoteBaseSite):
     
     @expose(r'^export_/(?P<app_name>.*)/models.js$')
     def export_models_for_app_(self, request, app_name):
-        from django.db.models.loading import get_app, get_models
-        from offline.export_models import export_remotes
+        
         
         try:
             

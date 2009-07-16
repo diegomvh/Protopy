@@ -1135,6 +1135,7 @@ Object numero=1 cadena=texto arreglo=[6] objeto=Object
 \end{lstlisting}
 \subsection{rpc}
 
+\begin{lstlisting}[style=python]
 class MyFuncs:
     def _listMethods(self):
         # this method must be present for system.listMethods
@@ -1163,6 +1164,7 @@ server = SimpleXMLRPCServer(("localhost", 8000))
 dispatcher.register_introspection_functions()
 dispatcher.register_instance(MyFuncs())
 #dispatcher.serve_forever()
+\end{lstlisting}
 
 \begin{lstlisting}[style=consola]
 >>> require('rpc')
@@ -1188,8 +1190,8 @@ the add method takes two integers as arguments and returns a double result.
 \end{lstlisting}
 
 Add
-\rightarrow \verb|{"version": "1.1", "method": "add", "id": 1, "params": [24,4]}|
-\rightarrow \verb|{"id":1,"result":28}|
+\rightarrow \verb|{"version": "1.1", "method": "add", "id": 1, "params":
+[24,4]}| \rightarrow \verb|{"id":1,"result":28}|
 
 Pow
 \rightarrow \verb|{"version": "1.1", "method": "pow", "id": 2, "params": [2,4]}|

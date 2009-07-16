@@ -11,6 +11,8 @@
 \usepackage[usenames,dvipsnames]{color}
 \usepackage{listings}
 \usepackage{caption}
+\usepackage[style=list]{glossary}
+
 
 % \pagestyle{fancy}
 % \fancyfoot{}
@@ -43,7 +45,7 @@
 \newcommand{\fullref}[1]{\ref{#1} de la página \pageref{#1}}
 
 %Crear el glosario
-\makeglossary
+%\makeglossary
 
 %Colores
 \definecolor{gray97}{gray}{.97}
@@ -266,7 +268,7 @@ existen bastantes analogías
 entre Python y los lenguajes minimalistas de la familia Lisp como puede ser
 Scheme.
 
-\subsubsection*{Filosofía del lenguaje}
+\subsection*{Filosofía del lenguaje}
 
 Los usuarios de Python se refieren a menudo a la Filosofía Python que es
 bastante análoga a la filosofía de Unix. El código que sigue los principios de
@@ -1052,12 +1054,20 @@ Una vez modificado el archvio de configuración, se debe ejecutar el comando
 \textbf{manage.py migrate\_project} dentro de la raíz del proyecto. Esto creara
 la estructura del proyecto offline.
 
-\subsubsection{Migración individual de aplicaciones}
+\subsubsection{Migración de aplicaciones}
 Por cada aplicación que se desee migrar deberá invocarse el comando 
-\textbf{manage.py migrate\_app <nombre_de_aplicacion>} en la raíz del proyecto.
-Esto crea la estructura 
+\textbf{manage.py migrate\_app <nombre\_de\_aplicacion>} en la raíz del
+proyecto. Esto crea la estructura 
  
-\section{Convivencia}
+
+\subsection{Concepto de RemoteSite}
+Como cobertura a las aplicaciones, se crea una clase que se encarga de exponer
+los métodos de obtención de la aplicación, el framework de javascript,
+sincronización, etc. Esta clase se llama RemoteSite
+
+\section{Sincronización}
+Durante la sincronización el cliente y el servidor intercambian regitros de 
+la base de datos. 
 
 \subsection{Modos de trabajo}
 Los distinotos modos de trabajo de la aplicacion son:
