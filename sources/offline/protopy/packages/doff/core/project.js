@@ -209,7 +209,7 @@ function get_settings() {
 }
 
 publish({
-    get_project: get_project,
-    new_project: get_project,
-    get_settings: get_settings
+	get_project: get_project,
+	new_project: get_project,
+	get_settings: get_settings
 });

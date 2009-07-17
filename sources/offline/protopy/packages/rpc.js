@@ -104,8 +104,8 @@ rpc.ServiceProxy = type('ServiceProxy', object, {
 	this.__authPassword = null;
 	this.__callbackParamName = 'JSON-response-callback';
 	this.__protocol = 'JSON-RPC';
-	json.date_encoding = 'ISO8601'; // ("@timestamp@" || "@ticks@") || "classHinting" || "ASP.NET"
-	this.__decodeISO8601 = true; //JSON only
+	json.date.encoding = 'ISO8601'; // ("@timestamp@" || "@ticks@") || "classHinting" || "ASP.NET"
+	json.date.decode = true; //JSON only
 	
 	//Get the provided options
 	if(options instanceof Object){
@@ -126,8 +126,8 @@ rpc.ServiceProxy = type('ServiceProxy', object, {
 			this.__protocol = 'XML-RPC';
 		if(options.dateEncoding != undefined)
 			this.__dateEncoding = options.dateEncoding;
-		if(options.decodeISO8601 != undefined)
-			this.__decodeISO8601 = !!options.decodeISO8601;
+		if(options.decode != undefined)
+			json.date.decode = !!options.decode;
 		providedMethodList = options.methods;
 	}
 	if(this.__isCrossSite){
@@ -372,7 +372,6 @@ rpc.ServiceProxy = type('ServiceProxy', object, {
 				if(response.error)
 					throw Error('Unable to call "' + methodName + '". Server responsed with error (code ' + response.error.code + '): ' + response.error.message);
 				
-				this.__upgradeValuesFromJSON(response);
 				return response.result;
 			}
 		}
@@ -436,7 +435,6 @@ rpc.ServiceProxy = type('ServiceProxy', object, {
 		//  need to be modified by reference, and the only way to do so is
 		//  but accessing an object's properties. Thus an extra level of
 		//  abstraction allows for accessing all of the results members by reference.
-		this.__upgradeValuesFromJSON(response);
 		
 		if(rpc.pendingRequests[response.id].onSuccess){
 			try {
@@ -500,53 +498,6 @@ rpc.ServiceProxy = type('ServiceProxy', object, {
 		throw err;
 	}
     },
-
-    //This function iterates over the properties of the passed object and converts them 
-    //   into more appropriate data types, i.e. ISO8601 strings are converted to Date objects.
-    __upgradeValuesFromJSON: function(obj){
-	var matches, useHasOwn = {}.hasOwnProperty ? true : false;
-	for(var key in obj){
-		if(!useHasOwn || obj.hasOwnProperty(key)){
-			//Parse date strings
-			if(typeof obj[key] == 'string'){
-				//ISO8601
-				if(this.__decodeISO8601 && (matches = obj[key].match(/^(?:(\d\d\d\d)-(\d\d)(?:-(\d\d)(?:T(\d\d)(?::(\d\d)(?::(\d\d)(?:\.(\d+))?)?)?)?)?)$/))){
-					obj[key] = new Date(0);
-					if(matches[1]) obj[key].setUTCFullYear(parseInt(matches[1]));
-					if(matches[2]) obj[key].setUTCMonth(parseInt(matches[2]-1));
-					if(matches[3]) obj[key].setUTCDate(parseInt(matches[3]));
-					if(matches[4]) obj[key].setUTCHours(parseInt(matches[4]));
-					if(matches[5]) obj[key].setUTCMinutes(parseInt(matches[5]));
-					if(matches[6]) obj[key].setUTCMilliseconds(parseInt(matches[6]));
-				}
-				//@timestamp@ / @ticks@
-				else if(matches = obj[key].match(/^@(\d+)@$/)){
-					obj[key] = new Date(parseInt(matches[1]))
-				}
-				//ASP.NET
-				else if(matches = obj[key].match(/^\/Date\((\d+)\)\/$/)){
-					obj[key] = new Date(parseInt(matches[1]))
-				}
-			}
-			else if(obj[key] instanceof Object){
-
-				//JSON 1.0 Class Hinting: {"__jsonclass__":["constructor", [param1,...]], "prop1": ...}
-				if(obj[key].__jsonclass__ instanceof Array){
-					//console.info('good1');
-					if(obj[key].__jsonclass__[0] == 'Date'){
-						//console.info('good2');
-						if(obj[key].__jsonclass__[1] instanceof Array && obj[key].__jsonclass__[1][0])
-							obj[key] = new Date(obj[key].__jsonclass__[1][0]);
-						else
-							obj[key] = new Date();
-					}
-				}
-				else this.__upgradeValuesFromJSON(obj[key]);
-			}
-		}
-	}
-    },
-
 
     /*******************************************************************************************
     * XML-RPC Specific Functions
