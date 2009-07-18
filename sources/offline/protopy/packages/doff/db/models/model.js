@@ -413,7 +413,7 @@ var Model = type('Model', object, {
         }
     },
 
-    'delete': function delete() {
+    delete: function() {
         assert (this._get_pk_val(), "%s object can't be deleted because its %s attribute is set to None.".subs(this._meta.object_name, this._meta.pk.attname));
 
         // Find all the objects than need to be deleted.
@@ -424,7 +424,7 @@ var Model = type('Model', object, {
         delete_objects(seen_objs);
     },
 
-    '_get_FIELD_display': function _get_FIELD_display(field) {
+    _get_FIELD_display: function(field) {
         value = this[field.attname];
         return string(new Dict(field.flatchoices).get(value, value));
     },

@@ -16,12 +16,12 @@ var BLANK_CHOICE_NONE = [["", "None"]];
 
 var FieldDoesNotExist = type('FieldDoesNotExist', Exception);
 
-var Field = type('Field', object, {
+var Field = type('Field', [ object ], {
     creation_counter: 0,
     auto_creation_counter: -1
 },{
     empty_strings_allowed: true,
-    '__init__': function __init__() {
+    __init__: function() {
 
         arguments = new Arguments(arguments, {'verbose_name':null, 'name':null, 'primary_key':false,
             'max_length':null, 'unique':false, 'blank':false, 'none':false, 'null':false,
@@ -69,12 +69,12 @@ var Field = type('Field', object, {
 
     },
 
-    '__cmp__': function __cmp__(other){
+    __cmp__: function(other){
         // This is needed because bisect does not take a comparison function.
         return this.creation_counter - other.creation_counter;
     },
 
-    '__deepcopy__': function __deepcopy__() {
+    __deepcopy__: function() {
 	var obj = this.copy();
 	if (this.rel)
 	    obj.rel = this.rel.copy();
@@ -230,7 +230,7 @@ var Field = type('Field', object, {
     /*
 	* Returns choices with a default blank choices included, for use as SelectField choices for this field.
 	*/
-    'get_choices': function get_choices(include_blank, blank_choice) {
+    get_choices: function(include_blank, blank_choice) {
         include_blank = include_blank || true;
         blank_choice = blank_choice || BLANK_CHOICE_DASH;
         var first_choice = include_blank && blank_choice || [];
@@ -243,9 +243,9 @@ var Field = type('Field', object, {
         else
             lst = [[x._get_pk_val(), x] for (x in rel_model._default_manager.complex_filter(this.rel.limit_choices_to))];
         return first_choice.concat(lst);
-        },
+    },
 
-        'get_choices_default': function get_choices_default() {
+    get_choices_default: function() {
         return this.get_choices();
     },
 

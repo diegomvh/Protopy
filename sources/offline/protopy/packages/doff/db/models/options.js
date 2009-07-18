@@ -1,5 +1,4 @@
 /* "doff.db.models.options" */
-    
 require('doff.core.project', 'get_settings');
 require('doff.db.models.related', 'RelatedObject');
 require('doff.db.models.fields.related', 'ManyToManyRel');
@@ -15,11 +14,10 @@ var settings = get_settings();
 var get_verbose_name = function(class_name) { return class_name;};
 
 var DEFAULT_NAMES = ['verbose_name', 'db_table', 'ordering', 'unique_together', 'permissions', 'get_latest_by',
-                    'order_with_respect_to', 'app_label', 'db_tablespace',
-                    'abstracto'];
+                    'order_with_respect_to', 'app_label', 'db_tablespace', 'abstracto'];
 
-var Options = type('Options', object, {
-    '__init__': function __init__(meta, app_label) {
+var Options = type('Options', [ object ], {
+    __init__: function(meta, app_label) {
         this.local_fields = [];
         this.local_many_to_many = [];
         this.virtual_fields = [];
@@ -46,8 +44,8 @@ var Options = type('Options', object, {
 
     },
 
-    '__str__': function __str__() {
-        return "%s.%s".subs(this.app_label, this.module_name);
+    __str__: function() {
+        return '%s.%s'.subs(this.app_label, this.module_name);
     },
     
     'contribute_to_class': function contribute_to_class(cls, name) {
@@ -384,7 +382,7 @@ var Options = type('Options', object, {
         return cache.items();
     },
 
-    '_fill_related_many_to_many_cache': function _fill_related_many_to_many_cache() {
+    _fill_related_many_to_many_cache: function() {
         var cache = new SortedDict();
         var parent_list = this.get_parent_list();
         for each (var parent in this.parents) {

@@ -1,10 +1,10 @@
 {% load export_models %}{% spaceless %}
 var models = require('doff.db.models.base');
+require('doffline.export.offline.models', '*');
 {% for model_name, fields in models.iteritems %}
 var {{ model_name }} = type("{{ model_name }}", models.Model, {
-	{% for field_name, arguments in fields.iteritems %}
-	{{ field_name }}: new models.{{ arguments|first }}({% get_model_definition arguments %}){% if not forloop.last %},{% endif %}
-	{% endfor %}
+    {% for field_name, arguments in fields.iteritems %}
+    {{ field_name }}: new models.{{ arguments|first }}({% get_model_definition arguments %}){% if not forloop.last %},{% endif %}{% endfor %}
 });
 {% endfor %}
 
