@@ -16,20 +16,6 @@ function index(request) {
     return response;
 }
 
-function syncdb(request) {
-    var s = require('doff.core.commands.syncdb');
-    s.execute();
-    return new HttpResponseRedirect('/');
-}
-
-function removedb(request) {
-    var s = require('doff.core.commands.removedb');
-    s.execute();
-    return new HttpResponseRedirect('/');
-}
-
 publish({ 
-    index: index,
-    syncdb: syncdb,
-    removedb: removedb
+    index: index
 });

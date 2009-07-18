@@ -7,7 +7,7 @@ function can_serve_locally(url) {
 }
 
 //TODO: Se puede explotar mucho mas este objeto
-var ResourceStore = type ('ResourceStore', object, {
+var ResourceStore = type ('ResourceStore', [ object ], {
     _store: null,
 
     __init__: function(name, requiredCookie) {
@@ -87,7 +87,7 @@ var ResourceStore = type ('ResourceStore', object, {
     }
 });
 
-var ManagedResourceStore = type ('ManagedResourceStore', object, {
+var ManagedResourceStore = type ('ManagedResourceStore', [ object ], {
     _store: null,
 
     __init__: function(name, requiredCookie) {

@@ -1,11 +1,9 @@
 require('doff.conf.urls', '*');
-require('blog.views', 'index', 'removedb');
+require('blog.views', 'index');
 
 var urlpatterns = patterns('',
     // Example:
     ['^$', index],
-    ['^syncdb/$', 'blog.views.syncdb'],
-    ['^removedb/$', removedb],
     ['^blog/', include('blog.post.urls')]
 )
 

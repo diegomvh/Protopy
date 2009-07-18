@@ -145,6 +145,17 @@ var Project = type('Project', object, {
 
         for each (var store in this.managed_stores)
             store.check_for_update();
+    
+        require('doff.db.utils','syncdb');
+        syncdb();
+    },
+
+    uninstall: function() {
+        require('doff.db.utils','removedb');
+        removedb();
+
+        for each (var store in this.managed_stores)
+            store.delete();
     },
 
     /********************************

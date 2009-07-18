@@ -26,10 +26,8 @@
         <div class="middle">
             {% block middle %}
             {% if sin_tablas %}
-            <h2>NO HAY DATOS O NO HAY BASE DE DATOS</h2>
-            
-            Por favor cree una base de datos nueva, haciendo clic en el link correspondiente o <h2><a href="/syncdb/">aqui</a></h2>
-            <br /><br />
+            <h2>El proyecto no esta instalado</h2>
+            <br />
             {% endif %}
             {% endblock %}
         </div>
@@ -39,8 +37,6 @@
             <h2>{{ pepe|yesno }}</h2>
             <h2><a href="/blog/">Inicio</a></h2>
             <h2><a href="/doffline/list_templates/">Lista de Templates</a></h2>
-            <h2><a href="/syncdb/">Crear Base de Datos</a></h2>
-            <h2><a href="/removedb/">Eliminar Base de datos</a></h2>
             <h2><a id='google' href="http://www.google.com">Google</a></h2>
 	    {% if not sin_tablas %}
 		<h2><a href="/blog/add_tag/">Agregar Tag</a></h2>
