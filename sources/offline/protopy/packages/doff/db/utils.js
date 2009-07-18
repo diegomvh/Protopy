@@ -1,10 +1,9 @@
-/* "doff.core.management.commands.syncdb" */
 require('doff.db.base', 'connection');
 var models = require('doff.db.models.base');
 require('doff.db.transaction');
 require('doff.core.project', 'get_settings');
 
-function execute() {
+function syncdb() {
     var settings = get_settings();
     /* No creo que sea necesario
     for each (var app_name in settings.INSTALLED_APPS) {
@@ -120,6 +119,14 @@ function execute() {
     //call_command('loaddata', 'initial_data', verbosity=verbosity)
 }
 
+function removedb() {
+    require('doff.db.base', 'connection');
+    var cursor = connection.cursor();
+    if (callable(cursor.remove))
+        cursor.remove();
+}
+
 publish({ 
-    execute: execute 
+    syncdb: syncdb,
+    removedb: removedb
 });
