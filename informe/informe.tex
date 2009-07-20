@@ -1117,17 +1117,44 @@ Una vez modificado el archvio de configuración, se debe ejecutar el comando
 la estructura del proyecto offline.
 
 \subsubsection{Migración de aplicaciones}
-Por cada aplicación que se desee migrar deberá invocarse el comando 
-\textbf{manage.py migrate\_app <nombre\_de\_aplicacion>} en la raíz del
-proyecto. Esto crea la estructura 
+Django divide el proyecto en aplicaciones. En aplicaciones web orientadas al
+contenido, como son los blogs, foros, redes sociales, etc. los modelos de cada
+aplicación suelen estar débilmente acoplados.
+Generalmente hacer referencia a las clases de modelos provistos por django,
+como \textbf{django.cotrib.auth.User}, \textbf{django.contrib.auth.Group}, pero
+no existe relacion entre modelos de una aplicación y otra.
+Existen otros tipos de sistemas, orientados a organizaciones en las cuales se
+lelvan a cabo operaciones comerciales, donde los modelos suelen tener cierta
+relación entre si.
+
+
  
 
 \subsection{Concepto de RemoteSite}
-Como cobertura a las aplicaciones, se crea una clase que se encarga de exponer
-los métodos de obtención de la aplicación, el framework de javascript,
-sincronización, etc. Esta clase se llama RemoteSite
+En el framework django, los proyectos agrupan aplicaciones, que son paquetes
+que constan de módulos de patrones de urls, vistas, modelos, módulo de
+administración, etc. y se comportan como una entidad independiente. Una
+aplicación debe estar \textit{instalada} en un proyecto para estar activa, es
+decir, estar incluida en \textbf{INSTALLED\_APPS} en el módulo de configuración
+de proyecto (\textbf{settings.py}). Una aplicación puede ser copiada o movida a
+otro proyecto si cumple con algunas condiciones de modularidad, como:
+\begin{itemize}
+  \item {Imoprtación de módulos sin base en el proyecto, es decir, si el
+  proyecto se llama mi\_proyecto, no existen sentecias como
+  \begin{verbatim} import mi_proyecto.models \end{verbatim}
+   debido a que al mover o copiara la aplicación, las referencias con base en
+  \textit{mi\_proyecto} quedan sin refrencia.}
+\end{itemize}
 
-\section{Sincronización}
+
+
+ El equivalente a un proyecto django en el lado
+del servidor es un remote site del lado del cliente. En un proyecto django donde se encuentre instalada la aplicación \textbf{offline} pueden existir uno o más remote sites.
+El remote site tiene como responsabilidad la exportación de los modelos al
+clinete, mantenimiento de las versiones de código javascript en el cliente
+tanto del proyecto como del sistema, inicialización y sincronización de datos.
+
+\section{Sincronización de un RemoteSite}
 Durante la sincronización el cliente y el servidor intercambian regitros de 
 la base de datos. 
 
