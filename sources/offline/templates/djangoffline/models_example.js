@@ -13,9 +13,9 @@ var Tag = type('Tag', models.Model, {
     
     /* Sync */
     _sync_log: new models.ForeignKey(SyncLog, {"db_index": true, "null": true, "blank": true, "editable": false}),
-    _active: new models.BooleanField({"default": true, "blank": true, "editable": false}),
-    _status: new models.CharField({"max_length": 1, "choices": SyncLog.SYNC_STATUS, "editable": false, "default": "c"}),
-    server_pk: new models.PositiveIntegerField({"null": true, "blank": true, "editable": false})
+    _active: new models.BooleanField( {"default": true, "blank": true, "editable": false}),
+    _status: new models.CharField( {"max_length": 1, "choices": SyncLog.SYNC_STATUS, "editable": false, "default": "c"}),
+    server_pk: new models.PositiveIntegerField( {"null": true, "blank": true, "editable": false})
 });
 
 
