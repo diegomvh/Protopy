@@ -25,7 +25,7 @@ var Field = type('Field', [ object ], {
 
         arguments = new Arguments(arguments, {'verbose_name':null, 'name':null, 'primary_key':false,
             'max_length':null, 'unique':false, 'blank':false, 'none':false, 'null':false,
-            'db_index':false, 'rel':null, 'default_value':NOT_PROVIDED, 'editable':true,
+            'db_index':false, 'rel':null, 'default':NOT_PROVIDED, 'editable':true,
             'serialize':true, 'unique_for_date':null, 'unique_for_month':null,
             'unique_for_year':null, 'choices':[], 'help_text':'', 'db_column':null,
             'db_tablespace':settings.DEFAULT_INDEX_TABLESPACE, 'auto_created':false});
@@ -43,7 +43,7 @@ var Field = type('Field', [ object ], {
         if (this.empty_strings_allowed && connection.features.interprets_empty_strings_as_nulls)
             this.none = true;
         this.rel = kwargs['rel'];
-        this.default_value = kwargs['default_value'];
+        this.default_value = kwargs['default'];
         this.editable = kwargs['editable'];
         this.serialize = kwargs['serialize'];
         this.unique_for_date = kwargs['unique_for_date'];
@@ -278,8 +278,9 @@ var Field = type('Field', [ object ], {
     },
 
     get choices() {
-        if (this._choices['next']) {
-            var [choices, _choices] = tee(this._choices);
+        //TODO: ver que pasa con las choices que son generadores
+        if (callable(this._choices['next'])) {
+            var choices = array(this._choices);
             this._choices = _choices;
             return choices;
         } else {
@@ -288,15 +289,15 @@ var Field = type('Field', [ object ], {
     },
 
     /*
-	* Flattened version of choices tuple.
-	*/
+     * Flattened version of choices
+     */
     get flatchoices() {
         var flat = [];
-        for ([choice, value] in this.choices)
-            if (type(value) == Array)
-            flat.concat(value);
+        for each (var [choice, value] in this.choices)
+            if (isinstance(value, Array))
+                flat = flat.concat(value);
             else
-            flat.push([choice, value])
+                flat.push([choice, value])
         return flat;
     },
 

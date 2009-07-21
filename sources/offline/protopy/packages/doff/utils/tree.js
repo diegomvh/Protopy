@@ -98,7 +98,7 @@ var Node = type('Node', object, {
 
     end_subtree: function() {
         var obj = this.subtree_parents.pop();
-        var node = this.constructor(this.children, this.connector);
+        var node = new this.__class__(this.children, this.connector);
         this.connector = obj.connector;
         this.negated = obj.negated;
         this.children = obj.children;

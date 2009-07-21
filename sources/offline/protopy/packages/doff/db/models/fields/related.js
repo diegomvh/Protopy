@@ -304,10 +304,10 @@ var ForeignRelatedObjectsDescriptor = type('ForeignRelatedObjectsDescriptor', [ 
         if (!isinstance(instance, instance_type))
             throw new AttributeError("Manager must be accessed via instance");
 
-        var manager = this.__get__(instance);
+        var manager = this.__get__(instance, instance_type);
         if (this.related.field.none)
             manager.clear();
-        manager.add(value);
+        manager.add.apply(manager, value);
     }
 });
 
@@ -432,7 +432,7 @@ function create_many_related_manager(superclass, through) {
     // If the ManyToMany relation has an intermediary model,
     // the add and remove methods do not exist.
     if (!through) {
-        ManyRelatedManager.prototype['add'] = function add() {
+        ManyRelatedManager.prototype['add'] = function() {
             var arg = new Arguments(arguments);
             var args = [this.source_col_name, this.target_col_name].concat(arg.args);
             this._add_items.apply(this, args);
@@ -444,7 +444,7 @@ function create_many_related_manager(superclass, through) {
             }
         }
 
-	    ManyRelatedManager.prototype['remove'] = function remove() {
+	    ManyRelatedManager.prototype['remove'] = function() {
             var arg = new Arguments(arguments);
             var args = [this.source_col_name, this.target_col_name].concat(arg.args);
             this._remove_items.apply(this, args);
@@ -504,13 +504,13 @@ var ManyRelatedObjectsDescriptor = type('ManyRelatedObjectsDescriptor', [ object
         if (!isinstance(instance, instance_type))
             throw new AttributeError("Manager must be accessed via instance");
 
-        through = this.related.field.rel['through'];
+        var through = this.related.field.rel['through'];
         if (through)
             throw new AttributeError("Cannot set values on a ManyToManyField which specifies an intermediary model. Use %s's Manager instead.".subs(through));
 
-        manager = this.__get__(instance);
+        var manager = this.__get__(instance, instance_type);
         manager.clear();
-        manager.add.apply(this, value);
+        manager.add.apply(manager, value);
     }
 });
 
@@ -561,9 +561,9 @@ var ReverseManyRelatedObjectsDescriptor = type('ReverseManyRelatedObjectsDescrip
         if (through)
             throw new AttributeError("Cannot set values on a ManyToManyField which specifies an intermediary model.  Use %s's Manager instead.".subs(through));
 
-        manager = this.__get__(instance);
+        var manager = this.__get__(instance, instance_type);
         manager.clear();
-        manager.add.apply(this, value);
+        manager.add.apply(manager, value);
     }
 });
 

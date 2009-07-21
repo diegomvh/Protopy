@@ -16,9 +16,9 @@ var subclass_exception = function(name, parent, module) {
     klass.prototype.__module__ = module;
     return klass;
 }
-    
-var Model = type('Model', object, {
-    '__new__': function __new__(name, bases, attrs) {
+
+var Model = type('Model', [ object ], {
+    __new__: function(name, bases, attrs) {
         if (name == 'Model' && bases[0] == object ) {
             // estoy creando el modelo,
             return super(Model, this).__new__(name, bases, attrs);
@@ -27,7 +27,7 @@ var Model = type('Model', object, {
         var module = this.__module__;
         attrs['__module__'] = module;
         super(Model, this).__new__(name, bases, attrs);
-        
+
         var attr_meta = attrs['Meta'] || new Object();
         var abstracto = attr_meta['abstracto'] || false;
         var meta = attr_meta;
@@ -144,7 +144,7 @@ var Model = type('Model', object, {
         return get_model(this._meta.app_label, name, false);
     },
 
-    'add_to_class': function add_to_class(name, value) {
+    add_to_class: function(name, value) {
         if (value && value['contribute_to_class'])
             value.contribute_to_class(this, name);
         else
@@ -152,7 +152,7 @@ var Model = type('Model', object, {
     },
 
     /* Creates some methods once self._meta has been populated. */
-    '_prepare': function _prepare() {
+    _prepare: function() {
 
         var opts = this._meta;
         opts._prepare(this);
@@ -168,11 +168,11 @@ var Model = type('Model', object, {
         event.publish('class_prepared', [ this ]);
     }
 },{
-    '__init__': function __init__() {
-        arguments = new Arguments(arguments);
-        var args = arguments.args;
-        var kwargs = arguments.kwargs;
-	event.publish('pre_init', [this.constructor, args, kwargs]);
+    __init__: function() {
+        var arg = new Arguments(arguments);
+        var args = arg.args;
+        var kwargs = arg.kwargs;
+        event.publish('pre_init', [this.constructor, args, kwargs]);
         // There is a rather weird disparity here; if kwargs, it's set, then args
         // overrides it. It should be one or the other; don't duplicate the work
         // The reason for the kwargs check is that standard iterator passes in by
@@ -218,7 +218,7 @@ var Model = type('Model', object, {
             } else {
                 val = field.get_default();
             }
-            
+
             // If we got passed a related instance, set it using the field.name
             // instead of field.attname (e.g. 'user' instead of 'user_id') so
             // that the object gets properly cached (and type checked) by the
@@ -229,23 +229,23 @@ var Model = type('Model', object, {
                 this[field.attname] = field.to_javascript(val);
             }
         }
-        
-	event.publish('post_init', [this.constructor, this]);
+
+        event.publish('post_init', [this.constructor, this]);
     },
 
-    '__str__': function __str__() {
+    __str__: function() {
         return '%s object'.subs(this.constructor.__name__);
     },
 
-    '__eq__': function __eq__(other) {
+    __eq__: function(other) {
         return (other instanceof this.constructor) && this._get_pk_val() == other._get_pk_val()
     },
 
-    '__ne__': function __ne__(other) {
+    __ne__: function(other) {
         return !this.__eq__(other);
     },
 
-    '_get_pk_val': function _get_pk_val(meta) {
+    _get_pk_val: function(meta) {
         if (!meta)
             meta = this._meta;
         return this[meta.pk.attname] || null;
@@ -255,7 +255,7 @@ var Model = type('Model', object, {
         return this._get_pk_val();
     },
 
-    '_set_pk_val': function _set_pk_val(value) {
+    _set_pk_val: function(value) {
         return this[this._meta.pk.attname] = value;
     },
 
@@ -271,7 +271,7 @@ var Model = type('Model', object, {
         that the 'save' must be an SQL insert or update (or equivalent for
         non-SQL backends), respectively. Normally, they should not be set.
         */
-    'save': function save(force_insert, force_update) {
+    save: function(force_insert, force_update) {
         var force_insert = force_insert || false;
         var force_update = force_update || false;
         if (force_insert && force_update)
@@ -285,8 +285,7 @@ var Model = type('Model', object, {
         need for overrides of save() to pass around internal-only parameters
         ('raw' and 'cls').
         */
-    'save_base': function save_base(raw, cls, force_insert, force_update) {
-        
+    save_base: function(raw, cls, force_insert, force_update) {
         assert (!(force_insert && force_update));
         cls = cls || null;
         if (!cls) {
@@ -378,7 +377,7 @@ var Model = type('Model', object, {
             [(model_class, {pk_val: obj, pk_val: obj, ...}),
                 (model_class, {pk_val: obj, pk_val: obj, ...}), ...]
         */
-    '_collect_sub_objects': function _collect_sub_objects(seen_objs, parent, nullable) {
+    _collect_sub_objects: function(seen_objs, parent, nullable) {
         var pk_val = this._get_pk_val();
         if (seen_objs.add(this.__class__, pk_val, this, parent || null, nullable || false))
             return;
@@ -425,21 +424,25 @@ var Model = type('Model', object, {
     },
 
     _get_FIELD_display: function(field) {
-        value = this[field.attname];
+        var value = this[field.attname];
         return string(new Dict(field.flatchoices).get(value, value));
     },
 
-    '_get_next_or_previous_by_FIELD': function _get_next_or_previous_by_FIELD(field, is_next) {
-        arguments = new Arguments(arguments);
+    _get_next_or_previous_by_FIELD: function(field, is_next) {
+        var arg = new Arguments(arguments);
         var op = is_next && 'gt' || 'lt';
         var order = !is_next && '-' || '';
         var param = this[field.attname];
+
         var key = '%s__%s'.subs(field.name, op);
-        var q = new Q({key: param});
-        key2 = 'pk__%s'.subs(op);
-        var key2 = field.name;
-        q = q.or(new Q({key2: param, key: this.pk}));
-        qs = this.constructor._default_manager.filter(arguments.kwargs).filter(q).order_by('%s%s'.subs(order, field.name), '%spk'.subs(order));
+        var obj = {}; obj[key] = param;
+        var q = new Q(obj);
+
+        key = 'pk__%s'.subs(op);
+        obj = {}; obj[field.name] = param; obj[key] = this.pk;
+
+        q = q.or(new Q(obj));
+        var qs = this.__class__._default_manager.filter(arg.kwargs).filter(q).order_by('%s%s'.subs(order, field.name), '%spk'.subs(order));
         try {
             return qs.get(0);
         } catch (e if e instanceof IndexError) {
@@ -447,8 +450,8 @@ var Model = type('Model', object, {
         }
     },
 
-    '_get_next_or_previous_in_order': function _get_next_or_previous_in_order(is_next) {
-        cachename = '__%s_order_cache'.subs(is_next);
+    _get_next_or_previous_in_order: function(is_next) {
+        var cachename = '__%s_order_cache'.subs(is_next);
         if (!this[cachename]) {
             qn = connection.ops.quote_name;
             op = is_next && '>' || '<';
