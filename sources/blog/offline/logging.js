@@ -1,7 +1,7 @@
 {
     'loggers': {
         'root': {
-            'level': 'ERROR',
+            'level': 'DEBUG',
             'handlers': 'firebug'
         },
         /*'doff.db.models.sql': {
