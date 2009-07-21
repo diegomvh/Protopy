@@ -21,6 +21,10 @@ from django.db.models.loading import get_app
 import copy
 import SimpleXMLRPCServer
 from offline.rpc.SimpleJSONRPCServer import SimpleJSONRPCDispatcher
+from datetime import datetime
+from django.db.models.loading import get_app, get_models
+from offline.export_models import export_remotes
+
 
 __all__ = ('RemoteSite', 
            'expose',
@@ -54,7 +58,7 @@ class RemoteSiteBase(type):
             for name, obj in ns.iteritems():
                 if hasattr(obj, 'expose'):
                     #urls.append(obj.expose)
-                    regex, largs, kwargs = obj.expose
+                    regex, _largs, kwargs = obj.expose
                     urls.append(RegexURLPattern(regex, obj, kwargs, ''))
                 elif hasattr(obj, 'jsonrpc'):
                     jsonrpc.append(obj.jsonrpc.__name__)  
@@ -304,6 +308,50 @@ class RemoteSite(RemoteBaseSite):
         suma(a, b) => Retorna la suma de los numeros a y b
         '''
         return a + b
+    @jsonrpc
+    def start_sync(self, sync_request):
+        '''
+        1) El cliente envía SyncRequest
+            sreq = new SyncRequest()
+            sreq.first = True
+            sync_resp = send_sync_request(sreq); // Le pega a una url y un mￃﾩtodo de json-rpc
+    
+        2) El server le envía SyncResponse sr1:
+            
+            - model_order lista de dependencias de modelos
+            - current_time
+            - sync_id Identificación de sincronización (transacción) (el cliente lo envía con cada SyncRequest)
+        '''
+        now = datetime.now()
+        date = now.strftime("%Y-%m-%dT%H:%M:%S")
+        return {
+                'model_order': [1, 2, 4, ],
+                'current_time': date,
+                'sync_id': None
+                }
+    
+    @jsonrpc
+    def model_dump(self, sync_request):
+        '''
+        4) El cliente envía en SyncRequest con el primer contenttype de sr1.model_order (lista de dependencias)
+            for each (var model in sr1.model_order){
+                sreq.model = model;
+                sreq.sync_id = sr1.sync_id
+                sresp2 = send_sync_request(sreq);
+                
+                for each (var data in sr2.reponse) {
+                    // Falta pasar del contenttype a la clase del lado del clinete
+                    // Asumimos que el _active y el _status viene del servidor
+                    m = model(data.extend({_sync_log = sl}));
+                    m.save()
+                }
+            }
+        '''
+        return {'app_name': 'foo',
+                'model_name': 'bar', 
+                'instances': []
+        }
+    
     
     @expose(r'^manifests/system.json$')
     def system_manifest(self, request, version = None, exclude_callback = None):
@@ -341,6 +389,18 @@ class RemoteSite(RemoteBaseSite):
         for app in app_labels:
             m.add_entry('/%s/export/%s/models.js' % (self.offline_base, app))
         
+        if not request.method == "GET":
+            return Http404("Manifest must be retreived via GET HTTP method")
+        try:
+            refered = request.GET['refered']
+            if refered != '/':
+                for path in [ '/', '/index.html', 'index.htm', '/index' ]:
+                    m.add_entry( path, redirect = refered )
+                m.add_entry(refered)
+        except KeyError:
+            pass
+        
+        #m.add_entry('/', redirect='')
         json = m.dump_manifest()
         
         if 'human' in request.GET:
@@ -354,8 +414,7 @@ class RemoteSite(RemoteBaseSite):
     
     @expose(r'^export/(?P<app_name>.*)/models.js$')
     def export_models_for_app(self, request, app_name):
-        from django.db.models.loading import get_app, get_models
-        from offline.export_models import export_remotes
+        
         
         try:
             

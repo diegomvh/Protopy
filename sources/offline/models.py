@@ -49,6 +49,7 @@ class Manifest(models.Model):
     # Version string
     version = models.CharField(max_length=150, blank = False)
     content = models.TextField(editable = False, null = True, blank = True)
+    offline_root = models.TextField(max_length = 150, editable = False)
     
     class Meta:
         unique_together = (('version'), )
