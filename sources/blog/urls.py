@@ -8,7 +8,7 @@ import offline
 # Uncomment the next two lines to enable the admin:
 #from django.contrib import admin
 #admin.autodiscover()
-from blog.post.remote import site
+from blog.offline.blog import blog_site
 
 urlpatterns = patterns('',
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
@@ -21,7 +21,7 @@ urlpatterns = patterns('',
     # index
     (r'^offblog/offline.html$', include('blog.post.urls'),),
 
-    (r'^%s/(.*)' % settings.OFFLINE_BASE, site.root ),
+    (r'^%s/(.*)' % blog_site.url, blog_site.root ),
 
     (r'^rpc/test', 'offline.sync.rpc_handler' ),
     

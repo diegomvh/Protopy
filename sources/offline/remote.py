@@ -25,7 +25,7 @@ from offline.rpc.SimpleJSONRPCServer import SimpleJSONRPCDispatcher
 from datetime import datetime
 from django.db.models.loading import get_app, get_models
 from offline.export_models import export_remotes
-
+from django.conf import settings
 
 __all__ = ('RemoteSite', 
            'expose',
@@ -178,34 +178,27 @@ class RemoteBaseSite(object):
 #            text = '\n'.join([str(x.regex) for x in self._urls])
 #            text = SafeString(text)
         raise Http404(u"No url for «%s»" % (url, ))
-    
+
+REMOTE_SITES = {}
 class RemoteSite(RemoteBaseSite):
     '''
     Manages offline project support.
     @expose decorator indicates how URLs are mapped
     '''
     
-    def __init__(self, name, offline_root = None, offline_base = None, protopy_root = None):
+    def __init__(self, name, protopy_root = None):
         
-        from django.conf import settings
-        if not offline_root:
-            assert hasattr(settings, "OFFLINE_ROOT"), \
-                "You must define OFFLINE_ROOT in your project settings file, please check protopy docs"
-                
-            offline_root = settings.OFFLINE_ROOT
-        self.offline_root = offline_root    
+        global REMOTE_SITES
+        if name in REMOTE_SITES:
+            raise Exception("You can't define two RemoteSites with the same name")
         
-        if not offline_base:
-            assert hasattr(settings, "OFFLINE_BASE"), \
-                "You must define OFFLINE_BASE in your project settings file, please check protopy docs"
-            offline_base = settings.OFFLINE_BASE
-        self.offline_base = offline_base
+        self.name = name
         
         if not protopy_root:
             from os.path import abspath, dirname, join
             protopy_root = getattr(get_app('offline'), '__file__')
             protopy_root = join(abspath(dirname(protopy_root)), 'protopy')
-        self.protpy_root = protopy_root
+        self._protopy_root = protopy_root
         
         # Create a Dispatcher; this handles the calls and translates info to function maps
         #self.rpc_dispatcher = SimpleJSONRPCDispatcher() # Python 2.4
@@ -214,7 +207,12 @@ class RemoteSite(RemoteBaseSite):
         self.rpc_dispatcher.register_instance(self)
         
         self._registry = {}
-        
+    
+    
+    offline_root = property(lambda inst: settings.OFFLINE_ROOT)
+    offline_base = property(lambda inst: settings.OFFLINE_BASE)
+    protpy_root = property(lambda inst: inst._protopy_root)
+    
     @expose(r'^$')
     def index(self, request):
         return HttpResponse('Yo soy el RemoteSite %s' % self.offline_base)
