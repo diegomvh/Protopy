@@ -1,7 +1,8 @@
 from operator import itemgetter as _itemgetter
 from keyword import iskeyword as _iskeyword
 import sys as _sys
-
+import os
+from glob import glob
 
 def namedtuple(typename, field_names, verbose=False, rename=False):
     """Returns a new subclass of tuple with named fields.
@@ -115,19 +116,21 @@ def namedtuple(typename, field_names, verbose=False, rename=False):
 
 def get_remotesite(name):
     from django.conf import settings
-    from offline.remote import RemoteSite
+    import offline
     project_name = settings.ROOT_URLCONF.split('.')[0]
-    mod = __import__('.'.join([project_name, 'offline', name ] ), {}, {}, ['*', ])
-    remotes = filter(lambda f: isinstance(f, RemoteSite), mod.__dict__.values())
-    if remotes:
-        return remotes[0]
-
-
+    __import__('.'.join([project_name, 'offline', name ] ), {}, {}, ['*', ])
+    return offline.remote.REMOTE_SITES[name] 
 
 def get_remotesites():
-    return
-
-
+    from django.conf import settings
+    import offline
+    project_name = settings.ROOT_URLCONF.split('.')[0]
+    off_pkg = __import__('.'.join([project_name, 'offline' ] ), {}, {}, ['*', ])
+    #TODO: Skip TODO
+    module_names = filter( lambda s: s.replace('.py', ''), glob( off_pkg.__path__ + os.sep + "*.py"))
+    for m in module_names:
+        __import__('.'.join([project_name, 'offl    ine', m] ), {}, {}, ['*', ])
+    return offline.remote.REMOTE_SITES
 
 if __name__ == '__main__':
     # verify that instances can be pickled
