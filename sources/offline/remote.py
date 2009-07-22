@@ -283,6 +283,11 @@ class RemoteSite(RemoteBaseSite):
         response['Content-length'] = str(len(response.content))
         return response
     
+    def __str__(self):
+        return "<RemoteSite '%s'>" % self.name
+    
+    __repr__ = __str__
+    
     def _listMethods(self):
         # this method must be present for system.listMethods to work
         return self._jsonrpc or []

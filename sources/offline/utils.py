@@ -2,6 +2,7 @@ from operator import itemgetter as _itemgetter
 from keyword import iskeyword as _iskeyword
 import sys as _sys
 
+
 def namedtuple(typename, field_names, verbose=False, rename=False):
     """Returns a new subclass of tuple with named fields.
 
@@ -112,7 +113,19 @@ def namedtuple(typename, field_names, verbose=False, rename=False):
     return result
 
 
+def get_remotesite(name):
+    from django.conf import settings
+    from offline.remote import RemoteSite
+    project_name = settings.ROOT_URLCONF.split('.')[0]
+    mod = __import__('.'.join([project_name, 'offline', name ] ), {}, {}, ['*', ])
+    remotes = filter(lambda f: isinstance(f, RemoteSite), mod.__dict__.values())
+    if remotes:
+        return remotes[0]
 
+
+
+def get_remotesites():
+    return
 
 
 

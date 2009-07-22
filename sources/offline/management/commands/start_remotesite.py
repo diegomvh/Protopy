@@ -35,23 +35,14 @@ class Command(LabelCommand):
             sys.exit(-3)
         else:
             offline_base = settings.OFFLINE_BASE
+        offline_root = join( os.getcwd(), 'offline')
+        if not exists(offline_root):
+            mkdir(offline_root)
             
-        if not hasattr(settings, "OFFLINE_ROOT"):
-            print "Please define OFFLINE_ROOT in your project settings file"
-        else:
-            offline_root = settings.OFFLINE_ROOT
-            if not exists(offline_root):
-                resp = read_input("%s does not exist, do you want to create it now?" % offline_root,
-                           ["y", "n"], "y")
-                if resp == "n":
-                    sys.exit(-4)
-                    
-                #TODO: Absolute path?
-                mkdir(offline_root)
-            package_init = join (offline_root, "__init__.py")
-            if not exists(package_init):
-                f = open(package_init)
-                f.close()
+        package_init = join (offline_root, "__init__.py")
+        if not exists(package_init):
+            f = open(package_init)
+            f.close()
         
         remote_site_root = join(offline_root, remote_name)
         remote_site_mod = join(offline_root, remote_name + ".py")
@@ -79,6 +70,7 @@ class Command(LabelCommand):
         mkdir(remote_site_root)
         template_folder = join(template_base, "remote_project_template")
         template_list = glob("%s%s*.*" % (template_folder, os.sep))
+        
         for template_path in template_list:
             name = basename(template_path)
             f_template = open(template_path, "r")
