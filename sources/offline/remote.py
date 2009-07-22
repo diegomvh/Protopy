@@ -184,7 +184,7 @@ class RemoteSite(RemoteBaseSite):
     @expose decorator indicates how URLs are mapped
     '''
     
-    def __init__(self, offline_root = None, offline_base = None, protopy_root = None):
+    def __init__(self, name, offline_root = None, offline_base = None, protopy_root = None):
         
         from django.conf import settings
         if not offline_root:

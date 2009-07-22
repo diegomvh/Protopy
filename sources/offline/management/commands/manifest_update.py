@@ -31,7 +31,7 @@ class Command(LabelCommand):
             
             # genreate random version string
             m.version = random_string(32)
-            
+            print m
             
             #m.add_uris_from_pathwalk(self.offline_root, '/%s/project' % self.offline_base)
             # Add templates

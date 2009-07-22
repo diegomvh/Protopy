@@ -30,6 +30,6 @@ class TagRemote(RemoteModelProxy):
 
 
 
-site = RemoteSite()
+site = RemoteSite('blog')
 site.register(Post)
 site.register(Tag, TagRemote)
