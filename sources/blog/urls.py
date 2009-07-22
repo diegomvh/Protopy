@@ -19,9 +19,9 @@ urlpatterns = patterns('',
     (r'^admin/(.*)', bolg_admin_site.root),
 
     # index
-    (r'^offblog/offline.html$', include('blog.post.urls'),),
+    (r'^offblog/offline.html$', 'blog.views.load_offline'),
 
-    (r'^%s/(.*)' % blog_site.url, blog_site.root ),
+    (r'^%s/(.*)' % blog_site.offline_base, blog_site.root ),
 
     (r'^rpc/test', 'offline.sync.rpc_handler' ),
     

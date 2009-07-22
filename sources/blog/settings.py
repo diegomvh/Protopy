@@ -70,7 +70,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     
-    
 )
 
 ROOT_URLCONF = 'blog.urls'
@@ -112,10 +111,6 @@ except ImportError:
     pass
 except AssertionError:
     INSTALLED_APPS += ('django_extensions', )
-
-# No es URL, es absoluto
-OFFLINE_ROOT = os.path.join(os.getcwd(), 'offline')
-#OFFLINE_ROOT = "Does not exist"
 
 # Habría que ver como hacer que las URLs se añadan de manera automática
 # como en django-command-extensions

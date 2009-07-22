@@ -191,9 +191,10 @@ class RemoteSite(RemoteBaseSite):
         global REMOTE_SITES
         if name in REMOTE_SITES:
             raise Exception("You can't define two RemoteSites with the same name")
-        
-        self.name = name
-        
+        else:
+            self.name = name
+            REMOTE_SITES[self.name] = self
+    
         if not protopy_root:
             from os.path import abspath, dirname, join
             protopy_root = getattr(get_app('offline'), '__file__')
@@ -207,15 +208,19 @@ class RemoteSite(RemoteBaseSite):
         self.rpc_dispatcher.register_instance(self)
         
         self._registry = {}
-    
-    
+            
     offline_root = property(lambda inst: settings.OFFLINE_ROOT)
-    offline_base = property(lambda inst: settings.OFFLINE_BASE)
     protpy_root = property(lambda inst: inst._protopy_root)
+
+    def _get_offline_base(self):
+        names = settings.OFFLINE_BASE.split("/")
+        names.append(self.name)
+        return "/".join(names)
+    offline_base = property(_get_offline_base)
     
     @expose(r'^$')
     def index(self, request):
-        return HttpResponse('Yo soy el RemoteSite %s' % self.offline_base)
+        return HttpResponse('Yo soy el RemoteSite %s' % self.name)
     
     @expose(r'^templates/(.*)$')
     def templates_static_serve(self, request, path):

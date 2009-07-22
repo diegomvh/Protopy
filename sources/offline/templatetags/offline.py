@@ -12,9 +12,10 @@ offline_template = '''
 </script>
 '''
 
-def offline():
-    offline_support = settings.OFFLINE_BASE
-    project_package = 'blog'
+def offline(name):
+    ROOT_URLCONF
+    offline_support = "%s/%s" % settings.OFFLINE_BASE
+    project_package = remote_site.name
     return offline_template % { 'OFFLINE_SUPPORT': offline_support, 
                                 'PROJECT_PACKAGE': project_package
                               }
