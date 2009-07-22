@@ -25,6 +25,7 @@ var Project = type('Project', object, {
         this._create_toolbar();
         this.network_check();
         this._start_network_thread();
+        this.go_offline();
     },
 
     onNetwork: function(type) {

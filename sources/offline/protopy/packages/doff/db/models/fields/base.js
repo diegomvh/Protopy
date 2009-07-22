@@ -25,7 +25,7 @@ var Field = type('Field', [ object ], {
 
         arguments = new Arguments(arguments, {'verbose_name':null, 'name':null, 'primary_key':false,
             'max_length':null, 'unique':false, 'blank':false, 'none':false, 'null':false,
-            'db_index':false, 'rel':null, 'default_value':NOT_PROVIDED, 'editable':true,
+            'db_index':false, 'rel':null, 'default':NOT_PROVIDED, 'editable':true,
             'serialize':true, 'unique_for_date':null, 'unique_for_month':null,
             'unique_for_year':null, 'choices':[], 'help_text':'', 'db_column':null,
             'db_tablespace':settings.DEFAULT_INDEX_TABLESPACE, 'auto_created':false});
@@ -43,7 +43,7 @@ var Field = type('Field', [ object ], {
         if (this.empty_strings_allowed && connection.features.interprets_empty_strings_as_nulls)
             this.none = true;
         this.rel = kwargs['rel'];
-        this.default_value = kwargs['default_value'];
+        this.default_value = kwargs['default'];
         this.editable = kwargs['editable'];
         this.serialize = kwargs['serialize'];
         this.unique_for_date = kwargs['unique_for_date'];
@@ -75,10 +75,10 @@ var Field = type('Field', [ object ], {
     },
 
     __deepcopy__: function() {
-	var obj = this.copy();
-	if (this.rel)
-	    obj.rel = this.rel.copy();
-	return obj;
+        var obj = this.copy();
+        if (this.rel)
+            obj.rel = this.rel.copy();
+        return obj;
     },
 
     'copy': function copy() {
@@ -115,17 +115,16 @@ var Field = type('Field', [ object ], {
             this.verbose_name = name.replace('_', ' ');
     },
 
-    'contribute_to_class': function contribute_to_class(cls, name) {
+    contribute_to_class: function(cls, name) {
         this.set_attributes_from_name(name);
         cls._meta.add_field(this);
         if (bool(this.choices)) {
-                //FIXME: creo ques es un add_method
             var key = 'get_%s_display'.subs(this.name);
-            cls[key] = curry(cls._get_FIELD_display, this);
+            cls.prototype[key] = curry(cls.prototype._get_FIELD_display, this);
         }
     },
 
-    'get_attname': function get_attname() {
+    get_attname: function() {
         return this.name;
     },
 
@@ -279,8 +278,9 @@ var Field = type('Field', [ object ], {
     },
 
     get choices() {
-        if (this._choices['next']) {
-            var [choices, _choices] = tee(this._choices);
+        //TODO: ver que pasa con las choices que son generadores
+        if (callable(this._choices['next'])) {
+            var choices = array(this._choices);
             this._choices = _choices;
             return choices;
         } else {
@@ -289,15 +289,15 @@ var Field = type('Field', [ object ], {
     },
 
     /*
-	* Flattened version of choices tuple.
-	*/
+     * Flattened version of choices
+     */
     get flatchoices() {
         var flat = [];
-        for ([choice, value] in this.choices)
-            if (type(value) == Array)
-            flat.concat(value);
+        for each (var [choice, value] in this.choices)
+            if (isinstance(value, Array))
+                flat = flat.concat(value);
             else
-            flat.push([choice, value])
+                flat.push([choice, value])
         return flat;
     },
 
@@ -378,22 +378,22 @@ var AutoField = type('AutoField', Field, {
 });
 
 var BooleanField = type('BooleanField', Field, {
-    '__init__': function __init__() {
-        arguments = new Arguments(arguments);
-        arguments.kwargs['blank'] = true;
-        if (bool(kwargs['default_value']) && bool(kwargs['none']));
-            arguments.kwargs['default_value'] = false;
-        super(Field, this).__init__(arguments);
+    __init__: function() {
+        var arg = new Arguments(arguments);
+        arg.kwargs['blank'] = true;
+        if (bool(arg.kwargs['default_value']) && bool(arg.kwargs['none']));
+            arg.kwargs['default_value'] = false;
+        super(Field, this).__init__(arg);
     },
 
-    'to_javascript': function to_javascript(value) {
+    to_javascript: function(value) {
         if (value == false || value == true) return value;
         if (include(['t', 'true', '1'], value)) return true;
         if (include(['f', 'false', '0'], value)) return false;
         throw new ValidationError("This value must be either True or False.");
     },
 
-    'get_db_prep_lookup': function get_db_prep_lookup(lookup_type, value) {
+    get_db_prep_lookup: function(lookup_type, value) {
         // Special-case handling for filters coming from a web request (e.g. the
         // admin interface). Only works for scalar values (not lists). If you're
         // passing in a list, you might as well make things the right type when
@@ -403,17 +403,17 @@ var BooleanField = type('BooleanField', Field, {
         return super(Field, this).get_db_prep_lookup(lookup_type, value);
     },
 
-    'get_db_prep_value': function get_db_prep_value(value) {
+    get_db_prep_value: function(value) {
         if (!value)
             return null;
         return bool(value);
     },
 
-    'formfield': function formfield() {
-	arguments = new Arguments(arguments);
-	var defaults = {'form_class': forms.BooleanField };
-	extend(defaults, arguments.kwargs);
-	return super(Field, this).formfield(defaults);
+    formfield: function() {
+        var arg = new Arguments(arguments);
+        var defaults = {'form_class': forms.BooleanField };
+        extend(defaults, arg.kwargs);
+        return super(Field, this).formfield(defaults);
     }
 });
 
@@ -487,14 +487,14 @@ var DateField = type('DateField', Field, {
 	    return super(Field, this).pre_save(model_instance, add);
     },
 
-    'contribute_to_class': function contribute_to_class(cls, name) {
-	super(Field, this).contribute_to_class(cls, name);
-	if (!this.none) {
-	    var key = 'get_next_by_%s'.subs(this.name);
-	    cls.prototype[key] = curry(cls.prototype._get_next_or_previous_by_FIELD, this, true);
-	    key = 'get_previous_by_%s'.subs(this.name);
-	    cls.prototype[key] = curry(cls.prototype._get_next_or_previous_by_FIELD, this, false);
-	}
+    contribute_to_class: function(cls, name) {
+        super(Field, this).contribute_to_class(cls, name);
+        if (!this.none) {
+            var key = 'get_next_by_%s'.subs(this.name);
+            cls.prototype[key] = curry(cls.prototype._get_next_or_previous_by_FIELD, this, true);
+            key = 'get_previous_by_%s'.subs(this.name);
+            cls.prototype[key] = curry(cls.prototype._get_next_or_previous_by_FIELD, this, false);
+        }
     },
 
     'get_db_prep_lookup': function get_db_prep_lookup(lookup_type, value) {

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #coding: utf-8
 '''
 Remote model proxy for remote models in gears client.
@@ -409,12 +410,13 @@ class RemoteSite(RemoteBaseSite):
         return HttpResponse( json, 'text/plain' )
 
     @expose(r'^export/(?P<app_name>.*)/models.js$')
-    def export_models_for_app_(self, request, app_name):
+    def export_models_for_app(self, request, app_name):
         return render_to_response('djangoffline/models_example.js', mimetype = 'text/javascript')
     
-    @expose(r'^export/(?P<app_name>.*)/models.js$')
-    def export_models_for_app(self, request, app_name):
-        
+    @expose(r'^export_/(?P<app_name>.*)/models.js$')
+    def export_models_for_app_(self, request, app_name):
+        from django.db.models.loading import get_app, get_models
+        from offline.export_models import export_remotes
         
         try:
             
