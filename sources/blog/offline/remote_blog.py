@@ -1,11 +1,6 @@
-'''
-Remote models for doff app
-'''
-
-from blog.post.models import *
-from offline.remote import RemoteSite 
-from django.db import models
-from offline.remote import RemoteModelProxy
+from blog.post.models import Tag, Post
+from offline.sites import RemoteSite 
+from offline.sites import RemoteModelProxy
 
 class TagRemote(RemoteModelProxy):
 #    
@@ -27,7 +22,6 @@ class TagRemote(RemoteModelProxy):
 #class PostRemote(RemoteModelProxy):
 #    class Meta:
 #        model = Post
-
 
 
 site = RemoteSite('blog')

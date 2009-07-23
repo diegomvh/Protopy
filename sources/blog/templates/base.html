@@ -1,7 +1,7 @@
 <html>
 <head>
 <link rel="stylesheet" href="{{ MEDIA_URL }}main.css" type="text/css" ></link>
-{% load offline_support %}{% offline "blog" %}
+{% block extrahead %}{% endblock %}
 </head>
 <body>
 <div id="wrap">
@@ -31,7 +31,7 @@
             {% endif %}
             {% endblock %}
         </div>
-                        
+
         <div class="right">
             {% block right %}
             <h2>{{ pepe|yesno }}</h2>
