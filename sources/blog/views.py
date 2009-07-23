@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 # coding: utf-8
-
-from django.http import HttpResponseRedirect
-from django.conf import settings
+from blog.post.models import Post, Tag
 from django.shortcuts import render_to_response
+from django.template.context import RequestContext
 
-def load_offline(request):
-    return HttpResponseRedirect('/blog/')
+def index(request):
+    return render_to_response('show_posts.html', {
+                                'posts': Post.objects.all().order_by('-date'),
+                                'tags': Tag.objects.all().order_by('title')},
+                                context_instance=RequestContext(request));

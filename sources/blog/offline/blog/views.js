@@ -7,7 +7,7 @@ function index(request) {
     require('doff.db.base', 'connection');
     var response = new HttpResponse();
     if (!bool(connection.introspection.table_names())) {
-        var t = loader.get_template('index.html');
+        var t = loader.get_template('base.html');
 	response.write(t.render(new RequestContext(request, {'sin_tablas': true})));
     } else {
         var t = loader.get_template('show_posts.html');

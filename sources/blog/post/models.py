@@ -4,14 +4,13 @@ Models del blog
 '''
 
 class Tag(models.Model):
-    #slug = models.SlugField(help_text = 'Automatically buit from the title', primary_key = True, editable = False)
-    slug = models.SlugField(help_text = 'Automatically buit from the title')
+    slug = models.SlugField(help_text = 'Automatically buit from the title', primary_key = True)
     title = models.CharField('Title', max_length = 30)
     def __unicode__(self):
         return self.title
 
 class Post(models.Model):
-    slug = models.SlugField('Slug', primary_key = True, editable = False)
+    slug = models.SlugField('Slug', primary_key = True)
     title = models.CharField('Title', max_length = 30)
     tags = models.ManyToManyField(Tag)
     date = models.DateTimeField('Date', auto_now = True)

@@ -2,7 +2,11 @@
 
 
 from django.conf.urls.defaults import *
-
+from blog.post import views
+    
 urlpatterns = patterns('django.views.generic.simple', 
-    (r'^$', 'direct_to_template', {'template': 'index.html'}),
+    (r'^add_tag/$', views.add_tag),
+    (r'^remove_tag/$', views.remove_tag),
+    (r'^add_post/$', views.add_post),
+    (r'^remove_post/$', views.remove_post)
 )

@@ -1,8 +1,8 @@
-{% extends "index.html" %}
+{% extends "base.html" %}
 {% block middle %}
-<h1 id="titulo">Inserte un nuevo Tag</h1>
+<h1 id="titulo">Inserte un nuevo Post</h1>
 <div>
-    <form id='{{ formpost.__name__ }}' action="/blog/add_post/" method="post">
+    <form action="/blog/add_post/" method="post">
         {{ formpost.as_ul }}
         <input type='submit' value='guardar'/>
     </form>
