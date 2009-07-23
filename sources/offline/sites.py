@@ -209,9 +209,13 @@ class RemoteSite(RemoteBaseSite):
         
         self._registry = {}
             
-    offline_root = property(lambda inst: settings.OFFLINE_ROOT)
     protpy_root = property(lambda inst: inst._protopy_root)
 
+    def _get_offline_root(self):
+        return "/".join(['offline', self.name])
+    offline_root = property(_get_offline_root)
+    
+    #TODO: ver si es absoluta o relativa o como cuernos lo manejamos
     def _get_offline_base(self):
         names = settings.OFFLINE_BASE.split("/")
         names.append(self.name)

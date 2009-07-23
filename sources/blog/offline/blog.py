@@ -1,3 +1,3 @@
-from offline.remote import RemoteSite
+from offline.sites import RemoteSite
 
 blog_site = RemoteSite("blog")

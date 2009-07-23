@@ -1,4 +1,9 @@
+<html>
+<head>
 <link rel="stylesheet" href="{{ MEDIA_URL }}main.css" type="text/css" ></link>
+{% load offline_support %}{% offline "blog" %}
+</head>
+<body>
 <div id="wrap">
 
     <div id="top"></div>
@@ -50,3 +55,6 @@
     Design by <a href="http://www.minimalistic-design.net">Minimalistic Design</a>
     {% endblock %}
 </div>
+
+</body>
+</html>

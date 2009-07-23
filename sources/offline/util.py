@@ -113,24 +113,29 @@ def namedtuple(typename, field_names, verbose=False, rename=False):
 
     return result
 
-
-def get_remotesite(name):
+def get_site(name):
     from django.conf import settings
-    import offline
+    from offline import sites
     project_name = settings.ROOT_URLCONF.split('.')[0]
-    __import__('.'.join([project_name, 'offline', name ] ), {}, {}, ['*', ])
-    return offline.remote.REMOTE_SITES[name] 
+    try:
+        __import__('.'.join([project_name, 'offline', name ]), {}, {}, ['*', ])
+        return sites.REMOTE_SITES[name]
+    except (ImportError, KeyError), e:
+        pass 
 
-def get_remotesites():
+def get_sites():
     from django.conf import settings
-    import offline
+    from offline import sites
     project_name = settings.ROOT_URLCONF.split('.')[0]
-    off_pkg = __import__('.'.join([project_name, 'offline' ] ), {}, {}, ['*', ])
-    #TODO: Skip TODO
-    module_names = filter( lambda s: s.replace('.py', ''), glob( off_pkg.__path__ + os.sep + "*.py"))
-    for m in module_names:
-        __import__('.'.join([project_name, 'offl    ine', m] ), {}, {}, ['*', ])
-    return offline.remote.REMOTE_SITES
+    package = __import__('.'.join([project_name, 'offline' ] ), {}, {}, ['*', ])
+    path = package.__path__[0]
+    sites = []
+    for f in glob(path + os.sep + "*.py"):
+        name = f.split('/')[-1].split('.')[0]
+        site = get_site(name)
+        if site:
+            sites.append(site)
+    return sites
 
 if __name__ == '__main__':
     # verify that instances can be pickled
