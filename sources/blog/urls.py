@@ -19,7 +19,9 @@ urlpatterns = patterns('',
     (r'^admin/(.*)', bolg_admin_site.root),
 
     # index
-    (r'^offblog/offline.html$', 'django.views.generic.simple.direct_to_template', {'template': 'index.html'}),
+    (r'^$', 'django.views.generic.simple.direct_to_template', {'template': 'base.html'}),
+    # Install offline
+    (r'^offline.html$', 'django.views.generic.simple.direct_to_template', {'template': 'offline_installer.html'}),
 
     (r'^%s/(.*)' % blog_site.offline_base, blog_site.root ),
 

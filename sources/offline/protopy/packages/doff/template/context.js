@@ -1,3 +1,4 @@
+require('doff.core.exceptions', 'ImproperlyConfigured');
 require('doff.core.project', 'get_settings', 'get_project');
 
 var settings = get_settings();

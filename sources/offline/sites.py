@@ -27,7 +27,7 @@ from django.db.models.loading import get_app, get_models
 from offline.export_models import export_remotes
 from django.conf import settings
 
-__all__ = ('RemoteSite', 
+__all__ = ('RemoteSite',
            'expose',
            'RemoteModelProxy',
            )
@@ -91,36 +91,36 @@ def _retrieve_templates_from_path(path, template_bases = None, strip_first_slash
     from os.path import join
     if not template_bases:
         template_bases = []
-        
+
     template_files = [] 
     for root, _dirs, files in os.walk(path):
         for t_base in template_bases:
             #import ipdb; ipdb.set_trace()
-            
+
             if t_base in root:
                 index = root.index(t_base)
                 root = root[index + len(t_base):]
                 break
-        
+
         template_files += map(lambda f: join(root, f), files)
-        
+
     templates = filter(valid_templates, template_files)
     if strip_first_slash:
         templates = filter(
                                  lambda f: f.startswith('/') and f[1:] or f, 
                                  templates)
     return templates
-    
+
 def full_template_list(exclude_apps = None, exclude_callable = None):
     from django.conf import settings
-    
+
     template_dirs = map(lambda s: s.split(os.sep)[-1], settings.TEMPLATE_DIRS)
-     
+
     template_files = []
     for path in settings.TEMPLATE_DIRS:
         template_files += _retrieve_templates_from_path(path, template_dirs)
         # Split
-    
+
     # Get per application template list
     if 'django.template.loaders.app_directories.load_template_source' in settings.TEMPLATE_LOADERS:
         from django.template.loaders.app_directories import app_template_dirs
@@ -133,25 +133,6 @@ class RemoteBaseSite(object):
     For each offline application, there's a offline base
     '''
     __metaclass__ = RemoteSiteBase
-    
-#    def get_urls(self):
-#        from django.conf.urls.defaults import patterns, url
-#
-#        urlpatterns = patterns('',
-#            url(r'^$',
-#                self.index,
-#                kwargs={'p1': 'Pepe'}, 
-#                name='%sadmin_index' % self.name),
-#            url(r'^(?P<app_label>\w+)/$',
-#                self.app_index,
-#                kwargs={'p1': 'Pepe'}, 
-#                name='%sadmin_app_list' % self.name),
-#            
-#        )
-#
-#        return urlpatterns
-#
-#    urlpatterns = property(get_urls)
 
     def root(self, request, url):
         from django.conf import settings
@@ -171,7 +152,7 @@ class RemoteBaseSite(object):
                     # El binding de la funcion se hizo en ámbito estatico
                     # por lo tanto no tiene el curry de self :)
                     return callback(self, request, *callback_args, **callback_kwargs)
-        
+
         #TODO: Imprimir un mensaje con el listado de URLs en el 404
 #        if settings.DEBUG:
 #            # Build a nice message when an url isn't found
@@ -185,16 +166,16 @@ class RemoteSite(RemoteBaseSite):
     Manages offline project support.
     @expose decorator indicates how URLs are mapped
     '''
-    
+
     def __init__(self, name, protopy_root = None):
-        
+
         global REMOTE_SITES
         if name in REMOTE_SITES:
             raise Exception("You can't define two RemoteSites with the same name")
         else:
             self.name = name
             REMOTE_SITES[self.name] = self
-    
+
         if not protopy_root:
             from os.path import abspath, dirname, join
             protopy_root = getattr(get_app('offline'), '__file__')
@@ -206,26 +187,25 @@ class RemoteSite(RemoteBaseSite):
         self.rpc_dispatcher = SimpleJSONRPCDispatcher(allow_none=False, encoding=None) # Python 2.5
         self.rpc_dispatcher.register_introspection_functions() #Un poco de azucar
         self.rpc_dispatcher.register_instance(self)
-        
         self._registry = {}
-            
+
     protpy_root = property(lambda inst: inst._protopy_root)
 
     def _get_offline_root(self):
         return "/".join(['offline', self.name])
     offline_root = property(_get_offline_root)
-    
+
     #TODO: ver si es absoluta o relativa o como cuernos lo manejamos
     def _get_offline_base(self):
         names = settings.OFFLINE_BASE.split("/")
         names.append(self.name)
         return "/".join(names)
     offline_base = property(_get_offline_base)
-    
+
     @expose(r'^$')
     def index(self, request):
         return HttpResponse('Yo soy el RemoteSite %s' % self.name)
-    
+
     @expose(r'^templates/(.*)$')
     def templates_static_serve(self, request, path):
         from django.template.loader import find_template_source
@@ -234,28 +214,36 @@ class RemoteSite(RemoteBaseSite):
         except TemplateDoesNotExist:
             return HttpResponseNotFound(u'404: template not found: \"%s\"' % path)
         return HttpResponse(template_source)
-    
+
     @expose(r'^template_list/$')
     def template_list(self, request):
         '''
         Debug
         ''' 
         return HttpResponse( html_output(full_template_list(), indent = 2))
-    
-    @expose('^system/(.*)$')
+
+    @expose('^lib/(.*)$')
     def system_static_serve(self, request, path):
         from django.views.static import serve
         return serve(request, path, self.protpy_root, show_indexes = True)
-    
-    @expose('^project/(.*)$')
+
+
+    @expose('^js/(.*)$')
     def project_static_serve(self, request, path):
         from django.views.static import serve
-        return serve(request, path, self.offline_root, show_indexes = True)
-        
+        try:
+            return serve(request, path, self.offline_root, show_indexes = True)
+        except Http404, e:
+            match = re.compile(r'^(?P<app_name>.*)/models.js$').match(path)
+            if match:
+                match.groupdict()['app_name']
+                return render_to_response('djangoffline/models_example.js', mimetype = 'text/javascript')
+            raise e
+
     @expose(r'^network_check/?$')
     def network_check(self, request):
         return HttpResponse()
-    
+
     @expose(r'^jsonrpc/?$')
     def jsonrpc_handler(self, request):
         """
@@ -265,7 +253,7 @@ class RemoteSite(RemoteBaseSite):
         If post data is defined, it assumes it's XML-RPC and tries to process as such
         Empty post assumes you're viewing from a browser and tells you about the service.
         """
-    
+
         response = HttpResponse()
         if len(request.POST):
             response.write(self.rpc_dispatcher._marshaled_dispatch(request.raw_post_data))
@@ -274,21 +262,21 @@ class RemoteSite(RemoteBaseSite):
             response.write("You need to invoke it using an JSON-RPC Client!<br>")
             response.write("The following methods are available:<ul>")
             methods = self.rpc_dispatcher.system_listMethods()
-    
+
             for method in methods:
                 # right now, my version of SimpleXMLRPCDispatcher always
                 # returns "signatures not supported"... :(
                 # but, in an ideal world it will tell users what args are expected
                 sig = self.rpc_dispatcher.system_methodSignature(method)
-    
+
                 # this just reads your docblock, so fill it in!
                 help =  self.rpc_dispatcher.system_methodHelp(method)
-    
+
                 response.write("<li><b>%s</b>: [%s] %s" % (method, sig, help))
-    
+
             response.write("</ul>")
             response.write('<a href="http://www.djangoproject.com/"> <img src="http://media.djangoproject.com/img/badges/djangomade124x25_grey.gif" border="0" alt="Made with Django." title="Made with Django."></a>')
-    
+
         response['Content-length'] = str(len(response.content))
         return response
     
@@ -365,15 +353,15 @@ class RemoteSite(RemoteBaseSite):
                 'instances': []
         }
     
-    
+
     @expose(r'^manifests/system.json$')
     def system_manifest(self, request, version = None, exclude_callback = None):
     #def dynamic_manifest_from_fs(request, path, base_uri, version = None, exclude_callback = None):
-    
+
         if not version:
             version = random_string(32)
         version = 'system_beta_1.2'
-        
+
         m = Manifest( version = version )
         m.add_uris_from_pathwalk(self.protpy_root, 
                                  "%s/system" % self.offline_base, 
@@ -382,26 +370,26 @@ class RemoteSite(RemoteBaseSite):
         if 'human' in request.GET:
             json = json.replace(', ', ',\n').replace("\\", "")
         return HttpResponse( json, 'text/plain' )
-    
+
     @expose(r'^manifests/project.json$')
     def project_manifest(self, request):
-        
+
         template_base = self.offline_base.split('/') + ['templates', ] 
         m = Manifest()
         # genreate random version string
         m.version = random_string(32)
         m.version = 'project_beta_2.2'
-        
-        m.add_uris_from_pathwalk(self.offline_root, '/%s/project' % self.offline_base)
+
+        m.add_uris_from_pathwalk(self.offline_root, '/%s/js' % self.offline_base)
         # Add templates
         for t in full_template_list():
             m.add_entry( '/%s' % '/'.join( filter(bool, template_base + t.split(os.sep))))
-            
+
         app_labels = set(map( lambda model: model._meta.app_label, self._registry))
-        
+
         for app in app_labels:
             m.add_entry('/%s/export/%s/models.js' % (self.offline_base, app))
-        
+
         if not request.method == "GET":
             return Http404("Manifest must be retreived via GET HTTP method")
         try:
@@ -412,40 +400,40 @@ class RemoteSite(RemoteBaseSite):
                 m.add_entry(refered)
         except KeyError:
             pass
-        
+
         #m.add_entry('/', redirect='')
         json = m.dump_manifest()
-        
+
         if 'human' in request.GET:
             json = json.replace(', ', ',\n')
-        
+
         return HttpResponse( json, 'text/plain' )
 
     @expose(r'^export/(?P<app_name>.*)/models.js$')
     def export_models_for_app(self, request, app_name):
         return render_to_response('djangoffline/models_example.js', mimetype = 'text/javascript')
-    
+
     @expose(r'^export_/(?P<app_name>.*)/models.js$')
     def export_models_for_app_(self, request, app_name):
         from django.db.models.loading import get_app, get_models
         from offline.export_models import export_remotes
-        
+
         try:
-            
+
             model_remotes = filter(lambda x: x._meta.app_label == app_name, self._registry.values())
             #print model_remotes
             #app = get_app(app_name)
-            
+
             #app_models = get_models(app)
             models = export_remotes(model_remotes)
-            
+
             return render_to_response('djangoffline/models.js', 
                            locals(),
                            mimetype = 'text/javascript')
-        
+
         except ImproperlyConfigured, e:
             return HttpResponseNotFound(str(e))
-    
+
 #        return render_to_response('djangoffline/models.js', locals(),
 #                              mimetype = 'text/javascript')
 #        
@@ -468,9 +456,9 @@ class RemoteSite(RemoteBaseSite):
             remote_proxy = type('%sRemote' % name, 
                                 (RemoteModelProxy, ), 
                                 {'Meta': RemoteOptions(basic_meta)} )
-        
+
         self._registry[model] = remote_proxy
-    
+
 class RemoteModelMetaclass(type):
     def __new__(cls, name, bases, attrs):
         '''
@@ -512,23 +500,23 @@ class RemoteModelMetaclass(type):
             class_fields = {}
             
             field_check = lambda field: isinstance(field, models.Field)
-            
+
             opts.fields = []
-            
+
             for base in bases:
                 for f_name, field in base.__dict__.iteritems():
                     if field_check(field):
                         if field.name != f_name:
                             field.name = f_name
                         opts.fields.append(field)
-            
+
             for f_name, field in attrs.iteritems():
                 if isinstance(field, models.Field):
                     if field.name != f_name:
                         field.name = f_name
                     opts.fields.append(field)
                     #print "Agregando field interno", f_name
-        
+
         new_class = super(RemoteModelMetaclass, cls).__new__(cls, name, bases, attrs)
         return new_class
 
@@ -553,27 +541,24 @@ class RemoteModelProxy(object):
     _status = models.CharField(choices = STATUS_CHOICES, max_length = 1)
     #id_start = models.PositiveIntegerField()
     #_synced_at = models.DateTimeField(editable = False)
-    
-    
+
     def dump(self):
         '''
         '''
         pass
-    
+
     def sync(self):
         pass
-    
-    
+
 class RemoteOptions(object):
     def __init__(self, class_meta, **options):
         self.model = getattr(class_meta, 'model')
-        
+
         #TODO: __module__ ???
-        
-        
+
         if not self.model or not issubclass(self.model, models.Model):
             raise ImproperlyConfigured("Invalid model %s" % self.model)
-        
+
         if hasattr(class_meta, 'exclude'):
             exclude_fields = getattr(class_meta, 'exclude')
             # model_field_names is for checking purposes only
@@ -583,9 +568,8 @@ class RemoteOptions(object):
             for name in exclude_fields:
                 if name not in model_field_names:
                     raise ImproperlyConfigured("%s has no %s field" % (self.model, name)) 
-    
+
     app_label = property(lambda s: s.model._meta.app_label, doc="Points to model app_label")
-    
+
     def __str__(self):
         return unicode("<RemoteOptions for %s>" % self.model._meta.object_name)
-    

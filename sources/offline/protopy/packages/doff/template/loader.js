@@ -1,6 +1,6 @@
 require('doff.core.exceptions', 'ImproperlyConfigured'),
 require('doff.template.base', 'Template', 'Context', 'TemplateDoesNotExist', 'add_to_builtins');
-require('doff.core.project', 'get_settings', 'get_project');
+require('doff.core.project', 'get_settings');
 var logging = require('logging.base');
 
 var logger = logging.get_logger(__name__);

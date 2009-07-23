@@ -45,6 +45,10 @@ function media(request) {
     return {'MEDIA_URL': settings.MEDIA_URL};
 }
 
+function offline(request) {
+    return {'OFFLINE': true};
+}
+
 function request(request) {
     return {'request': request};
 }
@@ -52,5 +56,6 @@ function request(request) {
 publish({
     debug: debug,
     media: media,
+    offline: offline,
     request: request
 });

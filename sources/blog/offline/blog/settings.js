@@ -18,7 +18,7 @@
 
 'INSTALLED_APPS': [ 'blog.post' ],
 
-'TEMPLATE_URL': '/doffline/templates/',
+'TEMPLATE_URL': '/doffline/blog/templates/',
 
 'TEMPLATE_STRING_IF_INVALID': '{{ No esta <strong>%s</strong> en el contexto }}',
 

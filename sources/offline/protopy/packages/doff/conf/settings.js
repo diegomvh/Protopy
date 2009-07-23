@@ -28,7 +28,8 @@ publish({
         TEMPLATE_CONTEXT_PROCESSORS: [
             'doff.core.context_processors.debug',
             'doff.core.context_processors.media',
-            'doff.core.context_processors.request'
+            'doff.core.context_processors.request',
+            'doff.core.context_processors.offline'
         ],
 
         TEMPLATE_STRING_IF_INVALID: '',

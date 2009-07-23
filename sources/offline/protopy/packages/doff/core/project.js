@@ -43,13 +43,13 @@ var Project = type('Project', object, {
         this.start_url = location.pathname;
 
         //Registro la ruta absoluta al soporte offline
-        sys.register_path(this.offline_support, '/' + offline_support);
+        //sys.register_path(this.offline_support, '/' + offline_support);
         //Registro la ruta absoluta al proyecto
-        sys.register_path(this.package, sys.module_url(this.offline_support, '/project'));
+        sys.register_path(this.package, this.offline_support + '/js');
         this.path = sys.paths[this.package];
 
         //Url para ver si estoy conectado
-        this.availability_url = sys.module_url(offline_support, '/network_check');
+        this.availability_url = this.offline_support + '/network_check';
         if (sys.gears.installed && sys.gears.factory.hasPermission)
             this._create_stores();
     },
