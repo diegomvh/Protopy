@@ -50,14 +50,12 @@ var Logger = type('Logger', [Panel, Handler], {
     _display: function() {
         super(Panel, this)._display();
         var self = this;
-
         this.bt_pause = $('logger-pause');
         event.connect(this.bt_pause, 'click', this, 'pause');
-
-	this.bt_clear = $('logger-clear');
-	event.connect(this.bt_clear, 'click', function(event) {
-	    self.output.update('');
-	});
+        this.bt_clear = $('logger-clear');
+        event.connect(this.bt_clear, 'click', function(event) {
+        	self.output.update('');
+        });
 
         $$('input[type="radio"]').forEach(function(radio) { 
             radio.checked = get_level(self.level) === radio.value;
@@ -66,15 +64,13 @@ var Logger = type('Logger', [Panel, Handler], {
                 self.root.set_level(get_level(e.target.value));
             });
         });
-
-	this.select_module = $('logger-filter-modulo');
-	this.select_module.insert('<option value="root">root</option>');
-	for each (var l in this.root.manager.loggers)
-	  this.select_module.insert('<option value="' + l.name + '">' + l.name + '</option>');
-	event.connect(this.select_module, 'change', this, 'set_name');
+        this.select_module = $('logger-filter-modulo');
+        this.select_module.insert('<option value="root">root</option>');
+        for each (var l in this.root.manager.loggers)
+            this.select_module.insert('<option value="' + l.name + '">' + l.name + '</option>');
+        event.connect(this.select_module, 'change', this, 'set_name');
         this.select_module.selectedIndex = 0;
         this.name = 'root';
-	
         this.output = $('logger-output');
     }
 });

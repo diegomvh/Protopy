@@ -10,7 +10,7 @@ function parse_uri(str) {
         strictMode: false,
         key: ["source","protocol","authority","userInfo","user","password","host","port","relative","path","directory","file","query","anchor"],
         q: {
-            name:   "queryKey",
+            name: "queryKey",
             parser: /(?:^|&)([^&=]*)=?([^&]*)/g
         },
         parser: {
@@ -18,7 +18,7 @@ function parse_uri(str) {
             loose:  /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*):?([^:@]*))?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/
         }
     }
-    var	m   = options.parser[options.strictMode ? "strict" : "loose"].exec(str),
+    var m   = options.parser[options.strictMode ? "strict" : "loose"].exec(str),
         uri = {},
         i   = 14;
 
@@ -38,9 +38,9 @@ var HttpRequest = type ('HttpRequest', [ object ], {
 
     __init__: function __init__(uri) {
         this.GET = {};
-	this.POST  = {};
-	this.META = {};
-	this.FILES = {};
+        this.POST  = {};
+        this.META = {};
+        this.FILES = {};
         extend(this, parse_uri(uri));
         if (!this.host) {
             this.host = location.hostname;

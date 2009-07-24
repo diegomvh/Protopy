@@ -1,7 +1,52 @@
 require('sys');
 require('event');
+require('dom');
 require('ajax');
 
+var FakeHtml = type('FakeHtml', [ object ], {
+    event_elements: {'FORM': 'onsubmit', 'A': 'onclick'},
+    event_handlers: [],
+
+    __init__: function(content) {
+        this.head = document.createElement('div');
+        this.head.id = "fake_head";
+        this.body = document.createElement('div');
+        this.body.id = "fake_body";
+        // Apagando la chache del selector
+        dom.cache(false);
+        $$('body')[0].update(this.head);
+        $$('body')[0].insert(this.body);
+        this.update(content);
+    },
+    update: function(content) {
+        this.remove_hooks();
+        var head = content.match(new RegExp('<head[^>]*>([\\S\\s]*?)<\/head>', 'im'));
+        if (head)
+            this.head.update(head[1]);
+        var body = content.match(new RegExp('<body[^>]*>([\\S\\s]*?)<\/body>', 'im'));
+        if (body)
+            this.body.update(body[1]);
+        else this.body.update(content);
+        this.add_hooks();
+    },
+    
+    onEvent: function(event) {},
+    
+    add_hooks: function() {
+        var self = this;
+        var re = keys(this.event_elements).reduce(
+            function(previous, current) { return previous.concat(self.body.select(current)); }, []);
+            re.forEach(function(e) {
+                self.event_handlers.push(event.connect(e, self.event_elements[e.tagName], getattr(self, 'onEvent')));
+            });
+    },
+
+    remove_hooks: function() {
+        this.event_handlers.forEach(function(hler) {
+            event.disconnect(hler);
+        });
+    },
+});
 var Project = type('Project', object, {
     is_online: true,
     NET_CHECK: 5,
@@ -9,23 +54,25 @@ var Project = type('Project', object, {
     do_net_checking: true,
 
     onLoad: function() {
-        //Tiro cables al html
-        this.html = {'head': $$('head')[0], 'body': $$('body')[0]};
-
-        //Inicio del handler para las url
+        // Creo el objeto html falso
+        this.html = new FakeHtml($$('body')[0].innerHTML);
+        // Inicio del handler para las url
         require('doff.core.urlhandler', 'Handler');
         this.handler = new Handler(this.settings.ROOT_URLCONF, this.html);
 
-        //Inicio el logging, si no hay hay archivo de configuracion no pasa nada
+        event.connect(this.html, 'onEvent', this.handler, 'handle');
+        
+        // Inicio el logging, si no hay hay archivo de configuracion no pasa nada
         require('logging.config', 'file_config');
         try {
             file_config(sys.module_url(this.package, 'logging.js'));
         } catch (except) {}
 
         this._create_toolbar();
-        this.network_check();
-        this._start_network_thread();
-        this.go_offline();
+        // this.network_check();
+        // this._start_network_thread();
+        // this.go_offline();
+        this.handler.handle('/');
     },
 
     onNetwork: function(type) {
@@ -33,22 +80,18 @@ var Project = type('Project', object, {
         this[m]();
     },
     
-    handle: function(value) {
-        return this.handler.handle(value);
-    },
-
     __init__: function(package, offline_support) {
         this.package = package;
         this.offline_support = offline_support;
         this.start_url = location.pathname;
 
-        //Registro la ruta absoluta al soporte offline
-        //sys.register_path(this.offline_support, '/' + offline_support);
-        //Registro la ruta absoluta al proyecto
+        // Registro la ruta absoluta al soporte offline
+        // sys.register_path(this.offline_support, '/' + offline_support);
+        // Registro la ruta absoluta al proyecto
         sys.register_path(this.package, this.offline_support + '/js');
         this.path = sys.paths[this.package];
 
-        //Url para ver si estoy conectado
+        // Url para ver si estoy conectado
         this.availability_url = this.offline_support + '/network_check';
         if (sys.gears.installed && sys.gears.factory.hasPermission)
             this._create_stores();
@@ -57,8 +100,8 @@ var Project = type('Project', object, {
     _create_toolbar: function(){
         require('doff.utils.toolbar', 'ToolBar');
 
-        this.toolbar = new ToolBar(this.html);
-        //The status and installer bar
+        this.toolbar = new ToolBar();
+        // The status and installer bar
         require('doff.utils.toolbars.status', 'Status');
         this.toolbar.add(new Status(this));
         if (this.settings['DEBUG']) {
@@ -111,11 +154,11 @@ var Project = type('Project', object, {
     },
 
     go_offline: function() { 
-        this.handler.hook_events();
+        this.html.add_hooks();
     },
 	
     go_online: function(callback) {
-        this.handler.clear_hooks();
+        this.html.remove_hooks();
     },
 
     get_permission: function() {
@@ -131,7 +174,7 @@ var Project = type('Project', object, {
     },
 
     get is_installed() {
-        //TODO: Un cache
+        // TODO: Un cache
         try {
             var localserver = require('gears.localserver');
             return localserver.can_serve_locally('/');
@@ -159,9 +202,9 @@ var Project = type('Project', object, {
             store.delete();
     },
 
-    /********************************
-     * Network Check
-     */
+    /***************************************************************************
+	 * Network Check
+	 */
     network_check: function network_check(){
 	var self = this;
 	var get = new ajax.Request(this._get_availability_url(), {
@@ -196,7 +239,8 @@ var Project = type('Project', object, {
 
     _get_availability_url: function(){
     	var url = this.availability_url;
-    	// bust the browser's cache to make sure we are really talking to the server
+    	// bust the browser's cache to make sure we are really talking to the
+		// server
     	url += (url.indexOf("?") == -1)? "?" : "&";
     	url += "browserbust=" + new Date().getTime();
     	return url;
@@ -205,7 +249,7 @@ var Project = type('Project', object, {
 
 /**
  * Instancia del proyecto
-*/
+ */
 var project = null;
 
 function get_project(package, offline_support){

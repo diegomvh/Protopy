@@ -4,8 +4,8 @@
      * si safe == false los atribuotos de la forma __<foo>__ no se copian al objeto destino
      */
     function __extend__(safe, destiny) {
-    	for (var i = 2, length = arguments.length; i < length; i++) {
-		    var object = arguments[i];
+        for (var i = 2, length = arguments.length; i < length; i++) {
+            var object = arguments[i];
 		    var back_iter = object['__iterator__'];
 		    delete object['__iterator__'];
 		    for (var name in object) {
@@ -1847,18 +1847,18 @@
     //Populate builtins
     __extend__(false, builtin, {
         super: super,
-	isundefined: isundefined,
+        isundefined: isundefined,
         isinstance: isinstance,
         issubclass: issubclass,
         Arguments: Arguments,
         Template: Template,
         Dict: Dict,
         Set: Set,
-	hash: hash,
+        hash: hash,
         id: id,
-	getattr: getattr,
-	setattr: setattr,
-	hasattr: hasattr,
+        getattr: getattr,
+        setattr: setattr,
+        hasattr: hasattr,
         assert: function(test, text) {
             if ( test === false )
                 throw new AssertionError( text || 'An assertion failed!');
@@ -1877,8 +1877,8 @@
             return object && type(object) == Function;
         },
         chr: function(number){ 
-	    if (type(number) != Number) throw new TypeError('An integer is required');
-	    return String.fromCharCode(number);
+            if (type(number) != Number) throw new TypeError('An integer is required');
+            return String.fromCharCode(number);
         },
         ord: function(ascii) {
             if (type(ascii) != String) throw new TypeError('An string is required');
@@ -1902,17 +1902,20 @@
             if (callable(object1['__ne__'])) return object1.__ne__(object2);
             return object1 != object2;
         },
-	number: function(value) {
+        number: function(value) {
             if (isinstance(value, String) || isinstance(value, Number)) {
-		var number = Number(value);
-		if (isNaN(number))
-		    throw new ValueError('Invalid literal');
-		return number;
-	    }
-	    throw new TypeError('Argument must be a string or number');
+                var number = Number(value);
+                if (isNaN(number))
+                    throw new ValueError('Invalid literal');
+                return number;
+            }
+            throw new TypeError('Argument must be a string or number');
         },
-	flatten: function(array) { 
+        flatten: function(array) { 
             return array.reduce(function(a,b) { return a.concat(b); }, []); 
+        },
+        html: function(object) {
+            return object && object.__html__ ? object.__html__() : String.interpret(object);
         },
         include: function(obj, element){
             if (isundefined(obj)) return false;
@@ -1963,7 +1966,7 @@
         keys: function(object){
             return [e for (e in object)];
         },
-	items: function(object){
+        items: function(object){
             return zip(keys(object), values(object));
         },
         inspect: function(object) {
@@ -1987,8 +1990,7 @@
                 yield i;
         },
         zip: function(){
-	    var args = array(arguments);
-    
+            var args = array(arguments);
             var collections = args.map(array);
             var array1 = collections.shift();
             return array1.map( function(value, index) { 
@@ -2020,16 +2022,15 @@
     var config = script[0].getAttribute('pyconfig');
     if (config) //TODO: validate config
 	__extend__(false, ModuleManager, eval('({' + config + '})'));
-})();
 
 // ******************************* EXTENDING JAVASCRIPT ************************************* //
 (function(){
     //--------------------------------------- String -------------------------------------//
     extend(String, {
-	scriptfragment: '<script[^>]*>([\\S\\s]*?)<\/script>',
-	interpret: function(value) {
-	    return value == null ? '' : String(value);
-	},
+    scriptfragment: '<script[^>]*>([\\S\\s]*?)<\/script>',
+    interpret: function(value) {
+        return value == null ? '' : String(value);
+    },
         special: {    // table of character substitutions
             '\b': '\\b',
             '\t': '\\t',
@@ -2043,13 +2044,12 @@
 
     extend(String.prototype, {
         sub: function(pattern, replacement, count) {
-	    count = (!count) ? 1 : count;
-
-	    return this.replace(pattern, function(str) {
-		if (--count < 0) return str;
-		    return replacement;
-	    }, 'g');
-	},
+        count = (!count) ? 1 : count;
+        return this.replace(pattern, function(str) {
+            if (--count < 0) return str;
+            return replacement;
+        }, 'g');
+    },
 
 	//% operator like python
 	subs: function() {
@@ -2285,35 +2285,42 @@
 	    return this;
 	},
 	update: function(content) {
+        if (content && content.toElement) content = content.toElement();
 	    if (Element.isElement(content)) return this.update().insert(content);
-	    content = String.interpret(content);
+	    content = html(content);
 	    this.innerHTML = content.stripscripts();
-	    getattr(content, 'evalscripts')();
+	    timer.defer(getattr(content, 'evalscripts'), 1);
 	    return this;
 	},
-	insert: function(insertions) {
-	    if (isinstance(insertions, String) || isinstance(insertions, Number) || Element.isElement(insertions))
-		insertions = {bottom:insertions};
-	    var content, insert, tagName, childNodes, self = this;
-	    for (var position in insertions) {
-		content  = insertions[position];
-		position = position.toLowerCase();
-		insert = Element._insertion_translations[position];
+    insert: function(insertions) {
+        if (isinstance(insertions, String) ||
+            isinstance(insertions, Number) ||
+            Element.isElement(insertions) ||
+            (insertions && (insertions.toElement || insertions.__html__))
+            )
+            insertions = {bottom:insertions};
+        var content, insert, tagName, childNodes, self = this;
+        for (var position in insertions) {
+            content  = insertions[position];
+            position = position.toLowerCase();
+            insert = Element._insertion_translations[position];
 
-		if (Element.isElement(content)) {
-		    insert(this, content);
-		    continue;
-		}
+            if (content && content.toElement) content = content.toElement();
+            if (Element.isElement(content)) {
+                insert(this, content);
+                continue;
+            }
 
-		tagName = ((position == 'before' || position == 'after') ? this.parentNode : this).tagName.toUpperCase();
-		childNodes = Element._get_content_from_anonymous_element(tagName, content.stripscripts());
+            content = html(content)
+            tagName = ((position == 'before' || position == 'after') ? this.parentNode : this).tagName.toUpperCase();
+            childNodes = Element._get_content_from_anonymous_element(tagName, content.stripscripts());
 
-		if (position == 'top' || position == 'after') 
-		    childNodes.reverse();
-		childNodes.forEach(function (e) { insert(self, e); });
-		getattr(content, 'evalscripts')();
-	    }
-	    return this;
+            if (position == 'top' || position == 'after') 
+                childNodes.reverse();
+            childNodes.forEach(function (e) { insert(self, e); });
+            getattr(content, 'evalscripts')();
+        }
+        return this;
 	},
 	select: function(selector) {
 	    return $$(selector, this);
@@ -2503,4 +2510,5 @@
     extend(HTMLInputElement.prototype, Form.Element );
     extend(HTMLSelectElement.prototype, Form.Element );
     extend(HTMLTextAreaElement.prototype, Form.Element );
+})();
 })();

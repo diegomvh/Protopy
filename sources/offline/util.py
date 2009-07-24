@@ -118,7 +118,7 @@ def get_site(name):
     from offline import sites
     project_name = settings.ROOT_URLCONF.split('.')[0]
     try:
-        __import__('.'.join([project_name, 'offline', name ]), {}, {}, ['*', ])
+        __import__('.'.join([project_name, 'offline', "remote_" + name ]), {}, {}, ['*', ])
         return sites.REMOTE_SITES[name]
     except (ImportError, KeyError), e:
         pass 

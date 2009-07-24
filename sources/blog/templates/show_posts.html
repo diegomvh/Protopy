@@ -1,4 +1,10 @@
 {% extends "base.html" %}
+
+{% block head %}
+{{ block.super }}
+
+{% endblock %}
+
 {% block middle %}
 <h1>Estos son los Tags</h1>
 {% for tag in tags %}

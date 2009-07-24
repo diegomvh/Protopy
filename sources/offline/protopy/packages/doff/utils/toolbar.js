@@ -4,34 +4,34 @@ require('event');
 var Panel = type('Panel', object, {
     __init__: function(id, name, title) {
         this.id = id;
-	this.name = name;
-	this.title = title || name;
+        this.name = name;
+        this.title = title || name;
 
-	//The body element, panel and hide
+        //The body element, panel and hide
         this.body = document.createElement('div');
         this.body.id = this.id;
         this.body.setAttribute('class', 'panel');
-	this.body.hide();
+        this.body.hide();
 
         //Header
         this.header = document.createElement('h1');
         this.header.setAttribute('class', 'header');
-	this.header.insert('<span>' + this.title + '</span>');
+        this.header.insert('<span>' + this.title + '</span>');
         var close_image = document.createElement('img');
         close_image.src = sys.module_url('doff.utils', 'resources/closebox.gif');
         this.header.insert(close_image);
-	event.connect(close_image, 'click', this, 'hide');
-	
+        event.connect(close_image, 'click', this, 'hide');
+
         //Content
-	this.content = document.createElement('div');
-	this.content.setAttribute('class', 'content');
+        this.content = document.createElement('div');
+        this.content.setAttribute('class', 'content');
 
         this.body.insert(this.header);
         this.body.insert(this.content);
-	
-	//Style and other yerbas
-	this.height = '25em';
-	this.width = '80%';
+
+        //Style and other yerbas
+        this.height = '25em';
+        this.width = '80%';
     },
 
     set height(value) {
@@ -75,8 +75,7 @@ var Panel = type('Panel', object, {
 });
 
 var ToolBar = type('Toolbar', object, {
-    __init__: function(html) {
-        this.html = html;
+    __init__: function() {
         this.content = document.createElement('div');
         this.content.id = 'toolbar';
         this.ul = document.createElement('ul');
@@ -85,20 +84,20 @@ var ToolBar = type('Toolbar', object, {
         this.stylesheet.rel = "stylesheet";
         this.stylesheet.type = "text/css";
         this.stylesheet.href = sys.module_url('doff.utils', 'resources/toolbar.css');
-	this.active_panel = null;
+        this.active_panel = null;
     },
 
     add: function(element) {
         //Toolbar tab
         var tab = document.createElement('li');
-	if (isinstance(element, Panel)) {
+        if (isinstance(element, Panel)) {
             tab.update(element.name);
             element.tab = tab;
-	    element.bar = this;
-	    this.content.insert(element.body);
-	    event.connect(tab, 'click', element, 'toggle');
+            element.bar = this;
+            this.content.insert(element.body);
+            event.connect(tab, 'click', element, 'toggle');
         } else if (isinstance(element, String))
-	    tab.update(element);
+            tab.update(element);
         this.ul.insert(tab);
         return tab;
     },
@@ -108,16 +107,16 @@ var ToolBar = type('Toolbar', object, {
     },
 
     show: function() {
-	if (!this.displayed) {
-	    this._display();
+        if (!this.displayed) {
+        this._display();
             this.displayed = true;
         }
-	this.ul.show();
+        this.ul.show();
     },
 
     _display: function () {
-	this.html['head'].insert(this.stylesheet);
-	this.html['body'].insert(this.content);
+        $$('head')[0].insert(this.stylesheet);
+        $$('body')[0].insert(this.content);
     }
     
 });

@@ -8,7 +8,7 @@ import offline
 # Uncomment the next two lines to enable the admin:
 #from django.contrib import admin
 #admin.autodiscover()
-from blog.offline.blog import site
+from blog.offline.remote_blog import site
 
 urlpatterns = patterns('',
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
