@@ -2,6 +2,7 @@ from operator import itemgetter as _itemgetter
 from keyword import iskeyword as _iskeyword
 import sys as _sys
 import os
+import re
 from glob import glob
 
 
@@ -156,6 +157,62 @@ def excluding_abswalk_with_simlinks(path, exclude = None):
         yield p
 
 
+INVALID_TEMPLATE_SUFFIXES = re.compile(r'(:?.*\.svn.*)?(?:~|#)$')
+#valid_templates = lambda name: not INVALID_TEMPLATE_SUFFIXES.search( name )
+SCM_FOLDER_PATTERNS = ('.hg', '.git', '.svn', )
+        
+def valid_templates(name):
+    if INVALID_TEMPLATE_SUFFIXES.search(name):
+        return False
+    if any(map(lambda n: name.count(n) > 0, SCM_FOLDER_PATTERNS)):
+        return False
+    return True
+
+
+
+def _retrieve_templates_from_path(path, template_bases = None, strip_first_slash = True):
+    '''
+    '''
+    from os.path import join
+    if not template_bases:
+        template_bases = []
+
+    template_files = [] 
+    for root, _dirs, files in os.walk(path):
+        for t_base in template_bases:
+            #import ipdb; ipdb.set_trace()
+
+            if t_base in root:
+                index = root.index(t_base)
+                root = root[index + len(t_base):]
+                break
+
+        template_files += map(lambda f: join(root, f), files)
+
+    templates = filter(valid_templates, template_files)
+    if strip_first_slash:
+        templates = filter(
+                                 lambda f: f.startswith('/') and f[1:] or f, 
+                                 templates)
+    return templates
+
+
+
+def full_template_list(exclude_apps = None, exclude_callable = None):
+    from django.conf import settings
+    template_dirs = map(lambda s: s.split(os.sep)[-1], settings.TEMPLATE_DIRS)
+
+    template_files = []
+    for path in settings.TEMPLATE_DIRS:
+        template_files += _retrieve_templates_from_path(path, template_dirs)
+        # Split
+
+    # Get per application template list
+    if 'django.template.loaders.app_directories.load_template_source' in settings.TEMPLATE_LOADERS:
+        from django.template.loaders.app_directories import app_template_dirs
+        for path in app_template_dirs:
+            template_files += _retrieve_templates_from_path(path, template_dirs)
+    return template_files
 
 #===============================================================================
 # Magic, don't touch
