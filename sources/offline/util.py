@@ -133,6 +133,27 @@ def abswalk_with_simlinks(path):
                 for f in abswalk_with_simlinks( full_dir_path ):
                     yield f
 
+def excluding_abswalk_with_simlinks(path, exclude = None):
+    '''
+    Returns an iterator on the path base taking into account a list of 
+    @param path: Base path
+    @param exclude: May be a list of strings, regular expressions or functions
+    '''
+    if type(exclude) is not list:
+        exclude = [exclude, ]
+        
+    for p in abswalk_with_simlinks(path):
+        #TODO: Optimizar esto, es una asco
+        for e in exclude:
+            if issubclass(type(e), basestring):
+                if e == p:
+                    continue
+            elif callable(e) and e(p):
+                continue
+            # Try to identify a Regular Expression
+            elif hasattr(e, 'search') and callable(getattr(e, 'search')) and e.search(p):
+                continue
+        yield p
 
 
 
@@ -156,7 +177,7 @@ def get_project_root():
 def get_offline_root():
     return os.path.join(get_project_root(), OFFLINE_ROOT_DIR)
 
-def get_site_media_root(site_name):
+def get_site_root(site_name):
     if not get_site(site_name):
         return
     return os.path.join(get_offline_root(), site_name)

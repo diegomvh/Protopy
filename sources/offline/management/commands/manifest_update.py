@@ -7,7 +7,7 @@ from offline.models import GearsManifest, GearsManifestEntry
 from django.db import models 
 #TODO: (d3f0)Move away code from
 from offline.sites import random_string
-from offline.util import get_site
+from offline.util import get_site, get_site_root, excluding_abswalk_with_simlinks 
 import os
 import sys
 from pprint import pprint
@@ -44,12 +44,20 @@ class Command(LabelCommand):
         entries = manifest.gearsmanifestentry_set.count()
         
         offline_base = site.offline_base
-        
+        splitted_offline_base = offline_base.split('/')
         # Cambiar el numero de version
         if not manifest.version:
             manifest.version = random_string(32)
         print manifest.version
         
+        # Application Code
+        file_list = []
+        site_root = get_site_root(remotesite_name)
+        for f in excluding_abswalk_with_simlinks(site_root):
+            pth = f[ f.index(site_root) + len(site_root) + 1: ]
+            pth = pth.split(os.sep)
+            pth = '/'.join( splitted_offline_base + pth)
+            file_list.append({'url': pth, 'file': f, 'mtime': None})
         
         
         pprint(locals())
