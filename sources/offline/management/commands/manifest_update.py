@@ -1,34 +1,69 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-
 from django.core.management.base import *
-from offline.models import Manifest
-from offline.remote import random_string
+#from offline.models import Manifest
+from offline.models import GearsManifest, GearsManifestEntry
+from django.db import models 
+#TODO: (d3f0)Move away code from
+from offline.sites import random_string
+from offline.util import get_site
 import os
 import sys
+from pprint import pprint
 
 #TODO: Update if changed based on file modification date
 class Command(LabelCommand):
-    help = """
-        Probando el sistema de comandos de Django.
+    help = \
+    """
+        This command updates manifest files for remote site sincronization.
     """
     requires_model_validation = False
     can_import_settings = True
     
     def handle_label(self, remotesite_name, **options):
         from django.conf import settings
-        
+        site = get_site(remotesite_name)
+        if not site:
+            print "Can't find any site by the name '%s'" % remotesite_name
+            # Won't exit if it fails since more than one site maight have been
+            # passed to the command
+            #sys.exit(3)
+            return
         try:
-            m = Manifest.objects.get(remotesite_name = remotesite_name)
-        except Exception, e:
-            print e
-            print "Creating new manifest for %s" % remotesite_name
-            m = Manifest()
+            manifest = GearsManifest.objects.get(remotesite_name = remotesite_name)
+        except models.exceptions.ObjectDoesNotExist:
+            print "No resmote instance"
+            manifest = GearsManifest()
+            manifest.remotesite_name = remotesite_name
+        except (models.exceptions.FieldError, models.exceptions.ValidationError):
+            print "Syncdb?"
+            return
+        
+        entries = manifest.gearsmanifestentry_set.count()
+        
+        offline_base = site.offline_base
+        
+        
+        
+        if not manifest.version:
+            manifest.version = random_string(32)
+        print manifest.version
+        
+        pprint(locals())
+        #manifest.add_uris_from_pathwalk(path, uri_base, exclude_callback, followlinks)
+        #from ipdb import set_trace; set_trace()
+        
+#        try:
+#            m = Manifest.objects.get(remotesite_name = remotesite_name)
+#        except Exception, e:
+#            print e
+#            print "Creating new manifest for %s" % remotesite_name
+#            m = Manifest()
         #template_base = self.offline_base.split('/') + ['templates', ] 
         
         # genreate random version string
-        m.version = random_string(32)
+#        m.version = random_string(32)
         
         #remotesite = 
         

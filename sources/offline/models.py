@@ -4,6 +4,7 @@ from django.utils.datastructures import SortedDict
 from simplejson import loads, dumps
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
+from django.conf import settings
 import os
 
 MAX_APP_NAME_LENGTH = 160
@@ -106,11 +107,14 @@ class Manifest(models.Model):
         Generates a gears' managed store compatible manifest
         '''
         # Json guarantee
+        
         return dumps({
             "betaManifestVersion": self.MANIFEST_VERSION,
             "version": self.version,
             "entries": self.entries 
         })
+    
+    
     
     def save(self, *largs, **kwargs):
         
@@ -141,7 +145,74 @@ class Manifest(models.Model):
 #                            ))
 
         map( self.add_entry, file_list )
+    
+    def __add__(self, other):
+        '''
+        Joins manifests
+        '''
+        m = Manifest()
+        m.version = self.version
+        m.entries = self.entries + other.entries
+        return m
+
+class GearsManifest(models.Model):
+    '''
+    Transition class, moving from list based entries to DB relationship.
+    '''
+    # Gears internals
+    MANIFEST_VERSION = 1
+    
+    # Version string
+    version = models.CharField(max_length=150, blank = False)
+    content = models.TextField(editable = False, null = True, blank = True)
+    remotesite_name = models.TextField(max_length = 150, editable = False)
+    
+    def uri_base(): #@NoSelf
+        def fget(self):
+            return settings.OFFLINE_ROOT
+        return locals()
+    uri_base = property(**uri_base())
         
+    
+    def add_uris_from_pathwalk(self, path, uri_base = None, exclude_callback = None, followlinks = True):
+        '''
+        Recursively adds a path walk served statically behind a uri_base
+        to the manifest entries.
+        '''
+        uri_base = filter(bool, uri_base.split('/'))
+        
+        file_list = []
+        for f in abswalk_with_simlinks( path ):
+            if callable(exclude_callback) and exclude_callback(f):
+                continue
+            pth = f[ f.index(path) + len(path) + 1: ]
+            pth = pth.split(os.sep)
+            pth = '/%s' % '/'.join( uri_base + pth)
+            file_list.append(pth)
+            
+#            file_list.append('%s/%s' % ( uri_base,                     
+#                                        f[ f.index(path) + len(path) + 1: ]
+#                            ))
+
+        map( self.add_entry, file_list )
+        
+    def __unicode__(self):
+        return "<%s for site %s>" % (type(self).__name__, self.remotesite_name or "?")
+    
+    __repr__ = __unicode__
+    
+class GearsManifestEntry(models.Model):
+    '''
+    
+    '''
+    manifest = models.ForeignKey(GearsManifest)
+    url = models.URLField()
+    redirect = models.URLField()
+    src = models.URLField()
+    ignoreQuery = models.BooleanField()
+    file_mtime = models.DateTimeField()
+    
+    #, src = None, redirect = None, ignoreQuery = None):
         
 def abswalk_with_simlinks(path):
     '''
