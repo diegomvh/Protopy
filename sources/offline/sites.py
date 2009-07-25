@@ -112,7 +112,6 @@ def _retrieve_templates_from_path(path, template_bases = None, strip_first_slash
     return templates
 
 def full_template_list(exclude_apps = None, exclude_callable = None):
-    from django.conf import settings
 
     template_dirs = map(lambda s: s.split(os.sep)[-1], settings.TEMPLATE_DIRS)
 
@@ -199,7 +198,7 @@ class RemoteSite(RemoteBaseSite):
     def _get_offline_base(self):
         names = settings.OFFLINE_BASE.split("/")
         names.append(self.name)
-        return "/".join(names)
+        return "/" + "/".join(names)
     offline_base = property(_get_offline_base)
 
     @expose(r'^$')
@@ -353,7 +352,9 @@ class RemoteSite(RemoteBaseSite):
                 'instances': []
         }
     
-
+    #===========================================================================
+    # Manifests
+    #===========================================================================
     @expose(r'^manifests/system.json$')
     def system_manifest(self, request, version = None, exclude_callback = None):
     #def dynamic_manifest_from_fs(request, path, base_uri, version = None, exclude_callback = None):
@@ -409,6 +410,17 @@ class RemoteSite(RemoteBaseSite):
 
         return HttpResponse( json, 'text/plain' )
 
+    @expose('^manifest.json$')
+    def unified_manifest(self, request):
+        '''
+        For simlicity reasons, we merge both the protopy (aka system manifest)
+        and the project manifest into mainfest.json
+        Using the update_manifest command these manifests can be updated.
+        '''
+        return HttpResponse('Hola', 'text/plain')
+    #===========================================================================
+    # Models
+    #===========================================================================
     @expose(r'^export/(?P<app_name>.*)/models.js$')
     def export_models_for_app(self, request, app_name):
         return render_to_response('djangoffline/models_example.js', mimetype = 'text/javascript')
