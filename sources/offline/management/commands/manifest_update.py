@@ -57,7 +57,7 @@ class Command(LabelCommand):
             pth = f[ f.index(site_root) + len(site_root) + 1: ]
             pth = pth.split(os.sep)
             pth = '/'.join( splitted_offline_base + pth)
-            file_list.append({'url': pth, 'file': f, 'mtime': None})
+            file_list.append({'url': pth, 'file': f, 'mtime': os.path.getmtime(f), 'size': os.path.getsize(f)})
         
         
         pprint(locals())
