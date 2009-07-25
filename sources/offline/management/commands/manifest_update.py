@@ -36,6 +36,7 @@ class Command(LabelCommand):
             print "No resmote instance"
             manifest = GearsManifest()
             manifest.remotesite_name = remotesite_name
+            
         except (models.exceptions.FieldError, models.exceptions.ValidationError):
             print "Syncdb?"
             return
@@ -44,11 +45,12 @@ class Command(LabelCommand):
         
         offline_base = site.offline_base
         
-        
-        
+        # Cambiar el numero de version
         if not manifest.version:
             manifest.version = random_string(32)
         print manifest.version
+        
+        
         
         pprint(locals())
         #manifest.add_uris_from_pathwalk(path, uri_base, exclude_callback, followlinks)

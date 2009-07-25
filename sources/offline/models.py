@@ -6,6 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.conf import settings
 import os
+from offline.util import abswalk_with_simlinks
 
 MAX_APP_NAME_LENGTH = 160
 
@@ -214,21 +215,7 @@ class GearsManifestEntry(models.Model):
     
     #, src = None, redirect = None, ignoreQuery = None):
         
-def abswalk_with_simlinks(path):
-    '''
-    Python <2.6 version walk(followlinks = True)
-    '''
-     
-    for path, subdirs, files in os.walk(path):
-        
-        files = map( lambda n: os.path.join( path, n), files )
-        for f in files:
-                yield f
-        for dirname in subdirs:
-            full_dir_path = os.path.join(path, dirname)
-            if os.path.islink( full_dir_path ):
-                for f in abswalk_with_simlinks( full_dir_path ):
-                    yield f
+
                 
         
 class SyncData(models.Model):

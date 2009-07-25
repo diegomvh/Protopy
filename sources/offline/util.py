@@ -4,6 +4,10 @@ import sys as _sys
 import os
 from glob import glob
 
+
+#===============================================================================
+# Python <2.6 support code
+#===============================================================================
 def namedtuple(typename, field_names, verbose=False, rename=False):
     """Returns a new subclass of tuple with named fields.
 
@@ -113,6 +117,24 @@ def namedtuple(typename, field_names, verbose=False, rename=False):
 
     return result
 
+def abswalk_with_simlinks(path):
+    '''
+    Python <2.6 version walk(followlinks = True)
+    '''
+     
+    for path, subdirs, files in os.walk(path):
+        
+        files = map( lambda n: os.path.join( path, n), files )
+        for f in files:
+                yield f
+        for dirname in subdirs:
+            full_dir_path = os.path.join(path, dirname)
+            if os.path.islink( full_dir_path ):
+                for f in abswalk_with_simlinks( full_dir_path ):
+                    yield f
+
+
+
 
 #===============================================================================
 # Magic, don't touch
@@ -164,6 +186,8 @@ def get_sites():
         if site:
             sites.append(site)
     return sites
+
+
 
 if __name__ == '__main__':
     # verify that instances can be pickled

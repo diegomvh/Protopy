@@ -452,6 +452,9 @@ class RemoteSite(RemoteBaseSite):
 #        
 #        return HttpResponse('a', mimetype = 'text/javascript')
     
+    #===========================================================================
+    # Model handling
+    #===========================================================================
     def register(self, model, remote_proxy = None):
         '''
         Register a proxy for a model
