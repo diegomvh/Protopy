@@ -206,12 +206,17 @@ class GearsManifestEntry(models.Model):
     '''
     
     '''
+    # Thse files should be serialized
     manifest = models.ForeignKey(GearsManifest)
     url = models.URLField()
-    redirect = models.URLField()
-    src = models.URLField()
-    ignoreQuery = models.BooleanField()
+    redirect = models.URLField(default = '')
+    src = models.URLField(default = '')
+    ignoreQuery = models.BooleanField(default = False)
+    file = models.FilePathField()
+    
+    # These fields should not be serialized
     file_mtime = models.DateTimeField()
+    file_size = models.IntegerField()
     
     #, src = None, redirect = None, ignoreQuery = None):
         

@@ -10,6 +10,7 @@ from offline.sites import random_string
 from offline.util import get_site, get_site_root, excluding_abswalk_with_simlinks 
 import os
 import sys
+import time
 from pprint import pprint
 
 #TODO: Update if changed based on file modification date
@@ -57,8 +58,20 @@ class Command(LabelCommand):
             pth = f[ f.index(site_root) + len(site_root) + 1: ]
             pth = pth.split(os.sep)
             pth = '/'.join( splitted_offline_base + pth)
-            file_list.append({'url': pth, 'file': f, 'mtime': os.path.getmtime(f), 'size': os.path.getsize(f)})
+            mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(f)))
+            #TODO: Remove base path
+            file_list.append({'url': pth, 'file': f, 'file_mtime': mtime, 'file_size': os.path.getsize(f)})
         
+        if not entries:
+            # New instance or empty, just create entries and add them
+            manifest.save()
+            for f in file_list:
+                entry = GearsManifestEntry(manifest = manifest, **f)
+                entry.save()
+        else:
+            # Compraracion por modificaciones
+            file_mapping = dict([(m.file, m) for m in manifest.gearsmanifestentry_set.all()])
+            
         
         pprint(locals())
         #manifest.add_uris_from_pathwalk(path, uri_base, exclude_callback, followlinks)
