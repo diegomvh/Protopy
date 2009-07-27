@@ -149,7 +149,14 @@ class RemoteSite(RemoteBaseSite):
         names.append(self.name)
         return "/" + "/".join(names)
     offline_base = property(_get_offline_base)
-
+    
+    def _get_offline_urlregex(self):
+        if not self.offline_base.startswith('/'):
+            return self.offline_base
+        return self.offline_base[1:]
+    
+    offline_urlregex = property(_get_offline_urlregex)
+    
     @expose(r'^$')
     def index(self, request):
         return HttpResponse('Yo soy el RemoteSite %s' % self.name)

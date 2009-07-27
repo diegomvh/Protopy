@@ -217,6 +217,7 @@ class GearsManifestEntry(models.Model):
     # These fields should not be serialized
     file_mtime = models.DateTimeField()
     file_size = models.IntegerField()
+    real_file = models.BooleanField(default = False)
     
     #, src = None, redirect = None, ignoreQuery = None):
         

@@ -24,7 +24,7 @@ urlpatterns = patterns('',
     # Install offline
     (r'^offline.html$', 'django.views.generic.simple.direct_to_template', {'template': 'offline_installer.html'}),
 
-    (r'^%s/(.*)' % site.offline_base, site.root ),
+    (r'^%s/(.*)' % site.offline_urlregex, site.root ),
 
     (r'^rpc/test', 'offline.sync.rpc_handler' ),
     

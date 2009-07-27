@@ -214,6 +214,34 @@ def full_template_list(exclude_apps = None, exclude_callable = None):
             template_files += _retrieve_templates_from_path(path, template_dirs)
     return template_files
 
+def get_templates_and_files(path, template_bases = None, strip_first_slash = True):
+    '''
+    Scan filesystem for templates and returns 
+    (tempalte_relative_name, tempalte_full_path)
+    '''
+    from os.path import join
+    if not template_bases:
+        template_bases = []
+
+    template_files = [] 
+    for root, _dirs, files in os.walk(path):
+        for t_base in template_bases:
+            #import ipdb; ipdb.set_trace()
+
+            if t_base in root:
+                index = root.index(t_base)
+                root = root[index + len(t_base):]
+                break
+
+        template_files += map(lambda f: join(root, f), files)
+    
+    templates = filter(valid_templates, template_files)
+    if strip_first_slash:
+        templates = filter(
+                                 lambda f: f.startswith('/') and f[1:] or f, 
+                                 templates)
+    return templates
+
 #===============================================================================
 # Magic, don't touch
 #===============================================================================
