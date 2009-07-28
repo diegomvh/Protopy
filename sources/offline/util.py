@@ -1,6 +1,9 @@
 from operator import itemgetter as _itemgetter
 from keyword import iskeyword as _iskeyword
 import sys as _sys
+from django.utils import simplejson
+
+from django.core.serializers.json import DjangoJSONEncoder
 import os
 import re
 from glob import glob
@@ -190,10 +193,9 @@ def _retrieve_templates_from_path(path, template_bases = None, strip_first_slash
         template_files += map(lambda f: join(root, f), files)
 
     templates = filter(valid_templates, template_files)
+    
     if strip_first_slash:
-        templates = filter(
-                                 lambda f: f.startswith('/') and f[1:] or f, 
-                                 templates)
+        templates = map( lambda f: f[0] == '/' and f[1:] or f, templates)
     return templates
 
 
@@ -206,12 +208,13 @@ def full_template_list(exclude_apps = None, exclude_callable = None):
     for path in settings.TEMPLATE_DIRS:
         template_files += _retrieve_templates_from_path(path, template_dirs)
         # Split
-
+    
     # Get per application template list
     if 'django.template.loaders.app_directories.load_template_source' in settings.TEMPLATE_LOADERS:
         from django.template.loaders.app_directories import app_template_dirs
         for path in app_template_dirs:
             template_files += _retrieve_templates_from_path(path, template_dirs)
+            
     return template_files
 
 def get_templates_and_files(path, template_bases = None, strip_first_slash = True):
@@ -293,6 +296,40 @@ def get_sites():
             sites.append(site)
     return sites
 
+# TODO: Fix
+class ProtpyJsonEncoder(DjangoJSONEncoder):
+    def default(self, o):
+        from offline.models import GearsManifest, GearsManifestEntry
+        
+        if isinstance(o, GearsManifest):
+            entries = o.gearsmanifestentry_set.all()
+            data = []
+            
+            for entry in entries:
+                d = {}
+                for k in ("url", "redirect", "src", "ignoreQuery"):
+                    v = getattr(entry, k)
+                    if v:
+                        d[k] = v
+                data.append(d)
+            
+            return self.default({
+                "betaManifestVersion": o.MANIFEST_VERSION,
+                "version": o.version,
+                "entries": unicode(data)
+                #"entries": self.default(list(o.gearsmanifestentry_set.all())) 
+            })
+        elif isinstance(o, GearsManifestEntry):
+            d = {}
+            for k in ("url", "redirect", "src", "ignoreQuery"):
+                v = getattr(o, k)
+                if v:
+                    d[k] = v
+            return self.default(d)
+        
+        else:
+            print type(o)
+            return super(ProtpyJsonEncoder, self).default(o)
 
 
 if __name__ == '__main__':

@@ -8,7 +8,7 @@ from django.db import models
 #TODO: (d3f0)Move away code from
 from offline.sites import random_string
 from offline.util import get_site, get_site_root, excluding_abswalk_with_simlinks ,\
-    full_template_list
+    full_template_list, abswalk_with_simlinks
 from django_extensions.management.utils import get_project_root
 from django.template.loader import find_template_source
 import os
@@ -60,7 +60,7 @@ class Command(LabelCommand):
         
         entries = self.manifest.gearsmanifestentry_set.count()
         
-        offline_base = self.site.offline_base
+        offline_base = self.site.url
         splitted_offline_base = offline_base.split('/')
         # Cambiar el numero de version
         if not self.manifest.version:
@@ -72,34 +72,65 @@ class Command(LabelCommand):
         site_root = get_site_root(remotesite_name)
         project_root = get_project_root()
         
-        
+        print "Adding/updating templates..."
         for t in full_template_list():
             _template_source, template_origin = find_template_source(t)
             fname = template_origin.name
             mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(fname)))
             fsize = os.path.getsize(fname)
-            file_list.append('name')
-#        for f in excluding_abswalk_with_simlinks(site_root):
-#            pth = f[ f.index(site_root) + len(site_root) + 1: ]
-#            pth = pth.split(os.sep)
-#            pth = '/'.join( splitted_offline_base + pth)
-#            mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(f)))
-#            rel_f = os.path.relpath(f, project_root)
-#            #TODO: Remove base path
-#            file_list.append({'url': pth, 'file_mtime': mtime, 'file_size': os.path.getsize(f)})
+            file_list.append({'name': t, 'url': '/'.join([self.site.templates_url, t]), 
+                              'file_mtime': mtime, 'file_size': fsize})
+        
+        print "Adding/updating js..."
+        for js in abswalk_with_simlinks(self.site.project_root):
+            relpath = os.path.relpath(js, self.site.project_root)
+            mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(js)))
+            fsize = os.path.getsize(js)
+            file_list.append({'name': relpath, 'url': '/'.join([self.site.js_url, relpath]), 
+                              'file_mtime': mtime, 'file_size': fsize})
+        
+        print "Adding/updating models..."
+        for app in self.site.app_names():
+            #relpath = os.path.relpath(js, self.site.project_root)
+            #mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(js)))
+            #fsize = os.path.getsize(js)
+            name = '/'.join([self.site.name, app, 'models.js'])
+            #TODO: Check if the file exists
+            file_list.append({'name': name, 'url': '/'.join([ self.site.js_url, name ])})
+        
+        print "Adding/updating lib..."
+        for lib in abswalk_with_simlinks(self.site.protopy_root):
+            relpath = os.path.relpath(lib, self.site.protopy_root)
+            mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(lib)))
+            fsize = os.path.getsize(lib)
+            file_list.append({'name': relpath, 'url': '/'.join([self.site.lib_url, relpath]), 
+                              'file_mtime': mtime, 'file_size': fsize})
+        
+        print "Adding/updating media..."
+        media_root = os.path.abspath(settings.MEDIA_ROOT)
+        if settings.MEDIA_URL[-1] == '/':
+            media_url = settings.MEDIA_URL[:-1]
+        else:
+            media_url = settings.MEDIA_URL
+        
+        for media in abswalk_with_simlinks(media_root):
+            relpath = os.path.relpath(media, media_root)
+            mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(media)))
+            fsize = os.path.getsize(media)
+            file_list.append({'name': relpath, 'url': '/'.join([media_url, relpath]), 
+                              'file_mtime': mtime, 'file_size': fsize})
             
         if not entries:
             # New instance or empty, just create entries and add them
             self.manifest.save()
             for f in file_list:
-                entry = GearsManifestEntry(manifest = self.manifest, **f).save()
-                print entry
-                #entry.save()
+                entry = GearsManifestEntry(manifest = self.manifest, **f)
+                entry.save()
             #self.manifest.save()
         else:
             # Compraracion por modificaciones
             print "Comparing file sizes and mtime"
-            file_mapping = dict([(m.file, m) for m in self.manifest.gearsmanifestentry_set.all()])
+            file_mapping = dict([(m.name, m) for m in self.manifest.gearsmanifestentry_set.all()])
             
         print full_template_list()
         #pprint(locals())

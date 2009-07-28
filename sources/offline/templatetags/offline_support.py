@@ -14,7 +14,7 @@ offline_template = '''
 
 def offline(name):
     site = util.get_site(name)
-    return offline_template % { 'OFFLINE_SUPPORT': site.offline_base, 
+    return offline_template % { 'OFFLINE_SUPPORT': site.url, 
                                 'PROJECT_PACKAGE': site.name
                               }
 

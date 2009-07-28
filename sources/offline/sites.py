@@ -7,7 +7,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.http import Http404
 from django.core.urlresolvers import Resolver404, RegexURLPattern
 from django.utils.encoding import smart_str
-from offline.models import Manifest, SyncLog
+from offline.models import Manifest, SyncLog, GearsManifest
 from django.template import TemplateDoesNotExist
 from django.utils.safestring import SafeString
 from offline.debug import html_output
@@ -16,6 +16,7 @@ from django.db import models
 from django.contrib.admin.sites import AlreadyRegistered
 from django.shortcuts import render_to_response
 from django.db.models.fields import AutoField
+from django_extensions.management.utils import get_project_root
 import os, re
 from pprint import pformat
 from django.db.models.loading import get_app
@@ -25,7 +26,7 @@ from offline.rpc.SimpleJSONRPCServer import SimpleJSONRPCDispatcher
 from datetime import datetime
 from django.db.models.loading import get_app, get_models
 from offline.export_models import export_remotes
-from offline.util import full_template_list
+from offline.util import full_template_list, abswalk_with_simlinks
 
 from django.conf import settings
 
@@ -114,7 +115,11 @@ class RemoteSite(RemoteBaseSite):
     Manages offline project support.
     @expose decorator indicates how URLs are mapped
     '''
-
+    TEMPLATES_PREFIX = 'templates'
+    JS_PREFIX = 'js'
+    LIB_PREFIX = 'lib'
+    OFFLINE_ROOT = 'offline'
+    
     def __init__(self, name, protopy_root = None):
 
         global REMOTE_SITES
@@ -128,7 +133,7 @@ class RemoteSite(RemoteBaseSite):
             from os.path import abspath, dirname, join
             protopy_root = getattr(get_app('offline'), '__file__')
             protopy_root = join(abspath(dirname(protopy_root)), 'protopy')
-        self._protopy_root = protopy_root
+        self.protopy_root = protopy_root
         
         # Create a Dispatcher; this handles the calls and translates info to function maps
         #self.rpc_dispatcher = SimpleJSONRPCDispatcher() # Python 2.4
@@ -137,10 +142,10 @@ class RemoteSite(RemoteBaseSite):
         self.rpc_dispatcher.register_instance(self)
         self._registry = {}
 
-    protpy_root = property(lambda inst: inst._protopy_root)
+    
 
     def _get_project_root(self):
-        return os.sep.join(['offline', self.name])
+        return os.sep.join([get_project_root(), self.OFFLINE_ROOT, self.name])
     project_root = property(_get_project_root, doc = "File system offline location")
 
     #TODO: ver si es absoluta o relativa o como cuernos lo manejamos
@@ -151,17 +156,29 @@ class RemoteSite(RemoteBaseSite):
     url = property(_get_url, doc = "Absolute URL to the remote site")
     
     def _get_urlregex(self):
-        if not self.offline_base.startswith('/'):
-            return self.offline_base
-        return self.offline_base[1:]
+        if not self.url.startswith('/'):
+            return self.url
+        return self.url[1:]
     
     urlregex = property(_get_urlregex, doc = "For regex in url.py")
+    
+    def _get_js_url(self):
+        return '/'.join([self.url, self.JS_PREFIX])
+    js_url = property(_get_js_url, doc = "For something")
+    
+    def _get_lib_url(self):
+        return '/'.join([self.url, self.LIB_PREFIX])
+    lib_url = property(_get_lib_url, doc = "For lib")
+    
+    def _get_templates_url(self):
+        return '/'.join([self.url, self.TEMPLATES_PREFIX])
+    templates_url = property(_get_templates_url, doc = "Base url for templates")
     
     @expose(r'^$')
     def index(self, request):
         return HttpResponse('Yo soy el RemoteSite %s' % self.name)
 
-    @expose(r'^templates/(.*)$')
+    @expose(r'^%s/(.*)$' % TEMPLATES_PREFIX)
     def templates_static_serve(self, request, path):
         from django.template.loader import find_template_source
         try:
@@ -177,13 +194,13 @@ class RemoteSite(RemoteBaseSite):
         ''' 
         return HttpResponse( html_output(full_template_list(), indent = 2))
 
-    @expose('^lib/(.*)$')
+    @expose('^%s/(.*)$' % LIB_PREFIX)
     def system_static_serve(self, request, path):
         from django.views.static import serve
         return serve(request, path, self.protpy_root, show_indexes = True)
 
 
-    @expose('^js/(.*)$')
+    @expose('^%s/(.*)$' % JS_PREFIX)
     def project_static_serve(self, request, path):
         from django.views.static import serve
         try:
@@ -311,69 +328,25 @@ class RemoteSite(RemoteBaseSite):
     #===========================================================================
     # Manifests
     #===========================================================================
-    @expose(r'^manifests/system.json$')
-    def system_manifest(self, request, version = None, exclude_callback = None):
-    #def dynamic_manifest_from_fs(request, path, base_uri, version = None, exclude_callback = None):
-
-        if not version:
-            version = random_string(32)
-        version = 'system_beta_1.2'
-
-        m = Manifest( version = version )
-        m.add_uris_from_pathwalk(self.protpy_root, 
-                                 "%s/system" % self.offline_base, 
-                                 exclude_callback)
-        json = m.dump_manifest()
-        if 'human' in request.GET:
-            json = json.replace(', ', ',\n').replace("\\", "")
-        return HttpResponse( json, 'text/plain' )
-
-    @expose(r'^manifests/project.json$')
-    def project_manifest(self, request):
-
-        template_base = self.offline_base.split('/') + ['templates', ] 
-        m = Manifest()
-        # genreate random version string
-        m.version = random_string(32)
-        m.version = 'project_beta_2.2'
-
-        m.add_uris_from_pathwalk(self.offline_root, '/%s/js' % self.offline_base)
-        # Add templates
-        for t in full_template_list():
-            m.add_entry( '/%s' % '/'.join( filter(bool, template_base + t.split(os.sep))))
-
-        app_labels = set(map( lambda model: model._meta.app_label, self._registry))
-
-        for app in app_labels:
-            m.add_entry('/%s/export/%s/models.js' % (self.offline_base, app))
-
-        if not request.method == "GET":
-            return Http404("Manifest must be retreived via GET HTTP method")
-        try:
-            refered = request.GET['refered']
-            if refered != '/':
-                for path in [ '/', '/index.html', 'index.htm', '/index' ]:
-                    m.add_entry( path, redirect = refered )
-                m.add_entry(refered)
-        except KeyError:
-            pass
-
-        #m.add_entry('/', redirect='')
-        json = m.dump_manifest()
-
-        if 'human' in request.GET:
-            json = json.replace(', ', ',\n')
-
-        return HttpResponse( json, 'text/plain' )
-
     @expose('^manifest.json$')
-    def unified_manifest(self, request):
+    def manifest(self, request):
         '''
         For simlicity reasons, we merge both the protopy (aka system manifest)
         and the project manifest into mainfest.json
         Using the update_manifest command these manifests can be updated.
         '''
-        return HttpResponse('Hola', 'text/plain')
+        manifest = GearsManifest.objects.get(remotesite_name = self.name)
+        try:
+            refered = request.GET['refered']
+            if refered != '/':
+                for path in [ '/', '/index.html', 'index.htm', '/index' ]:
+                    manifest.add_fake_entry( url = path, redirect = refered )
+                manifest.add_fake_entry(url = refered)
+        except KeyError:
+            pass
+
+        return HttpResponse(manifest.json_dumps(), 'text/javascript')
+    
     #===========================================================================
     # Models
     #===========================================================================
@@ -429,7 +402,10 @@ class RemoteSite(RemoteBaseSite):
                                 {'Meta': RemoteOptions(basic_meta)} )
 
         self._registry[model] = remote_proxy
-
+    
+    def app_names(self):
+        return set(map( lambda m: m._meta.app_label, self._registry))
+    
 class RemoteModelMetaclass(type):
     def __new__(cls, name, bases, attrs):
         '''
