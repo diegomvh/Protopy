@@ -10,12 +10,10 @@ publish({
         // List of strings representing installed apps.
         INSTALLED_APPS: [],
 
-        // List of locations of the template source files, in search order.
+        // Location of the template source files.
         TEMPLATE_URL: '',
 
         // List of callables that know how to import templates from various sources.
-        // See the comments in django/core/template/loader.py for interface
-        // documentation.
         TEMPLATE_LOADERS: [
             'doff.template.loaders.url.load_template_source',
             //'doff.template.loaders.remote_app.load_template_source',

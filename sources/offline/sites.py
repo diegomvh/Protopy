@@ -142,24 +142,20 @@ class RemoteSite(RemoteBaseSite):
         self.rpc_dispatcher.register_instance(self)
         self._registry = {}
 
-    
-
     def _get_project_root(self):
         return os.sep.join([get_project_root(), self.OFFLINE_ROOT, self.name])
     project_root = property(_get_project_root, doc = "File system offline location")
 
-    #TODO: ver si es absoluta o relativa o como cuernos lo manejamos
     def _get_url(self):
         names = settings.OFFLINE_BASE.split("/")
         names.append(self.name)
         return "/" + "/".join(names)
     url = property(_get_url, doc = "Absolute URL to the remote site")
-    
+
     def _get_urlregex(self):
         if not self.url.startswith('/'):
             return self.url
         return self.url[1:]
-    
     urlregex = property(_get_urlregex, doc = "For regex in url.py")
     
     def _get_js_url(self):
@@ -197,14 +193,14 @@ class RemoteSite(RemoteBaseSite):
     @expose('^%s/(.*)$' % LIB_PREFIX)
     def system_static_serve(self, request, path):
         from django.views.static import serve
-        return serve(request, path, self.protpy_root, show_indexes = True)
+        return serve(request, path, self.protopy_root, show_indexes = True)
 
 
     @expose('^%s/(.*)$' % JS_PREFIX)
     def project_static_serve(self, request, path):
         from django.views.static import serve
         try:
-            return serve(request, path, self.offline_root, show_indexes = True)
+            return serve(request, path, self.offline_root, show_indexes = False)
         except Http404, e:
             match = re.compile(r'^(?P<app_name>.*)/models.js$').match(path)
             if match:

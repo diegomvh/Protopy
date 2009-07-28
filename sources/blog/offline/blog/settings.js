@@ -18,9 +18,8 @@
 
 'INSTALLED_APPS': [ 'blog.post' ],
 
-'TEMPLATE_URL': '/doffline/blog/templates/',
-
-'TEMPLATE_STRING_IF_INVALID': '{{ No esta <strong>%s</strong> en el contexto }}',
+// Quiza este bueno que sea automatico y los busque en offline_base/templates
+//'TEMPLATE_URL': '/doffline/blog/templates/',
 
 'TEMPLATE_LOADERS': [
             'doff.template.loaders.url.load_template_source',

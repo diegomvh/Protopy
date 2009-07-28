@@ -54,8 +54,8 @@ var Project = type('Project', object, {
     do_net_checking: true,
 
     onLoad: function() {
-        // Creo el objeto html falso
-        this.html = new FakeHtml($$('body')[0].innerHTML);
+        // Creo el objeto html
+        this.html = new FakeHtml($$('html')[0].innerHTML);
         // Inicio del handler para las url
         require('doff.core.urlhandler', 'Handler');
         this.handler = new Handler(this.settings.ROOT_URLCONF, this.html);
@@ -72,7 +72,7 @@ var Project = type('Project', object, {
         // this.network_check();
         // this._start_network_thread();
         // this.go_offline();
-        this.handler.handle('/');
+        // this.handler.handle('/');
     },
 
     onNetwork: function(type) {
@@ -85,14 +85,14 @@ var Project = type('Project', object, {
         this.offline_support = offline_support;
         this.start_url = location.pathname;
 
-        // Registro la ruta absoluta al soporte offline
-        // sys.register_path(this.offline_support, '/' + offline_support);
-        // Registro la ruta absoluta al proyecto
+        // Registro la ruta al proyecto
         sys.register_path(this.package, this.offline_support + '/js');
-        this.path = sys.paths[this.package];
-
+        
         // Url para ver si estoy conectado
         this.availability_url = this.offline_support + '/network_check';
+        
+        this.templates_url = this.offline_support + '/templates/';
+        
         if (sys.gears.installed && sys.gears.factory.hasPermission)
             this._create_stores();
     },
@@ -115,14 +115,9 @@ var Project = type('Project', object, {
     },
 
     _create_stores: function() {
-    	var localserver = require('gears.localserver');
-        this.managed_stores = [];
-        var s = new localserver.ManagedResourceStore(this.package + '_system');
-        s.manifest_url = sys.module_url(this.offline_support, '/manifests/system.json');
-        this.managed_stores.push(s);
-        s = new localserver.ManagedResourceStore(this.package + '_project');
-        s.manifest_url = sys.module_url(this.offline_support, '/manifests/project.json?refered=' + this.start_url);
-        this.managed_stores.push(s);
+        var localserver = require('gears.localserver');
+        this.managed_store = new localserver.ManagedResourceStore(this.package + '_manifest');
+        this.managed_store.manifest_url = sys.module_url(this.offline_support, '/manifest.json?refered=' + this.start_url);
     },
 
     bootstrap: function(){
@@ -189,7 +184,7 @@ var Project = type('Project', object, {
 
         for each (var store in this.managed_stores)
             store.check_for_update();
-    
+
         require('doff.db.utils','syncdb');
         syncdb();
     },
@@ -203,47 +198,45 @@ var Project = type('Project', object, {
     },
 
     /***************************************************************************
-	 * Network Check
-	 */
+     * Network Check
+     */
     network_check: function network_check(){
-	var self = this;
-	var get = new ajax.Request(this._get_availability_url(), {
-	    method: 'GET',
+        var self = this;
+        var get = new ajax.Request(this._get_availability_url(), {
+            method: 'GET',
             onComplete: function(transport) {
-	       if (200 == transport.status) {
-	           if(!self.is_online) {
-		      self.is_online = true;
-		      self.onNetwork("online");
+                if (200 == transport.status) {
+                    if(!self.is_online) {
+                        self.is_online = true;
+                        self.onNetwork("online");
                    }
-	       } else if(self.is_online) {
-		    self.is_online = false;
-		    self.onNetwork("offline");
-	       }
-	    }
-	});
+                } else if(self.is_online) {
+                    self.is_online = false;
+                    self.onNetwork("offline");
+                }
+            }
+        });
     },
 
     _start_network_thread: function(){
-	if(!this.do_net_checking){
-	    return;
-	}
-	this.thread = window.setInterval(getattr(this, 'network_check'), this.NET_CHECK * 1000);
+        if(!this.do_net_checking)
+            return;
+        this.thread = window.setInterval(getattr(this, 'network_check'), this.NET_CHECK * 1000);
     },
-
     _stop_network_thread: function(){
-	if (this.thread != null) {
-	    window.clearInterval(this.thread);
-	    this.thread = null;
-	}
+        if (this.thread != null) {
+            window.clearInterval(this.thread);
+            this.thread = null;
+        }
     },
 
     _get_availability_url: function(){
-    	var url = this.availability_url;
-    	// bust the browser's cache to make sure we are really talking to the
-		// server
-    	url += (url.indexOf("?") == -1)? "?" : "&";
-    	url += "browserbust=" + new Date().getTime();
-    	return url;
+        var url = this.availability_url;
+        // bust the browser's cache to make sure we are really talking to the
+        // server
+        url += (url.indexOf("?") == -1)? "?" : "&";
+        url += "browserbust=" + new Date().getTime();
+        return url;
     }
 });
 
@@ -254,9 +247,9 @@ var project = null;
 
 function get_project(package, offline_support){
     if (!package && !project) 
-	throw new Exception('No project');
+        throw new Exception('No project');
     if (!project) 
-	project = new Project(package, offline_support);
+        project = new Project(package, offline_support);
     return project;
 }
 
@@ -265,7 +258,7 @@ function get_settings() {
 }
 
 publish({
-	get_project: get_project,
-	new_project: get_project,
-	get_settings: get_settings
+    get_project: get_project,
+    new_project: get_project,
+    get_settings: get_settings
 });
