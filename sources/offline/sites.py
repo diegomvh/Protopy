@@ -139,23 +139,23 @@ class RemoteSite(RemoteBaseSite):
 
     protpy_root = property(lambda inst: inst._protopy_root)
 
-    def _get_offline_root(self):
-        return "/".join(['offline', self.name])
-    offline_root = property(_get_offline_root)
+    def _get_project_root(self):
+        return os.sep.join(['offline', self.name])
+    project_root = property(_get_project_root, doc = "File system offline location")
 
     #TODO: ver si es absoluta o relativa o como cuernos lo manejamos
-    def _get_offline_base(self):
+    def _get_url(self):
         names = settings.OFFLINE_BASE.split("/")
         names.append(self.name)
         return "/" + "/".join(names)
-    offline_base = property(_get_offline_base)
+    url = property(_get_url, doc = "Absolute URL to the remote site")
     
-    def _get_offline_urlregex(self):
+    def _get_urlregex(self):
         if not self.offline_base.startswith('/'):
             return self.offline_base
         return self.offline_base[1:]
     
-    offline_urlregex = property(_get_offline_urlregex)
+    urlregex = property(_get_urlregex, doc = "For regex in url.py")
     
     @expose(r'^$')
     def index(self, request):
@@ -170,7 +170,7 @@ class RemoteSite(RemoteBaseSite):
             return HttpResponseNotFound(u'404: template not found: \"%s\"' % path)
         return HttpResponse(template_source)
 
-    @expose(r'^template_list/$')
+    @expose(r'^template_list/?$')
     def template_list(self, request):
         '''
         Debug

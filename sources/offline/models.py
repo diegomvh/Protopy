@@ -6,7 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.conf import settings
 import os
-from offline.util import abswalk_with_simlinks
+from offline.util import abswalk_with_simlinks, get_site
 
 MAX_APP_NAME_LENGTH = 160
 
@@ -168,6 +168,10 @@ class GearsManifest(models.Model):
     content = models.TextField(editable = False, null = True, blank = True)
     remotesite_name = models.TextField(max_length = 150, editable = False)
     
+    def _get_site(self):
+        return get_site(self.remotesite_name)
+    site = property(_get_site)
+    
     def uri_base(): #@NoSelf
         def fget(self):
             return settings.OFFLINE_ROOT
@@ -208,19 +212,22 @@ class GearsManifestEntry(models.Model):
     '''
     # Thse files should be serialized
     manifest = models.ForeignKey(GearsManifest)
-    url = models.URLField()
+    name = models.URLField()
     redirect = models.URLField(default = '')
     src = models.URLField(default = '')
     ignoreQuery = models.BooleanField(default = False)
-    file = models.FilePathField()
+    #file = models.FilePathField()
     
     # These fields should not be serialized
     file_mtime = models.DateTimeField()
     file_size = models.IntegerField()
-    real_file = models.BooleanField(default = False)
+    #real_file = models.BooleanField(default = False)
     
     #, src = None, redirect = None, ignoreQuery = None):
-        
+    def _get_url(self):
+        if self.name:
+            return "/".join( [self.manifest.site.url, self.name] )
+    url = property()
 
                 
         

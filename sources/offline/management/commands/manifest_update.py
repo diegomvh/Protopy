@@ -10,6 +10,7 @@ from offline.sites import random_string
 from offline.util import get_site, get_site_root, excluding_abswalk_with_simlinks ,\
     full_template_list
 from django_extensions.management.utils import get_project_root
+from django.template.loader import find_template_source
 import os
 import sys
 import time
@@ -70,14 +71,22 @@ class Command(LabelCommand):
         file_list = []
         site_root = get_site_root(remotesite_name)
         project_root = get_project_root()
-        for f in excluding_abswalk_with_simlinks(site_root):
-            pth = f[ f.index(site_root) + len(site_root) + 1: ]
-            pth = pth.split(os.sep)
-            pth = '/'.join( splitted_offline_base + pth)
-            mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(f)))
-            rel_f = os.path.relpath(f, project_root)
-            #TODO: Remove base path
-            file_list.append({'url': pth, 'file': rel_f, 'file_mtime': mtime, 'file_size': os.path.getsize(f), 'real_file': True})
+        
+        
+        for t in full_template_list():
+            _template_source, template_origin = find_template_source(t)
+            fname = template_origin.name
+            mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(fname)))
+            fsize = os.path.getsize(fname)
+            file_list.append('name')
+#        for f in excluding_abswalk_with_simlinks(site_root):
+#            pth = f[ f.index(site_root) + len(site_root) + 1: ]
+#            pth = pth.split(os.sep)
+#            pth = '/'.join( splitted_offline_base + pth)
+#            mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(f)))
+#            rel_f = os.path.relpath(f, project_root)
+#            #TODO: Remove base path
+#            file_list.append({'url': pth, 'file_mtime': mtime, 'file_size': os.path.getsize(f)})
             
         if not entries:
             # New instance or empty, just create entries and add them
