@@ -1,3 +1,4 @@
+require('blog.post.mixin');
 var models = require('doff.db.models.base');
 
 var SyncLog = type('SyncLog', models.Model, {
@@ -7,7 +8,7 @@ var SyncLog = type('SyncLog', models.Model, {
     sync_id: new models.CharField({'max_length': 512})
 });
 
-var Tag = type('Tag', models.Model, {
+var Tag = type('Tag', models.Model, extend(mixin.Tag, {
     slug: new models.SlugField('Slug', {'help_text':'Automatically built from the title.', 'primary_key':true}),
     title: new models.CharField('Title', {'max_length':30}),
     
@@ -16,10 +17,10 @@ var Tag = type('Tag', models.Model, {
     _active: new models.BooleanField( {"default": true, "blank": true, "editable": false}),
     _status: new models.CharField( {"max_length": 1, "choices": SyncLog.SYNC_STATUS, "editable": false, "default": "c"}),
     server_pk: new models.PositiveIntegerField( {"null": true, "blank": true, "editable": false})
-});
+}));
 
 
-var Post = type('Post', models.Model, {
+var Post = type('Post', models.Model, extend(mixin.Post, {
     slug: new models.SlugField('Slug', {'primary_key':true}),
     title: new models.CharField('Title', {'max_length':30}),
     tags: new models.ManyToManyField(Tag),
@@ -34,7 +35,7 @@ var Post = type('Post', models.Model, {
     Meta: {
         ordering: ['-date']
     }
-});
+}));
 
 publish({
     Tag: Tag,

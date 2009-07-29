@@ -1,4 +1,4 @@
-require('blog.post.mixin', 'Post', 'Tag');
+require('blog.post.models', 'Post', 'Tag');
 require('doff.template.context', 'RequestContext');
 require('doff.template.loader');
 require('doff.core.http', 'HttpResponse', 'HttpResponseRedirect');

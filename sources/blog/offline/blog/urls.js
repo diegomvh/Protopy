@@ -3,7 +3,7 @@ require('blog.views', 'index');
 
 var urlpatterns = patterns('',
     // Example:
-    ['^$', index],
+    ['^blog/$', index],
     ['^blog/', include('blog.post.urls')]
 )
 

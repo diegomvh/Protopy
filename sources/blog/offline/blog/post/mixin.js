@@ -1,19 +1,17 @@
-require('blog.post.models', '*');
-
-extend(Post.prototype, {
+Post = {
     __str__: function() {
         return this.title;
     },
     pepe: function() {
         return 'pepe';
     }
-});
+};
 
-extend(Tag.prototype, {
+Tag = {
     __str__: function() {
         return this.title;
     }
-});
+};
 
 publish({
     Post: Post,

@@ -3,27 +3,23 @@
     /* Copia sobre destiny todos los objetos pasados como argumento.
      * si safe == false los atribuotos de la forma __<foo>__ no se copian al objeto destino
      */
-    function __extend__(safe, destiny) {
-        for (var i = 2, length = arguments.length; i < length; i++) {
-            var object = arguments[i];
-		    var back_iter = object['__iterator__'];
-		    delete object['__iterator__'];
-		    for (var name in object) {
-			if (safe || name.search(/^__.*__$/) == -1) {
-			    var getter = object.__lookupGetter__(name);
-			    var setter = object.__lookupSetter__(name);
-			    if (getter)
-				destiny.__defineGetter__(name, getter);
-			    if (setter)
-				destiny.__defineSetter__(name, setter);
-			    if (getter || setter) continue;
-			    destiny[name] = object[name];
-			}
-		    }
-		    if (back_iter)
-			object['__iterator__'] = back_iter;
-		}
-		return destiny;
+    function __extend__(safe, destiny, source) {
+        var back_iter = source['__iterator__'];
+        delete source['__iterator__'];
+        for (var name in source) {
+            if (!safe && name.search(/^__.*__$/) != -1) continue;
+            var getter = source.__lookupGetter__(name);
+            var setter = source.__lookupSetter__(name);
+            if (getter)
+                destiny.__defineGetter__(name, getter);
+            if (setter)
+                destiny.__defineSetter__(name, setter);
+            if (getter || setter) continue;
+                destiny[name] = source[name];
+        }
+        if (back_iter)
+            source['__iterator__'] = back_iter;
+        return destiny;
     }
 
     /* Copia en this todos los atribuos del objeto pasado como argumento
@@ -35,75 +31,88 @@
     /* Administrador de modulos, encargado de la creacion, almacenamiento y otras tareas referidas a los modulos
      */
     var ModuleManager = {
-	modules: {},
-	modules_dict: {},
-	paths: {},
-	module_functions: {
-	    publish: publish,
-	    require: require,
-	    type: type
-	},
-	base: '/', //Where i'm, set this for another place. Default root 
-	default_path: 'packages',
-	add: function(module) {
-	    var name = module['__name__'];
-	    this.modules[name] = module;
-	},
-	remove: function(module) {
-	    var name = module['__name__'];
-	    delete this.modules[name];
-	},
-	create: function(name, file, source) {
-	    var module = this.modules_dict;
-	    for each (var n in name.split('.')) {
-		module = module[n] || (module[n] = new Object());
-	    }
-	    module['__file__'] = file;
-	    module['__name__'] = name;
-	    if (source)
-		__extend__(true, module, source);
-	    return module;
-	},
-	decorate: function(module) {
-	    return __extend__(false, module, this.module_functions);
-	},
-	clean: function(module) {
-	    for (var f in this.module_functions)
-		delete module[f];
-	    return module;
-	},
-	get: function(name) {
-	    return this.modules[name] || null;
-	},
-	register_path: function(name, path) {
-	    assert(name.lastIndexOf('.') == -1, 'The module name should be whitout dots');
-	    assert(!this.paths[name], 'The module is registered');
-	    var absolute = (path[0] === '/');
-	    path = path.split('/').filter( function (e) { return e; });
-	    if (!bool(path)) { throw new TypeError('where is the path?') }
-	    this.paths[name] = absolute ? '/' + path.join('/') : this.base + path.join('/');
-	},
-	file: function(name) {
-	    if (isinstance(name, String)) {
-		var index = name.lastIndexOf('.');
-		var [ pkg, filename ] = (index != -1)? [ name.slice(0, index), name.slice(index + 1)] : [ '', name];
-		return this.module_url(pkg, filename + '.js');
-	    } else if (isinstance(name, Object) && name['__file__'])
-		return name['__file__'];
-	    else throw new TypeError('Invalid Argument');
-	},
-	module_url: function(name, postfix) {
-	    var url = name.split('.');
-	    if (!isundefined(url[0]) && !isundefined(this.paths[url[0]]))
-		url = this.paths[url[0]].split('/').concat(url.slice(1));
-	    else
-		url = this.default_path.split('/').concat(url);
-	    
-	    if (postfix)
-		url = url.concat(postfix.split('/'));
-	    url = url.filter( function (element) { return element; });
-	    return '/' + url.join('/');
-	}
+        modules: {},
+        modules_dict: {},
+        paths: {},
+        module_functions: {
+            publish: publish,
+            require: require,
+            type: type
+        },
+        base: '/', //Where i'm, set this for another place. Default root 
+        default_path: 'packages',
+        add: function(module) {
+            var name = module['__name__'];
+            this.modules[name] = module;
+        },
+        remove: function(module) {
+            var name = module['__name__'];
+            delete this.modules[name];
+        },
+        create: function(name, file, source) {
+            var module = this.modules_dict;
+            for each (var n in name.split('.')) {
+                module = module[n] || (module[n] = new Object());
+            }
+            module['__file__'] = file;
+            module['__name__'] = name;
+            if (isinstance(source, String)) {
+                module = this.decorate(module);
+                this.add(module);
+                //The base module are ready, publish the event
+                event.publish('onModuleCreated', [module]);
+                try {
+                    with (module) {
+                        eval(source).call(module);
+                    }
+                } catch (e) {
+                    this.remove(module);
+                    throw e;
+                }
+            } else {
+                __extend__(false, module, source);
+            }
+            return module;
+        },
+        decorate: function(module) {
+            return __extend__(false, module, this.module_functions);
+        },
+        clean: function(module) {
+            for (var f in this.module_functions)
+                delete module[f];
+            return module;
+        },
+        get: function(name) {
+            return this.modules[name] || null;
+        },
+        register_path: function(name, path) {
+            assert(name.lastIndexOf('.') == -1, 'The module name should be whitout dots');
+            assert(!this.paths[name], 'The module is registered');
+            var absolute = (path[0] === '/');
+            path = path.split('/').filter( function (e) { return e; });
+            if (!bool(path)) { throw new TypeError('where is the path?') }
+            this.paths[name] = absolute ? '/' + path.join('/') : this.base + path.join('/');
+        },
+        file: function(name) {
+            if (isinstance(name, String)) {
+                var index = name.lastIndexOf('.');
+                var [ pkg, filename ] = (index != -1)? [ name.slice(0, index), name.slice(index + 1)] : [ '', name];
+                return this.module_url(pkg, filename + '.js');
+            } else if (isinstance(name, Object) && name['__file__'])
+                return name['__file__'];
+            else throw new TypeError('Invalid Argument');
+        },
+        module_url: function(name, postfix) {
+            var url = name.split('.');
+            if (!isundefined(url[0]) && !isundefined(this.paths[url[0]]))
+                url = this.paths[url[0]].split('/').concat(url.slice(1));
+            else
+                url = this.default_path.split('/').concat(url);
+            if (postfix)
+                url = url.concat(postfix.split('/'));
+            url = url.filter( function (element) { return element; });
+            return '/' + url.join('/');
+        }
     };
 
     /* Funcion "cargadora" de modulos, carga en this el modulo requerido, 
@@ -113,38 +122,22 @@
         var mod = ModuleManager.get(name);
         if (!mod) {
             //Only firefox and synchronous, sorry
-        	var file = ModuleManager.file(name);
+            var file = ModuleManager.file(name);
             var code = null,
             request = new XMLHttpRequest();
             request.open('GET', file, false); 
             request.send(null);
             if(request.status != 200)
-            	throw new LoadError(file);
+                throw new LoadError(file);
             //Tego el codigo, creo el modulo
             var code = '(function(){ ' + request.responseText + '});';
-            mod = ModuleManager.create(name, file);
-            //TODO: Hacer que los modulos se decoren en funcion de sus necesidades, si tiene un requiere, o si tiene un type mas que nada
-            //if (bool(code.match(/require\('.*'\);/)))
-            mod = ModuleManager.decorate(mod);
-            ModuleManager.add(mod);
-            //The base module are ready, publish the event
-            event.publish('onModuleCreated', [this, mod]);
-            try {
-            	with (mod) {
-            		eval(code).call(mod);
-            	}
-            } catch (e) {
-            	ModuleManager.remove(mod);
-            	throw e;
-            }
-            //Not clean for lazy require support
-            //mod = ModuleManager.clean(mod);
+            mod = ModuleManager.create(name, file, code);
         }
         event.publish('onModuleLoaded', [this, mod]);
         switch (arguments.length) {
             case 1:
                     // Returns module
-		    var names = name.split('.');
+                    var names = name.split('.');
                     var last = names[names.length - 1];
                     this[last] = mod;
                     return mod;
@@ -172,7 +165,7 @@
     /************************** Types and Objects ****************************/
     /* Base te todos los objetos que crea protopy */
     function object() { 
-	throw 'The wormhole stop here. Please, is just javascript not python :)'; 
+        throw 'The wormhole stop here. Please, is just javascript not python :)'; 
     };
 
     //Static
@@ -207,56 +200,55 @@
 
     // Constructor de tipos o clases
     function type(name) {
-	if (isundefined(name))
-	    throw new TypeError('Invalid arguments');
-	var args = Array.prototype.slice.call(arguments).slice(1);
-	if (args.length == 0) {
-	    if (name === null) return Object;
-	    return name.constructor;
-	}
-	if (isinstance(args[0], Array) && args[0].length > 0)
-	    var bases = args.shift();
-	else if (!isinstance(args[0], Array) && isinstance(args[0], Function))
-	    var bases = [args.shift()];
-	else 
-	    throw new TypeError('Invalid arguments, bases?');
-	if (isinstance(args[0], Object) && args.length == 2) {
-	    var classAttrs = args.shift();
-	    var instanceAttrs = args.shift();
-	} else if (args.length == 1) {
-	    var classAttrs = {};
-	    var instanceAttrs = args.shift();
-	} else if (args.length == 0) {
-	    var classAttrs = {};
-	    var instanceAttrs = {};
-	} else new TypeError('Invalid arguments');
+        if (isundefined(name))
+            throw new TypeError('Invalid arguments');
+        var args = Array.prototype.slice.call(arguments).slice(1);
+        if (args.length == 0) {
+            if (name === null) return Object;
+            return name.constructor;
+        }
+        if (isinstance(args[0], Array) && args[0].length > 0)
+            var bases = args.shift();
+        else if (!isinstance(args[0], Array) && isinstance(args[0], Function))
+            var bases = [args.shift()];
+        else 
+            throw new TypeError('Invalid arguments, bases?');
+        if (isinstance(args[0], Object) && args.length == 2) {
+            var classAttrs = args.shift();
+            var instanceAttrs = args.shift();
+        } else if (args.length == 1) {
+            var classAttrs = {};
+            var instanceAttrs = args.shift();
+        } else if (args.length == 0) {
+            var classAttrs = {};
+            var instanceAttrs = {};
+        } else new TypeError('Invalid arguments');
 
-	var new_type = eval('(function ' + name + '() { this.__init__.apply(this, arguments); })');
+        var new_type = eval('(function ' + name + '() { this.__init__.apply(this, arguments); })');
 
-	//Jerarquia
-	new_type.__base__ = bases[0];
-	new_type.__bases__ = bases;
-	new_type.__subclasses__ = [];
-	new_type.__static__ = {};
-	for each (var base in bases.reverse()) {
-	    base.__subclasses__.push(new_type);
-	    __extend__(true, new_type.__static__, base.__static__);
-	    new_type.__new__ = base.__new__;
-	}
+        //Jerarquia
+        new_type.__base__ = bases[0];
+        new_type.__bases__ = bases;
+        new_type.__subclasses__ = [];
+        new_type.__static__ = {};
+        for each (var base in bases.reverse()) {
+            base.__subclasses__.push(new_type);
+            __extend__(true, new_type.__static__, base.__static__);
+            new_type.__new__ = base.__new__;
+        }
+        //Decorando los atributos
+        classAttrs['__name__'] = instanceAttrs['__name__'] = name;
+        classAttrs['__module__'] = instanceAttrs['__module__'] = this['__name__'] || 'window';
 
-	//Decorando los atributos
-	classAttrs['__name__'] = instanceAttrs['__name__'] = name;
-	classAttrs['__module__'] = instanceAttrs['__module__'] = this['__name__'] || 'window';
-
-	//Construyendo el tipo
+        //Construyendo el tipo
         __extend__(true, new_type.__static__, classAttrs);
-	__extend__(true, new_type, new_type.__static__);
+        __extend__(true, new_type, new_type.__static__);
 
-	//Constructor de instancia
-	new_type = new_type.__new__(new_type.__name__, new_type.__bases__, instanceAttrs);
-	return new_type;
+        //Constructor de instancia
+        new_type = new_type.__new__(new_type.__name__, new_type.__bases__, instanceAttrs);
+        return new_type;
     }
-    
+
     // ******************************* MODULES ************************************* //
 
     /******************** sys ***********************/
@@ -1396,14 +1388,14 @@
     var builtin = ModuleManager.create('builtin','built-in', {
         publish: publish,
         require: require,
-	$: function () { 
-	    var result = array(arguments).map(function (element) { return query(isinstance(element, String)? '#' + element : element)[0]; });
-	    return (len(result) == 1)? result[0] : result; 
-	},
-	$$: query,
-	object: object,
-	type: type,
-	extend: function extend() {return __extend__.apply(this, [false].concat(array(arguments)));}
+        $: function () { 
+            var result = array(arguments).map(function (element) { return query(isinstance(element, String)? '#' + element : element)[0]; });
+            return (len(result) == 1)? result[0] : result; 
+        },
+        $$: query,
+        object: object,
+        type: type,
+        extend: function extend(destiny, source) {return __extend__.apply(this, [false, destiny, source]);}
     });
 
     // ******************************* MORE BUILTINS ************************************* //
@@ -1606,7 +1598,7 @@
     id.next = function () { return id.current += 1; };
 
     function getattr(object, name, def) {
-	//TODO: validar argumentos
+        //TODO: validar argumentos
         var attr = null;
         if (!isundefined(object)) {
             attr = object[name];
@@ -1620,22 +1612,22 @@
             }
         }
         if (isundefined(def))
-	   throw new AttributeError(object + ' has no attribute ' + name);
-	else
-	   return def;
+            throw new AttributeError(object + ' has no attribute ' + name);
+        else
+            return def;
     }
     
     function setattr(object, name, value) {
-	object[name] = value;
+        object[name] = value;
     }
 
     function hasattr(object, name) {
-	try {
-	    getattr(object, name);
-	    return true;
-	} catch (e if isinstance(e, AttributeError)) {
-	    return false;
-	}
+        try {
+            getattr(object, name);
+            return true;
+        } catch (e if isinstance(e, AttributeError)) {
+            return false;
+        }
     }
 
     var Dict = type('Dict', object, {
@@ -1683,7 +1675,7 @@
         setdefault: function(key, value){
             var ret = this.get(key);
             if (ret) 
-		return ret;
+                return ret;
             return this.set(key, value);
         },
         get: function(key, otherwise) {
