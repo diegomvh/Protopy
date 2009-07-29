@@ -16,6 +16,11 @@ import sys
 import time
 from pprint import pprint
 
+try:
+    from os.path import relpath as relativepath
+except ImportError, e:
+    from offline.util import relpath as relativepath
+
 #TODO: Update if changed based on file modification date
 class Command(LabelCommand):
     help = \
@@ -83,7 +88,7 @@ class Command(LabelCommand):
         
         print "Adding/updating js..."
         for js in abswalk_with_simlinks(self.site.project_root):
-            relpath = os.path.relpath(js, self.site.project_root)
+            relpath = relativepath(js, self.site.project_root)
             mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(js)))
             fsize = os.path.getsize(js)
             file_list.append({'name': relpath, 'url': '/'.join([self.site.js_url, relpath]), 
@@ -91,16 +96,16 @@ class Command(LabelCommand):
         
         print "Adding/updating models..."
         for app in self.site.app_names():
-            #relpath = os.path.relpath(js, self.site.project_root)
+            #relpath = relativepath(js, self.site.project_root)
             #mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(js)))
             #fsize = os.path.getsize(js)
-            name = '/'.join([self.site.name, app, 'models.js'])
+            name = '/'.join([app, 'models.js'])
             #TODO: Check if the file exists
             file_list.append({'name': name, 'url': '/'.join([ self.site.js_url, name ])})
         
         print "Adding/updating lib..."
         for lib in abswalk_with_simlinks(self.site.protopy_root):
-            relpath = os.path.relpath(lib, self.site.protopy_root)
+            relpath = relativepath(lib, self.site.protopy_root)
             mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(lib)))
             fsize = os.path.getsize(lib)
             file_list.append({'name': relpath, 'url': '/'.join([self.site.lib_url, relpath]), 
@@ -114,7 +119,7 @@ class Command(LabelCommand):
             media_url = settings.MEDIA_URL
         
         for media in abswalk_with_simlinks(media_root):
-            relpath = os.path.relpath(media, media_root)
+            relpath = relativepath(media, media_root)
             mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(media)))
             fsize = os.path.getsize(media)
             file_list.append({'name': relpath, 'url': '/'.join([media_url, relpath]), 

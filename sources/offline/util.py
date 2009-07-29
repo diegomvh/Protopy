@@ -125,9 +125,8 @@ def abswalk_with_simlinks(path):
     '''
     Python <2.6 version walk(followlinks = True)
     '''
-     
+
     for path, subdirs, files in os.walk(path):
-        
         files = map( lambda n: os.path.join( path, n), files )
         for f in files:
                 yield f
@@ -159,19 +158,33 @@ def excluding_abswalk_with_simlinks(path, exclude = None):
                 continue
         yield p
 
+def relpath(path, start=os.curdir):
+    """Return a relative version of a path"""
+    
+    if not path:
+        raise ValueError("no path specified")
+
+    start_list = os.path.abspath(start).split(os.sep)
+    path_list = os.path.abspath(path).split(os.sep)
+    
+    # Work out how much of the filepath is shared by start and path.
+    i = len(os.path.commonprefix([start_list, path_list]))
+
+    rel_list = [os.path.pardir] * (len(start_list)-i) + path_list[i:]
+    if not rel_list:
+        return os.curdir
+    return os.path.join(*rel_list)
 
 INVALID_TEMPLATE_SUFFIXES = re.compile(r'(:?.*\.svn.*)?(?:~|#)$')
 #valid_templates = lambda name: not INVALID_TEMPLATE_SUFFIXES.search( name )
 SCM_FOLDER_PATTERNS = ('.hg', '.git', '.svn', )
-        
+
 def valid_templates(name):
     if INVALID_TEMPLATE_SUFFIXES.search(name):
         return False
     if any(map(lambda n: name.count(n) > 0, SCM_FOLDER_PATTERNS)):
         return False
     return True
-
-
 
 def _retrieve_templates_from_path(path, template_bases = None, strip_first_slash = True):
     '''
@@ -193,12 +206,10 @@ def _retrieve_templates_from_path(path, template_bases = None, strip_first_slash
         template_files += map(lambda f: join(root, f), files)
 
     templates = filter(valid_templates, template_files)
-    
+
     if strip_first_slash:
         templates = map( lambda f: f[0] == '/' and f[1:] or f, templates)
     return templates
-
-
 
 def full_template_list(exclude_apps = None, exclude_callable = None):
     from django.conf import settings
@@ -208,13 +219,13 @@ def full_template_list(exclude_apps = None, exclude_callable = None):
     for path in settings.TEMPLATE_DIRS:
         template_files += _retrieve_templates_from_path(path, template_dirs)
         # Split
-    
+
     # Get per application template list
     if 'django.template.loaders.app_directories.load_template_source' in settings.TEMPLATE_LOADERS:
         from django.template.loaders.app_directories import app_template_dirs
         for path in app_template_dirs:
             template_files += _retrieve_templates_from_path(path, template_dirs)
-            
+
     return template_files
 
 def get_templates_and_files(path, template_bases = None, strip_first_slash = True):
@@ -269,7 +280,6 @@ def get_site_root(site_name):
     if not get_site(site_name):
         return
     return os.path.join(get_offline_root(), site_name)
-
 
 def get_site(name):
     from django.conf import settings
