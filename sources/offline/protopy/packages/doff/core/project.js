@@ -117,7 +117,7 @@ var Project = type('Project', object, {
     _create_stores: function() {
         var localserver = require('gears.localserver');
         this.managed_store = new localserver.ManagedResourceStore(this.package + '_manifest');
-        this.managed_store.manifest_url = sys.module_url(this.offline_support, '/manifest.json?refered=' + this.start_url);
+        this.managed_store.manifest_url = this.offline_support + '/manifest.json?refered=' + this.start_url;
     },
 
     bootstrap: function(){
