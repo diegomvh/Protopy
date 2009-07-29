@@ -9,7 +9,7 @@ from django.db import models
 from offline.sites import random_string
 from offline.util import get_site, get_site_root, excluding_abswalk_with_simlinks ,\
     full_template_list, abswalk_with_simlinks
-from django_extensions.management.utils import get_project_root
+from offline.util import get_project_root
 from django.template.loader import find_template_source
 import os
 import sys
