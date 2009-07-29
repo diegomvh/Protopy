@@ -7,7 +7,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.http import Http404
 from django.core.urlresolvers import Resolver404, RegexURLPattern
 from django.utils.encoding import smart_str
-from offline.models import Manifest, SyncLog, GearsManifest
+from offline.models import SyncLog, GearsManifest
 from django.template import TemplateDoesNotExist
 from django.utils.safestring import SafeString
 from offline.debug import html_output
@@ -16,7 +16,7 @@ from django.db import models
 from django.contrib.admin.sites import AlreadyRegistered
 from django.shortcuts import render_to_response
 from django.db.models.fields import AutoField
-from django_extensions.management.utils import get_project_root
+from offline.util import get_project_root
 import os, re
 from pprint import pformat
 from django.db.models.loading import get_app
@@ -200,7 +200,7 @@ class RemoteSite(RemoteBaseSite):
     def project_static_serve(self, request, path):
         from django.views.static import serve
         try:
-            return serve(request, path, self.offline_root, show_indexes = False)
+            return serve(request, path, self.project_root, show_indexes = False)
         except Http404, e:
             match = re.compile(r'^(?P<app_name>.*)/models.js$').match(path)
             if match:

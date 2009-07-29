@@ -25,7 +25,7 @@ function add_tag(request){
 	    return new HttpResponseRedirect('/');
 	}
     } else {
-	var formtag = new TagForm();
+        var formtag = new TagForm();
     }
     var t = loader.get_template('add_tag.html');
     var response = new HttpResponse();
@@ -50,7 +50,7 @@ function add_post(request) {
 	var formpost = new PostForm({ data: request.POST });
 	if (formpost.is_valid()) {
             formpost.save();
-	    return new HttpResponseRedirect('/');
+        return new HttpResponseRedirect('/');
 	}
     } else {
 	var formpost = new PostForm();

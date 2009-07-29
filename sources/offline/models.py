@@ -5,7 +5,6 @@ from simplejson import loads, dumps
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.conf import settings
-from unohelper import _FactoryHelper_
 import os
 from offline.util import abswalk_with_simlinks, get_site, full_template_list
 
