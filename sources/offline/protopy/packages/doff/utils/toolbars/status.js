@@ -86,7 +86,7 @@ var Status = type('Status', [ Panel ], {
     },
 
     install: function(e) {
-        if (!sys.gears.factory.hasPermission && !this.project.get_permission())
+        if (!sys.gears.hasPermission && !this.project.get_permission())
             return;
         if (isundefined(this.project.system))
             this.project._create_stores();

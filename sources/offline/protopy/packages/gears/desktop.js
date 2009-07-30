@@ -1,8 +1,8 @@
 require('sys');
 
-var desktop = google.gears.factory.create('beta.desktop');
+var desktop = sys.gears._factory.create('beta.desktop');
 
-var Icon = type('Icon', [ object ], {
+desktop.Icon = type('Icon', [ object ], {
     _sizes: ['128x128', '48x48', '32x32', '16x16'],
     __init__: function() {
         for each (var s in this._sizes)
@@ -27,7 +27,7 @@ var Icon = type('Icon', [ object ], {
 
 var _themes = ['tux'];
 
-var IconTheme = type('Icon', [ Icon ], {
+desktop.IconTheme = type('Icon', [ desktop.Icon ], {
     __init__: function(name) {
         if (!include(_themes, name))
             throw new ValueError('The theme %s is not installed'.subs(name));
@@ -36,7 +36,7 @@ var IconTheme = type('Icon', [ Icon ], {
     }
 });
 
-var Shortcut = type('Shortcut', [ object ], {
+desktop.Shortcut = type('Shortcut', [ object ], {
     __init__: function(name, url) {
         assert(bool(name), 'The name of shortcut is requere');
         assert(bool(url), 'The url of shortcut is requere');
@@ -52,7 +52,5 @@ var Shortcut = type('Shortcut', [ object ], {
 
 
 publish({
-    Icon: Icon,
-    IconTheme: IconTheme,
-    Shortcut: Shortcut
+    desktop: desktop
 });

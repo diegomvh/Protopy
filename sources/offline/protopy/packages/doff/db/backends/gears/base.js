@@ -1,19 +1,21 @@
 /* 'doff.db.backends.gears.base' */
 
-require('gears.database');
+require('sys');
 require('doff.db.backends.util');
 require('doff.db.backends.base', 'BaseDatabaseFeatures', 'BaseDatabaseOperations', 'BaseDatabaseWrapper', 'BaseDatabaseValidation');
 require('doff.db.backends.gears.creation', 'DatabaseCreation');
 require('doff.db.backends.gears.introspection', 'DatabaseIntrospection');
 var logging = require('logging.base');
-
 var logger = logging.get_logger(__name__);
+
+var database = sys.gears.create('beta.database');
+
 var DatabaseError = database.DatabaseError;
 var IntegrityError = database.IntegrityError;
 
-var DatabaseOperations = type('DatabaseOperations', BaseDatabaseOperations, {
+var DatabaseOperations = type('DatabaseOperations', [ BaseDatabaseOperations ], {
     //TODO: le faltan cosas
-    'autoinc_sql': function autoinc_sql(table, column){
+    autoinc_sql: function(table, column){
         return null;
     },
 
@@ -50,20 +52,20 @@ var DatabaseFeatures = type('DatabaseFeatures', BaseDatabaseFeatures, {
 var DatabaseWrapper = type('DatabaseWrapper', BaseDatabaseWrapper, {
 
     operators: {
-        'exact': '= %s',
-        'iexact': "LIKE %s ESCAPE '\\'",
-        'contains': "LIKE %s ESCAPE '\\'",
-        'icontains': "LIKE %s ESCAPE '\\'",
-        'regex': 'REGEXP %s',
-        'iregex': "REGEXP '(?i)' || %s",
-        'gt': '> %s',
-        'gte': '>= %s',
-        'lt': '< %s',
-        'lte': '<= %s',
-        'startswith': "LIKE %s ESCAPE '\\'",
-        'endswith': "LIKE %s ESCAPE '\\'",
-        'istartswith': "LIKE %s ESCAPE '\\'",
-        'iendswith': "LIKE %s ESCAPE '\\'"
+        exact: '= %s',
+        iexact: "LIKE %s ESCAPE '\\'",
+        contains: "LIKE %s ESCAPE '\\'",
+        icontains: "LIKE %s ESCAPE '\\'",
+        regex: 'REGEXP %s',
+        iregex: "REGEXP '(?i)' || %s",
+        gt: '> %s',
+        gte: '>= %s',
+        lt: '< %s',
+        lte: '<= %s',
+        startswith: "LIKE %s ESCAPE '\\'",
+        endswith: "LIKE %s ESCAPE '\\'",
+        istartswith: "LIKE %s ESCAPE '\\'",
+        iendswith: "LIKE %s ESCAPE '\\'"
     },
 
     '__init__': function __init__(settings){
@@ -97,8 +99,8 @@ var DatabaseWrapper = type('DatabaseWrapper', BaseDatabaseWrapper, {
     }
 });
 
-var GearsCursorWrapper = type('GearsCursorWrapper', database.Cursor, {
-    'execute': function execute(query, params) {
+var GearsCursorWrapper = type('GearsCursorWrapper', [ database.Cursor ], {
+    execute: function(query, params) {
         params = params || [];
         try {
             query = this.convert_query(query, params.length);
@@ -111,7 +113,7 @@ var GearsCursorWrapper = type('GearsCursorWrapper', database.Cursor, {
         }
     },
 
-    'executemany': function executemany(query, param_list) {
+    executemany: function(query, param_list) {
         try {
             var query = this.convert_query(query, param_list[0].length);
             for each (var params in param_list)
@@ -120,7 +122,7 @@ var GearsCursorWrapper = type('GearsCursorWrapper', database.Cursor, {
         return null;
     },
 
-    'convert_query': function convert_query(query, num_params){
+    convert_query: function(query, num_params){
         return query.subs(['?' for (x in range(num_params))]);
     }
 });

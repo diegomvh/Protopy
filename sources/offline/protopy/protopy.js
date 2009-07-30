@@ -201,7 +201,7 @@
     // Constructor de tipos o clases
     function type(name) {
         if (isundefined(name))
-            throw new TypeError('Invalid arguments');
+            throw new TypeError('Invalid arguments: %s'.subs(arguments));
         var args = Array.prototype.slice.call(arguments).slice(1);
         if (args.length == 0) {
             if (name === null) return Object;
@@ -211,8 +211,8 @@
             var bases = args.shift();
         else if (!isinstance(args[0], Array) && isinstance(args[0], Function))
             var bases = [args.shift()];
-        else 
-            throw new TypeError('Invalid arguments, bases?');
+        else
+            throw new TypeError('Invalid arguments: %s'.subs(arguments));
         if (isinstance(args[0], Object) && args.length == 2) {
             var classAttrs = args.shift();
             var instanceAttrs = args.shift();
@@ -222,7 +222,7 @@
         } else if (args.length == 0) {
             var classAttrs = {};
             var instanceAttrs = {};
-        } else new TypeError('Invalid arguments');
+        } else new TypeError('Invalid arguments: %s'.subs(arguments));
 
         var new_type = eval('(function ' + name + '() { this.__init__.apply(this, arguments); })');
 
@@ -282,7 +282,30 @@
 
         window.google = {}, window.google.gears = {'installed': !!factory};
 	if(factory) {
-            window.google.gears.factory = factory;  
+            window.google.gears._factory = factory;
+
+            window.google.gears.getBuildInfo = function() {
+                return window.google.gears._factory.getBuildInfo();
+            }
+            window.google.gears.getPermission = function(siteName, imageUrl, extraMessage) { 
+                return window.google.gears._factory.getPermission(siteName, imageUrl, extraMessage);
+            }
+
+            window.google.gears.__defineGetter__('hasPermission', function() {return window.google.gears._factory.hasPermission;});
+            window.google.gears.__defineGetter__('version', function() {return window.google.gears._factory.version;});
+
+            window.google.gears.create = function (className, classVersion) {
+                //Has module?
+                var gears_object = null;
+                var module_name = className.slice(className.lastIndexOf('.') + 1);
+
+                try {
+                    gears_object = require('gears.' + module_name, module_name);
+                } catch (e if isinstance(e, LoadError)) {
+                    gears_object = window.google.gears._factory.create(className, classVersion);
+                }
+                return gears_object;
+            }
         } else {
             window.google.gears.install = function (message) {
                  message = message || 'To enable fast client-side search of this website please install Gears';

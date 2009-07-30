@@ -1,24 +1,29 @@
 require('sys');
 
-var Connection = type('Connection', object, {
-    '__init__': function __init__(options) {
+var database = sys.gears._factory.create('beta.database');
+
+database.DatabaseError = type('DatabaseError', [ object ]);
+database.IntegrityError = type('IntegrityError', [ object ]);
+
+database.Connection = type('Connection', [ object ], {
+    __init__: function(options) {
         this.database = options['database'];
         this.detect_types = options['detect_types'];
-        this.factory = options['factory'] || Cursor;
+        this.factory = options['factory'] || database.Cursor;
 	try {
-            this.connection = google.gears.factory.create('beta.database');
+            this.connection = database;
             this.connection.open(this.database);
         } catch(ex) {
             throw new Exception("couldn`t open database: " + name + " exception: " + ex.message || ex.description || String(ex));
         }
     },
 
-    'cursor': function cursor() {
+    cursor: function() {
         var cur = new this.factory(this.connection);
         return cur;
     },
 
-    'execute': function execute(query, params) {
+    execute: function(query, params) {
         try {
             return this.connection.execute(query, params);
         }
@@ -28,8 +33,8 @@ var Connection = type('Connection', object, {
     },
 });
 
-var Cursor = type('Cursor', object, {
-    '__init__': function __init__(connection){
+database.Cursor = type('Cursor', [ object ], {
+    __init__: function(connection){
             this.connection = connection;
             this.lastResulSet = null;
     },
@@ -42,7 +47,7 @@ var Cursor = type('Cursor', object, {
         return this.connection.rowsAffected;
     },
 
-    'close': function close(){
+    close: function(){
         try {
             this.connection.close();
         }
@@ -51,7 +56,7 @@ var Cursor = type('Cursor', object, {
         }
     },
 
-    'remove': function remove(){
+    remove: function(){
         try {
             this.connection.remove();
         }
@@ -60,7 +65,7 @@ var Cursor = type('Cursor', object, {
         }
     },
 
-    'execute': function execute(query, params){
+    execute: function(query, params){
         params = params || [];
         try {
             this.lastResulSet = this.connection.execute(query, params);
@@ -70,7 +75,7 @@ var Cursor = type('Cursor', object, {
         }
     },
 
-    'executemany': function executemany(query, param_list) {
+    executemany: function(query, param_list) {
         try {
             for each (var params in param_list)
                 this.connection.execute(query, params);
@@ -78,7 +83,7 @@ var Cursor = type('Cursor', object, {
         return null;
     },
 
-    'fetchone': function fetchone(){
+    fetchone: function(){
         try {
             return this.next();
         } catch (stop) { 
@@ -86,7 +91,7 @@ var Cursor = type('Cursor', object, {
         };
     },
 
-    'fetchmany': function fetchmany(chunk_size) {
+    fetchmany: function(chunk_size) {
         if (!chunk_size) return this.fetchone();
         if (!this.lastResulSet.isValidRow() || this.lastResulSet.fieldCount() == 0) return [];
         var result = [];
@@ -99,7 +104,7 @@ var Cursor = type('Cursor', object, {
         };
     },
 
-    'fetchall': function fetchall(){
+    fetchall: function(){
         if (!this.lastResulSet.isValidRow() || this.lastResulSet.fieldCount() == 0) return [];
         var result = [];
         var result = [];
@@ -111,7 +116,7 @@ var Cursor = type('Cursor', object, {
         };
     },
 
-    'next': function next() {
+    next: function() {
         if (this.lastResulSet == null)
             throw StopIteration;
         if (!this.lastResulSet.isValidRow()) throw StopIteration;
@@ -127,9 +132,8 @@ var Cursor = type('Cursor', object, {
     }
 });
 
-publish({    
-    connect: function(options) { return new Connection(options); },
-    Cursor: Cursor,
-    DatabaseError: type('DatabaseError', [ object ]),
-    IntegrityError: type('IntegrityError', [ object ])
+database.connect = function(options) { return new database.Connection(options); },
+
+publish({
+    database: database
 });

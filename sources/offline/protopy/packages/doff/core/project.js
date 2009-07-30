@@ -93,7 +93,7 @@ var Project = type('Project', object, {
         
         this.templates_url = this.offline_support + '/templates/';
         
-        if (sys.gears.installed && sys.gears.factory.hasPermission)
+        if (sys.gears.installed && sys.gears.hasPermission)
             this._create_stores();
     },
 
@@ -115,9 +115,9 @@ var Project = type('Project', object, {
     },
 
     _create_stores: function() {
-        var localserver = require('gears.localserver');
-        this.managed_store = new localserver.ManagedResourceStore(this.package + '_manifest');
-        this.managed_store.manifest_url = this.offline_support + '/manifest.json?refered=' + this.start_url;
+        var localserver = sys.gears.create('beta.localserver');
+        this.managed_store = localserver.createManagedStore(this.package + '_manifest');
+        this.managed_store.manifestUrl = this.offline_support + '/manifest.json?refered=' + this.start_url;
     },
 
     bootstrap: function(){
@@ -157,7 +157,7 @@ var Project = type('Project', object, {
     },
 
     get_permission: function() {
-        if (sys.gears.factory.hasPermission)
+        if (sys.gears.hasPermission)
             return true;
         var site_name = this.settings.PROJECT_NAME;
         var icon = this.settings.PROJECT_IMAGE;
@@ -165,14 +165,14 @@ var Project = type('Project', object, {
             + 'This site would like to use Google Gears to enable fast, '
             + 'as-you-type searching of its documents.';
 
-        return sys.gears.factory.getPermission(site_name, icon, msg);
+        return sys.gears.getPermission(site_name, icon, msg);
     },
 
     get is_installed() {
         // TODO: Un cache
         try {
-            var localserver = require('gears.localserver');
-            return localserver.can_serve_locally('/');
+            var localserver = sys.gears.create('beta.localserver');
+            return localserver.canServeLocally('/');
         } catch (e) { return false; }
     },
 
