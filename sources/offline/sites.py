@@ -340,8 +340,12 @@ class RemoteSite(RemoteBaseSite):
                 manifest.add_fake_entry(url = refered)
         except KeyError:
             pass
-
-        return HttpResponse(manifest.json_dumps(), 'text/javascript')
+        js_output = manifest.json_dumps()
+        from ipdb import set_trace; set_trace()
+        if request.GET.get('human'):
+            print "Human"
+            js_output = js_output.replace(' ', '\n')
+        return HttpResponse(js_output, 'text/javascript')
     
     #===========================================================================
     # Models
