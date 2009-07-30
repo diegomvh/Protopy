@@ -22,8 +22,10 @@ def add_tag(request):
         formtag = TagForm()
     return render_to_response('add_tag.html', {'formtag': formtag}, context_instance=RequestContext(request))
 
-def remove_tag(request):
-    pass
+def remove_tag(request, slug):
+    tag = Tag.objects.get(slug = slug)
+    tag.delete()
+    return HttpResponseRedirect('/')
 
 def add_post(request):
     if request.method == 'POST':
@@ -35,5 +37,7 @@ def add_post(request):
         formpost = PostForm()
     return render_to_response('add_post.html', {'formpost': formpost}, context_instance=RequestContext(request))
 
-def remove_post(request):
-    pass
+def remove_post(request, slug):
+    post = Post.objects.get(slug = slug)
+    post.delete()
+    return HttpResponseRedirect('/')

@@ -7,7 +7,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.http import Http404
 from django.core.urlresolvers import Resolver404, RegexURLPattern
 from django.utils.encoding import smart_str
-from offline.models import SyncLog, GearsManifest
+from offline.models import SyncLog, GearsManifest, SyncData
 from django.template import TemplateDoesNotExist
 from django.utils.safestring import SafeString
 from offline.debug import html_output
@@ -29,6 +29,7 @@ from offline.export_models import export_remotes
 from offline.util import full_template_list, abswalk_with_simlinks
 from django.db.models import signals
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 
 __all__ = ('RemoteSite',
            'expose',
@@ -404,11 +405,19 @@ class RemoteSite(RemoteBaseSite):
         signals.post_save.connect(self.model_saved, model)
         signals.post_delete.connect(self.model_deleted, model)
         
-    def model_saved(self, sender, instance, created):
-        pass
+    def model_saved(self, **kwargs):
+        if kwargs['created']:
+            sd = SyncData(content_object = kwargs['instance'], active = True)
+            print sd.__dict__
+        else:
+            sd = SyncData.objects.get(content_object = kwargs['instance'])
+        sd.save()
     
-    def model_deleted(self ,sender, instance):
-        pass
+    def model_deleted(self, **kwargs):
+        model_type = ContentType.objects.get_for_model(kwargs['sender'])
+        sd = SyncData.objects.get(content_type__pk = model_type.id, object_id=kwargs['instance'].pk)
+        sd.active = False
+        sd.save()
         
     def app_names(self):
         return set(map( lambda m: m._meta.app_label, self._registry))

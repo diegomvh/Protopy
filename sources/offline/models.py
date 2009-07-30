@@ -90,25 +90,23 @@ class SyncData(models.Model):
     Saves some data taken from 
     http://trimpath.googlecode.com/svn/trunk/junction_docs/files/junction_doc_sync-txt.html
     '''
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.PositiveIntegerField()
+    content_type = models.ForeignKey(ContentType, blank=True, null=True)
+    object_id = models.TextField(blank=True, null=True)
     content_object = generic.GenericForeignKey('content_type', 'object_id')
     
     # Indica si el registro fue borrado en algun cliente
     active = models.BooleanField()
-    #synced_at = models.DateTimeField()
-    # Logic clock updated on save and delete.
-    version = models.PositiveIntegerField(default = 0)
-     
-    def save(self, *largs, **kwargs):
-        self.version += 1
-        super(SyncData, self).save(*largs, **kwargs)
+    update_at = models.DateTimeField()
+
+    def save(self):
+        from datetime import datetime
+        self.update_at = datetime.now()
+        super(SyncData, self).save()
         
-    
 class SyncLog(models.Model):
     '''
     This is a client side only model
     '''
     synced_at = models.DateTimeField()
     sync_id = models.CharField(max_length = 512)
-        
+    
