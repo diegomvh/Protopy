@@ -24,6 +24,9 @@ class TagRemote(RemoteModelProxy):
 #        model = Post
 
 
-site = RemoteSite('blog')
+class BlogRemoteSite(RemoteSite):
+    exclude_patterns = (r'.*~$', )
+#site = RemoteSite('blog')
+site = BlogRemoteSite('blog')
 site.register(Post)
 site.register(Tag, TagRemote)

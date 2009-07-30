@@ -27,7 +27,7 @@ from datetime import datetime
 from django.db.models.loading import get_app, get_models
 from offline.export_models import export_remotes
 from offline.util import full_template_list, abswalk_with_simlinks
-
+from django.db.models import signals
 from django.conf import settings
 
 __all__ = ('RemoteSite',
@@ -103,10 +103,7 @@ class RemoteBaseSite(object):
                     return callback(self, request, *callback_args, **callback_kwargs)
 
         #TODO: Imprimir un mensaje con el listado de URLs en el 404
-#        if settings.DEBUG:
-#            # Build a nice message when an url isn't found
-#            text = '\n'.join([str(x.regex) for x in self._urls])
-#            text = SafeString(text)
+
         raise Http404(u"No url for «%s»" % (url, ))
 
 REMOTE_SITES = {}
@@ -119,6 +116,7 @@ class RemoteSite(RemoteBaseSite):
     JS_PREFIX = 'js'
     LIB_PREFIX = 'lib'
     OFFLINE_ROOT = 'offline'
+    
     
     def __init__(self, name, protopy_root = None):
 
@@ -141,7 +139,8 @@ class RemoteSite(RemoteBaseSite):
         self.rpc_dispatcher.register_introspection_functions() #Un poco de azucar
         self.rpc_dispatcher.register_instance(self)
         self._registry = {}
-
+        
+    
     def _get_project_root(self):
         return os.sep.join([get_project_root(), self.OFFLINE_ROOT, self.name])
     project_root = property(_get_project_root, doc = "File system offline location")
@@ -341,10 +340,9 @@ class RemoteSite(RemoteBaseSite):
         except KeyError:
             pass
         js_output = manifest.json_dumps()
-        from ipdb import set_trace; set_trace()
-        if request.GET.get('human'):
-            print "Human"
-            js_output = js_output.replace(' ', '\n')
+        #from ipdb import set_trace; set_trace()
+        if request.GET.has_key('human'):
+            js_output = js_output.replace(', ', ',\n')
         return HttpResponse(js_output, 'text/javascript')
     
     #===========================================================================
@@ -402,7 +400,16 @@ class RemoteSite(RemoteBaseSite):
                                 {'Meta': RemoteOptions(basic_meta)} )
 
         self._registry[model] = remote_proxy
+        
+        signals.post_save.connect(self.model_saved, model)
+        signals.post_delete.connect(self.model_deleted, model)
+        
+    def model_saved(self, sender, instance, created):
+        pass
     
+    def model_deleted(self ,sender, instance):
+        pass
+        
     def app_names(self):
         return set(map( lambda m: m._meta.app_label, self._registry))
     

@@ -96,7 +96,14 @@ class SyncData(models.Model):
     
     # Indica si el registro fue borrado en algun cliente
     active = models.BooleanField()
-    synced_at = models.DateTimeField()
+    #synced_at = models.DateTimeField()
+    # Logic clock updated on save and delete.
+    version = models.PositiveIntegerField(default = 0)
+     
+    def save(self, *largs, **kwargs):
+        self.version += 1
+        super(SyncData, self).save(*largs, **kwargs)
+        
     
 class SyncLog(models.Model):
     '''
