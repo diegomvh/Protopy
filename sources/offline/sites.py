@@ -18,6 +18,7 @@ from django.shortcuts import render_to_response
 from django.db.models.fields import AutoField
 from offline.util import get_project_root
 import os, re
+import random, string
 from pprint import pformat
 from django.db.models.loading import get_app
 import copy
@@ -55,6 +56,7 @@ class RemoteSiteBase(type):
         '''
         Generate the class attribute with the urls.
         '''
+        attrs = cls.config_params(attrs)
         new_class = super(RemoteSiteBase, cls).__new__(cls, name, bases, attrs)
         urls = []
         jsonrpc = []
@@ -71,11 +73,9 @@ class RemoteSiteBase(type):
         if jsonrpc:
             new_class._jsonrpc = jsonrpc
         return new_class
+        
 
-import random, string
 random_string = lambda length: ''.join( [ random.choice(string.letters) for _ in range(length) ] )
-
-
 
 class RemoteBaseSite(object):
     '''
@@ -117,6 +117,9 @@ class RemoteSite(RemoteBaseSite):
     LIB_PREFIX = 'lib'
     OFFLINE_ROOT = 'offline'
     
+    TEMPLATAE_RE_EXCLUDE = map(re.compile, (r'\.svn', r'\.hg', r'.*~'))
+    #TODO: (nahuel) es necesario?
+    TEMPLATE_CALLBACK_EXCLUDE = None
     
     def __init__(self, name, protopy_root = None):
 
@@ -139,6 +142,7 @@ class RemoteSite(RemoteBaseSite):
         self.rpc_dispatcher.register_introspection_functions() #Un poco de azucar
         self.rpc_dispatcher.register_instance(self)
         self._registry = {}
+        
         
     
     def _get_project_root(self):
