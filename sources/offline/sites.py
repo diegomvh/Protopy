@@ -56,7 +56,6 @@ class RemoteSiteBase(type):
         '''
         Generate the class attribute with the urls.
         '''
-        attrs = cls.config_params(attrs)
         new_class = super(RemoteSiteBase, cls).__new__(cls, name, bases, attrs)
         urls = []
         jsonrpc = []
