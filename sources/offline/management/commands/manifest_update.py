@@ -37,6 +37,12 @@ class Command(LabelCommand):
                     help = "Version")                                      
         )
     
+    def invalid_file(self, path):
+        for regex in self.site.TEMPLATAE_RE_EXCLUDE:
+            if regex.search(path):
+                return True
+        
+    
     def handle_label(self, remotesite_name, **options):
         from django.conf import settings
         self.site = get_site(remotesite_name)
@@ -105,6 +111,9 @@ class Command(LabelCommand):
         
         print "Adding/updating lib..."
         for lib in abswalk_with_simlinks(self.site.protopy_root):
+            if self.invalid_file(lib):
+                print "*** Invalid %s" % lib
+                continue
             relpath = relativepath(lib, self.site.protopy_root)
             mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(lib)))
             fsize = os.path.getsize(lib)
