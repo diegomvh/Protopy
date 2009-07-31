@@ -151,8 +151,20 @@ class Command(LabelCommand):
             print "Comparing file sizes and mtime"
             file_mapping = dict([(m.name, m) for m in self.manifest.gearsmanifestentry_set.all()])
             
+            m_templates_qs = self.manifest.gearsmanifestentry_set.filter(url__startswith = self.site.templates_url)
+            f_m_templates = dict([(m.url, m) for m in m_templates_qs.all()])
+            print f_m_templates
+            for template_url in [ f['url'] for f in file_list if f['url'].startswith(self.site.templates_url)]:
+                print template_url 
+            #filter(lambda f['url']: f['url'].startswith(self.site.templates_url), file_list):
+                if template_url not in f_m_templates:
+                    print "deleted"
+                else:
+                    print "OK"
         #print full_template_list()
         #pprint(locals())
+    def template_compare(self, url, templates):
+        pass
     
     def clear_manifest(self):
         print "Clear manifest...",
