@@ -409,11 +409,12 @@ class RemoteSite(RemoteBaseSite):
         signals.post_delete.connect(self.model_deleted, model)
         
     def model_saved(self, **kwargs):
-        if kwargs['created']:
-            sd = SyncData(content_object = kwargs['instance'], active = True)
-            print sd.__dict__
-        else:
-            sd = SyncData.objects.get(content_object = kwargs['instance'])
+        model_type = ContentType.objects.get_for_model(kwargs['sender'])
+        try:
+            sd = SyncData.objects.get(content_type__pk = model_type.id, object_id=kwargs['instance'].pk)
+        except SyncData.DoesNotExist:
+            sd = SyncData(content_object = kwargs['instance'])
+        sd.active = True
         sd.save()
     
     def model_deleted(self, **kwargs):
