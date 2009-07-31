@@ -2238,7 +2238,8 @@
 		this.getUTCDate().format('02') + 'T' +
 		this.getUTCHours().format('02') + ':' +
 		this.getUTCMinutes().format('02') + ':' +
-		this.getUTCSeconds().format('02'); 
+		this.getUTCSeconds().format('02') + '.' +
+                this.getUTCMilliseconds(); 
 	}
     });
 

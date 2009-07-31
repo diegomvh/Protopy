@@ -1,13 +1,17 @@
-from operator import itemgetter as _itemgetter
-from keyword import iskeyword as _iskeyword
-import sys as _sys
-from django.utils import simplejson
-
-from django.core.serializers.json import DjangoJSONEncoder
 import os
 import re
+import datetime
+import sys as _sys
+
+from operator import itemgetter as _itemgetter
+from keyword import iskeyword as _iskeyword
+from django.utils import simplejson
 from glob import glob
 
+try:
+    import decimal
+except ImportError:
+    from django.utils import _decimal as decimal    # Python 2.3 fallback
 
 #===============================================================================
 # Python <2.6 support code
@@ -306,40 +310,57 @@ def get_sites():
             sites.append(site)
     return sites
 
-# TODO: Fix
-class ProtpyJsonEncoder(DjangoJSONEncoder):
+class ProtopyJSONEncoder(simplejson.JSONEncoder):
+    DATE_FORMAT = "%Y-%m-%d"
+    TIME_FORMAT = "%H:%M:%S.%L"
+
     def default(self, o):
-        from offline.models import GearsManifest, GearsManifestEntry
-        
-        if isinstance(o, GearsManifest):
-            entries = o.gearsmanifestentry_set.all()
-            data = []
-            
-            for entry in entries:
-                d = {}
-                for k in ("url", "redirect", "src", "ignoreQuery"):
-                    v = getattr(entry, k)
-                    if v:
-                        d[k] = v
-                data.append(d)
-            
-            return self.default({
-                "betaManifestVersion": o.MANIFEST_VERSION,
-                "version": o.version,
-                "entries": unicode(data)
-                #"entries": self.default(list(o.gearsmanifestentry_set.all())) 
-            })
-        elif isinstance(o, GearsManifestEntry):
-            d = {}
-            for k in ("url", "redirect", "src", "ignoreQuery"):
-                v = getattr(o, k)
-                if v:
-                    d[k] = v
-            return self.default(d)
-        
+        if isinstance(o, datetime.datetime):
+            return o.strftime("%s %s" % (self.DATE_FORMAT, self.TIME_FORMAT))
+        elif isinstance(o, datetime.date):
+            return o.strftime(self.DATE_FORMAT)
+        elif isinstance(o, datetime.time):
+            return o.strftime(self.TIME_FORMAT)
+        elif isinstance(o, decimal.Decimal):
+            return str(o)
         else:
-            print type(o)
-            return super(ProtpyJsonEncoder, self).default(o)
+            return super(ProtopyJSONEncoder, self).default(o)
+json_encode = ProtopyJSONEncoder().encode
+
+# TODO: Fix
+#class ProtpyJsonEncoder(DjangoJSONEncoder):
+    #def default(self, o):
+        #from offline.models import GearsManifest, GearsManifestEntry
+        
+        #if isinstance(o, GearsManifest):
+            #entries = o.gearsmanifestentry_set.all()
+            #data = []
+            
+            #for entry in entries:
+                #d = {}
+                #for k in ("url", "redirect", "src", "ignoreQuery"):
+                    #v = getattr(entry, k)
+                    #if v:
+                        #d[k] = v
+                #data.append(d)
+            
+            #return self.default({
+                #"betaManifestVersion": o.MANIFEST_VERSION,
+                #"version": o.version,
+                #"entries": unicode(data)
+                ##"entries": self.default(list(o.gearsmanifestentry_set.all())) 
+            #})
+        #elif isinstance(o, GearsManifestEntry):
+            #d = {}
+            #for k in ("url", "redirect", "src", "ignoreQuery"):
+                #v = getattr(o, k)
+                #if v:
+                    #d[k] = v
+            #return self.default(d)
+        
+        #else:
+            #print type(o)
+            #return super(ProtpyJsonEncoder, self).default(o)
 
 
 if __name__ == '__main__':
