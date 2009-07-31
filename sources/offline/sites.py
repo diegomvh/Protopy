@@ -117,7 +117,7 @@ class RemoteSite(RemoteBaseSite):
     LIB_PREFIX = 'lib'
     OFFLINE_ROOT = 'offline'
     
-    TEMPLATAE_RE_EXCLUDE = map(re.compile, (r'\.svn', r'\.hg', r'.*~'))
+    TEMPLATE_RE_EXCLUDE = map(re.compile, (r'\.svn', r'\.hg', r'\.*~$'))
     #TODO: (nahuel) es necesario?
     TEMPLATE_CALLBACK_EXCLUDE = None
     

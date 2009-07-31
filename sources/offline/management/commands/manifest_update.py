@@ -21,6 +21,7 @@ try:
 except ImportError, e:
     from offline.util import relpath as relativepath
 
+from django.db.models import exceptions
 #TODO: Update if changed based on file modification date
 class Command(LabelCommand):
     help = \
@@ -38,7 +39,7 @@ class Command(LabelCommand):
         )
     
     def invalid_file(self, path):
-        for regex in self.site.TEMPLATAE_RE_EXCLUDE:
+        for regex in self.site.TEMPLATE_RE_EXCLUDE:
             if regex.search(path):
                 return True
         
@@ -80,11 +81,11 @@ class Command(LabelCommand):
         
         # Application Code
         file_list = []
-        site_root = get_site_root(remotesite_name)
-        project_root = get_project_root()
         
         print "Adding/updating templates..."
         for t in full_template_list():
+            if self.invalid_file(t):
+                continue
             _template_source, template_origin = find_template_source(t)
             fname = template_origin.name
             mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(fname)))
@@ -94,6 +95,8 @@ class Command(LabelCommand):
         
         print "Adding/updating js..."
         for js in abswalk_with_simlinks(self.site.project_root):
+            if self.invalid_file(js):
+                continue
             relpath = relativepath(js, self.site.project_root)
             mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(js)))
             fsize = os.path.getsize(js)
@@ -109,10 +112,10 @@ class Command(LabelCommand):
             #TODO: Check if the file exists
             file_list.append({'name': name, 'url': '/'.join([ self.site.js_url, name ])})
         
+        
         print "Adding/updating lib..."
         for lib in abswalk_with_simlinks(self.site.protopy_root):
             if self.invalid_file(lib):
-                print "*** Invalid %s" % lib
                 continue
             relpath = relativepath(lib, self.site.protopy_root)
             mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(lib)))
@@ -128,6 +131,8 @@ class Command(LabelCommand):
             media_url = settings.MEDIA_URL
         
         for media in abswalk_with_simlinks(media_root):
+            if self.invalid_file(js):
+                continue
             relpath = relativepath(media, media_root)
             mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(media)))
             fsize = os.path.getsize(media)
@@ -146,7 +151,7 @@ class Command(LabelCommand):
             print "Comparing file sizes and mtime"
             file_mapping = dict([(m.name, m) for m in self.manifest.gearsmanifestentry_set.all()])
             
-        print full_template_list()
+        #print full_template_list()
         #pprint(locals())
     
     def clear_manifest(self):
