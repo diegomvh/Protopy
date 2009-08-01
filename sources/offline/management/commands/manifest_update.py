@@ -9,11 +9,13 @@ from django.db import models
 from offline.sites import random_string
 from offline.util import get_site, get_site_root, excluding_abswalk_with_simlinks ,\
     full_template_list, abswalk_with_simlinks
-from offline.util import get_project_root
+from offline.util import get_project_root, objdict
 from django.template.loader import find_template_source
+from django.template import TemplateDoesNotExist
 import os
 import sys
 import time
+
 from pprint import pprint
 
 try:
@@ -34,8 +36,10 @@ class Command(LabelCommand):
     option_list = LabelCommand.option_list + (
         make_option('-c', '--clear', action='store_true', dest='clear', default = False,
                     help="Clears application manifests"),
-        make_option('-r', '--ver', action='store', dest='version', 
-                    help = "Version")                                      
+        make_option('-r', '--manifest-version', action='store', dest='manifest_ver', 
+                    help = "Version", default = None),
+        make_option('-s', '--no-output', action='store_true', dest='no_output',
+                    default = False),                  
         )
     
     
@@ -49,11 +53,18 @@ class Command(LabelCommand):
                 return True
         
     
+    
+    def output(self, no_newline = False, *largs):
+        if self.verbose: 
+            sys.stderr.write(u" ".join(map(unicode, largs)))
+    
     def handle_label(self, remotesite_name, **options):
+        self.verbose = not options.get('no_output')
         from django.conf import settings
         self.site = get_site(remotesite_name)
         if not self.site:
             print "Can't find any site by the name '%s'" % remotesite_name
+            
             # Won't exit if it fails since more than one site maight have been
             # passed to the command
             #sys.exit(3)
@@ -61,7 +72,7 @@ class Command(LabelCommand):
         try:
             self.manifest = GearsManifest.objects.get(remotesite_name = remotesite_name)
         except models.exceptions.ObjectDoesNotExist:
-            print "No resmote instance"
+            print "New manifest created"
             self.manifest = GearsManifest()
             self.manifest.remotesite_name = remotesite_name
             
@@ -70,8 +81,6 @@ class Command(LabelCommand):
             return
         
         # Switches
-        
-        
         if options.get('clear'):
             return self.clear_manifest()
         
@@ -81,8 +90,11 @@ class Command(LabelCommand):
         splitted_offline_base = offline_base.split('/')
         # Cambiar el numero de version
         if not self.manifest.version:
-            self.manifest.version = random_string(32)
-        print self.manifest.version
+            if options.get('manifest_ver'):
+                self.manifest.version = options.get('manifest_ver')
+            else: 
+                self.manifest.version = random_string(32)
+        print "Version:", self.manifest.version
         
         # Application Code
         file_list = []
@@ -94,8 +106,13 @@ class Command(LabelCommand):
             fname = self.get_template_file(t)
             mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(fname)))
             fsize = os.path.getsize(fname)
-            file_list.append({'name': t, 'url': '/'.join([self.site.templates_url, t]), 
-                              'file_mtime': mtime, 'file_size': fsize})
+            file_list.append(objdict({
+                                      'name': t, 
+                                      'url': '/'.join([self.site.templates_url, t]),
+                                      'file_mtime': mtime, 
+                                      'file_size': fsize
+                                      })
+            )
         
         print "Adding/updating js..."
         for js in abswalk_with_simlinks(self.site.project_root):
@@ -104,8 +121,12 @@ class Command(LabelCommand):
             relpath = relativepath(js, self.site.project_root)
             mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(js)))
             fsize = os.path.getsize(js)
-            file_list.append({'name': relpath, 'url': '/'.join([self.site.js_url, relpath]), 
-                              'file_mtime': mtime, 'file_size': fsize})
+            file_list.append(objdict({'name': relpath, 
+                                      'url': '/'.join([self.site.js_url, relpath]),
+                                      'file_mtime': mtime, 
+                                      'file_size': fsize,
+                                      })
+            )
         
         print "Adding/updating models..."
         for app in self.site.app_names():
@@ -114,7 +135,10 @@ class Command(LabelCommand):
             #fsize = os.path.getsize(js)
             name = '/'.join([app, 'models.js'])
             #TODO: Check if the file exists
-            file_list.append({'name': name, 'url': '/'.join([ self.site.js_url, name ])})
+            file_list.append(objdict({'name': name, 
+                                      'url': '/'.join([ self.site.js_url, name ]),
+                                      })
+            )
         
         
         print "Adding/updating lib..."
@@ -124,8 +148,12 @@ class Command(LabelCommand):
             relpath = relativepath(lib, self.site.protopy_root)
             mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(lib)))
             fsize = os.path.getsize(lib)
-            file_list.append({'name': relpath, 'url': '/'.join([self.site.lib_url, relpath]), 
-                              'file_mtime': mtime, 'file_size': fsize})
+            file_list.append(objdict({'name': relpath, 
+                                      'url': '/'.join([self.site.lib_url, relpath]),
+                                      'file_mtime': mtime, 
+                                      'file_size': fsize,
+                                      })
+            )
         
         print "Adding/updating media..."
         media_root = os.path.abspath(settings.MEDIA_ROOT)
@@ -140,38 +168,110 @@ class Command(LabelCommand):
             relpath = relativepath(media, media_root)
             mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(media)))
             fsize = os.path.getsize(media)
-            file_list.append({'name': relpath, 'url': '/'.join([media_url, relpath]), 
-                              'file_mtime': mtime, 'file_size': fsize})
+            file_list.append(objdict({'name': relpath, 
+                                      'url': '/'.join([media_url, relpath]),
+                                      'file_mtime': mtime, 
+                                      'file_size': fsize,
+                                      })
+            )
             
         if not entries:
             # New instance or empty, just create entries and add them
+            print "Creating new manifest...",
             self.manifest.save()
             for f in file_list:
                 entry = GearsManifestEntry(manifest = self.manifest, **f)
                 entry.save()
             #self.manifest.save()
+            print "OK"
         else:
             # Compraracion por modificaciones
-            print "Comparing file sizes and mtime"
-            file_mapping = dict([(m.name, m) for m in self.manifest.gearsmanifestentry_set.all()])
+            print "Checking for updates..."
             
             m_templates_qs = self.manifest.gearsmanifestentry_set.filter(url__startswith = self.site.templates_url)
-            f_m_templates = dict([(m.url, m) for m in m_templates_qs.all()])
-            print f_m_templates
-            for template_url in [ f['url'] for f in file_list if f['url'].startswith(self.site.templates_url)]:
-                print template_url 
-            #filter(lambda f['url']: f['url'].startswith(self.site.templates_url), file_list):
-                if template_url in f_m_templates:
-                    template_fname = self.get_template_file(template_url)
-                    
+            
+            
+            #self.get_updates_for_entry_qs(m_templates_qs)
+            
+            url_entry_map = dict([(m.url, m) for m in m_templates_qs.all()])
+            
+            updated_templates, new_templates, deleted_templates = 0, 0, 0
+            
+            # For each template...
+            for file_info in filter(lambda f: f.url.startswith(self.site.templates_url), 
+                                       file_list):
+                # Is there a database entry?
+                entry = file_info.url in url_entry_map and url_entry_map[file_info.url] or None
+                if entry:
+                    filename = self.get_template_file(file_info.name)
+                    if entry.altered( filename ):
+                        entry.update_mtime_and_size(filename)
+                        updated_templates += 1
+                        print "ALTERED: %s"% file_info.name
                 else:
-                    print "Does not exist"
-        #print full_template_list()
-        #pprint(locals())
+                    print "NEW: %s" % file_info.name
+                    new_template = GearsManifestEntry(manifest = self.manifest, **file_info)
+                    new_template.save()
+                    new_templates += 1
+            #from ipdb import set_trace; set_trace()
+            for deleted_template in m_templates_qs.exclude(url__in = map(lambda f: f.url, file_list)):
+                print "DELETED: %s" % deleted_template
+                deleted_template.delete()
+                deleted_templates += 1
+                
+                
+            templates_modified = updated_templates or new_templates or deleted_templates
+            lib_modified = False
+            js_modifed = False
+            media_modified = False
+            
+            if templates_modified or lib_modified or js_modifed or media_modified:
+                
+                self.manifest.version = options.get('manifest_ver') or random_string(32)
+                self.manifest.save()
+                print "Manifest version updated to %s" % self.manifest.version
+                
+    def get_updates_for_entry_qs(self, entry_qs, file_list, ):
+        '''
+        Returns updated, modified, deleted
+        '''
+        created, modified, deleted = 0, 0, 0
+        url_entry_map = dict([(m.url, m) for m in entry_qs.all()])
+        
+        # For each template...
+        for file_info in filter(lambda f: f.url.startswith(self.site.templates_url), 
+                                   file_list):
+            # Is there a database entry?
+            entry = file_info.url in url_entry_map and url_entry_map[file_info.url] or None
+            if entry:
+                filename = self.get_template_file(file_info.name)
+                if entry.altered( filename ):
+                    entry.update_mtime_and_size(filename)
+                    modified += 1
+                    print "ALTERED: %s"% file_info.name
+            else:
+                print "NEW: %s" % file_info.name
+                new_template = GearsManifestEntry(manifest = self.manifest, **file_info)
+                new_template.save()
+                created += 1
+        #from ipdb import set_trace; set_trace()
+        for deleted_template in m_templates_qs.exclude(url__in = map(lambda f: f.url, file_list)):
+            print "DELETED: %s" % deleted_template
+            deleted_template.delete()
+            deleted += 1
+        
+        return created, modified, deleted
+     
         
     def get_template_file(self, name):
-        _template_source, template_origin = find_template_source(name)
-        return template_origin.name
+        try:
+            _template_source, template_origin = find_template_source(name)
+            return template_origin.name
+        except TemplateDoesNotExist:
+            name = name[1:]
+            _template_source, template_origin = find_template_source(name)
+            return template_origin.name
+        
     
     def is_file_altered(self, filename, entry_instance):
         mtime, size = time.localtime(os.path.getmtime(filename)), os.path.getsize(filename)
@@ -183,11 +283,8 @@ class Command(LabelCommand):
     
     def clear_manifest(self):
         print "Clear manifest...",
-        self.manifest.gearsmanifestentry_set.all().delete()
-        if not self.manifest.gearsmanifestentry_set.count():
-            print "OK"
-            
-        
+        self.manifest.delete()
+        print "OK"
     
     def update_manifest(self):
         pass
@@ -195,33 +292,7 @@ class Command(LabelCommand):
     
     def check_system_manifest(self):
         pass
-        #manifest.add_uris_from_pathwalk(path, uri_base, exclude_callback, followlinks)
-        #from ipdb import set_trace; set_trace()
-        
-#        try:
-#            m = Manifest.objects.get(remotesite_name = remotesite_name)
-#        except Exception, e:
-#            print e
-#            print "Creating new manifest for %s" % remotesite_name
-#            m = Manifest()
-        #template_base = self.offline_base.split('/') + ['templates', ] 
-        
-        # genreate random version string
-#        m.version = random_string(32)
-        
-        #remotesite = 
-        
-        #m.add_uris_from_pathwalk(path, uri_base, exclude_callback, followlinks)
-        
-        #m.add_uris_from_pathwalk(self.offline_root, '/%s/project' % self.offline_base)
-        # Add templates
-        #for t in full_template_list():
-        #    m.add_entry( '/%s' % '/'.join( filter(bool, template_base + t.split(os.sep))))
-            
-        #app_labels = set(map( lambda model: model._meta.app_label, self._registry))
-        
-        #for app in app_labels:
-        #    m.add_entry('/%s/export/%s/models.js' % (self.offline_base, app))
+
             
         
 

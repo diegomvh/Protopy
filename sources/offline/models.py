@@ -6,6 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.conf import settings
 import os
+import time, datetime
 from offline.util import abswalk_with_simlinks, get_site, full_template_list
 
 class GearsManifest(models.Model):
@@ -83,7 +84,22 @@ class GearsManifestEntry(models.Model):
             if v:
                 d[k] = v
         return d
-                
+
+    def altered(self, filename):
+        mtime, size = datetime.datetime.utcfromtimestamp(os.path.getmtime(filename)), os.path.getsize(filename)
+        if self.file_mtime and self.file_mtime != mtime:
+            return True
+        if self.file_size and self.file_size != size:
+            return True
+        
+    def update_mtime_and_size(self, filename):
+        mtime, size = datetime.datetime.utcfromtimestamp(os.path.getmtime(filename)), os.path.getsize(filename)
+        self.file_mtime = mtime
+        self.file_size = size
+        self.save()
+    
+    def __unicode__(self):
+        return "%s" % self.url
         
 class SyncData(models.Model):
     '''
