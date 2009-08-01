@@ -125,6 +125,16 @@ def namedtuple(typename, field_names, verbose=False, rename=False):
 
     return result
 
+class objdict(dict):
+    '''
+    Enables a dict to accpet dot syntax for element access.
+    Instead of my_dict['url'], you could write my_objdict.url
+    '''
+    def __getattr__(self, k):
+        if self.has_key(k):
+            return self[k]
+
+
 def abswalk_with_simlinks(path):
     '''
     Python <2.6 version walk(followlinks = True)
