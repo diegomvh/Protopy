@@ -173,6 +173,22 @@ class RemoteSite(RemoteBaseSite):
         return '/'.join([self.url, self.TEMPLATES_PREFIX])
     templates_url = property(_get_templates_url, doc = "Base url for templates")
     
+    def _get_media_url(self):
+        if settings.MEDIA_URL[-1] == '/':
+            return settings.MEDIA_URL[:-1]
+        return settings.MEDIA_URL
+    media_url = property(_get_media_url, doc = "Media url")
+    
+    
+    def _get_media_root(self):
+        from django.conf import settings
+        return os.path.abspath(settings.MEDIA_ROOT)
+    media_root = property(_get_media_root, doc = "Medai root")
+    
+    
+    #===========================================================================
+    # View methods
+    #===========================================================================
     @expose(r'^$')
     def index(self, request):
         return HttpResponse('Yo soy el RemoteSite %s' % self.name)

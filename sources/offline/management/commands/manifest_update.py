@@ -156,20 +156,21 @@ class Command(LabelCommand):
             )
         
         print "Adding/updating media..."
-        media_root = os.path.abspath(settings.MEDIA_ROOT)
-        if settings.MEDIA_URL[-1] == '/':
-            media_url = settings.MEDIA_URL[:-1]
-        else:
-            media_url = settings.MEDIA_URL
+        #media_root = os.path.abspath(settings.MEDIA_ROOT)
         
-        for media in abswalk_with_simlinks(media_root):
+        #if settings.MEDIA_URL[-1] == '/':
+        #    self.media_url = settings.MEDIA_URL[:-1]
+        #else:
+        #    self.media_url = settings.MEDIA_URL
+        
+        for media in abswalk_with_simlinks(self.site.media_root):
             if self.invalid_file(js):
                 continue
-            relpath = relativepath(media, media_root)
+            relpath = relativepath(media, self.site.media_root)
             mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(media)))
             fsize = os.path.getsize(media)
             file_list.append(objdict({'name': relpath, 
-                                      'url': '/'.join([media_url, relpath]),
+                                      'url': '/'.join([self.site.media_url, relpath]),
                                       'file_mtime': mtime, 
                                       'file_size': fsize,
                                       })
@@ -190,7 +191,6 @@ class Command(LabelCommand):
             
             m_templates_qs = self.manifest.gearsmanifestentry_set.filter(url__startswith = self.site.templates_url)
             
-            
             updated_templates, \
             new_templates, \
             deleted_templates = self.get_updates_for_entry_qs(m_templates_qs,
@@ -198,37 +198,39 @@ class Command(LabelCommand):
                                                               self.site.templates_url,
                                                               self.get_template_file)
             
-#            url_entry_map = dict([(m.url, m) for m in m_templates_qs.all()])
-#            
-#            updated_templates, new_templates, deleted_templates = 0, 0, 0
-#            
-#            # For each template...
-#            for file_info in filter(lambda f: f.url.startswith(self.site.templates_url), 
-#                                       file_list):
-#                # Is there a database entry?
-#                entry = file_info.url in url_entry_map and url_entry_map[file_info.url] or None
-#                if entry:
-#                    filename = self.get_template_file(file_info.name)
-#                    if entry.altered( filename ):
-#                        entry.update_mtime_and_size(filename)
-#                        updated_templates += 1
-#                        print "ALTERED: %s"% file_info.name
-#                else:
-#                    print "NEW: %s" % file_info.name
-#                    new_template = GearsManifestEntry(manifest = self.manifest, **file_info)
-#                    new_template.save()
-#                    new_templates += 1
-#            #from ipdb import set_trace; set_trace()
-#            for deleted_template in m_templates_qs.exclude(url__in = map(lambda f: f.url, file_list)):
-#                print "DELETED: %s" % deleted_template
-#                deleted_template.delete()
-#                deleted_templates += 1
-                
+            m_js_qs = self.manifest.gearsmanifestentry_set.filter(url__startswith = self.site.js_url)
+            updated_js, \
+            new_js, \
+            deleted_js = self.get_updates_for_entry_qs(m_js_qs,
+                                                       file_list,
+                                                       self.site.js_url,
+                                                       self.get_js_file)
+            
+            
+            m_lib_qs =  self.manifest.gearsmanifestentry_set.filter(url__startswith = self.site.lib_url)
+            
+            updated_lib, \
+            new_lib, \
+            deleted_lib = self.get_updates_for_entry_qs(m_lib_qs,
+                                                       file_list,
+                                                       self.site.lib_url,
+                                                       self.get_lib_file)
+            
+            m_media_qs =  self.manifest.gearsmanifestentry_set.filter(url__startswith = self.site.media_url)
+            
+            updated_media, \
+            new_media, \
+            deleted_media = self.get_updates_for_entry_qs(m_media_qs,
+                                                              file_list,
+                                                              self.site.media_url,
+                                                              self.get_media_file)
+            
                 
             templates_modified = updated_templates or new_templates or deleted_templates
-            lib_modified = False
-            js_modifed = False
-            media_modified = False
+            lib_modified = updated_lib or new_lib or deleted_lib
+            js_modifed = updated_js or new_js or deleted_js
+            media_modified = updated_media or new_media or deleted_media
+            
             
             if templates_modified or lib_modified or js_modifed or media_modified:
                 
@@ -240,7 +242,7 @@ class Command(LabelCommand):
         '''
         Returns updated, modified, deleted
         '''
-        created, modified, deleted = 0, 0, 0
+        modified, created, deleted = 0, 0, 0
         url_entry_map = dict([(m.url, m) for m in entry_qs.all()])
         
         # For each template...
@@ -249,8 +251,11 @@ class Command(LabelCommand):
             # Is there a database entry?
             entry = file_info.url in url_entry_map and url_entry_map[file_info.url] or None
             if entry:
-                #filename = self.get_template_file(file_info.name)
-                filename = dict_to_file_callback(file_info.name)
+                
+                if file_info.file_mtime and file_info.file_mtime: 
+                    filename = dict_to_file_callback(file_info.name)
+                else:
+                    continue
                 
                 if entry.altered( filename ):
                     entry.update_mtime_and_size(filename)
@@ -267,7 +272,7 @@ class Command(LabelCommand):
             deleted_template.delete()
             deleted += 1
         
-        return created, modified, deleted
+        return modified, created, deleted
      
         
     def get_template_file(self, name):
@@ -278,7 +283,16 @@ class Command(LabelCommand):
             name = name[1:]
             _template_source, template_origin = find_template_source(name)
             return template_origin.name
-        
+    
+    def get_js_file(self, name):
+        return os.path.join(self.site.project_root, name)
+    
+    def get_lib_file(self, name):
+        return os.path.join(self.site.protopy_root, name)
+    
+    def get_media_file(self, name):
+        return os.path.join(self.site.media_root, name)
+    
     
     def is_file_altered(self, filename, entry_instance):
         mtime, size = time.localtime(os.path.getmtime(filename)), os.path.getsize(filename)
