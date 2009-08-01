@@ -1,3 +1,5 @@
+require('datetime', 'datetime');
+
 String.prototype.__json__ = function() { 
     return this.inspect(true); 
 }
@@ -30,7 +32,7 @@ Date.prototype.__json__ = function() {
 	case 'ASP.NET':
 	    return '"\\/Date(' + this.valueOf() + ')\\/"';
 	default:
-		return '"' + this.toISO8601() + '"';
+		return '"' + datetime.toISOTimestamp(datetime.datetime(this)) + '"';
     }
 }
 

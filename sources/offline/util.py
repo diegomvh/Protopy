@@ -320,22 +320,6 @@ def get_sites():
             sites.append(site)
     return sites
 
-class ProtopyJSONEncoder(simplejson.JSONEncoder):
-    DATE_FORMAT = "%Y-%m-%d"
-    TIME_FORMAT = "%H:%M:%S.%L"
-
-    def default(self, o):
-        if isinstance(o, datetime.datetime):
-            return o.strftime("%s %s" % (self.DATE_FORMAT, self.TIME_FORMAT))
-        elif isinstance(o, datetime.date):
-            return o.strftime(self.DATE_FORMAT)
-        elif isinstance(o, datetime.time):
-            return o.strftime(self.TIME_FORMAT)
-        elif isinstance(o, decimal.Decimal):
-            return str(o)
-        else:
-            return super(ProtopyJSONEncoder, self).default(o)
-json_encode = ProtopyJSONEncoder().encode
 
 # TODO: Fix
 #class ProtpyJsonEncoder(DjangoJSONEncoder):

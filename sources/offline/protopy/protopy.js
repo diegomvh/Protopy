@@ -2213,41 +2213,28 @@
     //--------------------------------------- Number -------------------------------------//
     extend(Number.prototype, {
         format: function(f, radix) {
-	    var pad = (f[0] == '0')? '0' : ' ';
-	    var left = false;
-	    if (f[0] == '-') {
-		left = true;
-		f = f.substr(1);
-	    };
-	    var [fe, fd] = f.split('.').map(function (n) {return Number(n);});
-	    if (!isundefined(fd))
-		var result = this.toFixed(fd);
-	    else 
-		var result = this.toString(radix || 10);
-	    [e, d] = result.split('.');
-	    e = (left)? e + pad.times(fe - e.length) : pad.times(fe - e.length) + e;
-	    return e + (!isundefined(d)? '.' + d : '');
-	}
-    });
-
-    //--------------------------------------- Date -------------------------------------//
-    extend(Date.prototype, {
-        toISO8601: function() {
-	    return this.getUTCFullYear() + '-' +
-		(this.getUTCMonth() + 1).format('02') + '-' +
-		this.getUTCDate().format('02') + 'T' +
-		this.getUTCHours().format('02') + ':' +
-		this.getUTCMinutes().format('02') + ':' +
-		this.getUTCSeconds().format('02') + '.' +
-                this.getUTCMilliseconds(); 
-	}
+            var pad = (f[0] == '0')? '0' : ' ';
+            var left = false;
+            if (f[0] == '-') {
+                left = true;
+                f = f.substr(1);
+            };
+            var [fe, fd] = f.split('.').map(function (n) {return Number(n);});
+            if (!isundefined(fd))
+                var result = this.toFixed(fd);
+            else 
+                var result = this.toString(radix || 10);
+            [e, d] = result.split('.');
+            e = (left)? e + pad.times(fe - e.length) : pad.times(fe - e.length) + e;
+            return e + (!isundefined(d)? '.' + d : '');
+        }
     });
 
     //--------------------------------------- Element -------------------------------------//
     extend(Element, {
-	isElement: function(object) {
-	    return !!(object && object.nodeType == 1);
-	},
+        isElement: function(object) {
+            return !!(object && object.nodeType == 1);
+        },
 	_insertion_translations: {
 	    before: function(element, node) {
 		element.parentNode.insertBefore(node, element);
