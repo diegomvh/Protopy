@@ -191,33 +191,38 @@ class Command(LabelCommand):
             m_templates_qs = self.manifest.gearsmanifestentry_set.filter(url__startswith = self.site.templates_url)
             
             
-            #self.get_updates_for_entry_qs(m_templates_qs)
+            updated_templates, \
+            new_templates, \
+            deleted_templates = self.get_updates_for_entry_qs(m_templates_qs,
+                                                              file_list,
+                                                              self.site.templates_url,
+                                                              self.get_template_file)
             
-            url_entry_map = dict([(m.url, m) for m in m_templates_qs.all()])
-            
-            updated_templates, new_templates, deleted_templates = 0, 0, 0
-            
-            # For each template...
-            for file_info in filter(lambda f: f.url.startswith(self.site.templates_url), 
-                                       file_list):
-                # Is there a database entry?
-                entry = file_info.url in url_entry_map and url_entry_map[file_info.url] or None
-                if entry:
-                    filename = self.get_template_file(file_info.name)
-                    if entry.altered( filename ):
-                        entry.update_mtime_and_size(filename)
-                        updated_templates += 1
-                        print "ALTERED: %s"% file_info.name
-                else:
-                    print "NEW: %s" % file_info.name
-                    new_template = GearsManifestEntry(manifest = self.manifest, **file_info)
-                    new_template.save()
-                    new_templates += 1
-            #from ipdb import set_trace; set_trace()
-            for deleted_template in m_templates_qs.exclude(url__in = map(lambda f: f.url, file_list)):
-                print "DELETED: %s" % deleted_template
-                deleted_template.delete()
-                deleted_templates += 1
+#            url_entry_map = dict([(m.url, m) for m in m_templates_qs.all()])
+#            
+#            updated_templates, new_templates, deleted_templates = 0, 0, 0
+#            
+#            # For each template...
+#            for file_info in filter(lambda f: f.url.startswith(self.site.templates_url), 
+#                                       file_list):
+#                # Is there a database entry?
+#                entry = file_info.url in url_entry_map and url_entry_map[file_info.url] or None
+#                if entry:
+#                    filename = self.get_template_file(file_info.name)
+#                    if entry.altered( filename ):
+#                        entry.update_mtime_and_size(filename)
+#                        updated_templates += 1
+#                        print "ALTERED: %s"% file_info.name
+#                else:
+#                    print "NEW: %s" % file_info.name
+#                    new_template = GearsManifestEntry(manifest = self.manifest, **file_info)
+#                    new_template.save()
+#                    new_templates += 1
+#            #from ipdb import set_trace; set_trace()
+#            for deleted_template in m_templates_qs.exclude(url__in = map(lambda f: f.url, file_list)):
+#                print "DELETED: %s" % deleted_template
+#                deleted_template.delete()
+#                deleted_templates += 1
                 
                 
             templates_modified = updated_templates or new_templates or deleted_templates
@@ -231,7 +236,7 @@ class Command(LabelCommand):
                 self.manifest.save()
                 print "Manifest version updated to %s" % self.manifest.version
                 
-    def get_updates_for_entry_qs(self, entry_qs, file_list, ):
+    def get_updates_for_entry_qs(self, entry_qs, file_list, url_prefix, dict_to_file_callback):
         '''
         Returns updated, modified, deleted
         '''
@@ -239,12 +244,14 @@ class Command(LabelCommand):
         url_entry_map = dict([(m.url, m) for m in entry_qs.all()])
         
         # For each template...
-        for file_info in filter(lambda f: f.url.startswith(self.site.templates_url), 
+        for file_info in filter(lambda f: f.url.startswith(url_prefix), 
                                    file_list):
             # Is there a database entry?
             entry = file_info.url in url_entry_map and url_entry_map[file_info.url] or None
             if entry:
-                filename = self.get_template_file(file_info.name)
+                #filename = self.get_template_file(file_info.name)
+                filename = dict_to_file_callback(file_info.name)
+                
                 if entry.altered( filename ):
                     entry.update_mtime_and_size(filename)
                     modified += 1
@@ -255,7 +262,7 @@ class Command(LabelCommand):
                 new_template.save()
                 created += 1
         #from ipdb import set_trace; set_trace()
-        for deleted_template in m_templates_qs.exclude(url__in = map(lambda f: f.url, file_list)):
+        for deleted_template in entry_qs.exclude(url__in = map(lambda f: f.url, file_list)):
             print "DELETED: %s" % deleted_template
             deleted_template.delete()
             deleted += 1
