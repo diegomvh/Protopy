@@ -38,7 +38,12 @@ class Command(LabelCommand):
                     help = "Version")                                      
         )
     
+    
     def invalid_file(self, path):
+        '''
+        Checks weather a file has or not to be included in a manifest file
+        based on the TEMPLATE_RE_EXCLUDE tuple or list defined in the RemoteSite.
+        '''
         for regex in self.site.TEMPLATE_RE_EXCLUDE:
             if regex.search(path):
                 return True
@@ -86,8 +91,7 @@ class Command(LabelCommand):
         for t in full_template_list():
             if self.invalid_file(t):
                 continue
-            _template_source, template_origin = find_template_source(t)
-            fname = template_origin.name
+            fname = self.get_template_file(t)
             mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(fname)))
             fsize = os.path.getsize(fname)
             file_list.append({'name': t, 'url': '/'.join([self.site.templates_url, t]), 
@@ -157,14 +161,25 @@ class Command(LabelCommand):
             for template_url in [ f['url'] for f in file_list if f['url'].startswith(self.site.templates_url)]:
                 print template_url 
             #filter(lambda f['url']: f['url'].startswith(self.site.templates_url), file_list):
-                if template_url not in f_m_templates:
-                    print "deleted"
+                if template_url in f_m_templates:
+                    template_fname = self.get_template_file(template_url)
+                    
                 else:
-                    print "OK"
+                    print "Does not exist"
         #print full_template_list()
         #pprint(locals())
-    def template_compare(self, url, templates):
-        pass
+        
+    def get_template_file(self, name):
+        _template_source, template_origin = find_template_source(name)
+        return template_origin.name
+    
+    def is_file_altered(self, filename, entry_instance):
+        mtime, size = time.localtime(os.path.getmtime(filename)), os.path.getsize(filename)
+        if entry_instance.file_mtime and entry_instance.file_mtime != mtime:
+            return True
+        if entry_instance.file_size and entry_instance.file_size != size:
+            return True
+        
     
     def clear_manifest(self):
         print "Clear manifest...",
