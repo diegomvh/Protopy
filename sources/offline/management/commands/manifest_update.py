@@ -21,6 +21,7 @@ try:
 except ImportError, e:
     from offline.util import relpath as relativepath
 
+from django.db.models import exceptions
 #TODO: Update if changed based on file modification date
 class Command(LabelCommand):
     help = \
@@ -36,6 +37,17 @@ class Command(LabelCommand):
         make_option('-r', '--ver', action='store', dest='version', 
                     help = "Version")                                      
         )
+    
+    
+    def invalid_file(self, path):
+        '''
+        Checks weather a file has or not to be included in a manifest file
+        based on the TEMPLATE_RE_EXCLUDE tuple or list defined in the RemoteSite.
+        '''
+        for regex in self.site.TEMPLATE_RE_EXCLUDE:
+            if regex.search(path):
+                return True
+        
     
     def handle_label(self, remotesite_name, **options):
         from django.conf import settings
@@ -74,13 +86,12 @@ class Command(LabelCommand):
         
         # Application Code
         file_list = []
-        site_root = get_site_root(remotesite_name)
-        project_root = get_project_root()
         
         print "Adding/updating templates..."
         for t in full_template_list():
-            _template_source, template_origin = find_template_source(t)
-            fname = template_origin.name
+            if self.invalid_file(t):
+                continue
+            fname = self.get_template_file(t)
             mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(fname)))
             fsize = os.path.getsize(fname)
             file_list.append({'name': t, 'url': '/'.join([self.site.templates_url, t]), 
@@ -88,6 +99,8 @@ class Command(LabelCommand):
         
         print "Adding/updating js..."
         for js in abswalk_with_simlinks(self.site.project_root):
+            if self.invalid_file(js):
+                continue
             relpath = relativepath(js, self.site.project_root)
             mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(js)))
             fsize = os.path.getsize(js)
@@ -103,8 +116,11 @@ class Command(LabelCommand):
             #TODO: Check if the file exists
             file_list.append({'name': name, 'url': '/'.join([ self.site.js_url, name ])})
         
+        
         print "Adding/updating lib..."
         for lib in abswalk_with_simlinks(self.site.protopy_root):
+            if self.invalid_file(lib):
+                continue
             relpath = relativepath(lib, self.site.protopy_root)
             mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(lib)))
             fsize = os.path.getsize(lib)
@@ -119,6 +135,8 @@ class Command(LabelCommand):
             media_url = settings.MEDIA_URL
         
         for media in abswalk_with_simlinks(media_root):
+            if self.invalid_file(js):
+                continue
             relpath = relativepath(media, media_root)
             mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(media)))
             fsize = os.path.getsize(media)
@@ -137,8 +155,31 @@ class Command(LabelCommand):
             print "Comparing file sizes and mtime"
             file_mapping = dict([(m.name, m) for m in self.manifest.gearsmanifestentry_set.all()])
             
-        print full_template_list()
+            m_templates_qs = self.manifest.gearsmanifestentry_set.filter(url__startswith = self.site.templates_url)
+            f_m_templates = dict([(m.url, m) for m in m_templates_qs.all()])
+            print f_m_templates
+            for template_url in [ f['url'] for f in file_list if f['url'].startswith(self.site.templates_url)]:
+                print template_url 
+            #filter(lambda f['url']: f['url'].startswith(self.site.templates_url), file_list):
+                if template_url in f_m_templates:
+                    template_fname = self.get_template_file(template_url)
+                    
+                else:
+                    print "Does not exist"
+        #print full_template_list()
         #pprint(locals())
+        
+    def get_template_file(self, name):
+        _template_source, template_origin = find_template_source(name)
+        return template_origin.name
+    
+    def is_file_altered(self, filename, entry_instance):
+        mtime, size = time.localtime(os.path.getmtime(filename)), os.path.getsize(filename)
+        if entry_instance.file_mtime and entry_instance.file_mtime != mtime:
+            return True
+        if entry_instance.file_size and entry_instance.file_size != size:
+            return True
+        
     
     def clear_manifest(self):
         print "Clear manifest...",
