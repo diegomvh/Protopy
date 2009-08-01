@@ -119,7 +119,7 @@ var decode_dates = function(obj) {
 };
 
 publish({
-	date: date,
+    date: date,
     stringify: stringify,
     parse: parse
 });

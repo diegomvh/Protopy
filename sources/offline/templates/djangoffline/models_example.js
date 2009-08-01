@@ -13,10 +13,10 @@ var Tag = type('Tag', models.Model, extend(mixin.Tag, {
     title: new models.CharField('Title', {'max_length':30}),
     
     /* Sync */
-    _sync_log: new models.ForeignKey(SyncLog, {"db_index": true, "null": true, "blank": true, "editable": false}),
-    _active: new models.BooleanField( {"default": true, "blank": true, "editable": false}),
-    _status: new models.CharField( {"max_length": 1, "choices": SyncLog.SYNC_STATUS, "editable": false, "default": "c"}),
-    server_pk: new models.PositiveIntegerField( {"null": true, "blank": true, "editable": false})
+    _sync_log: new models.ForeignKey(SyncLog, {"db_index": true, "null": true, "blank": true, "editable": false, "serialize": false}),
+    _active: new models.BooleanField( {"default": true, "blank": true, "editable": false, "serialize": false}),
+    _status: new models.CharField( {"max_length": 1, "choices": SyncLog.SYNC_STATUS, "editable": false, "default": "c", "serialize": false}),
+    server_pk: new models.PositiveIntegerField( {"null": true, "blank": true, "editable": false, "serialize": false})
 }));
 
 
@@ -28,10 +28,10 @@ var Post = type('Post', models.Model, extend(mixin.Post, {
     body: new models.TextField('Body Text'),
     
     /* Sync */
-    _sync_log: new models.ForeignKey(SyncLog, {"db_index": true, "null": true, "blank": true, "editable": false}),
-    _active: new models.BooleanField( {"default": true, "blank": true, "editable": false}),
-    _status: new models.CharField( {"max_length": 1, "choices": SyncLog.SYNC_STATUS, "editable": false, "default": "c"}),
-    server_pk: new models.PositiveIntegerField( {"null": true, "blank": true, "editable": false}),
+    _sync_log: new models.ForeignKey(SyncLog, {"db_index": true, "null": true, "blank": true, "editable": false, "serialize": false}),
+    _active: new models.BooleanField( {"default": true, "blank": true, "editable": false, "serialize": false}),
+    _status: new models.CharField( {"max_length": 1, "choices": SyncLog.SYNC_STATUS, "editable": false, "default": "c", "serialize": false}),
+    server_pk: new models.PositiveIntegerField( {"null": true, "blank": true, "editable": false, "serialize": false}),
     Meta: {
         ordering: ['-date']
     }
