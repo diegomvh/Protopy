@@ -111,7 +111,7 @@ import sys
 import os
 
 import SimpleXMLRPCServer
-import json
+from django.utils import simplejson
 
 import traceback
 
@@ -140,7 +140,7 @@ class SimpleJSONRPCDispatcher(SimpleXMLRPCServer.SimpleXMLRPCDispatcher):
         existing method through subclassing is the prefered means
         of changing method dispatch behavior.
         """
-        rawreq = json.read(data)
+        rawreq = simplejson.loads(data)
     
         #params, method = xmlrpclib.loads(data)
         id = rawreq.get('id', 0)
@@ -169,7 +169,7 @@ class SimpleJSONRPCDispatcher(SimpleXMLRPCServer.SimpleXMLRPCDispatcher):
             #    )
             responseDict['error'] = "%s:%s" % (sys.exc_type, sys.exc_value)
     
-        return json.write(responseDict)
+        return simplejson.dumps(responseDict)
     
 
 #class SimpleXMLRPCRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):

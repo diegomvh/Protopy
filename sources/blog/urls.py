@@ -22,7 +22,7 @@ urlpatterns = patterns('',
     (r'^$', 'blog.views.index'),
     (r'^blog/', include('blog.post.urls')),
     # Install offline
-    (r'^offline.html$', 'django.views.generic.simple.direct_to_template', {'template': 'offline_installer.html'}),
+    (r'^offline$', 'django.views.generic.simple.direct_to_template', {'template': 'offline_installer.html'}),
 
     (r'^%s/(.*)' % site.urlregex, site.root ),
     (r'^rpc/test', 'offline.sync.rpc_handler' ),

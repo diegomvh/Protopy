@@ -272,11 +272,12 @@ class RemoteSite(RemoteBaseSite):
             raise 'bad method'
     
     @jsonrpc
-    def suma(self, a, b):
+    def echo(self, value):
         '''
-        suma(a, b) => Retorna la suma de los numeros a y b
+        echo(value) => value
         '''
-        return a + b
+        return value
+   
     @jsonrpc
     def start_sync(self, sync_request):
         '''

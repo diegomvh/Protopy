@@ -2,15 +2,15 @@ require('sys');
 
 var database = sys.gears._factory.create('beta.database');
 
-database.DatabaseError = type('DatabaseError', [ object ]);
-database.IntegrityError = type('IntegrityError', [ object ]);
+database.DatabaseError = type('DatabaseError', [ Exception ]);
+database.IntegrityError = type('IntegrityError', [ Exception ]);
 
 database.Connection = type('Connection', [ object ], {
     __init__: function(options) {
         this.database = options['database'];
         this.detect_types = options['detect_types'];
         this.factory = options['factory'] || database.Cursor;
-	try {
+        try {
             this.connection = database;
             this.connection.open(this.database);
         } catch(ex) {

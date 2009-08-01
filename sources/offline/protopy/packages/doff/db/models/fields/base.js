@@ -269,7 +269,7 @@ var Field = type('Field', [ object ], {
      * Returns a string value of this field from the passed obj.
      * This is used by the serialization framework.
      */
-    'value_to_string': function value_to_string(object) {
+    value_to_string: function(object) {
         return new String(this._get_val_from_obj(object));
     },
 

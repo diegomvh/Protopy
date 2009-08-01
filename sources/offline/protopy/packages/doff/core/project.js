@@ -51,6 +51,7 @@ var Project = type('Project', object, {
     is_online: true,
     NET_CHECK: 5,
     availability_url: null,
+    jsonrpc_url: null,
     do_net_checking: true,
 
     onLoad: function() {
@@ -68,7 +69,7 @@ var Project = type('Project', object, {
             file_config(sys.module_url(this.package, 'logging.js'));
         } catch (except) {}
 
-        this._create_toolbar();
+        // this._create_toolbar();
         // this.network_check();
         // this._start_network_thread();
         // this.go_offline();
@@ -79,7 +80,7 @@ var Project = type('Project', object, {
         var m = 'go_' + type;
         this[m]();
     },
-    
+
     __init__: function(package, offline_support) {
         this.package = package;
         this.offline_support = offline_support;
@@ -90,6 +91,9 @@ var Project = type('Project', object, {
         
         // Url para ver si estoy conectado
         this.availability_url = this.offline_support + '/network_check';
+        
+        // Url para jsonrpc
+        this.jsonrpc_url = this.offline_support + '/jsonrpc';
         
         this.templates_url = this.offline_support + '/templates/';
         
@@ -118,6 +122,11 @@ var Project = type('Project', object, {
         var localserver = sys.gears.create('beta.localserver');
         this.managed_store = localserver.createManagedStore(this.package + '_manifest');
         this.managed_store.manifestUrl = this.offline_support + '/manifest.json?refered=' + this.start_url;
+    },
+
+    _create_jsonrpc: function() {
+        require('rpc');
+        this.jsonrpc = new rpc.ServiceProxy(this.jsonrpc_url, {asynchronous: false});
     },
 
     bootstrap: function(){

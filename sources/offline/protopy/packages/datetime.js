@@ -1,19 +1,14 @@
-/***
-
-datetime.js 0.1
-
+/*** datetime.js 0.1
 See <http://svgkit.sourceforge.net/> for documentation, downloads, license, etc.
 
 (c) 2006 Jason Gallicchio.
 Licensed under the open source (GNU compatible) MIT License
 
-Utilities for handling dates, times, 
-datetime stamps, and time intervals
+Utilities for handling dates, times, datetime stamps, and time intervals
 
 Format inspired by ISO 8601 and math by XMLSchema http://www.w3.org/TR/xmlschema-2/#isoformats
 
-Intended to be more generic than JavaScript to be easily ported 
-to Python, C, Java, etc.
+Intended to be more generic than JavaScript to be easily ported to Python, C, Java, etc.
 
 Biggest difference between this and JavaScript's Date object is that we allow 
 and handle null in any of the fields.
@@ -921,7 +916,7 @@ var datetime = {
         PARSING
     ***/
     
-    _timestampRegexp : /(\d{4,})(?:-(\d{1,2})(?:-(\d{1,2})(?:[T ](\d{1,2}):(\d{1,2})(?::(\d{1,2})(?:\.(\d+))?)?(?:(Z)|([+-])(\d{1,2})(?::(\d{1,2}))?)?)?)?)?/,
+    _timestampRegexp : /(\d{4})(?:-(\d{1,2})(?:-(\d{1,2})(?:[T](\d{1,2}):(\d{1,2})(?::(\d{1,2})(?:\.(\d+))?)?(?:(Z)|([+-])(\d{1,2})(?::(\d{1,2}))?)?)?)?)?/,
     _periodRegexp :  /^P(?:([+-]?\d+)Y)?(?:([+-]?\d+)M)?(?:([+-]?\d*\.?\d*)D)?(?:[T ](?:([+-]?\d*\.?\d*)H)?(?:([+-]?\d*\.?\d*)M)?(?:([+-]?\d*\.?\d*)S)?)?$/,
     _periodRegexp2 : /^P(?:([+-]?\d+))?-(?:([+-]?\d+))?-(?:([+-]?\d*\.?\d*))?(?:[T ](?:([+-]?\d*\.?\d*))?:(?:([+-]?\d*\.?\d*))?:(?:([+-]?\d*\.?\d*))?)?$/,
     // Only integer years and months, but fractional everything else
@@ -984,7 +979,6 @@ var datetime = {
         }
         return dt;
     },
-    
     
     /***
         Output formatting:  yyyy-mm-dd hh:nn:ss.uuu
@@ -1309,8 +1303,6 @@ var datetime = {
         return result
     }
 }
-
-
 
 /***
     Places where JavaScript's built in Date falls short:
