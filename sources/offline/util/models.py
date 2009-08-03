@@ -24,13 +24,18 @@ class modeldict(SortedDict):
         '''
         
         '''
-        sent = []
-        while sent != self.keys():
-            elements = [ k for k, v in self.iteritems() if not v]
-            for leaf in elements:
-                sent.append(leaf)
-                yield leaf
-        
+        def explore(mapping, used):
+            for model, deps in mapping.iteritems():
+                if all(map(lambda e: e in used, deps)):
+                    if not model in used:
+                        used.append(model)
+                        yield model
+             
+        used = []
+        while used != self.keys():
+            for m in explore(self, used):
+                yield m
+            
 
 def model_tree(app_label_or_app):
     '''
