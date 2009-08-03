@@ -19,6 +19,22 @@ var subclass_exception = function(name, parent, module) {
 
 var Model = type('Model', [ object ], {
     __new__: function(name, bases, attrs) {
+
+        if (name == 'Model' && bases[0] == object ) {
+            return super(Model, this).__new__(name, bases, attrs);
+        }
+        var parents = [b for (b in bases) if (issubclass(b, Model))];
+
+        var module = this.__module__;
+        attrs['__module__'] = module;
+        super(Model, this).__new__(name, bases, attrs);
+
+        var attr_meta = attrs['Meta'] || new Object();
+        var abstract = attr_meta['abstract'] || false;
+        var meta = attr_meta;
+        var base_meta = this.prototype['_meta'];
+
+        /*
         if (name == 'Model' && bases[0] == object ) {
             // estoy creando el modelo,
             return super(Model, this).__new__(name, bases, attrs);
@@ -29,10 +45,10 @@ var Model = type('Model', [ object ], {
         super(Model, this).__new__(name, bases, attrs);
 
         var attr_meta = attrs['Meta'] || new Object();
-        var abstracto = attr_meta['abstracto'] || false;
+        var abstract = attr_meta['abstract'] || false;
         var meta = attr_meta;
         var base_meta = this.prototype['_meta'];
-
+        */
         var app_label = meta['app_label'];
         if (!app_label) {
             app_label = module.split('.').slice(-2)[0];
@@ -40,13 +56,13 @@ var Model = type('Model', [ object ], {
 
         this.add_to_class('_meta', new Options(meta, app_label));
 
-        if (!abstracto) {
+        if (!abstract) {
             this.add_to_class('DoesNotExist', subclass_exception('DoesNotExist', ObjectDoesNotExist, module));
             this.add_to_class('MultipleObjectsReturned', subclass_exception('MultipleObjectsReturned', MultipleObjectsReturned, module));
             this.DoesNotExist = this.prototype.DoesNotExist;
             this.MultipleObjectsReturned = this.prototype.MultipleObjectsReturned;
 
-            if (base_meta && !base_meta.abstracto) {
+            if (base_meta && !base_meta['abstract']) {
                 // Non-abstract child classes inherit some attributes from their
                 // non-abstract parent (unless an ABC comes before it in the
                 // method resolution order).
@@ -70,14 +86,14 @@ var Model = type('Model', [ object ], {
 
         // Do the appropriate setup for any model parents.
         var o2o_map = new Dict([[f.rel.to, f] for (f in this._meta.local_fields) if (f instanceof OneToOneField)]);
-        for each (var base in bases) {
+        for each (var base in parents) {
             if (base['_meta']) {
 
                 // All the fields of any type declared on this model
                 var new_fields = this._meta.local_fields.concat(this._meta.local_many_to_many).concat(this._meta.virtual_fields);
                 var field_names = new Set([f.name for each (f in new_fields)]);
 
-                if (!base._meta.abstracto) {
+                if (!base._meta['abstract']) {
                     // Concrete classes...
                     if (include(o2o_map, base)) {
                         var field = o2o_map.get(base);
@@ -119,17 +135,17 @@ var Model = type('Model', [ object ], {
 
                 // Inherit virtual fields (like GenericForeignKey) from the parent class
                 for each (var field in base._meta.virtual_fields) {
-                    if (base._meta.abstracto && include(field_names, field.name))
+                    if (base._meta['abstract'] && include(field_names, field.name))
                         throw new FieldError('Local field %s in class %s clashes with field of similar name from abstract base class %s'.subs(field.name, name, base.__name__));
                     this.add_to_class(field.name, deepcopy(field));
                 }
             }
         }
-        if (abstracto) {
+        if (abstract) {
             // Abstract base models can't be instantiated and don't appear in
             // the list of models for an app. We do the final setup for them a
             // little differently from normal models.
-            attr_meta.abstracto = false;
+            attr_meta['abstract'] = false;
             this.Meta = attr_meta;
             return this;
         }
@@ -303,7 +319,7 @@ var Model = type('Model', [ object ], {
         // that might have come from the parent class - we just save the
         // attributes we have been given to the class we have been given.
         if (!raw) {
-            for each (var [parent, field] in meta.parents) {
+            for each (var [parent, field] in meta.parents.items()) {
                 // At this point, parent's primary key field may be unknown
                 // (for example, from administration form which doesn't fill
                 // this field). If so, fill it.
@@ -477,9 +493,7 @@ Model.prototype.save_base.alters_data = true;
 Model.prototype.delete.alters_data = true;
 
 // HELPER FUNCTIONS (CURRIED MODEL METHODS)
-//
 // ORDERING METHODS #########################
-
 var method_set_order = function(ordered_obj, id_list) {
     var rel_val = this[ordered_obj._meta.order_with_respect_to.rel.field_name];
     var order_name = ordered_obj._meta.order_with_respect_to.name;
@@ -488,7 +502,6 @@ var method_set_order = function(ordered_obj, id_list) {
     //for ([i, j] in enumerate(id_list))
         //ordered_obj.objects.filter({'pk': j, 'order_name': rel_val}).update({'_order':i});
 };
-
 
 var method_get_order = function(ordered_obj) {
     var rel_val = this[ordered_obj._meta.order_with_respect_to.rel.field_name];

@@ -57,7 +57,7 @@ var RelatedField = type('RelatedField', [ Field ], {
 
         this.related_query_name = curry(this._get_related_query_name, cls._meta);
 
-        if ((!cls._meta.abstracto) && (this.rel.related_name))
+        if ((!cls._meta['abstract']) && (this.rel.related_name))
             this.rel.related_name = this.rel.related_name.interpolate({'class': cls.__name__.toLowerCase()});
 
         var other = this.rel.to;
@@ -83,7 +83,7 @@ var RelatedField = type('RelatedField', [ Field ], {
     do_related_class: function(other, cls) {
         this.set_attributes_from_rel();
         var related = new RelatedObject(other, cls, this);
-        if (!cls._meta.abstracto)
+        if (!cls._meta['abstract'])
             this.contribute_to_related_class(other, related);
     },
 
@@ -626,7 +626,7 @@ var ForeignKey = type('ForeignKey', RelatedField, {
         } catch (e if e instanceof TypeError ) {
             assert(type(to) == String, "%s is invalid. First parameter to ForeignKey must be either a model, a model name, or the string %s".subs(to, RECURSIVE_RELATIONSHIP_CONSTANT));
         } finally {
-            assert (!to._meta.abstracto, "cannot define a relation with abstract class %s".subs(to._meta.object_name));
+            assert (!to._meta['abstract'], "cannot define a relation with abstract class %s".subs(to._meta.object_name));
             to_field = arg.kwargs['to_field'] || to._meta.pk.name;
         }
 
@@ -755,7 +755,7 @@ var ManyToManyField = type('ManyToManyField', [ RelatedField ], {
         var to_field = null, rel_class = arg.kwargs['rel_class'];
 
         try {
-            assert (!to._meta.abstracto, "cannot define a relation with abstract class %s".subs(to._meta.object_name));
+            assert (!to._meta['abstract'], "cannot define a relation with abstract class %s".subs(to._meta.object_name));
         } catch (e if e instanceof AttributeError ) {
             assert(type(to) == String, "%s is invalid. First parameter to ForeignKey must be either a model, a model name, or the string %s".subs(to, RECURSIVE_RELATIONSHIP_CONSTANT));
         }

@@ -16,7 +16,10 @@
 
 'ROOT_URLCONF': 'blog.urls',
 
-'INSTALLED_APPS': [ 'blog.post' ],
+'INSTALLED_APPS': [ 
+    'doff.contrib.synchronization',
+    'blog.post' 
+],
 
 // Quiza este bueno que sea automatico y los busque en offline_base/templates
 //'TEMPLATE_URL': '/doffline/blog/templates/',

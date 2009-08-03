@@ -44,7 +44,7 @@ function days_before_month(year, month) {
     if (month > 2 && is_leap(year))
         ++days;
     return days;
-},
+}
 
 /* year -> number of days before January 1st of year.  Remember that we
 * start with year 1, so days_before_year(1) == 0.
@@ -63,7 +63,7 @@ function days_before_year(year) {
         assert(y == -1);
         return -366;
     }
-},
+}
 
 /* Number of days in 4, 100, and 400 year cycles.  That these have
 * the correct values is asserted in the module init function.
@@ -132,7 +132,7 @@ function ord_to_ymd(dt, ordinal) {
         year -= 1;
         month = 12;
         day = 31;
-        
+
         dt.year = year;
         dt.month = month;
         dt.day = day;

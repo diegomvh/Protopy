@@ -29,9 +29,9 @@ var FakeHtml = type('FakeHtml', [ object ], {
         else this.body.update(content);
         this.add_hooks();
     },
-    
+
     onEvent: function(event) {},
-    
+
     add_hooks: function() {
         var self = this;
         var re = keys(this.event_elements).reduce(
@@ -62,7 +62,7 @@ var Project = type('Project', object, {
         this.handler = new Handler(this.settings.ROOT_URLCONF, this.html);
 
         event.connect(this.html, 'onEvent', this.handler, 'handle');
-        
+
         // Inicio el logging, si no hay hay archivo de configuracion no pasa nada
         require('logging.config', 'file_config');
         try {
@@ -88,15 +88,15 @@ var Project = type('Project', object, {
 
         // Registro la ruta al proyecto
         sys.register_path(this.package, this.offline_support + '/js');
-        
+
         // Url para ver si estoy conectado
         this.availability_url = this.offline_support + '/network_check';
-        
+
         // Url para jsonrpc
         this.jsonrpc_url = this.offline_support + '/jsonrpc';
-        
+
         this.templates_url = this.offline_support + '/templates/';
-        
+
         if (sys.gears.installed && sys.gears.hasPermission)
             this._create_stores();
     },
@@ -130,7 +130,7 @@ var Project = type('Project', object, {
     },
 
     bootstrap: function(){
-        event.connect(window, 'load', this, 'onLoad');
+//        event.connect(window, 'load', this, 'onLoad');
     },
 
     get settings() {

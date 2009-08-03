@@ -5,7 +5,7 @@ require('doff.db.models.fields.base', 'FieldDoesNotExist');
 require('copy', 'copy');
 
 function ensure_default_manager(cls) {
-    if (!cls['_default_manager'] && !cls._meta.abstracto) {
+    if (!cls['_default_manager'] && !cls._meta['abstract']) {
         try {
             var f = cls._meta.get_field('objects');
             throw new ValueError("Model %s must specify a custom Manager, because it has a field named 'objects'".subs(cls.name));
@@ -29,7 +29,7 @@ var Manager = type('Manager', object, {
         model.__defineGetter__(name, function(){ return md.__get__(this, this.constructor); });
             if (!model['_default_manager'] || this.creation_counter < model._default_manager.creation_counter)
             model._default_manager = this;
-        if (model._meta.abstracto || this._inherited)
+        if (model._meta['abstract'] || this._inherited)
             model._meta.abstract_managers.push([this.creation_counter, name, this]);
         },
 

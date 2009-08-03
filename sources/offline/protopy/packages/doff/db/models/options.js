@@ -14,7 +14,7 @@ var settings = get_settings();
 var get_verbose_name = function(class_name) { return class_name;};
 
 var DEFAULT_NAMES = ['verbose_name', 'db_table', 'ordering', 'unique_together', 'permissions', 'get_latest_by',
-                    'order_with_respect_to', 'app_label', 'db_tablespace', 'abstracto'];
+                    'order_with_respect_to', 'app_label', 'db_tablespace', 'abstract'];
 
 var Options = type('Options', [ object ], {
     __init__: function(meta, app_label) {
@@ -36,7 +36,7 @@ var Options = type('Options', [ object ], {
         this.has_auto_field = false;
         this.auto_field = null;
         this.one_to_one_field = null;
-        this.abstracto = false;
+        this.abstract = false;
         this.parents = new SortedDict();
         this.duplicate_targets = {};
         // Managers that have been inherited from abstract base classes. These are passed onto any children.
