@@ -23,7 +23,6 @@ import random, string
 from pprint import pformat
 from django.db.models.loading import get_app
 import copy
-import SimpleXMLRPCServer
 from offline.util.jsonrpc import SimpleJSONRPCDispatcher
 from datetime import datetime
 from django.db.models.loading import get_app, get_models
