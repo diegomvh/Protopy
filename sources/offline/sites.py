@@ -31,7 +31,7 @@ from offline.util import full_template_list, abswalk_with_simlinks
 from django.db.models import signals
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-
+from django.db.models import exceptions
 __all__ = ('RemoteSite',
            'expose',
            'RemoteModelProxy',
@@ -429,7 +429,7 @@ class RemoteSite(RemoteBaseSite):
         model_type = ContentType.objects.get_for_model(kwargs['sender'])
         try:
             sd = SyncData.objects.get(content_type__pk = model_type.id, object_id=kwargs['instance'].pk)
-        except SyncData.DoesNotExist:
+        except exceptions.ObjectDoesNotExist:
             sd = SyncData(content_object = kwargs['instance'])
         sd.active = True
         sd.save()
