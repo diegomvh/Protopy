@@ -2,7 +2,7 @@
 Models
 '''
 from django.utils.datastructures import SortedDict
-
+from copy import copy
 
 #def itemodule(mod, skip_underunder = True):
 #    '''
@@ -24,7 +24,13 @@ class modeldict(SortedDict):
         '''
         
         '''
-        pass
+        sent = []
+        while sent != self.keys():
+            elements = [ k for k, v in self.iteritems() if not v]
+            for leaf in elements:
+                sent.append(leaf)
+                yield leaf
+        
 
 def model_tree(app_label_or_app):
     '''
