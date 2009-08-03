@@ -3,7 +3,8 @@
 '''
 Remote model proxy for remote models in gears client.
 '''
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound,\
+    HttpResponseServerError
 from django.http import Http404
 from django.core.urlresolvers import Resolver404, RegexURLPattern
 from django.utils.encoding import smart_str
@@ -11,7 +12,7 @@ from offline.models import SyncLog, GearsManifest, SyncData
 from django.template import TemplateDoesNotExist
 from django.utils.safestring import SafeString
 from offline.debug import html_output
-from django.core.exceptions import ImproperlyConfigured
+from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 from django.db import models
 from django.contrib.admin.sites import AlreadyRegistered
 from django.shortcuts import render_to_response
@@ -23,7 +24,7 @@ from pprint import pformat
 from django.db.models.loading import get_app
 import copy
 import SimpleXMLRPCServer
-from offline.rpc.SimpleJSONRPCServer import SimpleJSONRPCDispatcher
+from offline.util.jsonrpc import SimpleJSONRPCDispatcher
 from datetime import datetime
 from django.db.models.loading import get_app, get_models
 from offline.export_models import export_remotes
@@ -351,7 +352,10 @@ class RemoteSite(RemoteBaseSite):
         and the project manifest into mainfest.json
         Using the update_manifest command these manifests can be updated.
         '''
-        manifest = GearsManifest.objects.get(remotesite_name = self.name)
+        try:
+            manifest = GearsManifest.objects.get(remotesite_name = self.name)
+        except ObjectDoesNotExist:
+            return HttpResponseServerError("No manifest for '%s'. Please run manage.py manifest_update." % self.name)
         try:
             refered = request.GET['refered']
             if refered != '/':
