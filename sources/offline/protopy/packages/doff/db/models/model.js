@@ -23,7 +23,7 @@ var Model = type('Model', [ object ], {
         if (name == 'Model' && bases[0] == object ) {
             return super(Model, this).__new__(name, bases, attrs);
         }
-        var parents = [b for (b in bases) if (issubclass(b, Model))];
+        var parents = [b for each (b in bases) if (issubclass(b, Model))];
 
         var module = this.__module__;
         attrs['__module__'] = module;
@@ -85,7 +85,7 @@ var Model = type('Model', [ object ], {
             this.add_to_class(obj_name, attrs[obj_name]);
 
         // Do the appropriate setup for any model parents.
-        var o2o_map = new Dict([[f.rel.to, f] for (f in this._meta.local_fields) if (f instanceof OneToOneField)]);
+        var o2o_map = new Dict([[f.rel.to, f] for (f in this._meta.local_fields) if (isinstance(f, OneToOneField))]);
         for each (var base in parents) {
             if (base['_meta']) {
 

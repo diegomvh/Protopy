@@ -13,7 +13,7 @@ var SyncModel = type('SyncModel', models.Model, {
     _status: new models.CharField( {"max_length": 1, "choices": SyncLog.SYNC_STATUS, "editable": false, "default": "c", "serialize": false}),
     server_pk: new models.PositiveIntegerField( {"null": true, "blank": true, "editable": false, "serialize": false}),
     Meta: {
-        abstract: true
+        abstract: false
     }
 });
 

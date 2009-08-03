@@ -1690,6 +1690,10 @@
         __len__: function() {
             return len(this._key);
         },
+        __contains__: function(value) {
+            var keys = values(this._key);
+            return include(keys, value);
+        },
         set: function(key, value) {
             var hash = id(key);
             this._key[hash] = key;

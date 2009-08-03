@@ -62,10 +62,10 @@ var RelatedField = type('RelatedField', [ Field ], {
 
         var other = this.rel.to;
 
-        if (type(other) == String) {
+        if (isinstance(other, String)) {
             function resolve_related_class(field, model, cls){
-            field.rel.to = model;
-            field.do_related_class(model, cls);
+                field.rel.to = model;
+                field.do_related_class(model, cls);
             }
             add_lazy_relation(cls, this, other, resolve_related_class);
         } else {
@@ -732,7 +732,7 @@ var OneToOneField = type('OneToOneField', [ ForeignKey ], {
     },
 
     contribute_to_related_class: function(cls, related) {
-        var srod = new SingleRelatedObjectDescriptor(this);
+        var srod = new SingleRelatedObjectDescriptor(related);
         var attr = related.get_accessor_name();
         cls.prototype.__defineGetter__(attr, function(){ return srod.__get__(this, this.constructor); });
         cls.prototype.__defineSetter__(attr, function(value){ return srod.__set__(this, this.constructor, value); });

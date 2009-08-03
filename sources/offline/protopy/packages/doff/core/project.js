@@ -130,7 +130,7 @@ var Project = type('Project', object, {
     },
 
     bootstrap: function(){
-//        event.connect(window, 'load', this, 'onLoad');
+        event.connect(window, 'load', this, 'onLoad');
     },
 
     get settings() {

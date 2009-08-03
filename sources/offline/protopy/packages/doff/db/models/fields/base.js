@@ -5,6 +5,7 @@ require('doff.core.project', 'get_settings');
 var forms = require('doff.forms.base');
 require('doff.core.exceptions', 'ValidationError');
 require('functional', 'curry');
+require('copy', 'copy');
 
 var settings = get_settings();
 
@@ -75,14 +76,10 @@ var Field = type('Field', [ object ], {
     },
 
     __deepcopy__: function() {
-        var obj = this.copy();
+        var obj = copy(this);
         if (this.rel)
-            obj.rel = this.rel.copy();
+            obj.rel = copy(this.rel);
         return obj;
-    },
-
-    'copy': function copy() {
-        return type(this.__name__, this.prototype);
     },
 
     /*
