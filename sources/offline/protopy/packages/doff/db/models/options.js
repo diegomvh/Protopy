@@ -347,7 +347,7 @@ var Options = type('Options', [ object ], {
     '_fill_related_objects_cache': function _fill_related_objects_cache() {
         var cache = new SortedDict();
         var parent_list = this.get_parent_list();
-        for each (var parent in this.parents)
+        for each (var parent in this.parents.keys())
             for each (var [obj, model] in parent._meta.get_all_related_objects_with_model()) {
                 if ((obj.field.creation_counter < 0 || obj.field.rel.parent_link) && !include(parent_list, obj.model))
                     continue;
@@ -385,7 +385,7 @@ var Options = type('Options', [ object ], {
     _fill_related_many_to_many_cache: function() {
         var cache = new SortedDict();
         var parent_list = this.get_parent_list();
-        for each (var parent in this.parents) {
+        for each (var parent in this.parents.keys()) {
             for each (var [obj, model] in parent._meta.get_all_related_m2m_objects_with_model()) {
                 if (obj.field.creation_counter < 0 && include(parent_list, obj.model))
                     continue;
@@ -414,7 +414,7 @@ var Options = type('Options', [ object ], {
             return;
         if (include(this.parents, model))
             return [model];
-        for each (var parent in this.parents)
+        for each (var parent in this.parents.keys())
             res = parent._meta.get_base_chain(model);
             if (res)
                 res.push(0, parent);
@@ -428,7 +428,7 @@ var Options = type('Options', [ object ], {
         */
     'get_parent_list': function get_parent_list() {
         var result = new Set();
-        for each (var parent in this.parents) {
+        for each (var parent in this.parents.keys()) {
             result.add(parent);
             result.update(parent._meta.get_parent_list());
         }

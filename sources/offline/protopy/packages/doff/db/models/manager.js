@@ -39,8 +39,7 @@ var Manager = type('Manager', object, {
     },
 
     '_copy_to_model': function _copy_to_model(model){
-        //assert issubclass(model, this.model)
-        //TODO: Hacer un assert en javascript
+        assert(issubclass(model, this.model));
         var mgr = copy(this);
         mgr._set_creation_counter();
         mgr.model = model;

@@ -7,7 +7,7 @@
 var BaseDatabaseCreation = type('BaseDatabaseCreation', object, {
     data_types: {},
 
-    '__init__': function __init__(connection){
+    __init__: function(connection){
         this.connection = connection;
     },
 
@@ -15,7 +15,7 @@ var BaseDatabaseCreation = type('BaseDatabaseCreation', object, {
         * Returns the SQL required to create a single model, as a array of:
         * [list_of_sql, pending_references_dict]
         */
-    'sql_create_model': function sql_create_model(model, kms){
+    sql_create_model: function(model, kms){
 
         var IntegerField = require('doff.db.models.fields.base', 'IntegerField');
         var known_models = (bool(kms))?kms : new Set();
@@ -27,7 +27,7 @@ var BaseDatabaseCreation = type('BaseDatabaseCreation', object, {
             qn = this.connection.ops.quote_name,
             field_output = null;
 
-        for each (var f in opts.fields) {
+        for each (var f in opts.local_fields) {
 
             var col_type = f.db_type();
             if (!col_type)
@@ -77,7 +77,7 @@ var BaseDatabaseCreation = type('BaseDatabaseCreation', object, {
         /**
         * Return the SQL snippet defining the foreign key reference for a field
         */
-    'sql_for_inline_foreign_key_references': function sql_for_inline_foreign_key_references(field, known_models){
+    sql_for_inline_foreign_key_references: function(field, known_models){
 
         var qn = this.connection.ops.quote_name;
         if (include(known_models, field.rel.to)) {
@@ -96,7 +96,7 @@ var BaseDatabaseCreation = type('BaseDatabaseCreation', object, {
         /**
         * Returns any ALTER TABLE statements to add constraints after the fact.
         */
-    'sql_for_pending_references': function sql_for_pending_references(model, pending_references){
+    sql_for_pending_references: function(model, pending_references){
         var qn = this.connection.ops.quote_name,
             final_output = [],
             opts = model._meta;
@@ -118,7 +118,7 @@ var BaseDatabaseCreation = type('BaseDatabaseCreation', object, {
     /**
         * Return the CREATE TABLE statments for all the many-to-many tables defined on a model
         */
-    'sql_for_many_to_many': function sql_for_many_to_many(model) {
+    sql_for_many_to_many: function(model) {
         var output = [];
         for each (var f in model._meta.local_many_to_many) {
             output = output.concat(this.sql_for_many_to_many_field(model, f));
@@ -128,7 +128,7 @@ var BaseDatabaseCreation = type('BaseDatabaseCreation', object, {
     /**
         * Return the CREATE TABLE statements for a single m2m field
         */
-    'sql_for_many_to_many_field': function sql_for_many_to_many_field(model, f){
+    sql_for_many_to_many_field: function(model, f) {
 
         var AutoField = require('doff.db.models.fields.base', 'AutoField');
 
@@ -174,7 +174,7 @@ var BaseDatabaseCreation = type('BaseDatabaseCreation', object, {
     /**
         * Create the references to other tables required by a many-to-many table
         */
-    'sql_for_inline_many_to_many_references': function sql_for_inline_many_to_many_references(model, field){
+    sql_for_inline_many_to_many_references: function(model, field) {
 
         var ForeignKey = require('doff.db.models.fields.related', 'ForeignKey');
 
@@ -205,7 +205,7 @@ var BaseDatabaseCreation = type('BaseDatabaseCreation', object, {
     /**
         * Returns the CREATE INDEX SQL statements for a single model
         */
-    'sql_indexes_for_model': function sql_indexes_for_model(model){
+    sql_indexes_for_model: function(model){
         var output = [];
         for each (var f in model._meta.local_fields) {
             output = output.concat(this.sql_indexes_for_field(model, f));
@@ -216,7 +216,7 @@ var BaseDatabaseCreation = type('BaseDatabaseCreation', object, {
     /**
         * Return the CREATE INDEX SQL statements for a single model field
         */
-    'sql_indexes_for_field': function sql_indexes_for_field(model, f) {
+    sql_indexes_for_field: function(model, f) {
         if (f.db_index && !f.unique) {
             var qn = this.connection.ops.quote_name;
             var output = ['CREATE INDEX ' +
@@ -233,7 +233,7 @@ var BaseDatabaseCreation = type('BaseDatabaseCreation', object, {
     /**
         * Return the DROP TABLE and restraint dropping statements for a single model
         */
-    'sql_destroy_model': function sql_destroy_model(model, references_to_delete){
+    sql_destroy_model: function(model, references_to_delete) {
 
         var qn = this.connection.ops.quote_name;
         var output = ['%s %s;'.subs('DROP TABLE', qn(model._meta.db_table))];
@@ -246,7 +246,7 @@ var BaseDatabaseCreation = type('BaseDatabaseCreation', object, {
         return output;
     },
 
-    'sql_remove_table_constraints': function sql_remove_table_constraints(model, references_to_delete){
+    sql_remove_table_constraints: function(model, references_to_delete){
 
         var output = [];
         var qn = this.connection.ops.quote_name;
@@ -269,7 +269,7 @@ var BaseDatabaseCreation = type('BaseDatabaseCreation', object, {
     /*
         * Returns the DROP TABLE statements for a single m2m field
         */
-    'sql_destroy_many_to_many': function sql_destroy_many_to_many(model, f) {
+    sql_destroy_many_to_many: function(model, f) {
 
         var qn = this.connection.ops.quote_name;
         var output = [];
