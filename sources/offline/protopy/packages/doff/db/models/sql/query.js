@@ -426,7 +426,7 @@ var Query = type('Query', object, {
         for each (var [table, col] in this.related_select_cols) {
             var r = '%s.%s'.subs(qn(table), qn(col));
             if (with_aliases && include(col_aliases, col)) {
-                c_alias = 'Col%s'.subs(col_aliases.length);
+                c_alias = 'Col%s'.subs(len(col_aliases));
                 result.push('%s AS %s'.subs(r, c_alias));
                 aliases.add(c_alias);
                 col_aliases.add(c_alias);
@@ -472,8 +472,8 @@ var Query = type('Query', object, {
                 result.push([alias, field.column]);
                 continue;
             }
-            if (with_aliases && field.column in col_aliases) {
-                c_alias = 'Col%s'.subs(col_aliases.length);
+            if (with_aliases && include(col_aliases, field.column)) {
+                c_alias = 'Col%s'.subs(len(col_aliases));
                 result.push('%s.%s AS %s'.subs(qn(alias), qn2(field.column), c_alias));
                 col_aliases.add(c_alias);
                 aliases.add(c_alias);
@@ -949,7 +949,7 @@ var Query = type('Query', object, {
         If 'nullable' is True, the join can potentially involve NULL values and
         is a candidate for promotion (to "left outer") when combining querysets.
         */
-    'join': function join(connection, always_create, exclusions, promote, outer_if_first, nullable, reuse) {
+    join: function(connection, always_create, exclusions, promote, outer_if_first, nullable, reuse) {
         always_create = always_create || false;
         exclusions = exclusions || [];
         promote = promote || false;
@@ -962,7 +962,7 @@ var Query = type('Query', object, {
         else
             var lhs_table = lhs;
 
-        if (reuse && always_create && this.table_map[table]) {
+        if (reuse && always_create && table in this.table_map) {
             // Convert the 'reuse' to case to be "exclude everything but the
             // reusable set, minus exclusions, for this table".
             exclusions = new Set(this.table_map[table]).difference(reuse).union(new Set(exclusions));
@@ -1073,7 +1073,7 @@ var Query = type('Query', object, {
                     int_opts = int_model._meta;
                     //join(connection, always_create, exclusions, promote, outer_if_first, nullable, reuse)
                     alias = this.join([alias, int_opts.db_table, lhs_col, int_opts.pk.column], null, used, promote);
-                    for ([dupe_opts, dupe_col] in dupe_set)
+                    for (var [dupe_opts, dupe_col] in dupe_set)
                         this.update_dupe_avoidance(dupe_opts, dupe_col, alias);
             } else { alias = root_alias };
 
@@ -1087,17 +1087,17 @@ var Query = type('Query', object, {
             alias = this.join([alias, table, f.column, f.rel.get_related_field().column], null, used.union(avoid), promote);
             used.add(alias);
             //get_default_columns(with_aliases, col_aliases, start_alias, opts, as_pairs)
-            this.related_select_cols = this.related_select_cols.concat(this.get_default_columns( null, null, alias, f.rel.to._meta, true)[0]);
-            this.related_select_fields.extend(f.rel.to._meta.fields);
+            this.related_select_cols = this.related_select_cols.concat(this.get_default_columns( null, null, alias, f.rel.to._meta, true)[0]);            
+            this.related_select_fields = this.related_select_fields.concat(f.rel.to._meta.fields);
             if (restricted)
-                next = requested.get(f.name, {});
+                var next = requested.get(f.name, {});
             else
-                next = false;
+                var next = false;
             if (f.none)
                 new_nullable = f.none;
             else
                 new_nullable = null;
-            for ([dupe_opts, dupe_col] in dupe_set)
+            for (var [dupe_opts, dupe_col] in dupe_set)
                 this.update_dupe_avoidance(dupe_opts, dupe_col, alias);
             this.fill_related_selections(f.rel.to._meta, alias, cur_depth + 1, used, next, restricted, new_nullable, dupe_set, avoid);
     },
@@ -1344,7 +1344,7 @@ var Query = type('Query', object, {
                     alias = this.join([alias, opts.db_table, lhs_col, opts.pk.column], null, exclusions);
                     joins.push(alias);
                     exclusions.add(alias);
-                    for ([dupe_opts, dupe_col] in dupe_set)
+                    for (var [dupe_opts, dupe_col] in dupe_set)
                         this.update_dupe_avoidance(dupe_opts, dupe_col, alias);
                 }
             }
@@ -1447,7 +1447,7 @@ var Query = type('Query', object, {
                     joins.push(alias);
                 }
             }
-            for ([dupe_opts, dupe_col] in dupe_set) {
+            for (var [dupe_opts, dupe_col] in dupe_set) {
                 try {
                     this.update_dupe_avoidance(dupe_opts, dupe_col, int_alias);
                 }
