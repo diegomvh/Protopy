@@ -23,7 +23,7 @@ syntax: glob
 *.orig
 bundle*
 *bundle
-
+*_build/latex*
 doffproj/static/doffproj_offline/*
 
 
