@@ -167,12 +167,61 @@ Cada vez que se crea una aplicación, se genera un módulo models.py, en el cual
 se le permite al programador definir modelos de objetos, que luego son
 transformados en tablas relacionales [*]_.
 
+Módulo views
+~~~~~~~~~~~~~
+
+Cada aplicacion posee un módulo views, donde se definen las funcinoes que atienden
+al cliente y son activadas gracias a el mapeo definido en el módulo urls del proyecto
+o de la aplicación.
+
+Las funciones que trabajan como vistas deben recibir como primer parámetro el request
+y opcionalmente parámetros que pueden ser recuperados del mapeo de urls del modulo urls.
+
+
+
+
 
 .. [*] Mediante el comando syncdb del módulo manage del proyecto
 
 El cliclo de una petición
 ~~~~~~~~~~~~~~~~~~~~~~~~~
  
+Cada vez que un browser realiza una petición a un proyecto desarrollado en django, 
+la petición HTTP pasa por varias capas.
+
+Inicialmente atraviesa los Middlewares, en la cual, el middleware de Request, empaqueta
+las variables del request en una instancia de la calse Request.
+
+Luego de atravesar los middlewares de request, mediante las definciones de URLs, 
+se selecciona la vista a ser ejecutada.
+
+Una vista es una función que recibe como primer argumento el request y opcionalmente 
+una serie de parámetros que puede recuperar de la propia URL.
+
+.. code-block:: python
+	
+	# Tras un mapeo como el sigunete
+	(r'^persona/(?P<id_persona>\d)/$', mi_vista)
+	# la vista se define como
+	def mi_vista(request, id_persona):
+		persona = Personas.objects.get(id = id_persona)
+		datos = {'persona':persona, }
+		return render_to_response('plantilla.html', datos) 
+
+Dentro de la vista se suelen hacer llamadas al ORM, para realizar consultas sobre
+la base de datos. Una vez que la vista a completado la lógica, genera un mapeo que es
+transferido a la capa de templates.
+
+El template rellena sus comodines en función de los valores del mapeo que le entrega
+la vista. Un template puede poseer lógica muy básica (bifurcaciones, bucles de repetición, 
+formateo de datos, etc).
+
+El template se entrega como un HttpResponse. La responsabilidad de la vista es entregar
+una instancia de esta clase.
+
+.. image:: ../_static/get_response.png
+	:height: 400
+	:width: 400
 
 	
 ..	\begin{figure}[htp]
