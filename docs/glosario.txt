@@ -99,3 +99,17 @@ Glosario
         A function responsible for rending a page.
     BSD
     	ve ese de
+    	
+    urlpatterns
+    
+    	Nombre para las urls
+    
+    i18n
+    	La internacionalización es el proceso de diseñar software de manera 
+    	tal que pueda adaptarse a diferentes idiomas y regiones sin la
+    	necesidad de realizar cambios de ingeniería ni en el código.
+    	La localización es el proceso de adaptar el software para una región 
+    	específica mediante la adición de componentes específicos de un locale 
+    	y la traducción de los textos, por lo que también se le puede denominar 
+    	regionalización. No obstante la traducción literal del inglés es la más extendida.
+    	
