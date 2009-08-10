@@ -175,9 +175,19 @@ al cliente y son activadas gracias a el mapeo definido en el módulo urls del pr
 o de la aplicación.
 
 Las funciones que trabajan como vistas deben recibir como primer parámetro el request
-y opcionalmente parámetros que pueden ser recuperados del mapeo de urls del modulo urls.
+y opcionalmente parámetros que pueden ser recuperados del mapeo de urls.
 
+Dentro del módulo de urls
 
+.. code-block:: python
+	
+	# Tras un mapeo como el sigunete
+	(r'^persona/(?P<id_persona>\d)/$', mi_vista)
+	# la vista se define como
+	def mi_vista(request, id_persona):
+		persona = Personas.objects.get(id = id_persona)
+		datos = {'persona':persona, }
+		return render_to_response('plantilla.html', datos)
 
 
 
@@ -198,15 +208,7 @@ se selecciona la vista a ser ejecutada.
 Una vista es una función que recibe como primer argumento el request y opcionalmente 
 una serie de parámetros que puede recuperar de la propia URL.
 
-.. code-block:: python
-	
-	# Tras un mapeo como el sigunete
-	(r'^persona/(?P<id_persona>\d)/$', mi_vista)
-	# la vista se define como
-	def mi_vista(request, id_persona):
-		persona = Personas.objects.get(id = id_persona)
-		datos = {'persona':persona, }
-		return render_to_response('plantilla.html', datos) 
+ 
 
 Dentro de la vista se suelen hacer llamadas al ORM, para realizar consultas sobre
 la base de datos. Una vez que la vista a completado la lógica, genera un mapeo que es
@@ -223,53 +225,6 @@ una instancia de esta clase.
 	:height: 400
 	:width: 400
 
-	
-..	\begin{figure}[htp]
-	\centering
-	\includegraphics[scale=0.60]{img/django_simple_mtv.pdf}
-	\caption{Estruccura báisca de Django}\label{fig:erptsqfit}
-	\end{figure}
-	  
-	
-	%  Dentro de estas utilidades encontramos 
-	% un servidor standalone de desarrollo para probar los proyectos, creación de 
-	% tablas a partir de los modelos del mapeador objeto-relacional, realizar 
-	% volcado y carga de datos (\emph{fixtures}), ejecución de pruebas basadas 
-	% en test de unidad, entre otras.
-	
-	\subsubsection*{Módulo urls.py}
-	  Este módulo define las asociacines entre las URL y las funciones (vistas) que
-	las
-	atienden. Para generar código más modular, django permite delegar urls que
-	cumplan
-	con cierto patrón a un otro módulo. Típicamente este módulo se llama también
-	urls y 
-	es parte de una aplicación (Ej: tratar todo lo lo que comience con
-	\textbf{/clientes/} con el módulo
-	\textbf{mi\_proyecto.mi\_aplicacion.urls}).
-	
-	
-	
-	\subsection*{Elementos de una aplicación Django}
-	
-	Una aplicación consiste en 2 módulos fundamentales.
-	\subsubsection*{Módulo models.py}
-	En este módulo se definien los modelos.
-	
-	\subsubsection*{Módulo views.py}
-	En este módulo se definen las viastas. Una vista es una función que recibe como
-	primer
-	argumento un objeto HttpRequest\footnote{
-	\href{
-	http://docs.djangoproject.com/en/dev/ref/request-response/\#httprequest-objects}
-	{Documentación oficial sobre HttpRequest en djangoproject.com}}, el cual
-	encapsula la información preveniente del request, 
-	como el método (GET, POST), los elementos de la query http.
-	\begin{figure}[htp]
-	\centering
-	\includegraphics[scale=0.40]{img/django_strucure.pdf}
-	\caption{Esquema de flujo de una aplicación Django}\label{fig:erptsqfit}
-	\end{figure}
 	
 
 El mapeador Objeto-Relacional de Django
