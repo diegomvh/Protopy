@@ -1,0 +1,184 @@
+=========================
+Tecnologías del servidor
+=========================
+
+CGI
+===
+
+CGI es bla 
+
+WSGI
+====
+
+WSGI es CGI para Python.
+
+Lenguajes interpreteados
+========================
+
+Python es un lengauje interpretado.
+
+
+Frameworks web
+==============
+
+Un framework web es una cosa loca.
+
+
+Django
+======
+
+`Django <http://www.djangoproject.com>`_ es un framework web escrito en
+Python el cual sigue vagamente el concepto de Modelo Vista Controlador.
+Ideado inicialmente como un adminsitrador de contenido para varios
+sitios de noticias, los desarrolladores encontraron que su CMS era lo 
+sufcientemente genérico como para curbir un ámbito más aplio de aplicaciones.
+
+En honor al músico Django Reinhart, fue liberado el código base bajo la licencia 
+:term:`BSD` en Julio del 2005 como Django Web Framework. El slogan del framework
+fue "Django, Él framework para perfeccionistas con fechas límites" [*]_.
+
+.. [*] Del ingles "The Web framework for perfectionists with deadlines"
+
+En junio del 2008 fue anuncidada la cereación de la Django Software Fundation,
+la cual se hace cargo hasta la fecha del desarrollo y mantenimiento.
+
+Los orígenes de Django en la administración de páginas de noticias son evidentes
+en su diseño, ya que proporciona una serie de características que facilitan el
+desarrollo rápido de páginas orientadas a contenidos. 
+Por ejemplo, en lugar de requerir que los desarrolladores escriban controladores 
+y vistas para las áreas de administración de la página, Django proporciona una aplicación incorporada
+para administrar los contenidos que puede incluirse como parte de cualquier
+proyecto; la aplicación administrativa permite la creación, actualización y 
+eliminación de objetos de contenido, llevando un registro de todas las acciones 
+realizadas sobre cada uno (sistema de logging o bitácora), y proporciona una
+interfaz para administrar los usuarios y los grupos de usuarios (incluyendo una
+asignación detallada de permisos).
+
+La distribución principal de Django también aglutina aplicaciones que
+proporcionan un sistema de comentarios, herramientas para sindicar contenido via
+RSS y/o Atom, "páginas planas" que permiten gestionar páginas de contenido sin
+necesidad de escribir controladores o vistas para esas páginas, y un sistema de
+redirección de URLs.
+
+
+..	
+	
+	
+	
+	
+	
+	
+	
+	\begin{figure}[htp]
+	\centering
+	\includegraphics[scale=0.60]{img/django_simple_mtv.pdf}
+	\caption{Estruccura báisca de Django}\label{fig:erptsqfit}
+	\end{figure}
+	  
+	
+	Django como framework de desarrollo consiste en un  conjunto de utilidades 
+	de consola que permiten crear y manipular proyectos y aplicaciones.
+	
+	\subsection*{Estructura de un proyecto}
+	%%Django implementa una estructura \emph{modelo}, \emph{vista},
+	\emph{plantilla}.
+	%% o MTV por sus siglas en inglés (model, view, template).
+	Un proyecto funciona como un contenedor de aplicaciones que ser rigen bajo
+	la misma base de datos, los mismos templates y las mismas clases de middleware.
+	
+	Una aplicación es un paquete que contiene al menos los módulos
+	\textbf{models.py} y \textbf{views.py}, 
+	y generalmente suele agregarse un módulo \textbf{urls.py}.
+	
+	
+	
+	
+	%  Dentro de estas utilidades encontramos 
+	% un servidor standalone de desarrollo para probar los proyectos, creación de 
+	% tablas a partir de los modelos del mapeador objeto-relacional, realizar 
+	% volcado y carga de datos (\emph{fixtures}), ejecución de pruebas basadas 
+	% en test de unidad, entre otras.
+	
+	Un \label{django:proyecto}{proyecto} Django consite en 3 módulos\footnote{Un
+	módulo en Python, es un
+	archivo con extensión .py} básicos:
+	\subsubsection*{Módulo manage.py}
+	  Esta es la interfase con el framework. Este módulo permite crear aplicaciones,
+	testear que los modelos de una aplicación estén bien definidos (validación),
+	iniciar el servidor de desarrollo, crar volcados de la base de datos y
+	restaurarlos
+	restaurarlos (\emph{fixtures}, utilizados en casos de pruebas y para precarga
+	de datos conocidos).
+	
+	\subsubsection*{Módulo settings.py}
+	  El módulo \emph{settings} define la configuración transversal
+	a las aplicaciones de usuario. En este módulo no se suelen definir más que
+	constantes.
+	Dentro de estas constantes encontramos la base de datos sobre la cual trabaja el
+	ORM, 
+	el(los) directorio(s) de las plantillas, las clases middleware,
+	ubicación de los medios estáticos\footnote{
+	Un medio estático es todo contenido que no se genera dinámicamente, como
+	imágenes, 
+	liberías de javascript, contenido para embeber como archivos multimedia u
+	elementos}.
+	En este módulo se defnien la lista de aplicaciones instaladas.
+	
+	\subsubsection*{Módulo urls.py}
+	  Este módulo define las asociacines entre las URL y las funciones (vistas) que
+	las
+	atienden. Para generar código más modular, django permite delegar urls que
+	cumplan
+	con cierto patrón a un otro módulo. Típicamente este módulo se llama también
+	urls y 
+	es parte de una aplicación (Ej: tratar todo lo lo que comience con
+	\textbf{/clientes/} con el módulo
+	\textbf{mi\_proyecto.mi\_aplicacion.urls}).
+	
+	Una \emph{expresión regular} es una forma de definir un patrón en una cadena.
+	Mediante
+	ésta técnica se realizan validaciones y búsquedas de elementos en cadenas. En
+	python
+	se define además una forma de otorgarle un alias a los elementos buscaods (en
+	contraposición
+	a la forma tradicional que utiliza un índice numérico).
+	Esta particularidad de las expresiones regulares ha sido explotada para la
+	asociación
+	de las URLs a las funciones que las atienden.
+	Cuando el cliente realiza accede a una URL dentro de un proyecto django, esta es
+	checkeada
+	contra cada patrón definido como url, en caso de éxito, se ejecuta la función
+	asociada o vista.
+	Si la expresión regualar tiene definido gurpos nombrados, cada subcadena pasa a
+	ser argumento
+	
+	pasan a ser argumentos de la vista, es decir, cada grupo nombrado, pasa a ser
+	argumento
+	de la función asociada.
+	
+	\subsection*{Elementos de una aplicación Django}
+	
+	Una aplicación consiste en 2 módulos fundamentales.
+	\subsubsection*{Módulo models.py}
+	En este módulo se definien los modelos.
+	
+	\subsubsection*{Módulo views.py}
+	En este módulo se definen las viastas. Una vista es una función que recibe como
+	primer
+	argumento un objeto HttpRequest\footnote{
+	\href{
+	http://docs.djangoproject.com/en/dev/ref/request-response/\#httprequest-objects}
+	{Documentación oficial sobre HttpRequest en djangoproject.com}}, el cual
+	encapsula la información preveniente del request, 
+	como el método (GET, POST), los elementos de la query http.
+	\begin{figure}[htp]
+	\centering
+	\includegraphics[scale=0.40]{img/django_strucure.pdf}
+	\caption{Esquema de flujo de una aplicación Django}\label{fig:erptsqfit}
+	\end{figure}
+	
+
+El mapeador Objeto-Relacional de Django
+=======================================
+
+Diego
