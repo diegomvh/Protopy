@@ -97,3 +97,5 @@ Glosario
         
     view
         A function responsible for rending a page.
+    BSD
+    	ve ese de
