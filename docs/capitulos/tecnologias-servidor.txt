@@ -169,6 +169,12 @@ de las urls a una aplicación particular.
 		.. code-block:: python
 			
 			(r'^personas', include('mi_proyecto.personas.urls'))
+
+Estructura de una aplicación Django
+-----------------------------------
+
+Una aplicación es un paquete python que consta de un módulo models y un módulo views.
+
  
 Módulo models
 ~~~~~~~~~~~~~
