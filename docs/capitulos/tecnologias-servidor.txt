@@ -13,18 +13,33 @@ WSGI es CGI para Python.
 
 Lenguajes interpreteados
 ************************
+PHP
+Ruby
+Python
 
 Python es un lengauje interpretado.
 
 
-Frameworks web
-**************
+Frameworks
+**********
 
-Un framework web es una cosa loca.
+Model View Controler
+--------------------
 
+Mapeador Objeto-Relacional
+--------------------------
+
+.. por poner algo, pueden ser otros
+Rails
+
+Symfony
+
+.. Django CLI
 
 Django
 ******
+
+Acá tenemos que justificar por que django
 
 `Django <http://www.djangoproject.com>`_ es un framework web escrito en
 Python el cual sigue vagamente el concepto de Modelo Vista Controlador.
@@ -72,13 +87,15 @@ Un proyecto es un paquete que contiene 3 módulos:
  * manage.py
  * urls.py
  * settings.py
- 
+
+.. comentar un poco los modulos y hace la referencia
+
 Cuando django se encuentra instalado, existe un comando llamado django-admin.py en el PATH 
 del sistema. Mediante este comando se pueden crear proyectos:
 
 .. code-block:: bash
-	
-	$ django-admin.py startproject mi_proyecto # Crea el proyecto mi_proyecto
+    
+    $ django-admin.py startproject mi_proyecto # Crea el proyecto mi_proyecto
 
 El proyecto funciona como un contenedor de aplicaciones que ser rigen bajo
 la misma base de datos, los mismos templates, las mismas clases de middleware entre 
@@ -102,16 +119,16 @@ del proyecto, o el módulo manage.py que se explica más abajo.
 
 La estructura de archivos creada es la siguiente::
 
-	mi_proyecto
-	|-- mi_aplicacion
-	|   |-- __init__.py
-	|   |-- models.py
-	|   |-- tests.py
-	|   `-- views.py
-	|-- __init__.py
-	|-- manage.py
-	|-- settings.py
-	`-- urls.py
+    mi_proyecto
+    |-- mi_aplicacion
+    |   |-- __init__.py
+    |   |-- models.py
+    |   |-- tests.py
+    |   `-- views.py
+    |-- __init__.py
+    |-- manage.py
+    |-- settings.py
+    `-- urls.py
 
 A continuación veremos que utilidad tiene cada uno de los módulos en el proyecto.	
 
@@ -144,8 +161,6 @@ testear que los modelos de una aplicación estén bien definidos (validación),
 iniciar el servidor de desarrollo, 
 crear volcados de la base de datos y restaurarlos restaurarlos :ref:`fixtures`, etc.
 
-	
-
 Módulo urls
 ~~~~~~~~~~~
 
@@ -161,14 +176,14 @@ La asociación url-vistas se define en el módulo bajo el nombre :term:`urlpatte
 También es posible derivar el tratado de una parte de la expresión reuglar
 a otro módulo de urls. Generalmente esto ocurre cuando se desea delegar el tratado
 de las urls a una aplicación particular.
-	
-	Ej:
-		Derivar el tratado de todo lo que comience con la cadena personas a 
-		al módulo de urls de la aplicación personas.
-		
-		.. code-block:: python
-			
-			(r'^personas', include('mi_proyecto.personas.urls'))
+
+    Ej:
+        Derivar el tratado de todo lo que comience con la cadena personas a 
+        al módulo de urls de la aplicación personas.
+    
+        .. code-block:: python
+        
+            (r'^personas', include('mi_proyecto.personas.urls'))
 
 Estructura de una aplicación Django
 -----------------------------------
@@ -196,14 +211,14 @@ y opcionalmente parámetros que pueden ser recuperados del mapeo de urls.
 Dentro del módulo de urls
 
 .. code-block:: python
-	
-	# Tras un mapeo como el sigunete
-	(r'^persona/(?P<id_persona>\d)/$', mi_vista)
-	# la vista se define como
-	def mi_vista(request, id_persona):
-		persona = Personas.objects.get(id = id_persona)
-		datos = {'persona':persona, }
-		return render_to_response('plantilla.html', datos)
+
+    # Tras un mapeo como el sigunete
+    (r'^persona/(?P<id_persona>\d)/$', mi_vista)
+    # la vista se define como
+    def mi_vista(request, id_persona):
+        persona = Personas.objects.get(id = id_persona)
+        datos = {'persona':persona, }
+        return render_to_response('plantilla.html', datos)
 
 
 
@@ -224,8 +239,6 @@ se selecciona la vista a ser ejecutada.
 Una vista es una función que recibe como primer argumento el request y opcionalmente 
 una serie de parámetros que puede recuperar de la propia URL.
 
- 
-
 Dentro de la vista se suelen hacer llamadas al ORM, para realizar consultas sobre
 la base de datos. Una vez que la vista a completado la lógica, genera un mapeo que es
 transferido a la capa de templates.
@@ -238,10 +251,8 @@ El template se entrega como un HttpResponse. La responsabilidad de la vista es e
 una instancia de esta clase.
 
 .. image:: ../_static/get_response.png
-	:height: 400
-	:width: 400
-
-	
+	:height: 200
+	:width: 200
 
 El Mapeador Objeto-Relacional de Django
 =======================================
