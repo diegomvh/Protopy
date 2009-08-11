@@ -66,10 +66,19 @@ de consola que permiten crear y manipular proyectos y aplicaciones.
 Estructuración de un proyecto en Django
 ---------------------------------------
 
-El framework parte de la base que un proyecto está compuesto por un conjunto 
-de aplicaciones.
+Durante la instalación del framework en el sistema del desarrollador, se añade al
+PATH un comando con el nombre django-admin.py. Mediante este comando se crean proyectos
+y se los administra.
 
-**Un proyecto es un paquete que contiene 3 módulos**:
+
+Un proyecto se crea mediante la siguiente orden:
+
+.. code-block:: bash
+	
+	$ django-admin.py startproject mi_proyecto # Crea el proyecto mi_proyecto
+
+
+**Un proyecto es un paquete Python que contiene 3 módulos**:
 
  * manage.py
  	Interfase de consola para la ejecución de comandos
@@ -78,39 +87,8 @@ de aplicaciones.
  * settings.py
  	Configuración de la base de datos, directorios de plantillas, etc.
  
-Durante la instalación del framework en la computradora del desarrollador, se añade al
-path un comando con el nombre django-admin.py. Mediante este comando se crean proyectos
-basados en Django.
-
-.. code-block:: bash
-	
-	$ django-admin.py startproject mi_proyecto # Crea el proyecto mi_proyecto
-
-El proyecto funciona como un contenedor de aplicaciones que ser rigen bajo
-la misma base de datos, los mismos templates, las mismas clases de middleware entre 
-otros parámetros.
-
-Una aplicación es un paquete que contiene al menos los módulos:
-
- * models.py
- 	Definición de entidades para el mapaeador objeto-relacional
- * views.py
- 	Definición de las funciones que generan contenido al cliente
- 
-Y si bien, el comadno **startapp** no lo genera, se eventualmente se termina agregando
-un módulo:
-
- * urls.py
- 	Mapeo de URLs a funciones (del módulo views de la aplicación)
-
-
-El comando django-admin permite crear proyectos, su sintaxis es la siguiente:
-
-.. code-block:: bash
-	
-	$ django-admin.py startproject mi_proj # Crear un proyecto
-
-La estructura de archivos creada es la siguiente::
+En el ejemplo anterior, un listado gerárquico del sistema de archivos 
+mostraría la siguiente estructura::
 
 	mi_proyecto
 	|-- __init__.py
@@ -118,7 +96,12 @@ La estructura de archivos creada es la siguiente::
 	|-- settings.py
 	`-- urls.py
 
-A continuación veremos que utilidad tiene cada uno de los módulos en el proyecto.	
+El proyecto funciona como un contenedor de aplicaciones que ser rigen bajo
+la misma base de datos, los mismos templates, las mismas clases de middleware entre 
+otros parámetros.
+
+Analicemos a continuación la función de cada uno de estos 3 módulos.
+	
 
 Módulo settings
 ~~~~~~~~~~~~~~~
@@ -127,6 +110,8 @@ la configuración de la base de datos a utilizar, la ruta en la cual se encuentr
 los médios estáticos, cuál es el nombre del archivo raíz de urls (generalmente urls.py).
 Otros atributos son las clases middleware, las rutas de los templates, el idioma para
 las aplicaciones que soportan :ref:`i18n`, etc.
+
+.. Subir como ventaja
 
 Al ser un módulo del lengauje python, la confguración se puede editar muy facilmente
 a diferencia de configuraciones realizadas en XML, además de contar con la ventaja de 
