@@ -66,15 +66,21 @@ de consola que permiten crear y manipular proyectos y aplicaciones.
 Estructuración de un proyecto en Django
 ---------------------------------------
 
-El framework parte de la base que un proyecto está compuesto por un conjunto de aplicaciones.
-Un proyecto es un paquete que contiene 3 módulos:
+El framework parte de la base que un proyecto está compuesto por un conjunto 
+de aplicaciones.
+
+**Un proyecto es un paquete que contiene 3 módulos**:
 
  * manage.py
+ 	Interfase de consola para la ejecución de comandos
  * urls.py
+ 	Mapeo de URLs en vistas (funciones)
  * settings.py
+ 	Configuración de la base de datos, directorios de plantillas, etc.
  
-Cuando django se encuentra instalado, existe un comando llamado django-admin.py en el PATH 
-del sistema. Mediante este comando se pueden crear proyectos:
+Durante la instalación del framework en la computradora del desarrollador, se añade al
+path un comando con el nombre django-admin.py. Mediante este comando se crean proyectos
+basados en Django.
 
 .. code-block:: bash
 	
@@ -87,27 +93,26 @@ otros parámetros.
 Una aplicación es un paquete que contiene al menos los módulos:
 
  * models.py
+ 	Definición de entidades para el mapaeador objeto-relacional
  * views.py
+ 	Definición de las funciones que generan contenido al cliente
  
-y generalmente suele agregarse un módulo:
+Y si bien, el comadno **startapp** no lo genera, se eventualmente se termina agregando
+un módulo:
 
  * urls.py
+ 	Mapeo de URLs a funciones (del módulo views de la aplicación)
 
-Para crear una aplicación, se puede bien utilizar el comando django-admin.py en la carpeta
-del proyecto, o el módulo manage.py que se explica más abajo.
+
+El comando django-admin permite crear proyectos, su sintaxis es la siguiente:
 
 .. code-block:: bash
 	
-	$ django-admin.py startapp mi_app # Crear una aplicacion
+	$ django-admin.py startproject mi_proj # Crear un proyecto
 
 La estructura de archivos creada es la siguiente::
 
 	mi_proyecto
-	|-- mi_aplicacion
-	|   |-- __init__.py
-	|   |-- models.py
-	|   |-- tests.py
-	|   `-- views.py
 	|-- __init__.py
 	|-- manage.py
 	|-- settings.py
@@ -134,15 +139,32 @@ Módulo manage
 ~~~~~~~~~~~~~
 
 Esta es la interfase con el framework. Éste módulo es un script ejecutable, que
-recibe como argumento algún nombre de comando para que el framework lo ejecute y 
-parámetros opcionales.
+recibe como primer argumento un nombre de comando de django.
 
-Este módulo permite crear aplicaciones,
-generar el SQL necesario para crear en la base de datos las tablas fruto de la 
-escritura de los modelos, 
-testear que los modelos de una aplicación estén bien definidos (validación),
-iniciar el servidor de desarrollo, 
-crear volcados de la base de datos y restaurarlos restaurarlos :ref:`fixtures`, etc.
+Los comandos de django pemiten, permiten entre otras cosas:
+
+	* startapp <nombre de aplicación>
+		Crear una aplicación
+	
+	* runserver
+		Correr el proyecto en un servidor de desarrollo.
+	
+	* syncdb
+		Generar las tablas en la base de datos de las aplicaciones instaladas
+		 
+El resultado de el comando **startapp** en el ejemplo anterior genera el siguiente
+resultado::
+
+	mi_proyecto
+	|-- mi_aplicacion
+	|   |-- __init__.py
+	|   |-- models.py
+	|   |-- tests.py
+	|   `-- views.py
+	|-- __init__.py
+	|-- manage.py
+	|-- settings.py
+	`-- urls.py
 
 	
 

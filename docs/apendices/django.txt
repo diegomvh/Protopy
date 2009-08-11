@@ -2,6 +2,41 @@
 Referencia sobre Django
 =========================
 
+Instalación de Django
+---------------------
+
+La mayoría de la gente querrá instalar el lanzamiento oficial más reciente
+de http://www.djangoproject.com/download/. Django usa el método ``distutils``
+estándar de instalación de Python, que en el mundo de Linux es así:
+
+   #. Baja el tarball, que se llamará algo así como *Django-0.96.tar.gz*
+
+   #. ``tar xzvf Django-*.tar.gz``
+
+   #. ``cd Django-*``
+
+   #. ``sudo python setup.py install``
+
+En Windows, recomendamos usar 7-Zip para manejar archivos comprimidos de todo
+tipo, incluyendo ``.tar.gz``. Puedes bajar 7-Zip de http://www.djangoproject.com/r/7zip/.
+
+Cambia a algún otro directorio e inicia ``python``. Si todo está funcionando
+bien, deberías poder importar el módulo ``django``::
+
+    >>> import django
+    >>> django.VERSION
+    (0, 96, None)
+
+.. nota::
+
+    El intérprete interactivo de Python es un programa de línea de comandos que
+    te permite escribir un programa Python de forma interactiva. Para iniciarlo
+    sólo ejecuta el comando ``python`` en la línea de comandos. Durante
+    todo este libro, mostraremos ejemplos de código Python como si estuviesen
+    escritos en el intérprete interactivo. El triple signo de *mayor que* (``>>>``)
+    es el prompt de Python.
+
+
 Comandos del módulo manage
 --------------------------
 
@@ -23,3 +58,9 @@ El comando validate
 
 Este comando recibe puede no recibir argumentos o una lista de aplicaciones que validar.
 Realiza una verficación de sintaxis
+
+
+Comandos de usuario
+-------------------
+
+Django permite 
