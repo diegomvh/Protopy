@@ -1,31 +1,30 @@
-=========================
 Tecnologías del servidor
-=========================
+########################
 
 CGI
-===
+***
 
 CGI es bla 
 
 WSGI
-====
+****
 
 WSGI es CGI para Python.
 
 Lenguajes interpreteados
-========================
+************************
 
 Python es un lengauje interpretado.
 
 
 Frameworks web
-==============
+**************
 
 Un framework web es una cosa loca.
 
 
 Django
-======
+******
 
 `Django <http://www.djangoproject.com>`_ es un framework web escrito en
 Python el cual sigue vagamente el concepto de Modelo Vista Controlador.
@@ -227,7 +226,46 @@ una instancia de esta clase.
 
 	
 
-El mapeador Objeto-Relacional de Django
+El Mapeador Objeto-Relacional de Django
 =======================================
 
-Diego
+Modelos
+-------
+Los modelos son la fuente de información sobre los datos de la aplicacion. Esencialmente
+estan compuestos de campos y comportamiento propio de los datos almacenados. Generalmente,
+un modelo se corresponde con una tabla en la base de datos.
+
+Dentro de un proyecto los modelos se definen por aplicacion en el modulo models.py.
+
+Un modelo es una clase Python que hereda de ``django.db.models.Model`` y cada atributo representa
+un campo requerido por el modelo de datos de la aplicación.
+Con esta informacion Django genera automaticamente una :term:`API` de acceso a los datos en la base. 
+
+Este modelo de ejemplo define una ``Persona`` que encapsula los datos correspondientes al ``nombre`` y el ``apellido``.
+
+.. code-block:: python
+
+    from django.db import models
+
+    class Persona(models.Model):
+        nombre = models.CharField(max_length = 30)
+        apellido = models.CharField(max_length = 30)
+
+``nombre`` y ``apellido`` son atributos de clase
+
+.. code-block:: sql
+
+    CREATE TABLE miapp_persona (
+        "id" serial NOT NULL PRIMARY KEY,
+        "nombre" varchar(30) NOT NULL,
+        "apellido" varchar(30) NOT NULL
+    );
+
+Consultas
+---------
+bala
+
+Administradores de consultas
+----------------------------
+Estos objetos representan la interfase de comunicacion con la base de datos. Cada modelo tiene por lo menos un
+administrador para acceder a los datos almacenados.
