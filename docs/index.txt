@@ -13,7 +13,6 @@ Sistemas Web Desconectados
    :maxdepth: 2
    
    capitulos/tecnologias-servidor
-   apendices/python
    glosario
 
 Indices, glosario y tablas

@@ -1,6 +1,6 @@
-===============================================
-Apéndice A: Referencia sobre el lenguaje Python
-===============================================
+=====================================
+Referencia sobre el lenguaje Python
+=====================================
 
 Modularidad
 -----------
@@ -40,4 +40,27 @@ Para importar el módulo al ámbito de nombres local se puede utilizar la senten
 Paquete
 ~~~~~~~
 Un paquete es una colección de uno o más módulos, contenidos en una carpeta. 
+
+Módulo de expresiones regulares "re"
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+El módulo de expresiones regulares de Python permite recuperar gurpos nombrados.
+
+.. code-block:: python
+
+	r'persona/(?P<nombre>\w+)/(?P<edad>\d{2,3})'
+	
+En la expresión regular anterior se pueden recuperar el grupo **nombre**, que es un gurpo de
+uno o más letras, y el grupo **edad**, que es un entero de 2 o 3 cifras.
+
+.. code-block:: python
+	
+	>>> import re
+	>>> expresion = re.compile(r'persona/(?P<nombre>\w+)/(?P<edad>\d{2,3})')
+	>>> match = expresion.search('persona/nahuel/25')
+	>>> match.group('nombre')
+	'nahuel'
+	>>> match.group('edad')
+	'25'
+	
 

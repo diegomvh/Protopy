@@ -134,23 +134,16 @@ Módulo manage
 ~~~~~~~~~~~~~
 
 Esta es la interfase con el framework. Éste módulo es un script ejecutable, que
-recibe como argumento algún nombre de comando para que el framework lo ejecute.
+recibe como argumento algún nombre de comando para que el framework lo ejecute y 
+parámetros opcionales.
 
 Este módulo permite crear aplicaciones,
 generar el SQL necesario para crear en la base de datos las tablas fruto de la 
-escritura de los modelos, testear que los modelos de una aplicación estén bien
-definidos (validación),
-iniciar el servidor de desarrollo, crear volcados de la base de datos y
-restaurarlos
-restaurarlos (\emph{fixtures}, utilizados en casos de pruebas y para precarga
-de datos conocidos).
+escritura de los modelos, 
+testear que los modelos de una aplicación estén bien definidos (validación),
+iniciar el servidor de desarrollo, 
+crear volcados de la base de datos y restaurarlos restaurarlos :ref:`fixtures`, etc.
 
-Por ejemplo, para generar en la base de datos a patir de las aplicaciones inestaladas
-se ejecuta el siguiente comando:
-
-.. code-block:: bash
-
-	manage.py syncdb # Generar las tablas
 	
 
 Módulo urls

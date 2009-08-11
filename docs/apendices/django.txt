@@ -1,0 +1,19 @@
+=========================
+Referencia sobre Django
+=========================
+
+Comandos del módulo manage
+--------------------------
+
+Syncdb
+~~~~~~~
+
+El comando syncdb busca los modelos de todas las aplicaciones instaladas. Por cada
+modelo, genera el SQL necesario para crear las tablas relacionales y mediante la
+configuración definida en el módulo settings, se connecta con la base de datos y
+ejecuta las secuencia SQL, creando así las tablas del modelo que no existan.
+
+Runserver
+~~~~~~~~~
+
+Este comando lanza el servidor de desarrollo. Generalmente se ejecuta en el puerto 8000.
