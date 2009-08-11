@@ -67,7 +67,7 @@ Estructuración de un proyecto en Django
 ---------------------------------------
 
 El framework parte de la base que un proyecto está compuesto por un conjunto de aplicaciones.
-Un proyecto es un paquete que contiene 3 archivos:
+Un proyecto es un paquete que contiene 3 módulos:
 
  * manage.py
  * urls.py
@@ -81,7 +81,8 @@ del sistema. Mediante este comando se pueden crear proyectos:
 	$ django-admin.py startproject mi_proyecto # Crea el proyecto mi_proyecto
 
 El proyecto funciona como un contenedor de aplicaciones que ser rigen bajo
-la misma base de datos, los mismos templates y las mismas clases de middleware.
+la misma base de datos, los mismos templates, las mismas clases de middleware entre 
+otros parámetros.
 
 Una aplicación es un paquete que contiene al menos los módulos:
 
@@ -99,6 +100,20 @@ del proyecto, o el módulo manage.py que se explica más abajo.
 	
 	$ django-admin.py startapp mi_app # Crear una aplicacion
 
+La estructura de archivos creada es la siguiente::
+
+	mi_proyecto
+	|-- mi_aplicacion
+	|   |-- __init__.py
+	|   |-- models.py
+	|   |-- tests.py
+	|   `-- views.py
+	|-- __init__.py
+	|-- manage.py
+	|-- settings.py
+	`-- urls.py
+
+A continuación veremos que utilidad tiene cada uno de los módulos en el proyecto.	
 
 Módulo settings
 ~~~~~~~~~~~~~~~
@@ -118,7 +133,10 @@ de las aplicaciones instaladas en le proyecto.
 Módulo manage
 ~~~~~~~~~~~~~
 
-Esta es la interfase con el framework. Este módulo permite crear aplicaciones,
+Esta es la interfase con el framework. Éste módulo es un script ejecutable, que
+recibe como argumento algún nombre de comando para que el framework lo ejecute.
+
+Este módulo permite crear aplicaciones,
 generar el SQL necesario para crear en la base de datos las tablas fruto de la 
 escritura de los modelos, testear que los modelos de una aplicación estén bien
 definidos (validación),

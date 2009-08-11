@@ -1,0 +1,43 @@
+===============================================
+Apéndice A: Referencia sobre el lenguaje Python
+===============================================
+
+Modularidad
+-----------
+
+Ámbito de nombres
+~~~~~~~~~~~~~~~~~
+
+**TODO**
+
+Módulos
+~~~~~~~
+Un módulo en Python es un archivo con código python. Usualmente con la extensión .py.
+Un módulo puede ser importado en el ámbito de nombres local mediante la sentecia **import**.
+
+Por ejemplo, consideremos el módulo funciones.py
+
+.. code-block:: python
+	
+	# coding: utf-8
+	
+	def media(lista):
+		return float(sum(lista)) / len(lista)
+	
+	def media_geo(lista):
+		# La raíz puede expresarse como potencia > 1
+		return reduce(lambda x, y: x*y, lista) ** 1.0/len(lista)
+
+Para importar el módulo al ámbito de nombres local se puede utilizar la sentencia **import**.
+
+
+.. code-block:: python
+
+	>>> import funciones 
+	>>> dir(funciones)
+	
+
+Paquete
+~~~~~~~
+Un paquete es una colección de uno o más módulos, contenidos en una carpeta. 
+
