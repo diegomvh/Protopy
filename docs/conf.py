@@ -192,7 +192,7 @@ latex_logo = '_static/nasa_django_logo.png'
 #latex_preamble = ''
 
 # Documents to append as an appendix to all manuals.
-latex_appendices = ['apendices/protopy', 'apendices/python', 'apendices/django']
+latex_appendices = [] #['apendices/protopy', 'apendices/python', 'apendices/django']
 
 # If false, no module index is generated.
 #latex_use_modindex = True

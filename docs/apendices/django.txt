@@ -27,7 +27,7 @@ bien, deberías poder importar el módulo ``django``::
     >>> django.VERSION
     (0, 96, None)
 
-.. nota::
+.. nota:
 
     El intérprete interactivo de Python es un programa de línea de comandos que
     te permite escribir un programa Python de forma interactiva. Para iniciarlo

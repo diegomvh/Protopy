@@ -1,27 +1,33 @@
 Tecnologías del servidor
-########################
+************************
 
 CGI
-***
+===
 
 CGI es bla 
 
 WSGI
-****
+====
 
 WSGI es CGI para Python.
 
 Lenguajes interpreteados
-************************
+========================
+
 PHP
+---
+
 Ruby
+----
+
 Python
+------
 
 Python es un lengauje interpretado.
 
 
 Frameworks
-**********
+==========
 
 .. Usamos la traducción redefinir para override
 
@@ -66,10 +72,31 @@ de aplicación. A pesar de tener como objetivo estandarizar y reducir el tiempo 
 aprendizaje de un framework suele requerir tiempo extra en el desarrollo, aunque posteriores 
 desarrollos pueden verse beneficiados de este aprendizaje inicial.
 
-.. Quizás
+Frameworks web
+--------------
+
+Los frameworks web surgen como evolución histórica a CGI.
 
 Model View Controler
 --------------------
+
+Modelo-Vista-Controlador, MVC [*]_, es un patrón de diseño arquitectural que separa la aplicación
+el modelo de datos, de la lógica de negocio y la interfase de usuario.
+
+Muchos frameworks web se respetan en mayor o menor grado el patrón MVC, aliviando tareas comunes
+en cada una de estas capas.
+
+En la capa de *modelo de datos*, muchos frameworks proveen lo que se conocoe como Mapeador Objeto Relacional o ORM. Su función es transofrmar una representación de objetos en tablas relacionales.
+El ORM se encarga de presentar una interfase orientada a objetos (API) para represnetar el modelo y
+brindar mecanismos para cración, actualización y elmiminación de entidades, así como también una 
+API para consultas. Algunos ORM permiten escribir el modelo utilizando la API OO [*]_ y generar las
+tablas relacionales a partir de esta representación.
+
+En la capa de *controlador* los frameworks proveen una forma de 
+
+
+.. [*] Del inglés *Model View Controller*
+.. [*] API Orientada a Objetos
 
 Mapeador Objeto-Relacional
 --------------------------
@@ -82,7 +109,7 @@ Symfony
 .. Django CLI
 
 Django
-******
+======
 
 Acá tenemos que justificar por que django
 
@@ -165,7 +192,7 @@ Analicemos a continuación la función de cada uno de estos 3 módulos.
 	
 
 Módulo settings
-~~~~~~~~~~~~~~~
+---------------
 Este módulo define la configuración del proyecto, siendo sus atributos principales
 la configuración de la base de datos a utilizar, la ruta en la cual se encuentran
 los médios estáticos, cuál es el nombre del archivo raíz de urls (generalmente urls.py).
@@ -182,7 +209,7 @@ Un parametro fundamental es la lista denominada INSTALLED_APPS que contiene los 
 de las aplicaciones instaladas en le proyecto.
  
 Módulo manage
-~~~~~~~~~~~~~
+-------------
 
 Esta es la interfase con el framework. Éste módulo es un script ejecutable, que
 recibe como primer argumento un nombre de comando de django.
@@ -213,7 +240,7 @@ resultado::
 	`-- urls.py
 
 Módulo urls
-~~~~~~~~~~~
+-----------
 
 Este nombre de módulo aparece a nivel proyecto, pero también puede aparecer a nivel
 aplicación. Su misión es definir las asociaciones entre URLs y vistas, de manera de 
@@ -236,21 +263,22 @@ de las urls a una aplicación particular.
         
             (r'^personas', include('mi_proyecto.personas.urls'))
 
+
 Estructura de una aplicación Django
------------------------------------
+--------------------------------------
 
 Una aplicación es un paquete python que consta de un módulo models y un módulo views.
 
  
 Módulo models
-~~~~~~~~~~~~~
+-------------
 
 Cada vez que se crea una aplicación, se genera un módulo models.py, en el cual
 se le permite al programador definir modelos de objetos, que luego son
 transformados en tablas relacionales [*]_.
 
 Módulo views
-~~~~~~~~~~~~~
+------------
 
 Cada aplicacion posee un módulo views, donde se definen las funcinoes que atienden
 al cliente y son activadas gracias a el mapeo definido en el módulo urls del proyecto
@@ -276,7 +304,7 @@ Dentro del módulo de urls
 .. [*] Mediante el comando syncdb del módulo manage del proyecto
 
 El cliclo de una petición
-~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------
  
 Cada vez que un browser realiza una petición a un proyecto desarrollado en django, 
 la petición HTTP pasa por varias capas.

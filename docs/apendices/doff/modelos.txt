@@ -12,7 +12,7 @@ Campos
 La parte más importante de un modelo -- y la única parte requerida de un modelo
 -- es la lista de campos de la base de datos que define.
 
-.. exhortacion:: Restricciones en el nombre de los campos
+.. exhortacion: Restricciones en el nombre de los campos
 
     Existen solo dos restricciones en el nombre de los campos:
 
@@ -90,7 +90,7 @@ DateField
 Un campo de fecha. ``DateField`` tiene algunos argumentos opcionales extra,
 como se muestra en la Tabla B-1.
 
-.. tabla:: Tabla B-1. Argumentos opcionales extra de DateField
+.. tabla: Tabla B-1. Argumentos opcionales extra de DateField
 
     ======================  ===================================================
     Argumento               Descripción
@@ -125,7 +125,7 @@ FileField
 Un campo de upload de archivos. Tiene un argumento *requerido*, como se ve en
 la Tabla B-3.
 
-.. tabla:: Tabla B-2. Opciones extra de FileField
+.. tabla: Tabla B-2. Opciones extra de FileField
 
     ======================  ===================================================
     Argumento                Descripción
@@ -173,7 +173,7 @@ refiera a ese archivo, o el tamaño del archivo, puedes usar los métodos
 ``get_FIELD_filename()``, ``get_FIELD_url()``, y ``get_FIELD_size()``. Ver
 el Apéndice C para una explicación completa de estos métodos.
 
-.. nota::
+.. nota:
 
     Cualquiera sea la forma en que manejes tus archivos subidos, tienes que
     prestar mucha atención a donde los estás subiendo y que tipo de archivos
@@ -192,7 +192,7 @@ Un campo cuyas opciones están limitadas a los nombres de archivo en un cierto
 directorio en el sistema de archivos. Tiene tres argumentos especiales, que se
 muestran en la Tabla B-3.
 
-.. tabla:: Tabla B-3. Opciones extra de FilePathField
+.. tabla: Tabla B-3. Opciones extra de FilePathField
 
     ======================  ===================================================
     Argumento               Descripción
@@ -232,7 +232,7 @@ FloatField
 Un numero de punto flotante, representado en Python por una instancia de
 ``float``. Tiene dos argumentos requeridos, que se muestran en la Tabla B-4.
 
-.. tabla:: Tabla B-4. Opciones extra de FloatField
+.. tabla: Tabla B-4. Opciones extra de FloatField
 
     ======================  ===================================================
     Argumento               descripción
@@ -292,7 +292,7 @@ PhoneNumberField
 Un ``CharField`` que chequea que el valor es un teléfono válido estilo U.S.
 (en formato ``XXX-XXX-XXXX``).
 
-.. nota::
+.. nota:
 
     Si necesitas representar teléfonos de otros países, consulta el paquete
     ``django.contrib.localflavor`` para ver si ya están incluidas las
@@ -637,7 +637,7 @@ supuesto, puedes ponerle el nombre que quieras. Por ejemplo::
 Los campos ``ForeignKey`` reciben algunos argumentos extra para definir como
 debe trabajar la relación (ver Tabla B-5). Todos son opcionales.
 
-.. tabla:: Tabla B-5. Opciones de ForeignKey
+.. tabla: Tabla B-5. Opciones de ForeignKey
 
     =======================  ============================================================
     Argumento                Descripción
@@ -757,7 +757,7 @@ que los usuarios selecciones los ingredientes.
 Los objetos ``ManyToManyField`` toman algunos argumentos extra para definir como
 debe trabajar la relación (ver Tabla B-6). Todos son opcionales.
 
-.. tabla:: Tabla B-6. Opciones de ManyToManyField
+.. tabla: Tabla B-6. Opciones de ManyToManyField
 
     =======================  ============================================================
     Argumento                Descripción
@@ -1728,7 +1728,7 @@ SQL::
 Para búsquedas más rápidas y/o más restrictivas, agrega como prefijo al nombre
 de campo un operador como se muestra en la Tabla B-7.
 
-.. tabla:: Tabla B-7. Operadores Permitidos en search_fields
+.. tabla: Tabla B-7. Operadores Permitidos en search_fields
 
     ==========  =======================================================================
     Operador    Significado
