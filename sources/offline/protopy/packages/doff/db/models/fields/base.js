@@ -9,13 +9,13 @@ require('copy', 'copy');
 
 var settings = get_settings();
 
-var NOT_PROVIDED = type('NOT_PROVIDED', Exception);
+var NOT_PROVIDED = type('NOT_PROVIDED', [ Exception ]);
 
 // The values to use for "blank" in SelectFields. Will be appended to the start of most "choices" lists.
 var BLANK_CHOICE_DASH = [["", "---------"]];
 var BLANK_CHOICE_NONE = [["", "None"]];
 
-var FieldDoesNotExist = type('FieldDoesNotExist', Exception);
+var FieldDoesNotExist = type('FieldDoesNotExist', [ Exception ]);
 
 var Field = type('Field', [ object ], {
     creation_counter: 0,
@@ -24,14 +24,14 @@ var Field = type('Field', [ object ], {
     empty_strings_allowed: true,
     __init__: function() {
 
-        arguments = new Arguments(arguments, {'verbose_name':null, 'name':null, 'primary_key':false,
+        var arg = new Arguments(arguments, {'verbose_name':null, 'name':null, 'primary_key':false,
             'max_length':null, 'unique':false, 'blank':false, 'none':false, 'null':false,
             'db_index':false, 'rel':null, 'default':NOT_PROVIDED, 'editable':true,
             'serialize':true, 'unique_for_date':null, 'unique_for_month':null,
             'unique_for_year':null, 'choices':[], 'help_text':'', 'db_column':null,
             'db_tablespace':settings.DEFAULT_INDEX_TABLESPACE, 'auto_created':false});
-        var args = arguments.args;
-        var kwargs = arguments.kwargs;
+        var args = arg.args;
+        var kwargs = arg.kwargs;
 
         this.name = kwargs['name'];
         this.verbose_name = (args.length == 1)? args[0] : kwargs['verbose_name'];
@@ -87,11 +87,11 @@ var Field = type('Field', [ object ], {
      * doff.core.ValidationError if the data can't be converted.
      * Returns the converted value. Subclasses should override this.
      */
-    'to_javascript': function to_javascript(value) {
+    to_javascript: function(value) {
         return value;
     },
 
-    'db_type': function db_type() {
+    db_type: function() {
         var ret = connection.creation.data_types[this.get_internal_type()];
         if (!ret)
             return null;
@@ -103,7 +103,7 @@ var Field = type('Field', [ object ], {
         return this._unique || this.primary_key;
     },
 
-    'set_attributes_from_name': function set_attributes_from_name(name) {
+    set_attributes_from_name: function(name) {
         this.name = name;
         var [attname, column] = this.get_attname_column();
         this.attname = attname;
@@ -125,24 +125,24 @@ var Field = type('Field', [ object ], {
         return this.name;
     },
 
-    'get_attname_column': function get_attname_column() {
+    get_attname_column: function() {
         var attname = this.get_attname();
         var column = this.db_column || attname;
         return [attname, column];
     },
 
-    'get_cache_name': function get_cache_name() {
+    get_cache_name: function() {
         return '_%s_cache'.subs(this.name);
     },
 
-    'get_internal_type': function get_internal_type() {
+    get_internal_type: function() {
         return this.constructor.__name__;
     },
 
     /*
 	* Returns field's value just before saving.
 	*/
-    'pre_save': function pre_save(model_instance, add) {
+    pre_save: function(model_instance, add) {
         return model_instance[this.attname];
     },
 
@@ -150,18 +150,18 @@ var Field = type('Field', [ object ], {
 	* Returns field's value prepared for interacting with the database backend.
 	* Used by the default implementations of ``get_db_prep_save``and `get_db_prep_lookup```
 	*/
-    'get_db_prep_value': function get_db_prep_value(value) {
+    get_db_prep_value: function(value) {
         return value;
     },
 
     /*
 	* Returns field's value prepared for saving into a database.
 	*/
-    'get_db_prep_save': function get_db_prep_save(value) {
+    get_db_prep_save: function(value) {
         return this.get_db_prep_value(value);
     },
 
-    'get_db_prep_lookup': function get_db_prep_lookup(lookup_type, value){
+    get_db_prep_lookup: function(lookup_type, value){
 	/* Returns field's value prepared for database lookup. */
 	if (callable(value['as_sql'])) {
 	    var [sql, params] = value.as_sql();
@@ -201,14 +201,14 @@ var Field = type('Field', [ object ], {
     /*
 	* Returns a boolean of whether this field has a default value.
 	*/
-    'has_default': function has_default() {
+    has_default: function() {
         return this.default_value != NOT_PROVIDED;
     },
 
     /*
 	* Returns the default value for this field
 	*/
-    'get_default': function get_default() {
+    get_default: function() {
 	if (this.has_default()) {
 	    if (callable(this.default_value))
 		return this.default_value();
@@ -219,7 +219,7 @@ var Field = type('Field', [ object ], {
 	return "";
     },
 
-    'get_validator_unique_lookup_type': function get_validator_unique_lookup_type() {
+    get_validator_unique_lookup_type: function() {
         return '%s__exact'.subs(this.name);
     },
 
@@ -248,14 +248,14 @@ var Field = type('Field', [ object ], {
     /*
      * Returns flattened choices with a default blank choice included.
      */
-    'get_flatchoices': function get_flatchoices(include_blank, blank_choice) {
+    get_flatchoices: function(include_blank, blank_choice) {
         include_blank = include_blank || true;
         blank_choice = blank_choice || BLANK_CHOICE_DASH;
         var first_choice = include_blank && blank_choice || [];
         return first_choice.concat(this.flatchoices);
     },
 
-    '_get_val_from_obj': function _get_val_from_obj(object) {
+    _get_val_from_obj: function(object) {
         if (object)
             return object[this.attname];
         else
@@ -270,7 +270,7 @@ var Field = type('Field', [ object ], {
         return new String(this._get_val_from_obj(object));
     },
 
-    'bind': function bind(fieldmapping, original, bound_field_class) {
+    bind: function(fieldmapping, original, bound_field_class) {
         return bound_field_class(this, fieldmapping, original);
     },
 
@@ -298,14 +298,14 @@ var Field = type('Field', [ object ], {
         return flat;
     },
 
-    'save_form_data': function save_form_data(instance, data) {
+    save_form_data: function(instance, data) {
         instance[this.name] = data;
     },
 
     //Returns a django.forms.Field instance for this database Field.
-    'formfield': function() {
-        arguments = new Arguments(arguments);
-        var kwargs = arguments.kwargs;
+    formfield: function() {
+        var arg = new Arguments(arguments);
+        var kwargs = arg.kwargs;
 	var form_class = kwargs['form_class'] || forms.CharField;
 	var defaults = {'required': !this.blank, 'label': this.verbose_name.capitalize(), 'help_text': this.help_text};
 	if (this.has_default()) {
@@ -334,21 +334,21 @@ var Field = type('Field', [ object ], {
     /*
 	* Returns the value of this field in the given model instance.
 	*/
-    'value_from_object': function value_from_object(object) {
+    value_from_object: function(object) {
         return object[this.attname];
     }
 });
 
-var AutoField = type('AutoField', Field, {
+var AutoField = type('AutoField', [ Field ], {
     empty_strings_allowed: false,
-    '__init__': function __init__() {
-        arguments = new Arguments(arguments);
-        assert (bool(arguments.kwargs['primary_key']), "%ss must have primary_key = true.".subs(type(this).__name__));
-        arguments.kwargs['blank'] = true;
-        super(Field, this).__init__(arguments);
+    __init__: function() {
+        var arg = new Arguments(arguments);
+        assert (bool(arg.kwargs['primary_key']), "%ss must have primary_key = true.".subs(type(this).__name__));
+        arg.kwargs['blank'] = true;
+        super(Field, this).__init__(arg);
     },
 
-    'to_javascript': function to_javascript(value) {
+    to_javascript: function(value) {
         if (!value)
             return value;
         var n = Number(value);
@@ -356,25 +356,25 @@ var AutoField = type('AutoField', Field, {
             throw new ValidationError("This value must be an integer.");
     },
 
-    'get_db_prep_value': function get_db_prep_value(value) {
+    get_db_prep_value: function(value) {
         if (!value)
             return null;
         return Number(value) || null;
     },
 
-    'contribute_to_class': function contribute_to_class(cls, name) {
+    contribute_to_class: function(cls, name) {
         assert (!cls._meta.has_auto_field, "A model can't have more than one AutoField.");
         super(Field, this).contribute_to_class(cls, name);
         cls._meta.has_auto_field = true;
         cls._meta.auto_field = this;
     },
 
-    'formfield': function formfield() {
+    formfield: function() {
 	return null;
     }
 });
 
-var BooleanField = type('BooleanField', Field, {
+var BooleanField = type('BooleanField', [ Field ], {
     __init__: function() {
         var arg = new Arguments(arguments);
         arg.kwargs['blank'] = true;
@@ -414,14 +414,14 @@ var BooleanField = type('BooleanField', Field, {
     }
 });
 
-var CharField = type('CharField', Field, {
-	'__init__': function __init__() {
-        arguments = new Arguments(arguments);
-        arguments.kwargs['max_length'] = arguments.kwargs['max_length'] || 100;
-        super(Field, this).__init__(arguments);
+var CharField = type('CharField', [ Field ], {
+	__init__: function() {
+        var arg = new Arguments(arguments);
+        arg.kwargs['max_length'] = arg.kwargs['max_length'] || 100;
+        super(Field, this).__init__(arg);
     },
 
-    'to_javascript': function to_javascript(value) {
+    to_javascript: function(value) {
         if (type(value) == String)
             return value;
         if (!value)
@@ -431,11 +431,11 @@ var CharField = type('CharField', Field, {
             throw new ValidationError("This field cannot be null.");
         return value;
     },
-    
-    'formfield': function formfield() {
-	arguments = new Arguments(arguments);
+
+    formfield: function() {
+	var arg = new Arguments(arguments);
 	var defaults = {'max_length': this.max_length};
-	extend(defaults, arguments.kwargs);
+	extend(defaults, arg.kwargs);
 	return super(Field, this).formfield(defaults);
     }
 });
@@ -443,21 +443,21 @@ var CharField = type('CharField', Field, {
 var ansi_date_re = /^\d{4}-\d{1,2}-\d{1,2}$/;
 var ansi_time_re = /^(0[1-9]|1\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
 
-var DateField = type('DateField', Field, {
+var DateField = type('DateField', [ Field ], {
     empty_strings_allowed: false,
-    '__init__': function __init__() {
-        arguments = new Arguments(arguments, {'verbose_name':null, 'name':null, 'auto_now':false, 'auto_now_add':false});
-        this.auto_now = arguments.kwargs['auto_now'];
-        this.auto_now_add = arguments.kwargs['auto_now_add'];
+    __init__: function() {
+        var arg = new Arguments(arguments, {'verbose_name':null, 'name':null, 'auto_now':false, 'auto_now_add':false});
+        this.auto_now = arg.kwargs['auto_now'];
+        this.auto_now_add = arg.kwargs['auto_now_add'];
         //auto_now_add/auto_now should be done as a default or a pre_save.
         if (this.auto_now || this.auto_now_add) {
-            arguments.kwargs['editable'] = false;
-            arguments.kwargs['blank'] = true;
+            arg.kwargs['editable'] = false;
+            arg.kwargs['blank'] = true;
         }
-        super(Field, this).__init__(arguments);
+        super(Field, this).__init__(arg);
     },
 
-    'to_javascript': function to_javascript(value) {
+    to_javascript: function(value) {
 	if (value == null)
 	    return value;
 	if (value instanceof Date)
@@ -475,7 +475,7 @@ var DateField = type('DateField', Field, {
 	return new Date(year, month, day);
     },
 
-    'pre_save': function pre_save(model_instance, add) {
+    pre_save: function(model_instance, add) {
 	if (this.auto_now || (this.auto_now_add && add)) {
 	    value = new Date();
 	    model_instance[this.attname] = value;
@@ -561,7 +561,7 @@ var DateTimeField = type('DateTimeField', DateField, {
     }
 });
 
-var DecimalField = type('DecimalField', Field, {
+var DecimalField = type('DecimalField', [ Field ], {
     empty_strings_allowed: false,
     '__init__': function __init__() {
         arguments = new Arguments(arguments, {'verbose_name':null, 'name':null, 'max_digits':null, 'decimal_places':null});
@@ -623,7 +623,7 @@ var EmailField = type('EmailField', CharField, {
     }
 });
 
-var FilePathField = type('FilePathField', Field, {
+var FilePathField = type('FilePathField', [ Field ], {
     '__init__': function __init__() {
         arguments = new Arguments(arguments, {'verbose_name':null, 'name':null, 'path':'', 'match':null, 'recursive':false});
         this.path = arguments.kwargs['path'];
@@ -646,7 +646,7 @@ var FilePathField = type('FilePathField', Field, {
     }
 });
 
-var FloatField = type('FloatField', Field, {
+var FloatField = type('FloatField', [ Field ], {
     empty_strings_allowed: false,
 
     'get_db_prep_value': function get_db_prep_value(value) {
@@ -663,7 +663,7 @@ var FloatField = type('FloatField', Field, {
     }
 });
 
-var IntegerField = type('IntegerField', Field, {
+var IntegerField = type('IntegerField', [ Field ], {
     empty_strings_allowed: false,
     'get_db_prep_value': function get_db_prep_value(value) {
         if (!value)
@@ -689,7 +689,7 @@ var IntegerField = type('IntegerField', Field, {
     }
 });
 
-var IPAddressField = type('IPAddressField', Field, {
+var IPAddressField = type('IPAddressField', [ Field ], {
     empty_strings_allowed: false,
     '__init__': function __init__() {
         arguments = new Arguments(arguments);
@@ -705,7 +705,7 @@ var IPAddressField = type('IPAddressField', Field, {
     }
 });
 
-var NullBooleanField = type('NullBooleanField', Field, {
+var NullBooleanField = type('NullBooleanField', [ Field ], {
     empty_strings_allowed: false,
     '__init__': function __init__() {
         arguments = new Arguments(arguments);
@@ -788,7 +788,7 @@ var SlugField = type('SlugField', CharField, {
 
 var SmallIntegerField = type('SmallIntegerField', IntegerField);
 
-var TextField = type('TextField', Field, {
+var TextField = type('TextField', [ Field ], {
     'formfield': function formfield() {
 	arguments = new Arguments(arguments);
 	var defaults = {'widget': forms.Textarea };
@@ -796,7 +796,7 @@ var TextField = type('TextField', Field, {
 	return super(Field, this).formfield(defaults);
     }
 });
-var TimeField = type('TimeField', Field, {
+var TimeField = type('TimeField', [ Field ], {
     empty_strings_allowed: false,
     '__init__': function __init__() {
         arguments = new Arguments(arguments, {'verbose_name':null, 'name':null, 'auto_now':false, 'auto_now_add':false});
@@ -890,12 +890,6 @@ var URLField = type('URLField', CharField, {
     }
 });
 
-var XMLField = type('XMLField', TextField, {
-    '__init__': function __init__() {
-        arguments = new Arguments(arguments, {'verbose_name':null, 'name':null, 'schema_path':null});
-        this.schema_path = arguments.kwargs['schema_path'];
-        super(TextField, this).__init__(arguments);
-    }
 });
 
 publish({ 
@@ -919,7 +913,5 @@ publish({
     SmallIntegerField: SmallIntegerField,
     TextField: TextField,
     TimeField: TimeField,
-    URLField: URLField,
-    XMLField: XMLField 
+    URLField: URLField
 });
-    
