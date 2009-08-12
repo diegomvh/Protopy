@@ -23,6 +23,51 @@ Python es un lengauje interpretado.
 Frameworks
 **********
 
+.. Usamos la traducción redefinir para override
+
+Un framework web es un abstracción en la cual un código común que provee una funcionalidad genérica puede ser personalizadas
+por el programador de manera selectiva para brindar una funcionalidad específica.
+
+Se suele decir que los frameworks son similares a las bibliotecas de software (a veces llamadas librerías) dado que proveen
+abstracciones reusables de código a las cuales se accede mediante una API bien definida. 
+
+
+Sin embargo, podemos encontrar ciertas características que diferencian al framework de una librería o aplicaciones normales de usuario:
+
+	* Inversion de control
+		Al contrario que las bibliotecas en las aplicaciones de usuario, en un framework, el flujo de control no es manejado
+		por el llamador, sino por el framework. Es decir, cuando se utilizan bibliotecas o programas de usuario como soporte
+		para brindar funcionalidad, estas son llamados o invocados en el código de aplicación principal que es definido por el usuario. 
+		En un framework, el flujo de control principal está definido por el framework.
+	
+	* Comportamiento por defecto definido
+		Un framework tiene un comportamiento por defecto definido. En cada componete del framework, existe un comportamineto
+		genérico con alguna utilidad, que puede ser redefinido con funcionalidad del usuario.
+
+	* Extensibiliad
+		Un framework suele ser extendido por el usuario mediante redefinición o especialización para proveer una funcionalidad específica. 
+
+	* No modificabilidad del código del framework
+		En general no se permite la modificación del código del framework. Los programadores pueden extender el framework, pero no modificar
+		su código. 
+
+Los diseñadores de frameworks tienen como objetivo facilitar el desarrollo de software, permitiendo
+a los programadores enfocarse en cumplimentar los requermientos del análisis y diseño, en vez de 
+dedicar tiempo a resolver los detalles comunes de bajo nivel. En general la utilización de un 
+framework reduce el tiempo de desarrollo.
+
+Por ejemplo, en un equipo donde se utiliza un framework web para desarrollar un sitio de banca 
+electrónica, los desarrolladores pueden enfocarse en la lógica necesaria para realizar las extraciones
+de dinero, en vez de la mecánica para preserver el estado entre las peticiones del navegador.
+
+Sin embargo, se suele argumentar que los frameworks puedens ser una carga, debido a la complejidad
+de sus APIs o la incertidumbre que generar la existencia de varios frameworks para un mismo tipo
+de aplicación. A pesar de tener como objetivo estandarizar y reducir el tiempo de desarrollo, el
+aprendizaje de un framework suele requerir tiempo extra en el desarrollo, aunque posteriores 
+desarrollos pueden verse beneficiados de este aprendizaje inicial.
+
+.. Quizás
+
 Model View Controler
 --------------------
 

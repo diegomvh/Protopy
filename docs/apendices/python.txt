@@ -15,7 +15,7 @@ Módulos
 Un módulo en Python es un archivo con código python. Usualmente con la extensión .py.
 Un módulo puede ser importado en el ámbito de nombres local mediante la sentecia **import**.
 
-Por ejemplo, consideremos el módulo funciones.py
+Por ejemplo, consideremos el módulo ***funciones.py***
 
 .. code-block:: python
 	
@@ -39,7 +39,16 @@ Para importar el módulo al ámbito de nombres local se puede utilizar la senten
 
 Paquete
 ~~~~~~~
-Un paquete es una colección de uno o más módulos, contenidos en una carpeta. 
+Un paquete es una colección de uno o más módulos, contenidos en una directorio. Para que un directorio
+sea tratado como paquete debe crearse un módulo con el nombre __init__.py.
+
+El módulo __init__ puede contener código que será evaluado si se realiza una import con el nombre del paquete
+como argumento, o si se realiza la importación de todos los símbolos:
+
+.. code-block:: python
+	
+	from mi_paquete import * # Se evalua __init__.py
+	 
 
 Módulo de expresiones regulares "re"
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
