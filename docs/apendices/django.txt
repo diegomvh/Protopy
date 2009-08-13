@@ -2,6 +2,8 @@
 Referencia sobre Django
 =========================
 
+.. _instalacion-django:
+
 Instalación de Django
 ---------------------
 
