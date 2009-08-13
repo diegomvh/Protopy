@@ -624,42 +624,42 @@ var EmailField = type('EmailField', CharField, {
 });
 
 var FilePathField = type('FilePathField', [ Field ], {
-    '__init__': function __init__() {
-        arguments = new Arguments(arguments, {'verbose_name':null, 'name':null, 'path':'', 'match':null, 'recursive':false});
-        this.path = arguments.kwargs['path'];
-        this.match = arguments.kwargs['match'];
-        this.recursive = arguments.kwargs['recursive'];
-        arguments.kwargs['max_length'] = arguments.kwargs['max_length'] || 100;
-        super(Field, this).__init__(arguments);
+    __init__: function() {
+        var arg = new Arguments(arguments, {'verbose_name':null, 'name':null, 'path':'', 'match':null, 'recursive':false});
+        this.path = arg.kwargs['path'];
+        this.match = arg.kwargs['match'];
+        this.recursive = arg.kwargs['recursive'];
+        arg.kwargs['max_length'] = arg.kwargs['max_length'] || 100;
+        super(Field, this).__init__(arg);
     },
 
-    'formfield': function formfield() {
-	arguments = new Arguments(arguments);
-	var defaults = {
-	    'path': this.path,
-	    'match': this.match,
-	    'recursive': this.recursive,
-	    'form_class': forms.FilePathField
-	}
-	extend(defaults, arguments.kwargs);
-	return super(Field, this).formfield(defaults);
+    formfield: function() {
+        var arg = new Arguments(arguments);
+        var defaults = {
+            'path': this.path,
+            'match': this.match,
+            'recursive': this.recursive,
+            'form_class': forms.FilePathField
+        }
+        extend(defaults, arg.kwargs);
+        return super(Field, this).formfield(defaults);
     }
 });
 
 var FloatField = type('FloatField', [ Field ], {
     empty_strings_allowed: false,
-
-    'get_db_prep_value': function get_db_prep_value(value) {
+    //TODO: Implementar max_digits, decimal_places y usarlo para emular el decimafield
+    get_db_prep_value: function(value) {
         if (!value)
             return null;
         return Number(value);
     },
     
-    'formfield': function formfield() {
-	arguments = new Arguments(arguments);
-	var defaults = {'form_class': forms.FloatField };
-	extend(defaults, arguments.kwargs);
-	return super(Field, this).formfield(defaults);
+    formfield: function() {
+        var arg = new Arguments(arguments);
+        var defaults = {'form_class': forms.FloatField };
+        extend(defaults, arg.kwargs);
+        return super(Field, this).formfield(defaults);
     }
 });
 
@@ -750,52 +750,53 @@ var NullBooleanField = type('NullBooleanField', [ Field ], {
     }
 });
 
-var PositiveIntegerField = type('PositiveIntegerField', IntegerField, {
-    'formfield': function formfield() {
-	arguments = new Arguments(arguments);
-	var defaults = {'min_value': 0};
-	extend(defaults, arguments.kwargs);
-	return super(IntegerField, this).formfield(defaults);
+var PositiveIntegerField = type('PositiveIntegerField', [ IntegerField ], {
+    formfield: function() {
+        var arg = new Arguments(arguments);
+        var defaults = {'min_value': 0};
+        extend(defaults, arg.kwargs);
+        return super(IntegerField, this).formfield(defaults);
     }
 });
 
-var PositiveSmallIntegerField = type('PositiveSmallIntegerField', IntegerField, {
-    'formfield': function formfield() {
-	arguments = new Arguments(arguments);
-	var defaults = {'min_value': 0};
-	extend(defaults, arguments.kwargs);
-	return super(IntegerField, this).formfield(defaults);
+var PositiveSmallIntegerField = type('PositiveSmallIntegerField', [ IntegerField ], {
+    formfield: function() {
+        var arg = new Arguments(arguments);
+        var defaults = {'min_value': 0};
+        extend(defaults, arg.kwargs);
+        return super(IntegerField, this).formfield(defaults);
     }
 });
 
-var SlugField = type('SlugField', CharField, {
-    '__init__': function __init__() {
-	arguments = new Arguments(arguments);
-	arguments.kwargs['max_length'] = arguments.kwargs['max_length'] || 50;
-	// Set db_index = true unless it's been set manually.
-	if (!arguments.kwargs['db_index'])
-	    arguments.kwargs['db_index'] = true;
-	super(CharField, this).__init__(arguments);
+var SlugField = type('SlugField', [ CharField ], {
+    __init__: function() {
+        var arg = new Arguments(arguments);
+        arg.kwargs['max_length'] = arg.kwargs['max_length'] || 50;
+        // Set db_index = true unless it's been set manually.
+        if (!arg.kwargs['db_index'])
+            arg.kwargs['db_index'] = true;
+        super(CharField, this).__init__(arg);
     },
 
-    'formfield': function formfield() {
-	arguments = new Arguments(arguments);
-	var defaults = {'form_class': forms.SlugField };
-	extend(defaults, arguments.kwargs);
-	return super(CharField, this).formfield(defaults);
+    formfield: function formfield() {
+        var arg = new Arguments(arguments);
+        var defaults = {'form_class': forms.SlugField };
+        extend(defaults, arg.kwargs);
+        return super(CharField, this).formfield(defaults);
     }
 });
 
-var SmallIntegerField = type('SmallIntegerField', IntegerField);
+var SmallIntegerField = type('SmallIntegerField', [ IntegerField ]);
 
 var TextField = type('TextField', [ Field ], {
-    'formfield': function formfield() {
-	arguments = new Arguments(arguments);
-	var defaults = {'widget': forms.Textarea };
-	extend(defaults, arguments.kwargs);
-	return super(Field, this).formfield(defaults);
+    formfield: function() {
+        var arg = new Arguments(arguments);
+        var defaults = {'widget': forms.Textarea };
+        extend(defaults, arg.kwargs);
+        return super(Field, this).formfield(defaults);
     }
 });
+
 var TimeField = type('TimeField', [ Field ], {
     empty_strings_allowed: false,
     '__init__': function __init__() {
@@ -875,18 +876,18 @@ var TimeField = type('TimeField', [ Field ], {
 });
 
 var URLField = type('URLField', CharField, {
-    '__init__': function __init__() {
-        arguments = new Arguments(arguments, {'verbose_name':null, 'name':null, 'verify_exists':true});
-        arguments.kwargs['max_length'] = arguments.kwargs['max_length'] || 200;
-        this.verify_exists = arguments.kwargs['verify_exists'];
-        super(CharField, this).__init__(arguments);
+    __init__: function() {
+        var arg = new Arguments(arguments, {'verbose_name':null, 'name':null, 'verify_exists':true});
+        arg.kwargs['max_length'] = arg.kwargs['max_length'] || 200;
+        this.verify_exists = arg.kwargs['verify_exists'];
+        super(CharField, this).__init__(arg);
     },
   
-    'formfield': function formfield() {
-	arguments = new Arguments(arguments);
-	var defaults = {'form_class': forms.URLField, 'verify_exists': this.verify_exists };
-	extend(defaults, arguments.kwargs);
-	return super(CharField, this).formfield(defaults);
+    formfield: function() {
+        var arg = new Arguments(arguments);
+        var defaults = {'form_class': forms.URLField, 'verify_exists': this.verify_exists };
+        extend(defaults, arg.kwargs);
+        return super(CharField, this).formfield(defaults);
     }
 });
 

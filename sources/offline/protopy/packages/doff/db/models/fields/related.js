@@ -573,7 +573,7 @@ var ManyToOneRel = type('ManyToOneRel', [ object ], {
         var arg = new Arguments(arguments, {related_name: null, limit_choices_to: {}, lookup_overrides: {}, parent_link: false});
 
         if (!to._meta)
-            assert (type(to) == String, "'to' must be either a model, a model name or the string %r".subs(RECURSIVE_RELATIONSHIP_CONSTANT));
+            assert (isinstance(to, String), "'to' must be either a model, a model name or the string %r".subs(RECURSIVE_RELATIONSHIP_CONSTANT));
         this.to = to;
         this.field_name = field_name;
         this.related_name = arg.kwargs['related_name'];
