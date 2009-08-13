@@ -13,7 +13,7 @@ var settings = get_settings();
 //TODO: Pasar los nombres de las clases
 var get_verbose_name = function(class_name) { return class_name;};
 
-var DEFAULT_NAMES = ['verbose_name', 'db_table', 'ordering', 'unique_together', 'permissions', 'get_latest_by',
+var DEFAULT_NAMES = ['verbose_name', 'db_table', 'ordering', 'unique_together', 'get_latest_by',
                     'order_with_respect_to', 'app_label', 'db_tablespace', 'abstract'];
 
 var Options = type('Options', [ object ], {
@@ -48,7 +48,7 @@ var Options = type('Options', [ object ], {
         return '%s.%s'.subs(this.app_label, this.module_name);
     },
     
-    'contribute_to_class': function contribute_to_class(cls, name) {
+    contribute_to_class: function(cls, name) {
         var connection = require('doff.db.base', 'connection');
         var truncate_name = require('doff.db.backends.util', 'truncate_name');
         
@@ -80,7 +80,7 @@ var Options = type('Options', [ object ], {
             // tuple of two strings. Normalize it to a tuple of tuples, so that
             // calling code can uniformly expect that.
             var ut = meta_attrs['unique_together'] || this['unique_together'];
-            if (bool(ut) && type(ut[0]) == Array)
+            if (bool(ut) && !isinstance(ut[0], Array))
                 ut = [ut];
             this['unique_together'] = ut;
 
@@ -101,7 +101,7 @@ var Options = type('Options', [ object ], {
         cls.prototype._meta = this;
     },
 
-    '_prepare': function _prepare(model) {
+    _prepare: function(model) {
         if (this.order_with_respect_to) {
             this.order_with_respect_to = this.get_field(this.order_with_respect_to);
             this.ordering = ['_order'];

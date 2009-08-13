@@ -1,33 +1,27 @@
 Tecnologías del servidor
-************************
+########################
 
 CGI
-===
+***
 
 CGI es bla 
 
 WSGI
-====
+****
 
 WSGI es CGI para Python.
 
 Lenguajes interpreteados
-========================
-
+************************
 PHP
----
-
 Ruby
-----
-
 Python
-------
 
 Python es un lengauje interpretado.
 
 
 Frameworks
-==========
+**********
 
 .. Usamos la traducción redefinir para override
 
@@ -72,34 +66,148 @@ de aplicación. A pesar de tener como objetivo estandarizar y reducir el tiempo 
 aprendizaje de un framework suele requerir tiempo extra en el desarrollo, aunque posteriores 
 desarrollos pueden verse beneficiados de este aprendizaje inicial.
 
-Frameworks web
---------------
-
-Los frameworks web surgen como evolución histórica a CGI.
+.. Quizás
 
 Model View Controler
 --------------------
 
-Modelo-Vista-Controlador, MVC [*]_, es un patrón de diseño arquitectural que separa la aplicación
-el modelo de datos, de la lógica de negocio y la interfase de usuario.
+Antes de profundizar en más código, tomémonos un momento para considerar el
+diseño global de una aplicación Web Django impulsada por bases de datos.
 
-Muchos frameworks web se respetan en mayor o menor grado el patrón MVC, aliviando tareas comunes
-en cada una de estas capas.
+Como mencionamos en los capítulos anteriores, Django fue diseñado para promover
+el acoplamiento débil y la estricta separación entre las piezas de una
+aplicación. Si sigues esta filosofía, es fácil hacer cambios en un lugar
+particular de la aplicación sin afectar otras piezas. En las funciones de vista,
+por ejemplo, discutimos la importancia de separar la lógica de negocios de la
+lógica de presentación usando un sistema de plantillas. Con la capa de la base
+de datos, aplicamos esa misma filosofía para el acceso lógico a los datos.
 
-En la capa de *modelo de datos*, muchos frameworks proveen lo que se conocoe como Mapeador Objeto Relacional o ORM. Su función es transofrmar una representación de objetos en tablas relacionales.
-El ORM se encarga de presentar una interfase orientada a objetos (API) para represnetar el modelo y
-brindar mecanismos para cración, actualización y elmiminación de entidades, así como también una 
-API para consultas. Algunos ORM permiten escribir el modelo utilizando la API OO [*]_ y generar las
-tablas relacionales a partir de esta representación.
+Estas tres piezas juntas -- la lógica de acceso a la base de datos, la lógica
+de negocios, y la lógica de presentación -- comprenden un concepto que a veces
+es llamado el patrón de arquitectura de software *Modelo-Vista-Controlador* (MVC).
+En este patrón, el "Modelo" hace referencia al acceso a la capa de datos, la
+"Vista" se refiere a la parte del sistema que selecciona qué mostrar y cómo
+mostrarlo, y el "Controlador" implica la parte del sistema que decide qué
+vista usar, dependiendo de la entrada del usuario, accediendo al modelo si es
+necesario.
 
-En la capa de *controlador* los frameworks proveen una forma de 
+.. exhortacion:: ¿Por qué el acrónimo?
 
+    El objetivo de definir en forma explícita patrones como MVC es
+    principalmente simplificar la comunicación entre los desarrolladores. En
+    lugar de tener que decir a tus compañeros de trabajo, "Vamos a hacer una
+    abstracción del acceso a la base de datos, luego vamos a tener una capa que
+    se encarga de mostrar los datos, y vamos a poner una capa en el medio para
+    que regule esto", puedes sacar provecho de un vocabulario compartido y
+    decir, "Vamos a usar un patrón MVC aquí".
 
-.. [*] Del inglés *Model View Controller*
-.. [*] API Orientada a Objetos
+Django sigue el patrón MVC tan al pie de la letra que puede ser llamado
+un framework MVC. Someramente, la M, V y C se separan en Django de la
+siguiente manera:
+
+    * *M*, la porción de acceso a la base de datos, es manejada por la capa de
+      la base de datos de Django, la cual describiremos en este capítulo.
+
+    * *V*, la porción que selecciona qué datos mostrar y cómo mostrarlos, es
+      manejada por la vista y las plantillas.
+
+    * *C*, la porción que delega a la vista dependiendo de la entrada del
+      usuario, es manejada por el framework mismo siguiendo tu URLconf y
+      llamando a la función apropiada de Python para la URL obtenida.
+
+Debido a que la "C" es manejada por el mismo framework y la parte más
+emocionante se produce en los modelos, las plantillas y las vistas, Django es
+conocido como un *Framework MTV*. En el patrón de diseño MTV,
+
+    * *M* significa "Model" (Modelo), la capa de acceso a la base de datos. Esta
+      capa contiene toda la información sobre los datos: cómo acceder a estos,
+      cómo validarlos, cuál es el comportamiento que tiene, y las relaciones
+      entre los datos.
+
+    * *T* significa "Template" (Plantilla), la capa de presentación. Esta capa
+      contiene las decisiones relacionadas a la presentación: como algunas cosas
+      son mostradas sobre una página web o otro tipo de documento.
+
+    * *V* significa "View" (Vista), la capa de la lógica de negocios. Esta capa
+      contiene la lógica que accede al modelo y la delega a la plantilla
+      apropiada: puedes pensar en esto como un puente entre el modelos y las
+      plantillas.
+
+Si estás familiarizado con otros frameworks de desarrollo web MVC, como Ruby on
+Rails, quizás consideres que las vistas de Django pueden ser el "controlador" y
+las plantillas de Django pueden ser la "vista". Esto es una confusión
+desafortunada a raíz de las diferentes interpretaciones de MVC. En la
+interpretación de Django de MVC, la "vista" describe los datos que son
+presentados al usuario; no necesariamente el *cómo* se mostrarán, pero si
+*cuáles* datos son presentados. En contraste, Ruby on Rails y frameworks
+similares sugieren que el trabajo del controlador incluya la decisión de cuales
+datos son presentados al usuario, mientras que la vista sea estrictamente el
+*cómo* serán presentados y no *cuáles*.
+
+Ninguna de las interpretaciones es más "correcta" que otras. Lo importante es
+entender los conceptos subyacentes.
+
 
 Mapeador Objeto-Relacional
 --------------------------
+
+En las aplicaciones web modernas, la lógica arbitraria a menudo implica
+interactuar con una base de datos. Detrás de escena, un *sitio web impulsado por
+una base de datos* se conecta a un servidor de base de datos, recupera algunos
+datos de esta, y los muestra con un formato agradable en una página web. O,
+del mismo modo, el sitio puede proporcionar funcionalidad que permita a los
+visitantes del sitio poblar la base de datos por su propia cuenta.
+
+Muchos sitios web más complejos proporcionan alguna combinación de las dos.
+Amazon.com, por ejemplo, es un gran ejemplo de un sitio que maneja una base de
+datos. Cada página de un producto es esencialmente una consulta a la base de
+datos de productos de Amazon formateada en HTML, y cuando envías una opinión
+de cliente (*customer review*), esta es insertada en la base de datos de
+opiniones.
+
+Así como en el `Capítulo 3`_ detallamos la manera "tonta" de producir una salida
+con la vista (codificando *en duro*) el texto directamente dentro de la vista),
+hay una manera "tonta" de recuperar datos desde la base de datos en una vista.
+Esto es simple: sólo usa una biblioteca de Python existente para ejecutar una
+consulta SQL y haz algo con los resultados.
+
+En este ejemplo de vista, usamos la biblioteca ``MySQLdb`` (disponible en
+http://www.djangoproject.com/r/python-mysql/)  para conectarnos a una base de
+datos de MySQL, recuperar algunos registros, y alimentar con ellos una plantilla
+para mostrar una página web::
+
+    from django.shortcuts import render_to_response
+    import MySQLdb
+
+    def book_list(request):
+        db = MySQLdb.connect(user='me', db='mydb', passwd='secret', host='localhost')
+        cursor = db.cursor()
+        cursor.execute('SELECT name FROM books ORDER BY name')
+        names = [row[0] for row in cursor.fetchall()]
+        db.close()
+        return render_to_response('book_list.html', {'names': names})
+
+Este enfoque funciona, pero deberían hacerse evidentes inmediatamente algunos
+problemas:
+
+    * Estamos codificando *en duro* (*hard-coding*) los parámetros de la
+      conexión a la base de datos. Lo ideal sería que esos parámetros se
+      guardarsen en la configuración de Django.
+
+    * Tenemos que escribir una cantidad de código estereotípico: crear una
+      conexión, un cursor, ejecutar una sentencia, y cerrar la conexión. Lo
+      ideal sería que todo lo que tuviéramos que hacer fuera especificar los
+      resultados que queremos.
+
+    * Nos ata a MySQL. Si, en el camino, cambiamos de MySQL a PostgreSQL,
+      tenemos que usar un adaptador de base de datos diferente (por ej.
+      ``psycopg`` en vez de ``MySQLdb``), alterar los parámetros de conexión
+      y -- dependiendo de la naturaleza de las sentencia de SQL -- posiblemente
+      reescribir el SQL. La idea es que el servidor de base de datos que usemos
+      esté abstraído, entonces el pasarnos a otro servidor podría significar
+      realizar un cambio en un único lugar.
+
+
 
 .. por poner algo, pueden ser otros
 Rails
@@ -109,7 +217,7 @@ Symfony
 .. Django CLI
 
 Django
-======
+******
 
 Acá tenemos que justificar por que django
 
@@ -153,11 +261,10 @@ de consola que permiten crear y manipular proyectos y aplicaciones.
 Estructuración de un proyecto en Django
 ---------------------------------------
 
-Durante la instalación del framework [*]_ en el sistema del desarrollador, se añade al
+Durante la instalación del framework en el sistema del desarrollador, se añade al
 PATH un comando con el nombre django-admin.py. Mediante este comando se crean proyectos
 y se los administra.
 
-.. [*] :ref:<Ver apartado sobre instalación de django `instalacion-django`>
 
 Un proyecto se crea mediante la siguiente orden:
 
@@ -193,7 +300,7 @@ Analicemos a continuación la función de cada uno de estos 3 módulos.
 	
 
 Módulo settings
-"""""""""""""""
+~~~~~~~~~~~~~~~
 Este módulo define la configuración del proyecto, siendo sus atributos principales
 la configuración de la base de datos a utilizar, la ruta en la cual se encuentran
 los médios estáticos, cuál es el nombre del archivo raíz de urls (generalmente urls.py).
@@ -210,7 +317,7 @@ Un parametro fundamental es la lista denominada INSTALLED_APPS que contiene los 
 de las aplicaciones instaladas en le proyecto.
  
 Módulo manage
-"""""""""""""
+~~~~~~~~~~~~~
 
 Esta es la interfase con el framework. Éste módulo es un script ejecutable, que
 recibe como primer argumento un nombre de comando de django.
@@ -241,7 +348,7 @@ resultado::
 	`-- urls.py
 
 Módulo urls
-"""""""""""
+~~~~~~~~~~~
 
 Este nombre de módulo aparece a nivel proyecto, pero también puede aparecer a nivel
 aplicación. Su misión es definir las asociaciones entre URLs y vistas, de manera de 
@@ -264,22 +371,21 @@ de las urls a una aplicación particular.
         
             (r'^personas', include('mi_proyecto.personas.urls'))
 
-
 Estructura de una aplicación Django
-""""""""""""""""""""""""""""""""""""
+-----------------------------------
 
 Una aplicación es un paquete python que consta de un módulo models y un módulo views.
 
  
 Módulo models
-"""""""""""""
+~~~~~~~~~~~~~
 
 Cada vez que se crea una aplicación, se genera un módulo models.py, en el cual
 se le permite al programador definir modelos de objetos, que luego son
 transformados en tablas relacionales [*]_.
 
 Módulo views
-""""""""""""
+~~~~~~~~~~~~~
 
 Cada aplicacion posee un módulo views, donde se definen las funcinoes que atienden
 al cliente y son activadas gracias a el mapeo definido en el módulo urls del proyecto
@@ -305,7 +411,7 @@ Dentro del módulo de urls
 .. [*] Mediante el comando syncdb del módulo manage del proyecto
 
 El cliclo de una petición
-"""""""""""""""""""""""""
+~~~~~~~~~~~~~~~~~~~~~~~~~
  
 Cada vez que un browser realiza una petición a un proyecto desarrollado en django, 
 la petición HTTP pasa por varias capas.
@@ -334,11 +440,131 @@ una instancia de esta clase.
 	:height: 200
 	:width: 200
 
-El Mapeador Objeto-Relacional de Django
-=======================================
+.. _django-orm:
+Interactuar con una base de datos
+=================================
+.. decir ORM
+Primero, necesitamos tener en cuenta algunas configuraciones
+iniciales: necesitamos indicarle a Django qué servidor de base de datos usar y
+cómo conectarse con el mismo.
 
+Asumimos que haz configurado un servidor de base de datos, lo has activado, y
+has creado una base de datos en este (por ej. usando la sentencia
+``CREATE DATABASE``). SQLite es un caso especial; es este caso, no hay que
+crear una base de datos, porque SQLite usa un archivo autónomo sobre el
+sistema de archivos para guardar los datos.
+
+Como con ``TEMPLATE_DIRS`` en los capítulos anteriores, la configuración de la
+base de datos se encuentra en el archivo de configuración de Django, llamado,
+por omisión, ``settings.py``. Edita este archivo y busca las opciones de la
+base de datos::
+
+Hay pocas reglas estrictas sobre cómo encajar el código Django en este esquema;
+es flexible. Si estás construyendo un sitio web simple, quizás uses una sola
+aplicación. Si estás construyendo un sitio web complejo con varias piezas que
+no se relacionan entre sí, tales como un sistema de comercio electrónico o un
+foro, probablemente quieras dividir esto en aplicaciones para que te sea
+posible reusar estas individualmente en un futuro.
+
+Es más, no necesariamente debes crear aplicaciones en absoluto, como lo hace
+evidente la función de la vista del ejemplo que creamos antes en este libro.  En
+estos casos, simplemente creamos un archivo llamado ``views.py``, llenamos este
+con una función de vista, y apuntamos nuestra URLconf a esa función. No se
+necesitan "aplicaciones".
+
+No obstante, existe un requisito respecto a la convención de la aplicación: si
+estás usando la capa de base de datos de Django (modelos), debes crear una
+aplicación de Django. Los modelos deben vivir dentro de aplicaciones.
+
+Dentro del directorio del proyecto ``mysite`` que creaste en el `Capítulo 2`_,
+escribe este comando para crear una nueva aplicación llamada books::
+
+    python manage.py startapp books
+
+Este comando no produce ninguna salida, pero crea un directorio ``books``
+dentro del directorio ``mysite``. Echemos un vistazo al contenido::
+
+    books/
+        __init__.py
+        models.py
+        views.py
+
+Esos archivos contendrán los modelos y las vistas para esta aplicación.
+
+Echa un vistazo a ``models.py`` y ``views.py`` en tu editor de texto favorito.
+Ambos archivos están vacíos, excepto por la importación en ``models.py``. Este
+es el espacio disponible para ser creativo con tu aplicación de Django.
+
+.. _django-modelos:
 Modelos
 -------
+
+Un modelo de Django es una descripción de los datos en la base de datos, representada como código de Python.
+Esta es tu capa de datos -- lo
+equivalente de tu sentencia SQL ``CREATE TABLE`` -- excepto que están en Python
+en vez de SQL, e incluye más que sólo definición de columnas de la base de
+datos. Django usa un modelo para ejecutar código SQL detrás de las escenas y
+retornar estructuras de datos convenientes en Python representando las filas de
+tus tablas de la base de datos. Django también usa modelos para representar
+conceptos de alto nivel que no necesariamente pueden ser manejados por SQL.
+
+Si estás familiarizado con base de datos, inmediatamente podría pensar, "¿No es
+redundante definir modelos de datos en Python *y* en SQL?" Django trabaja de
+este modo por varias razones:
+
+    * La introspección requiere ***overhead*** y es imperfecta. Con el objetivo
+      de proveer una API conveniente de acceso a los datos, Django necesita
+      conocer *de alguna forma* la capa de la base de datos, y hay dos formas de
+      lograr esto. La primera sería describir explícitamente los datos en
+      Python, y la segunda sería la introspección de la base de datos en tiempo
+      de ejecución para determinar el modelo de la base de datos.
+
+      La segunda forma parece clara, porque los metadatos sobre tus tablas vive en
+      un único lugar, pero introduce algunos problemas. Primero,
+      introspeccionar una base de datos en tiempo de ejecución obviamente
+      requiere overhead. Si el framework tuviera que introspeccionar la base
+      de datos cada vez que se procese una petición, o incluso cuando el
+      servidor web sea inicializado, esto podría provocar un nivel de overhead
+      inaceptable. (Mientras algunos creen que el nivel de overhead es
+      aceptable, los desarrolladores de Django apuntan a quitar del framework
+      tanto overhead como sea posible, y esta aproximación hace que Django sea
+      más rápido que los frameworks competidores de alto nivel en mediciones de
+      desempeño). Segundo, algunas bases de datos, notablemente viejas
+      versiones de MySQL, no guardan suficiente metadatos para asegurarse una
+      completa introspección.
+
+    * Escribir Python es divertido, y dejar todo en Python limita el número de
+      veces que tu cerebro tiene que realizar un "cambio de contexto". Si te
+      mantienes en un solo entorno/mentalidad de programación tanto tiempo
+      como sea posible, ayuda para la productividad. Teniendo que escribir SQL,
+      luego Python, y luego SQL otra vez es perjudicial.
+
+    * Tener modelos de datos guardados como código en vez de en tu base de datos
+      hace fácil dejar tus modelos bajo un control de versiones. De esta forma,
+      puedes fácilmente dejar rastro de los cambios a tu capa de modelos.
+
+    * SQL permite sólo un cierto nivel de metadatos acerca de un ***layout*** de
+      datos.  La mayoría de sistemas de base de datos, por ejemplo, no provee un
+      tipo de datos especializado para representar una dirección web o de email.
+      Los modelos de Django sí. La ventaja de un tipo de datos de alto nivel es
+      la alta productividad y la reusabilidad de código.
+
+    * SQL es inconsistente a través de distintas plataformas. Si estás
+      redistribuyendo una aplicación web, por ejemplo, es mucho más pragmático
+      distribuir un módulo de Python que describa tu capa de datos que separar
+      conjuntos de sentencias ``CREATE TABLE``  para MySQL, PostgreSQL y SQLite.
+
+Una contra de esta aproximación, sin embargo, es que es posible que el código
+Python quede fuera de sincronía respecto a lo que hay actualmente en la base. Si
+haces cambios en un modelo Django, necesitarás hacer los mismos cambios dentro
+de tu base de datos para mantenerla consistente con el modelo. Detallaremos
+algunas estrategias para manejar este problema más adelante en este capítulo.
+
+Finalmente, Django incluye una utilidad que puede generar modelos haciendo
+introspección sobre una base de datos existente. Esto es útil para comenzar
+a trabajar rápidamente sobre datos heredados.
+
+
 Los modelos son la fuente de información sobre los datos de la aplicacion. Esencialmente
 estan compuestos de campos y comportamiento propio de los datos almacenados. Generalmente,
 un modelo se corresponde con una tabla en la base de datos.

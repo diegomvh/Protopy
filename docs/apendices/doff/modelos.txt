@@ -2,38 +2,40 @@
 Referencia de la definición de modelos
 ======================================
 
-El `Capítulo 5`_ se explica lo básico de la definición de modelos.
+El :ref:`doff-modelos` se explica lo básico de la definición de modelos.
 Existe un enorme rango de opciones disponibles que no se han cubierto en otro lado.
 Este apéndice explica toda opción disponible en la definición de modelos.
 
 Campos
 ======
 
-La parte más importante de un modelo -- y la única parte requerida de un modelo
--- es la lista de campos de la base de datos que define.
+La parte más importante de un modelo -- y la única requerida -- es la lista de campos
+de la base de datos que define.
 
-.. exhortacion: Restricciones en el nombre de los campos
+.. admonition:: Restricciones en el nombre de los campos
 
     Existen solo dos restricciones en el nombre de los campos:
 
         1. Un nombre de campo no puede ser una palabra reservada,
-           porque eso ocasionaría un error de sintaxis, por ejemplo::
+           porque eso ocasionaría un error de sintaxis, por ejemplo:
+            .. code-block:: javascript
 
-               var ejemplo = type('Ejemplo', [models.Model], {
-                   var = models.IntegerField() // 'var' es una palabra reservada!
-               });
+                var Ejemplo = type('Ejemplo', [ models.Model ], {
+                    var = new models.IntegerField() // 'var' es una palabra reservada!
+                });
 
         2. Un nombre de campo no puede contener dos o más guiones bajos
            consecutivos, debido a la forma en que trabaja la sintaxis de las
-           consultas de búsqueda, por ejemplo::
+           consultas de búsqueda, por ejemplo:
+            .. code-block:: javascript
 
-               var ejemplo = type('Ejemplo', [models.Model], {
-                   foo__bar = models.IntegerField() # 'foo__bar' tiene dos guiones bajos!
-               });
+                var Ejemplo = type('Ejemplo', [models.Model], {
+                    foo__bar = new models.IntegerField() // 'foo__bar' tiene dos guiones bajos!
+                });
 
     Estas limitaciones se pueden manejar sin mayores problemas, dado que el
     nombre del campo no necesariamente tiene que coincidir con el nombre de la
-    columna en la base de datos. Ver "db_column", más abajo.
+    columna en la base de datos. Ver :ref:`db_column <apendices-doff-modelos-dbcolumn>`, más abajo.
 
     Las palabras reservadas de SQL, como ``join``, ``where``, o ``select``,
     *son* permitidas como nombres de campo, dado que se "escapean" todos los
@@ -41,8 +43,8 @@ La parte más importante de un modelo -- y la única parte requerida de un model
     subyacente.
 
 
-Cada campo en el modelo debe ser una instancia de la clase de campo apropiada.
-Los tipos de clase ``Field`` son utilzados para determinar algunas cosas:
+Cada campo en el modelo debe ser una instancia del tipo de campo apropiado.
+Los tipos de ``Field`` son utilzados para determinar algunas cosas:
 
     * El tipo de columna de la base de datos (ej.:, ``INTEGER``, ``VARCHAR``).
 
@@ -50,16 +52,15 @@ Los tipos de clase ``Field`` son utilzados para determinar algunas cosas:
 
     * Los requerimientos mínimos de validación.
 
-A continuación, una lista completa de las clases de campo, ordenadas
-alfabéticamente. Los campos de relación (``ForeignKey``, etc.) se tratan en la
-siguiente sección.
+A continuación, una lista completa de los campos, ordenados alfabéticamente. Los campos de
+relación (``ForeignKey``, etc.) se tratan en la siguiente sección.
 
 
 AutoField
 ---------
 
 Un ``IntegerField`` que se incrementa automáticamente de acuerdo con los IDs
-disponibles. Normalmente no es necesario utilizarlos directamente; se agrega un
+disponibles. Normalmente no es necesario utilizarlos directamente ya que se agrega un
 campo de clave primaria automáticamente al modelo si no se especifica una clave
 primaria.
 
@@ -78,35 +79,26 @@ usar ``TextField``.
 máxima (en caracteres) del campo. Esta longitud máxima es reforzada a nivel de
 la base de datos y en la validación.
 
-CommaSeparatedIntegerField
---------------------------
-
-Un campo de enteros separados por comas. Igual que en ``CharField``, se
-requiere el argumento ``max_length``.
-
 DateField
 ---------
 
 Un campo de fecha. ``DateField`` tiene algunos argumentos opcionales extra,
-como se muestra en la Tabla B-1.
+como se muestra en la :ref:`Tabla <doff-modelos-datefield-tabla>`.
 
-.. tabla: Tabla B-1. Argumentos opcionales extra de DateField
-
-    ======================  ===================================================
-    Argumento               Descripción
-    ======================  ===================================================
-    ``auto_now``            Asigna automáticamente al campo un valor igual al
-                            momento en que se salva el objeto. Es útil para las
-                            marcas de tiempo "última modificación". Observar
-                            que *siempre* se usa la fecha actual; no es un
-                            valor por omisión que se pueda sobreescribir.
-
-    ``auto_now_add``        Asigna automáticamente al campo un valor igual al
-                            momento en que se crea el objeto. Es útil para la
-                            creación de marcas de tiempo. Observar que
-                            *siempre* se usa la fecha actual; no es un valor
-                            por omisión que se pueda sobreescribir.
-    ======================  ===================================================
+.. _doff-modelos-datefield-tabla:
+.. list-table:: Argumentos opcionales extra de DateField
+    :widths: 20 80
+   
+    * - **Argumento**
+      - **Descripción**
+    * - ``auto_now``
+      - Asigna automáticamente al campo un valor igual al momento en que se salva el objeto. Es útil para las
+        marcas de tiempo "última modificación". Observar que *siempre* se usa la fecha actual; no es un
+        valor por omisión que se pueda sobreescribir.
+    * - ``auto_now_add``
+      - Asigna automáticamente al campo un valor igual al momento en que se crea el objeto. Es útil para la
+        creación de marcas de tiempo. Observar que *siempre* se usa la fecha actual; no es un valor
+        por omisión que se pueda sobreescribir.
 
 DateTimeField
 -------------
@@ -121,25 +113,24 @@ acepta ``max_length``; su ``max_length`` se establece automáticamente en 75.
 
 FileField
 ---------
+.. warning:: No este implementado actualmente ver bien la doc.
 
-Un campo de upload de archivos. Tiene un argumento *requerido*, como se ve en
-la Tabla B-3.
+Un campo de captura de archivos. Tiene un argumento *requerido*, como se ve en
+la :ref:`Tabla <doff-modelos-filefield-tabla>`.
 
-.. tabla: Tabla B-2. Opciones extra de FileField
+.. _doff-modelos-filefield-tabla:
+.. list-table:: Opciones extra de FileField
+    :widths: 20 80
+   
+    * - **Argumento**
+      - **Descripción**
+    * - ``upload_to``
+      - Una ruta del sistema de archivos local que se agregará a la configuración de ``MEDIA_ROOT``
+        para determinar el resultado de la función de ayuda ``get_<fieldname>_url()``.
 
-    ======================  ===================================================
-    Argumento                Descripción
-    ======================  ===================================================
-    ``upload_to``           Una ruta del sistema de archivos local que se
-                            agregará a la configuración de ``MEDIA_ROOT``
-                            para determinar el resultado de la función de ayuda
-                            ``get_<fieldname>_url()``
-    ======================  ===================================================
-
-Esta ruta puede contener formato ``strftime`` (ver
-http://www.djangoproject.com/r/python/strftime/), que será reemplazada por la
-fecha y hora del upload del archivo (de manera que los archivos subidos no
-llenen el directorio dada).
+Esta ruta puede contener formato ``strftime``, que será reemplazada por la
+fecha y hora de la captura del archivo (de manera que los archivos capturados no
+llenen una ruta dada).
 
 El uso de un ``FileField`` o un ``ImageField`` en un modelo requiere algunos
 pasos:
@@ -173,7 +164,7 @@ refiera a ese archivo, o el tamaño del archivo, puedes usar los métodos
 ``get_FIELD_filename()``, ``get_FIELD_url()``, y ``get_FIELD_size()``. Ver
 el Apéndice C para una explicación completa de estos métodos.
 
-.. nota:
+.. note::
 
     Cualquiera sea la forma en que manejes tus archivos subidos, tienes que
     prestar mucha atención a donde los estás subiendo y que tipo de archivos
@@ -188,39 +179,34 @@ el Apéndice C para una explicación completa de estos métodos.
 FilePathField
 -------------
 
-Un campo cuyas opciones están limitadas a los nombres de archivo en un cierto
-directorio en el sistema de archivos. Tiene tres argumentos especiales, que se
-muestran en la Tabla B-3.
+Un campo cuyas opciones están limitadas a los nombres de archivo en una cierta 
+ruta en el sistema de archivos. Tiene tres argumentos especiales, que se muestran
+en la :ref:`Tabla <doff-modelos-filepathfield-tabla>`.
 
-.. tabla: Tabla B-3. Opciones extra de FilePathField
-
-    ======================  ===================================================
-    Argumento               Descripción
-    ======================  ===================================================
-    ``path``                *Requerido*; la ruta absoluta en el sistema de
-                            archivos hacia el directorio del cual este
-                            ``FilePathField`` debe tomar sus opciones
-                            (ej.: ``"/home/images"``).
-
-    ``match``               Opcional; una expresión regular como string, que
-                            ``FilePathField`` usará para filtrar los nombres
-                            de archivo. Observar que la regex será aplicada al
-                            nombre de archivo base, no a la ruta completa (ej.:
-                            ``"foo.*\.txt^"``, va a matchear con un archivo
-                            llamado ``foo23.txt``, pero no con ``bar.txt`` o
-                            ``foo23.gif``).
-
-    ``recursive``           Opcional; ``true`` o ``false``. El valor por omisión es
-                            ``false``. Especifica si deben incluirse todos los
-                            subdirectorios de ``path``.
-    ======================  ===================================================
+.. _doff-modelos-filepathfield-tabla:
+.. list-table:: Opciones extra de FilePathField
+    :widths: 20 80
+   
+    * - **Argumento**
+      - **Descripción**
+    * - ``path``
+      - *Requerido*; la ruta absoluta en el sistema de archivos hacia el directorio del cual este
+        ``FilePathField`` debe tomar sus opciones (ej.: ``"/home/images"``).
+    * - ``match``
+      - Opcional; una expresión regular como string, que ``FilePathField`` usará para filtrar los nombres
+        de archivo. Observar que la regex será aplicada al nombre de archivo base, no a la ruta completa (ej.:
+        ``"foo.*\.txt^"``, va a matchear con un archivo llamado ``foo23.txt``, pero no con ``bar.txt`` o
+        ``foo23.gif``).
+    * - ``recursive``
+      - Opcional; ``true`` o ``false``. El valor por omisión es ``false``. Especifica si deben incluirse todos los
+        subdirectorios de ``path``.
 
 Por supuesto, estos argumentos pueden usarse juntos.
 
 El único 'gotcha' potencial es que ``match`` se aplica sobre el nombre de
 archivo base, no la ruta completa. De esta manera, este ejemplo::
 
-    FilePathField(path="/home/images", match="foo.*", recursive=true)
+    FilePathField({path:"/home/images", match:"foo.*", recursive:true})
 
 va a matchear con ``/home/images/foo.gif`` pero no con
 ``/home/images/foo/bar.gif`` porque el  ``match`` se aplica al nombre de
@@ -229,20 +215,19 @@ archivo base (``foo.gif`` y ``bar.gif``).
 FloatField
 ----------
 
-Un numero de punto flotante, representado en Python por una instancia de
-``float``. Tiene dos argumentos requeridos, que se muestran en la Tabla B-4.
+Un numero de punto flotante, representado en JavaScript por una instancia de
+``Number``. Tiene dos argumentos requeridos, que se muestran en la :ref:`Tabla <doff-modelos-floatfield-tabla>`.
 
-.. tabla: Tabla B-4. Opciones extra de FloatField
-
-    ======================  ===================================================
-    Argumento               descripción
-    ======================  ===================================================
-    ``max_digits``          La cantidad máximo de dígitos permitidos en el
-                            número.
-
-    ``decimal_places``      La cantidad de posiciones decimales a almacenar con
-                            el número.
-    ======================  ===================================================
+.. _doff-modelos-floatfield-tabla:
+.. list-table:: Opciones extra de FloatField
+    :widths: 20 80
+   
+    * - **Argumento**
+      - **Descripción**
+    * - ``max_digits``
+      - La cantidad máximo de dígitos permitidos en el número.
+    * - ``decimal_places``
+      - La cantidad de posiciones decimales a almacenar con el número.
 
 Por ejemplo, para almacenar números hasta 999 con una resolución de dos
 decimales, hay que usar::
@@ -256,8 +241,9 @@ de diez dígitos decimales, hay que usar::
 
 ImageField
 ----------
+.. warning:: No este implementado actualmente ver bien la doc.
 
-Similar a ``FileField``, pero valida que el objeto subido sea una imagen
+Similar a ``FileField``, pero valida que el objeto capturado sea una imagen
 válida. Tiene dos argumentos opcionales extra, ``height_field`` y
 ``width_field``, que si se utilizan, serán auto-rellenados con la altura y el
 ancho de la imagen cada vez que se guarde una instancia del modelo.
@@ -265,10 +251,7 @@ ancho de la imagen cada vez que se guarde una instancia del modelo.
 Además de los métodos especiales ``get_FIELD_*`` que están disponibles para
 ``FileField``, un ``ImageField`` tiene también los métodos
 ``get_FIELD_height()`` y ``get_FIELD_width()``. Éstos están documentados en el
-Apéndice C.
-
-``ImageField`` requiere la biblioteca Python Imaging Library
-(http://www.pythonware.com/products/pil/).
+:ref:`apendices-doff-dbapi`.
 
 IntegerField
 ------------
@@ -283,20 +266,8 @@ Una dirección IP, en formato string (ej.: ``"24.124.1.30"``).
 NullBooleanField
 ----------------
 
-Similar a ``BooleanField``, pero permite ``NULL`` como opcion.
+Similar a ``BooleanField``, pero permite ``NULL`` como opción.
 Usar éste en lugar de un ``BooleanField`` con ``null = true``.
-
-PhoneNumberField
-----------------
-
-Un ``CharField`` que chequea que el valor es un teléfono válido estilo U.S.
-(en formato ``XXX-XXX-XXXX``).
-
-.. nota:
-
-    Si necesitas representar teléfonos de otros países, consulta el paquete
-    ``django.contrib.localflavor`` para ver si ya están incluidas las
-    definiciones para tu país.
 
 PositiveIntegerField
 --------------------
@@ -319,19 +290,10 @@ que contiene solo letras, números, guiones bajos o simples. Generalmente se
 usan en URLs.
 
 De igual forma que en ``CharField``, puedes especificar ``max_length``. Si
-``max_length`` no está especificado, Django asume un valor por omisión de 50.
-
+``max_length`` no está especificado, el valor por omisión es de 50.
 
 Un ``SlugField`` implica ``db_index=true`` debido a que son los se usan
 principalmente para búsquedas en la base de datos.
-
-``SlugField`` acepta una opción extra, ``prepopulate_from``, que es una lista
-de campos a partir de los cuales auto-rellenar el slug, vía JavaScript, en el
-formulario de administración del objeto::
-
-    models.SlugField(prepopulate_from=("pre_name", "name"))
-
-``prepopulate_from`` no acepta nombres ``DateTimeField`` como argumentos.
 
 SmallIntegerField
 -----------------
@@ -360,7 +322,6 @@ respuesta 404).
 Como los otros campos de caracteres, ``URLField`` toma el argumento
 ``max_length``. Si no se especifica, el valor por omisión es 200.
 
-
 Opciones para todos los campos
 ==============================
 
@@ -377,14 +338,15 @@ Los valores de string nulo siempre se almacenan como strings vacíos, no como
 ``NULL``. ``null=true`` se debe utilizar solo para campos no-string, como enteros,
 booleanos y fechas. En los dos casos, también es necesario establecer ``blank=true``
 si se desea permitir valores vacíos en los formularios, ya que el parámetro ``null``
-solo afecta el almacenamiento en la base de datos (ver la siguiente sección, titulada "`blank`_").
+solo afecta el almacenamiento en la base de datos (ver la siguiente sección, titulada :ref:`blank <apendices-doff-modelos-blank>`).
 
-Evitar utilizar ``null`` en campos basados en string como ``CharField`` y
+Se debe evitar utilizar ``null`` en campos basados en string como ``CharField`` y
 ``TextField`` salvo que se tenga una excelente razón para hacerlo. Si un campo
 basado en string tiene ``null=true``, eso significa que tiene dos valores
 posibles para "sin datos": ``NULL`` y el string vacío. En la mayoría de los
 casos, esto es redundante; la convención es usar el string vacío, no ``NULL``.
 
+.. _apendices-doff-modelos-blank:
 blank
 -----
 
@@ -418,31 +380,31 @@ Una lista de opciones se ve así::
 El primer elemento de cada tupla es el valor actual a ser almacenado.
 El segundo elemento es el nombre legible por humanos para la opción.
 
-La lista de opciones puede ser definida también como parte de la clase del
-modelo::
+La lista de opciones puede ser definida también como parte del modelo::
 
-    var foo = type ('Foo', [models.Model], {
+    var Foo = type('Foo', [ models.Model ], {
         GENDER_CHOICES: [
             ['M', 'Male'],
             ['F', 'Female']
         ],
-        gender: models.CharField({ max_length:1, choices:GENDER_CHOICES}),
+        gender: new models.CharField({ max_length:1, choices:GENDER_CHOICES}),
         });
 
-o fuera de la clase del modelo::
+o fuera del modelo::
 
     var GENDER_CHOICES: [
             ['M', 'Male'],
             ['F', 'Female']
         ];
-    var foo = type ('Foo', [models.Model], {
-        gender: models.CharField({ max_length:1, choices:GENDER_CHOICES}),
+    var Foo = type ('Foo', [models.Model], {
+        gender: new models.CharField({ max_length:1, choices:GENDER_CHOICES}),
         });
 
 Para cada campo del modelo que tenga establecidas ``choices``, Se agregará
 un método para recuperar el nombre legible por humanos para el valor actual del
-campo. Ver Apéndice C para más detalles.
+campo. Ver :ref:`apendices-doff-dbapi` para más detalles.
 
+.. _apendices-doff-modelos-dbcolumn:
 db_column
 ---------
 
@@ -485,7 +447,7 @@ Si es ``true``, este campo es la clave primaria del modelo.
 Si no se especifica ``primary_key=true`` para ningún campo del modelo, se
 agregará automáticamente este campo::
 
-    id = models.AutoField('ID', { primary_key: true });
+    id = new models.AutoField('ID', { primary_key: true });
 
 Por lo tanto, no es necesario establecer ``primary_key=true`` en ningún campo,
 salvo que se quiera sobreescribir el comportamiento por omisión de la clave
@@ -515,9 +477,9 @@ Asignar como valor el nombre de un ``DateField`` o ``DateTimeField`` para
 requerir que este campo sea único para el valor del campo tipo fecha, por
 ejemplo::
 
-    var story = type('Story', [models.Model] {
-        pub_date: models.DateTimeField(),
-        slug: models.SlugField({unique_for_date:"pub_date"}),
+    var Story = type('Story', [ models.Model ] {
+        pub_date: new models.DateTimeField(),
+        slug: new models.SlugField({unique_for_date:"pub_date"}),
         ...
     });
 
@@ -542,24 +504,24 @@ verbose_name
 
 Cada tipo de campo, excepto ``ForeignKey``, ``ManyToManyField``, y
 ``OneToOneField``, toma un primer argumento posicional opcional -- un nombre
-descriptivo. Si el nombre descriptivo no está dado, se crea automáticamente
+descriptivo --. Si el nombre descriptivo no está dado, se crea automáticamente
 usando el nombre de atributo del campo, convirtiendo guiones bajos en espacios.
 
 En este ejemplo, el nombre descriptivo es ``"Person's first name"``::
 
-    first_name = models.CharField("Person's first name", { max_length: 30 })
+    first_name = new models.CharField("Person's first name", { max_length: 30 })
 
 En este ejemplo, el nombre descriptivo es ``"first name"``::
 
-    first_name = models.CharField({maxlength: 30})
+    first_name = new models.CharField({maxlength: 30})
 
 ``ForeignKey``, ``ManyToManyField``, y ``OneToOneField`` requieren que el
 primer argumento sea una clase del modelo, en este caso hay que usar
 ``verbose_name`` como argumento con nombre::
 
-    poll = models.ForeignKey(Poll, {verbose_name: "the related poll"})
-    sites = models.ManyToManyField(Site, {verbose_name: "list of sites"})
-    place = models.OneToOneField(Place, {verbose_name: "related place"})
+    poll = new models.ForeignKey(Poll, {verbose_name: "the related poll"})
+    sites = new models.ManyToManyField(Site, {verbose_name: "list of sites"})
+    place = new models.OneToOneField(Place, {verbose_name: "related place"})
 
 La convención es no capitalizar la primera letra del ``verbose_name`` estas son pasadas a
 mayúscula automáticamente cuando sea necesario.
@@ -568,170 +530,154 @@ Relaciones
 ==========
 
 Es claro que el poder de las bases de datos se basa en relacionar tablas entre
-sí. Django ofrece formas de definir los tres tipos de relaciones más comunes en
-las bases de datos: muchos-a-uno, muchos-a-muchos, y uno-a-uno.
-
-Sin embargo, la semántica de las relaciones uno-a-uno esta siendo revisada
-mientras se imprime este libro, así que no se cubren en esta sección. Consulte
-en la documentación on-line la información más actualizada.
+sí. Los tres tipos de relaciones más comunes en las bases de datos estan
+soportadas: muchos-a-uno, muchos-a-muchos, y uno-a-uno (utilizada indirectamente en la herencia).
 
 Relaciones Muchos-a-Uno
--------------------------
+-----------------------
 
-Para definir una relación muchos-a-uno, usa ``ForeignKey``. Se usa como
-cualquier otro tipo ``Field``: incluyéndolo como un atributo de clase en tu
-modelo.
+El campo ``ForeignKey`` definie las relaciones muchos-a-uno. Se usa como
+cualquier otro tipo ``Field``: incluyéndolo como un atributo en el modelo.
 
-``ForeignKey`` requiere un argumento posicional: la clase a la cual se relaciona
+``ForeignKey`` requiere un argumento posicional: el tipo al cual se relaciona
 el modelo.
 
 Por ejemplo, si un modelo ``Car`` tiene un ``Manufacturer`` -- es decir, un
 ``Manufacturer`` fabrica múltiples autos pero cada ``Car`` tiene solo un
-``Manufacturer`` -- usa la siguiente definición::
+``Manufacturer`` -- la definición es::
 
-    class Manufacturer(models.Model):
+    var Manufacturer = type('Manufacturer', [ models.Model ], {
         ...
+    });
 
-    class Car(models.Model):
-        manufacturer = models.ForeignKey(Manufacturer)
+    var Car = type('Car', [ models.Model ], 
+        manufacturer: new models.ForeignKey(Manufacturer),
         ...
+    });
 
 Para crear una relación *recursiva* -- un objeto que tiene una relación
-muchos-a-uno con él mismo -- usa ``models.ForeignKey('self')``::
+muchos-a-uno con él mismo -- ``models.ForeignKey('this')``::
 
-    class Employee(models.Model):
-        manager = models.ForeignKey('self')
-
-Si necesitas crear una relación con un modelo que aún no se ha definido,
-puedes usar el nombre del modelo en lugar del objeto modelo::
-
-    class Car(models.Model):
-        manufacturer = models.ForeignKey('Manufacturer')
+    var Employee = type('Employee', [ models.Model ], {
+        manager: new models.ForeignKey('this'),
         ...
+    });
 
-    class Manufacturer(models.Model):
+Si se necesita crear una relación con un modelo que aún no se ha definido,
+el nombre del modelo puede ser utilizado en lugar del objeto modelo::
+
+    var Car = type('Car', [ models.Model ], {
+        manufacturer: new models.ForeignKey('Manufacturer'),
         ...
+    });
 
-Observar que de todas formas solo puedes usar strings para hacer referencia a
-modelos dentro del mismo archivo ``models.py`` -- no puedes usar un string para
-hacer referencia a un modelo en una aplicación diferente, o hacer referencia a
-un modelo que ha sido importado de cualquier otro lado.
+    var Manufacturer = type('Manufacturer', [ models.Model ], {
+        ...
+    });
 
-Detrás de la escena, Django agrega ``"_id"`` al nombre de campo para crear su
+Observar que de todas formas solo se pueden usar strings para hacer referencia a
+modelos dentro del mismo archivo ``models.js`` -- no se pueden usar strings para
+hacer referencias a un modelo en una aplicación diferente, o hacer referencia a
+un modelo que ha sido requerido de cualquier otro lado.
+
+Detrás de la escena, ``"_id"`` es agregado al nombre de campo para crear su
 nombre de columna en la base de datos. En el ejemplo anterior, la tabla de la
 base de datos correspondiente al modelo ``Car``, tendrá una columna
-``manufacturer_id``. (Puedes cambiar esto explícitamente especificando
-``db_column``; ver más arriba en la sección "`db_column`_".) De todas formas, tu
+``manufacturer_id``. (Esto puede se puede cambiar explícitamente especificando
+``db_column``; ver más arriba en la sección :ref:`db_column <apendices-doff-modelos-dbcolumn>`.) De todas formas, el
 código nunca debe utilizar el nombre de la columna de la base de datos, salvo
-que escribas tus propias SQL. Siempre te manejarás con los nombres de campo de
-tu objeto modelo.
+que escribas SQL. Siempre se utilizaran los nombres de campo del modelo.
 
 Se sugiere, pero no es requerido, que el nombre de un campo ``ForeignKey``
-(``manufacturer`` en el ejemplo) sea el nombre del modelo en minúsculas. Por
-supuesto, puedes ponerle el nombre que quieras. Por ejemplo::
+(``manufacturer`` en el ejemplo) sea el nombre del modelo en minúsculas. Igualmente
+se puede poner cualquier nombre. Por ejemplo::
 
-    class Car(models.Model):
-        company_that_makes_it = models.ForeignKey(Manufacturer)
-        # ...
+    var Car = type('Car', [ models.Model ], {
+        company_that_makes_it: new models.ForeignKey(Manufacturer),
+        // ...
+    });
 
 Los campos ``ForeignKey`` reciben algunos argumentos extra para definir como
-debe trabajar la relación (ver Tabla B-5). Todos son opcionales.
+debe trabajar la relación (ver :ref:`Tabla <doff-modelos-foreignkey-tabla>`). Todos son opcionales.
 
-.. tabla: Tabla B-5. Opciones de ForeignKey
+.. warning:: ver esta tabla hay opciones que no estan.
 
-    =======================  ============================================================
-    Argumento                Descripción
-    =======================  ============================================================
-    ``edit_inline``          Si no es ``false``, este objeto relacionado se edita
-                             "inline" en la página del objeto relacionado. Esto significa
-                             que el objeto no tendrá su propia interfaz de
-                             administración. Usa ``models.TABULAR`` o ``models.STACKED``,
-                             que designan si los objetos editables inline se muestran como
-                             una tabla o como una pila de conjuntos de campos,
-                             respectivamente.
+.. _doff-modelos-foreignkey-tabla:
+.. list-table:: Opciones de ForeignKey
+    :widths: 20 80
+   
+    * - **Argumento**
+      - **Descripción**
+    * - ``edit_inline``
+      - Si no es ``false``, este objeto relacionado se edita "inline" en la página del objeto relacionado. Esto significa
+        que el objeto no tendrá su propia interfaz de administración. Usa ``models.TABULAR`` o ``models.STACKED``,
+        que designan si los objetos editables inline se muestran como una tabla o como una pila de conjuntos de campos,
+        respectivamente.
+    * - ``limit_choices_to``
+      - Un diccionario para buscar argumentos y valores (ver el Apéndice C) que limita las opciones de administración
+        disponibles para este objeto. Usa esto con funciones del módulo ``datetime`` de Python para limitar las opciones de
+        fecha de los objetos. Por ejemplo::
 
-    ``limit_choices_to``     Un diccionario para buscar argumentos y valores (ver el
-                             Apéndice C) que limita las opciones de administración
-                             disponibles para este objeto. Usa esto con funciones del
-                             módulo ``datetime`` de Python para limitar las opciones de
-                             fecha de los objetos. Por ejemplo::
+            limit_choices_to: {'pub_date__lte': datetime.now}
 
-                                limit_choices_to = {'pub_date__lte': datetime.now}
+        sólo permite la elección de objetos relacionados con ``pub_date`` anterior a la fecha/hora actual.
 
-                             sólo permite la elección de objetos relacionados con
-                             ``pub_date`` anterior a la fecha/hora actual.
+        En lugar de un diccionario, esto puede ser un objeto ``Q`` (ver Apéndice C) para consultas más complejas.
 
-                             En lugar de un diccionario, esto puede ser un objeto ``Q``
-                             (ver Apéndice C) para consultas más complejas.
+        No es compatible con ``edit_inline``.
+    * - ``max_num_in_admin``
+      - Para objetos editados inline, este es el número máximo de objetos relacionados a mostrar en la interfaz de
+        administración.
+        Por lo tanto, si una pizza puede tener como máximo diez ingredientes, ``max_num_in_admin=10`` asegurará que un
+        usuario nunca ingresará más de diez ingredientes.
 
-                             No es compatible con ``edit_inline``.
-
-    ``max_num_in_admin``     Para objetos editados inline, este es el número máximo de
-                             objetos relacionados a mostrar en la interfaz de
-                             administración.
-                             Por lo tanto, si una pizza puede tener como máximo diez
-                             ingredientes, ``max_num_in_admin=10`` asegurará que un
-                             usuario nunca ingresará más de diez ingredientes.
-
-                             Observar que esto no asegura que no se puedan crear más
-                             de diez ingredientes relacionados. Simplemente controla
-                             la interfaz de administración; no fortalece cosas a nivel
-                             de Python API o base de datos.
-
-    ``min_num_in_admin``     La cantidad mínima de objetos relacionados que se muestran
-                             en la interfaz de administración. Normalmente,
-                             en el momento de la creación se muestran ``num_in_admin``
-                             objetos inline , y en el momento de edición se muestran
-                             ``num_extra_on_change`` objetos en blanco además de todos
-                             los objetos relacionados preexistentes. De todas formas,
-                             nunca se mostrarán menos de ``min_num_in_admin`` objetos
-                             relacionados.
-
-    ``num_extra_on_change``  La cantidad de campos en blanco extra de objetos
-                             relacionados a mostrar en el momento de realizar cambios.
-
-    ``num_in_admin``         El valor por omisión de la cantidad de objetos inline a
-                             mostrar en la página del objeto en el momento de agregar.
-
-    ``raw_id_admin``         Solo muestra un campo para ingresar un entero en lugar de
-                             un menú desplegable. Esto es útil cuando se relaciona con
-                             un tipo de objeto que tiene demasiadas filas para que sea
-                             práctico utilizar una caja de selección.
-
-                             No es utilizado con ``edit_inline``.
-
-    ``related_name``         El nombre a utilizar para la relación desde el objeto
-                             relacionado de hacia éste objeto. Para más información,
-                             ver el Apéndice C.
-
-    ``to_field``             El campo en el objeto relacionado con el cual se establece
-                             la relación. Por omisión, Django usa la clave primaria del
-                             objeto relacionado.
-    =======================  ============================================================
+        Observar que esto no asegura que no se puedan crear más de diez ingredientes relacionados. Simplemente controla
+        la interfaz de administración; no fortalece cosas a nivel de Python API o base de datos.
+    * - ``min_num_in_admin``
+      - La cantidad mínima de objetos relacionados que se muestran en la interfaz de administración. Normalmente,
+        en el momento de la creación se muestran ``num_in_admin`` objetos inline , y en el momento de edición se muestran
+        ``num_extra_on_change`` objetos en blanco además de todos los objetos relacionados preexistentes. De todas formas,
+        nunca se mostrarán menos de ``min_num_in_admin`` objetos relacionados.
+    * - ``num_extra_on_change``
+      - La cantidad de campos en blanco extra de objetos relacionados a mostrar en el momento de realizar cambios.
+    * - ``num_in_admin``
+      - El valor por omisión de la cantidad de objetos inline a mostrar en la página del objeto en el momento de agregar.
+    * - ``raw_id_admin``
+      - Solo muestra un campo para ingresar un entero en lugar de un menú desplegable. Esto es útil cuando se relaciona con
+        un tipo de objeto que tiene demasiadas filas para que sea práctico utilizar una caja de selección.
+        
+        No es utilizado con ``edit_inline``.
+    * - ``related_name``
+      - El nombre a utilizar para la relación desde el objeto relacionado de hacia éste objeto. Para más información,
+        ver el Apéndice C.
+    * - ``to_field``
+      -  El campo en el objeto relacionado con el cual se establece la relación. Por omisión, Django usa la clave primaria del
+         objeto relacionado.
 
 Relaciones Muchos-a-Muchos
 --------------------------
 
-Para definir una relación muchos-a-muchos, usa ``ManyToManyField``. Al igual que
-``ForeignKey``, ``ManyToManyField`` requiere un argumento posicional: la clase a
-la cual se relaciona el modelo.
+Para definir una relación muchos-a-muchos, ``ManyToManyField`` es el campo. Al igual que
+``ForeignKey``, ``ManyToManyField`` requiere un argumento posicional: el tipo al cual se relaciona el modelo.
 
 Por ejemplo, si una ``Pizza`` tiene múltiples objetos ``Topping`` -- es decir,
 un ``Topping`` puede estar en múltiples pizzas y cada ``Pizza`` tiene múltiples
 ingredientes (toppings) -- debe representarse así::
 
-    class Topping(models.Model):
+    var Topping = type('Topping', [ models.Model ], {
         ...
+    });
 
-    class Pizza(models.Model):
-        toppings = models.ManyToManyField(Topping)
+    var Pizza = type('Pizza', [ models.Model ], {
+        toppings: new models.ManyToManyField(Topping),
         ...
+    });
 
 Como sucede con ``ForeignKey``, una relación de un objeto con sí mismo puede
-definirse usando el string ``'self'`` en lugar del nombre del modelo, y puedes
-hacer referencia a modelos que todavía no se definieron usando un string que
-contenga el nombre del modelo. De todas formas solo puedes usar strings para
-hacer referencia a modelos dentro del mismo archivo ``models.py`` -- no puedes
+definirse usando el string ``'this'`` en lugar del nombre del modelo, y se pueden
+hacer referencias a modelos que todavía no se definieron usando un string que
+contenga el nombre del modelo. De todas formas solo se pueden usar strings para
+hacer referencia a modelos dentro del mismo archivo ``models.js`` -- no se puede
 usar un string para hacer referencia a un modelo en una aplicación diferente, o
 hacer referencia a un modelo que ha sido importado de cualquier otro lado.
 
@@ -739,85 +685,71 @@ Se sugiere, pero no es requerido, que el nombre de un campo ``ManyToManyField``
 (``toppings``, en el ejemplo) sea un término en plural que describa al conjunto
 de objetos relacionados con el modelo.
 
-Detrás de la escena, Django crea una tabla join intermedia para representar la
+Detrás de la escena, se crea una tabla join intermedia para representar la
 relación muchos-a-muchos.
 
 No importa cual de los modelos tiene el  ``ManyToManyField``, pero es necesario
 que esté en uno de los modelos -- no en los dos.
 
-Si estás usando la interfaz de administración, las instancias
-``ManyToManyField`` deben ir en el objeto que va a ser editado en la interfaz de
-administración. En el ejemplo anterior, los ``toppings`` están en la ``Pizza``
-(en lugar de que el ``Topping`` tenga ``pizzas`` ``ManyToManyField`` ) porque es
-más natural pensar que una ``Pizza`` tiene varios ingredientes (toppings) que
-pensar que un ingrediente está en muchas pizzas. En la forma en que está
-configurado el ejemplo, el formulario de administración de la``Pizza`` permitirá
-que los usuarios selecciones los ingredientes.
-
 Los objetos ``ManyToManyField`` toman algunos argumentos extra para definir como
-debe trabajar la relación (ver Tabla B-6). Todos son opcionales.
+debe trabajar la relación (ver :ref:`Tabla <doff-modelos-manytomanyfield-tabla>`). Todos son opcionales.
 
-.. tabla: Tabla B-6. Opciones de ManyToManyField
+.. warning:: ver esta tabla hay opciones que no estan.
 
-    =======================  ============================================================
-    Argumento                Descripción
-    =======================  ============================================================
-    ``related_name``         El nombre a utilizar para la relación desde el objeto
-                             relacionado hacia este objeto. Ver Apéndice C para más
-                             información.
+.. _doff-modelos-manytomanyfield-tabla:
+.. list-table:: Opciones de ManyToManyField
+    :widths: 20 80
+   
+    * - **Argumento**
+      - **Descripción**
+    * - ``related_name``
+      - El nombre a utilizar para la relación desde el objeto relacionado hacia este objeto. Ver Apéndice C para más
+        información..
+    * - ``filter_interface``
+      - Usa una interfaz de "filtro" JavaScript agradable y discreta en lugar de la menos cómoda ``<select multiple>`` en el
+        formulario administrativo de este objeto. El valos debe ser ``models.HORIZONTAL`` o ``models.VERTICAL`` (es decir, la
+        interfaz debe apilarse horizontal o verticalmente).
+    * - ``limit_choices_to``
+      - Ver la descripción en ``ForeignKey``.
+    * - ``symmetrical``
+      - Solo utilizado en la definición de ``ManyToManyField`` sobre sí mismo. Considera el siguiente modelo::
 
-    ``filter_interface``     Usa una interfaz de "filtro" JavaScript agradable y discreta
-                             en lugar de la menos cómoda ``<select multiple>`` en el
-                             formulario administrativo de este objeto. El valos debe ser
-                             ``models.HORIZONTAL`` o ``models.VERTICAL`` (es decir, la
-                             interfaz debe apilarse horizontal o verticalmente).
+        var Person = type('Person', [ models.Model ], {
+            friends: new models.ManyToManyField("this")
+        });
 
-    ``limit_choices_to``     Ver la descripción en ``ForeignKey``.
+        Cuando Django procesa este modelo, identifica que tiene un ``ManyToManyField`` sobre sí mismo, y como resultado, no
+        agrega un atributo ``person_set`` a la clase ``Person``.
+        En lugar de eso, se asumen que el ``ManyToManyField`` es simétrico -- esto es, si yo soy tu amigo, entonces tu eres
+        mi amigo.
 
-    ``symmetrical``          Solo utilizado en la definición de ``ManyToManyField`` sobre
-                             sí mismo. Considera el siguiente modelo::
-
-                                class Person(models.Model):
-                                    friends = models.ManyToManyField("self")
-
-                             Cuando Django procesa este modelo, identifica que tiene un
-                             ``ManyToManyField`` sobre sí mismo, y como resultado, no
-                             agrega un atributo ``person_set`` a la clase ``Person``.
-                             En lugar de eso, se asumen que el ``ManyToManyField`` es
-                             simétrico -- esto es, si yo soy tu amigo, entonces tu eres
-                             mi amigo.
-
-                             Si no deseas la simetría en las relaciones ``ManyToMany``
-                             con ``self``, establece ``symmetrical`` en ``false``. Esto
-                             forzará a Django a agregar el descriptor para la relación
-                             inversa, permitiendo que las relaciones ``ManyToMany`` sean
-                             asimétricas.
-
-    ``db_table``             El nombre de la tabla a crear para almacenar los datos de
-                             la relación muchos-a-muchos. Si no se provee, Django asumirá
-                             un nombre por omisión basado en los nombres de las dos
-                             tablas a ser vinculadas.
-
-    =======================  ============================================================
+        Si no deseas la simetría en las relaciones ``ManyToMany`` con ``self``, establece ``symmetrical`` en ``false``. Esto
+        forzará a Django a agregar el descriptor para la relación inversa, permitiendo que las relaciones ``ManyToMany`` sean
+        asimétricas.
+    * - ``db_table``
+      - El nombre de la tabla a crear para almacenar los datos de la relación muchos-a-muchos. Si no se provee, Django asumirá
+        un nombre por omisión basado en los nombres de las dos tablas a ser vinculadas.
 
 Opciones de los Metadatos del Modelo
 ====================================
 
-Los metadatos específicos de un modelo viven en una ``class Meta`` definida en
-el cuerpo de tu clase modelo::
+Los metadatos específicos de un modelo viven en un ``Object Meta`` definido en
+el cuerpo del modelo::
 
-    class Book(models.Model):
-        title = models.CharField(maxlength=100)
+    var Book = type('Book', [ models.Model ], {
+        title: new models.CharField({max_length:100}),
 
-        class Meta:
-            # model metadata options go here
+        Meta: {
+            // model metadata options go here
             ...
+        }
+    });
 
 Los metadatos del modelo son "cualquier cosa que no sea un campo", como
 opciones de ordenamiento, etc.
 
 Las secciones que siguen presentan una lista de todas las posibles ``Meta``
-opciones. Ninguna de estas opciones es requerida. Agregar ``class Meta`` a un
+opciones. Ninguna de estas opciones es requerida. Agregar ``Meta`` a un
 modelo es completamente opcional.
 
 db_table
@@ -825,33 +757,29 @@ db_table
 
 El nombre de la tabla de la base de datos a usar para el modelo.
 
-Para ahorrarte tiempo, Django deriva automáticamente el nombre de la tabla de la
-base de datos a partir del nombre de la clase modelo y la aplicación que la
-contiene. Un nombre de tabla de base de datos de un modelo se construye uniendo
-la etiqueta de la aplicación del modelo -- el nombre que usaste en
-``manage.py startapp`` -- con el nombre de la clase modelo, con un guión bajo
+Si no se define el nombre de la tabla de la base de datos es derivado automáticamente
+a partir del nombre del modelo y la aplicación que lo contiene. Un nombre de tabla de 
+base de datos de un modelo se construye uniendo la etiqueta de la aplicación del modelo
+-- el nombre que tiene la aplicacion -- con el nombre del modelo, con un guión bajo
 entre ellos.
 
-Por ejemplo, si tienes una aplicación  ``books`` (creada por
-``manage.py startapp books``), un modelo definido como ``class Book`` tendrá
-una tabla en la base de datos llamada ``books``.
+Por ejemplo, para la aplicación  ``books``, un modelo definido como ``Book`` tendrá
+una tabla en la base de datos llamada ``book_books``.
 
-Para sobreescribir el nombre de la tabla de la base de datos, use el parámetro
-``db_table`` dentro de ``class Meta``::
+Para sobreescribir el nombre de la tabla de la base de datos, se debe usar el parámetro
+``db_table`` dentro de ``Meta``::
 
-    class Book(models.Model):
+    var Book = type('Book', [ models.Model ], {
         ...
 
-        class Meta:
-            db_table = 'things_to_read'
+        Meta: {
+            db_table: 'things_to_read'
+        }
+    });
 
-Si no se define, Django utilizará ``app_label + '_' + model_class_name``.  Ver
-la sección "`Nombres de Tabla`_" para más información.
-
-Si tu nombre de tabla de base de datos es una palabra reservada de SQL, o
-contiene caracteres que no están permitidos en los nombres de variable de Python
-(especialmente el guión simple), no hay problema. Django quotea los nombres de
-tabla y de columna detrás de la escena.
+Si el nombre de tabla de base de datos es una palabra reservada de SQL, o
+contiene caracteres que no están permitidos en los nombres de variable, no hay problema. 
+Los nombres de tabla y de columna son escapeados con comillas al generar el SQL.
 
 get_latest_by
 -------------
@@ -862,14 +790,16 @@ modelo.
 
 Aquí hay un ejemplo::
 
-    class CustomerOrder(models.Model):
-        order_date = models.DateTimeField()
+    var CustomerOrder = type('CustomerOrder' ,[ models.Model ], {
+        order_date: new models.DateTimeField(),
         ...
 
-        class Meta:
-            get_latest_by = "order_date"
+        Meta: {
+            get_latest_by: "order_date"
+        }
+    });
 
-Ver el Apéndice C para más información sobre el método ``latest()``.
+Ver :ref:`apendices-doff-dbapi` para más información sobre el método ``latest()``.
 
 order_with_respect_to
 ---------------------
@@ -880,12 +810,14 @@ respecto a un objeto padre. Por ejemplo, si una ``Answer`` se relaciona a un
 objeto ``Question``, y una pregunta tiene más de una respuesta, y el orden de
 las respuestas importa, harás esto::
 
-    class Answer(models.Model):
-        question = models.ForeignKey(Question)
-        # ...
+    var Answer = type('Answer', [ models.Model ], {
+        question: new models.ForeignKey(Question),
+        ...
 
-        class Meta:
-            order_with_respect_to = 'question'
+        Meta: {
+            order_with_respect_to: 'question'
+        }
+    });
 
 ordering
 --------
@@ -893,70 +825,49 @@ ordering
 El ordenamiento por omisión del objeto, utilizado cuando se obtienen listas de
 objetos::
 
-    class Book(models.Model):
-        title = models.CharField(maxlength=100)
+    var Book = type('Book', [ models.Model ], {
+        title: new models.CharField({maxlength: 100}),
 
-        class Meta:
-            ordering = ['title']
+        Meta: {
+            ordering: ['title']
+        }
+    });
 
-Esto es una tupla o lista de strings. Cada string es un nombre de campo con un
-prefijo opcional ``-``, que indica orden descendiente. Los campos sin un ``-``
+Esto es una arreglo de strings. Cada string es un nombre de campo con un
+prefijo opcional ``-``, que indica orden descendente. Los campos sin un ``-``
 precedente se ordenarán en forma ascendente. Use el string ``"?"`` para ordenar
 al azar.
 
-Por ejemplo, para ordenar por un campo ``title`` en orden ascendente (A-Z), usa
-esto::
+Por ejemplo, para ordenar por un campo ``title`` en orden ascendente::
 
-    ordering = ['title']
+    ordering: ['title']
 
-Para ordenar por ``title`` en orden descendente (Z-A), usa esto::
+Para ordenar por ``title`` en orden descendente::
 
-    ordering = ['-title']
+    ordering: ['-title']
 
 Para ordenar por ``title`` en orden descendente, y luego por ``author`` en
-orden ascendente, usa esto::
+orden ascendente::
 
-    ordering = ['-title', 'author']
-
-Observar que no importa cuantos campos haya en ``ordering``, el sitio de
-administración usa sólo el primer campo.
-
-permissions
------------
-
-Permisos extra para almacenar en la tabla de permisos cuando se crea este
-objeto. Se crean automáticamente permisos para agregar, eliminar y cambiar para
-cada objeto que tenga establecida la opción ``admin``. Este ejemplo especifica
-un permiso extra, ``can_deliver_pizzas``::
-
-    class Employee(models.Model):
-        ...
-
-        class Meta:
-            permissions = (
-                ("can_deliver_pizzas", "Can deliver pizzas"),
-            )
-
-Esto es una lista o tupla de dos tuplas de la forma
-``(permission_code, human_readable_permission_name)``.
-
-Ver el `Capítulo 12`_ para más detalles sobre permisos.
+    ordering: ['-title', 'author']
 
 unique_together
 ---------------
 
 Conjuntos de nombres de campo que tomados juntos deben ser únicos::
 
-    class Employee(models.Model):
-        department = models.ForeignKey(Department)
-        extension = models.CharField(maxlength=10)
+    var Employee = type('Employee', [ models.Model ], {
+        department: new models.ForeignKey(Department),
+        extension: new models.CharField({max_length: 10}),
         ...
 
-        class Meta:
-            unique_together = [("department", "extension")]
+        Meta: {
+            unique_together: [["department", "extension"]]
+        }
+    });
 
-Esto es una lista de listas de campos que deben ser únicos cuando se consideran
-juntos. Es usado en la interfaz de administración de Django y se refuerza a
+Esto es un arreglo de arreglos de campos que deben ser únicos cuando se consideran
+juntos. Es usado en la validacion de formularios y se refuerza a
 nivel de base de datos (esto es, se incluyen las sentencias ``UNIQUE``
 apropiadas en la sentencia ``CREATE TABLE``).
 
@@ -965,14 +876,16 @@ verbose_name
 
 Un nombre legible por humanos para el objeto, en singular::
 
-    class CustomerOrder(models.Model):
-        order_date = models.DateTimeField()
+    var CustomerOrder = type('CustomerOrder', [ models.Model ], {
+        order_date: new models.DateTimeField(),
         ...
 
-        class Meta:
-            verbose_name = "order"
-
-Si no se define, Django utilizará una versión adaptada del nombre de la clase,
+        Meta: {
+            verbose_name: "order"
+        }
+    });
+    
+Si no se define, se utilizará una versión adaptada del nombre del modelo,
 en la cual ``CamelCase`` se convierte en ``camel case``.
 
 verbose_name_plural
@@ -980,13 +893,15 @@ verbose_name_plural
 
 El nombre del objeto en plural::
 
-    class Sphynx(models.Model):
+    var Sphynx = type('Sphynx', [ models.Model ], {
         ...
 
-        class Meta:
-            verbose_name_plural = "sphynges"
+        Meta: {
+            verbose_name_plural: "sphynges"
+        }
+    });
 
-Si no se define, Django agregará una "s" al final del ``verbose_name``.
+Si no se define, se agregará una "s" al final del ``verbose_name``.
 
 Managers
 ========
@@ -1001,6 +916,7 @@ comportamiento del ``Manager``.
 
 Nombres de Manager
 ------------------
+.. Diego falte de aca para abajo
 
 Por omisión, Django agrega un ``Manager`` llamado ``objects`` a cada clase
 modelo de Django. De todas formas, si tu quieres usar ``objects`` como nombre
@@ -1212,8 +1128,8 @@ que siguen.
 __str__
 -------
 
-``__str__()`` es un "método mágico" de Python que define lo que debe ser
-devuelto si llamas a ``str()`` sobre el objeto. Django usa ``str(obj)`` (o la
+``__str__()`` es un "método mágico" de Protopy que define lo que debe ser
+devuelto si llamas a ``string()`` sobre el objeto. Django usa ``string(obj)`` (o la
 función relacionada ``unicode(obj)``, que se describe más abajo) en varios
 lugares, particularmente como el valor mostrado para hacer el render de un
 objeto en el sitio de administración de Django y como el valor insertado en un
@@ -1726,9 +1642,9 @@ SQL::
     AND (first_name ILIKE '%lennon%' OR last_name ILIKE '%lennon%')
 
 Para búsquedas más rápidas y/o más restrictivas, agrega como prefijo al nombre
-de campo un operador como se muestra en la Tabla B-7.
+de campo un operador como se muestra en la Tabla B-7.   
 
-.. tabla: Tabla B-7. Operadores Permitidos en search_fields
+.. table:: Tabla B-7. Operadores Permitidos en search_fields
 
     ==========  =======================================================================
     Operador    Significado
@@ -1765,7 +1681,3 @@ de campo un operador como se muestra en la Tabla B-7.
                 búsqueda predeterminado, pero usa un índice. Actualmente solo está
                 disponible para MySQL.
     ==========  =======================================================================
-
-.. _Capítulo 5: ../chapter05/
-.. _Capítulo 12: ../chapter12/
-

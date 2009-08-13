@@ -193,7 +193,7 @@ en el mismo.
 
     \subsubsection*{\$\$}
     \begin{verbatim}
-    $$(cssRule: String) -> [HTMLElement...]
+.. function:: $$(cssRule: String) -> [HTMLElement...]
     \end{verbatim}
     Recupera elementos del documento, basando las reglas de seleccion en las
     reglas de css o hoja de estilos.
@@ -217,7 +217,7 @@ en el mismo.
     %extend
     \subsubsection*{extend}
     \begin{verbatim}
-    extend(destiny: Object, source: Object) -> alteredDestiny: Object
+.. function:: extend(destiny: Object, source: Object) -> alteredDestiny: Object
     \end{verbatim}
     Extiende sobre un objeto destino todos los objetos pasados como argumentos a
     continuación, copiando cada uno de los atributos correspondientes, el objeto
@@ -237,7 +237,7 @@ en el mismo.
     %super
     \subsubsection*{super}
     \begin{verbatim}
-    super(type: Type, instance: Object) -> boundedObject: Object
+.. function:: super(type: Type, instance: Object) -> boundedObject: Object
     \end{verbatim}
     Enlaza un objeto con un tipo de objeto, de este modo la invocación sobre una
     función del tipo se realizara sobre el objeto enlazado.
@@ -246,7 +246,7 @@ en el mismo.
     %isundefined
     \subsubsection*{isundefined}
     \begin{verbatim}
-    isundefined(object: Object) -> boolean
+.. function:: isundefined(object: Object) -> boolean
     \end{verbatim}
     Determina si un objeto no esta definido o asociado a un valor. Retorna un valor
     de verdad correspondiente.
@@ -254,7 +254,7 @@ en el mismo.
     %isinstance
     \subsubsection*{isinstance}
     \begin{verbatim}
-    isinstance(object, type | [type...]) -> boolean
+.. function:: isinstance(object, type | [type...]) -> boolean
     \end{verbatim}
     Retorna verdadero si el objeto es una instancia del tipo, si un arreglo de tipos
     es pasado como segundo argumento el valor de verdad surge de preguntar por cada
@@ -263,7 +263,7 @@ en el mismo.
     %issubclass 
     \subsubsection*{issubclass}
     \begin{verbatim}
-    issubclass(type1, type2 | [type...]) -> boolean
+.. function:: issubclass(type1, type2 | [type...]) -> boolean
     \end{verbatim}
     Retorna si type1 es una subclase de type2, cuando se pasa un arreglo en lugar de
     type2 la evaluación se realiza para cada una de las clases incluidas en el mismo.
@@ -271,7 +271,7 @@ en el mismo.
     %Arguments
     \subsubsection*{Arguments}
     \begin{verbatim}
-    new Arguments(arguments) -> Arguments
+.. function:: new Arguments(arguments) -> Arguments
     \end{verbatim}
     En JavaScript 
     El objeto para los argumentos asociativos debe ir al final de la invocación
@@ -1110,7 +1110,7 @@ en el mismo.
 
     \subsubsection*{enable}
     \begin{verbatim}
-    HTMLElement.enable() -> HTMLElement
+.. function:: HTMLElement.enable() -> HTMLElement
     \end{verbatim}
     Habilita un campo, previamente deshabilitado, para el ingreso de valores.
 
