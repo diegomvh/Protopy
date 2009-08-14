@@ -276,7 +276,7 @@ var Options = type('Options', [ object ], {
 
         Uses a cache internally, so after the first access, this is very fast.
         */
-    'get_field_by_name': function get_field_by_name(name) {
+    get_field_by_name: function(name) {
         var field = null;
         if (!this._name_map) {
             var cache = this.init_name_map();
@@ -426,7 +426,7 @@ var Options = type('Options', [ object ], {
         * Returns a list of all the ancestor of this model as a list. Useful for
         * determining if something is an ancestor, regardless of lineage.
         */
-    'get_parent_list': function get_parent_list() {
+    get_parent_list: function() {
         var result = new Set();
         for each (var parent in this.parents.keys()) {
             result.add(parent);
@@ -435,10 +435,32 @@ var Options = type('Options', [ object ], {
         return result;
     },
 
-    /*
-        * Returns a list of Options objects that are ordered with respect to this object.
+    get_ancestor_link: function(ancestor) {
+        /*
+        Returns the field on the current model which points to the given
+        "ancestor". This is possible an indirect link (a pointer to a parent
+        model, which points, eventually, to the ancestor). Used when
+        constructing table joins for model inheritance.
+
+        Returns None if the model isn't an ancestor of this one.
         */
-    'get_ordered_objects': function get_ordered_objects() {
+        if (include(this.parents, ancestor))
+            return this.parents.get(ancestor);
+        for each (var parent in this.parents.keys()) {
+            // Tries to get a link field from the immediate parent
+            var parent_link = parent._meta.get_ancestor_link(ancestor);
+            if (!isundefined(parent_link))
+                // In case of a proxied model, the first link
+                // of the chain to the ancestor is that parent
+                // links
+                return this.parents.get(parent) || parent_link;
+        }
+    },
+
+    /*
+     * Returns a list of Options objects that are ordered with respect to this object.
+     */
+    get_ordered_objects: function() {
         
         if (!this['_ordered_objects']) {
             var objects = [];

@@ -42,7 +42,6 @@ publish({
         'TextField': TextField,
         'TimeField': TimeField,
         'URLField': URLField,
-        'XMLField': XMLField,
         /*SubfieldBase: SubfieldBase,
         FileField: FileField,
         ImageField: ImageField,*/

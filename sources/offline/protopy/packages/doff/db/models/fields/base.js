@@ -494,90 +494,90 @@ var DateField = type('DateField', [ Field ], {
         }
     },
 
-    'get_db_prep_lookup': function get_db_prep_lookup(lookup_type, value) {
-	// For "__month" and "__day" lookups, convert the value to a string so
-	// the database backend always sees a consistent type.
-	if (include(['month', 'day'], lookup_type))
-	    return [new String(value)];
-	return super(Field, this).get_db_prep_lookup(lookup_type, value);
+    get_db_prep_lookup: function(lookup_type, value) {
+        // For "__month" and "__day" lookups, convert the value to a string so
+        // the database backend always sees a consistent type.
+        if (include(['month', 'day'], lookup_type))
+            return [new String(value)];
+        return super(Field, this).get_db_prep_lookup(lookup_type, value);
     },
 
-    'get_db_prep_value': function get_db_prep_value(value) {
-	// Casts dates into the format expected by the backend
-	return connection.ops.value_to_db_date(this.to_javascript(value));
+    get_db_prep_value: function(value) {
+        // Casts dates into the format expected by the backend
+        return connection.ops.value_to_db_date(this.to_javascript(value));
     },
 
-    'value_to_string': function value_to_string(obj) {
-	var val = this._get_val_from_obj(obj);
-	if (bool(val)) {
-	    var data = '';
-	} else {
-	    //TODO: pasar la fecha a cadena
-	    var data = datetime_safe.new_date(val).strftime("%Y-%m-%d")
-	}
-	return data;
+    value_to_string: function(obj) {
+        var val = this._get_val_from_obj(obj);
+        if (bool(val)) {
+            var data = '';
+        } else {
+            //TODO: pasar la fecha a cadena
+            var data = datetime_safe.new_date(val).strftime("%Y-%m-%d")
+        }
+        return data;
     },
 
-    'formfield': function formfield() {
-	arguments = new Arguments(arguments);
-	var defaults = {'form_class': forms.DateField };
-	extend(defaults, arguments.kwargs);
-	return super(Field, this).formfield(defaults);
+    formfield: function() {
+        var arg = new Arguments(arguments);
+        var defaults = {'form_class': forms.DateField };
+        extend(defaults, arg.kwargs);
+        return super(Field, this).formfield(defaults);
     }
 });
 
-var DateTimeField = type('DateTimeField', DateField, {
+var DateTimeField = type('DateTimeField', [ DateField ], {
 
-    'to_javascript': function to_javascript(value) {
-	if (!value)
-	    return value;
-	if (value instanceof Date)
-	    return value;
-	return new Date(number(value));
+    to_javascript: function(value) {
+        if (!value)
+            return value;
+        if (value instanceof Date)
+            return value;
+        return new Date(number(value));
     },
 
-    'get_db_prep_value': function get_db_prep_value(value) {
-	// Casts dates into the format expected by the backend
-	return connection.ops.value_to_db_datetime(this.to_javascript(value));
+    get_db_prep_value: function(value) {
+        // Casts dates into the format expected by the backend
+        return connection.ops.value_to_db_datetime(this.to_javascript(value));
     },
 
-    'value_to_string': function value_to_string(obj) {
-	var val = this._get_val_from_obj(obj);
-	if (!val) {
-	    data = '';
-	} else {
-	    //TODO: pasar hora a cadena o string :P
-	    d = datetime_safe.new_datetime(val)
-	    data = d.strftime('%Y-%m-%d %H:%M:%S')
-	}
-	return data;
+    value_to_string: function(obj) {
+        var val = this._get_val_from_obj(obj);
+        if (!val) {
+            data = '';
+        } else {
+            //TODO: pasar hora a cadena o string :P
+            d = datetime_safe.new_datetime(val)
+            data = d.strftime('%Y-%m-%d %H:%M:%S')
+        }
+        return data;
     },
 
-    'formfield': function formfield() {
-	arguments = new Arguments(arguments);
-	var defaults = {'form_class': forms.DateTimeField };
-	extend(defaults, arguments.kwargs);
-	return super(DateField, this).formfield(defaults);
+    formfield: function() {
+        var arg = new Arguments(arguments);
+        var defaults = {'form_class': forms.DateTimeField };
+        extend(defaults, arg.kwargs);
+        return super(DateField, this).formfield(defaults);
     }
 });
 
 var DecimalField = type('DecimalField', [ Field ], {
     empty_strings_allowed: false,
-    '__init__': function __init__() {
-        arguments = new Arguments(arguments, {'verbose_name':null, 'name':null, 'max_digits':null, 'decimal_places':null});
-        this.max_digits = arguments.kwargs['max_digits'];
-        this.decimal_places = arguments.kwargs['decimal_places'];
-        super(Field, this).__init__(arguments);
+    __init__: function() {
+        var arg = new Arguments(arguments, {'verbose_name':null, 'name':null, 'max_digits':null, 'decimal_places':null});
+        this.max_digits = arg.kwargs['max_digits'];
+        this.decimal_places = arg.kwargs['decimal_places'];
+        super(Field, this).__init__(arg);
     },
 
-    'to_javascript': function to_javascript(value) {
+    to_javascript: function(value) {
         if (!value)
             return value;
         //TODO ver que pasa con los decimal
         return decimal.Decimal(value);
     },
 
-    '_format': function _format(value) {
+    _format: function(value) {
         if (type(value) == String || !value)
             return value;
         else
@@ -587,39 +587,39 @@ var DecimalField = type('DecimalField', [ Field ], {
     /*
 	* Formats a number into a string with the requisite number of digits and decimal places.
 	*/
-    'format_number': function format_number(value) {
+    format_number: function(value) {
         var util = require('doff.db.backends.util');
         return util.format_number(value, this.max_digits, this.decimal_places);
     },
 
-    'get_db_prep_value': function get_db_prep_value(value) {
+    get_db_prep_value: function(value) {
         return connection.ops.value_to_db_decimal(this.to_javascript(value), this.max_digits, this.decimal_places);
     },
     
-    'formfield': function formfield() {
-	arguments = new Arguments(arguments);
-	var defaults = {
-	    'max_digits': this.max_digits,
-	    'decimal_places': this.decimal_places,
-	    'form_class': forms.DecimalField
-	}
-	extend(defaults, arguments.kwargs);
-	return super(Field, this).formfield(defaults);
+    formfield: function() {
+        var arg = new Arguments(arguments);
+        var defaults = {
+            'max_digits': this.max_digits,
+            'decimal_places': this.decimal_places,
+            'form_class': forms.DecimalField
+        }
+        extend(defaults, arg.kwargs);
+        return super(Field, this).formfield(defaults);
     }
 });
 
 var EmailField = type('EmailField', CharField, {
-    '__init__': function __init__() {
-        arguments = new Arguments(arguments);
-        arguments.kwargs['max_length'] = arguments.kwargs['max_length'] || 75;
-        super(CharField, this).__init__(arguments);
+    __init__: function __init__() {
+        var arg = new Arguments(arguments);
+        arg.kwargs['max_length'] = arg.kwargs['max_length'] || 75;
+        super(CharField, this).__init__(arg);
     },
 
-    'formfield': function formfield() {
-	arguments = new Arguments(arguments);
-	var defaults = {'form_class': forms.EmailField };
-	extend(defaults, arguments.kwargs);
-	return super(CharField, this).formfield(defaults);
+    formfield: function() {
+        var arg = new Arguments(arguments);
+        var defaults = {'form_class': forms.EmailField };
+        extend(defaults, arg.kwargs);
+        return super(CharField, this).formfield(defaults);
     }
 });
 
@@ -665,13 +665,13 @@ var FloatField = type('FloatField', [ Field ], {
 
 var IntegerField = type('IntegerField', [ Field ], {
     empty_strings_allowed: false,
-    'get_db_prep_value': function get_db_prep_value(value) {
+    get_db_prep_value: function(value) {
         if (!value)
             return null;
         return Number(value);
     },
 
-    'to_javascript': function to_javascript(value) {
+    to_javascript: function(value) {
         if (!value)
             return value;
         var n = Number(value);
@@ -681,39 +681,39 @@ var IntegerField = type('IntegerField', [ Field ], {
         return n;
     },
 
-    'formfield': function formfield() {
-	arguments = new Arguments(arguments);
-	var defaults = {'form_class': forms.IntegerField };
-	extend(defaults, arguments.kwargs);
-	return super(Field, this).formfield(defaults);
+    formfield: function() {
+        var arg = new Arguments(arguments);
+        var defaults = {'form_class': forms.IntegerField };
+        extend(defaults, arg.kwargs);
+        return super(Field, this).formfield(defaults);
     }
 });
 
 var IPAddressField = type('IPAddressField', [ Field ], {
     empty_strings_allowed: false,
-    '__init__': function __init__() {
-        arguments = new Arguments(arguments);
-        arguments.kwargs['max_length'] = 15;
-        super(Field, this).__init__(arguments);
+    __init__: function() {
+        var arg = new Arguments(arguments);
+        arg.kwargs['max_length'] = 15;
+        super(Field, this).__init__(arg);
     },
 
-    'formfield': function formfield() {
-	arguments = new Arguments(arguments);
-	var defaults = {'form_class': forms.IPAddressField};
-	extend(defaults, arguments.kwargs);
-	return super(Field, this).formfield(defaults);
+    formfield: function() {
+        var arg = new Arguments(arguments);
+        var defaults = {'form_class': forms.IPAddressField};
+        extend(defaults, arg.kwargs);
+        return super(Field, this).formfield(defaults);
     }
 });
 
 var NullBooleanField = type('NullBooleanField', [ Field ], {
     empty_strings_allowed: false,
-    '__init__': function __init__() {
-        arguments = new Arguments(arguments);
-        arguments.kwargs['none'] = true;
-        super(Field, this).__init__(arguments);
+    __init__: function() {
+        var arg = new Arguments(arguments);
+        arg.kwargs['none'] = true;
+        super(Field, this).__init__(arg);
     },
 
-    'to_javascript': function to_javascript(value) {
+    to_javascript: function(value) {
         if (value == false || value == true || value == null) return value;
         if ('null' == value) return null;
         if (include(['t', 'true', '1'], value)) return true;
@@ -721,32 +721,32 @@ var NullBooleanField = type('NullBooleanField', [ Field ], {
         throw new ValidationError("This value must be either null, true or false.");
     },
 
-    'get_db_prep_lookup': function get_db_prep_lookup(lookup_type, value) {
-	// Special-case handling for filters coming from a web request (e.g. the
-	// admin interface). Only works for scalar values (not lists). If you're
-	// passing in a list, you might as well make things the right type when
-	// constructing the list.
-	if (include(['1', '0'], value))
-	    value = bool(Number(value));
-	return super(Field, this).get_db_prep_lookup(lookup_type, value);
+    get_db_prep_lookup: function(lookup_type, value) {
+        // Special-case handling for filters coming from a web request (e.g. the
+        // admin interface). Only works for scalar values (not lists). If you're
+        // passing in a list, you might as well make things the right type when
+        // constructing the list.
+        if (include(['1', '0'], value))
+            value = bool(Number(value));
+        return super(Field, this).get_db_prep_lookup(lookup_type, value);
     },
 
-    'get_db_prep_value': function get_db_prep_value(value) {
-	if (value == null)
-	    return null;
-	return bool(value);
+    get_db_prep_value: function(value) {
+        if (value == null)
+            return null;
+        return bool(value);
     },
     
-    'formfield': function formfield() {
-	arguments = new Arguments(arguments);
-	var defaults = {
-	    'form_class': forms.NullBooleanField,
-	    'required':  !this.blank,
-	    'label': capfirst(this.verbose_name),
-	    'help_text': this.help_text
-	}
-	extend(defaults, arguments.kwargs);
-	return super(Field, this).formfield(defaults);
+    formfield: function() {
+        var arg = new Arguments(arguments);
+        var defaults = {
+            'form_class': forms.NullBooleanField,
+            'required':  !this.blank,
+            'label': capfirst(this.verbose_name),
+            'help_text': this.help_text
+        }
+        extend(defaults, arg.kwargs);
+        return super(Field, this).formfield(defaults);
     }
 });
 
@@ -799,79 +799,79 @@ var TextField = type('TextField', [ Field ], {
 
 var TimeField = type('TimeField', [ Field ], {
     empty_strings_allowed: false,
-    '__init__': function __init__() {
-        arguments = new Arguments(arguments, {'verbose_name':null, 'name':null, 'auto_now':false, 'auto_now_add':false});
-        this.auto_now = arguments.kwargs['auto_now'];
-        this.auto_now_add = arguments.kwargs['auto_now_add'];
+    __init__: function() {
+        var arg = new Arguments(arguments, {'verbose_name':null, 'name':null, 'auto_now':false, 'auto_now_add':false});
+        this.auto_now = arg.kwargs['auto_now'];
+        this.auto_now_add = arg.kwargs['auto_now_add'];
         if (this.auto_now || this.auto_now_add)
-            arguments.kwargs['editable'] = false;
-        super(Field, this).__init__.(arguments);
+            arg.kwargs['editable'] = false;
+        super(Field, this).__init__.(arg);
     },
 
-    'to_javascript': function to_javascript(value) {
-	if (!value)
-	    return null
-	if (value instanceof Date)
-	    return value;
+    to_javascript: function(value) {
+        if (!value)
+            return null
+        if (value instanceof Date)
+            return value;
 
-	    /* TODO validar la fecha
-	# Attempt to parse a datetime:
-	value = smart_str(value)
-	# split usecs, because they are not recognized by strptime.
-	if '.' in value:
-	    try:
-		value, usecs = value.split('.')
-		usecs = int(usecs)
-	    except ValueError:
-		raise ValidationError(
-		    _('Enter a valid time in HH:MM[:ss[.uuuuuu]] format.'))
-	else:
-	    usecs = 0
-	kwargs = {'microsecond': usecs}
+            /* TODO validar la fecha
+        # Attempt to parse a datetime:
+        value = smart_str(value)
+        # split usecs, because they are not recognized by strptime.
+        if '.' in value:
+            try:
+            value, usecs = value.split('.')
+            usecs = int(usecs)
+            except ValueError:
+            raise ValidationError(
+                _('Enter a valid time in HH:MM[:ss[.uuuuuu]] format.'))
+        else:
+            usecs = 0
+        kwargs = {'microsecond': usecs}
 
-	try: # Seconds are optional, so try converting seconds first.
-	    return datetime.time(*time.strptime(value, '%H:%M:%S')[3:6],
-				    **kwargs)
-	except ValueError:
-	    try: # Try without seconds.
-		return datetime.time(*time.strptime(value, '%H:%M')[3:5],
-					    **kwargs)
-	    except ValueError:
-		raise ValidationError(
-		    _('Enter a valid time in HH:MM[:ss[.uuuuuu]] format.'))
-	*/
+        try: # Seconds are optional, so try converting seconds first.
+            return datetime.time(*time.strptime(value, '%H:%M:%S')[3:6],
+                        **kwargs)
+        except ValueError:
+            try: # Try without seconds.
+            return datetime.time(*time.strptime(value, '%H:%M')[3:5],
+                            **kwargs)
+            except ValueError:
+            raise ValidationError(
+                _('Enter a valid time in HH:MM[:ss[.uuuuuu]] format.'))
+        */
     },
 
-    'pre_save': function pre_save(model_instance, add) {
-	if (this.auto_now || (this.auto_now_add && add)) {
-	    value = new Date();
-	    model_instance[this.attname] = value;
-	    return value;
-	}
-	else
-	    return super(Field, this).pre_save(model_instance, add);
+    pre_save: function(model_instance, add) {
+        if (this.auto_now || (this.auto_now_add && add)) {
+            value = new Date();
+            model_instance[this.attname] = value;
+            return value;
+        }
+        else
+            return super(Field, this).pre_save(model_instance, add);
     },
 
-    'get_db_prep_value': function get_db_prep_value(value) {
-	// Casts times into the format expected by the backend
-	return connection.ops.value_to_db_time(this.to_javascript(value));
+    get_db_prep_value: function(value) {
+        // Casts times into the format expected by the backend
+        return connection.ops.value_to_db_time(this.to_javascript(value));
     },
 
-    'value_to_string': function value_to_string(obj) {
-	var val = this._get_val_from_obj(obj);
-	if (!val)
-	    var data = '';
-	else
-	    //TODO pasar a time
-	    var data = val.strftime("%H:%M:%S")
-	return data;
+    value_to_string: function(obj) {
+        var val = this._get_val_from_obj(obj);
+        if (!val)
+            var data = '';
+        else
+            //TODO pasar a time
+            var data = val.strftime("%H:%M:%S")
+        return data;
     },
 
-    'formfield': function formfield() {
-	arguments = new Arguments(arguments);
-	var defaults = {'form_class': forms.TimeField }
-	extend(defaults, arguments.kwargs);
-	return super(Field, this).formfield(defaults);
+    formfield: function() {
+        var arg = new Arguments(arguments);
+        var defaults = {'form_class': forms.TimeField }
+        extend(defaults, arg.kwargs);
+        return super(Field, this).formfield(defaults);
     }
 });
 
@@ -889,8 +889,6 @@ var URLField = type('URLField', CharField, {
         extend(defaults, arg.kwargs);
         return super(CharField, this).formfield(defaults);
     }
-});
-
 });
 
 publish({ 
