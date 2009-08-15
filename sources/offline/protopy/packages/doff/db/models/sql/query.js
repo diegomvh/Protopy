@@ -518,14 +518,25 @@ var Query = type('Query', object, {
         else
             var col_aliases = new Set();
         if (bool(this.select)) {
+            var only_load = this.deferred_to_columns();
             for each (var col in this.select) {
                 if (isinstance(col, Array)) {
+                    var [ alias, column ] = col;
+                    var table = this.alias_map[alias][TABLE_NAME];
+                    if (include(only_load, table) && !include(only_load[table], col))
+                        continue;
                     var r = '%s.%s'.subs(qn(col[0]), qn(col[1]));
-                    if (with_aliases && include(col_aliases, col[1])) {
-                        c_alias = 'Col%s'.subs(col_aliases.length);
-                        result.push('%s AS %s'.subs(r, c_alias));
-                        aliases.add(c_alias);
-                        col_aliases.add(c_alias);
+                    if (with_aliases) {
+                        if (include(col_aliases, col[1])) {
+                            var c_alias = 'Col%s'.subs(col_aliases.length);
+                            result.push('%s AS %s'.subs(r, c_alias));
+                            aliases.add(c_alias);
+                            col_aliases.add(c_alias);
+                        } else {
+                            result.push('%s AS %s'.subs(r, qn2(col[1])));
+                            aliases.add(r);
+                            col_aliases.add(col[1]);
+                        }
                     } else {
                         result.push(r);
                         aliases.add(r);
@@ -533,13 +544,13 @@ var Query = type('Query', object, {
                     }
                 } else {
                     result.push(col.as_sql(qn));
-                    if (col['alias']) {
+                    if (hasattr(col, 'alias')) {
                         aliases.add(col.alias);
                         col_aliases.add(col.alias);
                     }
                 }
             }
-	} else if (this.default_cols) {
+        } else if (this.default_cols) {
             var [cols, new_aliases] = this.get_default_columns(with_aliases, col_aliases);
             result = result.concat(cols);
             aliases.update(new_aliases);
