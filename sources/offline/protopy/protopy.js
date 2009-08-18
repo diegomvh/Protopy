@@ -1793,7 +1793,8 @@
             return this.copy();
         },
         __deepcopy__: function(){
-            return new Set(this.elements.__deepcopy__());
+            require('copy', 'deepcopy');
+            return new Set(deepcopy(this.elements));
         },
         __iter__: function() {
             for each (var element in this.elements)

@@ -50,9 +50,9 @@ var Model = type('Model', [ object ], {
                 // Non-abstract child classes inherit some attributes from their
                 // non-abstract parent (unless an ABC comes before it in the
                 // method resolution order).
-                if (!meta['ordering'])
+                if (!hasattr(meta, 'ordering'))
                     this._meta.ordering = base_meta.ordering;
-                if (!meta['get_latest_by'])
+                if (!hasattr(meta, 'get_latest_by'))
                     this._meta.get_latest_by = base_meta.get_latest_by;
             }
         }
@@ -80,11 +80,11 @@ var Model = type('Model', [ object ], {
                 // Concrete classes...
                 if (include(o2o_map, base)) {
                     var field = o2o_map.get(base);
-                    field.primary_key = true;
-                    this._meta.setup_pk(field);
+                    field.primary_key = true; //esta comentado en lo nuevo de django 1.1
+                    this._meta.setup_pk(field); //esta comentado en lo nuevo de django 1.1
                 } else {
                     var attr_name = '%s_ptr'.subs(base._meta.module_name);
-                    var field = new OneToOneField(base, null ,{'name':attr_name, 'auto_created':true, 'parent_link':true})
+                    var field = new OneToOneField(base, null ,{name:attr_name, auto_created:true, parent_link:true})
                     this.add_to_class(attr_name, field);
                 }
                 this._meta.parents.set(base, field);

@@ -20,7 +20,7 @@ var Query = type('Query', object, {
     alias_prefix: 'T',
     query_terms: QUERY_TERMS,
     
-    '__init__': function __init__(model, connection, where){
+    __init__: function(model, connection, where) {
         where = where || WhereNode;
         this.model = model;
         this.connection = connection;
@@ -40,6 +40,7 @@ var Query = type('Query', object, {
         this.dupe_avoidance = new Dict();
         this.used_aliases = new Set();
         this.filter_is_sticky = false;
+        this.included_inherited_models = new Dict();
 
         // SQL-related attributes
         this.select = [];
@@ -66,14 +67,17 @@ var Query = type('Query', object, {
         // Arbitrary maximum limit for select_related. Prevents infinite
         // recursion. Can be changed by the depth parameter to select_related().
         this.max_depth = 5;
+        // A tuple that is a set of model field names and either True, if these
+        // are the fields to defer, or False if these are the only fields to load.
+        this.deferred_loading = [ new Set(), true ];
     },
     
-    '__str__': function __str__(){
+    __str__: function(){
         var [sql, params] = this.as_sql();
         return sql.subs(params);
     },
 
-    '__deepcopy__': function __deepcopy__(){
+    __deepcopy__: function(){
         return this.clone();
     },
     
@@ -82,7 +86,7 @@ var Query = type('Query', object, {
      * processing. Normally, this is self.model._meta, but it can be changed
      * by subclasses.
      */
-    'get_meta': function get_meta() {
+    get_meta: function() {
         return this.model._meta;
     },
 
@@ -112,14 +116,14 @@ var Query = type('Query', object, {
         arguments = new Arguments(arguments);
         var args = arguments.args;
         var kwargs = arguments.kwargs;
-	klass = klass || this.constructor;
-	var obj = type('Empty', object);
+        klass = klass || this.constructor;
+        var obj = type('Empty', object);
         obj.prototype.__proto__ = klass.prototype;
-	obj.prototype.constructor = klass.prototype.constructor;
-	obj = new obj();
-	obj['__name__'] = this['__name__'];
-	obj['__module__'] = this['__module__'];
-	obj['__class__'] = this['__class__'];
+        obj.prototype.constructor = klass.prototype.constructor;
+        obj = new obj();
+        obj['__name__'] = this['__name__'];
+        obj['__module__'] = this['__module__'];
+        obj['__class__'] = this['__class__'];
         obj.model = this.model;
         obj.connection = this.connection;
         obj.alias_refcount = copy(this.alias_refcount);
@@ -131,6 +135,7 @@ var Query = type('Query', object, {
         obj.default_cols = this.default_cols;
         obj.default_ordering = this.default_ordering;
         obj.standard_ordering = this.standard_ordering;
+        obj.included_inherited_models = copy(this.included_inherited_models);
         obj.ordering_aliases = [];
         obj.select_fields = copy(this.select_fields);
         obj.related_select_fields = copy(this.related_select_fields);
@@ -153,6 +158,7 @@ var Query = type('Query', object, {
         obj.extra_where = this.extra_where;
         obj.extra_params = this.extra_params;
         obj.extra_order_by = this.extra_order_by;
+        obj.deferred_loading = deepcopy(this.deferred_loading);
         if (this.filter_is_sticky && bool(this.used_aliases))
             obj.used_aliases = copy(this.used_aliases);
         else
@@ -207,8 +213,8 @@ var Query = type('Query', object, {
 
     'as_sql': function as_sql(with_limits, with_col_aliases) {
 
-	with_limits = with_limits || true;
-	with_col_aliases = with_col_aliases || false;
+        with_limits = with_limits || true;
+        with_col_aliases = with_col_aliases || false;
 
         this.pre_sql_setup();
         var out_cols = this.get_columns(with_col_aliases);
@@ -327,7 +333,7 @@ var Query = type('Query', object, {
             w.add(new EverythingNode(), AND);
         } else {
             var w = new this.where_class();
-	}
+        }
         this.where.add(w, connector);
 
         // Selection columns and extra extensions are those provided by 'rhs'.
@@ -368,13 +374,128 @@ var Query = type('Query', object, {
         * is for things that can't necessarily be done in __init__ because we
         * might not have all the pieces in place at that time.
         */
-    'pre_sql_setup': function pre_sql_setup() {
+    pre_sql_setup: function() {
 
         if (!bool(this.tables))
             //join(connection, always_create, exclusions, promote, outer_if_first, nullable, reuse)
             this.join([null, this.model._meta.db_table, null, null]);
+        if (!bool(this.select) && this.default_cols && !bool(this.included_inherited_models))
+            this.setup_inherited_models()
         if (this.select_related && !bool(this.related_select_cols))
             this.fill_related_selections();
+    },
+
+    deferred_to_data: function(target, callback) {
+        /*
+        Converts the self.deferred_loading data structure to an alternate data
+        structure, describing the field that *will* be loaded. This is used to
+        compute the columns to select from the database and also by the
+        QuerySet class to work out which fields are being initialised on each
+        model. Models that have all their fields included aren't mentioned in
+        the result, only those that have field restrictions in place.
+
+        The "target" parameter is the instance that is populated (in place).
+        The "callback" is a function that is called whenever a (model, field)
+        pair need to be added to "target". It accepts three parameters:
+        "target", and the model and list of fields being added for that model.
+        */
+        var [ field_names, defer ] = this.deferred_loading;
+        if (!bool(field_names))
+            return;
+        var columns = new Set();
+        var orig_opts = this.model._meta;
+        var seen = new Dict();
+        var must_include = new Dict();
+        must_include.set(this.model, new Set([orig_opts.pk]));
+        for (var field_name in field_names) {
+            var parts = field_name.split(LOOKUP_SEP);
+            var cur_model = this.model;
+            var opts = orig_opts;
+            for each (var name in parts.slice(0,-1)) {
+                var old_model = cur_model;
+                var source = opts.get_field_by_name(name)[0];
+                cur_model = opts.get_field_by_name(name)[0].rel.to;
+                opts = cur_model._meta;
+                // Even if we're "just passing through" this model, we must add
+                // both the current model's pk and the related reference field
+                // to the things we select.
+                must_include.get(old_model).add(source);
+                add_to_dict(must_include, cur_model, opts.pk);
+            }
+            var [ field, model, x, y] = opts.get_field_by_name(parts.slice(-1));
+            if (model == null)
+                model = cur_model;
+            add_to_dict(seen, model, field);
+        }
+        if (defer) {
+            // We need to load all fields for each model, except those that
+            // appear in "seen" (for all models that appear in "seen"). The only
+            // slight complexity here is handling fields that exist on parent
+            // models.
+            var workset = new Dict();
+            for each (var [ model, values ] in seen.items()) {
+                for each (var field in model._meta.local_fields) {
+                    if (include(values, field))
+                        continue;
+                    add_to_dict(workset, model, field);
+                }
+            }
+            for each (var [ model, values ] in must_include.items()) {
+                // If we haven't included a model in workset, we don't add the
+                // corresponding must_include fields for that model, since an
+                // empty set means "include all fields". That's why there's no
+                // "else" branch here.
+                if (include(workset, model))
+                    workset.get(model).update(values);
+            }
+            for each (var [ model, values ] in workset.items())
+                callback(target, model, values);
+        } else {
+            for each (var [ model, values ] in must_include.items()) {
+                if (include(seen, model)) {
+                    seen.get(model).update(values);
+                } else {
+                    // As we've passed through this model, but not explicitly
+                    // included any fields, we have to make sure it's mentioned
+                    // so that only the "must include" fields are pulled in.
+                    seen.set(model, values);
+                }
+            }
+            // Now ensure that every model in the inheritance chain is mentioned
+            // in the parent list. Again, it must be mentioned to ensure that
+            // only "must include" fields are pulled in.
+            for (var model in orig_opts.get_parent_list()) {
+                if (!include(seen, model))
+                    seen.set(model, new Set());
+            }
+            for each (var [ model, values ] in seen.items()) {
+                callback(target, model, values);
+            }
+        }
+    },
+
+    deferred_to_columns: function() {
+        /*
+        Converts the self.deferred_loading data structure to mapping of table
+        names to sets of column names which are to be loaded. Returns the
+        dictionary.
+        */
+        var columns = {};
+        this.deferred_to_data(columns, this.deferred_to_columns_cb);
+        return columns;
+    },
+
+    deferred_to_columns_cb: function(target, model, fields) {
+        /*
+        Callback used by deferred_to_columns(). The "target" parameter should
+        be a set instance.
+        */
+        var table = model._meta.db_table;
+        if (!include(target, table))
+            target[table] = new Set();
+        for (var field in fields) {
+            target[table].add(field.column);
+        }
     },
 
     /*
@@ -385,7 +506,7 @@ var Query = type('Query', object, {
         * (without the table names) are given unique aliases. This is needed in
         * some cases to avoid ambiguitity with nested queries.
         */
-    'get_columns': function get_columns(with_aliases) {
+    get_columns: function(with_aliases) {
 
         with_aliases = with_aliases || false;
         var qn = getattr(this, 'quote_name_unless_alias');
@@ -397,14 +518,25 @@ var Query = type('Query', object, {
         else
             var col_aliases = new Set();
         if (bool(this.select)) {
+            var only_load = this.deferred_to_columns();
             for each (var col in this.select) {
                 if (isinstance(col, Array)) {
+                    var [ alias, column ] = col;
+                    var table = this.alias_map[alias][TABLE_NAME];
+                    if (include(only_load, table) && !include(only_load[table], col))
+                        continue;
                     var r = '%s.%s'.subs(qn(col[0]), qn(col[1]));
-                    if (with_aliases && include(col_aliases, col[1])) {
-                        c_alias = 'Col%s'.subs(col_aliases.length);
-                        result.push('%s AS %s'.subs(r, c_alias));
-                        aliases.add(c_alias);
-                        col_aliases.add(c_alias);
+                    if (with_aliases) {
+                        if (include(col_aliases, col[1])) {
+                            var c_alias = 'Col%s'.subs(col_aliases.length);
+                            result.push('%s AS %s'.subs(r, c_alias));
+                            aliases.add(c_alias);
+                            col_aliases.add(c_alias);
+                        } else {
+                            result.push('%s AS %s'.subs(r, qn2(col[1])));
+                            aliases.add(r);
+                            col_aliases.add(col[1]);
+                        }
                     } else {
                         result.push(r);
                         aliases.add(r);
@@ -412,13 +544,13 @@ var Query = type('Query', object, {
                     }
                 } else {
                     result.push(col.as_sql(qn));
-                    if (col['alias']) {
+                    if (hasattr(col, 'alias')) {
                         aliases.add(col.alias);
                         col_aliases.add(col.alias);
                     }
                 }
             }
-	} else if (this.default_cols) {
+        } else if (this.default_cols) {
             var [cols, new_aliases] = this.get_default_columns(with_aliases, col_aliases);
             result = result.concat(cols);
             aliases.update(new_aliases);
@@ -448,28 +580,39 @@ var Query = type('Query', object, {
         * 'as_pairs' is True, returns a list of (alias, col_name) pairs instead
         *  of strings as the first component and None as the second component).
         */
-    'get_default_columns': function get_default_columns(with_aliases, col_aliases, start_alias, opts, as_pairs) {
+    get_default_columns: function(with_aliases, col_aliases, start_alias, opts, as_pairs) {
 
         with_aliases = with_aliases || false;
         col_aliases = col_aliases || null;
         opts = opts || this.model._meta;
         as_pairs = as_pairs || false;
-        var table_alias = start_alias || this.tables[0];
+        start_alias = start_alias || null; 
+        //var table_alias = start_alias || this.tables[0];
         var result = [];
-        var root_pk = opts.pk.column;
-        var seen = new Dict({'None': table_alias});
+        var seen = new Dict({'None': start_alias});
         var qn = getattr(this, 'quote_name_unless_alias');
         var qn2 = this.connection.ops.quote_name;
         var aliases = new Set();
+        var only_load = this.deferred_to_columns();
+
         for each (var [field, model] in opts.get_fields_with_model()) {
             model = model || 'None';
-            var alias = seen.get(model);
-            if (!alias) {
-                alias = this.join([table_alias, model._meta.db_table, root_pk, model._meta.pk.column]);
-                seen.set(model, alias);
+            if (start_alias) {
+                var alias = seen.get(model);
+                if (!alias) {
+                    var link_field = opts.get_ancestor_link(model);
+                    alias = this.join([start_alias, model._meta.db_table, link_field.column, model._meta.pk.column]);
+                    seen.set(model, alias);
+                }
+            } else {
+                var alias = this.included_inherited_models.get(model);
             }
+            var table = this.alias_map[alias][TABLE_NAME]
+            if (include(only_load, table) && !include(only_load[table], field.column))
+                continue;
             if (as_pairs) {
                 result.push([alias, field.column]);
+                aliases.add(alias)
                 continue;
             }
             if (with_aliases && include(col_aliases, field.column)) {
@@ -485,9 +628,7 @@ var Query = type('Query', object, {
                     col_aliases.add(field.column);
             }
         }
-        if (as_pairs)
-            return [result, null];
-        return [result, aliases];
+        return [ result, aliases ];
     },
 
     /*
@@ -755,7 +896,7 @@ var Query = type('Query', object, {
     },
 
     /* Decreases the reference count for this alias. */
-    'unref_alias': function unref_alias(alias) {
+    unref_alias: function(alias) {
         this.alias_refcount[alias] = this.alias_refcount[alias] - 1;
     },
 
@@ -804,7 +945,7 @@ var Query = type('Query', object, {
             if (!include(used_aliases, alias))
                 continue;
             if (!include(initial_refcounts, alias) || this.alias_refcount[alias] == initial_refcounts[alias]) {
-                parent = self.alias_map[alias][LHS_ALIAS];
+                parent = this.alias_map[alias][LHS_ALIAS];
                 must_promote = considered.get(parent, false);
                 promoted = this.promote_alias(alias, must_promote);
                 considered[alias] = must_promote || promoted;
@@ -1003,14 +1144,51 @@ var Query = type('Query', object, {
         this.rev_join_map[alias] = t_ident;
         return alias;
     },
+    
+    setup_inherited_models: function() {
+        /*
+        If the model that is the basis for this QuerySet inherits other models,
+        we need to ensure that those other models have their tables included in
+        the query.
 
+        We do this as a separate step so that subclasses know which
+        tables are going to be active in the query, without needing to compute
+        all the select columns (this method is called from pre_sql_setup(),
+        whereas column determination is a later part, and side-effect, of
+        as_sql()).
+        */
+        var opts = this.model._meta;
+        var root_alias = this.tables[0];
+        var seen = new Dict({'None': root_alias});
+
+        for each (var [ field, model ] in opts.get_fields_with_model()) {
+            model = model || 'None';
+            if (!include(seen, model)) {
+                var link_field = opts.get_ancestor_link(model);
+                seen.set(model, this.join([root_alias, model._meta.db_table, link_field.column, model._meta.pk.column]));
+            }
+        }
+        this.included_inherited_models = seen;
+    },
+
+    remove_inherited_models: function() {
+        /*
+        Undoes the effects of setup_inherited_models(). Should be called
+        whenever select columns (self.select) are set explicitly.
+        */
+        for each (var [ key, alias ] in this.included_inherited_models.items()) {
+            if (key)
+                this.unref_alias(alias);
+        }
+        this.included_inherited_models = new Dict();
+    },
     /*
         * Fill in the information needed for a select_related query. The current
         depth is measured as the number of connections away from the root model
         (for example, cur_depth=1 means we are looking at models with direct
         connections to the root model).
         */
-    'fill_related_selections': function fill_related_selections(opts, root_alias, cur_depth, used, requested, restricted, nullable, dupe_set, avoid_set) {
+    fill_related_selections: function(opts, root_alias, cur_depth, used, requested, restricted, nullable, dupe_set, avoid_set) {
 
         opts = opts || null;
         root_alias = root_alias || null;
@@ -1636,7 +1814,7 @@ var Query = type('Query', object, {
         * Adds data to the various extra_* attributes for user-created additions
         * to the query.
         */
-    'add_extra': function add_extra(select, select_params, where, params, tables, order_by) {
+    add_extra: function(select, select_params, where, params, tables, order_by) {
         if (select) {
             // We need to pair any placeholder markers in the 'select'
             // dictionary with their parameters in 'select_params' so that
@@ -1669,6 +1847,77 @@ var Query = type('Query', object, {
         if (order_by)
             this.extra_order_by = order_by;
     },
+    
+    clear_deferred_loading: function() {
+        /*
+        Remove any fields from the deferred loading set.
+        */
+        this.deferred_loading = [ new Set(), true ];
+    },
+
+    add_deferred_loading: function(field_names) {
+        /*
+        Add the given list of model field names to the set of fields to
+        exclude from loading from the database when automatic column selection
+        is done. The new field names are added to any existing field names that
+        are deferred (or removed from any existing field names that are marked
+        as the only ones for immediate loading).
+        */
+        // Fields on related models are stored in the literal double-underscore
+        // format, so that we can use a set datastructure. We do the foo__bar
+        // splitting and handling when computing the SQL colum names (as part of
+        // get_columns()).
+        var [ existing, defer ] = this.deferred_loading;
+        if (defer) {
+            // Add to existing deferred names.
+            this.deferred_loading = [ existing.union(field_names), true ];
+        } else {
+            // Remove names from the set of any existing "immediate load" names.
+            this.deferred_loading = [ existing.difference(field_names), false ];
+        }
+    },
+
+    add_immediate_loading: function(field_names) {
+        /*
+        Add the given list of model field names to the set of fields to
+        retrieve when the SQL is executed ("immediate loading" fields). The
+        field names replace any existing immediate loading field names. If
+        there are field names already specified for deferred loading, those
+        names are removed from the new field_names before storing the new names
+        for immediate loading. (That is, immediate loading overrides any
+        existing immediate values, but respects existing deferrals.)
+        */
+        var [ existing, defer ] = this.deferred_loading;
+        if (defer) {
+            // Remove any existing deferred names from the current set before
+            // setting the new names.
+            this.deferred_loading = [ new Set(field_names).difference(existing), false ];
+        } else {
+            // Replace any existing "immediate load" field names.
+            this.deferred_loading = [ new Set(field_names), false ];
+        }
+    },
+
+    get_loaded_field_names: function() {
+        /*
+        If any fields are marked to be deferred, returns a dictionary mapping
+        models to a set of names in those fields that will be loaded. If a
+        model is not in the returned dictionary, none of it's fields are
+        deferred.
+
+        If no fields are marked for deferral, returns an empty dictionary.
+        */
+        var collection = {};
+        this.deferred_to_data(collection, this.get_loaded_field_names_cb);
+        return collection;
+    },
+
+    get_loaded_field_names_cb: function(target, model, fields) {
+        /*
+        Callback used by get_deferred_field_names().
+        */
+        target[model] = new Set([f.name for each (f in fields)]);
+    },
 
     /*
         * Removes any aliases in the extra_select dictionary that aren't in 'names'.
@@ -1688,7 +1937,7 @@ var Query = type('Query', object, {
         * as friendly as add_filter(). Mostly useful for querying directly
         * against the join table of many-to-many relation in a subquery.
         */
-    'set_start': function set_start(start) {
+    set_start: function(start) {
         var opts = this.model._meta;
         var alias = this.get_initial_alias();
         var [field, col, opts, joins, last, extra] = this.setup_joins(start.split(LOOKUP_SEP), opts, alias, false);
@@ -1723,7 +1972,7 @@ var Query = type('Query', object, {
         * the cursor is returned, since it's used by subclasses such as
         * InsertQuery).
         */
-    'execute_sql': function execute_sql(result_type) {
+    execute_sql: function(result_type) {
 
         result_type = (typeof(result_type) === 'undefined')?MULTI:result_type;
         var sql = null, params = null;
@@ -1764,7 +2013,7 @@ var Query = type('Query', object, {
         * Adds a Q-object to the current filter.
         * Can also be used to add anything that has an 'add_to_query()' method.
         */
-    'add_q': function add_q(q_object, used_aliases) {
+    add_q: function(q_object, used_aliases) {
         used_aliases = used_aliases || this.used_aliases;
         var connector = AND;
         var subtree = false;
@@ -1812,7 +2061,7 @@ var Query = type('Query', object, {
         * constraints. So low is added to the current low value and both will be
         * clamped to any existing high value.
         */
-    'set_limits': function set_limits(low, high) {
+    set_limits: function(low, high) {
     
         if (high) {
             if (this.high_mark)
@@ -1829,7 +2078,7 @@ var Query = type('Query', object, {
     },
 
     /* Clears any existing limits. */
-    'clear_limits': function clear_limits() {
+    clear_limits: function() {
         this.low_mark = 0;
         this.high_mark = null;
     },
@@ -1838,7 +2087,7 @@ var Query = type('Query', object, {
         * Returns True if adding filters to this instance is still possible.
         * Typically, this means no limits or offsets have been put on the results.
         */
-    'can_filter': function can_filter() {
+    can_filter: function() {
         return !(this.low_mark != 0 || this.high_mark != null);
     }
 });
@@ -1889,6 +2138,17 @@ function order_modified_iter(cursor, trim, sentinel){
     */
 function setup_join_cache(cls) {
     cls._meta._join_cache = {};
+}
+
+function add_to_dict(data, key, value) {
+    /*
+    A helper function to add "value" to the set of values for "key", whether or
+    not "key" already exists.
+    */
+    if (include(data, key))
+        data.get(key).add(value);
+    else
+        data.set(key, new Set([value]));
 }
 
 var hcp = event.subscribe('class_prepared', setup_join_cache);
