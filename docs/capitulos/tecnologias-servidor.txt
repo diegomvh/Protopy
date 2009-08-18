@@ -25,14 +25,16 @@ Frameworks
 
 .. Usamos la traducción redefinir para override
 
-Un framework web es un abstracción en la cual un código común que provee una funcionalidad genérica puede ser personalizadas
-por el programador de manera selectiva para brindar una funcionalidad específica.
+.. Hacer referencia a en.wikipedia.com/Framework
 
-Se suele decir que los frameworks son similares a las bibliotecas de software (a veces llamadas librerías) dado que proveen
-abstracciones reusables de código a las cuales se accede mediante una API bien definida. 
+Según la la wikipedia [WIK001]_ un framework de software es *una abstracción en la cual un código común, que provee una funcionalidad genérica, 
+puede ser personalizado por el programador de manera selectiva para brindar una funcionalidad específica*.
 
+.. [WIK001] *Software Framework*, Wikipedia, 2009, http://en.wikipedia.com/software_framework, última visita Agosto de 2009.
 
-Sin embargo, podemos encontrar ciertas características que diferencian al framework de una librería o aplicaciones normales de usuario:
+Además agrega  que los frameworks son similares a las bibliotecas de software (a veces llamadas librerías) dado que proveen
+abstracciones reusables de código a las cuales se accede mediante una API bien definida. Sin embargo, existen
+ciertas características que diferencian al framework de una librería o aplicaciones normales de usuario:
 
 	* Inversion de control
 		Al contrario que las bibliotecas en las aplicaciones de usuario, en un framework, el flujo de control no es manejado
@@ -60,11 +62,15 @@ Por ejemplo, en un equipo donde se utiliza un framework web para desarrollar un 
 electrónica, los desarrolladores pueden enfocarse en la lógica necesaria para realizar las extraciones
 de dinero, en vez de la mecánica para preserver el estado entre las peticiones del navegador.
 
-Sin embargo, se suele argumentar que los frameworks puedens ser una carga, debido a la complejidad
+.. Carga != Incertidumbre
+
+Sin embargo, se suele argumentar que los frameworks pueden ser una carga, debido a la complejidad
 de sus APIs o la incertidumbre que generar la existencia de varios frameworks para un mismo tipo
 de aplicación. A pesar de tener como objetivo estandarizar y reducir el tiempo de desarrollo, el
-aprendizaje de un framework suele requerir tiempo extra en el desarrollo, aunque posteriores 
-desarrollos pueden verse beneficiados de este aprendizaje inicial.
+aprendizaje de un framework suele requerir tiempo extra en el desarrollo, que debe ser 
+tenido en cuenta por el quipo de desarrollo.
+Trás completar el desarrollo en un framework, el equipo de desarrllo no debe volver a invertir 
+tiempo en aprendizaje en sucesivos desarrollos.
 
 .. Quizás
 
