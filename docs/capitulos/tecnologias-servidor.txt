@@ -4,7 +4,17 @@ Tecnologías del servidor
 CGI
 ***
 
-CGI es bla 
+CGI, *Common Gateway Interface* [*]_ es un estándar de comunicación entre un servidor web
+y una aplicación.
+En CGI el servidor web transfiere las peticiones del cliente como entrada estándar y 
+los parámetros extra como variables de entorno.
+La aplicación CGI escribe en la salida la respuesta HTTP.
+
+.. Poner un gráfico aquí
+
+
+
+.. [*] A veces traducido como pasarela común de acceso.
 
 WSGI
 ****
@@ -72,7 +82,36 @@ tenido en cuenta por el quipo de desarrollo.
 Trás completar el desarrollo en un framework, el equipo de desarrllo no debe volver a invertir 
 tiempo en aprendizaje en sucesivos desarrollos.
 
-.. Quizás
+.. image:: ../_static/framework_esquema_flujo_control.png
+	:width: 719
+	
+	
+
+Framework Web
+-------------
+
+.. note::
+	
+	Ver diferencia entre sitio y aplicación
+	
+Un framework web, es un framework de software que permite implementar aplicaciones web brindando
+soporte para tareas comunes como.
+
+En Wikipeida [WIKI002]_
+
+	* Seguridad
+	
+	* Mapeo de URLs
+	
+	* Sistema de plantillas
+	
+	* Caché
+	
+	* AJAX
+	
+	* Configuración mínima y simplificada
+	
+.. [WIKI002] *Web Framework*, Wikipedia, 2009, http://en.wikipedia.org/wiki/Web_application_framework, última visita Agosto de 2009.
 
 Model View Controler
 --------------------
