@@ -5,21 +5,77 @@ CGI
 ***
 
 CGI, *Common Gateway Interface* [*]_ es un estándar de comunicación entre un servidor web
-y una aplicación.
-En CGI el servidor web transfiere las peticiones del cliente como entrada estándar y 
-los parámetros extra como variables de entorno.
-La aplicación CGI escribe en la salida la respuesta HTTP.
+y una aplicación, que permite que un a través de un navegador, se invoque un programa
+en el servidor y se recuperen resultados de éste. 
+
+CGI fue la primera estandarización de un mecanismo para generar contenido dinámico 
+en la web.
+
+En el estandar CGI, el servidor web intercambia datos con la aplicación medinate variables
+de entorno y los flujos de entrada y salida.
+
+Los parámetros HTTP (como la URL, el método (GET, POST, PUSH, etc.), nombre del servidor
+puerto, etc.) e información sobre el servidor son trasferidos a la aplicación CGI como variables de 
+entorno.
+
+Si existiese un cuerpo en la petición HTTP, como por ejemplo, el contenido de un formulario, bajo
+el método POST, la aplicación CGI accede a esta como entrada estandard.
+
+El resultado de la ejecución de la aplicación CGI se escribe en la salida estándard, anteponiendo
+las cabeceras HTTP respuesta, para que el servidor responda al clinete. En los encabezados
+de respuesta, el tipo MIME determina como interpreta el clinete la respuesta. Es decir, la 
+invocación de un CGI puede devolover diferentes tipos de contenido al clinete (html, imágenes, 
+javascript, contenido multimedia, etc.)
+
+
+Dentor de las varaibles de entorno, la Wikipedia [WikiCGI2009]_ menciona:
+
+   * QUERY_STRING
+   		Es la cadena de entrada del CGI cuando se utiliza el método GET sustituyendo algunos símbolos especiales por otros. Cada elemento se envía como una pareja Variable=Valor. Si se utiliza el método POST esta variable de entorno está vacía.
+   * CONTENT_TYPE
+		Tipo MIME de los datos enviados al CGI mediante POST. Con GET está vacía. Un valor típico para esta variable es: Application/X-www-form-urlencoded.
+   * CONTENT_LENGTH
+		Longitud en bytes de los datos enviados al CGI utilizando el método POST. Con GET está vacía.
+   * PATH_INFO
+		Información adicional de la ruta (el "path") tal y como llega al servidor en el URL.
+   * REQUEST_METHOD
+		Nombre del método (GET o POST) utilizado para invocar al CGI.
+   * SCRIPT_NAME
+		Nombre del CGI invocado.
+   * SERVER_PORT
+		Puerto por el que el servidor recibe la conexión.
+   * SERVER_PROTOCOL
+		Nombre y versión del protocolo en uso. (Ej.: HTTP/1.0 o 1.1)
+
+Variables de entorno que se intercambian de servidor a CGI:
+
+   * SERVER_SOFTWARE
+		Nombre y versión del software servidor de www.
+   * SERVER_NAME
+		Nombre del servidor.
+   * GATEWAY_INTERFACE
+		Nombre y versión de la interfaz de comunicación entre servidor y aplicaciones CGI/1.12
+
+Debido a la popularidad de las aplicaciones CGI, los servidores web incluyen generalmente
+un directorio llamado **cgi-bin** donde se albergan estas aplicaciones.
+
+.. note:: Faltan referencias sobre la popularidad de los lenguajes
+
+Históricamente las aplicaciones CGI han sido escritas en lenguajes interpretados, sinedo muy popular Perl y más recientemente el lenguaje PHP.
+
+
+..	http://www.mi_dominio.com/cgi-bin/mi_programa.cgi?nombre=matias
+	
+.. Invocará a la aplicación del archivo mi_programa.cgi
+
 
 .. Poner un gráfico aquí
 
-
+.. [WikiCGI2009] *Interfaz de entrada común*, Wikipedia, 2009, último acceso Agosto 2009, http://es.wikipedia.org/wiki/Common_Gateway_Interface#Intercambio_de_informaci.C3.B3n:_Variables_de_entorno
 
 .. [*] A veces traducido como pasarela común de acceso.
 
-WSGI
-****
 
-WSGI es CGI para Python.
 
 Lenguajes interpreteados
 ************************
@@ -28,6 +84,15 @@ Ruby
 Python
 
 Python es un lengauje interpretado.
+
+WSGI
+----
+
+WSGI o Web Server Gateway Interfase es una especidicación para que un web server y una aplicación
+se comuniquen. Es un estándar del lenguaje Python, descrito en el PEP [*]_ 333.
+
+.. [*] PEP *Python Enhancement Proposals* son documentos en los que se proponen mejoras para el lenguaje
+Python, son albergados en el sitio oficial http://www.python.org
 
 
 Frameworks
@@ -83,7 +148,7 @@ Trás completar el desarrollo en un framework, el equipo de desarrllo no debe vo
 tiempo en aprendizaje en sucesivos desarrollos.
 
 .. image:: ../_static/framework_esquema_flujo_control.png
-	:width: 719
+	:width: 719px
 	
 	
 
