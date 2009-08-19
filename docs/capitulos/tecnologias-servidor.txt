@@ -79,10 +79,6 @@ Históricamente las aplicaciones CGI han sido escritas en lenguajes interpretado
 
 .. [*] A veces traducido como pasarela común de acceso.
 
-.. _servidor-wsgi:
-****
-WSGI
-****
 
 
 .. _servidor-lenguajes:
@@ -96,8 +92,10 @@ Python
 Python es un lengauje interpretado.
 .. Escribir sobre el concepto de modulos y algo de programacion modular, ya que da soporte a protopy http://es.wikipedia.org/wiki/Programaci%C3%B3n_modular
 
-.. _servidor-frameworks:
-**********
+.. _servidor-wsgi:
+****
+WSGI
+****
 
 WSGI o Web Server Gateway Interfase es una especidicación para que un web server y una aplicación
 se comuniquen. Es un estándar del lenguaje Python, descrito en el PEP [*]_ 333.
@@ -105,12 +103,13 @@ se comuniquen. Es un estándar del lenguaje Python, descrito en el PEP [*]_ 333.
 .. [*] PEP *Python Enhancement Proposals* son documentos en los que se proponen mejoras para el lenguaje
 Python, son albergados en el sitio oficial http://www.python.org
 
+
+.. _servidor-frameworks:
+**********
 Frameworks
 **********
 
 .. Usamos la traducción redefinir para override
-
-.. Hacer referencia a en.wikipedia.com/Framework
 
 Según la la wikipedia [WIK001]_ un framework de software es *una abstracción en la cual un código común, que provee una funcionalidad genérica, 
 puede ser personalizado por el programador de manera selectiva para brindar una funcionalidad específica*.
