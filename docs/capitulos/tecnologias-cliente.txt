@@ -1,0 +1,10 @@
+.. _cliente-javascript:
+**********
+JavaScript
+**********
+.. Explicar como meter codigo javascript en un doc da sustento a protopy
+
+al archivo que contiene la funcionalidad. Mas tarde cuando el navegador descarga
+el documento y comienza su lectura al encontrar esta etiqueta solicita
+al servidor el archivo referenciado y lo interpreta, para continuar luego con la
+lectura del resto de las etiquetas. 
