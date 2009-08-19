@@ -86,19 +86,24 @@ Históricamente las aplicaciones CGI han sido escritas en lenguajes interpretado
 Lenguajes interpreteados
 ************************
 PHP
+===
 Ruby
+====
 Python
+======
 
 Python es un lengauje interpretado.
 .. Escribir sobre el concepto de modulos y algo de programacion modular, ya que da soporte a protopy http://es.wikipedia.org/wiki/Programaci%C3%B3n_modular
 
 .. _servidor-wsgi:
-****
+====
 WSGI
-****
+====
 
 WSGI o Web Server Gateway Interfase es una especidicación para que un web server y una aplicación
-se comuniquen. Es un estándar del lenguaje Python, descrito en el PEP [*]_ 333.
+se comuniquen. Es un estándar del lenguaje Python, descrito en el PEP [*]_ 333. Si bien WSGI es
+similar en su concepción a CGI, su objetivo es estandarizar la aparición de estructras de software
+cada vez más complejas (frameworks :ref:`servidor-frameworks_ <framework>`)
 
 .. [*] PEP *Python Enhancement Proposals* son documentos en los que se proponen mejoras para el lenguaje
 Python, son albergados en el sitio oficial http://www.python.org
@@ -162,7 +167,7 @@ tiempo en aprendizaje en sucesivos desarrollos.
 	
 
 Framework Web
--------------
+=============
 
 .. note::
 	
@@ -381,9 +386,9 @@ redirección de URLs.
 Django como framework de desarrollo consiste en un  conjunto de utilidades 
 de consola que permiten crear y manipular proyectos y aplicaciones.
 
-
+****************************************
 Estructuración de un proyecto en Django
-=======================================
+****************************************
 
 Durante la instalación del framework en el sistema del desarrollador, se añade al
 PATH un comando con el nombre django-admin.py. Mediante este comando se crean proyectos
@@ -496,7 +501,7 @@ de las urls a una aplicación particular.
             (r'^personas', include('mi_proyecto.personas.urls'))
 
 Estructura de una aplicación Django
------------------------------------
+===================================
 
 Una aplicación es un paquete python que consta de un módulo models y un módulo views.
 
@@ -621,7 +626,7 @@ es el espacio disponible para ser creativo con tu aplicación de Django.
 
 .. _django-modelos:
 Modelos
--------
+=======
 
 Un modelo de Django es una descripción de los datos en la base de datos, representada como código de Python.
 Esta es tu capa de datos -- lo
@@ -720,10 +725,51 @@ Este modelo de ejemplo define una ``Persona`` que encapsula los datos correspond
     );
 
 Consultas
----------
+=========
 bala
 
 Administradores de consultas
-----------------------------
+============================
 Estos objetos representan la interfase de comunicacion con la base de datos. Cada modelo tiene por lo menos un
 administrador para acceder a los datos almacenados.
+
+Cada entidad presente en el modelo de una aplicación django (de aquí en adelante, simplemente modelo), tiene al menos un *Manager* o administrador de consultas. El administrador de consultas encapsula en una semántica de objetos las opreaciones de consulta o query sobre la base de datos[*]_, y consiste en una instancia de la clase *django.db.models.manager.Manager*. De esta clase hereda un conjunto de métodos como *all()*, *filter()*, *exclude()*, *get()*, etc.
+
+.. [*] En el lenguaje SQL, las consultas se realizan miediante la sentecia SELECT.
+
+Un *Manager* se presenta como un atributo de clase en el modelo, por defecto el ORM incorpora el manager objects. Es decir, dado un modelo llamado *Usuario*, en el atributo *Usuario.objects* se encuentra la instancia del manager dedicado a las consultas sobre dicha entidad. 
+
+Mediante la utilización del manager, el programador puede especificar consultas simples acudiendo a los métodos del manager.
+
+.. code-block:: python
+
+	Usuario.objects.all()
+	
+es equivalente a la sentencia SQL:
+
+.. code-block:: sql
+
+	SELECT * FROM aplicacion_usuarios
+	
+El resultado de la invocación de un método de un manager es una intancia del tipo *QuerySet*. Los QuerySet son representantes representantes de las consultas.
+
+.. code-block:: python
+	
+	# datetime.now() devuelve un objeto datetime con la fecha y hora actual
+	r = Publicaciones.objects.filter( encabezado__stastswith = "Impuesto")
+	r.exclude( fecha_publicacion__lte = "2009/03/02" )
+	
+es equivalente a:
+.. Esto no se si está bien
+
+.. code-block:: sql
+	
+	SELECT * FROM aplicacion_publicaciones WHERE encabezado LIKE "Impuesto%" 
+	AND NOT fecha_publicacion >= "2009/03/02"
+	
+	
+Algunas aplicaciones de los managers son encapsular consultas complejas.
+	
+
+	
+
