@@ -733,25 +733,27 @@ Administradores de consultas
 Estos objetos representan la interfase de comunicacion con la base de datos. Cada modelo tiene por lo menos un
 administrador para acceder a los datos almacenados.
 
-Cada entidad presente en el modelo de una aplicación django (de aquí en adelante, simplemente modelo), tiene al menos un *Manager* o administrador de consultas. El administrador de consultas encapsula en una semántica de objetos las opreaciones de consulta o query sobre la base de datos[*]_, y consiste en una instancia de la clase *django.db.models.manager.Manager*. De esta clase hereda un conjunto de métodos como *all()*, *filter()*, *exclude()*, *get()*, etc.
+Cada entidad presente en el modelo de una aplicación django (de aquí en adelante, simplemente modelo), tiene al menos un *Manager*. Este *Manager* encapsula en una semántica de objetos las opreaciones de consulta (*query*) de la base de datos [*]_ . Un *Manager* consiste en una instancia de la clase *django.db.models.manager.Manager* donde se definen, entre otros métodos, *all()*, *filter()*, *exclude()* y *get()*.
+
+Cada uno de éstos métodos genera como resultado una instancia de la calse *QuerySet*. Un *QuerySet* envuelve el "resultado" de una consulta a la base de datos. Se dice que envuelven el "resultado" porque la estrategia de acceso a la base de datos es *evaluación retardada* [*]_, es decir, que la consulta que representa el *QuerySet* no será evaluada hasta que no sea necesario acceder a los resultados.
+
 
 .. [*] En el lenguaje SQL, las consultas se realizan miediante la sentecia SELECT.
+.. [*] También conocida como *Lazy Evaluation*
 
-Un *Manager* se presenta como un atributo de clase en el modelo, por defecto el ORM incorpora el manager objects. Es decir, dado un modelo llamado *Usuario*, en el atributo *Usuario.objects* se encuentra la instancia del manager dedicado a las consultas sobre dicha entidad. 
-
-Mediante la utilización del manager, el programador puede especificar consultas simples acudiendo a los métodos del manager.
+El siguiente ejemplo utiliza el manager *objects* que agrega de manera automática el ORM al modelo Usuario. En este caso, se consulta por todas las instancias de la entidad usuario.
 
 .. code-block:: python
 
 	Usuario.objects.all()
 	
-es equivalente a la sentencia SQL:
+El ORM se encarga de transformar la invocación al método *all()* por el SQL siguiente.
 
 .. code-block:: sql
 
 	SELECT * FROM aplicacion_usuarios
 	
-El resultado de la invocación de un método de un manager es una intancia del tipo *QuerySet*. Los QuerySet son representantes representantes de las consultas.
+Un *QuerySet*, además de presentar la posibilidad de ser iterado, para recuperar los datos, también presenta métodos similares al *Manager*, como *all()*, *filter()*, *exclude()* y *get()*, con la misma caracterísitica de devolver instancias de *QuerySet* como resultado. Gracias a esta característica, se pueden generar consultas medinate encadenamiento.
 
 .. code-block:: python
 	
