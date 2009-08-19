@@ -1,6 +1,10 @@
+.. _servidor:
+########################
 Tecnologías del servidor
 ########################
 
+.. _servidor-cgi:
+***
 CGI
 ***
 
@@ -75,8 +79,14 @@ Históricamente las aplicaciones CGI han sido escritas en lenguajes interpretado
 
 .. [*] A veces traducido como pasarela común de acceso.
 
+.. _servidor-wsgi:
+****
+WSGI
+****
 
 
+.. _servidor-lenguajes:
+************************
 Lenguajes interpreteados
 ************************
 PHP
@@ -84,16 +94,16 @@ Ruby
 Python
 
 Python es un lengauje interpretado.
+.. Escribir sobre el concepto de modulos y algo de programacion modular, ya que da soporte a protopy http://es.wikipedia.org/wiki/Programaci%C3%B3n_modular
 
-WSGI
-----
+.. _servidor-frameworks:
+**********
 
 WSGI o Web Server Gateway Interfase es una especidicación para que un web server y una aplicación
 se comuniquen. Es un estándar del lenguaje Python, descrito en el PEP [*]_ 333.
 
 .. [*] PEP *Python Enhancement Proposals* son documentos en los que se proponen mejoras para el lenguaje
 Python, son albergados en el sitio oficial http://www.python.org
-
 
 Frameworks
 **********
@@ -178,8 +188,10 @@ En Wikipeida [WIKI002]_
 	
 .. [WIKI002] *Web Framework*, Wikipedia, 2009, http://en.wikipedia.org/wiki/Web_application_framework, última visita Agosto de 2009.
 
+.. _servidor-mvc:
+********************
 Model View Controler
---------------------
+********************
 
 Antes de profundizar en más código, tomémonos un momento para considerar el
 diseño global de una aplicación Web Django impulsada por bases de datos.
@@ -257,9 +269,10 @@ datos son presentados al usuario, mientras que la vista sea estrictamente el
 Ninguna de las interpretaciones es más "correcta" que otras. Lo importante es
 entender los conceptos subyacentes.
 
-
+.. _servidor-orm:
+**************************
 Mapeador Objeto-Relacional
---------------------------
+**************************
 
 En las aplicaciones web modernas, la lógica arbitraria a menudo implica
 interactuar con una base de datos. Detrás de escena, un *sitio web impulsado por
@@ -326,6 +339,8 @@ Symfony
 
 .. Django CLI
 
+.. _servidor-django:
+******
 Django
 ******
 
@@ -369,7 +384,7 @@ de consola que permiten crear y manipular proyectos y aplicaciones.
 
 
 Estructuración de un proyecto en Django
----------------------------------------
+=======================================
 
 Durante la instalación del framework en el sistema del desarrollador, se añade al
 PATH un comando con el nombre django-admin.py. Mediante este comando se crean proyectos
@@ -410,7 +425,7 @@ Analicemos a continuación la función de cada uno de estos 3 módulos.
 	
 
 Módulo settings
-~~~~~~~~~~~~~~~
+===============
 Este módulo define la configuración del proyecto, siendo sus atributos principales
 la configuración de la base de datos a utilizar, la ruta en la cual se encuentran
 los médios estáticos, cuál es el nombre del archivo raíz de urls (generalmente urls.py).
@@ -427,7 +442,7 @@ Un parametro fundamental es la lista denominada INSTALLED_APPS que contiene los 
 de las aplicaciones instaladas en le proyecto.
  
 Módulo manage
-~~~~~~~~~~~~~
+=============
 
 Esta es la interfase con el framework. Éste módulo es un script ejecutable, que
 recibe como primer argumento un nombre de comando de django.
@@ -446,19 +461,19 @@ Los comandos de django pemiten, permiten entre otras cosas:
 El resultado de el comando **startapp** en el ejemplo anterior genera el siguiente
 resultado::
 
-	mi_proyecto
-	|-- mi_aplicacion
-	|   |-- __init__.py
-	|   |-- models.py
-	|   |-- tests.py
-	|   `-- views.py
-	|-- __init__.py
-	|-- manage.py
-	|-- settings.py
-	`-- urls.py
+    mi_proyecto
+    |-- mi_aplicacion
+    |   |-- __init__.py
+    |   |-- models.py
+    |   |-- tests.py
+    |   `-- views.py
+    |-- __init__.py
+    |-- manage.py
+    |-- settings.py
+    `-- urls.py
 
 Módulo urls
-~~~~~~~~~~~
+===========
 
 Este nombre de módulo aparece a nivel proyecto, pero también puede aparecer a nivel
 aplicación. Su misión es definir las asociaciones entre URLs y vistas, de manera de 
@@ -476,9 +491,9 @@ de las urls a una aplicación particular.
     Ej:
         Derivar el tratado de todo lo que comience con la cadena personas a 
         al módulo de urls de la aplicación personas.
-    
+
         .. code-block:: python
-        
+
             (r'^personas', include('mi_proyecto.personas.urls'))
 
 Estructura de una aplicación Django
@@ -488,14 +503,14 @@ Una aplicación es un paquete python que consta de un módulo models y un módul
 
  
 Módulo models
-~~~~~~~~~~~~~
+=============
 
 Cada vez que se crea una aplicación, se genera un módulo models.py, en el cual
 se le permite al programador definir modelos de objetos, que luego son
 transformados en tablas relacionales [*]_.
 
 Módulo views
-~~~~~~~~~~~~~
+============
 
 Cada aplicacion posee un módulo views, donde se definen las funcinoes que atienden
 al cliente y son activadas gracias a el mapeo definido en el módulo urls del proyecto
@@ -521,7 +536,7 @@ Dentro del módulo de urls
 .. [*] Mediante el comando syncdb del módulo manage del proyecto
 
 El cliclo de una petición
-~~~~~~~~~~~~~~~~~~~~~~~~~
+=========================
  
 Cada vez que un browser realiza una petición a un proyecto desarrollado en django, 
 la petición HTTP pasa por varias capas.
@@ -547,8 +562,8 @@ El template se entrega como un HttpResponse. La responsabilidad de la vista es e
 una instancia de esta clase.
 
 .. image:: ../_static/get_response.png
-	:height: 200
-	:width: 200
+    :height: 200
+    :width: 200
 
 .. _django-orm:
 Interactuar con una base de datos
