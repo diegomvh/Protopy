@@ -10,6 +10,8 @@ PAPER         =
 PAPEROPT_a4     = -D latex_paper_size=a4
 PAPEROPT_letter = -D latex_paper_size=letter
 ALLSPHINXOPTS   = -d _build/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
+SVG_FILES = $(shell ls _svg)
+SVG_PNG_OUTPUT = $(SVG_FILES:.svg=.png) 
 
 .PHONY: help clean html dirhtml pickle json htmlhelp qthelp latex changes linkcheck doctest
 
@@ -27,6 +29,10 @@ help:
 	@echo "  changes   to make an overview of all changed/added/deprecated items"
 	@echo "  linkcheck to check all external links for integrity"
 	@echo "  doctest   to run all doctests embedded in the documentation (if enabled)"
+
+svg:
+	@echo ${SVG_FILES} ${SVG_PNG_OUTPUT}
+
 
 clean:
 	-rm -rf _build/*
