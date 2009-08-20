@@ -34,9 +34,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.96222923"
-     inkscape:cx="248.45258"
-     inkscape:cy="205.32915"
+     inkscape:zoom="0.68039881"
+     inkscape:cx="248.08164"
+     inkscape:cy="178.25767"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -73,6 +73,18 @@
        orientation="0,1"
        position="332.15813,424.75089"
        id="guide3300" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="380.25083,574.34685"
+       id="guide3326" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="120.51755,271.89936"
+       id="guide3328" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="489.41884,263.081"
+       id="guide3344" />
   </sodipodi:namedview>
   <metadata
      id="metadata7">
@@ -130,12 +142,12 @@
            height="1052.3622"
            transform="translate(-44,0)" /></flowRegion><flowPara
          id="flowPara2415">Browser compatible con Javascript 1.7 </flowPara></flowRoot>    <rect
-       y="83.305336"
-       x="393.1481"
-       height="301.63397"
-       width="328.73505"
+       y="83.304741"
+       x="393.14749"
+       height="301.31546"
+       width="328.73624"
        id="rect2417"
-       style="opacity:1;fill:#447821;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:2.26497412;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+       style="opacity:1;fill:#447821;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:2.26378226;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
     <text
        inkscape:transform-center-y="-12.259652"
        inkscape:transform-center-x="-5.2917189"
@@ -251,12 +263,12 @@
          id="tspan3245"
          sodipodi:role="line">models</tspan></text>
     <rect
-       style="opacity:1;fill:#ddff55;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:2.27656627;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       style="opacity:1;fill:#ddff55;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:2.26497412;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        id="rect3247"
-       width="328.72345"
-       height="304.74014"
-       x="13.153905"
-       y="80.193382" />
+       width="328.73505"
+       height="301.63397"
+       x="13.148108"
+       y="83.305336" />
     <text
        xml:space="preserve"
        style="font-size:26.93964958px;font-style:normal;font-weight:normal;opacity:1;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Bitstream Vera Sans"
@@ -377,7 +389,8 @@
        width="118.62666"
        height="87.486961"
        x="12.26478"
-       y="568.53271" />
+       y="568.53271"
+       ry="9.353281" />
     <text
        xml:space="preserve"
        style="font-size:28.43637466px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
@@ -388,5 +401,43 @@
          id="tspan3304"
          x="22.764946"
          y="523.41125">DB API</tspan></text>
+    <rect
+       y="568.98059"
+       x="138.89229"
+       height="88.181458"
+       width="202.17342"
+       id="rect3330"
+       style="opacity:1;fill:#5aa02c;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.96039695;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="187.06561"
+       y="466.2645"
+       id="text3332"
+       transform="translate(11.76478,79.055099)"><tspan
+         sodipodi:role="line"
+         id="tspan3334"
+         x="187.06561"
+         y="466.2645">WSGI</tspan></text>
+    <text
+       id="text3336"
+       y="601.75317"
+       x="179.33821"
+       style="font-size:24.70783234px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       xml:space="preserve"
+       sodipodi:linespacing="125%"><tspan
+         y="601.75317"
+         x="179.33821"
+         id="tspan3338"
+         sodipodi:role="line">Web Server</tspan><tspan
+         y="632.63794"
+         x="179.33821"
+         sodipodi:role="line"
+         id="tspan3342"
+         style="-inkscape-font-specification:Bitstream Vera Sans Bold Oblique;font-family:Bitstream Vera Sans;font-weight:bold;font-style:oblique;font-stretch:normal;font-variant:normal;font-size:24.70783234px;text-anchor:start;text-align:start;writing-mode:lr;line-height:125%">WSGI Host</tspan><tspan
+         y="663.52277"
+         x="179.33821"
+         sodipodi:role="line"
+         id="tspan3340" /></text>
   </g>
 </svg>

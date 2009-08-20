@@ -33,6 +33,11 @@ help:
 svg:
 	@echo ${SVG_FILES} ${SVG_PNG_OUTPUT}
 
+# Crear el PNG de los archivos SVG	
+%.png: %.svg
+	inkscape --file=$< --export-dpi=90 --export-area-drawing --export-png=$@
+
+
 
 clean:
 	-rm -rf _build/*
