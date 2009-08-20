@@ -728,12 +728,15 @@ Consultas
 =========
 bala
 
+.. _django_managers:
 Administradores de consultas
 ============================
+
 Estos objetos representan la interfase de comunicacion con la base de datos. Cada modelo tiene por lo menos un
 administrador para acceder a los datos almacenados.
 
 Cada entidad presente en el modelo de una aplicación django (de aquí en adelante, simplemente modelo), tiene al menos un *Manager*. Este *Manager* encapsula en una semántica de objetos las opreaciones de consulta (*query*) de la base de datos [*]_ . Un *Manager* consiste en una instancia de la clase *django.db.models.manager.Manager* donde se definen, entre otros métodos, *all()*, *filter()*, *exclude()* y *get()*.
+
 
 Cada uno de éstos métodos genera como resultado una instancia de la calse *QuerySet*. Un *QuerySet* envuelve el "resultado" de una consulta a la base de datos. Se dice que envuelven el "resultado" porque la estrategia de acceso a la base de datos es *evaluación retardada* [*]_, es decir, que la consulta que representa el *QuerySet* no será evaluada hasta que no sea necesario acceder a los resultados.
 
@@ -752,14 +755,18 @@ El ORM se encarga de transformar la invocación al método *all()* por el SQL si
 .. code-block:: sql
 
 	SELECT * FROM aplicacion_usuarios
-	
-Un *QuerySet*, además de presentar la posibilidad de ser iterado, para recuperar los datos, también presenta métodos similares al *Manager*, como *all()*, *filter()*, *exclude()* y *get()*, con la misma caracterísitica de devolver instancias de *QuerySet* como resultado. Gracias a esta característica, se pueden generar consultas medinate encadenamiento.
+
+.. Esto es recursivo y dificil de explicar :S
+
+Un *QuerySet*, además de presentar la posibilidad de ser iterado, para recuperar los datos, también posee una colección de métodos orientados a conuslta, como *all()*, *filter()*, *exclude()* y *get()*. Cada uno de estos métodos, al igual que en un mánager, devuelven instancias de *QuerySet* como resultado. Gracias a esta característica recursiva, se pueden generar consultas medinate encadenamiento.
+
 
 .. code-block:: python
 	
 	# datetime.now() devuelve un objeto datetime con la fecha y hora actual
 	r = Publicaciones.objects.filter( encabezado__stastswith = "Impuesto")
-	r.exclude( fecha_publicacion__lte = "2009/03/02" )
+		.exclude( fecha_publicacion__lte = "2009/03/02" )
+	print r
 	
 es equivalente a:
 .. Esto no se si está bien
@@ -770,8 +777,44 @@ es equivalente a:
 	AND NOT fecha_publicacion >= "2009/03/02"
 	
 	
-Algunas aplicaciones de los managers son encapsular consultas complejas.
+.. Acá tenemos que hablar de la API de consutlas
+
+API de consultas
+=================
+
+Dado la siguiente definición de modelo
+
+.. code-block:: python
+
+	class Persona(models.Model):
+		nombre = models.CharField( max_length = 80 )
+		apellido = models.CharField( max_length = 140 )
+		fecha_de_nacimiento = models.DateField()
+		
+		
+	class Automovil(models.Model):
+		''' Un automovil posee un propietario '''
+		
+		modelo = models.IntegerField()
+		marca = models.ForeignKey( Marca )
+		
+		propietario = models.ForeignKey( Persona )
 	
+	class Marca(models.Model):
+		nombre = models.CharField( max_length = 40 )
+	
+el ORM agrega a cada modelo la propiedad *objects*:
+
+.. code-block:: python
+	
+	>>> Persona.objects
+	<django.db.models.manager.Manager object at 0x9e5d44c>
+	>>> Marca.objects
+	<django.db.models.manager.Manager object at 0x7efc002>
+	>>> Automovil.objects
+	<django.db.models.manager.Manager object at 0xa0edb07>
+	
+
 
 	
 
