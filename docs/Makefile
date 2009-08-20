@@ -16,6 +16,7 @@ SVG_PNG_OUTPUT = $(SVG_FILES:.svg=.png)
 .PHONY: help clean html dirhtml pickle json htmlhelp qthelp latex changes linkcheck doctest
 
 all: latex
+	$(MAKE) -C _build/latex
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of"

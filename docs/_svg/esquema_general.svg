@@ -35,8 +35,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.68039881"
-     inkscape:cx="248.08164"
-     inkscape:cy="178.25767"
+     inkscape:cx="131.97327"
+     inkscape:cy="263.5018"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -355,8 +355,8 @@
     <path
        style="opacity:1;fill:#5aa02c;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.29740667;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        d="M 0.65625,164.375 L 0.65625,226.125 L 129.03125,226.125 L 129.03125,263.03125 L 330.34375,263.03125 L 330.34375,164.375 L 0.65625,164.375 z"
-       transform="translate(12.015621,230.78608)"
-       id="rect3277" />
+       id="rect3277"
+       transform="translate(12.015621,230.78608)" />
     <text
        inkscape:transform-center-y="-12.259652"
        inkscape:transform-center-x="-5.2917189"
@@ -411,14 +411,13 @@
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
-       x="187.06561"
-       y="466.2645"
-       id="text3332"
-       transform="translate(11.76478,79.055099)"><tspan
+       x="187.41063"
+       y="543.00378"
+       id="text3332"><tspan
          sodipodi:role="line"
          id="tspan3334"
-         x="187.06561"
-         y="466.2645">WSGI</tspan></text>
+         x="187.41063"
+         y="543.00378">WSGI</tspan></text>
     <text
        id="text3336"
        y="601.75317"
