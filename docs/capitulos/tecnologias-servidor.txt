@@ -206,6 +206,53 @@ ellos, los cambios que sufran terminarán siendo reflejados en la base de datos.
 
 .. http://es.wikipedia.org/wiki/Mapeo_objeto-relacional
 
+.. _servidor-mvc:
+
+********************
+Model View Controler
+********************
+
+En aplicaciones complejas que impliquen sofisticadas interfaces, como las
+aplicaciones web, la lógica de la interfaz de usuario cambia con más frecuencia
+que los almacenes de datos y la lógica de negocio. Si se realiza un diseño
+mezclando los componentes de interfaz y de negocio, entonces las consecuencias
+serán que, cuando se necesite cambiar la interfaz, se tendra que modificar
+trabajosamente los componentes de negocio, teniendo de esta forma mayor trabajo
+y mayor riesgo de error.
+
+El patrón arquitectural MVC, *Modelo Vista Controlador* trata de realizar un
+diseño que desacople la interfaz o vista del modelo, con la finalidad de mejorar
+la reusabilidad. De esta forma las modificaciones en las vistas impactan en menor
+medida en la lógica de negocio o de datos.
+
+Este patrón fue descrito por primera vez en 1979 por Trygve Reenskaug [Tryg1979]_,
+entonces trabajando en Smalltalk en laboratorios de investigación de Xerox.
+La implementación original está descrita a fondo en Programación de Aplicaciones
+en Smalltalk-80(TM): Como utilizar Modelo Vista Controlador [SmallMVC]_.
+
+.. [Tryg1979] Trygve Reenskaug, http://heim.ifi.uio.no/~trygver/themes/mvc/mvc-index.html
+.. [SmallMVC] Steve Burbeck, Ph.D. http://st-www.cs.illinois.edu/users/smarch/st-docs/mvc.html
+
+Descripción del patrón:
+
+    * Modelo
+        Esta es la capa de datos, una representación de la información con la
+        cual el sistema opera. La lógica de datos asegura la integridad y
+        permite derivar nuevos datos.
+
+    * Vista
+        Esta es la capa de presentación del modelo, seleccionando qué mostrar y 
+        cómo mostrarlo, usualmente la interfaz de usuario.
+
+    * Controlador
+        Esta capa responde a eventos, usualmente acciones del usuario, e invoca
+        cambios en el modelo y probablemente en la vista.
+
+El patrón MVC se ve frecuentemente en aplicaciones web, donde la vista es la
+página HTML y el código que provee de datos dinámicos a la página. El modelo es
+el sistema de gestión de base de datos y la lógica de negocio, y el controlador
+es el responsable de recibir los eventos de entrada desde la vista.
+
 .. _servidor-frameworks:
 
 **********
@@ -213,6 +260,7 @@ Frameworks
 **********
 
 .. Usamos la traducción redefinir para override
+.. note:: Poner CLI
 
 Según la la wikipedia [WIK001]_ un framework de software es *una abstracción en
 la cual un código común, que provee una funcionalidad genérica, puede ser
@@ -300,31 +348,53 @@ En Wikipeida [WIKI002]_
 
 .. [WIKI002] *Web Framework*, Wikipedia, 2009, http://en.wikipedia.org/wiki/Web_application_framework, última visita Agosto de 2009.
 
-.. _servidor-mvc:
+.. por poner algo, pueden ser otros
+Rails
 
-********************
-Model View Controler
-********************
+Symfony
 
-Antes de profundizar en más código, tomémonos un momento para considerar el
-diseño global de una aplicación Web Django impulsada por bases de datos.
+.. _servidor-django:
 
-Como mencionamos en los capítulos anteriores, Django fue diseñado para promover
-el acoplamiento débil y la estricta separación entre las piezas de una
-aplicación. Si sigues esta filosofía, es fácil hacer cambios en un lugar
-particular de la aplicación sin afectar otras piezas. En las funciones de vista,
-por ejemplo, discutimos la importancia de separar la lógica de negocios de la
-lógica de presentación usando un sistema de plantillas. Con la capa de la base
-de datos, aplicamos esa misma filosofía para el acceso lógico a los datos.
+******
+Django
+******
 
-Estas tres piezas juntas -- la lógica de acceso a la base de datos, la lógica
-de negocios, y la lógica de presentación -- comprenden un concepto que a veces
-es llamado el patrón de arquitectura de software *Modelo-Vista-Controlador* (MVC).
-En este patrón, el "Modelo" hace referencia al acceso a la capa de datos, la
-"Vista" se refiere a la parte del sistema que selecciona qué mostrar y cómo
-mostrarlo, y el "Controlador" implica la parte del sistema que decide qué
-vista usar, dependiendo de la entrada del usuario, accediendo al modelo si es
-necesario.
+.. Acá tenemos que justificar por que django
+
+`Django <http://www.djangoproject.com>`_ es un framework web escrito en Python
+el cual sigue vagamente el concepto de Modelo Vista Controlador.
+Ideado inicialmente como un adminsitrador de contenido para varios sitios de
+noticias, los desarrolladores encontraron que su CMS era lo sufcientemente
+genérico como para curbir un ámbito más aplio de aplicaciones.
+
+En honor al músico Django Reinhart, fue liberado el código base bajo la licencia 
+:term:`BSD` en Julio del 2005 como Django Web Framework. El slogan del framework
+fue "Django, Él framework para perfeccionistas con fechas límites" [*]_.
+
+.. [*] Del ingles "The Web framework for perfectionists with deadlines"
+
+En junio del 2008 fue anuncidada la cereación de la Django Software Fundation,
+la cual se hace cargo hasta la fecha del desarrollo y mantenimiento.
+
+Los orígenes de Django en la administración de páginas de noticias son evidentes
+en su diseño, ya que proporciona una serie de características que facilitan el
+desarrollo rápido de páginas orientadas a contenidos. 
+Por ejemplo, en lugar de requerir que los desarrolladores escriban controladores 
+y vistas para las áreas de administración de la página, Django proporciona una
+aplicación incorporada para administrar los contenidos que puede incluirse como
+parte de cualquier proyecto; la aplicación administrativa permite la creación,
+actualización y eliminación de objetos de contenido, llevando un registro de
+todas las acciones realizadas sobre cada uno (sistema de logging o bitácora), y
+proporciona una interfaz para administrar los usuarios y los grupos de usuarios
+(incluyendo una asignación detallada de permisos).
+
+Con Django también se distribuyen aplicaciones que proporcionan un sistema de 
+comentarios, herramientas para sindicar contenido via RSS y/o Atom, "páginas
+planas" que permiten gestionar páginas de contenido sin necesidad de escribir
+controladores o vistas para esas páginas, y un sistema de redirección de URLs.
+
+Django como framework de desarrollo consiste en un  conjunto de utilidades 
+de consola que permiten crear y manipular proyectos y aplicaciones.
 
 .. exhortacion:: ¿Por qué el acrónimo?
 
@@ -382,53 +452,6 @@ datos son presentados al usuario, mientras que la vista sea estrictamente el
 Ninguna de las interpretaciones es más "correcta" que otras. Lo importante es
 entender los conceptos subyacentes.
 
-.. por poner algo, pueden ser otros
-Rails
-
-Symfony
-
-.. _servidor-django:
-
-******
-Django
-******
-
-.. Acá tenemos que justificar por que django
-
-`Django <http://www.djangoproject.com>`_ es un framework web escrito en Python
-el cual sigue vagamente el concepto de Modelo Vista Controlador.
-Ideado inicialmente como un adminsitrador de contenido para varios sitios de
-noticias, los desarrolladores encontraron que su CMS era lo sufcientemente
-genérico como para curbir un ámbito más aplio de aplicaciones.
-
-En honor al músico Django Reinhart, fue liberado el código base bajo la licencia 
-:term:`BSD` en Julio del 2005 como Django Web Framework. El slogan del framework
-fue "Django, Él framework para perfeccionistas con fechas límites" [*]_.
-
-.. [*] Del ingles "The Web framework for perfectionists with deadlines"
-
-En junio del 2008 fue anuncidada la cereación de la Django Software Fundation,
-la cual se hace cargo hasta la fecha del desarrollo y mantenimiento.
-
-Los orígenes de Django en la administración de páginas de noticias son evidentes
-en su diseño, ya que proporciona una serie de características que facilitan el
-desarrollo rápido de páginas orientadas a contenidos. 
-Por ejemplo, en lugar de requerir que los desarrolladores escriban controladores 
-y vistas para las áreas de administración de la página, Django proporciona una
-aplicación incorporada para administrar los contenidos que puede incluirse como
-parte de cualquier proyecto; la aplicación administrativa permite la creación,
-actualización y eliminación de objetos de contenido, llevando un registro de
-todas las acciones realizadas sobre cada uno (sistema de logging o bitácora), y
-proporciona una interfaz para administrar los usuarios y los grupos de usuarios
-(incluyendo una asignación detallada de permisos).
-
-Con Django también se distribuyen aplicaciones que proporcionan un sistema de 
-comentarios, herramientas para sindicar contenido via RSS y/o Atom, "páginas
-planas" que permiten gestionar páginas de contenido sin necesidad de escribir
-controladores o vistas para esas páginas, y un sistema de redirección de URLs.
-
-Django como framework de desarrollo consiste en un  conjunto de utilidades 
-de consola que permiten crear y manipular proyectos y aplicaciones.
 
 Estructuración de un proyecto en Django
 =======================================
@@ -440,7 +463,7 @@ proyectos y se los administra.
 Un proyecto se crea mediante la siguiente orden:
 
 .. code-block:: bash
-    
+
     $ django-admin.py startproject mi_proyecto # Crea el proyecto mi_proyecto
 
 Un proyecto es un paquete Python que contiene 3 módulos:
