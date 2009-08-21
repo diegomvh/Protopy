@@ -92,6 +92,7 @@ PHP
 
 Ruby
 ====
+
 Python
 ======
 
@@ -121,11 +122,89 @@ contenido se trata de texto plano.
 
 .. code-block:: python
 
-	def app(environ, start_response):
-	    start_response('200 OK', [('Content-Type', 'text/plain')])
-	    return ['Hello World\n']
+    def app(environ, start_response):
+        start_response('200 OK', [('Content-Type', 'text/plain')])
+        return ['Hello World\n']
 
+.. _servidor-orm:
 
+**************************
+Mapeador Objeto-Relacional
+**************************
+
+En las aplicaciones modernas, la lógica arbitraria a menudo implica interactuar
+con una base de datos. Detrás de escena, un *programa impulsado por una base de
+datos* se conecta a un servidor de base de datos, recupera algunos datos de
+esta, y los presenta al usuario con un formato agradable para su interpretacion.
+Una aplicacion web no escapa a esta aseveración, solo que presenta los datos 
+representados en HTML, así mismo un sitio puede proporcionar funcionalidad que
+permita a los visitantes del sitio poblar la base de datos por su propia cuenta.
+
+Amazon.com, por ejemplo, es un buen ejemplo de un sitio que maneja una base de
+datos. Cada página de un producto es esencialmente una consulta a la base de
+datos de productos de Amazon formateada en HTML, y cuando se envian datos al 
+servidor, como opiniónes de cliente, estos son insertadados en la base de datos
+de opiniones.
+
+La forma simple de interactuar con una base de datos, es mediante el uso de
+bibliotecas provistas por los lenguajes para ejecutar consultas SQL y una vez 
+obtenidos los datos, procesarlos.
+
+En este ejemplo se usa la biblioteca ``MySQLdb`` para conectar con una base de
+datos MySQL, recuperar algunos registros::
+
+    import MySQLdb
+
+    db = MySQLdb.connect(user='me', db='mydb', passwd='secret', host='localhost')
+    cursor = db.cursor()
+    cursor.execute('SELECT name FROM books ORDER BY name')
+    names = [row[0] for row in cursor.fetchall()]
+    db.close()
+
+Este enfoque funciona, pero presenta algunos problemas:
+
+    * Los parametros de la conexión a la base de datos estan codificandos 
+        *en duro* (*hard-coding*).
+
+    * Se debe escribir una cantidad de código estereotípico: crear una
+        conexión, un cursor, ejecutar una sentencia, y cerrar la conexión.
+
+    * Ata a las aplicaciones a MySQL. Si, en el camino, se quiere cambiar MySQL
+        por PostgreSQL por ejemplo, se deben alterar todas las lineas que hagan
+        falta para la nueva biblioteca o conector, parámetros de conexión, 
+        posiblemente reescribir el SQL, etc.
+
+Por otro lado y quiza mas importante a la hora de desarrollar un programador que 
+trabajé con programación orientada a objetos y bases de datos relacionales, debe
+realizar un cambio de contexto cada vez que requiera interactuar con la base de
+datos, escribiendo consultas en SQL y luego lidear con los resultados obtenidos
+de las consultas entre los objetos. Este *cambio de contexto* es debido a una
+diferencia que existe entre los dos paradigmas involucrados. Mientras que el
+modelo relacional trata con relaciones, conjuntos y la logica matemática 
+correspondiente, el paradigma orientado a objetos trata con objetos, atributos
+ y asociaciones de unos con otros. Tan pronto como se quieran persistir los
+objetos utilizando una base de datos relacional esta desaveniencia resulta
+evidente. 
+
+Las primeras aproximaciones al mapeo relacional de objetos, surgen de convertir
+los valores de los objetos en grupos de valores simples para almacenarlos en la
+base de datos (y volverlos a convertir luego de recuperarlos de la base de
+datos). Sin embargo, esta traduccion simple dista mucho del concepto de *objetos 
+persistentes*, la idea de estos es la traducción automatica de objetos en formas
+almacenables en la base de datos y su posterior recuperación conservando las
+propiedades y las relaciones ente los mismos.
+
+Con la finalidad de lograr *objetos persistentes* un buen número de sistemas
+de mapeo objeto-relacional se han desarrollado a lo largo de los años y aunque 
+su efectividad es muy discutida la realidad es que estos permiten agilizar el
+proceso de desarrollo, paleando mucho de los problemas presentados con
+anterioridad.
+
+Desde el punto de vista de un programador, un ORM debe lucir como un almacén
+de objetos persistentes. Uno puede crear objetos y trabajar normalmente con
+ellos, los cambios que sufran terminarán siendo reflejados en la base de datos.
+
+.. http://es.wikipedia.org/wiki/Mapeo_objeto-relacional
 
 .. _servidor-frameworks:
 
@@ -135,50 +214,62 @@ Frameworks
 
 .. Usamos la traducción redefinir para override
 
-Según la la wikipedia [WIK001]_ un framework de software es *una abstracción en la cual un código común, que provee una funcionalidad genérica, 
-puede ser personalizado por el programador de manera selectiva para brindar una funcionalidad específica*.
+Según la la wikipedia [WIK001]_ un framework de software es *una abstracción en
+la cual un código común, que provee una funcionalidad genérica, puede ser
+personalizado por el programador de manera selectiva para brindar una
+funcionalidad específica*.
 
 .. [WIK001] *Software Framework*, Wikipedia, 2009, http://en.wikipedia.com/software_framework, última visita Agosto de 2009.
 
-Además agrega  que los frameworks son similares a las bibliotecas de software (a veces llamadas librerías) dado que proveen
-abstracciones reusables de código a las cuales se accede mediante una API bien definida. Sin embargo, existen
-ciertas características que diferencian al framework de una librería o aplicaciones normales de usuario:
+Además agrega que los frameworks son similares a las bibliotecas de software
+(a veces llamadas librerías) dado que proveen abstracciones reusables de código
+a las cuales se accede mediante una API bien definida. Sin embargo, existen
+ciertas características que diferencian al framework de una librería o
+aplicaciones normales de usuario:
 
     * Inversion de control
-        Al contrario que las bibliotecas en las aplicaciones de usuario, en un framework, el flujo de control no es manejado
-        por el llamador, sino por el framework. Es decir, cuando se utilizan bibliotecas o programas de usuario como soporte
-        para brindar funcionalidad, estas son llamados o invocados en el código de aplicación principal que es definido por el usuario. 
-        En un framework, el flujo de control principal está definido por el framework.
+        Al contrario que las bibliotecas en las aplicaciones de usuario, en un
+        framework, el flujo de control no es manejado por el llamador,
+        sino por el framework. Es decir, cuando se utilizan bibliotecas o
+        programas de usuario como soporte para brindar funcionalidad, estas son
+        llamados o invocados en el código de aplicación principal que es
+        definido por el usuario. En un framework, el flujo de control principal
+        está definido por el framework.
 
     * Comportamiento por defecto definido
-        Un framework tiene un comportamiento por defecto definido. En cada componete del framework, existe un comportamineto
-        genérico con alguna utilidad, que puede ser redefinido con funcionalidad del usuario.
+        Un framework tiene un comportamiento por defecto definido. En cada
+        componete del framework, existe un comportamineto genérico con alguna
+        utilidad, que puede ser redefinido con funcionalidad del usuario.
 
     * Extensibiliad
-        Un framework suele ser extendido por el usuario mediante redefinición o especialización para proveer una funcionalidad específica. 
+        Un framework suele ser extendido por el usuario mediante redefinición o
+        especialización para proveer una funcionalidad específica. 
 
     * No modificabilidad del código del framework
-        En general no se permite la modificación del código del framework. Los programadores pueden extender el framework, pero no modificar
-        su código. 
+        En general no se permite la modificación del código del framework. Los
+        programadores pueden extender el framework, pero no modificar su código. 
 
-Los diseñadores de frameworks tienen como objetivo facilitar el desarrollo de software, permitiendo
-a los programadores enfocarse en cumplimentar los requermientos del análisis y diseño, en vez de 
-dedicar tiempo a resolver los detalles comunes de bajo nivel. En general la utilización de un 
-framework reduce el tiempo de desarrollo.
+Los diseñadores de frameworks tienen como objetivo facilitar el desarrollo de
+software, permitiendo a los programadores enfocarse en cumplimentar los
+requermientos del análisis y diseño, en vez de dedicar tiempo a resolver los
+detalles comunes de bajo nivel. En general la utilización de un framework reduce
+el tiempo de desarrollo.
 
-Por ejemplo, en un equipo donde se utiliza un framework web para desarrollar un sitio de banca 
-electrónica, los desarrolladores pueden enfocarse en la lógica necesaria para realizar las extraciones
-de dinero, en vez de la mecánica para preserver el estado entre las peticiones del navegador.
+Por ejemplo, en un equipo donde se utiliza un framework web para desarrollar un
+sitio de banca electrónica, los desarrolladores pueden enfocarse en la lógica
+necesaria para realizar las extraciones de dinero, en vez de la mecánica para
+preserver el estado entre las peticiones del navegador.
 
 .. Carga != Incertidumbre
 
-Sin embargo, se suele argumentar que los frameworks pueden ser una carga, debido a la complejidad
-de sus APIs o la incertidumbre que generar la existencia de varios frameworks para un mismo tipo
-de aplicación. A pesar de tener como objetivo estandarizar y reducir el tiempo de desarrollo, el
-aprendizaje de un framework suele requerir tiempo extra en el desarrollo, que debe ser 
-tenido en cuenta por el quipo de desarrollo.
-Trás completar el desarrollo en un framework, el equipo de desarrllo no debe volver a invertir 
-tiempo en aprendizaje en sucesivos desarrollos.
+Sin embargo, se suele argumentar que los frameworks pueden ser una carga,
+debido a la complejidad de sus APIs o la incertidumbre que generar la existencia
+de varios frameworks para un mismo tipo de aplicación. A pesar de tener como
+objetivo estandarizar y reducir el tiempo de desarrollo, el aprendizaje de un
+framework suele requerir tiempo extra en el desarrollo, que debe ser tenido en
+cuenta por el quipo de desarrollo. Trás completar el desarrollo en un framework,
+el equipo de desarrllo no debe volver a invertir tiempo en aprendizaje en
+sucesivos desarrollos.
 
 .. image:: ../_static/framework_esquema_flujo_control.png
     :width: 719px
@@ -187,26 +278,26 @@ Framework Web
 =============
 
 .. note::
-    
+
     Ver diferencia entre sitio y aplicación
-    
+
 Un framework web, es un framework de software que permite implementar aplicaciones web brindando
 soporte para tareas comunes como.
 
 En Wikipeida [WIKI002]_
 
     * Seguridad
-    
+
     * Mapeo de URLs
-    
+
     * Sistema de plantillas
-    
+
     * Caché
-    
+
     * AJAX
-    
+
     * Configuración mínima y simplificada
-    
+
 .. [WIKI002] *Web Framework*, Wikipedia, 2009, http://en.wikipedia.org/wiki/Web_application_framework, última visita Agosto de 2009.
 
 .. _servidor-mvc:
@@ -291,77 +382,10 @@ datos son presentados al usuario, mientras que la vista sea estrictamente el
 Ninguna de las interpretaciones es más "correcta" que otras. Lo importante es
 entender los conceptos subyacentes.
 
-
-.. _servidor-orm:
-
-**************************
-Mapeador Objeto-Relacional
-**************************
-
-En las aplicaciones web modernas, la lógica arbitraria a menudo implica
-interactuar con una base de datos. Detrás de escena, un *sitio web impulsado por
-una base de datos* se conecta a un servidor de base de datos, recupera algunos
-datos de esta, y los muestra con un formato agradable en una página web. O,
-del mismo modo, el sitio puede proporcionar funcionalidad que permita a los
-visitantes del sitio poblar la base de datos por su propia cuenta.
-
-Muchos sitios web más complejos proporcionan alguna combinación de las dos.
-Amazon.com, por ejemplo, es un gran ejemplo de un sitio que maneja una base de
-datos. Cada página de un producto es esencialmente una consulta a la base de
-datos de productos de Amazon formateada en HTML, y cuando envías una opinión
-de cliente (*customer review*), esta es insertada en la base de datos de
-opiniones.
-
-Así como en el `Capítulo 3`_ detallamos la manera "tonta" de producir una salida
-con la vista (codificando *en duro*) el texto directamente dentro de la vista),
-hay una manera "tonta" de recuperar datos desde la base de datos en una vista.
-Esto es simple: sólo usa una biblioteca de Python existente para ejecutar una
-consulta SQL y haz algo con los resultados.
-
-En este ejemplo de vista, usamos la biblioteca ``MySQLdb`` (disponible en
-http://www.djangoproject.com/r/python-mysql/)  para conectarnos a una base de
-datos de MySQL, recuperar algunos registros, y alimentar con ellos una plantilla
-para mostrar una página web::
-
-    from django.shortcuts import render_to_response
-    import MySQLdb
-
-    def book_list(request):
-        db = MySQLdb.connect(user='me', db='mydb', passwd='secret', host='localhost')
-        cursor = db.cursor()
-        cursor.execute('SELECT name FROM books ORDER BY name')
-        names = [row[0] for row in cursor.fetchall()]
-        db.close()
-        return render_to_response('book_list.html', {'names': names})
-
-Este enfoque funciona, pero deberían hacerse evidentes inmediatamente algunos
-problemas:
-
-    * Estamos codificando *en duro* (*hard-coding*) los parámetros de la
-      conexión a la base de datos. Lo ideal sería que esos parámetros se
-      guardarsen en la configuración de Django.
-
-    * Tenemos que escribir una cantidad de código estereotípico: crear una
-      conexión, un cursor, ejecutar una sentencia, y cerrar la conexión. Lo
-      ideal sería que todo lo que tuviéramos que hacer fuera especificar los
-      resultados que queremos.
-
-    * Nos ata a MySQL. Si, en el camino, cambiamos de MySQL a PostgreSQL,
-      tenemos que usar un adaptador de base de datos diferente (por ej.
-      ``psycopg`` en vez de ``MySQLdb``), alterar los parámetros de conexión
-      y -- dependiendo de la naturaleza de las sentencia de SQL -- posiblemente
-      reescribir el SQL. La idea es que el servidor de base de datos que usemos
-      esté abstraído, entonces el pasarnos a otro servidor podría significar
-      realizar un cambio en un único lugar.
-
-
-
 .. por poner algo, pueden ser otros
 Rails
 
 Symfony
-
-.. Django CLI
 
 .. _servidor-django:
 
@@ -369,7 +393,7 @@ Symfony
 Django
 ******
 
-Acá tenemos que justificar por que django
+.. Acá tenemos que justificar por que django
 
 `Django <http://www.djangoproject.com>`_ es un framework web escrito en Python
 el cual sigue vagamente el concepto de Modelo Vista Controlador.
@@ -723,7 +747,7 @@ la API de alto nivel en Python que Django provee para accesar los datos::
     >>> p1 = Persona(nombre='Pablo', apellido='Perez')
     >>> p1.save()
     >>> personas = Persona.objects.all()
-    
+
 En estas lineas se ven algunos detalles de la interaccion con los modelos:
 
     * Para crear un objeto, se importa la clase del modelo apropiada y se crea
