@@ -1,0 +1,10 @@
+#######################
+Desarrollo 
+#######################
+
+El desarrollo consistió en el siguiente diagrama:
+
+
+
+.. image:: ../_svg/esquema_general.png
+
