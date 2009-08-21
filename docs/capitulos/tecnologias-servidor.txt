@@ -1,9 +1,11 @@
 .. _servidor:
+
 ########################
 Tecnologías del servidor
 ########################
 
 .. _servidor-cgi:
+
 ***
 CGI
 ***
@@ -34,31 +36,31 @@ javascript, contenido multimedia, etc.)
 
 Dentor de las varaibles de entorno, la Wikipedia [WikiCGI2009]_ menciona:
 
-   * QUERY_STRING
-   		Es la cadena de entrada del CGI cuando se utiliza el método GET sustituyendo algunos símbolos especiales por otros. Cada elemento se envía como una pareja Variable=Valor. Si se utiliza el método POST esta variable de entorno está vacía.
-   * CONTENT_TYPE
-		Tipo MIME de los datos enviados al CGI mediante POST. Con GET está vacía. Un valor típico para esta variable es: Application/X-www-form-urlencoded.
-   * CONTENT_LENGTH
-		Longitud en bytes de los datos enviados al CGI utilizando el método POST. Con GET está vacía.
-   * PATH_INFO
-		Información adicional de la ruta (el "path") tal y como llega al servidor en el URL.
-   * REQUEST_METHOD
-		Nombre del método (GET o POST) utilizado para invocar al CGI.
-   * SCRIPT_NAME
-		Nombre del CGI invocado.
-   * SERVER_PORT
-		Puerto por el que el servidor recibe la conexión.
-   * SERVER_PROTOCOL
-		Nombre y versión del protocolo en uso. (Ej.: HTTP/1.0 o 1.1)
+    * QUERY_STRING
+        Es la cadena de entrada del CGI cuando se utiliza el método GET sustituyendo algunos símbolos especiales por otros. Cada elemento se envía como una pareja Variable=Valor. Si se utiliza el método POST esta variable de entorno está vacía.
+    * CONTENT_TYPE
+        Tipo MIME de los datos enviados al CGI mediante POST. Con GET está vacía. Un valor típico para esta variable es: Application/X-www-form-urlencoded.
+    * CONTENT_LENGTH
+        Longitud en bytes de los datos enviados al CGI utilizando el método POST. Con GET está vacía.
+    * PATH_INFO
+        Información adicional de la ruta (el "path") tal y como llega al servidor en el URL.
+    * REQUEST_METHOD
+        Nombre del método (GET o POST) utilizado para invocar al CGI.
+    * SCRIPT_NAME
+        Nombre del CGI invocado.
+    * SERVER_PORT
+        Puerto por el que el servidor recibe la conexión.
+    * SERVER_PROTOCOL
+        Nombre y versión del protocolo en uso. (Ej.: HTTP/1.0 o 1.1)
 
 Variables de entorno que se intercambian de servidor a CGI:
 
-   * SERVER_SOFTWARE
-		Nombre y versión del software servidor de www.
-   * SERVER_NAME
-		Nombre del servidor.
-   * GATEWAY_INTERFACE
-		Nombre y versión de la interfaz de comunicación entre servidor y aplicaciones CGI/1.12
+    * SERVER_SOFTWARE
+        Nombre y versión del software servidor de www.
+    * SERVER_NAME
+        Nombre del servidor.
+    * GATEWAY_INTERFACE
+        Nombre y versión de la interfaz de comunicación entre servidor y aplicaciones CGI/1.12
 
 Debido a la popularidad de las aplicaciones CGI, los servidores web incluyen generalmente
 un directorio llamado **cgi-bin** donde se albergan estas aplicaciones.
@@ -68,8 +70,8 @@ un directorio llamado **cgi-bin** donde se albergan estas aplicaciones.
 Históricamente las aplicaciones CGI han sido escritas en lenguajes interpretados, sinedo muy popular Perl y más recientemente el lenguaje PHP.
 
 
-..	http://www.mi_dominio.com/cgi-bin/mi_programa.cgi?nombre=matias
-	
+..  http://www.mi_dominio.com/cgi-bin/mi_programa.cgi?nombre=matias
+    
 .. Invocará a la aplicación del archivo mi_programa.cgi
 
 
@@ -79,12 +81,12 @@ Históricamente las aplicaciones CGI han sido escritas en lenguajes interpretado
 
 .. [*] A veces traducido como pasarela común de acceso.
 
-
-
 .. _servidor-lenguajes:
+
 ************************
 Lenguajes interpreteados
 ************************
+
 PHP
 ===
 
@@ -97,9 +99,9 @@ Python es un lengauje interpretado.
 .. Escribir sobre el concepto de modulos y algo de programacion modular, ya que da soporte a protopy http://es.wikipedia.org/wiki/Programaci%C3%B3n_modular
 
 .. _servidor-wsgi:
-====
+
 WSGI
-====
+----
 
 WSGI o Web Server Gateway Interfase es una especidicación para que un web server y una aplicación
 se comuniquen. Es un estándar del lenguaje Python, descrito en el PEP [*]_ 333. Si bien WSGI es
@@ -117,6 +119,7 @@ WSGI propone que una aplicación es una función que recibe 2 argumentos. Como p
 
 
 .. _servidor-frameworks:
+
 **********
 Frameworks
 **********
@@ -132,22 +135,22 @@ Además agrega  que los frameworks son similares a las bibliotecas de software (
 abstracciones reusables de código a las cuales se accede mediante una API bien definida. Sin embargo, existen
 ciertas características que diferencian al framework de una librería o aplicaciones normales de usuario:
 
-	* Inversion de control
-		Al contrario que las bibliotecas en las aplicaciones de usuario, en un framework, el flujo de control no es manejado
-		por el llamador, sino por el framework. Es decir, cuando se utilizan bibliotecas o programas de usuario como soporte
-		para brindar funcionalidad, estas son llamados o invocados en el código de aplicación principal que es definido por el usuario. 
-		En un framework, el flujo de control principal está definido por el framework.
-	
-	* Comportamiento por defecto definido
-		Un framework tiene un comportamiento por defecto definido. En cada componete del framework, existe un comportamineto
-		genérico con alguna utilidad, que puede ser redefinido con funcionalidad del usuario.
+    * Inversion de control
+        Al contrario que las bibliotecas en las aplicaciones de usuario, en un framework, el flujo de control no es manejado
+        por el llamador, sino por el framework. Es decir, cuando se utilizan bibliotecas o programas de usuario como soporte
+        para brindar funcionalidad, estas son llamados o invocados en el código de aplicación principal que es definido por el usuario. 
+        En un framework, el flujo de control principal está definido por el framework.
 
-	* Extensibiliad
-		Un framework suele ser extendido por el usuario mediante redefinición o especialización para proveer una funcionalidad específica. 
+    * Comportamiento por defecto definido
+        Un framework tiene un comportamiento por defecto definido. En cada componete del framework, existe un comportamineto
+        genérico con alguna utilidad, que puede ser redefinido con funcionalidad del usuario.
 
-	* No modificabilidad del código del framework
-		En general no se permite la modificación del código del framework. Los programadores pueden extender el framework, pero no modificar
-		su código. 
+    * Extensibiliad
+        Un framework suele ser extendido por el usuario mediante redefinición o especialización para proveer una funcionalidad específica. 
+
+    * No modificabilidad del código del framework
+        En general no se permite la modificación del código del framework. Los programadores pueden extender el framework, pero no modificar
+        su código. 
 
 Los diseñadores de frameworks tienen como objetivo facilitar el desarrollo de software, permitiendo
 a los programadores enfocarse en cumplimentar los requermientos del análisis y diseño, en vez de 
@@ -169,37 +172,36 @@ Trás completar el desarrollo en un framework, el equipo de desarrllo no debe vo
 tiempo en aprendizaje en sucesivos desarrollos.
 
 .. image:: ../_static/framework_esquema_flujo_control.png
-	:width: 719px
-	
-	
+    :width: 719px
 
 Framework Web
 =============
 
 .. note::
-	
-	Ver diferencia entre sitio y aplicación
-	
+    
+    Ver diferencia entre sitio y aplicación
+    
 Un framework web, es un framework de software que permite implementar aplicaciones web brindando
 soporte para tareas comunes como.
 
 En Wikipeida [WIKI002]_
 
-	* Seguridad
-	
-	* Mapeo de URLs
-	
-	* Sistema de plantillas
-	
-	* Caché
-	
-	* AJAX
-	
-	* Configuración mínima y simplificada
-	
+    * Seguridad
+    
+    * Mapeo de URLs
+    
+    * Sistema de plantillas
+    
+    * Caché
+    
+    * AJAX
+    
+    * Configuración mínima y simplificada
+    
 .. [WIKI002] *Web Framework*, Wikipedia, 2009, http://en.wikipedia.org/wiki/Web_application_framework, última visita Agosto de 2009.
 
 .. _servidor-mvc:
+
 ********************
 Model View Controler
 ********************
@@ -280,7 +282,9 @@ datos son presentados al usuario, mientras que la vista sea estrictamente el
 Ninguna de las interpretaciones es más "correcta" que otras. Lo importante es
 entender los conceptos subyacentes.
 
+
 .. _servidor-orm:
+
 **************************
 Mapeador Objeto-Relacional
 **************************
@@ -351,17 +355,18 @@ Symfony
 .. Django CLI
 
 .. _servidor-django:
+
 ******
 Django
 ******
 
 Acá tenemos que justificar por que django
 
-`Django <http://www.djangoproject.com>`_ es un framework web escrito en
-Python el cual sigue vagamente el concepto de Modelo Vista Controlador.
-Ideado inicialmente como un adminsitrador de contenido para varios
-sitios de noticias, los desarrolladores encontraron que su CMS era lo 
-sufcientemente genérico como para curbir un ámbito más aplio de aplicaciones.
+`Django <http://www.djangoproject.com>`_ es un framework web escrito en Python
+el cual sigue vagamente el concepto de Modelo Vista Controlador.
+Ideado inicialmente como un adminsitrador de contenido para varios sitios de
+noticias, los desarrolladores encontraron que su CMS era lo sufcientemente
+genérico como para curbir un ámbito más aplio de aplicaciones.
 
 En honor al músico Django Reinhart, fue liberado el código base bajo la licencia 
 :term:`BSD` en Julio del 2005 como Django Web Framework. El slogan del framework
@@ -376,74 +381,73 @@ Los orígenes de Django en la administración de páginas de noticias son eviden
 en su diseño, ya que proporciona una serie de características que facilitan el
 desarrollo rápido de páginas orientadas a contenidos. 
 Por ejemplo, en lugar de requerir que los desarrolladores escriban controladores 
-y vistas para las áreas de administración de la página, Django proporciona una aplicación incorporada
-para administrar los contenidos que puede incluirse como parte de cualquier
-proyecto; la aplicación administrativa permite la creación, actualización y 
-eliminación de objetos de contenido, llevando un registro de todas las acciones 
-realizadas sobre cada uno (sistema de logging o bitácora), y proporciona una
-interfaz para administrar los usuarios y los grupos de usuarios (incluyendo una
-asignación detallada de permisos).
+y vistas para las áreas de administración de la página, Django proporciona una
+aplicación incorporada para administrar los contenidos que puede incluirse como
+parte de cualquier proyecto; la aplicación administrativa permite la creación,
+actualización y eliminación de objetos de contenido, llevando un registro de
+todas las acciones realizadas sobre cada uno (sistema de logging o bitácora), y
+proporciona una interfaz para administrar los usuarios y los grupos de usuarios
+(incluyendo una asignación detallada de permisos).
 
 Con Django también se distribuyen aplicaciones que proporcionan un sistema de 
-comentarios, herramientas para sindicar contenido via RSS y/o Atom, 
-"páginas planas" que permiten gestionar páginas de contenido sin
-necesidad de escribir controladores o vistas para esas páginas, y un sistema de
-redirección de URLs.
+comentarios, herramientas para sindicar contenido via RSS y/o Atom, "páginas
+planas" que permiten gestionar páginas de contenido sin necesidad de escribir
+controladores o vistas para esas páginas, y un sistema de redirección de URLs.
 
 Django como framework de desarrollo consiste en un  conjunto de utilidades 
 de consola que permiten crear y manipular proyectos y aplicaciones.
 
-****************************************
 Estructuración de un proyecto en Django
-****************************************
+=======================================
 
-Durante la instalación del framework en el sistema del desarrollador, se añade al
-PATH un comando con el nombre django-admin.py. Mediante este comando se crean proyectos
-y se los administra.
-
+Durante la instalación del framework en el sistema del desarrollador, se añade
+al PATH un comando con el nombre django-admin.py. Mediante este comando se crean
+proyectos y se los administra.
 
 Un proyecto se crea mediante la siguiente orden:
-
 
 .. code-block:: bash
     
     $ django-admin.py startproject mi_proyecto # Crea el proyecto mi_proyecto
 
-
 **Un proyecto es un paquete Python que contiene 3 módulos**:
 
- * manage.py
- 	Interfase de consola para la ejecución de comandos
- * urls.py
- 	Mapeo de URLs en vistas (funciones)
- * settings.py
- 	Configuración de la base de datos, directorios de plantillas, etc.
+    * manage.py
+        Interfase de consola para la ejecución de comandos
+    * urls.py
+        Mapeo de URLs en vistas (funciones)
+    * settings.py
+        Configuración de la base de datos, directorios de plantillas, etc.
  
 En el ejemplo anterior, un listado gerárquico del sistema de archivos 
 mostraría la siguiente estructura::
 
-    mi_proyecto
-    |-- __init__.py
-    |-- manage.py
-    |-- settings.py
-    `-- urls.py
+    mi_proyecto/
+        __init__.py
+        manage.py
+        settings.py
+        urls.py
 
 El proyecto funciona como un contenedor de aplicaciones que ser rigen bajo
 la misma base de datos, los mismos templates, las mismas clases de middleware entre 
 otros parámetros.
 
 Analicemos a continuación la función de cada uno de estos 3 módulos.
-	
+
+.. _django-proyecto-settings:
 
 Módulo settings
-===============
-Este módulo define la configuración del proyecto, siendo sus atributos principales
-la configuración de la base de datos a utilizar, la ruta en la cual se encuentran
-los médios estáticos, cuál es el nombre del archivo raíz de urls (generalmente urls.py).
-Otros atributos son las clases middleware, las rutas de los templates, el idioma para
-las aplicaciones que soportan :ref:`i18n`, etc.
+---------------
+
+Este módulo define la configuración del proyecto, siendo sus atributos
+principales la configuración de la base de datos a utilizar, la ruta en la cual
+se encuentran los médios estáticos, cuál es el nombre del archivo raíz de urls
+(generalmente urls.py).
+Otros atributos son las clases middleware, las rutas de los templates, el idioma
+para las aplicaciones que soportan :ref:`i18n`, etc.
 
 .. Subir como ventaja
+.. Poner algo mas sobre la base de datos
 
 Al ser un módulo del lengauje python, la confguración se puede editar muy facilmente
 a diferencia de configuraciones realizadas en XML, además de contar con la ventaja de 
@@ -451,40 +455,41 @@ poder configurar en caliente algunos parametros que así lo requieran.
 
 Un parametro fundamental es la lista denominada INSTALLED_APPS que contiene los nombres
 de las aplicaciones instaladas en le proyecto.
- 
+
+.. _django-proyecto-manage:
+
 Módulo manage
-=============
+-------------
 
 Esta es la interfase con el framework. Éste módulo es un script ejecutable, que
 recibe como primer argumento un nombre de comando de django.
 
 Los comandos de django pemiten, permiten entre otras cosas:
 
-	* startapp <nombre de aplicación>
-		Crear una aplicación
-	
-	* runserver
-		Correr el proyecto en un servidor de desarrollo.
-	
-	* syncdb
-		Generar las tablas en la base de datos de las aplicaciones instaladas
-		 
+    * startapp <nombre de aplicación>
+        Crear una aplicación
+
+    * runserver
+        Correr el proyecto en un servidor de desarrollo.
+
+    * syncdb
+        Generar las tablas en la base de datos de las aplicaciones instaladas
+        
 El resultado de el comando **startapp** en el ejemplo anterior genera el siguiente
 resultado::
 
-    mi_proyecto
-    |-- mi_aplicacion
-    |   |-- __init__.py
-    |   |-- models.py
-    |   |-- tests.py
-    |   `-- views.py
-    |-- __init__.py
-    |-- manage.py
-    |-- settings.py
-    `-- urls.py
+    mi_proyecto/
+        mi_aplicacion/
+            __init__.py
+            models.py
+            views.py
+        __init__.py
+        manage.py
+        settings.py
+        urls.py
 
 Módulo urls
-===========
+-----------
 
 Este nombre de módulo aparece a nivel proyecto, pero también puede aparecer a nivel
 aplicación. Su misión es definir las asociaciones entre URLs y vistas, de manera de 
@@ -512,16 +517,22 @@ Estructura de una aplicación Django
 
 Una aplicación es un paquete python que consta de un módulo models y un módulo views.
 
+    mi_proyecto/
+        mi_aplicacion/
+            __init__.py
+            models.py
+            views.py
+        ...
  
 Módulo models
-=============
+-------------
 
 Cada vez que se crea una aplicación, se genera un módulo models.py, en el cual
 se le permite al programador definir modelos de objetos, que luego son
 transformados en tablas relacionales [*]_.
 
 Módulo views
-============
+------------
 
 Cada aplicacion posee un módulo views, donde se definen las funcinoes que atienden
 al cliente y son activadas gracias a el mapeo definido en el módulo urls del proyecto
@@ -541,8 +552,6 @@ Dentro del módulo de urls
         persona = Personas.objects.get(id = id_persona)
         datos = {'persona':persona, }
         return render_to_response('plantilla.html', datos)
-
-
 
 .. [*] Mediante el comando syncdb del módulo manage del proyecto
 
@@ -577,141 +586,71 @@ una instancia de esta clase.
     :width: 200
 
 .. _django-orm:
+
 Interactuar con una base de datos
 =================================
-.. decir ORM
-Primero, necesitamos tener en cuenta algunas configuraciones
-iniciales: necesitamos indicarle a Django qué servidor de base de datos usar y
-cómo conectarse con el mismo.
 
-Asumimos que haz configurado un servidor de base de datos, lo has activado, y
-has creado una base de datos en este (por ej. usando la sentencia
-``CREATE DATABASE``). SQLite es un caso especial; es este caso, no hay que
-crear una base de datos, porque SQLite usa un archivo autónomo sobre el
-sistema de archivos para guardar los datos.
+Django incluye una manera fácil pero poderosa de realizar consultas a bases de
+datos utilizando Python.
 
-Como con ``TEMPLATE_DIRS`` en los capítulos anteriores, la configuración de la
-base de datos se encuentra en el archivo de configuración de Django, llamado,
-por omisión, ``settings.py``. Edita este archivo y busca las opciones de la
-base de datos::
+Una ves configurada la conexión a la base de datos en el módulo de configuración
+:ref:`Módulo settings <django-proyecto-settings>` se esta condiciones de comenzar a
+usar la capa del sistema de Mapeo Objeto-Relacional del framework.
 
-Hay pocas reglas estrictas sobre cómo encajar el código Django en este esquema;
-es flexible. Si estás construyendo un sitio web simple, quizás uses una sola
-aplicación. Si estás construyendo un sitio web complejo con varias piezas que
-no se relacionan entre sí, tales como un sistema de comercio electrónico o un
-foro, probablemente quieras dividir esto en aplicaciones para que te sea
-posible reusar estas individualmente en un futuro.
+Si bien existen pocas reglas estrictas sobre cómo desarrollar dentro de Django, 
+existe un requisito respecto a la convención de la aplicación: "si se va a usar 
+la capa de base de datos de Django (modelos), se debe crear una aplicación de 
+Django. Los modelos deben vivir dentro de una aplicaciones". Para crear una
+aplicación se debe proceder con el procedimiento ya mencionado en :ref:`Módulo
+manage <django-proyecto-manage>`.
 
-Es más, no necesariamente debes crear aplicaciones en absoluto, como lo hace
-evidente la función de la vista del ejemplo que creamos antes en este libro.  En
-estos casos, simplemente creamos un archivo llamado ``views.py``, llenamos este
-con una función de vista, y apuntamos nuestra URLconf a esa función. No se
-necesitan "aplicaciones".
+.. _django-orm-modelos:
 
-No obstante, existe un requisito respecto a la convención de la aplicación: si
-estás usando la capa de base de datos de Django (modelos), debes crear una
-aplicación de Django. Los modelos deben vivir dentro de aplicaciones.
-
-Dentro del directorio del proyecto ``mysite`` que creaste en el `Capítulo 2`_,
-escribe este comando para crear una nueva aplicación llamada books::
-
-    python manage.py startapp books
-
-Este comando no produce ninguna salida, pero crea un directorio ``books``
-dentro del directorio ``mysite``. Echemos un vistazo al contenido::
-
-    books/
-        __init__.py
-        models.py
-        views.py
-
-Esos archivos contendrán los modelos y las vistas para esta aplicación.
-
-Echa un vistazo a ``models.py`` y ``views.py`` en tu editor de texto favorito.
-Ambos archivos están vacíos, excepto por la importación en ``models.py``. Este
-es el espacio disponible para ser creativo con tu aplicación de Django.
-
-.. _django-modelos:
 Modelos
 =======
 
-Un modelo de Django es una descripción de los datos en la base de datos, representada como código de Python.
-Esta es tu capa de datos -- lo
-equivalente de tu sentencia SQL ``CREATE TABLE`` -- excepto que están en Python
-en vez de SQL, e incluye más que sólo definición de columnas de la base de
-datos. Django usa un modelo para ejecutar código SQL detrás de las escenas y
-retornar estructuras de datos convenientes en Python representando las filas de
-tus tablas de la base de datos. Django también usa modelos para representar
+Un modelo de Django es una descripción de los datos en la base de datos,
+representada como código de Python.
+
+Esta es la capa de datos -- lo equivalente a sentencias SQL -- excepto que están
+en Python en vez de SQL, e incluye más que sólo definición de columnas de la
+base de datos. Django usa un modelo para ejecutar código SQL detrás de las
+escenas y retornar estructuras de datos convenientes en Python representando las
+filas de las tablas base de datos. Django también usa modelos para representar
 conceptos de alto nivel que no necesariamente pueden ser manejados por SQL.
 
-Si estás familiarizado con base de datos, inmediatamente podría pensar, "¿No es
-redundante definir modelos de datos en Python *y* en SQL?" Django trabaja de
-este modo por varias razones:
-
-    * La introspección requiere ***overhead*** y es imperfecta. Con el objetivo
-      de proveer una API conveniente de acceso a los datos, Django necesita
-      conocer *de alguna forma* la capa de la base de datos, y hay dos formas de
-      lograr esto. La primera sería describir explícitamente los datos en
-      Python, y la segunda sería la introspección de la base de datos en tiempo
-      de ejecución para determinar el modelo de la base de datos.
-
-      La segunda forma parece clara, porque los metadatos sobre tus tablas vive en
-      un único lugar, pero introduce algunos problemas. Primero,
-      introspeccionar una base de datos en tiempo de ejecución obviamente
-      requiere overhead. Si el framework tuviera que introspeccionar la base
-      de datos cada vez que se procese una petición, o incluso cuando el
-      servidor web sea inicializado, esto podría provocar un nivel de overhead
-      inaceptable. (Mientras algunos creen que el nivel de overhead es
-      aceptable, los desarrolladores de Django apuntan a quitar del framework
-      tanto overhead como sea posible, y esta aproximación hace que Django sea
-      más rápido que los frameworks competidores de alto nivel en mediciones de
-      desempeño). Segundo, algunas bases de datos, notablemente viejas
-      versiones de MySQL, no guardan suficiente metadatos para asegurarse una
-      completa introspección.
-
+Django define los modelos en Python por varias razones: 
+    
+    * La introspección requiere ***overhead*** y es imperfecta. Django necesita
+        conocer la capa de la base de datos para porveer una buena API de
+        consultas y hay dos formas de lograr esto. Una opción sería la 
+        introspección de la base de datos en tiempo de ejecución, la segunda y
+        adoptada por Django es describir explícitamente los datos en Python.
+    
     * Escribir Python es divertido, y dejar todo en Python limita el número de
-      veces que tu cerebro tiene que realizar un "cambio de contexto". Si te
-      mantienes en un solo entorno/mentalidad de programación tanto tiempo
-      como sea posible, ayuda para la productividad. Teniendo que escribir SQL,
-      luego Python, y luego SQL otra vez es perjudicial.
-
-    * Tener modelos de datos guardados como código en vez de en tu base de datos
-      hace fácil dejar tus modelos bajo un control de versiones. De esta forma,
-      puedes fácilmente dejar rastro de los cambios a tu capa de modelos.
-
-    * SQL permite sólo un cierto nivel de metadatos acerca de un ***layout*** de
-      datos.  La mayoría de sistemas de base de datos, por ejemplo, no provee un
-      tipo de datos especializado para representar una dirección web o de email.
-      Los modelos de Django sí. La ventaja de un tipo de datos de alto nivel es
-      la alta productividad y la reusabilidad de código.
-
-    * SQL es inconsistente a través de distintas plataformas. Si estás
-      redistribuyendo una aplicación web, por ejemplo, es mucho más pragmático
-      distribuir un módulo de Python que describa tu capa de datos que separar
-      conjuntos de sentencias ``CREATE TABLE``  para MySQL, PostgreSQL y SQLite.
+        veces que el cerebro tiene que realizar un "cambio de contexto".
+    
+    * El codigo que describe a los modelos se puede dejar fácilmente bajo un
+        control de versiones.
+    
+    * SQL permite sólo un cierto nivel de metadatos y tipos de datos basicos, 
+        mientras que un modelo puede contener tipos de datos especializado. La
+        ventaja de un tipo de datos de alto nivel es la alta productividad 
+        y la reusabilidad de código.
+    
+    * SQL es inconsistente a través de distintas plataformas.
 
 Una contra de esta aproximación, sin embargo, es que es posible que el código
 Python quede fuera de sincronía respecto a lo que hay actualmente en la base. Si
-haces cambios en un modelo Django, necesitarás hacer los mismos cambios dentro
-de tu base de datos para mantenerla consistente con el modelo. Detallaremos
-algunas estrategias para manejar este problema más adelante en este capítulo.
+se hacen cambios en un modelo Django, se necesitara hacer los mismos cambios dentro
+de la base de datos para mantenerla consistente con el modelo.
 
 Finalmente, Django incluye una utilidad que puede generar modelos haciendo
 introspección sobre una base de datos existente. Esto es útil para comenzar
 a trabajar rápidamente sobre datos heredados.
 
-
-Los modelos son la fuente de información sobre los datos de la aplicacion. Esencialmente
-estan compuestos de campos y comportamiento propio de los datos almacenados. Generalmente,
-un modelo se corresponde con una tabla en la base de datos.
-
-Dentro de un proyecto los modelos se definen por aplicacion en el modulo models.py.
-
-Un modelo es una clase Python que hereda de ``django.db.models.Model`` y cada atributo representa
-un campo requerido por el modelo de datos de la aplicación.
-Con esta informacion Django genera automaticamente una :term:`API` de acceso a los datos en la base. 
-
-Este modelo de ejemplo define una ``Persona`` que encapsula los datos correspondientes al ``nombre`` y el ``apellido``.
+Este modelo de ejemplo define una ``Persona`` que encapsula los datos
+correspondientes al ``nombre`` y el ``apellido``.
 
 .. code-block:: python
 
@@ -731,13 +670,40 @@ Este modelo de ejemplo define una ``Persona`` que encapsula los datos correspond
         "apellido" varchar(30) NOT NULL
     );
 
-Consultas
-=========
-bala
+En el ejemplo presentado se observa que un modelo es una clase Python que hereda
+de ``django.db.models.Model`` y cada atributo representa un campo requerido por
+el módelo de datos de la aplicación.
+Con esta informacion Django genera automaticamente la :term:`API` de acceso a
+los datos en la base. 
+
+Usando la API - Consultas
+-------------------------
+
+Luego de crear los modelos y sincronizar la base de datos :ref:`<django-comandos-syncdb>` 
+generando de esta manera el SQL correspondiente se esta en condiciones de usar 
+la API de alto nivel en Python que Django provee para accesar los datos::
+
+    >>> from models import Persona
+    >>> p1 = Persona(nombre='Pablo', apellido='Perez')
+    >>> p1.save()
+    >>> personas = Persona.objects.all()
+    
+En estas lineas se ven algunos detalles de la interaccion con los modelos:
+
+    * Para crear un objeto, se importa la clase del modelo apropiada y se crea
+        una instancia pasándole valores para cada campo.
+
+    * Para guardar el objeto en la base de datos, se usa el método ``save()``.
+
+    * Para recuperar objetos de la base de datos, se usa ``Persona.objects``.
+
+Internamente Django traduce todas las invocaciones que afecten a los datos en
+secuencias ``INSERT``, ``UPDATE``, ``DELETE`` de SQL
 
 .. _django_managers:
+
 Administradores de consultas
-============================
+----------------------------
 
 Estos objetos representan la interfase de comunicacion con la base de datos. Cada modelo tiene por lo menos un
 administrador para acceder a los datos almacenados.
@@ -755,13 +721,13 @@ El siguiente ejemplo utiliza el manager *objects* que agrega de manera automáti
 
 .. code-block:: python
 
-	Usuario.objects.all()
-	
+    Usuario.objects.all()
+    
 El ORM se encarga de transformar la invocación al método *all()* por el SQL siguiente.
 
 .. code-block:: sql
 
-	SELECT * FROM aplicacion_usuarios
+    SELECT * FROM aplicacion_usuarios
 
 .. Esto es recursivo y dificil de explicar :S
 
@@ -769,21 +735,21 @@ Un *QuerySet*, además de presentar la posibilidad de ser iterado, para recupera
 
 
 .. code-block:: python
-	
-	# datetime.now() devuelve un objeto datetime con la fecha y hora actual
-	r = Publicaciones.objects.filter( encabezado__stastswith = "Impuesto")
-		.exclude( fecha_publicacion__lte = "2009/03/02" )
-	print r
-	
+    
+    # datetime.now() devuelve un objeto datetime con la fecha y hora actual
+    r = Publicaciones.objects.filter( encabezado__stastswith = "Impuesto")
+        .exclude( fecha_publicacion__lte = "2009/03/02" )
+    print r
+    
 es equivalente a:
 .. Esto no se si está bien
 
 .. code-block:: sql
-	
-	SELECT * FROM aplicacion_publicaciones WHERE encabezado LIKE "Impuesto%" 
-	AND NOT fecha_publicacion >= "2009/03/02"
-	
-	
+    
+    SELECT * FROM aplicacion_publicaciones WHERE encabezado LIKE "Impuesto%" 
+    AND NOT fecha_publicacion >= "2009/03/02"
+    
+    
 .. Acá tenemos que hablar de la API de consutlas
 
 API de consultas
@@ -793,35 +759,30 @@ Dado la siguiente definición de modelo
 
 .. code-block:: python
 
-	class Persona(models.Model):
-		nombre = models.CharField( max_length = 80 )
-		apellido = models.CharField( max_length = 140 )
-		fecha_de_nacimiento = models.DateField()
-		
-		
-	class Automovil(models.Model):
-		''' Un automovil posee un propietario '''
-		
-		modelo = models.IntegerField()
-		marca = models.ForeignKey( Marca )
-		
-		propietario = models.ForeignKey( Persona )
-	
-	class Marca(models.Model):
-		nombre = models.CharField( max_length = 40 )
-	
+    class Persona(models.Model):
+        nombre = models.CharField( max_length = 80 )
+        apellido = models.CharField( max_length = 140 )
+        fecha_de_nacimiento = models.DateField()
+        
+        
+    class Automovil(models.Model):
+        ''' Un automovil posee un propietario '''
+        
+        modelo = models.IntegerField()
+        marca = models.ForeignKey( Marca )
+        
+        propietario = models.ForeignKey( Persona )
+    
+    class Marca(models.Model):
+        nombre = models.CharField( max_length = 40 )
+    
 el ORM agrega a cada modelo la propiedad *objects*:
 
 .. code-block:: python
-	
-	>>> Persona.objects
-	<django.db.models.manager.Manager object at 0x9e5d44c>
-	>>> Marca.objects
-	<django.db.models.manager.Manager object at 0x7efc002>
-	>>> Automovil.objects
-	<django.db.models.manager.Manager object at 0xa0edb07>
-	
-
-
-	
-
+    
+    >>> Persona.objects
+    <django.db.models.manager.Manager object at 0x9e5d44c>
+    >>> Marca.objects
+    <django.db.models.manager.Manager object at 0x7efc002>
+    >>> Automovil.objects
+    <django.db.models.manager.Manager object at 0xa0edb07>
