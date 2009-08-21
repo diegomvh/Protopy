@@ -558,21 +558,15 @@ usando un *sistema de plantillas* para generar el HTML.
 Estructura de una aplicación Django
 ===================================
 
-Una aplicación es un paquete python que consta de un módulo models y un módulo views.
-.. Hacer referencia al comando de startapp del modulo manager
-El resultado de el comando **startapp** en el ejemplo anterior genera el siguiente
-resultado::
+Una aplicación es un paquete python que consta de un módulo models y un módulo
+views, para crear una aplicacion se utiliza el comando **startapp** del modulo 
+:ref:`manage <django-proyecto-manage>` de la siguiente manera:
 
-    mi_proyecto/
-        mi_aplicacion/
-            __init__.py
-            models.py
-            views.py
-        __init__.py
-        manage.py
-        settings.py
-        urls.py
+.. code-block:: bash
 
+    $ python manage.py startapp mi_aplicacion # Crea la aplicacion
+
+El resultado de este comando genera la siguiente estructura en el proyecto::
 
     mi_proyecto/
         mi_aplicacion/
@@ -580,7 +574,7 @@ resultado::
             models.py
             views.py
         ...
- 
+
 Módulo models
 -------------
 
@@ -614,7 +608,7 @@ Dentro del módulo de urls
 
 El cliclo de una petición
 =========================
- 
+
 Cada vez que un browser realiza una petición a un proyecto desarrollado en
 django, la petición HTTP pasa por varias capas.
 
@@ -624,8 +618,9 @@ empaqueta las variables del request en una instancia de la calse Request.
 Luego de atravesar los middlewares de request, mediante las definciones de URLs, 
 se selecciona la vista a ser ejecutada.
 
-Una vista es una función que recibe como primer argumento el request y opcionalmente 
-una serie de parámetros que puede recuperar de la propia URL.
+.. algo de vista hay tambien en la parte de mapeo de url ver como hacer
+Una vista es una función que recibe como primer argumento el request y
+opcionalmente una serie de parámetros que puede recuperar de la propia URL.
 
 Dentro de la vista se suelen hacer llamadas al ORM, para realizar consultas sobre
 la base de datos. Una vez que la vista a completado la lógica, genera un mapeo que es
@@ -651,15 +646,14 @@ Django incluye una manera fácil pero poderosa de realizar consultas a bases de
 datos utilizando Python.
 
 Una ves configurada la conexión a la base de datos en el módulo de configuración
-:ref:`Módulo settings <django-proyecto-settings>` se esta condiciones de comenzar a
-usar la capa del sistema de Mapeo Objeto-Relacional del framework.
+:ref:`settings <django-proyecto-settings>` se esta condiciones de comenzar
+a usar la capa del sistema de Mapeo Objeto-Relacional del framework.
 
 Si bien existen pocas reglas estrictas sobre cómo desarrollar dentro de Django, 
 existe un requisito respecto a la convención de la aplicación: "si se va a usar 
 la capa de base de datos de Django (modelos), se debe crear una aplicación de 
 Django. Los modelos deben vivir dentro de una aplicaciones". Para crear una
-aplicación se debe proceder con el procedimiento ya mencionado en :ref:`Módulo
-manage <django-proyecto-manage>`.
+aplicación se debe proceder con el procedimiento ya mencionado en :ref:`manage <django-proyecto-manage>`.
 
 .. _django-orm-modelos:
 
@@ -733,11 +727,11 @@ el módelo de datos de la aplicación.
 Con esta informacion Django genera automaticamente la :term:`API` de acceso a
 los datos en la base. 
 
-Usando la API - Consultas
--------------------------
+Usando la API
+-------------
 
 Luego de crear los modelos y sincronizar la base de datos :ref:`<django-comandos-syncdb>` 
-generando de esta manera el SQL correspondiente se esta en condiciones de usar 
+generando de esta manera el SQL correspondiente, se esta en condiciones de usar 
 la API de alto nivel en Python que Django provee para accesar los datos::
 
     >>> from models import Persona
@@ -757,89 +751,37 @@ En estas lineas se ven algunos detalles de la interaccion con los modelos:
 Internamente Django traduce todas las invocaciones que afecten a los datos en
 secuencias ``INSERT``, ``UPDATE``, ``DELETE`` de SQL
 
+Django provee tambien una forma de seleccionar, filtrar y obtener datos de la 
+base a traves de los administradores de consultas representado en el ejemplo
+anterior por ``Persona.objects``.
+
 .. _django_managers:
 
 Administradores de consultas
 ----------------------------
 
-Estos objetos representan la interfase de comunicacion con la base de datos. Cada modelo tiene por lo menos un
-administrador para acceder a los datos almacenados.
+Los managers o administradores de consultas son los objetos que representan la
+interfase de comunicacion con la base de datos. Cada modelo tiene por lo menos
+un administrador para acceder a los datos almacenados.
+Cada entidad presente en el modelo, tiene al menos un *Manager*. Este *Manager*
+encapsula en una semántica de objetos las opreaciones de consulta (*query*) de
+la base de datos [*]_ . Un *Manager* consiste en una instancia de la clase
+*django.db.models.manager.Manager* donde se definen, entre otros métodos,
+*all()*, *filter()*, *exclude()* y *get()*.
 
-Cada entidad presente en el modelo de una aplicación django (de aquí en adelante, simplemente modelo), tiene al menos un *Manager*. Este *Manager* encapsula en una semántica de objetos las opreaciones de consulta (*query*) de la base de datos [*]_ . Un *Manager* consiste en una instancia de la clase *django.db.models.manager.Manager* donde se definen, entre otros métodos, *all()*, *filter()*, *exclude()* y *get()*.
-
-
-Cada uno de éstos métodos genera como resultado una instancia de la calse *QuerySet*. Un *QuerySet* envuelve el "resultado" de una consulta a la base de datos. Se dice que envuelven el "resultado" porque la estrategia de acceso a la base de datos es *evaluación retardada* [*]_, es decir, que la consulta que representa el *QuerySet* no será evaluada hasta que no sea necesario acceder a los resultados.
-
+Cada uno de éstos métodos genera como resultado una instancia de la calse
+*QuerySet*. Un *QuerySet* envuelve el "resultado" de una consulta a la base
+de datos. Se dice que envuelven el "resultado" porque la estrategia de acceso a
+la base de datos es *evaluación retardada* [*]_, es decir, que la consulta que
+representa el *QuerySet* no será evaluada hasta que no sea necesario acceder a
+los resultados.
 
 .. [*] En el lenguaje SQL, las consultas se realizan miediante la sentecia SELECT.
 .. [*] También conocida como *Lazy Evaluation*
 
-El siguiente ejemplo utiliza el manager *objects* que agrega de manera automática el ORM al modelo Usuario. En este caso, se consulta por todas las instancias de la entidad usuario.
-
-.. code-block:: python
-
-    Usuario.objects.all()
-    
-El ORM se encarga de transformar la invocación al método *all()* por el SQL siguiente.
-
-.. code-block:: sql
-
-    SELECT * FROM aplicacion_usuarios
-
-.. Esto es recursivo y dificil de explicar :S
-
-Un *QuerySet*, además de presentar la posibilidad de ser iterado, para recuperar los datos, también posee una colección de métodos orientados a conuslta, como *all()*, *filter()*, *exclude()* y *get()*. Cada uno de estos métodos, al igual que en un mánager, devuelven instancias de *QuerySet* como resultado. Gracias a esta característica recursiva, se pueden generar consultas medinate encadenamiento.
-
-
-.. code-block:: python
-    
-    # datetime.now() devuelve un objeto datetime con la fecha y hora actual
-    r = Publicaciones.objects.filter( encabezado__stastswith = "Impuesto")
-        .exclude( fecha_publicacion__lte = "2009/03/02" )
-    print r
-    
-es equivalente a:
-.. Esto no se si está bien
-
-.. code-block:: sql
-    
-    SELECT * FROM aplicacion_publicaciones WHERE encabezado LIKE "Impuesto%" 
-    AND NOT fecha_publicacion >= "2009/03/02"
-    
-    
-.. Acá tenemos que hablar de la API de consutlas
-
-API de consultas
-=================
-
-Dado la siguiente definición de modelo
-
-.. code-block:: python
-
-    class Persona(models.Model):
-        nombre = models.CharField( max_length = 80 )
-        apellido = models.CharField( max_length = 140 )
-        fecha_de_nacimiento = models.DateField()
-        
-        
-    class Automovil(models.Model):
-        ''' Un automovil posee un propietario '''
-        
-        modelo = models.IntegerField()
-        marca = models.ForeignKey( Marca )
-        
-        propietario = models.ForeignKey( Persona )
-    
-    class Marca(models.Model):
-        nombre = models.CharField( max_length = 40 )
-    
-el ORM agrega a cada modelo la propiedad *objects*:
-
-.. code-block:: python
-    
-    >>> Persona.objects
-    <django.db.models.manager.Manager object at 0x9e5d44c>
-    >>> Marca.objects
-    <django.db.models.manager.Manager object at 0x7efc002>
-    >>> Automovil.objects
-    <django.db.models.manager.Manager object at 0xa0edb07>
+Un *QuerySet*, además de presentar la posibilidad de ser iterado, para recuperar
+los datos, también posee una colección de métodos orientados a conuslta, como
+*all()*, *filter()*, *exclude()* y *get()*. Cada uno de estos métodos, al
+igual que en un mánager, devuelven instancias de *QuerySet* como resultado.
+Gracias a esta característica recursiva, se pueden generar consultas
+medinate encadenamiento.
