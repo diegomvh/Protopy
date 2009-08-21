@@ -78,7 +78,7 @@ Metaprogramación mediante metaclases
 Se puede definir la estructura de una clase mediante otra clase que herede de type.
 
 
-.. _python_callables:
+.. _apendice_python_callables:
 
 Objetos llamables o *callables*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
