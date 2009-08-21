@@ -393,36 +393,10 @@ comentarios, herramientas para sindicar contenido via RSS y/o Atom, "páginas
 planas" que permiten gestionar páginas de contenido sin necesidad de escribir
 controladores o vistas para esas páginas, y un sistema de redirección de URLs.
 
-Django como framework de desarrollo consiste en un  conjunto de utilidades 
-de consola que permiten crear y manipular proyectos y aplicaciones.
-
-.. exhortacion:: ¿Por qué el acrónimo?
-
-    El objetivo de definir en forma explícita patrones como MVC es
-    principalmente simplificar la comunicación entre los desarrolladores. En
-    lugar de tener que decir a tus compañeros de trabajo, "Vamos a hacer una
-    abstracción del acceso a la base de datos, luego vamos a tener una capa que
-    se encarga de mostrar los datos, y vamos a poner una capa en el medio para
-    que regule esto", puedes sacar provecho de un vocabulario compartido y
-    decir, "Vamos a usar un patrón MVC aquí".
-
-Django sigue el patrón MVC tan al pie de la letra que puede ser llamado
-un framework MVC. Someramente, la M, V y C se separan en Django de la
-siguiente manera:
-
-    * *M*, la porción de acceso a la base de datos, es manejada por la capa de
-      la base de datos de Django, la cual describiremos en este capítulo.
-
-    * *V*, la porción que selecciona qué datos mostrar y cómo mostrarlos, es
-      manejada por la vista y las plantillas.
-
-    * *C*, la porción que delega a la vista dependiendo de la entrada del
-      usuario, es manejada por el framework mismo siguiendo tu URLconf y
-      llamando a la función apropiada de Python para la URL obtenida.
-
-Debido a que la "C" es manejada por el mismo framework y la parte más
-emocionante se produce en los modelos, las plantillas y las vistas, Django es
-conocido como un *Framework MTV*. En el patrón de diseño MTV,
+Django como framework de desarrollo consiste en un conjunto de utilidades de
+consola que permiten crear y manipular proyectos y aplicaciones. Este sigue el
+patrón MVC y como el controlador "C" es manejado por el mismo sistema los
+desarrolladores dieron a conocer a Django como un *Framework MTV*.
 
     * *M* significa "Model" (Modelo), la capa de acceso a la base de datos. Esta
       capa contiene toda la información sobre los datos: cómo acceder a estos,
@@ -438,20 +412,8 @@ conocido como un *Framework MTV*. En el patrón de diseño MTV,
       apropiada: puedes pensar en esto como un puente entre el modelos y las
       plantillas.
 
-Si estás familiarizado con otros frameworks de desarrollo web MVC, como Ruby on
-Rails, quizás consideres que las vistas de Django pueden ser el "controlador" y
-las plantillas de Django pueden ser la "vista". Esto es una confusión
-desafortunada a raíz de las diferentes interpretaciones de MVC. En la
-interpretación de Django de MVC, la "vista" describe los datos que son
-presentados al usuario; no necesariamente el *cómo* se mostrarán, pero si
-*cuáles* datos son presentados. En contraste, Ruby on Rails y frameworks
-similares sugieren que el trabajo del controlador incluya la decisión de cuales
-datos son presentados al usuario, mientras que la vista sea estrictamente el
-*cómo* serán presentados y no *cuáles*.
-
-Ninguna de las interpretaciones es más "correcta" que otras. Lo importante es
-entender los conceptos subyacentes.
-
+MVC o MTV la realidad es que ninguna de las interpretaciones es más "correcta"
+que otra. Lo importante es entender los conceptos subyacentes.
 
 Estructuración de un proyecto en Django
 =======================================
@@ -563,11 +525,13 @@ Con la estructura del proyecto así definida y las herramientas que provee Djang
 es posible ya ver resultados en el navegador web corriendo el servidor de
 desarrollo incluido en el framework para tal fin.
 
-Es posible tambien en este momento definir modulos de vistas dentro del proyecto
-que otrogen determinada funcionalidad al sitio. Las vistas son invocadas por 
-Django y deben retornar una página HTML que contenga los resultados procesados
-para el cliente. Lo importante de este punto es como decirle a Django que vista
-ejecutar ante determinada url, es en este punto donde surgen las *URLconfs*.
+Es posible tambien en este momento definir algo de logica de negocios 
+implementando vistas dentro del proyecto para dotar al sitio de algo de
+funcionalidad dinamica. Una función vista, es una simple función de Python que
+toma como argumento una petición Web y retorna una respuesta Web. En el momento
+de procesar una peticion HTTP Django seleccionara y ejecutara la vista. Lo
+importante de este punto es como decirle a Django que vista ejecutar ante
+determinada url, es en este punto donde surgen las *URLconfs*.
 
 La *URLconf* es como una tabla de contenido para el sitio web. Básicamente,
 es un mapeo entre los patrones URL y las funciones de vista que deben
@@ -580,6 +544,16 @@ como requisito indispensable la definicion de la variable ``urlpatterns``,
 la cual Django espera encontrar en el módulo ``ROOT_URLCONF`` definido en
 ``settings``. Esta es la variable que define el mapeo entre las URLs y el código
 que manejan esas URLs.
+
+El sistema de plantillas
+========================
+
+Las vistas son las encargadas de retornar respuestas Web, entre estas respuestas
+esta el codigo HTML que debe ser enviado al cliente o navegador, Django separar
+el diseño de la página del código Python correspondiente a la logica de negocio
+usando un *sistema de plantillas* para generar el HTML.
+
+.. note:: quiza completar un poco
 
 Estructura de una aplicación Django
 ===================================
