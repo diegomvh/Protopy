@@ -44,20 +44,23 @@ la de Python, incluyendo en esta version generadores e iteradores los cuales
 son muy bien explotados por Protopy y el framework.
 
 Protopy
--------
+=======
 Protopy es una libreria JavaScript para el desarrollo de aplicaciones
 web dinamicas. Aporta un enfoque modular para la inclusión de código,
 orientación a objetos, manejo de AJAX, DOM y eventos.
 
 Para una referencia completa de la API de Protopy remitase al apandice
 
+
 Organizando el codigo
 =====================
+
 Como ya se vio en :ref:`cliente-javascript`, una de las formas tradicionales
 y preferida de incluir funcionalidad JavaScript en un documento HTML es 
-mediante el tag ``script'' haciendo en su atributo ``src`` una referencia al
-archivo que contiene el codigo que se interpretara en el momento
-de mostrar el documento.
+mediante el tag ``script'' haciendo una referencia en el atributo ``src`` a
+la url del archivo que contiene el codigo que sera interpretado por el cliente 
+web al momento de mostrar el documento.
+
 Este enfoque resulta sustentable para pequeños proyectos donde el lenguaje
 brinda mayormente soporte a la interacción con el usuario (validacion,
 accesibilidad, etc) y los fragmentos de codigo que se pasan al cliente son
@@ -65,9 +68,65 @@ bien conocidos por el desarrollador; en proyectos que implican mayor cantidad
 de funcionalidad JavaScript con grandes cantidades de codigo este enfoque
 resulta complejo de mantener y evolucionar en el tiempo.
 
-Buscando una forma de organizar y obtener el codigo que resulte sustentable
-y escalable es que surge el
-concepto de ``modulo'', similar a los modulos en python, cada unidad basica de
+Es por lo expuesto hasta aquí que se busco una forma de organizar y obtener el 
+codigo que resulte sustentable y escalable; similar al concepto de ``modulo''
+en Python :ref:`servidor-lenguajes-python`, se enfocó el desarrollo de Protopy
+en pequeñas unidades de codigo manejables, que puedan ser fasilmente obtenidas
+e interpretadas por el cliente y sumadas entre si cumplan una determinada tarea.
+Esta tecnica no es nueva en programacion y basicamente implica llevar el
+concepto de "divide y vencerás" ó "análisis descendente (Top-Down)" al hambito
+de JavaScript.
+
+Un módulo en Protopy resuelve un problema especifico y define una interfaz de
+comunicación para accesar y utilizar la funcionalidad que contiene. Por más
+simple que resulte de leer, esto implica que existe una manera de **obtener**
+un modulo y una manera de **publicar** la funcionalidad de un modulo, logrando
+de esta forma que interactuen entre ellos para resolver una determinada tarea.
+
+En su forma mas pedestre un módulo es un archivo que contiene definiciones y
+sentencias de JavaScript. El nombre del archivo es el nombre del módulo con el
+sufijo .js pegado y dentro de un módulo, el nombre del módulo (como una cadena)
+está disponible como el valor de la variable __name__.
+
+Obtener un módulo
+-----------------
+
+Cuando un módulo llamado spam es importado, Protopy busca un archivo llamado
+spam.js en la url base, de no encontrar el archivo...
+Otra forma de obtener modulos es usando nombres de **paquetes** asociados a
+urls, de forma similar a la anteriro cuando un módulo llamado paquete.spam es
+importado, Protopy busca en el objeto sys.paths si existe una url asociada a
+paquete, de encontrar la relacion el archivo spam.js es buscado en esta, por
+otra parte si sys.paths no contiene una url asociada el archivo paquete/spam.js
+es buscado en la url base de Protopy. El uso del objeto sys.paths permite a los
+modulos de JavaScript que saben lo que están haciendo al modificar o reemplazar
+el camino de búsqueda de módulos. Nótese que es importante que el script no
+tenga el mismo nombre que un módulo estandar. Ver el apendice :ref:`Módulos 
+estandar <apendices-protopy-modulos>` para más información.
+
+Publicar un módulo
+------------------
+
+Un módulo puede contener sentencias ejecutables y definición de funciones
+también. La intención de éstas sentencias es inicializar el módulo. Ellas son
+ejecutadas sólo la primera vez que el módulo se importa a alguna parte.
+Cada módulo tiene su propia tabla de símbolos privada, que es usada como la
+tabla global de símbolos por todas las funciones definidas el módulo. Así, el
+autor de un módulo puede usar variables globales en el módulo sin preocuparse
+por chocar con las variables globales de un usuario.
+
+Los módulos pueden importar otros módulos. Se acostumbra pero no se requiere
+poner todas las sentencias import al comienzo de un módulo (o script, para el
+evento). Los nombres de los módulos importados son puestos en la tabla global
+de símbolos del módulo importador.
+
+Hay incluso una variante para importar todos los nombres que un módulo define:
+
+
+Ésto importa todos los nombres excepto aquellos que empiecen con un underscore (__). 
+
+.. Hacer mencion de el cambio de enfoque
+
 de codigo define un modulo, este puede ser importado por otro fragemento de
 codigo y cada uno representa su propio ambito de nombres. Existen en Protopy
 dos tipos de modulos, los modulos integrados y los modulos organizados en
@@ -87,6 +146,7 @@ inclucion dinamica de funcionalidad bajo demanda, esto se logra con los
 Las funciones principales para trabajar con los modulos son ``require'' para
 cargar un modulo en el hambito de nombres local y ``publish'' para que los
 modulos publiquen o expongan la funcionalidad.
+
 
 Creando tipos de objeto
 =======================
@@ -113,20 +173,24 @@ similar. Si bien la estructura ``hasheable'' nativa a JavaScript en un objeto,
 los diccionarios de Protopy permiten el uso de objetos como claves en lugar de
 solo cadenas.
 
+
 Extendiendo el DOM
 ==================
-Si bien el :term:`DOM` ofrece ya una :term:`API` muy completa para acceder, añadir y cambiar
-dinámicamente el contenido estructurado en el documento HTML.
+Si bien el :term:`DOM` ofrece ya una :term:`API` muy completa para acceder,
+añadir y cambiar dinámicamente el contenido estructurado en el documento HTML.
+
 
 Manejando los eventos
 =====================
 %event.connect
 %event.
 
+
 Envolviendo a gears
 ===================
 %Almacenamiento en la base de datos local
 %LocalServer para guradar codigo
+
 
 Auditando el codigo
 ===================
@@ -201,6 +265,7 @@ debe limitarce a hacer uso de él y asegurar la correcta sincronizacion de datos
 entre el cliente y el servidor web, este tema se retomara en el capitulo de
 sincronizacion.
 %TODO: retomar este tema para no ser un mentiroso :)
+
 
 Ejecutando codigo remoto
 ========================
