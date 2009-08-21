@@ -186,15 +186,18 @@ latex_logo = '_static/nasa_django_logo.png'
 
 # For "manual" documents, if this is true, then toplevel headings are parts,
 # not chapters.
-#latex_use_parts = False
+latex_use_parts = True
 
 # Additional stuff for the LaTeX preamble.
 #latex_preamble = ''
 
 # Documents to append as an appendix to all manuals.
 #latex_appendices = ['apendices/protopy', 'apendices/python', 'apendices/django']
-latex_appendices = ['apendices/doff/modelos', 
-                    'apendices/python',
+latex_appendices = ['apendices/python',
+                    'apendices/django',
+                    'apendices/doff/modelos',
+                    'apendices/doff/dbapi',
+                    'apendices/doff/plantillas',
                     ]
 
 # If false, no module index is generated.
