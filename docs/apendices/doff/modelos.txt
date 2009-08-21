@@ -18,20 +18,22 @@ de la base de datos que define.
 
         1. Un nombre de campo no puede ser una palabra reservada,
            porque eso ocasionaría un error de sintaxis, por ejemplo:
-            .. code-block:: javascript
 
-                var Ejemplo = type('Ejemplo', [ models.Model ], {
-                    var = new models.IntegerField() // 'var' es una palabra reservada!
-                });
+        .. code-block:: javascript
+
+            var Ejemplo = type('Ejemplo', [ models.Model ], {
+                var = new models.IntegerField() // 'var' es una palabra reservada!
+            });
 
         2. Un nombre de campo no puede contener dos o más guiones bajos
            consecutivos, debido a la forma en que trabaja la sintaxis de las
            consultas de búsqueda, por ejemplo:
-            .. code-block:: javascript
 
-                var Ejemplo = type('Ejemplo', [models.Model], {
-                    foo__bar = new models.IntegerField() // 'foo__bar' tiene dos guiones bajos!
-                });
+        .. code-block:: javascript
+
+            var Ejemplo = type('Ejemplo', [models.Model], {
+                foo__bar = new models.IntegerField() // 'foo__bar' tiene dos guiones bajos!
+            });
 
     Estas limitaciones se pueden manejar sin mayores problemas, dado que el
     nombre del campo no necesariamente tiene que coincidir con el nombre de la
@@ -113,7 +115,7 @@ acepta ``max_length``; su ``max_length`` se establece automáticamente en 75.
 
 FileField
 ---------
-.. warning:: No este implementado actualmente ver bien la doc.
+.. warning:: No implementado actualmente ver bien la doc.
 
 Un campo de captura de archivos. Tiene un argumento *requerido*, como se ve en
 la :ref:`Tabla <doff-modelos-filefield-tabla>`.
@@ -347,6 +349,7 @@ posibles para "sin datos": ``NULL`` y el string vacío. En la mayoría de los
 casos, esto es redundante; la convención es usar el string vacío, no ``NULL``.
 
 .. _apendices-doff-modelos-blank:
+
 blank
 -----
 
@@ -411,6 +414,7 @@ un método para recuperar el nombre legible por humanos para el valor actual del
 campo. Ver :ref:`apendices-doff-dbapi` para más detalles.
 
 .. _apendices-doff-modelos-dbcolumn:
+
 db_column
 ---------
 
@@ -736,11 +740,13 @@ debe trabajar la relación (ver :ref:`Tabla <doff-modelos-manytomanyfield-tabla>
     * - ``limit_choices_to``
       - Ver la descripción en ``ForeignKey``.
     * - ``symmetrical``
-      - Solo utilizado en la definición de ``ManyToManyField`` sobre sí mismo. Considera el siguiente modelo::
+      - Solo utilizado en la definición de ``ManyToManyField`` sobre sí mismo. Considera el siguiente modelo:
+    
+        .. code-block:: javascript
 
-        var Person = type('Person', [ models.Model ], {
-            friends: new models.ManyToManyField("this")
-        });
+            var Person = type('Person', [ models.Model ], {
+                friends: new models.ManyToManyField("this")
+            });
 
         Cuando Django procesa este modelo, identifica que tiene un ``ManyToManyField`` sobre sí mismo, y como resultado, no
         agrega un atributo ``person_set`` a la clase ``Person``.
@@ -796,6 +802,7 @@ Para sobreescribir el nombre de la tabla de la base de datos, se debe usar el pa
 ``db_table`` dentro de ``Meta``:
 
     .. code-block:: javascript
+
         var Book = type('Book', [ models.Model ], {
             ...
 
@@ -1139,6 +1146,7 @@ manager ``people`` está definido primero -- por lo cual es el ``Manager`` por
 omisión.
 
 .. _apendices-doff-modelos-metodos:
+
 Métodos de Modelo
 =================
 
