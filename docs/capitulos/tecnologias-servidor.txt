@@ -116,6 +116,15 @@ WSGI propone que una aplicación es una función que recibe 2 argumentos. Como p
 .. image:: ../_svg/esquema_wsgi.png
 
 
+En el siguente ejemplo, la función app devuelve *Hello World* informandole al navegador web, que el
+contenido se trata de texto plano.
+
+.. code-block:: python
+
+	def app(environ, start_response):
+	    start_response('200 OK', [('Content-Type', 'text/plain')])
+	    return ['Hello World\n']
+
 
 
 .. _servidor-frameworks:

@@ -195,8 +195,8 @@ latex_use_parts = True
 #latex_appendices = ['apendices/protopy', 'apendices/python', 'apendices/django']
 latex_appendices = ['apendices/python',
                     'apendices/django',
-                    'apendices/doff/modelos',
-                    'apendices/doff/dbapi',
+                    #'apendices/doff/modelos',
+                    #'apendices/doff/dbapi',
                     'apendices/doff/plantillas',
                     ]
 
