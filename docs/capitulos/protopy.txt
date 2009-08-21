@@ -50,7 +50,7 @@ web dinamicas. Aporta un enfoque modular para la inclusión de código,
 orientación a objetos, manejo de AJAX, DOM y eventos.
 
 Para una referencia completa de la API de Protopy remitase al apandice
-
+:ref:`Protopy <apendices-doff-dbapi>`
 
 Organizando el codigo
 =====================

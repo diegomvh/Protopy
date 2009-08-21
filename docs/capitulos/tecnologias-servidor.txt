@@ -410,7 +410,7 @@ Un proyecto se crea mediante la siguiente orden:
     
     $ django-admin.py startproject mi_proyecto # Crea el proyecto mi_proyecto
 
-**Un proyecto es un paquete Python que contiene 3 módulos**:
+Un proyecto es un paquete Python que contiene 3 módulos:
 
     * manage.py
         Interfase de consola para la ejecución de comandos
@@ -464,7 +464,7 @@ Módulo manage
 Esta es la interfase con el framework. Éste módulo es un script ejecutable, que
 recibe como primer argumento un nombre de comando de django.
 
-Los comandos de django pemiten, permiten entre otras cosas:
+Los comandos de django permiten entre otras cosas:
 
     * startapp <nombre de aplicación>
         Crear una aplicación
@@ -474,7 +474,62 @@ Los comandos de django pemiten, permiten entre otras cosas:
 
     * syncdb
         Generar las tablas en la base de datos de las aplicaciones instaladas
-        
+
+Módulo urls
+-----------
+
+Este nombre de módulo aparece a nivel proyecto, pero también puede aparecer a
+nivel aplicación. Su misión es definir las asociaciones entre URLs y vistas, de
+manera que el framework sepa que vista utilizar en función de la URL que está
+requiriendo el clinete.
+Las URLs se ecriben mediante expresiones regulares del lenguaje Python. Este 
+sistema de URLs aprovecha muy bien el modulo de expreciones regulares del
+lenguaje permitiendo por ejemplo recuperar gurpos nombrados (en contraposición
+al enfoque ordinal tradicional).
+
+La asociación url-vistas se define en el módulo bajo el nombre :term:`urlpatterns`. 
+También es posible derivar el tratado de una parte de la expresión reuglar
+a otro módulo de urls. Generalmente esto ocurre cuando se desea delegar el
+tratado de las urls a una aplicación particular.
+
+    Ej:
+        Derivar el tratado de todo lo que comience con la cadena personas a 
+        al módulo de urls de la aplicación personas.
+
+        .. code-block:: python
+
+            (r'^personas', include('mi_proyecto.personas.urls'))
+
+Mapeando URLs a Vistas
+======================
+
+Con la estructura del proyecto así definida y las herramientas que provee Django,
+es posible ya ver resultados en el navegador web corriendo el servidor de
+desarrollo incluido en el framework para tal fin.
+
+Es posible tambien en este momento definir modulos de vistas dentro del proyecto
+que otrogen determinada funcionalidad al sitio. Las vistas son invocadas por 
+Django y deben retornar una página HTML que contenga los resultados procesados
+para el cliente. Lo importante de este punto es como decirle a Django que vista
+ejecutar ante determinada url, es en este punto donde surgen las *URLconfs*.
+
+La *URLconf* es como una tabla de contenido para el sitio web. Básicamente,
+es un mapeo entre los patrones URL y las funciones de vista que deben
+ser llamadas por esos patrones URL. Es como decirle a Django, "Para esta URL,
+llama a este código, y para esta URL, llama a este otro código".
+
+En el apartado de modulos del proyecto se observo el modulo sobre el cual el objeto
+URLconf es creado automáticamente: el archivo ``urls.py``, este modulo tiene
+como requisito indispensable la definicion de la variable ``urlpatterns``, 
+la cual Django espera encontrar en el módulo ``ROOT_URLCONF`` definido en
+``settings``. Esta es la variable que define el mapeo entre las URLs y el código
+que manejan esas URLs.
+
+Estructura de una aplicación Django
+===================================
+
+Una aplicación es un paquete python que consta de un módulo models y un módulo views.
+.. Hacer referencia al comando de startapp del modulo manager
 El resultado de el comando **startapp** en el ejemplo anterior genera el siguiente
 resultado::
 
@@ -488,34 +543,6 @@ resultado::
         settings.py
         urls.py
 
-Módulo urls
------------
-
-Este nombre de módulo aparece a nivel proyecto, pero también puede aparecer a nivel
-aplicación. Su misión es definir las asociaciones entre URLs y vistas, de manera de 
-que el framework sepa que vista utilizar en función de la URL que está requiriendo
-el clinete.
-Las URLs se ecriben mediante expresiones regulares. Se suele aprovechar la posibilidad
-del modulo de expresiones regulares del lenguaje python, que permite recuperar
-gurpos nombrados (en contraposición al enfoque ordinal tradicional).
-
-La asociación url-vistas se define en el módulo bajo el nombre :term:`urlpatterns`. 
-También es posible derivar el tratado de una parte de la expresión reuglar
-a otro módulo de urls. Generalmente esto ocurre cuando se desea delegar el tratado
-de las urls a una aplicación particular.
-
-    Ej:
-        Derivar el tratado de todo lo que comience con la cadena personas a 
-        al módulo de urls de la aplicación personas.
-
-        .. code-block:: python
-
-            (r'^personas', include('mi_proyecto.personas.urls'))
-
-Estructura de una aplicación Django
-===================================
-
-Una aplicación es un paquete python que consta de un módulo models y un módulo views.
 
     mi_proyecto/
         mi_aplicacion/
@@ -558,11 +585,11 @@ Dentro del módulo de urls
 El cliclo de una petición
 =========================
  
-Cada vez que un browser realiza una petición a un proyecto desarrollado en django, 
-la petición HTTP pasa por varias capas.
+Cada vez que un browser realiza una petición a un proyecto desarrollado en
+django, la petición HTTP pasa por varias capas.
 
-Inicialmente atraviesa los Middlewares, en la cual, el middleware de Request, empaqueta
-las variables del request en una instancia de la calse Request.
+Inicialmente atraviesa los Middlewares, en la cual, el middleware de Request,
+empaqueta las variables del request en una instancia de la calse Request.
 
 Luego de atravesar los middlewares de request, mediante las definciones de URLs, 
 se selecciona la vista a ser ejecutada.

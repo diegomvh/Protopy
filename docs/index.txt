@@ -14,9 +14,8 @@ Sistemas Web Desconectados
    
    capitulos/tecnologias-servidor
    capitulos/desarrollo
+   capitulos/protopy
    glosario
-   
-..   apendices/django
 
 Indices, glosario y tablas
 ==========================
