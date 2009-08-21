@@ -111,7 +111,7 @@ cada vez más complejas (frameworks :ref:`servidor-frameworks_ <framework>`)
 .. [*] PEP *Python Enhancement Proposals* son documentos en los que se proponen mejoras para el lenguaje
 Python, son albergados en el sitio oficial http://www.python.org
 
-WSGI propone que una aplicación es una función que recibe 2 argumentos. Como primer argumento, un diccionario con las variables de entorno, al igual que en CGI, y como segundo argumento un	a función (o objeto llamable) al cual se invoca para iniciar la respuesta.
+WSGI propone que una aplicación es una función que recibe 2 argumentos. Como primer argumento, un diccionario con las variables de entorno, al igual que en CGI, y como segundo argumento una función (u :ref:`python_callables_ <objeto llamable>`) al cual se invoca para iniciar la respuesta.
 
 .. image:: ../_svg/esquema_wsgi.png
 
