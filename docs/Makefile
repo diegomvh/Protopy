@@ -15,7 +15,7 @@ SVG_PNG_OUTPUT = $(SVG_FILES:.svg=.png)
 
 .PHONY: help clean html dirhtml pickle json htmlhelp qthelp latex changes linkcheck doctest
 
-all: latex
+all: svg latex
 	$(MAKE) -C _build/latex
 
 help:
@@ -31,17 +31,16 @@ help:
 	@echo "  linkcheck to check all external links for integrity"
 	@echo "  doctest   to run all doctests embedded in the documentation (if enabled)"
 
+# Compilar las imagenes en _svg
 svg:
-	@echo ${SVG_FILES} ${SVG_PNG_OUTPUT}
+	@ $(MAKE) -C _svg
 
-# Crear el PNG de los archivos SVG	
-%.png: %.svg
-	inkscape --file=$< --export-dpi=90 --export-area-drawing --export-png=$@
-
-
-
+# Borrar toodo
 clean:
 	-rm -rf _build/*
+	@ $(MAKE) -C _svg clean
+
+re: clean all
 
 html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) _build/html
