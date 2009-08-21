@@ -25,6 +25,7 @@ bundle*
 *bundle
 # La salida de sphinx
 docs/_build/*
+docs/_svg/*.png
 doffproj/static/doffproj_offline/*
 
 
