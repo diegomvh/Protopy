@@ -830,7 +830,7 @@ conceptos de alto nivel que no necesariamente pueden ser manejados por SQL.
 
 Django define los modelos en Python por varias razones: 
     
-    * La introspección requiere ***overhead*** y es imperfecta. Django necesita
+    * La introspección requiere **overhead** y es imperfecta. Django necesita
         conocer la capa de la base de datos para porveer una buena API de
         consultas y hay dos formas de lograr esto. Una opción sería la 
         introspección de la base de datos en tiempo de ejecución, la segunda y

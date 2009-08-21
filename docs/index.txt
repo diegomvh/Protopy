@@ -10,12 +10,14 @@ Sistemas Web Desconectados
 Índice:
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
    
-   capitulos/tecnologias-servidor
-   capitulos/desarrollo
-   capitulos/protopy
-   glosario
+    capitulos/introduccion
+    capitulos/tecnologias-servidor
+    capitulos/tecnologias-cliente
+    capitulos/desarrollo
+    capitulos/conclusiones
+    glosario
 
 Indices, glosario y tablas
 ==========================

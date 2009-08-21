@@ -11,6 +11,7 @@ Este apéndice explica todas las varias opciones de acceso a los datos detallada
 
 A lo largo de este apéndice, vamos a hacer referencia a los siguientes modelos,
 los cuales pueden formar una simple aplicación de blog:
+
 .. code-block:: javascript
 
     var models = require('doff.db.models.base');
@@ -316,6 +317,7 @@ La evaluacion de un ``QuerySet`` ocurre en cualquiera de las siguientes formas:
       de datos la primera vez que se itera sobre el. Por ejemplo, el siguiente
       ``QuerySet`` no es evaluado hasta que sea iterado sobre él en el bucle
       ``for``:
+
     .. code-block:: javascript
 
           qs = Entry.objects.filter({ pub_date__year: 2006 });
@@ -364,6 +366,7 @@ La evaluacion de un ``QuerySet`` ocurre en cualquiera de las siguientes formas:
     refinamiento.
 
 .. _apendices-doff-dbapi-limitando:
+
 Limitando QuerySets
 -------------------
 
@@ -746,7 +749,7 @@ una búsqueda exacta en ``get_or_create()``, simplemente hay que utilizar
         defaults={'defaults': 'baz'}
     )
 
-.. nota::
+.. note::
 
     Como ya se mencionó, ``get_or_create`` es utilizado más que nada en scripts
     que necesiten procesar datos y crear nuevos campos si los que existen no
@@ -881,7 +884,7 @@ Esto coincidirá con el titular ``'Today Lennon honored'`` pero no con
 SQLite no admite sentencias ``LIKE`` distinguiendo mayúsculas y minúsculas;
 cuando se utiliza SQLite, ``contains`` se comporta como ``icontains``.
 
-.. exhortación:: Escapado de porciento y guión bajo en sentencias ``LIKE``
+.. admonition:: Escapado de porciento y guión bajo en sentencias ``LIKE``
 
     Los patrones de búsqueda que resulten en sentencias SQL ``LIKE``
     (``iexact``, ``contains``, ``icontains``, ``startswith``, ``istartswith``,
@@ -1009,7 +1012,7 @@ Toma valores ``True`` o ``False``, que corresponderán a consultas SQL de
 
     >>> Entry.objects.filter(pub_date__isnull=True)
 
-.. exhortación:: ``__isnull=True`` vs. ``__exact=None``
+.. admonition:: ``__isnull=True`` vs. ``__exact=None``
 
     Hay una diferencia importante entre ``__isnull=True`` y ``__exact=None``.
     ``__exact=None`` *siempre* devolverá como resultado un conjunto vacío, ya
@@ -1354,7 +1357,7 @@ un ``related_name``.  En el ejemplo anterior, si el campo ``ManyToManyField``
 en el modelo ``Entry`` indicara ``related_name='entries'``, cualquier instancia
 de ``Author`` tendría un atributo ``entries`` en vez de ``entry_set``.
 
-.. exhortación:: Cómo son posibles las relaciones inversas?
+.. admonition:: Cómo son posibles las relaciones inversas?
 
     El mapeador objeto-relacional requiere que definas relaciones en ambos
     extremos.  Los desarrolladores Django creen que esto es una violación del

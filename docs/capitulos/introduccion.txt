@@ -1,0 +1,96 @@
+############
+Introduccion 
+############
+
+**********
+Motivación
+**********
+
+Hoy más que ayer, pero seguremente menos que mañana, Internet es ``la red de
+redes''. El alto contenido de información 
+Hoy en día Internet supone más que un medio para obtener información,
+su constante expanción a convetido a esta red en un terreno muy atractivo para
+la implementación de sistemas de información.
+
+Las aplicaciones web son populares debido a lo práctico que resulta el navegador
+web como cliente de acceso a las mismas.
+También resulta fácil actualizar y mantener aplicaciones web sin distribuir e
+instalar software a miles de usuarios potenciales.
+En la actualidad, existe una gran oferta de frameworks web para facilitar el
+desarrollo de aplicaciones web.
+Una ventaja significativa de las aplicaciones web es que funcionan
+independientemente de la versión del sistema operativo instalado en el cliente.
+En vez de crear clientes para los múltiples sistemas operativos, la aplicación
+web se escribe una vez y se ejecuta igual en todas partes.
+Las aplicaciones web tienen ciertas limitaciones en las funcionalidades que
+ofrecen al usuario.
+Hay funcionalidades comunes en las aplicaciones de escritorio, como dibujar en
+la pantalla o arrastrar y soltar, que no están soportadas por las tecnologías
+web estándar.
+Los desarrolladores web, generalmente, utilizan lenguajes interpretados o script
+en el lado del cliente para añadir más funcionalidades, especialmente para
+ofrecer una experiencia interactiva que no requiera recargar la página cada
+vez.Recientemente se han desarrollado tecnologías para coordinar estos lenguajes
+con tecnologías en el lado del servidor.
+Los sistemas operativos actuales de propósito general cuentan con un navegador
+web, con posibilidades de acceso a bases de datos y almacenamiento de código y
+recursos.
+La web, en el ámbito del software, es un medio singular por su ubicuidad y sus
+estándares abiertos. El conjunto de normas que rigen la forma en que se generan
+y transmiten los documentos a través de la web son regulados por la W3C
+(Consorcio World Wide Web). La mayor parte de la web está soportada sobre
+sistemas operativos y software de servidor que se rigen bajo licencias
+OpenSource1 (Apache, BIND, Linux, OpenBSD, FreeBSD). Los lenguajes con los que
+son desarrolladas las aplicaciones web son generalmente OpenSource, como e PHP,
+Python, Ruby, Perl y Java. Los frameworks web escritos sobre estos lenguajes
+utilizan alguna licencia OpenSource para su distribución; incluso frameworks
+basados en lenguajes propietarios son liberados bajo licencias OpenSource.
+
+*********
+Objetivos
+*********
+Podemos decir que las aplicaciones tradicionales, que no hacen uso de la web,
+son más robustas ya que no dependen de una conexión.
+Por lo tanto, sería deseable poder dotar a las aplicaciones web de la capacidad
+de trabajar cuando no cuentan con conexión.
+Si bien los elementos necesarios para llevar a cabo esta tarea están disponibles
+actualmente, no están contemplados en los diseños de los frameworks web.
+Es decir, cuando una determinada aplicación web debe ser transportada al
+cliente, es necesario escribir el código de soporte específico para esa
+aplicación.
+Un framework no constituye un producto per sé, sino una plataforma sobre la cual
+construir aplicaciones.
+Consideramos que sería beneficioso aportar una extensión a un framework web
+OpenSource que brinde facilidades para transportar las aplicaciones web, basadas
+en éste, al cliente de manera que la aplicación que haga uso de nuestra
+extensión pueda ser ejecutada a posteriori en el navegador en el cual ha sido
+descargada.
+El framework web será elegido tras un estudio de las características que
+consideramos más importantes para el desarrollo veloz, como la calidad del
+mapeador de objetos (entre las características más importantes de éste
+buscaremos eficiencia en las consultas a la base de datos, ejecución demorada
+para encadenamiento de consultas, implementación de herencia, baja carga de
+configuración), la simplicidad para enlazar url's a funciones controladoras,
+extensibilidad del sistema de escritura de plantillas. Buscaremos frameworks que
+permitan la ejecución transversal de cierto tipo de funciones, para ejecutar
+tareas como compresión de salida, sustitución de patrones de texto, caché,
+control de acceso, etc.
+
+La World Wide Web, o web, durante los últimos años ha ganado terreno como
+plataforma para aplicaciones del variado tipo. 
+Diversas tecnologías fueron formuladas para convertir el escenario inical, donde
+la web se limitaba a ser una gran colección de documentos enlazados
+(hipertexto),
+para llegar a ser...
+
+Vamos a realizar un breve análisis sobre las tecnologías que son utilizadas en
+la web.
+
+Luego un análisis de las tecnologías del cliente, haciendo hincapié en ...
+
+.. Citas copadas http://es.wikiquote.org/wiki/The\_Matrix
+
+*******
+Alcance
+*******
+Aca ponemos hasta donde nos vamos a llegar.

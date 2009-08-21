@@ -1,0 +1,34 @@
+#############################
+Conclusiones y lineas futuras 
+#############################
+
+************
+Conclusiones
+************
+
+El desarrollo consistió en el siguiente diagrama:
+
+**************
+Lineas futuras
+**************
+
+Sitio de administración
+=======================
+Django se caracteriza por brindar una aplicación ``django.contrib.admin``
+de admnistración que permite realizar CRUD (Create, Retrieve, Update, Delete)
+sobre los modelos de las aplicaciones de usuario, interactuando con la
+aplicación ``django.contrib.auth`` que provee
+usuarios, grupos y permisos.
+ 
+Historial de navegación
+=======================
+
+Workers con soporte para Javascript 1.7
+=======================================
+Google Gears provee un mecanismo de ejecución de código en el cliente de manera
+concurrente llamado Worker Pool. De esta manera tareas que demandan tiempo de
+CPU pueden ser envaidas a segundo plano, de manera de no entorpecer el refresco 
+de la GUI.
+Una caractersística de los worker pools, es que se ejecutan en un ámbito de 
+nombres diferente al del ``hilo principal''. Es decir, existe encapsulamiento
+de su estado.

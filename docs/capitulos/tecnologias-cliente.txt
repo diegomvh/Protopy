@@ -1,10 +1,75 @@
+.. _cliente:
+
+#######################
+Tecnologías del cliente
+#######################
+
+**************************
+Estructura de un navegador
+**************************
+
+.. _cliente-html:
+HTML
+====
+
+.. _cliente-css:
+CSS
+===
+
 .. _cliente-javascript:
-**********
 JavaScript
-**********
+==========
 .. Explicar como meter codigo javascript en un doc da sustento a protopy
 
 al archivo que contiene la funcionalidad. Mas tarde cuando el navegador descarga
 el documento y comienza su lectura al encontrar esta etiqueta solicita
 al servidor el archivo referenciado y lo interpreta, para continuar luego con la
 lectura del resto de las etiquetas. 
+
+
+************************
+Evolución del JavaScript
+************************
+
+
+************
+Google Gears
+************
+
+Introducción
+============
+
+Google Gears es un plug-in para los navegadores: Mozilla Firefox, Internet
+Explorer y IE Mobile, Opera y Opera Mobile, Safari y Google Chrome. Gears es
+un proyecto de código abierto y añade 3 componentes básicos al navegador.
+
+    * Local Server
+        Permite almacenar en caché y proporcionar recursos de aplicaciones
+        (HTML, JavaScript, imágenes, etc.) de forma local.
+    
+    * Database 
+        Permite almacenar datos localmente en una base de datos relacional en la
+        que se pueden realizar búsquedas.
+    
+    * Worker Pool
+        Permite realizar tareas que utilizan intensamente el CPU de forma
+        similar a ``procesos'' en un sistema operativo, de manera de que el 
+        las aplicaciones tengan mejor respuesta.
+
+Estos componentes estan enfocados en permitir al programador de aplicaciones web
+ejecutar sus aplicaciones cuando el navegador no está conectado al servidor.
+
+Vale aclarar que la aplicación debe ser transferida de manera previa al cliente.
+
+Componentes adicionales de Google Gears
+A partir de la versión 0.4 del Gears
+
+    * API para GIS, que permite acceder a la posición geográfica del usuario.
+
+    * El API Blob, que permite gestionar bloques de datos binarios.
+
+    * Accede a archivos en el equipo cliente a través del API de Google Desktop.
+
+    * Permite enviar y recibir Blobs con el API HttpRequest.
+    
+    * Localización de los cuadros de diálogo de Gears en varios idiomas.
