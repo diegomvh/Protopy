@@ -15,28 +15,30 @@ De lo estatico a lo dinámico
 CGI
 ===
 
-CGI, *Common Gateway Interface* [*]_ es un estándar de comunicación entre un servidor web
-y una aplicación, que permite que un a través de un navegador, se invoque un programa
-en el servidor y se recuperen resultados de éste. 
+CGI, *Common Gateway Interface* [*]_ es un estándar de comunicación entre un
+servidor web y una aplicación, que permite que un a través de un navegador, se
+invoque un programa en el servidor y se recuperen resultados de éste. 
 
-CGI fue la primera estandarización de un mecanismo para generar contenido dinámico 
-en la web.
+CGI fue la primera estandarización de un mecanismo para generar contenido
+dinámico en la web.
 
-En el estandar CGI, el servidor web intercambia datos con la aplicación medinate variables
-de entorno y los flujos de entrada y salida.
+En el estandar CGI, el servidor web intercambia datos con la aplicación medinate
+variables de entorno y los flujos de entrada y salida.
 
-Los parámetros HTTP (como la URL, el método (GET, POST, PUSH, etc.), nombre del servidor
-puerto, etc.) e información sobre el servidor son trasferidos a la aplicación CGI como variables de 
-entorno.
+Los parámetros HTTP (como la URL, el método (GET, POST, PUSH, etc.), nombre del
+servidor puerto, etc.) e información sobre el servidor son trasferidos a la
+aplicación CGI como variables de entorno.
 
-Si existiese un cuerpo en la petición HTTP, como por ejemplo, el contenido de un formulario, bajo
-el método POST, la aplicación CGI accede a esta como entrada estandard.
+Si existiese un cuerpo en la petición HTTP, como por ejemplo, el contenido de un
+formulario, bajo el método POST, la aplicación CGI accede a esta como entrada
+estandard.
 
-El resultado de la ejecución de la aplicación CGI se escribe en la salida estándard, anteponiendo
-las cabeceras HTTP respuesta, para que el servidor responda al clinete. En los encabezados
-de respuesta, el tipo MIME determina como interpreta el clinete la respuesta. Es decir, la 
-invocación de un CGI puede devolover diferentes tipos de contenido al clinete (html, imágenes, 
-javascript, contenido multimedia, etc.)
+El resultado de la ejecución de la aplicación CGI se escribe en la salida
+estándard, anteponiendo las cabeceras HTTP respuesta, para que el servidor
+responda al clinete. En los encabezados de respuesta, el tipo MIME determina
+como interpreta el clinete la respuesta. Es decir, la invocación de un CGI puede
+devolover diferentes tipos de contenido al clinete (html, imágenes, javascript,
+contenido multimedia, etc.)
 
 Dentor de las varaibles de entorno, la Wikipedia [WikiCGI2009]_ menciona:
 
@@ -66,8 +68,9 @@ Variables de entorno que se intercambian de servidor a CGI:
     * GATEWAY_INTERFACE
         Nombre y versión de la interfaz de comunicación entre servidor y aplicaciones CGI/1.12
 
-Debido a la popularidad de las aplicaciones CGI, los servidores web incluyen generalmente
-un directorio llamado **cgi-bin** donde se albergan estas aplicaciones.
+Debido a la popularidad de las aplicaciones CGI, los servidores web incluyen
+generalmente un directorio llamado **cgi-bin** donde se albergan estas
+aplicaciones.
 
 .. note:: Faltan referencias sobre la popularidad de los lenguajes
 
@@ -90,7 +93,8 @@ Históricamente las aplicaciones CGI han sido escritas en lenguajes interpretado
 Lenguajes
 =========
 
-.. note:: Mejorar la introduccion pedorra a lenguajes
+.. note:: Mejorar la introduccion pedorra a lenguajes y quitar las viles copias
+    de las descripcion de los lenguajes por algo mas nuestro.
 
 Existen en la actualidad diferentes lenguajes de programación para desarrollar
 en la web, estos han surgido y evolucionado en virtud de las tendencias y
@@ -103,6 +107,7 @@ sistemas de Bases de Datos.
 
 PHP
 ---
+
 Es un lenguaje de programación utilizado para la creación de sitio web. PHP es
 un acrónimo recursivo que significa “PHP Hypertext Pre-processor”, (inicialmente
 se llamó Personal Home Page). Surgió en 1995, desarrollado por PHP Group.
@@ -178,6 +183,7 @@ prácticas correctas de programación.
 
 Ruby
 ----
+
 Es un lenguaje interpretado de muy alto nivel y orientado a objetos.
 Desarrollado en el 1993 por el programador japonés Yukihiro “Matz” Matsumoto.
 Su sintaxis está inspirada en Phyton, Perl. Es distribuido bajo licencia de
@@ -190,7 +196,8 @@ usuarios un sitio con informaciones y cursos en español.
 
 Sintaxis:
 
-puts "hola"
+.. code-block:: ruby
+    puts "hola"
 
 Características:
 
@@ -209,6 +216,11 @@ Ventajas:
 
 Python
 ------
+
+.. note:: Creo que en esta parte mas que solo explicar un poco python, luego
+    de hacer la introduccion arrancar como un lenguaje electo para el desarrollo
+    serverside, y justificar.
+
 Es un lenguaje de programación creado en el año 1990 por Guido van Rossum, es
 el sucesor del lenguaje de programación ABC. Python es comparado habitualmente
 con Perl. Los usuarios lo consideran como un lenguaje más limpio para programar.
@@ -503,10 +515,16 @@ En Wikipeida [WIKI002]_
 
 .. [WIKI002] *Web Framework*, Wikipedia, 2009, http://en.wikipedia.org/wiki/Web_application_framework, última visita Agosto de 2009.
 
-.. por poner algo, pueden ser otros
-Symfony
+.. note:: completar tema framework un poco, antes de caer en django
 
-Rails
+Symfony
+-------
+
+Ruby on Rails
+-------------
+
+Django
+------
 
 .. _servidor-django:
 
@@ -517,7 +535,7 @@ Django
 Introducción
 ============
 
-.. Acá tenemos que justificar por que django
+.. note:: Acá tenemos que justificar por que django
 
 `Django <http://www.djangoproject.com>`_ es un framework web escrito en Python
 el cual sigue vagamente el concepto de Modelo Vista Controlador.
