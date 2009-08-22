@@ -64,54 +64,68 @@ Para una referencia completa de la API de Protopy remitase al apandice
 Organizando el codigo
 =====================
 
-Como ya se vio en :ref:`cliente-javascript`, una de las formas tradicionales
-y preferida de incluir funcionalidad JavaScript en un documento HTML es 
-mediante el tag ``script'' haciendo una referencia en el atributo ``src`` a
-la url del archivo que contiene el codigo que sera interpretado por el cliente 
-web al momento de mostrar el documento.
+Como ya se vio en la sección dedicada a :ref:`JavaScript <cliente-javascript>`,
+una de las formas tradicionales y recomendada de incluir funcionalidad en un
+documento HTML es mediante el tag ``script``, haciendo una referencia en el
+atributo ``src`` a la url del archivo que contiene el codigo; en una instancia 
+posterior, cuando el cliente accede al recurso, carga el archivo con las
+sentencias JavaScript y las interpreta en el contexto del documento.
 
 Este enfoque resulta sustentable para pequeños proyectos donde el lenguaje
 brinda mayormente soporte a la interacción con el usuario (validacion,
-accesibilidad, etc) y los fragmentos de codigo que se pasan al cliente son
+accesibilidad, etc) y los fragmentos de código que se pasan al cliente son
 bien conocidos por el desarrollador; en proyectos que implican mayor cantidad
-de funcionalidad JavaScript con grandes cantidades de codigo este enfoque
+de funcionalidad JavaScript, con grandes cantidades de código, este enfoque
 resulta complejo de mantener y evolucionar en el tiempo.
 
-Es por lo expuesto hasta aquí que se busco una forma de organizar y obtener el 
-codigo que resulte sustentable y escalable; similar al concepto de ``modulo''
-en Python :ref:`servidor-lenguajes-python`, se enfocó el desarrollo de Protopy
-en pequeñas unidades de codigo manejables, que puedan ser fasilmente obtenidas
-e interpretadas por el cliente y sumadas entre si cumplan una determinada tarea.
-Esta tecnica no es nueva en programacion y basicamente implica llevar el
-concepto de "divide y vencerás" ó "análisis descendente (Top-Down)" al hambito
-de JavaScript.
+Es por esto que para Protopy se busco como primera medida una forma de
+organizar y obtener el codigo del servidor que resulte sustentable y escalable;
+similar al concepto de :ref:`modulos en Python <servidor-lenguajes-python>`,
+se oriento el desarrollo de Protopy en pequeñas unidades de código. El enfoque
+modular no es nuevo en programacion y basicamente implica llevar el concepto de
+"divide y vencerás" ó "análisis descendente (Top-Down)" al hambito de JavaScript.
 
-Un módulo en Protopy resuelve un problema especifico y define una interfaz de
-comunicación para accesar y utilizar la funcionalidad que contiene. Por más
-simple que resulte de leer, esto implica que existe una manera de **obtener**
-un modulo y una manera de **publicar** la funcionalidad de un modulo, logrando
-de esta forma que interactuen entre ellos para resolver una determinada tarea.
+Un módulo resuelve un problema especifico y define una interfaz de comunicación
+para accesar y utilizar la funcionalidad que contiene. Por más simple que
+resulte de leer, esto implica que existe una manera de **obtener** un modulo y
+una manera de **publicar** la funcionalidad de un modulo, logrando de esta forma
+que interactuen entre ellos para resolver una determinada tarea.
 
 En su forma mas pedestre un módulo es un archivo que contiene definiciones y
 sentencias de JavaScript. El nombre del archivo es el nombre del módulo con el
-sufijo .js pegado y dentro de un módulo, el nombre del módulo (como una cadena)
-está disponible como el valor de la variable __name__.
+sufijo .js pegado y dentro de un módulo, el nombre del módulo está disponible
+como el valor de la variable `__name__`.
 
 Obtener un módulo
 -----------------
 
-Cuando un módulo llamado spam es importado, Protopy busca un archivo llamado
-spam.js en la url base, de no encontrar el archivo...
-Otra forma de obtener modulos es usando nombres de **paquetes** asociados a
-urls, de forma similar a la anteriro cuando un módulo llamado paquete.spam es
-importado, Protopy busca en el objeto sys.paths si existe una url asociada a
-paquete, de encontrar la relacion el archivo spam.js es buscado en esta, por
-otra parte si sys.paths no contiene una url asociada el archivo paquete/spam.js
-es buscado en la url base de Protopy. El uso del objeto sys.paths permite a los
-modulos de JavaScript que saben lo que están haciendo al modificar o reemplazar
-el camino de búsqueda de módulos. Nótese que es importante que el script no
-tenga el mismo nombre que un módulo estandar. Ver el apendice :ref:`Módulos 
-estandar <apendices-protopy-modulos>` para más información.
+La función `require` es la encargada de obtener los módulos del servidor e
+incorporarlo al :ref:`espacio de nombres <servidor-lenguajes-python>` del
+llamador, cuando un módulo llamado spam es requerido, Protopy busca un archivo
+llamado spam.js en la url base [*]_, de no encontrar el archivo el error
+``LoadError`` es lanzado a la funcion que requirio el modulo.
+
+.. [*] Ruta base desde la cual la biblioteca Protopy fue obtenida del servidor.
+
+Otra forma de obtener modulos es usando nombres de **paquetes**. A diferencia de
+Python un paquete no incluye funcionalidad en si mismo y su funcionalidad
+principal es la de establecer las bases en la cual buscar modulos.
+De forma similar a la anterior cuando un módulo llamado foo.spam es importado,
+Protopy busca en el objeto sys.paths si existe una url asociada al paquete foo,
+de encontrar la url base para foo el archivo spam.js es buscado en esa
+ubicación, por otra parte si sys.paths no contiene una url asociada a foo el
+archivo foo/spam.js es buscado en la url base. 
+
+El uso del objeto sys.paths permite a los modulos de JavaScript que saben lo
+que están haciendo al modificar o reemplazar el camino de búsqueda de módulos.
+Nótese que es importante que el script no tenga el mismo nombre que un
+:ref:`módulo estandar <apendices-protopy-modulos>`.
+
+Las formas en que el modulo obtenido es presentado al llamador difiere en
+funcion de la invocacion de `require`, por ahora solo alcanza con mencionar que
+un modulo puede ser obtenido en su totalidad, se puede obtener solo determinada
+funcion de un modulo o tambien cargar todas las definiciones del modulo en el
+espacio de nombres del llamador, para ver más :ref:`Apendice Protopy <apendices-protopy>`.
 
 Publicar un módulo
 ------------------
