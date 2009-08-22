@@ -101,6 +101,8 @@ tecnologías fueron desarrollándose y surgieron nuevas necesidades de dinamismo
 en la naturaleza de la web, permitiendo interactuar con usuarios y utilizar
 sistemas de Bases de Datos.
 
+Un lenguaje de programación interpretado es aquel en que un programa puede ser ejecutado sin ser necesaria una etapa de compilación. Existe un intérprete que realiza la ejecución del código fuente.
+
 PHP
 ---
 Es un lenguaje de programación utilizado para la creación de sitio web. PHP es
@@ -514,6 +516,7 @@ Rails
 Django
 ******
 
+Acá tenemos que justificar por que django
 Introducción
 ============
 
