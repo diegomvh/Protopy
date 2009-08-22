@@ -87,6 +87,8 @@ Históricamente las aplicaciones CGI han sido escritas en lenguajes interpretado
 Lenguajes interpreteados
 ************************
 
+Un lenguaje de programación interpretado es aquel en que un programa puede ser ejecutado sin ser necesaria una etapa de compilación. Existe un intérprete que realiza la ejecución del código fuente.
+
 PHP
 ===
 
@@ -369,7 +371,8 @@ Symfony
 Django
 ******
 
-Acá tenemos que justificar por que django
+.. note::
+	Tenemos que llegar a la elección de Django
 
 `Django <http://www.djangoproject.com>`_ es un framework web escrito en Python
 el cual sigue vagamente el concepto de Modelo Vista Controlador.
@@ -405,6 +408,9 @@ controladores o vistas para esas páginas, y un sistema de redirección de URLs.
 
 Django como framework de desarrollo consiste en un  conjunto de utilidades 
 de consola que permiten crear y manipular proyectos y aplicaciones.
+
+.. image:: ../_svg/django_mvc_mtv.png
+
 
 Estructuración de un proyecto en Django
 =======================================
