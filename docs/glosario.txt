@@ -112,4 +112,15 @@ Glosario
     	específica mediante la adición de componentes específicos de un locale 
     	y la traducción de los textos, por lo que también se le puede denominar 
     	regionalización. No obstante la traducción literal del inglés es la más extendida.
+    
+    HTTP
+    	Hyper Text Transfer Protocol
+    
+    HTML
+    	Lenguaje de hipertexto basado en etiquetas de marcado
     	
+    XHTML
+    	Lenguaje de hipertexto basado en etiquetas de marcado que no viola la esepcificación HTML
+    	
+    URL
+    	Localizador universal de recursos, especificada en la `RFC 2396 <http://tools.ietf.org/html/rfc2396>`_

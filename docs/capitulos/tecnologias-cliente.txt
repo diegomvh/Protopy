@@ -8,6 +8,12 @@ Tecnologías del cliente
 Estructura de un navegador
 **************************
 
+.. _navegador-web:
+Navegador Web
+=============
+Un navegador web o *web browser*, es un software encargado de representar documentos de hípertexto.
+El lenguaje en el cual se escriben estos documentos es HTML. 
+
 .. _cliente-html:
 HTML
 ====

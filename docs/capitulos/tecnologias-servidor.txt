@@ -9,6 +9,31 @@ De lo estatico a lo dinámico
 ****************************
 
 .. note:: algo de html quiza
+.. note:: titulo en revisión
+
+
+Servidor Web
+============
+Un servidor web, o *web server* es un software encargado de recibir solicitudes
+de un cliente, típicamente un :ref:`navegador web <navegador-web>`, a través del protcolo :term:`HTTP` y 
+generar una respuesta a la solicitud.
+Mediante la especificación :term:`MIME` que se incluye en el encabezado
+de la respuesta que es enviada al cliente, se puede identificar que tipo
+de archivo es devuelto, siendo el tipo más común :term:`HTML` o :term:`XHTML`. 
+
+El contenido que es enviado al cliente puede ser de origen *estático* o *dinámico*.
+
+
+.. _conteido-estatico:
+
+El contendio estático es aquél que proviene desde un archivo en el sistema de archivos sin ninguna modificación. 
+
+.. _conteido-dinamico:
+
+El contenido dinámico en contraposición al :ref:`contenido estático <conteido-estatico>` es generado por algún programa, un :term:`script` o algún tipo de API invocada por el web server, como SSI, :ref:`CGI <servidor-cgi>`, SCGI, FastCGI, JSP, ColdFusion, NSAPI o ISAPI).
+
+El clinete web accede a los recursos del web server mediante una dirección de recurso, u :term:`URL`.
+
 
 .. _servidor-cgi:
 
@@ -17,7 +42,7 @@ CGI
 
 CGI, *Common Gateway Interface* [*]_ es un estándar de comunicación entre un servidor web
 y una aplicación, que permite que un a través de un navegador, se invoque un programa
-en el servidor y se recuperen resultados de éste. 
+en el servidor y se recuperen resultados de éste.
 
 CGI fue la primera estandarización de un mecanismo para generar contenido dinámico 
 en la web.
@@ -92,6 +117,7 @@ Lenguajes
 
 .. note:: Mejorar la introduccion pedorra a lenguajes
 
+
 Existen en la actualidad diferentes lenguajes de programación para desarrollar
 en la web, estos han surgido y evolucionado en virtud de las tendencias y
 necesidades de las plataformas. En los inicios de Internet, la naturaleza
@@ -101,7 +127,6 @@ tecnologías fueron desarrollándose y surgieron nuevas necesidades de dinamismo
 en la naturaleza de la web, permitiendo interactuar con usuarios y utilizar
 sistemas de Bases de Datos.
 
-Un lenguaje de programación interpretado es aquel en que un programa puede ser ejecutado sin ser necesaria una etapa de compilación. Existe un intérprete que realiza la ejecución del código fuente.
 
 PHP
 ---
