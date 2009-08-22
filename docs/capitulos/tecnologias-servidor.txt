@@ -23,7 +23,6 @@ de archivo es devuelto, siendo el tipo más común :term:`HTML` o :term:`XHTML`.
 
 El contenido que es enviado al cliente puede ser de origen *estático* o *dinámico*.
 
-
 .. _conteido-estatico:
 
 El contendio estático es aquél que proviene desde un archivo en el sistema de archivos sin ninguna modificación. 
@@ -40,18 +39,12 @@ El clinete web accede a los recursos del web server mediante una dirección de r
 CGI
 ===
 
-<<<<<<< local
-CGI, *Common Gateway Interface* [*]_ es un estándar de comunicación entre un
-servidor web y una aplicación, que permite que un a través de un navegador, se
-invoque un programa en el servidor y se recuperen resultados de éste. 
-=======
 CGI, *Common Gateway Interface* [*]_ es un estándar de comunicación entre un servidor web
 y una aplicación, que permite que un a través de un navegador, se invoque un programa
 en el servidor y se recuperen resultados de éste.
->>>>>>> other
 
-CGI fue la primera estandarización de un mecanismo para generar contenido
-dinámico en la web.
+CGI fue la primera estandarización de un mecanismo para generar :ref:`contenido
+dinámico <conteido-dinamico>` en la web.
 
 En el estandar CGI, el servidor web intercambia datos con la aplicación medinate
 variables de entorno y los flujos de entrada y salida.
