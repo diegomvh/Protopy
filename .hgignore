@@ -27,7 +27,7 @@ bundle*
 docs/_build/*
 docs/_svg/*.png
 doffproj/static/doffproj_offline/*
-
+informe/*
 
 syntax: regexp
 ^nbproject

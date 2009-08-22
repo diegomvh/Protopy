@@ -49,8 +49,8 @@ dinámico <conteido-dinamico>` en la web.
 En el estandar CGI, el servidor web intercambia datos con la aplicación medinate
 variables de entorno y los flujos de entrada y salida.
 
-Los parámetros HTTP (como la URL, el método (GET, POST, PUSH, etc.), nombre del
-servidor puerto, etc.) e información sobre el servidor son trasferidos a la
+Los parámetros HTTP, como la :term:`URL`, el método (GET, POST, PUSH, etc.), nombre del
+servidor o host, puerto, etc.) e información sobre el servidor son trasferidos a la
 aplicación CGI como variables de entorno.
 
 Si existiese un cuerpo en la petición HTTP, como por ejemplo, el contenido de un
@@ -101,10 +101,6 @@ aplicaciones.
 Históricamente las aplicaciones CGI han sido escritas en lenguajes interpretados, sinedo muy popular Perl y más recientemente el lenguaje PHP.
 
 
-..  http://www.mi_dominio.com/cgi-bin/mi_programa.cgi?nombre=matias
-
-.. Invocará a la aplicación del archivo mi_programa.cgi
-
 
 .. Poner un gráfico aquí
 
@@ -114,182 +110,61 @@ Históricamente las aplicaciones CGI han sido escritas en lenguajes interpretado
 
 .. _servidor-lenguajes:
 
-Lenguajes
-=========
+Lenguajes interpretados
+=======================
 
 .. note:: Mejorar la introduccion pedorra a lenguajes y quitar las viles copias
     de las descripcion de los lenguajes por algo mas nuestro.
+    Existen en la actualidad diferentes lenguajes de programación para desarrollar
+	en la web, estos han surgido y evolucionado en virtud de las tendencias y
+	necesidades de las plataformas. En los inicios de Internet, la naturaleza
+	de los contenidos hacia que lenguajes estaicos como el HTML diera una buena
+	solucion a las necesidades de la Web. A medida que paso el tiempo, las
+	tecnologías fueron desarrollándose y surgieron nuevas necesidades de dinamismo
+	en la naturaleza de la web, permitiendo interactuar con usuarios y utilizar
+	sistemas de Bases de Datos.
+
+Un lenguaje de programación interpretado es aquel en el cual los programas son ejecutados
+por un intérprete, en vez de realizarse una traducción a lenguaje máquina, o compilados.
+
+.. image:: ../_svg/lenguaje_interpretado.png
 
 
-Existen en la actualidad diferentes lenguajes de programación para desarrollar
-en la web, estos han surgido y evolucionado en virtud de las tendencias y
-necesidades de las plataformas. En los inicios de Internet, la naturaleza
-de los contenidos hacia que lenguajes estaicos como el HTML diera una buena
-solucion a las necesidades de la Web. A medida que paso el tiempo, las
-tecnologías fueron desarrollándose y surgieron nuevas necesidades de dinamismo
-en la naturaleza de la web, permitiendo interactuar con usuarios y utilizar
-sistemas de Bases de Datos.
 
 
-PHP
----
 
-Es un lenguaje de programación utilizado para la creación de sitio web. PHP es
-un acrónimo recursivo que significa “PHP Hypertext Pre-processor”, (inicialmente
-se llamó Personal Home Page). Surgió en 1995, desarrollado por PHP Group.
-
-PHP es un lenguaje de script interpretado en el lado del servidor utilizado para
-la generación de páginas web dinámicas, embebidas en páginas HTML y ejecutadas
-en el servidor. PHP no necesita ser compilado para ejecutarse. Para su
-funcionamiento necesita tener instalado Apache o IIS con las librerías de PHP.
-La mayor parte de su sintaxis ha sido tomada de C, Java y Perl con algunas
-características específicas. Los archivos cuentan con la extensión (php).
-
-Sintaxis:
-
-La sintaxis utilizada para incorporar código PHP es la siguiente:
-
-.. code-block:: php
-
-    <?
-    $mensaje = “Hola”;
-    echo $mensaje;
-    ?>
-
-También puede usarse:
-
-.. code-block:: php
-
-    <?php
-    $mensaje = “Hola”;
-    echo $mensaje;
-    ?>
-
-Ventajas:
-
-    * Muy fácil de aprender.
-    * Se caracteriza por ser un lenguaje muy rápido.
-    * Soporta en cierta medida la orientación a objeto. Clases y herencia.
-    * Es un lenguaje multiplataforma: Linux, Windows, entre otros.
-    * Capacidad de conexión con la mayoría de los manejadores de base de datos.
-    * Capacidad de expandir su potencial utilizando módulos.
-    * Posee documentación en su página oficial la cual incluye descripción y
-        ejemplos de cada una de sus funciones.
-    * Es libre, por lo que se presenta como una alternativa de fácil acceso
-        para todos.
-    * Incluye gran cantidad de funciones.
-    * No requiere definición de tipos de variables ni manejo detallado del
-        bajo nivel.
-
-Desventajas:
-
-    * Se necesita instalar un servidor web.
-    * Todo el trabajo lo realiza el servidor y no delega al cliente. Por tanto
-        puede ser más ineficiente a medida que las solicitudes aumenten de
-        número.
-    * La legibilidad del código puede verse afectada al mezclar sentencias
-        HTML y PHP.
-    * La programación orientada a objetos es aún muy deficiente para
-        aplicaciones grandes.
-    * Dificulta la modularización.
-    * Dificulta la organización por capas de la aplicación.
-
-Seguridad:
-
-PHP es un poderoso lenguaje e intérprete, ya sea incluido como parte de un
-servidor web en forma de módulo o ejecutado como un binario CGI separado, es
-capaz de acceder a archivos, ejecutar comandos y abrir conexiones de red en el
-servidor. Estas propiedades hacen que cualquier cosa que sea ejecutada en un
-servidor web sea insegura por naturaleza.
-
-PHP está diseñado específicamente para ser un lenguaje más seguro para escribir
-programas CGI que Perl o C, y con la selección correcta de opciones de
-configuración en tiempos de compilación y ejecución, y siguiendo algunas
-prácticas correctas de programación.
-
-Ruby
-----
-
-Es un lenguaje interpretado de muy alto nivel y orientado a objetos.
-Desarrollado en el 1993 por el programador japonés Yukihiro “Matz” Matsumoto.
-Su sintaxis está inspirada en Phyton, Perl. Es distribuido bajo licencia de
-software libre (Opensource).
-
-Ruby es un lenguaje dinámico para una programación orientada a objetos rápida y
-sencilla. Para los que deseen iniciarse en este lenguaje pueden encontrar un
-tutorial interactivo de ruby. Se encuentra también a disposición de estos
-usuarios un sitio con informaciones y cursos en español.
-
-Sintaxis:
-
-.. code-block:: ruby
-    puts "hola"
-
-Características:
-
-    * Existe diferencia entre mayúsculas y minúsculas.
-    * Múltiples expresiones por líneas, separadas por punto y coma “;”.
-    * Dispone de manejo de excepciones.
-    * Ruby puede cargar librerías de extensiones dinámicamente si el
-        (Sistema Operativo) lo permite.
-    * Portátil.
-
-Ventajas:
-
-    * Permite desarrollar soluciones a bajo Costo.
-    * Software libre.
-    * Multiplataforma.
+.. _lenguaje-python:
 
 Python
-------
+======
 
-.. note:: Creo que en esta parte mas que solo explicar un poco python, luego
-    de hacer la introduccion arrancar como un lenguaje electo para el desarrollo
-    serverside, y justificar.
+El lenguaje de programación Python fue creado por Guido van Rossum en el año
+1991.
+Python es un lenguaje de programación multiparadigma. Es decir, permite al 
+programador utilizar diferentes formas de resolución de problemas
 
-Es un lenguaje de programación creado en el año 1990 por Guido van Rossum, es
-el sucesor del lenguaje de programación ABC. Python es comparado habitualmente
-con Perl. Los usuarios lo consideran como un lenguaje más limpio para programar.
-Permite la creación de todo tipo de programas incluyendo los sitios web.
+	* programación orientada a objetos
+	* programación estructurada
+	* programación funcional
 
-Su código no necesita ser compilado, por lo que se llama que el código es
-interpretado. Es un lenguaje de programación multiparadigma, lo cual fuerza a
-que los programadores adopten por un estilo de programación particular:
+Otros paradigmas (como programación lógica) están soportados mediante el uso de
+extensiones, por ejemplo, `PySWIP <http://code.google.com/p/pyswip/>`_
 
-    * Programación orientada a objetos.
-    * Programación estructurada.
-    * Programación funcional.
-    * Programación orientada a aspectos.
+Python usa tipo de dato dinámico y reference counting para el manejo de
+memoria, técnica similar al *garbage collector* del lenguaje de programación Java.
+Una característica importante de Python es la resolución dinámica de nombres, 
+lo que enlaza un método y un nombre de variable durante la ejecución del
+programa (también llamado ligadura dinámica de métodos, o *dynamic binding*).
 
-Sintaxis:
+Otro objetivo del diseño del lenguaje era la facilidad de extensión. 
+Nuevos módulos se pueden escribir fácilmente en C o C++. 
+Python puede utilizarse como un lenguaje de extensión para módulos y 
+aplicaciones que necesitan de una interfaz programable, es decir, un intérprete
+de python puede ser embebido en aplicaciones programadas en otros lenguajes.
 
-Ejemplo de una clase en Phyton:
 
-def dibujar_muneco(opcion):
-    if opcion == 1:
-        C.create_line(580, 150, 580, 320, width=4, fill="blue")
-        C.create_oval(510, 150, 560, 200, width=2, fill='PeachPuff')
 
-Ventajas:
 
-    * Libre y fuente abierta.
-    * Lenguaje de propósito general.
-    * Gran cantidad de funciones y librerías.
-    * Sencillo y rápido de programar.
-    * Multiplataforma.
-    * Licencia de código abierto (Opensource).
-    * Orientado a Objetos.
-    * Portable.
-
-Desventajas:
-
-    * Lentitud por ser un lenguaje interpretado.
-
-.. mucho mas lenguajes en http://www.maestrosdelweb.com/principiantes/los-diferentes-lenguajes-de-programacion-para-la-web/
-
-Python es un lengauje interpretado.
-
-.. Escribir sobre el concepto de modulos y algo de programacion modular, ya que da soporte a protopy http://es.wikipedia.org/wiki/Programaci%C3%B3n_modular
 
 .. _servidor-wsgi:
 
