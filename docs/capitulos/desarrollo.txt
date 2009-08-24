@@ -71,19 +71,26 @@ atributo ``src`` a la url del archivo que contiene el codigo; en una instancia
 posterior, cuando el cliente accede al recurso, carga el archivo con las
 sentencias JavaScript y las interpreta en el contexto del documento.
 
-Este enfoque resulta sustentable para pequeños proyectos donde el lenguaje
+El enfoque tradicional resulta sustentable para pequeños proyectos donde el lenguaje
 brinda mayormente soporte a la interacción con el usuario (validacion,
 accesibilidad, etc) y los fragmentos de código que se pasan al cliente son
 bien conocidos por el desarrollador; en proyectos que implican mayor cantidad
 de funcionalidad JavaScript, con grandes cantidades de código, este enfoque
-resulta complejo de mantener y evolucionar en el tiempo.
+resulta complejo de mantener y evolucionar en el tiempo. Es por esto que para
+Protopy se busco como primera medida una forma de organizar y obtener el codigo
+del servidor que resulte sustentable y escalable.
 
-Es por esto que para Protopy se busco como primera medida una forma de
-organizar y obtener el codigo del servidor que resulte sustentable y escalable;
-similar al concepto de :ref:`modulos en Python <servidor-lenguajes-python>`,
-se oriento el desarrollo de Protopy en pequeñas unidades de código. El enfoque
-modular no es nuevo en programacion y basicamente implica llevar el concepto de
-"divide y vencerás" ó "análisis descendente (Top-Down)" al hambito de JavaScript.
+Similar al concepto de :ref:`modulos en Python <servidor-lenguajes-python>`, el
+desarrollo de Protopy se oriento en pequeñas unidades funcionales llamadas
+**modulos**. A demas de la sanidad mental que implica organizar el código en
+distintos archivos, los módulos representan un cambio muy importante en la obtención
+de funcionalidad, donde ya no es el documento HTML el que dice al cliente que
+archivo cargar del servidor, sino que el mismo codigo interpretado va obteniendo
+la funcionalidad a medida que la requiere.
+
+El enfoque modular no es nuevo en programación y basicamente, la implementación
+de Protopy, implica llevar el concepto de "divide y vencerás" ó "análisis
+descendente (Top-Down)" al hambito de JavaScript.
 
 Un módulo resuelve un problema especifico y define una interfaz de comunicación
 para accesar y utilizar la funcionalidad que contiene. Por más simple que
@@ -99,7 +106,7 @@ como el valor de la variable `__name__`.
 Obtener un módulo
 -----------------
 
-La función `require` es la encargada de obtener los módulos del servidor e
+La función `require` es la encargada de obtener un módulo del servidor e
 incorporarlo al :ref:`espacio de nombres <servidor-lenguajes-python>` del
 llamador, cuando un módulo llamado spam es requerido, Protopy busca un archivo
 llamado spam.js en la url base [*]_, de no encontrar el archivo el error
@@ -122,7 +129,7 @@ Nótese que es importante que el script no tenga el mismo nombre que un
 :ref:`módulo estandar <apendices-protopy-modulos>`.
 
 Las formas en que el modulo obtenido es presentado al llamador difiere en
-funcion de la invocacion de `require`, por ahora solo alcanza con mencionar que
+funcion de los parametros pasados a `require`, por ahora solo alcanza con mencionar que
 un modulo puede ser obtenido en su totalidad, se puede obtener solo determinada
 funcion de un modulo o tambien cargar todas las definiciones del modulo en el
 espacio de nombres del llamador, para ver más :ref:`Apendice Protopy <apendices-protopy>`.
@@ -130,46 +137,14 @@ espacio de nombres del llamador, para ver más :ref:`Apendice Protopy <apendices
 Publicar un módulo
 ------------------
 
-Un módulo puede contener sentencias ejecutables y definición de funciones
-también. La intención de éstas sentencias es inicializar el módulo. Ellas son
-ejecutadas sólo la primera vez que el módulo se importa a alguna parte.
-Cada módulo tiene su propia tabla de símbolos privada, que es usada como la
-tabla global de símbolos por todas las funciones definidas el módulo. Así, el
-autor de un módulo puede usar variables globales en el módulo sin preocuparse
-por chocar con las variables globales de un usuario.
-
-Los módulos pueden importar otros módulos. Se acostumbra pero no se requiere
-poner todas las sentencias import al comienzo de un módulo (o script, para el
-evento). Los nombres de los módulos importados son puestos en la tabla global
-de símbolos del módulo importador.
-
-Hay incluso una variante para importar todos los nombres que un módulo define:
-
-
-Ésto importa todos los nombres excepto aquellos que empiecen con un underscore (__). 
-
-.. Hacer mencion de el cambio de enfoque
-
-de codigo define un modulo, este puede ser importado por otro fragemento de
-codigo y cada uno representa su propio ambito de nombres. Existen en Protopy
-dos tipos de modulos, los modulos integrados y los modulos organizados en
-archivos JavaScript.
-.. poner mas sobre los archivos js que representan modulos
-.. Esquema de nombrado
-Para acceder a los modulos es necesario establecer un esquema de nombrado ...
-.. Completar sobre esquema de nombres.
-Con los modulos y un sistema de nombrado para el acceso a los mismos, la
-responsabilidad de la carga del codigo se deja en manos del cliente y del
-propio codigo que requiera determinada funcionalidad provista por un modulo.
-
-Undo de los principales inconvenientes a los que Protopy da solucion es a la
-inclucion dinamica de funcionalidad bajo demanda, esto se logra con los
-``modulos''.
-
-Las funciones principales para trabajar con los modulos son ``require'' para
-cargar un modulo en el hambito de nombres local y ``publish'' para que los
-modulos publiquen o expongan la funcionalidad.
-
+La acción de publicar un modulo implica exponer la funcionalidad que este define.
+En Python no es necesario explicitar que funcionalidad del módulo se expone a
+los llamadores, ya que todo lo definido en él es público; pero los modulos en
+Protopy se evaluan dentro de una clausura y los llamadores no podran acceder
+a las definiciones dentro de ellas si no son publicadas. Para publicar las
+sentencias ejecutables y definición de funciones Protopy provee la función
+`publish`. La intención de las sentencias es inicializar el módulo y son
+ejecutadas sólo la primera vez que el módulo es requerido a alguna parte.
 
 Creando tipos de objeto
 =======================
