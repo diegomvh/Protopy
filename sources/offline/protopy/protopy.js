@@ -573,7 +573,7 @@
 	    this.responders.push(responder);
 	},
 	unregister: function(responder) {
-	    this.responders = this.responders.without(responder);
+	    this.responders = without(this.responders, responder);
 	},
 	dispatch: function(callback, request, transport, json) {
 	    for each (var responder in this.responders) {
@@ -1933,6 +1933,9 @@
         },
         flatten: function(array) { 
             return array.reduce(function(a,b) { return a.concat(b); }, []); 
+        },
+        without: function(array, e) {
+            //TODO este para queitar elemenetos de un arreglo
         },
         html: function(object) {
             return object && object.__html__ ? object.__html__() : String.interpret(object);

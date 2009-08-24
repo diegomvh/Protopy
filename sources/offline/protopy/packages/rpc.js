@@ -708,11 +708,10 @@ rpc.ServiceProxy = type('ServiceProxy', object, {
     }
 });
 
-
 rpc.setAsynchronous = function(serviceProxy, isAsynchronous){
-	if(!isAsynchronous && serviceProxy.__isCrossSite)
-		throw Error("It is not possible to establish a synchronous connection to a cross-site RPC service.");
-	serviceProxy.__isAsynchronous = !!isAsynchronous;
+    if(!isAsynchronous && serviceProxy.__isCrossSite)
+        throw Error("It is not possible to establish a synchronous connection to a cross-site RPC service.");
+    serviceProxy.__isAsynchronous = !!isAsynchronous;
 };
 
 

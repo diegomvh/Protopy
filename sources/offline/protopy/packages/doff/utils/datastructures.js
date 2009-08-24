@@ -6,7 +6,12 @@ var SortedDict = type('SortedDict', Dict, {
         this.keyOrder = (object && isinstance(object, SortedDict))? copy(object.keyOrder) : [];
         super(Dict, this).__init__(object);
     },
-    
+
+    __str__: function() {
+        var n = len(this.keyOrder);
+        return "%s".times(n, ', ').subs(this.keyOrder);
+    },
+
     __iter__: function() {
         for each (var key in this.keyOrder) {
             var value = this.get(key);
@@ -20,7 +25,7 @@ var SortedDict = type('SortedDict', Dict, {
     __copy__: function() {
         return new SortedDict(this);
     },
-    
+
     __deepcopy__: function() {
         var obj = new SortedDict();
         for (var hash in this._key) {
@@ -37,7 +42,7 @@ var SortedDict = type('SortedDict', Dict, {
     },
 
     unset: function(key) {
-        this.keyOrder.without(key);
+        without(this.keyOrder, key);
         return super(Dict, this).unset(key);
     },
 

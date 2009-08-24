@@ -139,12 +139,62 @@ Publicar un módulo
 
 La acción de publicar un modulo implica exponer la funcionalidad que este define.
 En Python no es necesario explicitar que funcionalidad del módulo se expone a
-los llamadores, ya que todo lo definido en él es público; pero los modulos en
+los llamadores, ya que todo lo definido en él es público; pero los módulos en
 Protopy se evaluan dentro de una clausura y los llamadores no podran acceder
-a las definiciones dentro de ellas si no son publicadas. Para publicar las
-sentencias ejecutables y definición de funciones Protopy provee la función
-`publish`. La intención de las sentencias es inicializar el módulo y son
-ejecutadas sólo la primera vez que el módulo es requerido a alguna parte.
+a sus funciones si no son publicadas. 
+
+La funcion `publish` es la encargada de relizar la tarea de publicar el
+contenido del modulo en Protopy.
+
+Un modulo puede contener sentencias ejecutables y definición de funciones,
+generalmente las sentencias son para inicializar el módulo ya que estas se
+evaluan solo la primera vez que el módulo es requerido a alguna parte y las
+definiciones son las efectivamente seran publicadas como funcionalidad.
+
+
+require('copy', 'copy', 'deepcopy');
+
+var SortedDict = type('SortedDict', [ Dict ], {
+    __init__: function(object) {
+        this.keyOrder = (object && isinstance(object, SortedDict))? copy(object.keyOrder) : [];
+        super(Dict, this).__init__(object);
+    },
+    __iter__: function() {
+        for each (var key in this.keyOrder) {
+            var value = this.get(key);
+            var pair = [key, value];
+            pair.key = key;
+            pair.value = value;
+            yield pair;
+        }
+    },
+    __deepcopy__: function() {
+        var obj = new SortedDict();
+        for (var hash in this._key) {
+            obj._key[hash] = deepcopy(this._key[hash]);
+            obj._value[hash] = deepcopy(this._value[hash]);
+        }
+        obj.keyOrder = deepcopy(this.keyOrder); 
+        return obj;
+    },
+    __str__: function() {
+        var n = len(this.keyOrder);
+        return "%s".times(n, ', ').subs(this.keyOrder);
+    },
+    set: function(key, value) {
+        this.keyOrder.push(key);
+        return super(Dict, this).set(key, value);
+    },
+    unset: function(key) {
+        this.keyOrder.without(key);
+        return super(Dict, this).unset(key);
+    }
+});
+
+publish({ 
+    SortedDict: SortedDict 
+});
+
 
 Creando tipos de objeto
 =======================
@@ -172,17 +222,29 @@ similar. Si bien la estructura ``hasheable'' nativa a JavaScript en un objeto,
 los diccionarios de Protopy permiten el uso de objetos como claves en lugar de
 solo cadenas.
 
-
-Extendiendo el DOM
-==================
+Extendiendo JavaScript
+======================
 Si bien el :term:`DOM` ofrece ya una :term:`API` muy completa para acceder,
-añadir y cambiar dinámicamente el contenido estructurado en el documento HTML.
+añadir y cambiar dinámicamente el contenido del documento HTML, existen
+funciones muy utiles y comunes en los desarrollos que los programadores
+incorporan al HTML y se intentaron englobar y mantener dentro del nucleo de
+Protopy, 
 
 
-Manejando los eventos
-=====================
-.. event.connect
-.. event.
+Extendiendo DOM
+===============
+Si bien el :term:`DOM` ofrece ya una :term:`API` muy completa para acceder,
+añadir y cambiar dinámicamente el contenido del documento HTML, existen
+funciones muy utiles y comunes para la manipulación del DOM, que los
+programadores incorporan al proyecto en forma de bibliotecas propias o de
+terceros, este tipo de funciones se integraron al nucleo de Protopy con el
+objetivo de fasilitar el desarrollo.
+
+Funciones para modificar e incorporar elementos al documento son muy comunes y
+estan disponibles en Protopy, en conjunto con otras para el manejo de
+formularios, como serializacion, obtencion de valores.
+
+En cuanto a los eventos 
 
 
 Envolviendo a gears

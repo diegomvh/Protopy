@@ -8,7 +8,7 @@ function curry(f) {
 function wrap(f, wrapper) {
     var wraped = f;
     return function() {
-      return wrapper.apply(this, [wraped].concat(array(arguments)));
+      return wrapper.apply(this, [ wraped ].concat(array(arguments)));
     }
 }
 
