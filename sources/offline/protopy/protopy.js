@@ -39,7 +39,7 @@
             require: require,
             type: type
         },
-        base: '/', //Where i'm, set this for another place. Default root 
+        base: '/',                          //Where i'm, set this for another place. Default root 
         default_path: 'packages',
         add: function(module) {
             var name = module['__name__'];
@@ -254,34 +254,34 @@
     /******************** sys ***********************/
     /* Retorna el objeto gears, de no existir lo crea en window.google.gears */
     function get_gears(){
-	var factory;
-	
-	if (window.google && window.google.gears) { 
-            return window.google.gears; 
-        } // already defined elsewhere
-	
-	if(typeof GearsFactory != "undefined"){ // Firefox
-		factory = new GearsFactory();
-	} else {
-		if(sys.browser.IE){
-			try{
-				factory = new ActiveXObject("Gears.Factory");
-			}catch(e){
-				// ok to squelch; there's no gears factory.  move on.
-			}
-		}else if(navigator.mimeTypes["application/x-googlegears"]){
-			// Safari?
-			factory = document.createElement("object");
-			factory.setAttribute("type", "application/x-googlegears");
-			factory.setAttribute("width", 0);
-			factory.setAttribute("height", 0);
-			factory.style.display = "none";
-			document.documentElement.appendChild(factory);
-		}
-	}
+        var factory;
+        
+        if (window.google && window.google.gears) { 
+                return window.google.gears; 
+            } // already defined elsewhere
+        
+        if(typeof GearsFactory != "undefined"){ // Firefox
+            factory = new GearsFactory();
+        } else {
+            if(sys.browser.IE){
+                try{
+                    factory = new ActiveXObject("Gears.Factory");
+                }catch(e){
+                    // ok to squelch; there's no gears factory.  move on.
+                }
+            }else if(navigator.mimeTypes["application/x-googlegears"]){
+                // Safari?
+                factory = document.createElement("object");
+                factory.setAttribute("type", "application/x-googlegears");
+                factory.setAttribute("width", 0);
+                factory.setAttribute("height", 0);
+                factory.style.display = "none";
+                document.documentElement.appendChild(factory);
+            }
+        }
 
         window.google = {}, window.google.gears = {'installed': !!factory};
-	if(factory) {
+        if(factory) {
             window.google.gears._factory = factory;
 
             window.google.gears.getBuildInfo = function() {
@@ -315,37 +315,36 @@
                  window.location.href = url;
             }
         }
-
-	return window.google.gears;
+        return window.google.gears;
     }
 
     /* Modulo: sys - modulo de sistema, proporciona informacion sobre el ambiente y algunas herramientas para interactuar con este */
     var sys = ModuleManager.create('sys', 'built-in', { 
-	version: 0.95,
-	browser: {
-	    IE:     !!(window.attachEvent && navigator.userAgent.indexOf('Opera') === -1),
-	    Opera:  navigator.userAgent.indexOf('Opera') > -1,
-	    WebKit: navigator.userAgent.indexOf('AppleWebKit/') > -1,
-	    Gecko:  navigator.userAgent.indexOf('Gecko') > -1 && navigator.userAgent.indexOf('KHTML') === -1,
-	    MobileSafari: !!navigator.userAgent.match(/Apple.*Mobile.*Safari/),
-	    features: {
-		XPath: !!document.evaluate,
-		SelectorsAPI: !!document.querySelector,
-		ElementExtensions: !!window.HTMLElement,
-		SpecificElementExtensions: document.createElement('div')['__proto__'] &&
-						document.createElement('div')['__proto__'] !==
-						document.createElement('form')['__proto__']
-	    }
-	},
-	register_path: function(module, path) { 
-	    ModuleManager.register_path(module, path); 
-	},
-	module_url: function(name, postfix) {
-	    return ModuleManager.module_url(name, postfix);
-	},
-	modules: ModuleManager.modules,
-	paths: ModuleManager.paths,
-	manager: ModuleManager
+        version: 0.95,
+        browser: {
+            IE:     !!(window.attachEvent && navigator.userAgent.indexOf('Opera') === -1),
+            Opera:  navigator.userAgent.indexOf('Opera') > -1,
+            WebKit: navigator.userAgent.indexOf('AppleWebKit/') > -1,
+            Gecko:  navigator.userAgent.indexOf('Gecko') > -1 && navigator.userAgent.indexOf('KHTML') === -1,
+            MobileSafari: !!navigator.userAgent.match(/Apple.*Mobile.*Safari/),
+            features: {
+            XPath: !!document.evaluate,
+            SelectorsAPI: !!document.querySelector,
+            ElementExtensions: !!window.HTMLElement,
+            SpecificElementExtensions: document.createElement('div')['__proto__'] &&
+                            document.createElement('div')['__proto__'] !==
+                            document.createElement('form')['__proto__']
+            }
+        },
+        register_path: function(module, path) { 
+            ModuleManager.register_path(module, path); 
+        },
+        module_url: function(name, postfix) {
+            return ModuleManager.module_url(name, postfix);
+        },
+        modules: ModuleManager.modules,
+        paths: ModuleManager.paths,
+        manager: ModuleManager
     });
 
     sys.gears = get_gears();
@@ -376,119 +375,119 @@
     /********************** event **************************/
     // From dojo
     var Listener = {
-	// create a dispatcher function
- 	getDispatcher: function() {
-	    return function() {
-		var callee = arguments.callee, listeners = callee._listeners, target = callee.target;
-		// return value comes from original target function
-		var ret = target && target.apply(this, arguments);
-		// invoke listeners after target function
-		for each (var listener in listeners)
-		    listener.apply(this, arguments);
-		// return value comes from original target function
-		return ret;
-	    }
-	},
-	// add a listener to an object
-	add: function(source, method, listener) {
-	    source = source || window;
-	    // The source method is either null, a dispatcher, or some other function
-	    var func = source[method];
-	    // Ensure a dispatcher
-	    if(!func || !func._listeners) {
-		var dispatcher = this.getDispatcher();
-		// original target function is special
-		dispatcher.target = func;
-		// dispatcher holds a list of listeners
-		dispatcher._listeners = []; 
-		// redirect source to dispatcher
-		func = source[method] = dispatcher;
-	    }
-	    return func._listeners.push(listener) ;
-	},
-	// remove a listener from an object
-	remove: function(source, method, handle) {
-	    var func = ( source || window )[method];
-	    // remember that handle is the index+1 (0 is not a valid handle)
-	    if(func && func._listeners && handle--) {
-		delete func._listeners[handle]; 
-	    }
-	}
+        // create a dispatcher function
+        getDispatcher: function() {
+            return function() {
+            var callee = arguments.callee, listeners = callee._listeners, target = callee.target;
+            // return value comes from original target function
+            var ret = target && target.apply(this, arguments);
+            // invoke listeners after target function
+            for each (var listener in listeners)
+                listener.apply(this, arguments);
+            // return value comes from original target function
+            return ret;
+            }
+        },
+        // add a listener to an object
+        add: function(source, method, listener) {
+            source = source || window;
+            // The source method is either null, a dispatcher, or some other function
+            var func = source[method];
+            // Ensure a dispatcher
+            if(!func || !func._listeners) {
+            var dispatcher = this.getDispatcher();
+            // original target function is special
+            dispatcher.target = func;
+            // dispatcher holds a list of listeners
+            dispatcher._listeners = []; 
+            // redirect source to dispatcher
+            func = source[method] = dispatcher;
+            }
+            return func._listeners.push(listener) ;
+        },
+        // remove a listener from an object
+        remove: function(source, method, handle) {
+            var func = ( source || window )[method];
+            // remember that handle is the index+1 (0 is not a valid handle)
+            if(func && func._listeners && handle--) {
+            delete func._listeners[handle]; 
+            }
+        }
     };
 
     var EventListener = {
-	add: function(node, name, fp) {
-	    if(!node)
-		return; 
-	    name = this._normalizeEventName(name);
-	    fp = this._fixCallback(name, fp);
-	    var oname = name;
-	    if(!sys.browser.IE && (name == "mouseenter" || name == "mouseleave")) {
-		var ofp = fp;
-		//oname = name;
-		name = (name == "mouseenter") ? "mouseover" : "mouseout";
-		fp = function(e) {
-		    // thanks ben!
-		    //if(!dojo.isDescendant(e.relatedTarget, node)){
-		    // e.type = oname; // FIXME: doesn't take? SJM: event.type is generally immutable.
-			return ofp.call(this, e); 
-		   // }
-		}
-	    }
-	    node.addEventListener(name, fp, false);
-	    return fp; /*Handle*/
-	},
-	remove: function(node, event, handle) {
-	    if (node)
-		node.removeEventListener(this._normalizeEventName(event), handle, false);
-	},
-	_normalizeEventName: function(name) {
-	    // Generally, name should be lower case, unless it is special
-	    // somehow (e.g. a Mozilla DOM event).
-	    // Remove 'on'.
-	    return name.slice(0,2) =="on" ? name.slice(2) : name;
-	},
-	_fixCallback: function(name, fp) {
-	    // By default, we only invoke _fixEvent for 'keypress'
-	    // If code is added to _fix_event for other events, we have
-	    // to revisit this optimization.
-	    // This also applies to _fix_event overrides for Safari and Opera
-	    // below.
-	    return name != "keypress" ? fp : function(e) { return fp.call(this, this._fixEvent(e, this)); };
-	},
-	_fixEvent: function(evt, sender){
-	    // _fixCallback only attaches us to keypress.
-	    // Switch on evt.type anyway because we might 
-	    // be called directly from dojo.fixEvent.
-	    switch(evt.type){
-		    case "keypress":
-			    this._setKeyChar(evt);
-			    break;
-	    }
-	    return evt;
-	},
-	_setKeyChar: function(evt){
-            evt.keyChar = evt.charCode ? String.fromCharCode(evt.charCode) : '';
-	    evt.charOrCode = evt.keyChar || evt.keyCode;
-	}
+        add: function(node, name, fp) {
+            if(!node)
+            return; 
+            name = this._normalizeEventName(name);
+            fp = this._fixCallback(name, fp);
+            var oname = name;
+            if(!sys.browser.IE && (name == "mouseenter" || name == "mouseleave")) {
+            var ofp = fp;
+            //oname = name;
+            name = (name == "mouseenter") ? "mouseover" : "mouseout";
+            fp = function(e) {
+                // thanks ben!
+                //if(!dojo.isDescendant(e.relatedTarget, node)){
+                // e.type = oname; // FIXME: doesn't take? SJM: event.type is generally immutable.
+                return ofp.call(this, e); 
+            // }
+            }
+            }
+            node.addEventListener(name, fp, false);
+            return fp; /*Handle*/
+        },
+        remove: function(node, event, handle) {
+            if (node)
+            node.removeEventListener(this._normalizeEventName(event), handle, false);
+        },
+        _normalizeEventName: function(name) {
+            // Generally, name should be lower case, unless it is special
+            // somehow (e.g. a Mozilla DOM event).
+            // Remove 'on'.
+            return name.slice(0,2) =="on" ? name.slice(2) : name;
+        },
+        _fixCallback: function(name, fp) {
+            // By default, we only invoke _fixEvent for 'keypress'
+            // If code is added to _fix_event for other events, we have
+            // to revisit this optimization.
+            // This also applies to _fix_event overrides for Safari and Opera
+            // below.
+            return name != "keypress" ? fp : function(e) { return fp.call(this, this._fixEvent(e, this)); };
+        },
+        _fixEvent: function(evt, sender){
+            // _fixCallback only attaches us to keypress.
+            // Switch on evt.type anyway because we might 
+            // be called directly from dojo.fixEvent.
+            switch(evt.type){
+                case "keypress":
+                    this._setKeyChar(evt);
+                    break;
+            }
+            return evt;
+        },
+        _setKeyChar: function(evt){
+                evt.keyChar = evt.charCode ? String.fromCharCode(evt.charCode) : '';
+            evt.charOrCode = evt.keyChar || evt.keyCode;
+        }
     };
 
     var Topics = {};
 
     function _connect(obj, event, context, method) {
-	// FIXME: need a more strict test
-	var isNode = obj && (obj.nodeType || obj.attachEvent || obj.addEventListener);
-	// choose one of three listener options: raw (connect.js), DOM event on a Node, custom event on a Node
-	// we need the third option to provide leak prevention on broken browsers (IE)
-	var lid = !isNode ? 0 : 1, l = [Listener, EventListener][lid];
-	// create a listener
-	var h = l.add(obj, event, isinstance(method, String)? getattr(context, method) : method);
-	// formerly, the disconnect package contained "l" directly, but if client code
-	// leaks the disconnect package (by connecting it to a node), referencing "l" 
-	// compounds the problem.
-	// instead we return a listener id, which requires custom _disconnect below.
-	// return disconnect package
-	return [ obj, event, h, lid ];
+        // FIXME: need a more strict test
+        var isNode = obj && (obj.nodeType || obj.attachEvent || obj.addEventListener);
+        // choose one of three listener options: raw (connect.js), DOM event on a Node, custom event on a Node
+        // we need the third option to provide leak prevention on broken browsers (IE)
+        var lid = !isNode ? 0 : 1, l = [Listener, EventListener][lid];
+        // create a listener
+        var h = l.add(obj, event, isinstance(method, String)? getattr(context, method) : method);
+        // formerly, the disconnect package contained "l" directly, but if client code
+        // leaks the disconnect package (by connecting it to a node), referencing "l" 
+        // compounds the problem.
+        // instead we return a listener id, which requires custom _disconnect below.
+        // return disconnect package
+        return [ obj, event, h, lid ];
     }
     
     function _disconnect(obj, event, handle, listener) {
@@ -497,70 +496,70 @@
 
     var event = ModuleManager.create('event', 'built-in', {
         connect: function(obj, event, context, method) {
-	    var a = arguments, args = [], i = 0;
-	    // if a[0] is a String, obj was ommited
-	    args.push(isinstance(a[0], String) ? null : a[i++], a[i++]);
-	    // if the arg-after-next is a String or Function, context was NOT omitted
-	    var a1 = a[i+1];
-	    args.push((a1 && isinstance(a1, String)) || callable(a1) ? a[i++] : null, a[i++]);
-	    // absorb any additional arguments
-	    for (var l = a.length; i < l; i++) 
-		args.push(a[i]);
-	    // do the actual work
-	    return _connect.apply(this, args); /*Handle*/
-	},
+            var a = arguments, args = [], i = 0;
+            // if a[0] is a String, obj was ommited
+            args.push(isinstance(a[0], String) ? null : a[i++], a[i++]);
+            // if the arg-after-next is a String or Function, context was NOT omitted
+            var a1 = a[i+1];
+            args.push((a1 && isinstance(a1, String)) || callable(a1) ? a[i++] : null, a[i++]);
+            // absorb any additional arguments
+            for (var l = a.length; i < l; i++) 
+            args.push(a[i]);
+            // do the actual work
+            return _connect.apply(this, args); /*Handle*/
+        },
         disconnect: function(handle) {
-	    if(handle && typeof(handle[0]) !== 'undefined') {
-		_disconnect.apply(this, handle);
-		// let's not keep this reference
-		delete handle[0];
-	    }
-	},
+            if(handle && typeof(handle[0]) !== 'undefined') {
+                _disconnect.apply(this, handle);
+                // let's not keep this reference
+                delete handle[0];
+            }
+        },
         subscribe: function(topic, context, method) {
-	    return [topic, Listener.add(Topics, topic, (method && isinstance(method, String))? getattr(context, method) : context)];
-	},
+            return [topic, Listener.add(Topics, topic, (method && isinstance(method, String))? getattr(context, method) : context)];
+        },
         unsubscribe: function(handle) {
-	    if(handle)
-		Listener.remove(Topics, handle[0], handle[1]);
-	},
+            if(handle)
+            Listener.remove(Topics, handle[0], handle[1]);
+        },
         publish: function(topic, args) {
-	    var func = Topics[topic];
-	    if(func)
-		func.apply(this, args || []);
-	},
+            var func = Topics[topic];
+            if(func)
+            func.apply(this, args || []);
+        },
         connectPublisher: function(topic, obj, event) {
-	    var pf = function() { 
-		this.publish(topic, arguments); 
-	    }
-	    return (event) ? this.connect(obj, event, pf) : this.connect(obj, pf); //Handle
-	},
+            var pf = function() { 
+            this.publish(topic, arguments); 
+            }
+            return (event) ? this.connect(obj, event, pf) : this.connect(obj, pf); //Handle
+        },
         fixEvent: function(evt, sender) {
             return EventListener._fixEvent(evt, sender);
         },
         stopEvent: function(evt){
             evt.preventDefault();
-	    evt.stopPropagation();
+        evt.stopPropagation();
         },
-	keys: { BACKSPACE: 8, TAB: 9, CLEAR: 12, ENTER: 13, SHIFT: 16, CTRL: 17, ALT: 18, PAUSE: 19, CAPS_LOCK: 20, 
-		    ESCAPE: 27, SPACE: 32, PAGE_UP: 33, PAGE_DOWN: 34, END: 35, HOME: 36, LEFT_ARROW: 37, UP_ARROW: 38,
-		    RIGHT_ARROW: 39, DOWN_ARROW: 40, INSERT: 45, DELETE: 46, HELP: 47, LEFT_WINDOW: 91, RIGHT_WINDOW: 92,
-		    SELECT: 93, NUMPAD_0: 96, NUMPAD_1: 97, NUMPAD_2: 98, NUMPAD_3: 99, NUMPAD_4: 100, NUMPAD_5: 101,
-		    NUMPAD_6: 102, NUMPAD_7: 103, NUMPAD_8: 104, NUMPAD_9: 105, NUMPAD_MULTIPLY: 106, NUMPAD_PLUS: 107,
-		    NUMPAD_ENTER: 108, NUMPAD_MINUS: 109, NUMPAD_PERIOD: 110, NUMPAD_DIVIDE: 111, F1: 112, F2: 113, F3: 114,
-		    F4: 115, F5: 116, F6: 117, F7: 118, F8: 119, F9: 120, F10: 121, F11: 122, F12: 123, F13: 124, 
-		    F14: 125, F15: 126, NUM_LOCK: 144, SCROLL_LOCK: 145 }
+        keys: { BACKSPACE: 8, TAB: 9, CLEAR: 12, ENTER: 13, SHIFT: 16, CTRL: 17, ALT: 18, PAUSE: 19, CAPS_LOCK: 20, 
+                ESCAPE: 27, SPACE: 32, PAGE_UP: 33, PAGE_DOWN: 34, END: 35, HOME: 36, LEFT_ARROW: 37, UP_ARROW: 38,
+                RIGHT_ARROW: 39, DOWN_ARROW: 40, INSERT: 45, DELETE: 46, HELP: 47, LEFT_WINDOW: 91, RIGHT_WINDOW: 92,
+                SELECT: 93, NUMPAD_0: 96, NUMPAD_1: 97, NUMPAD_2: 98, NUMPAD_3: 99, NUMPAD_4: 100, NUMPAD_5: 101,
+                NUMPAD_6: 102, NUMPAD_7: 103, NUMPAD_8: 104, NUMPAD_9: 105, NUMPAD_MULTIPLY: 106, NUMPAD_PLUS: 107,
+                NUMPAD_ENTER: 108, NUMPAD_MINUS: 109, NUMPAD_PERIOD: 110, NUMPAD_DIVIDE: 111, F1: 112, F2: 113, F3: 114,
+                F4: 115, F5: 116, F6: 117, F7: 118, F8: 119, F9: 120, F10: 121, F11: 122, F12: 123, F13: 124, 
+                F14: 125, F15: 126, NUM_LOCK: 144, SCROLL_LOCK: 145 }
     });
 
     /******************** timer **************************/
     var timer = ModuleManager.create('timer', 'built-in', {
-	delay: function(f) {
-	    var __method = f, args = array(arguments).slice(1), timeout = args.shift() * 1000;
-	    return window.setTimeout(function() { return __method.apply(__method, args); }, timeout);
-	},
-	defer: function(f) {
-	    var args = [0.01].concat(array(arguments).slice(1));
-	    return this.delay(f, args);
-	}
+        delay: function(f) {
+            var __method = f, args = array(arguments).slice(1), timeout = args.shift() * 1000;
+            return window.setTimeout(function() { return __method.apply(__method, args); }, timeout);
+        },
+        defer: function(f) {
+            var args = [0.01].concat(array(arguments).slice(1));
+            return this.delay(f, args);
+        }
     });
 
     /******************** ajax **************************/
@@ -2050,170 +2049,170 @@
 (function(){
     //--------------------------------------- String -------------------------------------//
     extend(String, {
-    scriptfragment: '<script[^>]*>([\\S\\s]*?)<\/script>',
-    interpret: function(value) {
-        return value == null ? '' : String(value);
-    },
-        special: {    // table of character substitutions
-            '\b': '\\b',
-            '\t': '\\t',
-            '\n': '\\n',
-            '\f': '\\f',
-            '\r': '\\r',
-            '"' : '\\"',
-            '\\': '\\\\'
-        }
-    });
+        scriptfragment: '<script[^>]*>([\\S\\s]*?)<\/script>',
+        interpret: function(value) {
+            return value == null ? '' : String(value);
+        },
+            special: {    // table of character substitutions
+                '\b': '\\b',
+                '\t': '\\t',
+                '\n': '\\n',
+                '\f': '\\f',
+                '\r': '\\r',
+                '"' : '\\"',
+                '\\': '\\\\'
+            }
+        });
 
-    extend(String.prototype, {
-        sub: function(pattern, replacement, count) {
-        count = (!count) ? 1 : count;
-        return this.replace(pattern, function(str) {
-            if (--count < 0) return str;
-            return replacement;
-        }, 'g');
-    },
+        extend(String.prototype, {
+            sub: function(pattern, replacement, count) {
+            count = (!count) ? 1 : count;
+            return this.replace(pattern, function(str) {
+                if (--count < 0) return str;
+                return replacement;
+            }, 'g');
+        },
 
-	//% operator like python
-	subs: function() {
-	    var args = flatten(array(arguments));
-	    //%% escaped
-	    var str = this.replace(/%%/g, function(str, p){ return '<ESC%%>'; });
-	    if (args[0] && (type(args[0]) == Object || isinstance(args[0], object)))
-                str = new Template(str, args[1]).evaluate(args[0]);
-	    else
-                str = str.replace(/%(-?\d*|\d*\.\d*)([s,n])/g, function(str, f, t) {
-		    if (args.length == 0) return str;
-		    var value = (t === 's')? string(args.shift()) : number(args.shift());
-		    return value.format(f); 
+        //% operator like python
+        subs: function() {
+            var args = flatten(array(arguments));
+            //%% escaped
+            var str = this.replace(/%%/g, function(str, p){ return '<ESC%%>'; });
+            if (args[0] && (type(args[0]) == Object || isinstance(args[0], object)))
+                    str = new Template(str, args[1]).evaluate(args[0]);
+            else
+                    str = str.replace(/%(-?\d*|\d*\.\d*)([s,n])/g, function(str, f, t) {
+                if (args.length == 0) return str;
+                var value = (t === 's')? string(args.shift()) : number(args.shift());
+                return value.format(f); 
+                    });
+            return str.replace(/<ESC%%>/g, function(str, p){ return '%'; });
+        },
+
+        format: function(f) { 
+            var pad = (f[0] == '0')? '0' : ' ';
+            var left = false;
+            if (f[0] == '-') {
+            left = true;
+            f = f.substr(1);
+            };
+            f = Number(f);
+            var result = (left)? this + pad.times(f - this.length): pad.times(f - this.length) + this;
+            return result;
+        },
+
+        inspect: function inspect(use_double_quotes) {
+            var escaped = this.replace(/[\x00-\x1f\\]/g, function(str) {
+                    var character = String.special[str];
+                    return character ? character : '\\u00' + str.charCodeAt().format('02', 16);
                 });
-	    return str.replace(/<ESC%%>/g, function(str, p){ return '%'; });
-	},
+            if (use_double_quotes) return '"' + escaped.replace(/"/g, '\\"') + '"';
+            return "'" + escaped.replace(/'/g, '\\\'') + "'";
+        },
 
-	format: function(f) { 
-	    var pad = (f[0] == '0')? '0' : ' ';
-	    var left = false;
-	    if (f[0] == '-') {
-		left = true;
-		f = f.substr(1);
-	    };
-	    f = Number(f);
-	    var result = (left)? this + pad.times(f - this.length): pad.times(f - this.length) + this;
-	    return result;
-	},
+        truncate: function(length, truncation) {
+            length = length || 30;
+            truncation = (!truncation) ? '...' : truncation;
+            return this.length > length ?
+            this.slice(0, length - truncation.length) + truncation : String(this);
+        },
 
-	inspect: function inspect(use_double_quotes) {
-	    var escaped = this.replace(/[\x00-\x1f\\]/g, function(str) {
-                var character = String.special[str];
-                return character ? character : '\\u00' + str.charCodeAt().format('02', 16);
+        strip: function() {
+            return this.replace(/^\s+/, '').replace(/\s+$/, '');
+        },
+
+        striptags: function() {
+            return this.replace(/<\/?[^>]+>/gi, '');
+        },
+
+        stripscripts: function() {
+            return this.replace(new RegExp(String.scriptfragment, 'img'), '');
+        },
+
+        extractscripts: function() {
+            var match_all = new RegExp(String.scriptfragment, 'img');
+            var match_one = new RegExp(String.scriptfragment, 'im');
+            return (this.match(match_all) || []).map(function(script_tag) {
+            return (script_tag.match(match_one) || ['', ''])[1];
             });
-	    if (use_double_quotes) return '"' + escaped.replace(/"/g, '\\"') + '"';
-	       return "'" + escaped.replace(/'/g, '\\\'') + "'";
-	},
+        },
 
-	truncate: function(length, truncation) {
-	    length = length || 30;
-	    truncation = (!truncation) ? '...' : truncation;
-	    return this.length > length ?
-	    this.slice(0, length - truncation.length) + truncation : String(this);
-	},
+        evalscripts: function() {
+            return this.extractscripts().map(function(script) { return eval(script) });
+        },
 
-	strip: function() {
-	    return this.replace(/^\s+/, '').replace(/\s+$/, '');
-	},
+        escapeHTML: function() {
+            var self = arguments.callee;
+            self.text.data = this;
+            return self.div.innerHTML;
+        },
 
-	striptags: function() {
-	    return this.replace(/<\/?[^>]+>/gi, '');
-	},
+        unescapeHTML: function() {
+            var div = document.createElement('div');
+            div.innerHTML = this.striptags();
+            return div.childNodes[0] ? (div.childNodes.length > 1 ?
+            array(div.childNodes).reduce(function(memo, node) { return memo + node.nodeValue }, '') :
+            div.childNodes[0].nodeValue) : '';
+        },
 
-	stripscripts: function() {
-	    return this.replace(new RegExp(String.scriptfragment, 'img'), '');
-	},
+        succ: function() {
+            return this.slice(0, this.length - 1) +
+            String.fromCharCode(this.charCodeAt(this.length - 1) + 1);
+        },
 
-	extractscripts: function() {
-	    var match_all = new RegExp(String.scriptfragment, 'img');
-	    var match_one = new RegExp(String.scriptfragment, 'im');
-	    return (this.match(match_all) || []).map(function(script_tag) {
-		return (script_tag.match(match_one) || ['', ''])[1];
-	    });
-	},
+        times: function(count, sep) {
+            sep = sep || '';
+            if (count < 1)
+                return '';
+            var ret = [];
+            for (var i = 0; i < count; i++)
+                ret.push(this.toString());
+            return ret.join(sep);
+        },
 
-	evalscripts: function() {
-	    return this.extractscripts().map(function(script) { return eval(script) });
-	},
+        camelize: function() {
+            var parts = this.split('-'), len = parts.length;
+            if (len == 1) return parts[0];
 
-	escapeHTML: function() {
-	    var self = arguments.callee;
-	    self.text.data = this;
-	    return self.div.innerHTML;
-	},
+            var camelized = this.charAt(0) == '-'
+            ? parts[0].charAt(0).toUpperCase() + parts[0].substring(1)
+            : parts[0];
 
-	unescapeHTML: function() {
-	    var div = document.createElement('div');
-	    div.innerHTML = this.striptags();
-	    return div.childNodes[0] ? (div.childNodes.length > 1 ?
-	    array(div.childNodes).reduce(function(memo, node) { return memo + node.nodeValue }, '') :
-	    div.childNodes[0].nodeValue) : '';
-	},
+            for (var i = 1; i < len; i++)
+            camelized += parts[i].charAt(0).toUpperCase() + parts[i].substring(1);
 
-	succ: function() {
-	    return this.slice(0, this.length - 1) +
-	    String.fromCharCode(this.charCodeAt(this.length - 1) + 1);
-	},
+            return camelized;
+        },
 
-	times: function(count, sep) {
-	    sep = sep || '';
-	    if (count < 1)
-	    	return '';
-	    var ret = [];
-	    for (var i = 0; i < count; i++)
-	    	ret.push(this.toString());
-	    return ret.join(sep);
-	},
+        capitalize: function() {
+            return this.charAt(0).toUpperCase() + this.substring(1).toLowerCase();
+        },
 
-	camelize: function() {
-	    var parts = this.split('-'), len = parts.length;
-	    if (len == 1) return parts[0];
+        underscore: function() {
+            return this.replace(/::/g, '/').replace(/([A-Z]+)([A-Z][a-z])/g,'$1_$2').replace(/([a-z\d])([A-Z])/g,'$1_$2').replace(/-/g,'_').toLowerCase();
+        },
 
-	    var camelized = this.charAt(0) == '-'
-	    ? parts[0].charAt(0).toUpperCase() + parts[0].substring(1)
-	    : parts[0];
+        dasherize: function() {
+            return this.replace(/_/g,'-');
+        },
 
-	    for (var i = 1; i < len; i++)
-	    camelized += parts[i].charAt(0).toUpperCase() + parts[i].substring(1);
+        startswith: function(pattern) {
+            return this.indexOf(pattern) === 0;
+        },
 
-	    return camelized;
-	},
+        endswith: function(pattern) {
+            var d = this.length - pattern.length;
+            return d >= 0 && this.lastIndexOf(pattern) === d;
+        },
 
-	capitalize: function() {
-	    return this.charAt(0).toUpperCase() + this.substring(1).toLowerCase();
-	},
+        blank: function() {
+            return /^\s*$/.test(this);
+        }
+        });
 
-	underscore: function() {
-	    return this.replace(/::/g, '/').replace(/([A-Z]+)([A-Z][a-z])/g,'$1_$2').replace(/([a-z\d])([A-Z])/g,'$1_$2').replace(/-/g,'_').toLowerCase();
-	},
-
-	dasherize: function() {
-	    return this.replace(/_/g,'-');
-	},
-
-	startswith: function(pattern) {
-	    return this.indexOf(pattern) === 0;
-	},
-
-	endswith: function(pattern) {
-	    var d = this.length - pattern.length;
-	    return d >= 0 && this.lastIndexOf(pattern) === d;
-	},
-
-	blank: function() {
-	    return /^\s*$/.test(this);
-	}
-    });
-
-    extend(String.prototype.escapeHTML, {
-	div:  document.createElement('div'),
-	text: document.createTextNode('')
+        extend(String.prototype.escapeHTML, {
+        div:  document.createElement('div'),
+        text: document.createTextNode('')
     });
 
     String.prototype.escapeHTML.div.appendChild(String.prototype.escapeHTML.text);
@@ -2332,10 +2331,10 @@
             getattr(content, 'evalscripts')();
         }
         return this;
-	},
-	select: function(selector) {
-	    return $$(selector, this);
-	},
+        },
+        select: function(selector) {
+            return $$(selector, this);
+        },
         empty: function() {
             return this.innerHTML.blank();
         },
@@ -2381,145 +2380,145 @@
 
     //--------------------------------------- Forms -------------------------------------//    
     var Form = {
-	disable: function() {
-	    array(this.elements).forEach(function(e) {e.disable();});
-	},
-	enable: function() {
-	    array(this.elements).forEach(function(e) {e.enable();});
-	},
-	serialize: function() {
-	    var elements = array(this.elements);
-	    var data = elements.reduce(function(result, element) {
-		if (!element.disabled && element.name) {
-		    key = element.name; value = element.get_value();
-		    if (value != null && element.type != 'file' && (element.type != 'submit')) {
-			if (key in result) {
-			    // a key is already present; construct an array of values
-			    if (type(result[key]) != Array) 
-				result[key] = [result[key]];
-			    result[key].push(value);
-			} else result[key] = value;
-		    }
-		}
-		return result;
-	    }, {});
-	    return data;
-	}
-    }
-    Form.Element = {
-	serialize: function() {
-	    if (!this.disabled && this.name) {
-		var value = this.get_value();
-		if (value != undefined) {
-		    var pair = { };
-		    pair[this.name] = value;
-		    return pair;
-		}
-	    }
-	    return '';
-	},
+        disable: function() {
+            array(this.elements).forEach(function(e) {e.disable();});
+        },
+        enable: function() {
+            array(this.elements).forEach(function(e) {e.enable();});
+        },
+        serialize: function() {
+            var elements = array(this.elements);
+            var data = elements.reduce(function(result, element) {
+            if (!element.disabled && element.name) {
+                key = element.name; value = element.get_value();
+                if (value != null && element.type != 'file' && (element.type != 'submit')) {
+                if (key in result) {
+                    // a key is already present; construct an array of values
+                    if (type(result[key]) != Array) 
+                    result[key] = [result[key]];
+                    result[key].push(value);
+                } else result[key] = value;
+                }
+            }
+            return result;
+            }, {});
+            return data;
+        }
+        }
+        Form.Element = {
+        serialize: function() {
+            if (!this.disabled && this.name) {
+            var value = this.get_value();
+            if (value != undefined) {
+                var pair = { };
+                pair[this.name] = value;
+                return pair;
+            }
+            }
+            return '';
+        },
 
-	get_value: function() {
-	    var method = this.tagName.toLowerCase();
-	    return Form.Serializers[method](this);
-	},
+        get_value: function() {
+            var method = this.tagName.toLowerCase();
+            return Form.Serializers[method](this);
+        },
 
-	set_value: function(value) {
-	    var method = this.tagName.toLowerCase();
-	    Form.Serializers[method](this, value);
-	},
+        set_value: function(value) {
+            var method = this.tagName.toLowerCase();
+            Form.Serializers[method](this, value);
+        },
 
-	clear: function() {
-	    this.value = '';
-	},
+        clear: function() {
+            this.value = '';
+        },
 
-	present: function() {
-	    return this.value != '';
-	},
+        present: function() {
+            return this.value != '';
+        },
 
-	activate: function() {
-	    try {
-		this.focus();
-		if (this.select && (this.tagName.toLowerCase() != 'input' || !include(['button', 'reset', 'submit'], element.type)))
-		    this.select();
-	    } catch (e) { }
-	},
+        activate: function() {
+            try {
+            this.focus();
+            if (this.select && (this.tagName.toLowerCase() != 'input' || !include(['button', 'reset', 'submit'], element.type)))
+                this.select();
+            } catch (e) { }
+        },
 
-	disable: function() {
-	    this.disabled = true;
-	},
+        disable: function() {
+            this.disabled = true;
+        },
 
-	enable: function() {
-	    this.disabled = false;
-	}
-    }
-    
-    Form.Serializers = {
-    input: function(element, value) {
-    	switch (element.type.toLowerCase()) {
-    	case 'checkbox':
-    	case 'radio':
-    		return this.input_selector(element, value);
-    	default:
-    		return this.textarea(element, value);
-    	}
-    },
+        enable: function() {
+            this.disabled = false;
+        }
+        }
+        
+        Form.Serializers = {
+        input: function(element, value) {
+            switch (element.type.toLowerCase()) {
+            case 'checkbox':
+            case 'radio':
+                return this.input_selector(element, value);
+            default:
+                return this.textarea(element, value);
+            }
+        },
 
-    input_selector: function(element, value) {
-    	if (typeof(value) === 'undefined') return element.checked ? element.value : null;
-    	else element.checked = !!value;
-    },
+        input_selector: function(element, value) {
+            if (typeof(value) === 'undefined') return element.checked ? element.value : null;
+            else element.checked = !!value;
+        },
 
-    textarea: function(element, value) {
-    	if (typeof(value) === 'undefined') return element.value;
-    	else element.value = value;
-    },
+        textarea: function(element, value) {
+            if (typeof(value) === 'undefined') return element.value;
+            else element.value = value;
+        },
 
-    select: function(element, value) {
-    	if (typeof(value) === 'undefined')
-    		return this[element.type == 'select-one' ?
-    				'select_one' : 'select_many'](element);
-    	else {
-    		var opt, currentValue, single = type(value) != Array;
-    		for (var i = 0, length = element.length; i < length; i++) {
-    			opt = element.options[i];
-    			currentValue = this.option_value(opt);
-    			if (single) {
-    				if (currentValue == value) {
-    					opt.selected = true;
-    					return;
-    				}
-    			} else 
-    				opt.selected = include(value, currentValue);
-    		}
-    	}
-    },
+        select: function(element, value) {
+            if (typeof(value) === 'undefined')
+                return this[element.type == 'select-one' ?
+                        'select_one' : 'select_many'](element);
+            else {
+                var opt, currentValue, single = type(value) != Array;
+                for (var i = 0, length = element.length; i < length; i++) {
+                    opt = element.options[i];
+                    currentValue = this.option_value(opt);
+                    if (single) {
+                        if (currentValue == value) {
+                            opt.selected = true;
+                            return;
+                        }
+                    } else 
+                        opt.selected = include(value, currentValue);
+                }
+            }
+        },
 
-    select_one: function(element) {
-    	var index = element.selectedIndex;
-    	return index >= 0 ? this.option_value(element.options[index]) : null;
-    },
+        select_one: function(element) {
+            var index = element.selectedIndex;
+            return index >= 0 ? this.option_value(element.options[index]) : null;
+        },
 
-    select_many: function(element) {
-    	var values, length = element.length;
-    	if (!length) return null;
+        select_many: function(element) {
+            var values, length = element.length;
+            if (!length) return null;
 
-    	for (var i = 0, values = []; i < length; i++) {
-    		var opt = element.options[i];
-    		if (opt.selected) values.push(this.option_value(opt));
-    	}
-    	return values;
-    },
+            for (var i = 0, values = []; i < length; i++) {
+                var opt = element.options[i];
+                if (opt.selected) values.push(this.option_value(opt));
+            }
+            return values;
+        },
 
-    option_value: function(opt) {
-    	return opt.hasAttribute('value') ? opt.value : opt.text;
-    }
-    }
-    
-    //For firefox
-    extend(HTMLFormElement.prototype, Form );
-    extend(HTMLInputElement.prototype, Form.Element );
-    extend(HTMLSelectElement.prototype, Form.Element );
-    extend(HTMLTextAreaElement.prototype, Form.Element );
-})();
+        option_value: function(opt) {
+            return opt.hasAttribute('value') ? opt.value : opt.text;
+        }
+        }
+        
+        //For firefox
+        extend(HTMLFormElement.prototype, Form );
+        extend(HTMLInputElement.prototype, Form.Element );
+        extend(HTMLSelectElement.prototype, Form.Element );
+        extend(HTMLTextAreaElement.prototype, Form.Element );
+    })();
 })();

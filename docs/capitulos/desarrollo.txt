@@ -30,7 +30,7 @@ framework y a buena parte de los items expuestos.
 
 Si bien el desarrollo de la libreria se mantuvo en paralelo a la del
 framework, existen aspectos basicos a los que esta brinda soporte y permiten
-presentarla en un apartado separado como una ''Libreria JavaScript'', esta
+presentarla en un apartado separado como "Una Biblioteca en JavaScript", esta
 constituye la base para posteriores construcciones y auna herramientas que
 simplifican el desarrollo client-side.
 
@@ -61,6 +61,8 @@ orientación a objetos, manejo de AJAX, DOM y eventos.
 Para una referencia completa de la API de Protopy remitase al apandice
 :ref:`Protopy <apendices-doff-dbapi>`
 
+.. _protopy-modulos:
+
 Organizando el codigo
 =====================
 
@@ -71,22 +73,24 @@ atributo ``src`` a la url del archivo que contiene el codigo; en una instancia
 posterior, cuando el cliente accede al recurso, carga el archivo con las
 sentencias JavaScript y las interpreta en el contexto del documento.
 
-El enfoque tradicional resulta sustentable para pequeños proyectos donde el lenguaje
-brinda mayormente soporte a la interacción con el usuario (validacion,
+El enfoque tradicional resulta sustentable para pequeños proyectos, donde el
+lenguaje brinda mayormente soporte a la interacción con el usuario (validacion,
 accesibilidad, etc) y los fragmentos de código que se pasan al cliente son
-bien conocidos por el desarrollador; en proyectos que implican mayor cantidad
+bien conocidos por el desarrollador, pero en proyectos que implican mayor cantidad
 de funcionalidad JavaScript, con grandes cantidades de código, este enfoque
 resulta complejo de mantener y evolucionar en el tiempo. Es por esto que para
-Protopy se busco como primera medida una forma de organizar y obtener el codigo
+Protopy se busco como primera medida una forma de organizar y obtener el código
 del servidor que resulte sustentable y escalable.
 
 Similar al concepto de :ref:`modulos en Python <servidor-lenguajes-python>`, el
 desarrollo de Protopy se oriento en pequeñas unidades funcionales llamadas
-**modulos**. A demas de la sanidad mental que implica organizar el código en
-distintos archivos, los módulos representan un cambio muy importante en la obtención
-de funcionalidad, donde ya no es el documento HTML el que dice al cliente que
-archivo cargar del servidor, sino que el mismo codigo interpretado va obteniendo
-la funcionalidad a medida que la requiere.
+**modulos**.
+
+Además de la sanidad mental que implica organizar el código en distintos
+archivos, los módulos representan un cambio muy importante en la obtención de
+funcionalidad; ya no es el documento HTML el que dice al cliente que archivo
+cargar del servidor, sino que el mismo código interpretado va obteniendo la
+funcionalidad a medida que la requiere.
 
 El enfoque modular no es nuevo en programación y basicamente, la implementación
 de Protopy, implica llevar el concepto de "divide y vencerás" ó "análisis
@@ -96,7 +100,7 @@ Un módulo resuelve un problema especifico y define una interfaz de comunicació
 para accesar y utilizar la funcionalidad que contiene. Por más simple que
 resulte de leer, esto implica que existe una manera de **obtener** un modulo y
 una manera de **publicar** la funcionalidad de un modulo, logrando de esta forma
-que interactuen entre ellos para resolver una determinada tarea.
+que interactuen entre ellos.
 
 En su forma mas pedestre un módulo es un archivo que contiene definiciones y
 sentencias de JavaScript. El nombre del archivo es el nombre del módulo con el
@@ -110,11 +114,12 @@ La función `require` es la encargada de obtener un módulo del servidor e
 incorporarlo al :ref:`espacio de nombres <servidor-lenguajes-python>` del
 llamador, cuando un módulo llamado spam es requerido, Protopy busca un archivo
 llamado spam.js en la url base [*]_, de no encontrar el archivo el error
-``LoadError`` es lanzado a la funcion que requirio el modulo.
+``LoadError`` es lanzado a la función que requirio el módulo.
 
-.. [*] Ruta base desde la cual la biblioteca Protopy fue obtenida del servidor.
+.. [*] Ruta base desde la cual la biblioteca Protopy carga los módulos, por
+    defecto esta es la url base del archivo protopy.js más el sufijo `packages`.
 
-Otra forma de obtener modulos es usando nombres de **paquetes**. A diferencia de
+Otra forma de obtener módulos es usando nombres de **paquetes**. A diferencia de
 Python un paquete no incluye funcionalidad en si mismo y su funcionalidad
 principal es la de establecer las bases en la cual buscar modulos.
 De forma similar a la anterior cuando un módulo llamado foo.spam es importado,
@@ -124,15 +129,21 @@ ubicación, por otra parte si sys.paths no contiene una url asociada a foo el
 archivo foo/spam.js es buscado en la url base. 
 
 El uso del objeto sys.paths permite a los modulos de JavaScript que saben lo
-que están haciendo al modificar o reemplazar el camino de búsqueda de módulos.
+que están haciendo modificar o reemplazar el camino de búsqueda para los módulos.
 Nótese que es importante que el script no tenga el mismo nombre que un
 :ref:`módulo estandar <apendices-protopy-modulos>`.
 
 Las formas en que el modulo obtenido es presentado al llamador difiere en
-funcion de los parametros pasados a `require`, por ahora solo alcanza con mencionar que
-un modulo puede ser obtenido en su totalidad, se puede obtener solo determinada
-funcion de un modulo o tambien cargar todas las definiciones del modulo en el
-espacio de nombres del llamador, para ver más :ref:`Apendice Protopy <apendices-protopy>`.
+funcion de los parametros pasados a `require`:
+
+    * Un modulo puede ser obtenido como un objeto
+
+    * Se puede obtener solo determinada funcion de un modulo.
+
+    * O se pueden importar todas las definiciones del módulo en el espacio de nombres del
+    llamador
+
+Para ver más :ref:`Apendice Protopy <apendices-protopy>`.
 
 Publicar un módulo
 ------------------
@@ -149,60 +160,81 @@ contenido del modulo en Protopy.
 Un modulo puede contener sentencias ejecutables y definición de funciones,
 generalmente las sentencias son para inicializar el módulo ya que estas se
 evaluan solo la primera vez que el módulo es requerido a alguna parte y las
-definiciones son las efectivamente seran publicadas como funcionalidad.
+definiciones son las que efectivamente seran publicadas como funcionalidad.
 
+A continuación se presenta un fragmento de código que ejemplifica el uso de las 
+dos funciones presentadas.
 
-require('copy', 'copy', 'deepcopy');
+.. code-block:: javascript
 
-var SortedDict = type('SortedDict', [ Dict ], {
-    __init__: function(object) {
-        this.keyOrder = (object && isinstance(object, SortedDict))? copy(object.keyOrder) : [];
-        super(Dict, this).__init__(object);
-    },
-    __iter__: function() {
-        for each (var key in this.keyOrder) {
-            var value = this.get(key);
-            var pair = [key, value];
-            pair.key = key;
-            pair.value = value;
-            yield pair;
+     //Obtengo la funcion copy y deepcopy del modulo copy
+    require('copy', 'copy', 'deepcopy');
+
+    var SortedDict = type('SortedDict', [ Dict ], {
+        __init__: function(object) {
+            this.keyOrder = (object && isinstance(object, SortedDict))? copy(object.keyOrder) : [];
+            super(Dict, this).__init__(object);
+        },
+        __iter__: function() {
+            for each (var key in this.keyOrder) {
+                var value = this.get(key);
+                var pair = [key, value];
+                pair.key = key;
+                pair.value = value;
+                yield pair;
+            }
+        },
+        __deepcopy__: function() {
+            var obj = new SortedDict();
+            for (var hash in this._key) {
+                obj._key[hash] = deepcopy(this._key[hash]);
+                obj._value[hash] = deepcopy(this._value[hash]);
+            }
+            obj.keyOrder = deepcopy(this.keyOrder); 
+            return obj;
+        },
+        __str__: function() {
+            var n = len(this.keyOrder);
+            return "%s".times(n, ', ').subs(this.keyOrder);
+        },
+        set: function(key, value) {
+            this.keyOrder.push(key);
+            return super(Dict, this).set(key, value);
+        },
+        unset: function(key) {
+            without(this.keyOrder, key);
+            return super(Dict, this).unset(key);
         }
-    },
-    __deepcopy__: function() {
-        var obj = new SortedDict();
-        for (var hash in this._key) {
-            obj._key[hash] = deepcopy(this._key[hash]);
-            obj._value[hash] = deepcopy(this._value[hash]);
-        }
-        obj.keyOrder = deepcopy(this.keyOrder); 
-        return obj;
-    },
-    __str__: function() {
-        var n = len(this.keyOrder);
-        return "%s".times(n, ', ').subs(this.keyOrder);
-    },
-    set: function(key, value) {
-        this.keyOrder.push(key);
-        return super(Dict, this).set(key, value);
-    },
-    unset: function(key) {
-        this.keyOrder.without(key);
-        return super(Dict, this).unset(key);
-    }
-});
+    });
+    
+    //Publico el tipo de objeto SortedDict
+    publish({ 
+        SortedDict: SortedDict 
+    });
 
-publish({ 
-    SortedDict: SortedDict 
-});
+Asumiendo que el código presentado esta en un archivo llamado `sortedict.js` en
+la url base, esté representa un módulo en si mismo y el acceso se obtiene
+mediante la invocación de 'require('sortedict')'. El ejemplo presenta muchas
+cosas nuevas, que seran abordadas a lo largo de este apartado, por ahora solo
+interesa la parte que corresponde al requerimiento de `copy` y la
+publicación de `SortedDict`.
 
+La primera lineas del ejemplo incian requirendo la funcion copy y deepcopy del
+módulo `copy`, ambas funciones se utilizan para realizar copias de objetos,
+superficial y en profundidad respectivamente. El ejemplo continua con una
+definición de un nuevo tipo de objeto llamado `SortedDict` que posteriormente
+publica en la ultima linea de código.
+
+.. note:: queda mas o menos claro?
+
+.. _protopy-tipos:
 
 Creando tipos de objeto
 =======================
 
-.. Semántica de objetos, dentro de la cual se hace una adaptación de
 En la programación basada en prototipos las ``clases'' no están presentes, y la
 re-utilización de procesos se obtiene a través de la clonación de objetos ya
-existentes.
+existentes y la extención de funcionalidad.
 Protopy agrega el concepto de clases al desarrollo, mediante un contructor de
 ``tipos de objeto''. De esta forma los objetos pueden ser de dos tipos, las
 clases y las instancias. Las clases definen la disposición y la funcionalidad

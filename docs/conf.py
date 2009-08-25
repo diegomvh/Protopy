@@ -194,7 +194,7 @@ latex_use_parts = True
 # Documents to append as an appendix to all manuals.
 #latex_appendices = ['apendices/protopy', 'apendices/python', 'apendices/django']
 latex_appendices = [
-                    'apendices/python',
+                    #'apendices/python',
                     #'apendices/django',
                     #'apendices/doff/modelos',
                     #'apendices/doff/dbapi',

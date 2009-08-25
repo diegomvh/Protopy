@@ -23,6 +23,7 @@ CSS
 ===
 
 .. _cliente-javascript:
+
 JavaScript
 ==========
 .. Explicar como meter codigo javascript en un doc da sustento a protopy
@@ -32,6 +33,53 @@ el documento y comienza su lectura al encontrar esta etiqueta solicita
 al servidor el archivo referenciado y lo interpreta, para continuar luego con la
 lectura del resto de las etiquetas. 
 
+..
+    De Wikipedia, la enciclopedia libre
+
+    Programación basada en prototipos
+
+    Programación basada en prototipos es un estilo de programación orientada a
+    objetos en el cual, las "clases" no están presentes, y la re-utilización de
+    procesos (conocida como herencia en lenguajes basados en clases) se obtiene
+    a través de la clonación de objetos ya existentes, que sirven de prototipos,
+    extendiendo sus funcionalidades. Este modelo es conocido como orientado a
+    prototipos, o programación basada en instancias.
+
+    El original (y el más canónico) ejemplo de lenguaje prototipado es el
+    lenguaje Self, desarrollado por David Ungar y Randall Smith. Sin embargo el 
+    paradigma sin clases está comenzando a popularizarse y ya ha sido
+    implementado en lenguajes de programación como JavaScript, Cecil,
+    NewtonScript, Ío, MOO, REBOL y varios otros.
+
+    En lenguajes basados en clases los objetos pueden ser de dos tipos generales,
+    las clases y las instancias. Las clases definen la disposición y la
+    funcionalidad básicas de los objetos, y las instancias son objetos "utilizables"
+    basados en los patrones de una clase particular. En este modelo, las clases
+    actúan como colecciones de comportamiento (métodos) y estructuras que son
+    iguales para todas las instancias, mientras que las instancias llevan los datos
+    de los objetos. La distinción del papel se basa así sobre todo en una distinción
+    entre la estructura y el comportamiento en un lado, y el estado en el otro.
+
+    Los entusiastas de la programación basada en prototipos a menudo argumentan que
+    los lenguajes basados en clases animan un modelo del desarrollo que se centra
+    primero en la taxonomía y las relaciones entre las clases. En cambio, la
+    programación basada en prototipos intenta animar al programador que se centre en
+    el comportamiento de un cierto sistema de ejemplos y después de clasificar estos
+    objetos en objetos arquetipos que se utilizan más adelante en una manera similar
+    a las clases. Como tal, muchos sistemas basados en prototipos animan la
+    alteración de prototipos durante tiempo de ejecución, mientras que solamente muy
+    pocos sistemas orientados a objeto, basados en clase (como el primer sistema
+    orientados al objetos dinámicos, Smalltalk) permiten que las clases sean
+    alteradas durante la ejecución de un programa.
+
+    Mientras que basan la amplia mayoría de sistemas basados en prototipos se hacen
+    con lenguajes de programación interpretados y de tipos de datos dinámicos, es
+    importante precisar que los sistemas de tipos de datos estáticos son
+    técnicamente factibles. El lenguaje de programación de Omega que es basado en
+    prototipos es un ejemplo de tal sistema, aunque según el Web site de Omega,
+    Omega no es exclusivamente de tipos de datos estáticos, pero su "compilador
+    puede elegir utilizar el tipo de dato estático donde es posible esto y puede
+    mejorar la eficacia del programa.”
 
 ************************
 Evolución del JavaScript
