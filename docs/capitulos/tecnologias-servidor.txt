@@ -125,10 +125,16 @@ Lenguajes interpretados
 	sistemas de Bases de Datos.
 
 Un lenguaje de programación interpretado es aquel en el cual los programas son ejecutados
-por un intérprete, en vez de realizarse una traducción a lenguaje máquina, o compilados.
+por un intérprete, en vez de realizarse una traducción a lenguaje máquina, conocido como proceso
+de compilación. 
+
+En teoría cualquier lenguaje de programación podría ser compilado o interpretado. 
+
+
 
 .. image:: ../_svg/lenguaje_interpretado.png
 
+.. note:: Explicar ámbito dinámico, Perl, PHP, Ruby y Python.
 
 
 
@@ -137,6 +143,7 @@ por un intérprete, en vez de realizarse una traducción a lenguaje máquina, o 
 
 Python
 ======
+
 
 El lenguaje de programación Python fue creado por Guido van Rossum en el año
 1991.
@@ -163,8 +170,7 @@ aplicaciones que necesitan de una interfaz programable, es decir, un intérprete
 de python puede ser embebido en aplicaciones programadas en otros lenguajes.
 
 
-
-
+.. note:: Justificar python
 
 .. _servidor-wsgi:
 
