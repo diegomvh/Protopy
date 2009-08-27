@@ -144,7 +144,10 @@ realizan en tiempo de ejecución.
 
 Un lenguaje dinámico admite de manera directa en tiempo de ejecución, el agregado de código, extensión o redefinición de objetos o hasta inclusive modificar tipos de datos. Si bien estas tareas pueden ser realizadas en lenguajes no dinámicos, su implementación no es sencilla. 
 
-Perl
+Perl es un lenguaje de programación diseñado por Larry Wall en 1987. Perl toma características del lenguaje C,
+del lenguaje interpretado shell (sh), AWK, sed, Lisp y, en un grado inferior, de muchos otros lenguajes de programación.
+
+Estructuralmente, Perl está basado en un estilo de bloques como los del C o AWK, y fue ampliamente adoptado por su destreza en el procesado de texto y no tener ninguna de las limitaciones de los otros lenguajes de script.
 
 PHP
 
@@ -295,10 +298,11 @@ cuenta por el quipo de desarrollo. Trás completar el desarrollo en un framework
 el equipo de desarrllo no debe volver a invertir tiempo en aprendizaje en
 sucesivos desarrollos.
 
-.. image:: ../_static/framework_esquema_flujo_control.png
-    :width: 719px
+.. image:: ../_svg/esquema_libreria_vs_framework.png
+
 
 .. note:: Breve introducción a patrones arquitecturales y mvc
+
 
 .. _servidor-mvc:
 
@@ -355,7 +359,8 @@ Framework Web
     http://www.javahispano.org/contenidos/es/comparativa_de_frameworks_web/
 
 Un framework web, es un framework de software que permite implementar aplicaciones web brindando
-soporte para tareas comunes como.
+soporte para tareas comunes como. Su objetivo es facilitar el desarrollo de aplicaciones web, 
+.
 
 En Wikipeida [WIKI002]_
 	
