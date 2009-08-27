@@ -4,9 +4,15 @@
 Tecnologías del servidor
 ########################
 
-****************************
-De lo estatico a lo dinámico
-****************************
+********************************
+Generación dinámica de contenido
+********************************
+
+.. note::
+	Otros títulos
+	
+		* De lo estático a lo dinámico (*previo*)
+		
 
 .. note:: algo de html quiza
 .. note:: titulo en revisión
@@ -126,11 +132,11 @@ de compilación.
 En teoría cualquier lenguaje de programación podría ser compilado o interpretado. 
 
 En un lengauje de programación interpretado se puede decir que el código fuente es el código ejecutable
-[a través del intérprete ].
+(a través del intérprete).
 
 .. image:: ../_svg/lenguaje_interpretado.png
 
-.. note:: Explicar ámbito dinámico, Perl, PHP, Ruby y Python.
+
 
 Los lenguajes de programación interpreteados suelen ser de alto nivel y de *tipo dinámico*, es decir
 que la mayoría de las comprobaciones que se realizan en tiempo de compilación en otros lenguajes, se
@@ -138,6 +144,13 @@ realizan en tiempo de ejecución.
 
 Un lenguaje dinámico admite de manera directa en tiempo de ejecución, el agregado de código, extensión o redefinición de objetos o hasta inclusive modificar tipos de datos. Si bien estas tareas pueden ser realizadas en lenguajes no dinámicos, su implementación no es sencilla. 
 
+Perl
+
+PHP
+
+Ruby
+
+Python
 
 .. _lenguaje-python:
 Python
@@ -179,7 +192,7 @@ Muchos de las sistemas webs basados en CGI, están
 escritos en Perl, por lo cual no es sorpresa encontrar una buena cantidad de 
 proyectos del lenguaje Python orientados a la Web [*]_.
 
-Para una referencia más amplia del lenguaje, recurra al apéndice.
+En el :ref:`apéndice <apendices-python>` se encuentra una referecia detallada del lenguaje.
 
 .. [*] En el repositorio de proyectos del lenguaje se encuentran más 1100 resultados para paquetes relacionados con el término "web". http://pypi.python.org/pypi?%3Aaction=search&term=web&submit=search
 
@@ -213,9 +226,158 @@ contenido se trata de texto plano.
 
 .. _servidor-orm:
 
-**********************
-Herramientas por favor
-**********************
+***************
+Frameworks Web
+***************
+
+.. _servidor-frameworks:
+
+Frameworks
+==========
+
+.. Usamos la traducción redefinir para override
+.. note:: Poner CLI
+
+Según la la wikipedia [WIK001]_ un framework de software es *una abstracción en
+la cual un código común, que provee una funcionalidad genérica, puede ser
+personalizado por el programador de manera selectiva para brindar una
+funcionalidad específica*.
+
+.. [WIK001] *Software Framework*, Wikipedia, 2009, http://en.wikipedia.com/software_framework, última visita Agosto de 2009.
+
+Además agrega que los frameworks son similares a las bibliotecas de software
+(a veces llamadas librerías) dado que proveen abstracciones reusables de código
+a las cuales se accede mediante una API bien definida. Sin embargo, existen
+ciertas características que diferencian al framework de una librería o
+aplicaciones normales de usuario:
+
+    * Inversion de control
+        Al contrario que las bibliotecas en las aplicaciones de usuario, en un
+        framework, el flujo de control no es manejado por el llamador,
+        sino por el framework. Es decir, cuando se utilizan bibliotecas o
+        programas de usuario como soporte para brindar funcionalidad, estas son
+        llamados o invocados en el código de aplicación principal que es
+        definido por el usuario. En un framework, el flujo de control principal
+        está definido por el framework.
+
+    * Comportamiento por defecto definido
+        Un framework tiene un comportamiento por defecto definido. En cada
+        componete del framework, existe un comportamineto genérico con alguna
+        utilidad, que puede ser redefinido con funcionalidad del usuario.
+
+    * Extensibiliad
+        Un framework suele ser extendido por el usuario mediante redefinición o
+        especialización para proveer una funcionalidad específica.
+
+    * No modificabilidad del código del framework
+        En general no se permite la modificación del código del framework. Los
+        programadores pueden extender el framework, pero no modificar su código. 
+
+Los diseñadores de frameworks tienen como objetivo facilitar el desarrollo de
+software, permitiendo a los programadores enfocarse en cumplimentar los
+requermientos del análisis y diseño, en vez de dedicar tiempo a resolver los
+detalles comunes de bajo nivel. En general la utilización de un framework reduce
+el tiempo de desarrollo.
+
+Por ejemplo, en un equipo donde se utiliza un framework web para desarrollar un
+sitio de banca electrónica, los desarrolladores pueden enfocarse en la lógica
+necesaria para realizar las extraciones de dinero, en vez de la mecánica para
+preserver el estado entre las peticiones del navegador.
+
+.. Carga != Incertidumbre
+
+Sin embargo, se suele argumentar que los frameworks pueden ser una carga,
+debido a la complejidad de sus APIs o la incertidumbre que generar la existencia
+de varios frameworks para un mismo tipo de aplicación. A pesar de tener como
+objetivo estandarizar y reducir el tiempo de desarrollo, el aprendizaje de un
+framework suele requerir tiempo extra en el desarrollo, que debe ser tenido en
+cuenta por el quipo de desarrollo. Trás completar el desarrollo en un framework,
+el equipo de desarrllo no debe volver a invertir tiempo en aprendizaje en
+sucesivos desarrollos.
+
+.. image:: ../_static/framework_esquema_flujo_control.png
+    :width: 719px
+
+.. note:: Breve introducción a patrones arquitecturales y mvc
+
+.. _servidor-mvc:
+
+Model View Controler
+====================
+
+En aplicaciones complejas que impliquen sofisticadas interfaces, como las
+aplicaciones web, la lógica de la interfaz de usuario cambia con más frecuencia
+que los almacenes de datos y la lógica de negocio. Si se realiza un diseño
+mezclando los componentes de interfaz y de negocio, entonces las consecuencias
+serán que, cuando se necesite cambiar la interfaz, se tendra que modificar
+trabajosamente los componentes de negocio, teniendo de esta forma mayor trabajo
+y mayor riesgo de error.
+
+El patrón arquitectural MVC, *Modelo Vista Controlador* trata de realizar un
+diseño que desacople la interfaz o vista del modelo, con la finalidad de mejorar
+la reusabilidad. De esta forma las modificaciones en las vistas impactan en menor
+medida en la lógica de negocio o de datos.
+
+Este patrón fue descrito por primera vez en 1979 por Trygve Reenskaug [Tryg1979]_,
+entonces trabajando en Smalltalk en laboratorios de investigación de Xerox.
+La implementación original está descrita a fondo en Programación de Aplicaciones
+en Smalltalk-80(TM): Como utilizar Modelo Vista Controlador [SmallMVC]_.
+
+.. [Tryg1979] Trygve Reenskaug, http://heim.ifi.uio.no/~trygver/themes/mvc/mvc-index.html
+.. [SmallMVC] Steve Burbeck, Ph.D. http://st-www.cs.illinois.edu/users/smarch/st-docs/mvc.html
+
+Descripción del patrón:
+
+    * Modelo
+        Esta es la capa de datos, una representación de la información con la
+        cual el sistema opera. La lógica de datos asegura la integridad y
+        permite derivar nuevos datos.
+
+    * Vista
+        Esta es la capa de presentación del modelo, seleccionando qué mostrar y 
+        cómo mostrarlo, usualmente la interfaz de usuario.
+
+    * Controlador
+        Esta capa responde a eventos, usualmente acciones del usuario, e invoca
+        cambios en el modelo y probablemente en la vista.
+
+El patrón MVC se ve frecuentemente en aplicaciones web, donde la vista es la
+página HTML y el código que provee de datos dinámicos a la página. El modelo es
+el sistema de gestión de base de datos y la lógica de negocio, y el controlador
+es el responsable de recibir los eventos de entrada desde la vista.
+
+Framework Web
+-------------
+
+.. note::
+
+    Ver diferencia entre sitio y aplicación
+    http://www.javahispano.org/contenidos/es/comparativa_de_frameworks_web/
+
+Un framework web, es un framework de software que permite implementar aplicaciones web brindando
+soporte para tareas comunes como.
+
+En Wikipeida [WIKI002]_
+	
+	* Acceso a datos
+		ORM
+
+    * Seguridad
+
+    * Mapeo de URLs
+
+    * Sistema de plantillas
+
+    * Caché
+
+    * AJAX
+
+    * Configuración mínima y simplificada
+
+.. [WIKI002] *Web Framework*, Wikipedia, 2009, http://en.wikipedia.org/wiki/Web_application_framework, última visita Agosto de 2009.
+
+.. note:: completar tema framework un poco, antes de caer en django
+
 
 Mapeador Objeto-Relacional
 ==========================
@@ -294,157 +456,10 @@ ellos, los cambios que sufran terminarán siendo reflejados en la base de datos.
 
 .. http://es.wikipedia.org/wiki/Mapeo_objeto-relacional
 
-.. _servidor-mvc:
 
-Model View Controler
-====================
 
-En aplicaciones complejas que impliquen sofisticadas interfaces, como las
-aplicaciones web, la lógica de la interfaz de usuario cambia con más frecuencia
-que los almacenes de datos y la lógica de negocio. Si se realiza un diseño
-mezclando los componentes de interfaz y de negocio, entonces las consecuencias
-serán que, cuando se necesite cambiar la interfaz, se tendra que modificar
-trabajosamente los componentes de negocio, teniendo de esta forma mayor trabajo
-y mayor riesgo de error.
 
-El patrón arquitectural MVC, *Modelo Vista Controlador* trata de realizar un
-diseño que desacople la interfaz o vista del modelo, con la finalidad de mejorar
-la reusabilidad. De esta forma las modificaciones en las vistas impactan en menor
-medida en la lógica de negocio o de datos.
 
-Este patrón fue descrito por primera vez en 1979 por Trygve Reenskaug [Tryg1979]_,
-entonces trabajando en Smalltalk en laboratorios de investigación de Xerox.
-La implementación original está descrita a fondo en Programación de Aplicaciones
-en Smalltalk-80(TM): Como utilizar Modelo Vista Controlador [SmallMVC]_.
-
-.. [Tryg1979] Trygve Reenskaug, http://heim.ifi.uio.no/~trygver/themes/mvc/mvc-index.html
-.. [SmallMVC] Steve Burbeck, Ph.D. http://st-www.cs.illinois.edu/users/smarch/st-docs/mvc.html
-
-Descripción del patrón:
-
-    * Modelo
-        Esta es la capa de datos, una representación de la información con la
-        cual el sistema opera. La lógica de datos asegura la integridad y
-        permite derivar nuevos datos.
-
-    * Vista
-        Esta es la capa de presentación del modelo, seleccionando qué mostrar y 
-        cómo mostrarlo, usualmente la interfaz de usuario.
-
-    * Controlador
-        Esta capa responde a eventos, usualmente acciones del usuario, e invoca
-        cambios en el modelo y probablemente en la vista.
-
-El patrón MVC se ve frecuentemente en aplicaciones web, donde la vista es la
-página HTML y el código que provee de datos dinámicos a la página. El modelo es
-el sistema de gestión de base de datos y la lógica de negocio, y el controlador
-es el responsable de recibir los eventos de entrada desde la vista.
-
-.. _servidor-frameworks:
-
-Frameworks
-==========
-
-.. Usamos la traducción redefinir para override
-.. note:: Poner CLI
-
-Según la la wikipedia [WIK001]_ un framework de software es *una abstracción en
-la cual un código común, que provee una funcionalidad genérica, puede ser
-personalizado por el programador de manera selectiva para brindar una
-funcionalidad específica*.
-
-.. [WIK001] *Software Framework*, Wikipedia, 2009, http://en.wikipedia.com/software_framework, última visita Agosto de 2009.
-
-Además agrega que los frameworks son similares a las bibliotecas de software
-(a veces llamadas librerías) dado que proveen abstracciones reusables de código
-a las cuales se accede mediante una API bien definida. Sin embargo, existen
-ciertas características que diferencian al framework de una librería o
-aplicaciones normales de usuario:
-
-    * Inversion de control
-        Al contrario que las bibliotecas en las aplicaciones de usuario, en un
-        framework, el flujo de control no es manejado por el llamador,
-        sino por el framework. Es decir, cuando se utilizan bibliotecas o
-        programas de usuario como soporte para brindar funcionalidad, estas son
-        llamados o invocados en el código de aplicación principal que es
-        definido por el usuario. En un framework, el flujo de control principal
-        está definido por el framework.
-
-    * Comportamiento por defecto definido
-        Un framework tiene un comportamiento por defecto definido. En cada
-        componete del framework, existe un comportamineto genérico con alguna
-        utilidad, que puede ser redefinido con funcionalidad del usuario.
-
-    * Extensibiliad
-        Un framework suele ser extendido por el usuario mediante redefinición o
-        especialización para proveer una funcionalidad específica. 
-
-    * No modificabilidad del código del framework
-        En general no se permite la modificación del código del framework. Los
-        programadores pueden extender el framework, pero no modificar su código. 
-
-Los diseñadores de frameworks tienen como objetivo facilitar el desarrollo de
-software, permitiendo a los programadores enfocarse en cumplimentar los
-requermientos del análisis y diseño, en vez de dedicar tiempo a resolver los
-detalles comunes de bajo nivel. En general la utilización de un framework reduce
-el tiempo de desarrollo.
-
-Por ejemplo, en un equipo donde se utiliza un framework web para desarrollar un
-sitio de banca electrónica, los desarrolladores pueden enfocarse en la lógica
-necesaria para realizar las extraciones de dinero, en vez de la mecánica para
-preserver el estado entre las peticiones del navegador.
-
-.. Carga != Incertidumbre
-
-Sin embargo, se suele argumentar que los frameworks pueden ser una carga,
-debido a la complejidad de sus APIs o la incertidumbre que generar la existencia
-de varios frameworks para un mismo tipo de aplicación. A pesar de tener como
-objetivo estandarizar y reducir el tiempo de desarrollo, el aprendizaje de un
-framework suele requerir tiempo extra en el desarrollo, que debe ser tenido en
-cuenta por el quipo de desarrollo. Trás completar el desarrollo en un framework,
-el equipo de desarrllo no debe volver a invertir tiempo en aprendizaje en
-sucesivos desarrollos.
-
-.. image:: ../_static/framework_esquema_flujo_control.png
-    :width: 719px
-
-Framework Web
--------------
-
-.. note::
-
-    Ver diferencia entre sitio y aplicación
-    http://www.javahispano.org/contenidos/es/comparativa_de_frameworks_web/
-
-Un framework web, es un framework de software que permite implementar aplicaciones web brindando
-soporte para tareas comunes como.
-
-En Wikipeida [WIKI002]_
-
-    * Seguridad
-
-    * Mapeo de URLs
-
-    * Sistema de plantillas
-
-    * Caché
-
-    * AJAX
-
-    * Configuración mínima y simplificada
-
-.. [WIKI002] *Web Framework*, Wikipedia, 2009, http://en.wikipedia.org/wiki/Web_application_framework, última visita Agosto de 2009.
-
-.. note:: completar tema framework un poco, antes de caer en django
-
-Symfony
--------
-
-Ruby on Rails
--------------
-
-Django
-------
 
 .. _servidor-django:
 
@@ -452,7 +467,6 @@ Django
 Django
 ******
 
-Acá tenemos que justificar por que django
 Introducción
 ============
 
@@ -511,6 +525,16 @@ desarrolladores dieron a conocer a Django como un *Framework MTV*.
 
 MVC o MTV la realidad es que ninguna de las interpretaciones es más "correcta"
 que otra. Lo importante es entender los conceptos subyacentes.
+
+.. note::
+	Justificacción
+	
+		* completitud
+		
+		* popularidad
+		
+		* simplicidad
+		
 
 Estructuración de un proyecto en Django
 =======================================
