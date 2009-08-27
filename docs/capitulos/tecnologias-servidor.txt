@@ -39,15 +39,20 @@ El clinete web accede a los recursos del web server mediante una dirección de r
 CGI
 ===
 
-CGI, *Common Gateway Interface* [*]_ es un estándar de comunicación entre un servidor web
-y una aplicación, que permite que un a través de un navegador, se invoque un programa
-en el servidor y se recuperen resultados de éste.
+CGI [*]_ surge como un estándar de comunicación, o :term:API entre un servidor web y un
+programa de usuario. Al permitir ejecutar un proceso, CGI permite generar contenido de 
+manera dinámica a traves de un servidor web.
+Es decir, el usuario puede recuperar datos de un programa
+que se ejecuta en el equipo en el que reside el servidor web, donde la salida puede ser
+un documento HTML entendible para el navegador, o culaquier otro tipo de archivo, como imágenes,
+contenido multimedial, sonidos, etc.
 
 CGI fue la primera estandarización de un mecanismo para generar :ref:`contenido
 dinámico <conteido-dinamico>` en la web.
 
-En el estandar CGI, el servidor web intercambia datos con la aplicación medinate
-variables de entorno y los flujos de entrada y salida.
+Los mecanismos de comunicación de entrada son las variables de
+entorno y la entrada estandar, mientras que para la salida se utiliza la salida estandard del
+proceso.
 
 Los parámetros HTTP, como la :term:`URL`, el método (GET, POST, PUSH, etc.), nombre del
 servidor o host, puerto, etc.) e información sobre el servidor son trasferidos a la
@@ -98,11 +103,11 @@ aplicaciones.
 
 .. note:: Faltan referencias sobre la popularidad de los lenguajes
 
-Históricamente las aplicaciones CGI han sido escritas en lenguajes interpretados, sinedo muy popular Perl y más recientemente el lenguaje PHP.
 
+Históricamente las aplicaciones CGI han sido escritas en lenguajes interpretados, sinedo muy popular Perl y más recientemente el lenguaje PHP. En los lenguajes interpretados, el código ejecutable es
+texto plano, por lo que puede ser editado en una terminal directamente en el servidor. Otra ventaja
+importante de ser texto plano, es que es más sencillo de mantener con alguna herramienta de :term:SCM.
 
-
-.. Poner un gráfico aquí
 
 .. [WikiCGI2009] *Interfaz de entrada común*, Wikipedia, 2009, último acceso Agosto 2009, http://es.wikipedia.org/wiki/Common_Gateway_Interface#Intercambio_de_informaci.C3.B3n:_Variables_de_entorno
 
@@ -113,64 +118,70 @@ Históricamente las aplicaciones CGI han sido escritas en lenguajes interpretado
 Lenguajes interpretados
 =======================
 
-.. note:: Mejorar la introduccion pedorra a lenguajes y quitar las viles copias
-    de las descripcion de los lenguajes por algo mas nuestro.
-    Existen en la actualidad diferentes lenguajes de programación para desarrollar
-	en la web, estos han surgido y evolucionado en virtud de las tendencias y
-	necesidades de las plataformas. En los inicios de Internet, la naturaleza
-	de los contenidos hacia que lenguajes estaicos como el HTML diera una buena
-	solucion a las necesidades de la Web. A medida que paso el tiempo, las
-	tecnologías fueron desarrollándose y surgieron nuevas necesidades de dinamismo
-	en la naturaleza de la web, permitiendo interactuar con usuarios y utilizar
-	sistemas de Bases de Datos.
-
 Un lenguaje de programación interpretado es aquel en el cual los programas son ejecutados
 por un intérprete, en vez de realizarse una traducción a lenguaje máquina, conocido como proceso
 de compilación. 
-
 En teoría cualquier lenguaje de programación podría ser compilado o interpretado. 
 
-
+En un lengauje de programación interpretado se puede decir que el código fuente es el código ejecutable
+[a través del intérprete ].
 
 .. image:: ../_svg/lenguaje_interpretado.png
 
 .. note:: Explicar ámbito dinámico, Perl, PHP, Ruby y Python.
 
+Los lenguajes de programación interpreteados suelen ser de alto nivel y de *tipo dinámico*, es decir
+que la mayoría de las comprobaciones que se realizan en tiempo de compilación en otros lenguajes, se
+realizan en tiempo de ejecución.
 
+Un lenguaje dinámico admite de manera directa en tiempo de ejecución, el agregado de código, extensión o redefinición de objetos o hasta inclusive modificar tipos de datos. Si bien estas tareas pueden ser realizadas en lenguajes no dinámicos, su implementación no es sencilla. 
 
 
 .. _lenguaje-python:
-
 Python
 ======
 
 
 El lenguaje de programación Python fue creado por Guido van Rossum en el año
 1991.
-Python es un lenguaje de programación multiparadigma. Es decir, permite al 
-programador utilizar diferentes formas de resolución de problemas
+Se trata de un lenguaje dinámico, y se lo categoriza como multiparadigma, es decir, permite al 
+programador utilizar diferentes formas de resolución de problemas:
 
 	* programación orientada a objetos
 	* programación estructurada
 	* programación funcional
 
-Otros paradigmas (como programación lógica) están soportados mediante el uso de
-extensiones, por ejemplo, `PySWIP <http://code.google.com/p/pyswip/>`_
+También se soportan otros paradigmas mediante extensiones [*]_ .
 
-Python usa tipo de dato dinámico y reference counting para el manejo de
-memoria, técnica similar al *garbage collector* del lenguaje de programación Java.
-Una característica importante de Python es la resolución dinámica de nombres, 
-lo que enlaza un método y un nombre de variable durante la ejecución del
-programa (también llamado ligadura dinámica de métodos, o *dynamic binding*).
+.. [*] `PySWIP <http://code.google.com/p/pyswip/>`_
 
-Otro objetivo del diseño del lenguaje era la facilidad de extensión. 
-Nuevos módulos se pueden escribir fácilmente en C o C++. 
-Python puede utilizarse como un lenguaje de extensión para módulos y 
-aplicaciones que necesitan de una interfaz programable, es decir, un intérprete
-de python puede ser embebido en aplicaciones programadas en otros lenguajes.
+Python usa tipo de dato dinámico y un recolector de basura basado en contadores
+de referencias. Gracias a su naturaleza dinámica, toda resolución de nombres (o símbolos) se
+realiza en tiempo de ejecución (*dynamic binding*). En la jerga del lenguaje se suele llamar a este
+hecho, *duck typing* y se lo asocia con el siguiente broma, *si tiene pico y 
+hace cuac, se trata de un pato*.
+
+Python puede ser extendido meidante módulos escritos en C o C++, y también 
+se puede embeber el intérprete en otros lenguajes. Python permite actualmente
+cargar bibliotecas de enlace dinámico, de manera dinámica y realizar llamadas
+incluso con callbacks escritos en Pyhton.
+
+Python es considerado por parte de la comunidad UNIX, como una evolución de Perl, 
+de sintaxis limpia y potente. Un caso sitable de esta "evolución" es el 
+árticulo escrito por Eric Raymond, "Why Python?", donde explica su conversión
+de Perl a Python [EricRaymon2000]_. 
+
+.. [EricRaymon2000] *Why Python*, Linux Journal, publicado el 1° de Mayo de 2000, http://www.linuxjournal.com/article/3882
+
+Muchos de las sistemas webs basados en CGI, están
+escritos en Perl, por lo cual no es sorpresa encontrar una buena cantidad de 
+proyectos del lenguaje Python orientados a la Web [*]_.
+
+Para una referencia más amplia del lenguaje, recurra al apéndice.
+
+.. [*] En el repositorio de proyectos del lenguaje se encuentran más 1100 resultados para paquetes relacionados con el término "web". http://pypi.python.org/pypi?%3Aaction=search&term=web&submit=search
 
 
-.. note:: Justificar python
 
 .. _servidor-wsgi:
 
