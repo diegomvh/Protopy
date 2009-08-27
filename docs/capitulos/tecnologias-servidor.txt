@@ -69,6 +69,8 @@ como interpreta el clinete la respuesta. Es decir, la invocación de un CGI pued
 devolover diferentes tipos de contenido al clinete (html, imágenes, javascript,
 contenido multimedia, etc.)
 
+.. image:: ../_svg/esquema_cgi.png
+
 Dentor de las varaibles de entorno, la Wikipedia [WikiCGI2009]_ menciona:
 
     * QUERY_STRING
