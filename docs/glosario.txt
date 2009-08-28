@@ -124,3 +124,5 @@ Glosario
     	
     URL
     	Localizador universal de recursos, especificada en la `RFC 2396 <http://tools.ietf.org/html/rfc2396>`_
+    
+    
