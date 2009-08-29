@@ -81,6 +81,10 @@ lectura del resto de las etiquetas.
     puede elegir utilizar el tipo de dato estático donde es posible esto y puede
     mejorar la eficacia del programa.”
 
+.. 
+    http://javis.wordpress.com/2006/10/23/javascript-orientado-a-objetos/
+    Algo de introduccion a objetos en javascript. sustento de prtopy y el constructor de clases
+
 ************************
 Evolución del JavaScript
 ************************
@@ -93,30 +97,65 @@ Google Gears
 Introducción
 ============
 
-Google Gears es un plug-in para los navegadores: Mozilla Firefox, Internet
-Explorer y IE Mobile, Opera y Opera Mobile, Safari y Google Chrome. Gears es
-un proyecto de código abierto y añade 3 componentes básicos al navegador.
+Google Gears es un software de código abierto distribuido por Google que añade
+una nueva capa de aplicación a los navegadores.
+
+.. http://gears.google.com/ Sitio de google gears
+
+Una vez instaldo como una extensión en el navegador, el producto agrega una API
+que permite programar en JavaScript interacciones con los componentes que
+contiene.
+
+Los tres componentes principales que incorpora gears son:
 
     * Local Server
-        Permite almacenar en caché y proporcionar recursos de aplicaciones
-        (HTML, JavaScript, imágenes, etc.) de forma local.
+        Permite almacenar localmente datos correspondientes a las páginas webs.
+        Tanto HTML, JavaScript e imágenes entre otros, pueden ser almacenados
+        localmente por el cliente e interponerse entre el requerimiento del
+        navegador al servidor en conslutas posteriores, evitando asi la
+        solicitud HTTP y optimizando el tiempo de respuesta de la aplicacion.
+        
+        Pese a que su funcionamiento es muy similar al de la cache del navegador
+        la diferencia fundamental esta en que la actualizacion de los recursos
+        que almacena es mantenida y realizada por el desarrollador.
     
-    * Database 
-        Permite almacenar datos localmente en una base de datos relacional en la
-        que se pueden realizar búsquedas.
+    * Database
+        Permite almacenar localmente datos que no correspondan a una página web
+        pero son parte de la logica de la aplicacion y requieren de un
+        almacenamiento presistente.
+        
+        El motor de base de datos utilizado es SQLite con algunos agregados y
+        restricciones para brindar seguridad y formas de busqueda.
+ 
+        Luego de que el usuario de la aplicacion web otroge el permiso explicito
+        de creacion de la base, el desarrollador, disponer de un almacenamiento
+        del tipo relacional en la máquina huésped. 
     
     * Worker Pool
-        Permite realizar tareas que utilizan intensamente el CPU de forma
-        similar a ``procesos'' en un sistema operativo, de manera de que el 
-        las aplicaciones tengan mejor respuesta.
+        De manera similar a los "hilos" del sistema operativo, el manejador de
+        hilos permite ejecutar acciones en segundo plano sin bloquear la
+        ejecución del hilo principal del navegador.
 
-Estos componentes estan enfocados en permitir al programador de aplicaciones web
-ejecutar sus aplicaciones cuando el navegador no está conectado al servidor.
+        Hay que destacar que el manejador no corre en forma paralela a la
+        ejecución del navegador, sino que se ejecuta cuando la página web se
+        mantiene activa, por lo cual el refresco de página o la salida de la
+        misma provoca que este se detenga o no se ejecute directemente.
 
-Vale aclarar que la aplicación debe ser transferida de manera previa al cliente.
+Basicamente Gears y sus principales componentes estan enfocados en permitir al
+programador ejecutar sus aplicaciones cuando el navegador no está conectado
+al servidor. El lider del grupo de desarrollo Bret Taylor dijo que buscaba ser
+capaz de acceder al Google Reader mientras usaba la conexión de la compañía, la
+cual frecuentemente tenia un acceso defectuoso a Internet.
 
-Componentes adicionales de Google Gears
-A partir de la versión 0.4 del Gears
+.. http://bret.appspot.com/ Blog de Bret Taylor
+
+Gears esta incluido en el nuevo navegador de Google (Google Chrome) y posee
+extensiones para instalarse en Internet Explorer 6.0+, Mozilla Firefox, Safari y
+Opera Mini, y funciona en los sistemas operativos Windows 2000, XP y Vista,
+Windows Mobile 5 y 6, MacOS y Linux de 32 bits.
+
+Con susecivos lanzamientos el producto sea visto mejorado y favorecido en varios
+aspectos a partir de la versión 0.4 del Gears se puede hablar ya de:
 
     * API para GIS, que permite acceder a la posición geográfica del usuario.
 
@@ -127,3 +166,10 @@ A partir de la versión 0.4 del Gears
     * Permite enviar y recibir Blobs con el API HttpRequest.
     
     * Localización de los cuadros de diálogo de Gears en varios idiomas.
+
+    * API para canvas, que permite manipular imagenes desde JavaScript.
+
+En todos los casos que se requiera tener instalada una aplicacion soportada por
+Gears vale la pena aclarar que el cliente debe haber accedido al menos una vez
+al servidor de la aplicacion web y otorgado los permisos de instalacion
+correspondiente. 

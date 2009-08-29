@@ -68,8 +68,8 @@ Organizando el codigo
 
 Como ya se vio en la sección dedicada a :ref:`JavaScript <cliente-javascript>`,
 una de las formas tradicionales y recomendada de incluir funcionalidad en un
-documento HTML es mediante el tag ``script``, haciendo una referencia en el
-atributo ``src`` a la url del archivo que contiene el codigo; en una instancia 
+documento HTML es mediante el tag `script`, haciendo una referencia en el
+atributo `src` a la url del archivo que contiene el codigo; en una instancia 
 posterior, cuando el cliente accede al recurso, carga el archivo con las
 sentencias JavaScript y las interpreta en el contexto del documento.
 
@@ -232,14 +232,213 @@ publica en la ultima linea de código.
 Creando tipos de objeto
 =======================
 
-En la programación basada en prototipos las ``clases'' no están presentes, y la
+En el apartado teórico se menciono ya que en JavaScript todo es un objeto y que
+estos se crean y modifican dinamicamente en tiempo de ejecución.
+
+Sin embargo, la creacion de objetos en Javascript carece de "clases" o si se
+quiere "tipos de objeto" y para crear dos o mas objetos de un mismo tipo se
+deben volver a declarar todos los miembros del objeto.
+
+La forma en que los lenguajes orientados a objetos comúnmente resuelven el
+problema anterior es mediante el uso de Clases, en JavaScript no es posible
+declarar Clases, pero si es posible instanciar objetos a partir de un
+constructor.
+
+El objeto Function es utilizado como objeto instanciable en JavaScript, y el
+cuerpo de la función es el constructor del nuestros objetos. Una vez que tenemos
+un constructor, podemos llamarlo con el operador new.
+
+En la programación basada en prototipos las "clases" no están presentes, y la
 re-utilización de procesos se obtiene a través de la clonación de objetos ya
 existentes y la extención de funcionalidad.
+
 Protopy agrega el concepto de clases al desarrollo, mediante un contructor de
-``tipos de objeto''. De esta forma los objetos pueden ser de dos tipos, las
+"tipos de objeto". De esta forma los objetos pueden ser de dos tipos, las
 clases y las instancias. Las clases definen la disposición y la funcionalidad
-básicas de los objetos, y las instancias son objetos ``utilizables'' basados en
+básicas de los objetos, y las instancias son objetos "utilizables" basados en
 los patrones de una clase particular.
+
+.. note:: hablar de las implementaciones de herencia y como es la nuestra
+
+Creando ‘Clases’ en JavaScript
+
+La forma en que los lenguajes orientados a objetos comúnmente resuelven el
+problema anterior es mediante el uso de Clases, en JavaScript no es posible
+declarar Clases, pero si es posible instanciar objetos a partir de un
+constructor.
+
+El objeto Function es utilizado como objeto instanciable en JavaScript, y el
+cuerpo de la función es el constructor del nuestros objetos. Una vez que tenemos
+un constructor, podemos llamarlo con el operador new.
+
+
+/*clase de ejemplo*/
+
+miClase = new Function();
+
+nuevoObjeto = new miClase(); // instanciamos ‘miClase’
+
+El método mas difundido para emular las clases en JavaScript es aprovechar el
+funcionamiento de la palabra clave this dentro de los constructores. Cuándo una
+función es llamada con el operador new, this hace referencia al objeto que será
+retornado. Veamos como funciona.
+
+/*clase de ejemplo*/
+
+miClase = function(){
+
+/*
+
+agregamos miembros dinamicamente
+
+al objeto que será retornado
+
+*/
+
+this.propiedad = “hola!”;
+
+this.metodo = function(){
+
+/* aqui ‘this’ hace referencia al objeto al que pertenece el metodo */
+
+alert(this.propiedad);
+
+}
+
+}
+
+nuevoObjeto = new miClase(); // instanciamos ‘miClase’
+
+Ahora, ‘nuevoObjeto’ va a referenciar al objeto que se retornó cuando se llamó a
+‘miClase’ usando el operador new, por lo tanto, va a tener todas las propiedades
+y metodos que se crearon dentro del constructor.
+
+El problema de esta forma de crear clases es que cada vez que la función
+‘miClase’ es llamada, se crea una nueva función llamada ‘metodo’, de modo que
+cada objeto tiene su propia versión de ‘metodo’ cuando, en realidad, todos los
+objetos deberían compartir la misma función.
+
+La propiedad ‘Prototype’
+
+Todas las funciones tienen una propiedad llamada prototype, esta propiedad es un
+objeto que será utilizado como ‘modelo’ inicial de todos los objetos que sean
+creados con esta función cuando sea utilizada como constructor.
+
+Inicialmente esta propiedad es un objeto vacío, pero debemos modificarla para
+aprovechar esta característica del lenguaje. Reescribiendo el ejemplo anterior
+el código quedaría así:
+
+/* creamos un constructor limpio */
+
+miClase = new Function();
+
+miClase.prototype.propiedad = “hola!”;
+
+miClase.prototype.metodo = function(){
+
+/* aqui ‘this’ hace referencia al objeto al que pertenece el metodo */
+
+alert(this.propiedad);
+
+}
+
+nuevoObjeto = new miClase(); // instanciamos ‘miClase’
+
+Ahora todos los objetos creados a partir de ‘miClase’ compartirán inicialmente
+las mismas referencias en todas sus propiedades, esto significa que, todos los
+objetos van a compartir la misma versión de ‘metodo’.
+
+Adicionalmente, al utilizar la propiedad prototype, obtenemos otra ventaja,
+podemos usar la palabra reservada instanceof. Vemos como se usa si
+escribimos:alert(nuevoObjeto instanceof miClase) // muestra ‘true’
+
+El problema del uso de prototype, es que todas las propiedades hacen referencia
+a las mismas del prototipo, por lo que si modificamos estos objetos se van a
+modificar también en todos los objetos creados con esta clase. En siguiente
+ejemplo cambiamos nuestra propiedad a un array para poder modificarla sin
+cambiar nuestra referencia, de modo que podamos ver lo que explico con un
+ejemplo:
+
+/* creamos un constructor limpio */
+
+miClase = new Function();
+
+miClase.prototype.propiedad = new Array(“hola”,“hello”);
+
+miClase.prototype.metodo = function(){
+
+/* aqui ‘this’ hace referencia al objeto al que pertenece el metodo */
+
+alert(this.propiedad);
+
+}
+
+nuevoObjeto = new miClase(); // instanciamos ‘miClase’
+
+otroObjeto = new miClase(); // instanciamos ‘miClase’
+
+nuevoObjeto.propiedad.push(“olá”);
+
+otroObjeto.metodo(); // muestra “hola”,”hello”,”olá”
+
+Como pueden ver en el ejemplo anterior, ‘nuevoObjeto’ y ‘otroObjeto’ hacen
+referencia al mismo array, para solucionar este problema solo debemos asignar
+un objeto diferente a cada propiedad de nuestros objetos. El constructor es un
+buen lugar para realizar esta tarea:
+
+miClase = function(){
+
+this.propiedad = new Array(“hola”,“hello”); // reemplazamos el valor de nuestra propiedad con un nuevo objeto
+
+};
+
+miClase.prototype.propiedad = new Array(“hola”,“hello”);
+
+miClase.prototype.metodo = function(){
+
+/* aqui ‘this’ hace referencia al objeto al que pertenece el metodo */
+
+alert(this.propiedad);
+
+}
+
+nuevoObjeto = new miClase(); // instanciamos ‘miClase’
+
+otroObjeto = new miClase(); // instanciamos ‘miClase’
+
+nuevoObjeto.propiedad.push(“olá”);
+
+otroObjeto.metodo(); // muestra “hola”,”hello” :)
+
+Listo, tenemos clase y tenemos objetos que funcionan bien. Espero que les haya
+resultado claro, en el próximo post voy a explicar el mecanismo de la herencia
+en JavaScript (si!!, se puede!!). Hasta entonces.
+
+Descargar archivo de ejemplo
+
+Y ya para finalizar este tema en el que se trata el lenguaje JS a modo de
+introducción hablaremos de la herencia entre clases. En relación a este aspecto
+he de decir que tras buscar por internet la posibilidad de Herencia, me he
+encontrado con algunos ejemplos que principalmente no funcionan, como es el caso
+del ejemplo de herencias que nos muestra "Douglas Crockford".
+
+En este caso y tras probar las posibilidades de herencia me di cuenta de que o
+no sabia exactamente como funcionaba o es que realmente no se soporta este tipo
+de herencia, yo he llegado a la conclusión de que no lo soporta.
+
+Posteriormente vi que la librería prototype ha desarrollado un metodo por el
+cual se pueden realizar herencias entre clases. Pero aún así seguí buscando la
+forma de tener una metodología propia para poder implementar las herencias en
+nuestro propia librería de JS. Y así llegué a un post en el que se trataba el
+tema en cuestión y en el cuál "Harry Fuecks" nos ha abierto la puerta a dotar a
+nuestrar propias librerías de herencia entre clases. ¿Y como es esto?, pues es
+tan sencillo como crearnos un objeto que lo que haga sea recorrer cada par
+"nombre:variable" del objeto que pasamos como original y asignárselo a nuevos
+pares "nombre:variable" del objeto al que deseamos copiar la herencia.
+
+Bueno por si no me he explicado bien vamos a ver unos ejemplos para así ver su
+funcionamiento.
+
 ...
 
 Como ya se menciono anteriormente Protopy explota las novedades de JavaScript
@@ -248,9 +447,9 @@ __iter__ con la finalidad de que los objetos generados en base al tipo
 sean iterables.
 
 Los primeros tipos que surgen para la organizacion de datos dentro de la
-librerias con los ``Sets'' y los ``Diccionarios'', hambos aproximan su
+librerias con los "Sets" y los "Diccionarios", hambos aproximan su
 estructura a las estructuras homonimas en python, brindando una funcionalidad
-similar. Si bien la estructura ``hasheable'' nativa a JavaScript en un objeto,
+similar. Si bien la estructura "hasheable" nativa a JavaScript en un objeto,
 los diccionarios de Protopy permiten el uso de objetos como claves en lugar de
 solo cadenas.
 
@@ -281,9 +480,34 @@ En cuanto a los eventos
 
 Envolviendo a gears
 ===================
-.. Almacenamiento en la base de datos local
-.. LocalServer para guradar codigo
 
+La biblioteca puede funcionar independiente de la instalación de Google Gears,
+debido a que su principal funcionalidad como ya se menciono es la de extención de
+JavaScript y posterior soporte al framework, pese a esto Protopy provee
+mecanismos para uniformar el acceso y extender los objetos de Gears cuando este
+se encuentra instalado en el navegador.
+
+Si bien no es necesario que los módulos obtengan el acceso a Gears a traves de
+Protopy, es recomendable que asi se haga; ya que la biblioteca provee los
+mecanimos de extención para los objetos Gears al momento de solicitarlos. Esto
+no fue asi desde el comienzo de del desarrollo y fue una idea que se maduro
+luego de observar que resultava complejo y costoso requerir los modulos que
+involucraban a Gears desde distintos lugares.
+
+El acceso al `Factory` de Gears esta centralizado y controlado en el objeto
+`gears` dentro del modulo `sys`, mediante este objeto es posible conocer el
+estado de Gears y sus permisos. El objeto informa al desarrollador si Gears esta
+instalado y en que version, si los permisos estan correctos e incluso simplifica
+el proceso de instalación de la extención de no estar presente en el navegador.
+
+La función `create` del objeto `sys.gears` es la encargada de crear y retornar
+los objetos Gears, la creación de estos objetos puede ser directemente
+dependiente del objeto `Factory` original de Gears o estar asistida y extendida
+por un modulo de Protopy que se encuentre en el paquete gears en la url base.
+
+Se busco extender algunos objetos Gears para el desarrollo del framework con la
+finalidad de interaccionar el backend de base datos con el acceso a la base
+propieamente dicho. 
 
 Auditando el codigo
 ===================
