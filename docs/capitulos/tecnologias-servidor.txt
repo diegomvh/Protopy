@@ -112,10 +112,9 @@ aplicaciones.
 .. note:: Faltan referencias sobre la popularidad de los lenguajes
 
 
-Históricamente las aplicaciones CGI han sido escritas en lenguajes interpretados, sinedo muy popular Perl y más recientemente el lenguaje PHP. En los lenguajes interpretados, el código ejecutable es
+Históricamente las aplicaciones CGI han sido escritas en lenguajes interpretados, sinedo muy popular Perl y más recientemente el lenguaje PHP. En los :ref:`lenguajes interpretados <servidor-lenguajes>`, el código ejecutable es
 texto plano, por lo que puede ser editado en una terminal directamente en el servidor. Otra ventaja
 importante de ser texto plano, es que es más sencillo de mantener con alguna herramienta de :term:SCM.
-
 
 .. [WikiCGI2009] *Interfaz de entrada común*, Wikipedia, 2009, último acceso Agosto 2009, http://es.wikipedia.org/wiki/Common_Gateway_Interface#Intercambio_de_informaci.C3.B3n:_Variables_de_entorno
 
@@ -123,36 +122,108 @@ importante de ser texto plano, es que es más sencillo de mantener con alguna he
 
 .. _servidor-lenguajes:
 
-Lenguajes interpretados
-=======================
+Lenguajes de programación para la web
+=====================================
+
+.. note::
+	Acá introducimos los conceptos de
+	
+	* Propósito General vs DSL
+	
+	* Compilado vs Intepretado, -> VMs
+	
+	* Dinámico vs Estático
+	
+	* Plataforma Específica vs Multiplataforma
+	
+	* Porgramación de sistema y programación de aplicaciones
+	
+Una de las clasificaciones más generales que se suelen realizar sobre los lenguajes de programación es identificar su objetivo.
+Los lenguajes de programación de *propósito general* están orientados a resolver cualquier tipo
+de problema, mientras que los lenguajes de *propósito específico* o *DSL* están enfocados en reolver un tipo de problemas
+de manera más eficáz. Un ejemplo muy popular de DSL es la planilla de cálculo Microsoft Excel [DavidPollak2006]_.
+
+.. [DavidPollak2006] *Ruby Sig:How To Design A Domain Specific Language*, Google Tech Talk, 2:44, http://video.google.com/videoplay?docid=-8103284744220333344
+
+Además de la división entre lenguaje de porposito general y DSL, exiten otras clasificaciones de interés
+en el estudio de los lenguajes de programación populares en la Web, como la divsión entre leguajes
+interpretados y compilados.
 
 Un lenguaje de programación interpretado es aquel en el cual los programas son ejecutados
 por un intérprete, en vez de realizarse una traducción a lenguaje máquina, conocido como proceso
-de compilación. 
+de compilación.
+
 En teoría cualquier lenguaje de programación podría ser compilado o interpretado. 
 
 En un lengauje de programación interpretado se puede decir que el código fuente es el código ejecutable
-(a través del intérprete).
+(a través del intérprete). Para llegar a la ejecución de un programa escrito en un lenguaje compilado,
+se debe pasar generalmente por dos etapas, una de compilación, donde se traducen las sentencias
+del lenguaje por código máquina y otra de enlace, donde se ensambla el código objeto resultado de la compilación 
+y se resuleven los enlaces entre los diferentes módulos compilados.
 
 .. image:: ../_svg/lenguaje_interpretado.png
 
-
+Existe un mecanismo intermedio de ejecución, que se conoce como máquina virtual. 
 
 Los lenguajes de programación interpreteados suelen ser de alto nivel y de *tipo dinámico*, es decir
-que la mayoría de las comprobaciones que se realizan en tiempo de compilación en otros lenguajes, se
+que la mayoría de las comprobaciones que se realizan en tiempo de compilación en otros lenguajes [*]_ , se
 realizan en tiempo de ejecución.
 
-Un lenguaje dinámico admite de manera directa en tiempo de ejecución, el agregado de código, extensión o redefinición de objetos o hasta inclusive modificar tipos de datos. Si bien estas tareas pueden ser realizadas en lenguajes no dinámicos, su implementación no es sencilla. 
+.. [*] Estas comprobaciones comprenden el checkeo de tipos de datos, resolución de métodos entro otros.
 
-Perl es un lenguaje de programación diseñado por Larry Wall en 1987. Perl toma características del lenguaje C,
+Un lenguaje dinámico admite de manera directa en tiempo de ejecución, el agregado de código, extensión o redefinición de objetos 
+o hasta inclusive modificar tipos de datos. Si bien estas tareas pueden ser realizadas en lenguajes no dinámicos, 
+su implementación no es sencilla. 
+
+..
+	Systems vs. applications programming
+
+	Systems programming emphasizes making the
+	new domain fit into the existing generic
+	interfaces
+	
+	Applications programming models the
+	application domain precisely first, worries
+	about integration afterwards (if at all)
+	
+Jhon Cownan [Cowan2005]_ adempas hace una clasificación interesante sobre la utilización de los lenguajes de 
+programación, diferenciando la *programación de sistema* de la *programación de aplicaciones*.
+
+	* *Programación de sistemas*
+		En la programación de sistemas, el programador se centra en adaptar un nuevo dominio
+		a interfases genéricas preexistentes.
+	
+	* *Programación de aplicaciones*
+		En la programación de aplicaciones, por el contrario, modela el dominio de la aplicación
+		de manera específica como paso inicial (análisis y diseño) y luego de la integración (si existe).
+
+Podemos ejemplificar la programación de sistemas con la creación de un shellscript por parte de un administrador de sistemas basados en UNIX,
+donde existe un legnguaje de integración, shellscript [*]_ y las un set de utilidades de sistema con interfase conocida que le brindan
+funcionalidades como ordenamiento de caddenas, busqueda y reemplazo de patrones, inicio y detencción de procesos, interacción con el SO, etc.
+
+
+.. [*] Bash, Sh, Csh, Ksh, Zsh, etc.
+
+.. [Cowan2005] *RESTful Web Services, An introduction to building Web Services without tears (i.e., without SOAP or WSDL)*, 2005, http://home.ccil.org/~cowan/restws.pdf
+
+** Java **
+
+
+**Perl** es un lenguaje de programación de propósito general diseñado por Larry Wall en 1987. Perl toma características del lenguaje C,
 del lenguaje interpretado shell (sh), AWK, sed, Lisp y, en un grado inferior, de muchos otros lenguajes de programación.
+Su uso principal es el procesamiento de texto, siendo muy popular en programación de sistemas. Muchos sistemas basados
+en CGI están escritos en Perl (sistemas de administración de servidores, correo, etc.)
 
-Estructuralmente, Perl está basado en un estilo de bloques como los del C o AWK, y fue ampliamente adoptado por su destreza en el procesado de texto y no tener ninguna de las limitaciones de los otros lenguajes de script.
+Estructuralmente, Perl está basado en un estilo de bloques como los del C o AWK, y fue ampliamente adoptado por su 
+destreza en el procesado de texto.
 
-**Perl**
+Su sintaxis es compleja y ambigua, una tarea puede ser realizada de muchas maneras diferentes, dado
+lugar a confusión.
+
 
 **PHP** es un lenguaje interpreteado, originalmente diseñado para ser embebido
-dentro del código HTML y procesado en el servidor.
+dentro del código HTML y procesado en el servidor. Toma elementos de Perl y shellscript, C, y 
+recientemente Java.
 Cuando el cliente solicita a través de una URL un módulo php, el interprete busca los 
 los tags del lenguaje, y los reemplaza por la salida del bloque.
 Presenta una ventaja importante sobre la escritura de CGI, ya que no es necesario 
@@ -170,6 +241,8 @@ Hoy es posible escribir aplicaciones gráficas mediante toolkits como Qt y GTK.
 Yukihiro "Matz" Matsumoto, en Japón.
 A menudo comparado con *Smalltak*, se suele decir que Ruby es un lenguaje de objetos puro, 
 ya que *todo* es un objeto. Posee muchas caracteríticas avanzadas como metaclases, clausuras, iteradores, integración de expresiones regulares en el lenguje, etc.
+Su sintaxis toma elementos de Perl, por lo cual, suelen existir convenciones de nombrado
+a las que cuesta acostumbrarse.
 Existen varios intérpretes de Ruby, siendo la oficial escrita en C, se concen 
 YARV [*]_ , 
 JRuby [*]_ , 
@@ -183,17 +256,22 @@ y MacRuby [*]_ .
 .. [*] IronRuby es una implementación de Ruby sobre la plataforma **.Net** http://www.ironruby.net/
 .. [*] MacRuby es una implementación de Ruby sobre **Objective-C** para el sistema Mac OS X, http://www.macruby.org/
 
-Una de las Killer App [*]_ según el autor es el framework para contenido web denominado `"Ruby on Rails" <www.rubyonrails.com>`_ 	que alcanzó su versión 1.0 en el año 2005.
+Una de las Killer App [*]_ según el autor es el framework para contenido web denominado `"Ruby on Rails" <www.rubyonrails.com>`_ 
+que alcanzó su versión 1.0 en el año 2005.
+
+Su principales desventajas son la baja aceptación, quizás debido a que la documentación oficial solía estar
+en idioma Japonés (auque la situación se ha venido revirtiendo ultimamente). Otra desventaja importante es que
+la velocidad del intérprete oficial es bastante baja cuando se la compara con otros lenguajes de programación y
+muestra variaciones importantes entre plataformas.
 
 .. [*] Aplicación que populariza un lenguaje.
 
-**Python** es un lenguaje interpretado, orientado a objetos.
+**Python** es un lenguaje interpretado, multiplataforma, orientado a objetos con dejos de programación funcional.
 
 .. _lenguaje-python:
 
 Python
 ======
-
 
 El lenguaje de programación Python fue creado por Guido van Rossum en el año
 1991.
