@@ -125,4 +125,7 @@ Glosario
     URL
     	Localizador universal de recursos, especificada en la `RFC 2396 <http://tools.ietf.org/html/rfc2396>`_
     
-    
+    deployment
+    	Etapa en el dearrollo de sistemas en la cual el producto es puesto en producción.
+    	El deployment involucra todas las actividades necesarias para poner el sistema en
+    	funcionamiento para el usuario final.

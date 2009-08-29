@@ -163,13 +163,26 @@ y se resuleven los enlaces entre los diferentes módulos compilados.
 
 .. image:: ../_svg/lenguaje_interpretado.png
 
-Existe un mecanismo intermedio de ejecución, que se conoce como máquina virtual. 
+Existe un mecanismo intermedio de ejecución, que se conoce como máquina virtual, en el cual, existe
+un proceso de compilación de el código fuente a un lenguaje intermedio, comunmente denominado
+*bytecode*. Este bytecode es luego ejecutado sobre un intérprete, al cual se denomina comunmente
+como máquina virutal. La traducción del código fuente a *bytecode* puede ser explícita, como en el
+lenguaje Java, o implícita como en Python, donde se mezcla en el intérprete la funcionalidad de 
+compilación a bytecode e interpretación en un solo programa.
 
 Los lenguajes de programación interpreteados suelen ser de alto nivel y de *tipo dinámico*, es decir
 que la mayoría de las comprobaciones que se realizan en tiempo de compilación en otros lenguajes [*]_ , se
 realizan en tiempo de ejecución.
 
 .. [*] Estas comprobaciones comprenden el checkeo de tipos de datos, resolución de métodos entro otros.
+
+Si un lenguaje provee la posibilidad de ser ejecutado en varias plataformas [*]_ decimos que es multiplataforma.
+En el caso de los lenguaje compilados, es necesario disponer de un compilador para la plataforma, mientras que 
+en un lenguaje interpretado, es necesario compilar el intérprete con el compilador de la plataforma.
+
+.. [*] *Una plataforma es una combinación de hardware y software usada para ejecutar aplicaciones; en su forma más simple consiste únicamente de un sistema operativo, una arquitectura, o una combinación de ambos. La plataforma más conocida es probablemente Microsoft Windows en una arquitectura x86* [WikiPlataforma2009]_
+
+.. [WikiPlataforma2009] *Multiplataforma*, Wikipedia, 2009, último acceso, Agosto de 2009, http://es.wikipedia.org/wiki/Multiplataforma
 
 Un lenguaje dinámico admite de manera directa en tiempo de ejecución, el agregado de código, extensión o redefinición de objetos 
 o hasta inclusive modificar tipos de datos. Si bien estas tareas pueden ser realizadas en lenguajes no dinámicos, 
@@ -201,18 +214,23 @@ Podemos ejemplificar la programación de sistemas con la creación de un shellsc
 donde existe un legnguaje de integración, shellscript [*]_ y las un set de utilidades de sistema con interfase conocida que le brindan
 funcionalidades como ordenamiento de caddenas, busqueda y reemplazo de patrones, inicio y detencción de procesos, interacción con el SO, etc.
 
-
 .. [*] Bash, Sh, Csh, Ksh, Zsh, etc.
 
 .. [Cowan2005] *RESTful Web Services, An introduction to building Web Services without tears (i.e., without SOAP or WSDL)*, 2005, http://home.ccil.org/~cowan/restws.pdf
 
-** Java **
+**Java** es un lenguaje de progamación orientado a objetos, multiplataforma y multiproposito, basado en máquina virtual, 
+de compilación explícita.
+Java ha definido algunos elementos importantes en cuanto a la web dinámica, como los applets [*]_ y la especificación 
+J2EE.
+
+.. [*] Pequeños programaas que se ejecutan en el navegaor web
 
 
 **Perl** es un lenguaje de programación de propósito general diseñado por Larry Wall en 1987. Perl toma características del lenguaje C,
 del lenguaje interpretado shell (sh), AWK, sed, Lisp y, en un grado inferior, de muchos otros lenguajes de programación.
 Su uso principal es el procesamiento de texto, siendo muy popular en programación de sistemas. Muchos sistemas basados
-en CGI están escritos en Perl (sistemas de administración de servidores, correo, etc.)
+en CGI están escritos en Perl (sistemas de administración de servidores, correo, etc.). Perl esta disponible para
+muchas plataformas, incluyendo todas las variantes de UNIX.
 
 Estructuralmente, Perl está basado en un estilo de bloques como los del C o AWK, y fue ampliamente adoptado por su 
 destreza en el procesado de texto.
@@ -222,22 +240,25 @@ lugar a confusión.
 
 
 **PHP** es un lenguaje interpreteado, originalmente diseñado para ser embebido
-dentro del código HTML y procesado en el servidor. Toma elementos de Perl y shellscript, C, y 
+dentro del código HTML y procesado en el servidor (DSL) y que con los años
+ha intentado convertirse en un lenguaje de porpósito general. Toma elementos de Perl y shellscript, C, y 
 recientemente Java.
 Cuando el cliente solicita a través de una URL un módulo php, el interprete busca los 
 los tags del lenguaje, y los reemplaza por la salida del bloque.
 Presenta una ventaja importante sobre la escritura de CGI, ya que no es necesario 
 confeccionar un programa de usuario, la resolución de URLs está dada por la estructura del 
 sistema de archivos. 
-Si bien es muy popular [*]_ , es criticado por no poseer ámbito de nombres para los módulos, 
+Si bien es muy popular [*]_ y está disponible en la gran mayoría de los servidores UNIX, simplificando el :ref:`deployment`
+es criticado por no poseer ámbito de nombres para los módulos, 
 promover el código desordenado, de dificil optimización y orientado a la web [BlogHardz2008]_ .
 Hoy es posible escribir aplicaciones gráficas mediante toolkits como Qt y GTK.
 
 .. [*] `Utilización de PHP según php.net <http://www.php.net/usage.php>`_
 
+
 .. [BlogHardz2008] http://hardz.wordpress.com/2008/02/07/php-hipertexto-pre-procesado/
 
-**Ruby** es un lenguaje orientado fuertemente objetos, creado a mediados de los noventa por 
+**Ruby** es un lenguaje orientado fuertemente objetos, multiplataforma, creado en 1995 por 
 Yukihiro "Matz" Matsumoto, en Japón.
 A menudo comparado con *Smalltak*, se suele decir que Ruby es un lenguaje de objetos puro, 
 ya que *todo* es un objeto. Posee muchas caracteríticas avanzadas como metaclases, clausuras, iteradores, integración de expresiones regulares en el lenguje, etc.
@@ -257,7 +278,7 @@ y MacRuby [*]_ .
 .. [*] MacRuby es una implementación de Ruby sobre **Objective-C** para el sistema Mac OS X, http://www.macruby.org/
 
 Una de las Killer App [*]_ según el autor es el framework para contenido web denominado `"Ruby on Rails" <www.rubyonrails.com>`_ 
-que alcanzó su versión 1.0 en el año 2005.
+que alcanzó su versión 1.0 en el año 2005, que poroponía un cambio radical al enfoque complejo de *J2EE*.
 
 Su principales desventajas son la baja aceptación, quizás debido a que la documentación oficial solía estar
 en idioma Japonés (auque la situación se ha venido revirtiendo ultimamente). Otra desventaja importante es que
@@ -266,28 +287,12 @@ muestra variaciones importantes entre plataformas.
 
 .. [*] Aplicación que populariza un lenguaje.
 
-**Python** es un lenguaje interpretado, multiplataforma, orientado a objetos con dejos de programación funcional.
 
-.. _lenguaje-python:
-
-Python
-======
-
-El lenguaje de programación Python fue creado por Guido van Rossum en el año
+**Python** es un lenguaje de programación interpretado multiparadigma, 
+de propósito general. Fue creado por por Guido van Rossum en el año
 1991.
-Se trata de un lenguaje dinámico, y se lo categoriza como multiparadigma, es decir, permite al 
-programador utilizar diferentes formas de resolución de problemas:
-
-	* programación orientada a objetos
-	* programación estructurada
-	* programación funcional
-
-También se soportan otros paradigmas mediante extensiones [*]_ .
-
-.. [*] `PySWIP <http://code.google.com/p/pyswip/>`_
-
-Python usa tipo de dato dinámico y un recolector de basura basado en contadores
-de referencias. Gracias a su naturaleza dinámica, toda resolución de nombres (o símbolos) se
+Se trata de un lenguaje dinámico, y toma elmentos de varios lenguajes, como C, Java,
+Scheme, entre otros. Gracias a su naturaleza dinámica, toda resolución de nombres (o símbolos) se
 realiza en tiempo de ejecución (*dynamic binding*). En la jerga del lenguaje se suele llamar a este
 hecho, *duck typing* y se lo asocia con el siguiente broma, *si tiene pico y 
 hace cuac, se trata de un pato*.
@@ -307,6 +312,12 @@ de Perl a Python [EricRaymon2000]_.
 Muchos de las sistemas webs basados en CGI, están
 escritos en Perl, por lo cual no es sorpresa encontrar una buena cantidad de 
 proyectos del lenguaje Python orientados a la Web [*]_.
+
+.. _lenguaje-python:
+
+Selección de un lenguaje de programación
+========================================
+
 
 En el :ref:`apéndice <apendices-python>` se encuentra una referecia detallada del lenguaje.
 
