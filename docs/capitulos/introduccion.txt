@@ -6,8 +6,8 @@ Introduccion
 Motivación
 **********
 
-Hoy más que ayer, pero seguremente menos que mañana, Internet es ``la red de
-redes''. El alto contenido de información 
+Hoy más que ayer, pero seguremente menos que mañana, Internet es "la red de
+redes". El alto contenido de información 
 Hoy en día Internet supone más que un medio para obtener información,
 su constante expanción a convetido a esta red en un terreno muy atractivo para
 la implementación de sistemas de información.
@@ -45,6 +45,24 @@ son desarrolladas las aplicaciones web son generalmente OpenSource, como e PHP,
 Python, Ruby, Perl y Java. Los frameworks web escritos sobre estos lenguajes
 utilizan alguna licencia OpenSource para su distribución; incluso frameworks
 basados en lenguajes propietarios son liberados bajo licencias OpenSource.
+
+****************
+La word wide web
+****************
+
+En 1994, el CERN y el MIT establecen el *Word Wide Web Consortium* (W3C), con
+la finalidad de promover el desarrollo de la Web, estandarizar protocolos y
+fomentar la interoperabilidad entre distintos sitios. El sitio oficial del
+consorcio es <http://www.w3.org>_ y en este se encuentran los principales
+documentos sobre la Web e información sobre la actividad de la organización. 
+
+.. 
+
+*******************
+La arquitectura web
+*******************
+
+
 
 *********
 Objetivos

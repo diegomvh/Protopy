@@ -4,6 +4,10 @@
 Tecnologías del cliente
 #######################
 
+Desde la perspectiva de un usuario, la Web consiste en una enorme cantidad de
+documentos interconectados a nivel mundial llamados *paginas Web*.
+En el clinete las paginas se ven mediante un programa llamado navegadores  
+
 **************************
 Estructura de un navegador
 **************************
@@ -11,8 +15,41 @@ Estructura de un navegador
 .. _navegador-web:
 Navegador Web
 =============
-Un navegador web o *web browser*, es un software encargado de representar documentos de hípertexto.
-El lenguaje en el cual se escriben estos documentos es HTML. 
+Un navegador es un programa que puede descargar e interpretar una pagina Web,
+presentandola al usuario en un formato ameno y posteriormente
+capturar los eventos de entrada sobre la pagina y actuar en funcion de estos,
+muy probablemente siguiendo hipervinculos a otras paginas. Para realizar esta
+tarea los hipervinculos necesitan de una manera de nombrar a cualquier pagina
+que se encuentre en la Web; es por esto que las paginas son nombradas por URLs   
+
+Cuando un usuario hace "clic" en un hipervinculo, el navegador pone en marcha
+unas serie de mecanismos para obtener la pagina a la que se esta apuntando.
+
+    # El navegador determina la URL.
+    # El navegador pide al DNS la direccion IP del domino presente en la URL.
+    # El DNS responde la direccion IP.
+    # El navegador realiza una conexion TCP con el puerto 80 en la IP obtenida.
+    # El navegador envia una solicitud para la pagina requerida.
+    # El servidor envia la pagina.
+    # Se libera la conexion TCP.
+    # El navegador interpreta y despliega el contenido de la pagina.
+
+No todas las paginas contienen HTML. Una hipervinculo puede conducir a distintos
+tipos de archivos, documentos :term:`PDF`, iconos en formato :term:`GIF`, fotos
+con formato :term:`JPEG`, musica con formato :term:`MP3`, videos con formato
+:term:`MPEG` o cualquier otro archivo. La gran cantidad de archivos que una
+pagina puede enlazar representa un problema para el navegador; pero en lugar de
+incorporar interpretes para todos los tipos de archivos se a optado por una
+solucion mas general. Cuando el servidor retorna la pagina al clinete, tambien
+entrega informacion adicional al respecto, esta informacion incluye el tipo
+:term:`MIME` de la pagina que indica al navegador que interprete utilizar, si el
+tipo MIME no esta integrado en el navegador este utiliza un visor externo
+asociado al tipo por el sistema operativo o el usuario. Otra opcion seria
+extender la tabla de tipos MIME que el navegador puede interpretar internamente,
+esta extencion se raliza mediante plug-ins, los cuales se cargan en funcion del
+tipo retornado y se descargan cuando ya no son necesarios. 
+    
+    
 
 .. _cliente-html:
 HTML
@@ -26,6 +63,25 @@ CSS
 
 JavaScript
 ==========
+
+JavaScript es un lenguaje de programación interpretado, es decir, que no requiere compilación, utilizado principalmente en páginas web, con una sintaxis semejante a la del lenguaje Java y el lenguaje C.
+
+Al igual que Java, JavaScript es un lenguaje orientado a objetos propiamente dicho, ya que dispone de Herencia, si bien ésta se realiza siguiendo el paradigma de programación basada en prototipos, ya que las nuevas clases se generan clonando las clases base (prototipos) y extendiendo su funcionalidad.
+
+Todos los navegadores modernos interpretan el código JavaScript integrado dentro de las páginas web. Para interactuar con una página web se provee al lenguaje JavaScript de una implementación del DOM.
+
+El lenguaje fue inventado por Brendan Eich en la empresa Netscape Communications, que es la que desarrolló los primeros navegadores web comerciales. Apareció por primera vez en el producto de Netscape llamado Netscape Navigator 2.0.
+
+Tradicionalmente, se venía utilizando en páginas web HTML, para realizar tareas y operaciones en el marco de la aplicación únicamente cliente, sin acceso a funciones del servidor. JavaScript se ejecuta en el agente de usuario al mismo tiempo que las sentencias van descargándose junto con el código HTML.
+
+Los autores inicialmente lo llamaron Mocha y más tarde LiveScript pero fue rebautizado como JavaScript en un anuncio conjunto entre Sun Microsystems y Netscape, el 4 de diciembre de 1995.
+
+En 1997 los autores propusieron JavaScript para que fuera adoptado como estándar de la European Computer Manufacturers' Association ECMA, que a pesar de su nombre no es europeo sino internacional, con sede en Ginebra. En junio de 1997 fue adoptado como un estándar ECMA, con el nombre de ECMAScript. Poco después también lo fue como un estándar ISO.
+
+JScript es la implementación de ECMAScript de Microsoft, muy similar al JavaScript de Netscape, pero con ciertas diferencias en el modelo de objetos del navegador que hacen a ambas versiones con frecuencia incompatibles.
+
+Para evitar estas incompatibilidades, el World Wide Web Consortium diseñó el estándar Document Object Model (DOM, ó Modelo de Objetos del Documento en castellano), que incorporan Konqueror, las versiones 6 de Internet Explorer y Netscape Navigator, Opera versión 7, y Mozilla desde su primera versión.
+
 .. Explicar como meter codigo javascript en un doc da sustento a protopy
 
 al archivo que contiene la funcionalidad. Mas tarde cuando el navegador descarga
