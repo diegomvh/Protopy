@@ -13,51 +13,204 @@ Estructura de un navegador
 **************************
 
 .. _navegador-web:
+
 Navegador Web
 =============
-Un navegador es un programa que puede descargar e interpretar una pagina Web,
-presentandola al usuario en un formato ameno y posteriormente
-capturar los eventos de entrada sobre la pagina y actuar en funcion de estos,
-muy probablemente siguiendo hipervinculos a otras paginas. Para realizar esta
-tarea los hipervinculos necesitan de una manera de nombrar a cualquier pagina
-que se encuentre en la Web; es por esto que las paginas son nombradas por URLs   
 
-Cuando un usuario hace "clic" en un hipervinculo, el navegador pone en marcha
-unas serie de mecanismos para obtener la pagina a la que se esta apuntando.
+.. note::
+	Acá abordamos desde la perspectiva del navegador HTTP, HTML y Javascript
+	
+	
+Un navegador web o *web browser*, es un software encargado de representar 
+documentos de hípertexto al usuario, siendo los lenguajes de codificación de hipertexto más 
+populares HTML y XHTML. Un navegador no solo representa los documentos de hipertexto, sino
+que puede representar otros tipos de documentos, como imágenes
+(:term:JPEG, :term:GIF, :term:PNG, etc.), 
+sonido (:term:WAV, :term:MP3, :term:OGG) y contenido
+multimedial como video (:term:MPEG, :term:H264, :term:RM, :term:MOV), 
+e interactivos como es el caso de Macromedia Flash, applets Java o controles ActiveX en
+la plataforma Windows. Debido a la cantidad de recursos que debe manejar un navegador, 
+el servidor web agrega a cada respuesta al cliente una cabecera donde le indica 
+el tipo de recurso que está engregado. Esta especificación se realiza con el 
+standard :term:MIME.
 
-    # El navegador determina la URL.
-    # El navegador pide al DNS la direccion IP del domino presente en la URL.
-    # El DNS responde la direccion IP.
-    # El navegador realiza una conexion TCP con el puerto 80 en la IP obtenida.
-    # El navegador envia una solicitud para la pagina requerida.
-    # El servidor envia la pagina.
-    # Se libera la conexion TCP.
-    # El navegador interpreta y despliega el contenido de la pagina.
 
-No todas las paginas contienen HTML. Una hipervinculo puede conducir a distintos
-tipos de archivos, documentos :term:`PDF`, iconos en formato :term:`GIF`, fotos
-con formato :term:`JPEG`, musica con formato :term:`MP3`, videos con formato
-:term:`MPEG` o cualquier otro archivo. La gran cantidad de archivos que una
-pagina puede enlazar representa un problema para el navegador; pero en lugar de
-incorporar interpretes para todos los tipos de archivos se a optado por una
-solucion mas general. Cuando el servidor retorna la pagina al clinete, tambien
-entrega informacion adicional al respecto, esta informacion incluye el tipo
-:term:`MIME` de la pagina que indica al navegador que interprete utilizar, si el
-tipo MIME no esta integrado en el navegador este utiliza un visor externo
-asociado al tipo por el sistema operativo o el usuario. Otra opcion seria
-extender la tabla de tipos MIME que el navegador puede interpretar internamente,
-esta extencion se raliza mediante plug-ins, los cuales se cargan en funcion del
-tipo retornado y se descargan cuando ya no son necesarios. 
-    
-    
+Un navegador web acepta como entrada del usuario una URL, comunmente conocida como dirección 
+de internet. Una vez validada la URL, el navegador web descarga el recurso apuntado por la URL
+mediante el protcolo HTTP.
 
+Una URL tiene el siguiente esquema, donde podemos diferenciar varios comopnentes
+
+.. image:: ../_svg/esquema_urls.png
+
+Los componetes de una URL son:
+
+	* esquema
+		Especifica el mecanismo de comunicación. Generalmente HTTP y HTTPS en una comunicación
+		asegurada mediante TLS [*]_ .
+		
+	* anfitrión
+		Especifica el nombre de dominio del servidor en internet, por ejemplo: *google.com*, 
+		*nasa.gov*, *wikipedia.com*, etc.
+		Se popularizó la utilización de el subdominio "www" para identificar el aniftrión
+		que ejecuta el servidor web, dando lugar a direcciones del tipo *www.google.com*, 
+		*www.nasa.gov*, etc.
+		
+		El *puerto* es un parametro de conexión TCP, y suele ser omitido debido a que 
+		el esquema suele determinarlo, sindo 80 para HTTP y 443 para HTTPS. 
+		 
+	* recurso
+		Especifica dentro del servidor, la ruta para acceder al recurso
+		
+	* query
+		El parámetro query tiene sentido cuando el recurso apuntado por la ruta no
+		se trata de una página estática y sirve para el pasaje de parámetros.
+		El programa que genera el recurso puede recbir como argumentos estos parámetros, 
+		por ejemplo, cuando se ingresa la palaba *foo* en el buscador google, la 
+		url que provee el resutlado de la búsqueda es la siguiente::
+			
+			http://www.google.com/search?*q=foo*
+		
+	
+	* enlace
+		Dentro de un documento de hipertexto pueden existir destinos de enlaces, 
+		o enlaces internos. Gracias a este parámeto se puede enlazar a una 
+		sección epecífica de un documento, permitiendo al navegador ubicarse
+		visualmente.
+
+.. [*] *Transport Security Layer* es el sucesor de *Secure Socket Layer* (SSL), es un protocolo
+criptográfico que provee conexiones seguras a traves de una red, típicamente internet [WikiSSL2009]_ .
+
+.. [WikiSSL2009] *Transport Layer Security*, Wikipedia, 2009, último acceso, Agosto 2009.
+
+Cuando el recurso apuntado se encuentra en internet, el navegador realiza una conexión hacia
+el servidor web indicado por el dominio y mediante el prtocolo HTTP le informandole a que
+recurso dese acceder.
+
+
+HTTP
+====
+
+Para acceder al recurso *~ndefosse/introducion_lenguaje_python.html* en
+el servidor *students.unp.edu.ar*, de la url http://students.unp.edu.ar/~ndefosse/introducion_lenguaje_python.html, el
+navegador conforma la siguiente consulta::
+
+	GET /~ndefosse/introduccion-lenguaje-python.html HTTP/1.1
+	Host: students.unp.edu.ar
+	User-Agent: Mozilla/5.0
+	Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+	Accept-Language: es-ar,en-us;q=0.7,en;q=0.3
+	Accept-Encoding: gzip,deflate
+	Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
+	Cookie: user_id=G7NVG5YY51I9DZAIJDEDQIXYQSRF0CTL
+
+.. _http_request:
+
+Esto conforma lo que se conoce como una consulta HTTP o *HTTP Request*. En la primera
+linea se conforma de el método HTTP y el nombre del recurso, finalizando con la versión
+del prtocolo que soporta el navegador (o cliente)::
+	
+	GET /~ndefosse/introduccion-lenguaje-python.html HTTP/1.1
+	
+La sgunda linea es el host al cual se accede. Un mismo servidor web puede estar publicado
+en varios dominos, mediante esta linea se puede discriminar desde cual se intenta acceder
+al recurso::
+
+	Host: students.unp.edu.ar
+	
+El siguiente componente del *request* es la linea que identifica al cliente, en este caso
+el navegador informa que se trata de Mozila, versión 5::
+	User-Agent: Mozilla/5.0
+
+
+Una vez que el servidor web a localizado y accedido al recurso, precede a enviar la respuesta
+	
 .. _cliente-html:
 HTML
 ====
+HTML es un lenguaje de marcado que teiene como objetivo describir un documento de hipertexto.
+Un documento HTML se conforma por una serie de *tags* o etiquetas.
+
+.. image:: ../_svg/etiqueta_html.png
+
+ 
+Un documento HTML está delimitado por las etiquetas o *tags* html y contiene una cabecera
+delimitada por *head* y un cuerpo, delmitado por *body*.
+
+.. code-block:: html
+	
+	<html>
+		<head>
+			<title>Mi pagina</title>
+		</head>
+		<body>
+			<h1>Título principal</h1> <!-- comentario -->
+			<p>Párrafo</p>
+		</body>
+	</html>
+
+Un documento HTML contener enlaces a recursos entendibles para el navegador, como los
+enlaces a hojas de estilos o código javascript.
+
+La inclusión de una hoja de estilo se realiza mediante el tag *link*, de la siguiente manera:
+
+.. code-block:: html
+
+	<link type="text/css" rel="stylesheet" href="hoja_de_estilos.css">
+
+Se puede además embeber en la página el estilo, de la siguente manera
+
+.. code-block:: html
+
+	<style type="text/css">
+	
+		BODY {
+			font-family: "Verdana";
+			font-size: 12pt;
+			padding: 2px 2px 3px 2px;
+		}
+	</style>
+	
+Al haberse incrustado el estilo en una página en particular, este solo tiene validés
+para ese recurso en particular.
+
+Otro tipo de recurso entendible para el navegador constituye la inclusión de código
+de ejecución en el clinete, mediante el tag script.
+
+.. code-block:: html
+
+	<script type="text/javscript" src="mi_codigo.js"></script>
+	
+Además de la inclusión de recursos javascript externos, el código javascript se
+puede embeber en el código html de varias maneras [StephenChapmanJS2009]_, entre ellas:
+
+.. code-block:: html
+
+	<script type="text/javascript">
+	<!-- // Javascript en un comentario, para pasar validadores XHTML y ocultar de navegadores
+		// que no soporten Javascript
+		var x = 2;
+		var y = 4;
+	// -->
+	</script> 
+
+.. [StephenChapmanJS2009] *Javascript and XML*, Stephen Chapman, About.com, último acceso Agosto 2009, http://javascript.about.com/library/blxhtml.htm
+
 
 .. _cliente-css:
+
 CSS
 ===
+Una hoja de estilo en cascada especfica como se va a mostrar un documento en pantalla, como
+se va a imprimir o inclusive como se realiza la pronunciación a través de un dispositivo de
+lectura [W3cCSS2009]_ .
+
+El objetivo de CSS es separar el contendio de la presentación de un documento HTML o XML. Una
+hoja de estilo puede ser enlazada desde varias paginas, permitiendo mantener coherencia y 
+consistencia en el estilo. 
+
+
+.. [W3cCSS2009] *Guia breve de CSS*, W3C, español, último acceso Agosto 2009, http://www.w3c.es/divulgacion/guiasbreves/HojasEstilo
 
 .. _cliente-javascript:
 
@@ -83,6 +236,9 @@ JScript es la implementación de ECMAScript de Microsoft, muy similar al JavaScr
 Para evitar estas incompatibilidades, el World Wide Web Consortium diseñó el estándar Document Object Model (DOM, ó Modelo de Objetos del Documento en castellano), que incorporan Konqueror, las versiones 6 de Internet Explorer y Netscape Navigator, Opera versión 7, y Mozilla desde su primera versión.
 
 .. Explicar como meter codigo javascript en un doc da sustento a protopy
+
+Javascript es un lenguaje de programación interpretado, de ámbito dinámico y orientado
+a objetos mediante protipos.
 
 al archivo que contiene la funcionalidad. Mas tarde cuando el navegador descarga
 el documento y comienza su lectura al encontrar esta etiqueta solicita

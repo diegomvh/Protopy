@@ -137,7 +137,8 @@ Lenguajes de programación para la web
 	* Plataforma Específica vs Multiplataforma
 	
 	* Porgramación de sistema y programación de aplicaciones
-	
+
+
 Una de las clasificaciones más generales que se suelen realizar sobre los lenguajes de programación es identificar su objetivo.
 Los lenguajes de programación de *propósito general* están orientados a resolver cualquier tipo
 de problema, mientras que los lenguajes de *propósito específico* o *DSL* están enfocados en reolver un tipo de problemas
