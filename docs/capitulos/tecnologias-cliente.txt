@@ -217,24 +217,6 @@ consistencia en el estilo.
 JavaScript
 ==========
 
-JavaScript es un lenguaje de programación interpretado, es decir, que no requiere compilación, utilizado principalmente en páginas web, con una sintaxis semejante a la del lenguaje Java y el lenguaje C.
-
-Al igual que Java, JavaScript es un lenguaje orientado a objetos propiamente dicho, ya que dispone de Herencia, si bien ésta se realiza siguiendo el paradigma de programación basada en prototipos, ya que las nuevas clases se generan clonando las clases base (prototipos) y extendiendo su funcionalidad.
-
-Todos los navegadores modernos interpretan el código JavaScript integrado dentro de las páginas web. Para interactuar con una página web se provee al lenguaje JavaScript de una implementación del DOM.
-
-El lenguaje fue inventado por Brendan Eich en la empresa Netscape Communications, que es la que desarrolló los primeros navegadores web comerciales. Apareció por primera vez en el producto de Netscape llamado Netscape Navigator 2.0.
-
-Tradicionalmente, se venía utilizando en páginas web HTML, para realizar tareas y operaciones en el marco de la aplicación únicamente cliente, sin acceso a funciones del servidor. JavaScript se ejecuta en el agente de usuario al mismo tiempo que las sentencias van descargándose junto con el código HTML.
-
-Los autores inicialmente lo llamaron Mocha y más tarde LiveScript pero fue rebautizado como JavaScript en un anuncio conjunto entre Sun Microsystems y Netscape, el 4 de diciembre de 1995.
-
-En 1997 los autores propusieron JavaScript para que fuera adoptado como estándar de la European Computer Manufacturers' Association ECMA, que a pesar de su nombre no es europeo sino internacional, con sede en Ginebra. En junio de 1997 fue adoptado como un estándar ECMA, con el nombre de ECMAScript. Poco después también lo fue como un estándar ISO.
-
-JScript es la implementación de ECMAScript de Microsoft, muy similar al JavaScript de Netscape, pero con ciertas diferencias en el modelo de objetos del navegador que hacen a ambas versiones con frecuencia incompatibles.
-
-Para evitar estas incompatibilidades, el World Wide Web Consortium diseñó el estándar Document Object Model (DOM, ó Modelo de Objetos del Documento en castellano), que incorporan Konqueror, las versiones 6 de Internet Explorer y Netscape Navigator, Opera versión 7, y Mozilla desde su primera versión.
-
 .. Explicar como meter codigo javascript en un doc da sustento a protopy
 
 Javascript es un lenguaje de programación interpretado, de ámbito dinámico y orientado
@@ -244,6 +226,213 @@ al archivo que contiene la funcionalidad. Mas tarde cuando el navegador descarga
 el documento y comienza su lectura al encontrar esta etiqueta solicita
 al servidor el archivo referenciado y lo interpreta, para continuar luego con la
 lectura del resto de las etiquetas. 
+
+JavaScript es un lenguaje orientado a objetos, pero no es muy fácil comprenderlo
+en este aspecto. A pesar de la sintaxis y el nombre, la forma en que JavaScript
+implementa objetos es bastante diferente al que conocemos de C++ o Java, esto
+suele llevar a la confusión. Mi intención es describir como es que se trabaja
+con OOP en JavaScript intentando no confundir al compararlo con otros lenguajes.
+
+Creación de Objetos
+-------------------
+
+No existe en JavaScript nada que no sea un objeto, lo son todos los tipos de
+datos e inclusive las funciones, pudiendo contener estos propiedades y métodos.
+
+Para crear un objeto desde cero basta con hacer:
+
+miobjeto = new Object();
+
+Lo que equivale a hacer:
+
+miobjeto = {};
+
+La primera forma de declarar un objeto les puede resultar familiar, la segunda
+hace uso de una característica propia del lenguaje para declarar estructuras de
+datos. Todos los tipos de datos pueden declararse de las dos maneras, por
+ejemplo, una cadena de texto se declara:micadena = new String();
+
+Y de la forma declarativa:micadena = “”;
+
+Un array se declara:miarray = new Array();
+
+Ó también:miarray = [];
+
+Esta forma de declarar objetos es muy útil en algunos casos y es la base del
+intercambio de mensajes mediante el estándar JSON.
+
+Agregar miembros
+
+Javascript es un lenguaje dinámico, esto posibilita la modificación de los
+objetos en tiempo de ejecución, esto quiere decir que a un objeto, luego de ser
+creado, se le pueden agregar o eliminar métodos y propiedades.
+
+Para agregar miembros al objeto creado anteriormente solo basta con declararlo y
+asignarle algún valor.
+
+miobjeto.variable = “hola”;
+
+miobjeto.metodo = new Function();
+
+Listo, ya disponemos de un objeto personalizado creado desde cero, de este modo
+se pueden agregar mas miembros de cualquier tipo a nuestro objeto. Sin embargo,
+crear objetos de esta manera no es muy cómodo, ya que si quisiéramos crear una
+copia de este objeto deberíamos declarar nuevamente todos sus miembros, debido a
+que este objeto no se puede instanciar.
+
+Creando ‘Clases’ en JavaScript
+
+La forma en que los lenguajes orientados a objetos comúnmente resuelven el
+problema anterior es mediante el uso de Clases, en JavaScript no es posible
+declarar Clases, pero si es posible instanciar objetos a partir de un
+constructor.
+
+El objeto Function es utilizado como objeto instanciable en JavaScript, y el
+cuerpo de la función es el constructor del nuestros objetos. Una vez que tenemos
+un constructor, podemos llamarlo con el operador new.
+
+/*clase de ejemplo*/
+
+miClase = new Function();
+
+nuevoObjeto = new miClase(); // instanciamos ‘miClase’
+
+El método mas difundido para emular las clases en JavaScript es aprovechar el
+funcionamiento de la palabra clave this dentro de los constructores. Cuándo una
+función es llamada con el operador new, this hace referencia al objeto que será
+retornado. Veamos como funciona.
+
+/*clase de ejemplo*/
+
+miClase = function(){
+
+/*
+
+agregamos miembros dinamicamente
+
+al objeto que será retornado
+
+*/
+
+this.propiedad = “hola!”;
+
+this.metodo = function(){
+
+/* aqui ‘this’ hace referencia al objeto al que pertenece el metodo */
+
+alert(this.propiedad);
+
+}
+
+}
+
+nuevoObjeto = new miClase(); // instanciamos ‘miClase’
+
+Ahora, ‘nuevoObjeto’ va a referenciar al objeto que se retornó cuando se llamó a
+‘miClase’ usando el operador new, por lo tanto, va a tener todas las propiedades
+y metodos que se crearon dentro del constructor.
+
+El problema de esta forma de crear clases es que cada vez que la función
+‘miClase’ es llamada, se crea una nueva función llamada ‘metodo’, de modo que
+cada objeto tiene su propia versión de ‘metodo’ cuando, en realidad, todos los
+objetos deberían compartir la misma función.
+
+La propiedad ‘Prototype’
+
+Todas las funciones tienen una propiedad llamada prototype, esta propiedad es un
+objeto que será utilizado como ‘modelo’ inicial de todos los objetos que sean
+creados con esta función cuando sea utilizada como constructor.
+
+Inicialmente esta propiedad es un objeto vacío, pero debemos modificarla para
+aprovechar esta característica del lenguaje. Reescribiendo el ejemplo anterior
+el código quedaría así:
+
+/* creamos un constructor limpio */
+
+miClase = new Function();
+
+miClase.prototype.propiedad = “hola!”;
+
+miClase.prototype.metodo = function(){
+
+/* aqui ‘this’ hace referencia al objeto al que pertenece el metodo */
+
+alert(this.propiedad);
+
+}
+
+nuevoObjeto = new miClase(); // instanciamos ‘miClase’
+
+Ahora todos los objetos creados a partir de ‘miClase’ compartirán inicialmente
+las mismas referencias en todas sus propiedades, esto significa que, todos los
+objetos van a compartir la misma versión de ‘metodo’.
+
+Adicionalmente, al utilizar la propiedad prototype, obtenemos otra ventaja,
+podemos usar la palabra reservada instanceof. Vemos como se usa si
+escribimos:alert(nuevoObjeto instanceof miClase) // muestra ‘true’
+
+El problema del uso de prototype, es que todas las propiedades hacen referencia
+a las mismas del prototipo, por lo que si modificamos estos objetos se van a
+modificar también en todos los objetos creados con esta clase. En siguiente
+ejemplo cambiamos nuestra propiedad a un array para poder modificarla sin
+cambiar nuestra referencia, de modo que podamos ver lo que explico con un
+ejemplo:
+
+/* creamos un constructor limpio */
+
+miClase = new Function();
+
+miClase.prototype.propiedad = new Array(“hola”,“hello”);
+
+miClase.prototype.metodo = function(){
+
+/* aqui ‘this’ hace referencia al objeto al que pertenece el metodo */
+
+alert(this.propiedad);
+
+}
+
+nuevoObjeto = new miClase(); // instanciamos ‘miClase’
+
+otroObjeto = new miClase(); // instanciamos ‘miClase’
+
+nuevoObjeto.propiedad.push(“olá”);
+
+otroObjeto.metodo(); // muestra “hola”,”hello”,”olá”
+
+Como pueden ver en el ejemplo anterior, ‘nuevoObjeto’ y ‘otroObjeto’ hacen
+referencia al mismo array, para solucionar este problema solo debemos asignar
+un objeto diferente a cada propiedad de nuestros objetos. El constructor es un
+buen lugar para realizar esta tarea:
+
+miClase = function(){
+
+this.propiedad = new Array(“hola”,“hello”); // reemplazamos el valor de nuestra propiedad con un nuevo objeto
+
+};
+
+miClase.prototype.propiedad = new Array(“hola”,“hello”);
+
+miClase.prototype.metodo = function(){
+
+/* aqui ‘this’ hace referencia al objeto al que pertenece el metodo */
+
+alert(this.propiedad);
+
+}
+
+nuevoObjeto = new miClase(); // instanciamos ‘miClase’
+
+otroObjeto = new miClase(); // instanciamos ‘miClase’
+
+nuevoObjeto.propiedad.push(“olá”);
+
+otroObjeto.metodo(); // muestra “hola”,”hello” :)
+
+Listo, tenemos clase y tenemos objetos que funcionan bien. Espero que les haya
+resultado claro, en el próximo post voy a explicar el mecanismo de la herencia
+en JavaScript (si!!, se puede!!). Hasta entonces.
+
 
 ..
     De Wikipedia, la enciclopedia libre
