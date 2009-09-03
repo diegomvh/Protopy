@@ -565,7 +565,7 @@ aspectos a partir de la versión 0.4 del Gears se puede hablar ya de:
     * Accede a archivos en el equipo cliente a través del API de Google Desktop.
 
     * Permite enviar y recibir Blobs con el API HttpRequest.
-    
+
     * Localización de los cuadros de diálogo de Gears en varios idiomas.
 
     * API para canvas, que permite manipular imagenes desde JavaScript.

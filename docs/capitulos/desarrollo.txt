@@ -292,43 +292,139 @@ Envolviendo a gears
 La biblioteca puede funcionar independiente de la instalación de Google Gears,
 debido a que su principal funcionalidad como ya se menciono es la de extención de
 JavaScript y posterior soporte al framework, pese a esto Protopy provee
-mecanismos para uniformar el acceso y extender los objetos de Gears cuando este
+mecanismos para uniformar el acceso y extender los objetos de Gears cuando éste
 se encuentra instalado en el navegador.
-
-Si bien no es necesario que los módulos obtengan el acceso a Gears a traves de
-Protopy, es recomendable que asi se haga; ya que la biblioteca provee los
-mecanimos de extención para los objetos Gears al momento de solicitarlos. Esto
-no fue asi desde el comienzo de del desarrollo y fue una idea que se maduro
-luego de observar que resultaba complejo y costoso requerir los módulos que
-involucraban a Gears desde distintos lugares.
 
 El acceso al `Factory` de Gears esta centralizado y controlado en el objeto
 `gears` dentro del modulo `sys`, mediante este objeto es posible conocer el
 estado de Gears y sus permisos. El objeto informa al desarrollador si Gears esta
-instalado y en que version, si los permisos estan correctos e incluso simplifica
-el proceso de instalación de la extensión de no estar presente en el navegador.
+instalado, la versión, si los permisos son corrector e incluso simplifica
+el proceso de instalación de la extensión de no estar presente en el navegador
+entre otras cosas.
 
-La función `create` del objeto `sys.gears` es la encargada de crear y retornar
-los objetos Gears. 
+El metodo `create` del objeto `sys.gears` es el encargado de crear y retornar
+los objetos Gears. Esta función se ayuda de módulos presentes en el paquete
+`gears` para asistir la creación de los objetos. El objeto que se retorne
+dependera de la precencia del módulo con el mismo nombre en dicho paquete; de no
+encontrar un modulo que asista la cración de un objeto Gears el objeto en sus
+estado "puro" es retornado al llamador.
 
-.. note::  mejorar la redacción, la idea es: la biblioteca retorna el objeto puro si no encuentra el modulo que cree y decore al objeto original
+Si bien no es necesario que los módulos obtengan el acceso a Gears a traves de
+Protopy, es recomendable que asi se haga; ya que la biblioteca provee los
+mecanimos de extención para los objetos en `create`. Esto no fue así desde el
+comienzo de del desarrollo y fue una idea que se maduro luego de observar que
+resultaba complejo y costoso requerir los módulos que involucraban a Gears
+desde distintos lugares.
 
-la creación de estos objetos puede ser directemente
-dependiente del objeto `Factory` original de Gears o estar asistida y extendida
-por un modulo de Protopy que se encuentre en el paquete `gears` en la url base.
+El desarrollo del framework implico extender algunos objetos Gears, concretamente
+al paquete `gears` se incorporaron los siguientes módulos:
 
-Se busco extender algunos objetos Gears para el desarrollo del framework con la
-finalidad de interaccionar el backend de base datos con el acceso a la base
-propieamente dicho.
+desktop
+-------
 
-.. note:: poner los modulos que extendienen los objetos, desktop y database, para que se extendio? 
+El objeto `desktop` de Gears permite interactuar con el escritorio del cliente. 
+Aquí se extendio la creacción de accesos directos para simplificar la generación
+de los mismos y agregar la posibilidad de manejar `Icon` y algunos `IconTheme`.
+
+database
+--------
+
+Sobre el objeto `database` se agrego funcionalidad uniformar el acceso a la base
+de datos por los módulos de Protopy y encapsular los `ResulSet` en cursores a
+los que se incorporo iteradores, registro de funciones para tipos de datos, etc.
 
 Auditando el codigo
 ===================
-.. Logger
 
-.. note:: escribir como que Marta esta en frente y le estamos contando que es esto :)
+Una queja recurrente de los desarrolladores que trabajan con JavaScript es lo
+complejo que resulta el lenguaje para depurar errores. Encontrar errores en
+el código resulta molesto y mas todavía si la salida de los mismos no esta en un
+formato adecuado y encausada en una salida especifica.
 
+Tradicionalmente lo que se hace para detectar errores es valerse de funciones
+`alert` diseminadas por el código con textos del estilo "Paso por aquí", pero
+luego de cerrar unas diez o quince ventanas de este estilo, generalmente se
+pierde referencia de donde esta ocurriendo el error y se cae en la tentación de
+comenzar a comentar alerts a mansalva esperando dar con el indicado. Este es un
+claro ejemplo de que tanto la salida como el sistema de detección de errores es
+molesto e infructifero.
+
+Una clara ventaja sobre el sistema tradicional y poderosa herramienta de
+desarrollo es el plug-in Firebug, que integra entre otras cosas una consola
+JavaScript y un debuger al ambinete del navegador, permitiendo a los
+desarrolladores depurar el código mediante puntos de corte, inspección de
+variables, etc. En firebug la consola pasa a ser por defecto la principal salida
+de errores, gracias a la funcion `console.log` los desarrolladores pueden
+redirigir todos los "Paso por aquí" a una salida uniforme e incluso inspeccionar
+el valor de las variables.
+
+Protopy lleva la depuración y auditoria del código un paso más lejos, integrando
+un sistema de logging propio altamente configurable y con posibilidades de
+escribir en diferentes salidas y con diferentes formatos.
+
+Similar a log4j el logger de Protopy trabaja con niveles de prioridad para los
+mensajes, distintos manejadores o `Handlers` y salidas en varios formatos. Todo
+esto configurable por el desarrollador.
+
+Una vez configurado el sistema de logging, los módulos que requieran auditar el
+codigo solo deben requerir un logger en su sespacio de nombre e invocar a sus
+funciones.
+
+.. code-block:: javascript
+
+    var logging = require('logging.base');
+    var logger = logging.get_logger(__name__);
+
+    ...
+
+    logger.debug('La query: %s\n Los parametros: %s', query, params, {});
+
+En este ejemplo se requiere el módulo `logging` y posteriormente un logger para
+el módulo con el nombre __name__, de no encontrar configuración para este módulo
+se adopta la configuracion del modulo inmediato superior y asi consecutivamente
+hasta tomar la configuración del root logger.
+
+Suponiendo que el módulo del ejemplo se llama doff.db.models.sql el siguiente
+archivo de configuracion perapraria este logger en modo DEBUG para auditar el
+código en la consola de firebug y en una url con distintos formatos.
+
+.. code-block:: javascript
+
+    {
+        'loggers': {
+            'root': {
+                'level': 'DEBUG',
+                'handlers': 'firebug'
+            },
+            'doff.db.models.sql': {
+                'level': 'DEBUG',
+                'handlers': [ 'firebug', 'remote'],
+                'propagate': true
+            },
+        },
+        'handlers': {
+            'firebug': {
+                'class': 'FirebugHandler',
+                'level': 'DEBUG',
+                'formatter': '%(time)s %(name)s(%(levelname)s):\n%(message)s',
+                'args': []
+            },
+            'remote': {
+                'class': 'RemoteHandler',
+                'level': 'DEBUG',
+                'formatter': '%(levelname)s:\n%(message)s',
+                'args': ['/loggers/audit']
+            },
+            'alert': {
+                'class': 'AlertHandler',
+                'level': 'DEBUG',
+                'formatter': '%(levelname)s:\n%(message)s',
+                'args': []
+            }
+        }
+    }
+
+.. note:: Poner referencia a firebug
 
 Interactuando con el servidor
 =============================

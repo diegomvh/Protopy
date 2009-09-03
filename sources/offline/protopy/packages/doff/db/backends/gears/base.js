@@ -18,26 +18,21 @@ var DatabaseOperations = type('DatabaseOperations', [ BaseDatabaseOperations ], 
     autoinc_sql: function(table, column){
         return null;
     },
-
-    'drop_foreignkey_sql': function drop_foreignkey_sql(){
+    drop_foreignkey_sql: function() {
         return "";
     },
-
-    'pk_default_value': function pk_default_value(){
+    pk_default_value: function() {
         return 'NULL';
     },
-
-    'quote_name': function quote_name(name){
+    quote_name: function(name) {
         if (name.startswith('"') && name.endswith('"'))
             return name;
         return '"%s"'.subs(name);
     },
-
-    'no_limit_value': function no_limit_value(){
+    no_limit_value: function() {
         return -1;
     },
-
-    'year_lookup_bounds': function year_lookup_bounds(value){
+    year_lookup_bounds: function(value) {
         var first = '%s-01-01',
             second = '%s-12-31 23:59:59.999999';
         return [first.subs(value), second.subs(value)];
@@ -67,8 +62,7 @@ var DatabaseWrapper = type('DatabaseWrapper', BaseDatabaseWrapper, {
         istartswith: "LIKE %s ESCAPE '\\'",
         iendswith: "LIKE %s ESCAPE '\\'"
     },
-
-    '__init__': function __init__(settings){
+    __init__: function(settings) {
         super(BaseDatabaseWrapper, this).__init__(settings);
         this.features = new DatabaseFeatures();
         this.ops = new DatabaseOperations();
@@ -76,17 +70,16 @@ var DatabaseWrapper = type('DatabaseWrapper', BaseDatabaseWrapper, {
         this.introspection = new DatabaseIntrospection(this);
         this.validation = new BaseDatabaseValidation();
     },
-
-    '_cursor': function _cursor(settings) {
+    _cursor: function(settings) {
         if (this.connection == null) {
             if (!bool(settings.DATABASE_NAME)) {
                 require('doff.core.exceptions', 'ImproperlyConfigured');
                 throw new ImproperlyConfigured("Please fill out DATABASE_NAME in the settings module before using the database.");
             }
             var args = {
-                'database': settings.DATABASE_NAME,
-                'detect_types': settings.PARSE_DECLTYPES | settings.PARSE_COLNAMES,
-                'factory': GearsCursorWrapper
+                database: settings.DATABASE_NAME,
+                detect_types: settings.PARSE_DECLTYPES | settings.PARSE_COLNAMES,
+                factory: GearsCursorWrapper
             }
             extend(args, this.options || {});
             this.connection = database.connect(args);

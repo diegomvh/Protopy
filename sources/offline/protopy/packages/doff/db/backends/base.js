@@ -2,39 +2,34 @@
 /*
  * Represents a database connection.
  */
-var BaseDatabaseWrapper = type('BaseDatabaseWrapper', object, {
+var BaseDatabaseWrapper = type('BaseDatabaseWrapper', [ object ], {
 
     ops: null,
-    '__init__': function __init__(settings){
+    __init__: function(settings) {
         this.connection = null;
         this.queries = [];
         this.settings = settings;
     },
-
-    '_commit': function _commit(){
+    _commit: function() {
         if (this.connection)
             return this.connection.commit();
     },
-    
-    '_rollback': function _rollback(){
+    _rollback: function() {
         if (this.connection)
             return this.connection.rollback();
     },
-    
-    'close': function close(){
+    close: function() {
         if (this.connection){
             this.connection.close();
             this.connection = null;
         }
     },
-    
-    'cursor': function cursor() {
+    cursor: function() {
         return this._cursor(this.settings);
     }
 });
 
-var BaseDatabaseFeatures = type('BaseDatabaseFeatures', object, {
-    
+var BaseDatabaseFeatures = type('BaseDatabaseFeatures', [ object ], {
     needs_datetime_string_cast: true,
     uses_custom_query_class: false,
     empty_fetchmany_value: [],
@@ -50,108 +45,75 @@ var BaseDatabaseFeatures = type('BaseDatabaseFeatures', object, {
     * This class encapsulates all backend-specific differences, such as the way
     * a backend performs ordering or calculates the ID of a recently-inserted row.
     */
-var BaseDatabaseOperations = type('BaseDatabaseOperations', object, {
+var BaseDatabaseOperations = type('BaseDatabaseOperations', [ object ], {
 
-    'autoinc_sql': function autoinc_sql(table, column) { return null; },
-
-    'date_extract_sql': function date_extract_sql(lookup_type, field_name) { throw new NotImplementedError(); },
-
-    'date_trunc_sql': function date_trunc_sql(lookup_type, field_name) { throw new NotImplementedError(); },
-
-    'datetime_cast_sql': function datetime_cast_sql() { return "%s"; },
-
-    'deferrable_sql': function deferrable_sql() { return ''; },
-
-    'drop_foreignkey_sql': function drop_foreignkey_sql() { return "DROP CONSTRAINT"; },
-
-    'drop_sequence_sql': function drop_sequence_sql(table) { return null; },
-
-    'field_cast_sql': function field_cast_sql(db_type) { return '%s'; },
-
-    'fulltext_search_sql': function fulltext_search_sql(field_name) { throw NotImplementedError('Full-text search is not implemented for this database backend'); },
-
-    'last_executed_query': function last_executed_query(cursor, sql, params) {
-        if (type(params) == Array)
+    autoinc_sql: function(table, column) { return null; },
+    date_extract_sql: function(lookup_type, field_name) { throw new NotImplementedError(); },
+    date_trunc_sql: function(lookup_type, field_name) { throw new NotImplementedError(); },
+    datetime_cast_sql: function() { return "%s"; },
+    deferrable_sql: function() { return ''; },
+    drop_foreignkey_sql: function() { return "DROP CONSTRAINT"; },
+    drop_sequence_sql: function(table) { return null; },
+    field_cast_sql: function(db_type) { return '%s'; },
+    fulltext_search_sql: function(field_name) { throw NotImplementedError('Full-text search is not implemented for this database backend'); },
+    last_executed_query: function(cursor, sql, params) {
+        if (isinstance(params, Array))
             var u_params = array([val for (val in params)]);
         else
             var u_params = new Dict([[k, v] for ([k, v] in params.items())]);
         return sql.subs(u_params);
     },
-
-    'last_insert_id': function last_insert_id(cursor, table_name, pk_name) { return cursor.lastrowid; },
-
-    'lookup_cast': function lookup_cast(lookup_type) { return "%s"; },
-
-    'max_name_length': function max_name_length() { return null; },
-
-    'no_limit_value': function no_limit_value() { throw new NotImplementedError() },
-
-    'pk_default_value': function pk_default_value() { return 'DEFAULT'; },
-
-    'query_class': function query_class(DefaultQueryClass) { return null; },
-        
-    'quote_name': function quote_name(name) { throw new NotImplementedError(); },
-        
-    'random_function_sql': function random_function_sql() { return 'RANDOM()'; },
-
-    'regex_lookup': function regex_lookup(lookup_type) { throw new NotImplementedError(); },
-        
-    'savepoint_create_sql': function savepoint_create_sql(sid) { throw new NotImplementedError(); },
-        
-    'savepoint_commit_sql': function savepoint_commit_sql(sid) { throw new NotImplementedError(); },
-        
-    'savepoint_rollback_sql': function savepoint_rollback_sql(sid) { throw new NotImplementedError(); },
-        
-    'sql_flush': function sql_flush(style, tables, sequences) { throw new NotImplementedError(); },
-        
-    'sequence_reset_sql': function sequence_reset_sql(style, model_list) { return []; },
-
-    'start_transaction_sql': function start_transaction_sql() { return "BEGIN;"; },
-
-    'tablespace_sql': function tablespace_sql(tablespace, inline) { return ''; },
-    
-    'prep_for_like_query': function prep_for_like_query(x) { return x.replace("\\", "\\\\").replace("%", "\%").replace("_", "\_")},
-
-    'prep_for_iexact_query': function prep_for_iexact_query(x) { return x.replace("\\", "\\\\").replace("%", "\%").replace("_", "\_")},
-
-    'value_to_db_date': function value_to_db_date(value) {
+    last_insert_id: function(cursor, table_name, pk_name) { return cursor.lastrowid; },
+    lookup_cast: function(lookup_type) { return "%s"; },
+    max_name_length: function() { return null; },
+    no_limit_value: function() { throw new NotImplementedError() },
+    pk_default_value: function() { return 'DEFAULT'; },
+    query_class: function(DefaultQueryClass) { return null; },
+    quote_name: function(name) { throw new NotImplementedError(); },
+    random_function_sql: function() { return 'RANDOM()'; },
+    regex_lookup: function(lookup_type) { throw new NotImplementedError(); },
+    savepoint_create_sql: function(sid) { throw new NotImplementedError(); },
+    savepoint_commit_sql: function(sid) { throw new NotImplementedError(); },
+    savepoint_rollback_sql: function(sid) { throw new NotImplementedError(); },
+    sql_flush: function(style, tables, sequences) { throw new NotImplementedError(); },
+    sequence_reset_sql: function(style, model_list) { return []; },
+    start_transaction_sql: function() { return "BEGIN;"; },
+    tablespace_sql: function(tablespace, inline) { return ''; },
+    prep_for_like_query: function(x) { return x.replace("\\", "\\\\").replace("%", "\%").replace("_", "\_")},
+    prep_for_iexact_query: function(x) { return x.replace("\\", "\\\\").replace("%", "\%").replace("_", "\_")},
+    value_to_db_date: function(value) {
         if (!value)
             return null;
         return '%s-%s-%s'.subs(value.getFullYear(), value.getMonth() + 1, value.getDate());
     },
-
-    'value_to_db_datetime': function value_to_db_datetime(value) {
+    value_to_db_datetime: function(value) {
         if (!value)
             return null;
         return value.getTime();
     },
-
-    'value_to_db_time': function value_to_db_time(value) {
+    value_to_db_time: function(value) {
         if (!value)
             return null;
         return '%s:%s:%s.%s'.subs(value.getHours(), value.getMinutes(), value.getSeconds(), value.getMilliseconds());
     },
-
-    'value_to_db_decimal': function value_to_db_decimal(value, max_digits, decimal_places) {
+    value_to_db_decimal: function(value, max_digits, decimal_places) {
         if (!value)
             return null;
         //TODO: pasar a decimal,
         return util.format_number(value, max_digits, decimal_places);
     },
-
-    'year_lookup_bounds': function year_lookup_bounds(value) {
+    year_lookup_bounds: function(value) {
         var first = '%s-01-01 00:00:00'
         var second = '%s-12-31 23:59:59.999999'
         return [first.subs(value), second.subs(value)];
     },
-
-    'year_lookup_bounds_for_date_field': function year_lookup_bounds_for_date_field(value) {
+    year_lookup_bounds_for_date_field: function(value) {
         return this.year_lookup_bounds(value);
     }
 });
 
-var BaseDatabaseValidation = type('BaseDatabaseValidation', object, {
-    'validate_field': function validate_field(errors, opts, f) {}
+var BaseDatabaseValidation = type('BaseDatabaseValidation', [ object ], {
+    validate_field: function(errors, opts, f) {}
 });
 
     /*
@@ -159,7 +121,7 @@ var BaseDatabaseValidation = type('BaseDatabaseValidation', object, {
     */
 var BaseDatabaseIntrospection = type('BaseDatabaseIntrospection', object, {
     data_types_reverse: {},
-    '__init__': function __init__(connection) {
+    __init__: function(connection) {
         this.connection = connection;
     },
 
@@ -167,14 +129,14 @@ var BaseDatabaseIntrospection = type('BaseDatabaseIntrospection', object, {
         * Apply a conversion to the name for the purposes of comparison.
         * The default table name converter is for case sensitive comparison.
         */
-    'table_name_converter': function table_name_converter(name) {
+    table_name_converter: function(name) {
         return name;
     },
 
     /*
         * Returns a list of names of all tables that exist in the database.
         */
-    'table_names': function table_names() {
+    table_names: function() {
         var cursor = this.connection.cursor();
         return this.get_table_list(cursor);
     },
@@ -184,7 +146,7 @@ var BaseDatabaseIntrospection = type('BaseDatabaseIntrospection', object, {
         * If only_existing is True, the resulting list will only include the tables
         * that actually exist in the database.
         */
-    'doff_table_names': function doff_table_names(only_existing) {
+    doff_table_names: function(only_existing) {
         var models = require('doff.db.models.base');
         var tables = new Set();
         for each (var app in models.get_apps()) {
@@ -203,7 +165,7 @@ var BaseDatabaseIntrospection = type('BaseDatabaseIntrospection', object, {
     /*
         * Returns a set of all models represented by the provided list of table names.
         */
-    'installed_models': function installed_models(tables) {
+    installed_models: function(tables) {
         var models = require('doff.db.models.base');
         var all_models = [];
         for each (var app in models.get_apps()) {
@@ -218,7 +180,7 @@ var BaseDatabaseIntrospection = type('BaseDatabaseIntrospection', object, {
     /*
         * Returns a list of information about all DB sequences for all models in all apps.
         */
-    'sequence_list': function sequence_list() {
+    sequence_list: function() {
         var models = require('doff.db.models.base');
         var apps = models.get_apps();
         var sequence_list = [];
@@ -241,7 +203,7 @@ var BaseDatabaseIntrospection = type('BaseDatabaseIntrospection', object, {
 
 });
 
-publish({    
+publish({
     BaseDatabaseWrapper: BaseDatabaseWrapper,
     BaseDatabaseFeatures: BaseDatabaseFeatures,
     BaseDatabaseOperations: BaseDatabaseOperations,
