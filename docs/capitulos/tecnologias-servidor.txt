@@ -288,6 +288,7 @@ muestra variaciones importantes entre plataformas.
 
 .. [*] Aplicación que populariza un lenguaje.
 
+.. _lenguaje-python:
 
 **Python** es un lenguaje de programación interpretado multiparadigma, 
 de propósito general. Fue creado por por Guido van Rossum en el año
@@ -314,17 +315,20 @@ Muchos de las sistemas webs basados en CGI, están
 escritos en Perl, por lo cual no es sorpresa encontrar una buena cantidad de 
 proyectos del lenguaje Python orientados a la Web [*]_.
 
-.. _lenguaje-python:
+.. [*] En el repositorio de proyectos del lenguaje se encuentran más 1100 resultados para paquetes relacionados con el término "web". http://pypi.python.org/pypi?%3Aaction=search&term=web&submit=search
+
+
 
 Selección de un lenguaje de programación
 ========================================
 
+Jhon Crockford 
+.. Con la masificación de la World Wide Web se hizo necesario encontrar formas de desarrollo
+
+
+
 
 En el :ref:`apéndice <apendices-python>` se encuentra una referecia detallada del lenguaje.
-
-.. [*] En el repositorio de proyectos del lenguaje se encuentran más 1100 resultados para paquetes relacionados con el término "web". http://pypi.python.org/pypi?%3Aaction=search&term=web&submit=search
-
-
 
 .. _servidor-wsgi:
 
