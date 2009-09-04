@@ -45,7 +45,9 @@ mediante el protcolo HTTP.
 
 Una URL tiene el siguiente esquema, donde podemos diferenciar varios comopnentes
 
-.. image:: ../_svg/esquema_urls.png
+.. figure:: ../_svg/esquema_urls.png
+    
+    Forma de una URL.
 
 Los componetes de una URL son:
 
@@ -135,8 +137,9 @@ HTML
 HTML es un lenguaje de marcado que teiene como objetivo describir un documento de hipertexto.
 Un documento HTML se conforma por una serie de *tags* o etiquetas.
 
-.. image:: ../_svg/etiqueta_html.png
-
+.. figure:: ../_svg/etiqueta_html.png
+    
+    Una etiqueta HTML.
  
 Un documento HTML está delimitado por las etiquetas o *tags* html y contiene una cabecera
 delimitada por *head* y un cuerpo, delmitado por *body*.

@@ -31,7 +31,7 @@ diferenciación entre un archivo que debe ser interpretado por PHP y uno que deb
 ser retornado sin interpretar.
 
 Existen otras formas de generar contendio al vuelo y generalmente todas estas se
-engloban dentro del termino *HTML dinámico*.
+engloban dentro del termino **HTML dinámico**.
 
 Servidor Web
 ============
@@ -64,7 +64,7 @@ El clinete web accede a los recursos del web server mediante una dirección de r
 CGI
 ===
 
-CGI [*]_ surge como un estándar de comunicación, o :term:API entre un servidor web y un
+CGI [*]_ surge como un estándar de comunicación, o :term:`API` entre un servidor web y un
 programa de usuario. Al permitir ejecutar un proceso, CGI permite generar contenido de 
 manera dinámica a traves de un servidor web.
 Es decir, el usuario puede recuperar datos de un programa
@@ -94,7 +94,9 @@ como interpreta el clinete la respuesta. Es decir, la invocación de un CGI pued
 devolover diferentes tipos de contenido al clinete (html, imágenes, javascript,
 contenido multimedia, etc.)
 
-.. image:: ../_svg/esquema_cgi.png
+.. figure:: ../_svg/esquema_cgi.png
+    
+    Poceso de una solicitud con CGI.
 
 Dentor de las varaibles de entorno, la Wikipedia [WikiCGI2009]_ menciona:
 
@@ -181,7 +183,9 @@ se debe pasar generalmente por dos etapas, una de compilación, donde se traduce
 del lenguaje por código máquina y otra de enlace, donde se ensambla el código objeto resultado de la compilación 
 y se resuleven los enlaces entre los diferentes módulos compilados.
 
-.. image:: ../_svg/lenguaje_interpretado.png
+.. figure:: ../_svg/lenguaje_interpretado.png
+
+    Lenguaje interpretado.
 
 Existe un mecanismo intermedio de ejecución, que se conoce como máquina virtual, en el cual, existe
 un proceso de compilación de el código fuente a un lenguaje intermedio, comunmente denominado
@@ -360,7 +364,9 @@ Python, son albergados en el sitio oficial http://www.python.org
 
 WSGI propone que una aplicación es una función que recibe 2 argumentos. Como primer argumento, un diccionario con las variables de entorno, al igual que en CGI, y como segundo argumento una función (u :ref:`objeto llamable <apendice_python_callables>` ) al cual se invoca para iniciar la respuesta.
 
-.. image:: ../_svg/esquema_wsgi.png
+.. figure:: ../_svg/esquema_wsgi.png
+
+    Esquema WSGI.
 
 En el siguente ejemplo, la función app devuelve *Hello World* informandole al navegador web, que el
 contenido se trata de texto plano.
@@ -442,8 +448,9 @@ cuenta por el quipo de desarrollo. Trás completar el desarrollo en un framework
 el equipo de desarrllo no debe volver a invertir tiempo en aprendizaje en
 sucesivos desarrollos.
 
-.. image:: ../_svg/esquema_libreria_vs_framework.png
+.. figure:: ../_svg/esquema_libreria_vs_framework.png
 
+    Libreria vs Framework.
 
 .. note:: Breve introducción a patrones arquitecturales y mvc
 
@@ -903,9 +910,11 @@ formateo de datos, etc).
 El template se entrega como un HttpResponse. La responsabilidad de la vista es entregar
 una instancia de esta clase.
 
-.. image:: ../_static/get_response.png
+.. figure:: ../_static/get_response.png
     :height: 200
     :width: 200
+
+    Poceso de un request.
 
 .. _django-orm:
 

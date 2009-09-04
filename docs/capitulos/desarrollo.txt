@@ -34,7 +34,7 @@ presentarla en un apartado separado como "Una Biblioteca en JavaScript", esta
 constituye la base para posteriores construcciones y auna herramientas que
 simplifican el desarrollo client-side.
 
-**proto** type + **py** thon = **protopy**
+    | **proto** type + **py** thon = **protopy**
 
 "La creación nace del caos", la libreria "Protopy" no escapa a esta
 afirmacion e inicialmente nace de la integracion de Prototype con
@@ -542,7 +542,7 @@ siendo así en XML-RPC.[2
 El framework
 ************
 
-**d** jango + **off** line = **doff**
+    | **d** jango + **off** line = **doff**
 
 *************
 La aplicación
