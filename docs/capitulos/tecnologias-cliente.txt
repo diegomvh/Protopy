@@ -4,6 +4,10 @@
 Tecnologías del cliente
 #######################
 
+**********************************
+Generación dinámica de páginas Web
+**********************************
+
 Desde la perspectiva de un usuario, la Web consiste en una enorme cantidad de
 documentos interconectados a nivel mundial llamados *paginas Web*.
 En el clinete las paginas se ven mediante un programa llamado navegadores  

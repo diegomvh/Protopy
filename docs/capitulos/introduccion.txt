@@ -108,6 +108,11 @@ Luego un análisis de las tecnologías del cliente, haciendo hincapié en ...
 
 .. Citas copadas http://es.wikiquote.org/wiki/The\_Matrix
 
+En los primeros días de la Web, todo el contenido era estático, los clinetes
+accedian mediante URLs a archivos físico del sistema de archivos del servidor.
+Sin emabrgo, en los años recientes, cada vez mas conenido es diámico, es decir,
+se genera a solicitud en lugar de estar almancenado en disco. El presente documento se estructura en dos partes que explican como se genera contenido dinamico ya sea en el servidor o en el clinete.
+
 *******
 Alcance
 *******

@@ -4,38 +4,57 @@
 Tecnologías del servidor
 ########################
 
-********************************
-Generación dinámica de contenido
-********************************
+**********************************
+Generación dinámica de páginas Web
+**********************************
 
 .. note::
-	Otros títulos
-	
-		* De lo estático a lo dinámico (*previo*)
-		
+    Introduccion de la mano de Tanenbaum
+    La parte estatica de la cuestion dejarla para la introduccion como cuentito,
+    aca vamos a los bifes dinamicos.
 
-.. note:: algo de html quiza
-.. note:: titulo en revisión
+Esta sección tiene como finalidad introducir los conceptos básicos concernientes
+a la generación dinamica contenido en el servidor.
+En el enfoque dinámico cuando un usuario realiza una solicitud, el mensaje
+enviado tiene como objetivo la ejecución de un programa o secuencia de comandos
+en el servidor. Por lo general, el procesamiento involucra el uso de la
+información proporcianda por el usuario para buscar registros en una base de
+datos y genrerar una página HTML personalizada para el cliente.
 
+La forma tradicional de manejar páginas Web interactivas se llama :term:`CGI`,
+éste representa un estandar a la hora de comunicar un servidor Web con un
+back-end escrito en un lenguaje de programación. Otra forma es incrustar
+secuencias de comandos dentro de la páginas HTML y hacer que el servidor mismo
+sea quien las ejecute. :term:`PHP` es un claro ejemplo de este caso, para
+utilizarlo un servidor tiene que entender el lenguaje y relizar una
+diferenciación entre un archivo que debe ser interpretado por PHP y uno que debe
+ser retornado sin interpretar.
+
+Existen otras formas de generar contendio al vuelo y generalmente todas estas se
+engloban dentro del termino *HTML dinámico*.
 
 Servidor Web
 ============
 Un servidor web, o *web server* es un software encargado de recibir solicitudes
-de un cliente, típicamente un :ref:`navegador web <navegador-web>`, a través del protcolo :term:`HTTP` y 
-generar una respuesta a la solicitud.
-Mediante la especificación :term:`MIME` que se incluye en el encabezado
-de la respuesta que es enviada al cliente, se puede identificar que tipo
-de archivo es devuelto, siendo el tipo más común :term:`HTML` o :term:`XHTML`. 
+de un cliente, típicamente un :ref:`navegador web <navegador-web>`, a través del
+protcolo :term:`HTTP` y generar una respuesta a la solicitud.
+Mediante la especificación :term:`MIME` que se incluye en el encabezado de la
+respuesta que es enviada al cliente, se puede identificar que tipo de archivo es
+devuelto, siendo el tipo más común :term:`HTML` o :term:`XHTML`. 
 
 El contenido que es enviado al cliente puede ser de origen *estático* o *dinámico*.
 
 .. _conteido-estatico:
 
-El contendio estático es aquél que proviene desde un archivo en el sistema de archivos sin ninguna modificación. 
+El contendio estático es aquél que proviene desde un archivo en el sistema de
+archivos sin ninguna modificación. 
 
 .. _conteido-dinamico:
 
-El contenido dinámico en contraposición al :ref:`contenido estático <conteido-estatico>` es generado por algún programa, un :term:`script` o algún tipo de API invocada por el web server, como SSI, :ref:`CGI <servidor-cgi>`, SCGI, FastCGI, JSP, ColdFusion, NSAPI o ISAPI).
+El contenido dinámico en contraposición al :ref:`contenido estático
+<conteido-estatico>` es generado por algún programa, un :term:`script` o algún
+tipo de API invocada por el web server, como SSI, :ref:`CGI <servidor-cgi>`,
+SCGI, FastCGI, JSP, ColdFusion, NSAPI o ISAPI).
 
 El clinete web accede a los recursos del web server mediante una dirección de recurso, u :term:`URL`.
 
