@@ -499,7 +499,7 @@ requeridas para el desarrollo del lado del cliente.
 
 .. module:: sys
 
-    Este modulo provee acceso a algunos objetos y funciones mantenidas por Protopy y
+    Este módulo provee acceso a algunos objetos y funciones mantenidas por Protopy y
     que resultan de utilidad para interactuar con el ambiente.
 
 .. attribute:: version

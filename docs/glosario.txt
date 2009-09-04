@@ -1,10 +1,13 @@
 .. _glosario:
 
-========
-Glosario
-========
+********
+Glossary
+********
+
+.. if you add new entries, keep the alphabetical sorting!
 
 .. glossary::
+    :sorted:
 
     API
         `Application-Programming-Interface`__; conjunto de funciones y procedimientos (o

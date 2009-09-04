@@ -280,7 +280,7 @@ var BaseDatabaseCreation = type('BaseDatabaseCreation', object, {
         return output;
     }
 });
-    
+
 publish({ 
     BaseDatabaseCreation: BaseDatabaseCreation 
 });

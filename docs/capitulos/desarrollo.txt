@@ -8,9 +8,9 @@ El desarrollo consistió en el siguiente diagrama:
 
 .. _capitulos-protopy:
 
-****************************
-Una biblioteca en JavaScript
-****************************
+*************
+La biblioteca
+*************
 
 La idea de diseñar y desarrollar un framework en que funcione en el hambiente
 de un navegador web, como es Firefox, deja entrever muchos aspectos que no
@@ -34,7 +34,7 @@ presentarla en un apartado separado como "Una Biblioteca en JavaScript", esta
 constituye la base para posteriores construcciones y auna herramientas que
 simplifican el desarrollo client-side.
 
-*proto* type + *py* thon = **protopy**
+    | **proto** type + **py** thon = **protopy**
 
 "La creación nace del caos", la libreria "Protopy" no escapa a esta
 afirmacion e inicialmente nace de la integracion de Prototype con
@@ -54,7 +54,7 @@ son muy bien explotados por Protopy y el framework.
 
 Protopy
 =======
-Protopy es una libreria JavaScript para el desarrollo de aplicaciones
+Protopy es una biblioteca JavaScript para el desarrollo de aplicaciones
 web dinamicas. Aporta un enfoque modular para la inclusión de código,
 orientación a objetos, manejo de AJAX, DOM y eventos.
 
@@ -112,7 +112,7 @@ Obtener un módulo
 
 La función `require` es la encargada de obtener un módulo del servidor e
 incorporarlo al :ref:`espacio de nombres <servidor-lenguajes-python>` del
-llamador, cuando un módulo llamado spam es requerido, Protopy busca un archivo
+llamador. Por ejemplo, cuando un módulo llamado spam es requerido, Protopy busca un archivo
 llamado spam.js en la url base [*]_, de no encontrar el archivo el error
 ``LoadError`` es lanzado a la función que requirio el módulo.
 
@@ -134,14 +134,14 @@ Nótese que es importante que el script no tenga el mismo nombre que un
 :ref:`módulo estandar <apendices-protopy-modulos>`.
 
 Las formas en que el modulo obtenido es presentado al llamador difiere en
-funcion de los parametros pasados a `require`:
+funcion de los parametros pasados a `require`. Estas formas son:
 
-    * Un modulo puede ser obtenido como un objeto
+    * Un modulo puede ser obtenido como un objeto,
 
-    * Se puede obtener solo determinada funcion de un modulo.
+    * Se puede obtener solo determinada funcion de un modulo,
 
-    * O se pueden importar todas las definiciones del módulo en el espacio de nombres del
-    llamador
+    * O se pueden importar todas las definiciones del módulo en el espacio de
+    nombres del llamador.
 
 Para ver más :ref:`Apendice Protopy <apendices-protopy>`.
 
@@ -165,7 +165,7 @@ definiciones son las que efectivamente seran publicadas como funcionalidad.
 A continuación se presenta un fragmento de código que ejemplifica el uso de las 
 dos funciones presentadas.
 
-.. code-block:: javascript
+.. code-block:: javascript Figura algo
 
      //Obtengo la funcion copy y deepcopy del modulo copy
     require('copy', 'copy', 'deepcopy');
@@ -212,14 +212,14 @@ dos funciones presentadas.
         SortedDict: SortedDict 
     });
 
-Asumiendo que el código presentado esta en un archivo llamado `sortedict.js` en
-la url base, esté representa un módulo en si mismo y el acceso se obtiene
+Asumiendo que el código presentado está en un archivo llamado `sortedict.js` en
+la url base, éste representa un módulo en sí mismo y el acceso se obtiene
 mediante la invocación de 'require('sortedict')'. El ejemplo presenta muchas
-cosas nuevas, que seran abordadas a lo largo de este apartado, por ahora solo
-interesa la parte que corresponde al requerimiento de `copy` y la
-publicación de `SortedDict`.
+cosas nuevas, que serán abordadas a lo largo de este apartado, por ahora sólo
+interesa la parte que corresponde al requerimiento de `copy` y la publicación de
+`SortedDict`.
 
-La primera lineas del ejemplo incian requirendo la funcion copy y deepcopy del
+La primera líneas del ejemplo incian requirendo la funcion copy y deepcopy del
 módulo `copy`, ambas funciones se utilizan para realizar copias de objetos,
 superficial y en profundidad respectivamente. El ejemplo continua con una
 definición de un nuevo tipo de objeto llamado `SortedDict` que posteriormente
@@ -227,10 +227,14 @@ publica en la ultima linea de código.
 
 .. note:: queda mas o menos claro?
 
+.. note:: describir de forma rápida los módulos principales
+
 .. _protopy-tipos:
 
 Creando tipos de objeto
 =======================
+
+.. note:: Hacer la referencia al codigo anterior
 
 En el apartado teórico se menciono ya que en JavaScript todo es un objeto y que
 estos se crean y modifican dinamicamente en tiempo de ejecución.
@@ -239,207 +243,10 @@ Sin embargo, la creacion de objetos en Javascript carece de "clases" o si se
 quiere "tipos de objeto" y para crear dos o mas objetos de un mismo tipo se
 deben volver a declarar todos los miembros del objeto.
 
-La forma en que los lenguajes orientados a objetos comúnmente resuelven el
-problema anterior es mediante el uso de Clases, en JavaScript no es posible
-declarar Clases, pero si es posible instanciar objetos a partir de un
-constructor.
-
-El objeto Function es utilizado como objeto instanciable en JavaScript, y el
-cuerpo de la función es el constructor del nuestros objetos. Una vez que tenemos
-un constructor, podemos llamarlo con el operador new.
-
-En la programación basada en prototipos las "clases" no están presentes, y la
-re-utilización de procesos se obtiene a través de la clonación de objetos ya
-existentes y la extención de funcionalidad.
-
-Protopy agrega el concepto de clases al desarrollo, mediante un contructor de
-"tipos de objeto". De esta forma los objetos pueden ser de dos tipos, las
-clases y las instancias. Las clases definen la disposición y la funcionalidad
-básicas de los objetos, y las instancias son objetos "utilizables" basados en
-los patrones de una clase particular.
-
-.. note:: hablar de las implementaciones de herencia y como es la nuestra
-
-Creando ‘Clases’ en JavaScript
-
-La forma en que los lenguajes orientados a objetos comúnmente resuelven el
-problema anterior es mediante el uso de Clases, en JavaScript no es posible
-declarar Clases, pero si es posible instanciar objetos a partir de un
-constructor.
-
-El objeto Function es utilizado como objeto instanciable en JavaScript, y el
-cuerpo de la función es el constructor del nuestros objetos. Una vez que tenemos
-un constructor, podemos llamarlo con el operador new.
-
-
-/*clase de ejemplo*/
-
-miClase = new Function();
-
-nuevoObjeto = new miClase(); // instanciamos ‘miClase’
-
-El método mas difundido para emular las clases en JavaScript es aprovechar el
-funcionamiento de la palabra clave this dentro de los constructores. Cuándo una
-función es llamada con el operador new, this hace referencia al objeto que será
-retornado. Veamos como funciona.
-
-/*clase de ejemplo*/
-
-miClase = function(){
-
-/*
-
-agregamos miembros dinamicamente
-
-al objeto que será retornado
-
-*/
-
-this.propiedad = “hola!”;
-
-this.metodo = function(){
-
-/* aqui ‘this’ hace referencia al objeto al que pertenece el metodo */
-
-alert(this.propiedad);
-
-}
-
-}
-
-nuevoObjeto = new miClase(); // instanciamos ‘miClase’
-
-Ahora, ‘nuevoObjeto’ va a referenciar al objeto que se retornó cuando se llamó a
-‘miClase’ usando el operador new, por lo tanto, va a tener todas las propiedades
-y metodos que se crearon dentro del constructor.
-
-El problema de esta forma de crear clases es que cada vez que la función
-‘miClase’ es llamada, se crea una nueva función llamada ‘metodo’, de modo que
-cada objeto tiene su propia versión de ‘metodo’ cuando, en realidad, todos los
-objetos deberían compartir la misma función.
-
-La propiedad ‘Prototype’
-
-Todas las funciones tienen una propiedad llamada prototype, esta propiedad es un
-objeto que será utilizado como ‘modelo’ inicial de todos los objetos que sean
-creados con esta función cuando sea utilizada como constructor.
-
-Inicialmente esta propiedad es un objeto vacío, pero debemos modificarla para
-aprovechar esta característica del lenguaje. Reescribiendo el ejemplo anterior
-el código quedaría así:
-
-/* creamos un constructor limpio */
-
-miClase = new Function();
-
-miClase.prototype.propiedad = “hola!”;
-
-miClase.prototype.metodo = function(){
-
-/* aqui ‘this’ hace referencia al objeto al que pertenece el metodo */
-
-alert(this.propiedad);
-
-}
-
-nuevoObjeto = new miClase(); // instanciamos ‘miClase’
-
-Ahora todos los objetos creados a partir de ‘miClase’ compartirán inicialmente
-las mismas referencias en todas sus propiedades, esto significa que, todos los
-objetos van a compartir la misma versión de ‘metodo’.
-
-Adicionalmente, al utilizar la propiedad prototype, obtenemos otra ventaja,
-podemos usar la palabra reservada instanceof. Vemos como se usa si
-escribimos:alert(nuevoObjeto instanceof miClase) // muestra ‘true’
-
-El problema del uso de prototype, es que todas las propiedades hacen referencia
-a las mismas del prototipo, por lo que si modificamos estos objetos se van a
-modificar también en todos los objetos creados con esta clase. En siguiente
-ejemplo cambiamos nuestra propiedad a un array para poder modificarla sin
-cambiar nuestra referencia, de modo que podamos ver lo que explico con un
-ejemplo:
-
-/* creamos un constructor limpio */
-
-miClase = new Function();
-
-miClase.prototype.propiedad = new Array(“hola”,“hello”);
-
-miClase.prototype.metodo = function(){
-
-/* aqui ‘this’ hace referencia al objeto al que pertenece el metodo */
-
-alert(this.propiedad);
-
-}
-
-nuevoObjeto = new miClase(); // instanciamos ‘miClase’
-
-otroObjeto = new miClase(); // instanciamos ‘miClase’
-
-nuevoObjeto.propiedad.push(“olá”);
-
-otroObjeto.metodo(); // muestra “hola”,”hello”,”olá”
-
-Como pueden ver en el ejemplo anterior, ‘nuevoObjeto’ y ‘otroObjeto’ hacen
-referencia al mismo array, para solucionar este problema solo debemos asignar
-un objeto diferente a cada propiedad de nuestros objetos. El constructor es un
-buen lugar para realizar esta tarea:
-
-miClase = function(){
-
-this.propiedad = new Array(“hola”,“hello”); // reemplazamos el valor de nuestra propiedad con un nuevo objeto
-
-};
-
-miClase.prototype.propiedad = new Array(“hola”,“hello”);
-
-miClase.prototype.metodo = function(){
-
-/* aqui ‘this’ hace referencia al objeto al que pertenece el metodo */
-
-alert(this.propiedad);
-
-}
-
-nuevoObjeto = new miClase(); // instanciamos ‘miClase’
-
-otroObjeto = new miClase(); // instanciamos ‘miClase’
-
-nuevoObjeto.propiedad.push(“olá”);
-
-otroObjeto.metodo(); // muestra “hola”,”hello” :)
-
-Listo, tenemos clase y tenemos objetos que funcionan bien. Espero que les haya
-resultado claro, en el próximo post voy a explicar el mecanismo de la herencia
-en JavaScript (si!!, se puede!!). Hasta entonces.
-
-Descargar archivo de ejemplo
-
-Y ya para finalizar este tema en el que se trata el lenguaje JS a modo de
-introducción hablaremos de la herencia entre clases. En relación a este aspecto
-he de decir que tras buscar por internet la posibilidad de Herencia, me he
-encontrado con algunos ejemplos que principalmente no funcionan, como es el caso
-del ejemplo de herencias que nos muestra "Douglas Crockford".
-
-En este caso y tras probar las posibilidades de herencia me di cuenta de que o
-no sabia exactamente como funcionaba o es que realmente no se soporta este tipo
-de herencia, yo he llegado a la conclusión de que no lo soporta.
-
-Posteriormente vi que la librería prototype ha desarrollado un metodo por el
-cual se pueden realizar herencias entre clases. Pero aún así seguí buscando la
-forma de tener una metodología propia para poder implementar las herencias en
-nuestro propia librería de JS. Y así llegué a un post en el que se trataba el
-tema en cuestión y en el cuál "Harry Fuecks" nos ha abierto la puerta a dotar a
-nuestrar propias librerías de herencia entre clases. ¿Y como es esto?, pues es
-tan sencillo como crearnos un objeto que lo que haga sea recorrer cada par
-"nombre:variable" del objeto que pasamos como original y asignárselo a nuevos
-pares "nombre:variable" del objeto al que deseamos copiar la herencia.
-
-Bueno por si no me he explicado bien vamos a ver unos ejemplos para así ver su
-funcionamiento.
-
-...
+__init__
+__iter__
+__deepcopy__
+__str__
 
 Como ya se menciono anteriormente Protopy explota las novedades de JavaScript
 1.7, para los iteradores el constructor de tipos prevee el metodo
@@ -461,6 +268,7 @@ funciones muy utiles y comunes en los desarrollos que los programadores
 incorporan al HTML y se intentaron englobar y mantener dentro del nucleo de
 Protopy, 
 
+.. note:: Poner los nombres de las funciones para destacar el laburo
 
 Extendiendo DOM
 ===============
@@ -484,35 +292,139 @@ Envolviendo a gears
 La biblioteca puede funcionar independiente de la instalación de Google Gears,
 debido a que su principal funcionalidad como ya se menciono es la de extención de
 JavaScript y posterior soporte al framework, pese a esto Protopy provee
-mecanismos para uniformar el acceso y extender los objetos de Gears cuando este
+mecanismos para uniformar el acceso y extender los objetos de Gears cuando éste
 se encuentra instalado en el navegador.
-
-Si bien no es necesario que los módulos obtengan el acceso a Gears a traves de
-Protopy, es recomendable que asi se haga; ya que la biblioteca provee los
-mecanimos de extención para los objetos Gears al momento de solicitarlos. Esto
-no fue asi desde el comienzo de del desarrollo y fue una idea que se maduro
-luego de observar que resultava complejo y costoso requerir los modulos que
-involucraban a Gears desde distintos lugares.
 
 El acceso al `Factory` de Gears esta centralizado y controlado en el objeto
 `gears` dentro del modulo `sys`, mediante este objeto es posible conocer el
 estado de Gears y sus permisos. El objeto informa al desarrollador si Gears esta
-instalado y en que version, si los permisos estan correctos e incluso simplifica
-el proceso de instalación de la extención de no estar presente en el navegador.
+instalado, la versión, si los permisos son corrector e incluso simplifica
+el proceso de instalación de la extensión de no estar presente en el navegador
+entre otras cosas.
 
-La función `create` del objeto `sys.gears` es la encargada de crear y retornar
-los objetos Gears, la creación de estos objetos puede ser directemente
-dependiente del objeto `Factory` original de Gears o estar asistida y extendida
-por un modulo de Protopy que se encuentre en el paquete gears en la url base.
+El metodo `create` del objeto `sys.gears` es el encargado de crear y retornar
+los objetos Gears. Esta función se ayuda de módulos presentes en el paquete
+`gears` para asistir la creación de los objetos. El objeto que se retorne
+dependera de la precencia del módulo con el mismo nombre en dicho paquete; de no
+encontrar un modulo que asista la cración de un objeto Gears el objeto en sus
+estado "puro" es retornado al llamador.
 
-Se busco extender algunos objetos Gears para el desarrollo del framework con la
-finalidad de interaccionar el backend de base datos con el acceso a la base
-propieamente dicho. 
+Si bien no es necesario que los módulos obtengan el acceso a Gears a traves de
+Protopy, es recomendable que asi se haga; ya que la biblioteca provee los
+mecanimos de extención para los objetos en `create`. Esto no fue así desde el
+comienzo de del desarrollo y fue una idea que se maduro luego de observar que
+resultaba complejo y costoso requerir los módulos que involucraban a Gears
+desde distintos lugares.
+
+El desarrollo del framework implico extender algunos objetos Gears, concretamente
+al paquete `gears` se incorporaron los siguientes módulos:
+
+desktop
+-------
+
+El objeto `desktop` de Gears permite interactuar con el escritorio del cliente. 
+Aquí se extendio la creacción de accesos directos para simplificar la generación
+de los mismos y agregar la posibilidad de manejar `Icon` y algunos `IconTheme`.
+
+database
+--------
+
+Sobre el objeto `database` se agrego funcionalidad uniformar el acceso a la base
+de datos por los módulos de Protopy y encapsular los `ResulSet` en cursores a
+los que se incorporo iteradores, registro de funciones para tipos de datos, etc.
 
 Auditando el codigo
 ===================
-.. Logger
 
+Una queja recurrente de los desarrolladores que trabajan con JavaScript es lo
+complejo que resulta el lenguaje para depurar errores. Encontrar errores en
+el código resulta molesto y mas todavía si la salida de los mismos no esta en un
+formato adecuado y encausada en una salida especifica.
+
+Tradicionalmente lo que se hace para detectar errores es valerse de funciones
+`alert` diseminadas por el código con textos del estilo "Paso por aquí", pero
+luego de cerrar unas diez o quince ventanas de este estilo, generalmente se
+pierde referencia de donde esta ocurriendo el error y se cae en la tentación de
+comenzar a comentar alerts a mansalva esperando dar con el indicado. Este es un
+claro ejemplo de que tanto la salida como el sistema de detección de errores es
+molesto e infructifero.
+
+Una clara ventaja sobre el sistema tradicional y poderosa herramienta de
+desarrollo es el plug-in Firebug, que integra entre otras cosas una consola
+JavaScript y un debuger al ambinete del navegador, permitiendo a los
+desarrolladores depurar el código mediante puntos de corte, inspección de
+variables, etc. En firebug la consola pasa a ser por defecto la principal salida
+de errores, gracias a la funcion `console.log` los desarrolladores pueden
+redirigir todos los "Paso por aquí" a una salida uniforme e incluso inspeccionar
+el valor de las variables.
+
+Protopy lleva la depuración y auditoria del código un paso más lejos, integrando
+un sistema de logging propio altamente configurable y con posibilidades de
+escribir en diferentes salidas y con diferentes formatos.
+
+Similar a log4j el logger de Protopy trabaja con niveles de prioridad para los
+mensajes, distintos manejadores o `Handlers` y salidas en varios formatos. Todo
+esto configurable por el desarrollador.
+
+Una vez configurado el sistema de logging, los módulos que requieran auditar el
+codigo solo deben requerir un logger en su sespacio de nombre e invocar a sus
+funciones.
+
+.. code-block:: javascript
+
+    var logging = require('logging.base');
+    var logger = logging.get_logger(__name__);
+
+    ...
+
+    logger.debug('La query: %s\n Los parametros: %s', query, params, {});
+
+En este ejemplo se requiere el módulo `logging` y posteriormente un logger para
+el módulo con el nombre __name__, de no encontrar configuración para este módulo
+se adopta la configuracion del modulo inmediato superior y asi consecutivamente
+hasta tomar la configuración del root logger.
+
+Suponiendo que el módulo del ejemplo se llama doff.db.models.sql el siguiente
+archivo de configuracion perapraria este logger en modo DEBUG para auditar el
+código en la consola de firebug y en una url con distintos formatos.
+
+.. code-block:: javascript
+
+    {
+        'loggers': {
+            'root': {
+                'level': 'DEBUG',
+                'handlers': 'firebug'
+            },
+            'doff.db.models.sql': {
+                'level': 'DEBUG',
+                'handlers': [ 'firebug', 'remote'],
+                'propagate': true
+            },
+        },
+        'handlers': {
+            'firebug': {
+                'class': 'FirebugHandler',
+                'level': 'DEBUG',
+                'formatter': '%(time)s %(name)s(%(levelname)s):\n%(message)s',
+                'args': []
+            },
+            'remote': {
+                'class': 'RemoteHandler',
+                'level': 'DEBUG',
+                'formatter': '%(levelname)s:\n%(message)s',
+                'args': ['/loggers/audit']
+            },
+            'alert': {
+                'class': 'AlertHandler',
+                'level': 'DEBUG',
+                'formatter': '%(levelname)s:\n%(message)s',
+                'args': []
+            }
+        }
+    }
+
+.. note:: Poner referencia a firebug
 
 Interactuando con el servidor
 =============================
@@ -575,7 +487,7 @@ implementen el metodo __json__, dejando de este modo en manos del
 desarrollador la reprecentacion en JSON de determinado objetos.
 La inclusion del metodo __json__  resulta de especial impotancia a la
 hora de pasar a JSON los objetos creados en base a tipos definidos por el
-desarrollador mediante el contructor ``type''.
+desarrollador mediante el contructor "type".
 
 Con el soporte de datos ya establecidos en la libreria, el framework solo
 debe limitarce a hacer uso de él y asegurar la correcta sincronizacion de datos
@@ -625,3 +537,15 @@ desarrollo, el estándar dejó de ser sencillo y se convirtió en lo que es
 actualmente conocido como SOAP. Una diferencia fundamental es que en los
 procedimientos en SOAP los parámetros tienen nombre y no interesan su orden, no
 siendo así en XML-RPC.[2
+
+************
+El framework
+************
+
+    | **d** jango + **off** line = **doff**
+
+*************
+La aplicación
+*************
+
+RemoteSite
