@@ -319,19 +319,17 @@ desde distintos lugares.
 El desarrollo del framework implico extender algunos objetos Gears, concretamente
 al paquete `gears` se incorporaron los siguientes módulos:
 
-desktop
--------
+    * desktop
 
-El objeto `desktop` de Gears permite interactuar con el escritorio del cliente. 
-Aquí se extendio la creacción de accesos directos para simplificar la generación
-de los mismos y agregar la posibilidad de manejar `Icon` y algunos `IconTheme`.
+        El objeto `desktop` de Gears permite interactuar con el escritorio del cliente. 
+        Aquí se extendio la creacción de accesos directos para simplificar la generación
+        de los mismos y agregar la posibilidad de manejar `Icon` y algunos `IconTheme`.
 
-database
---------
+    * database
 
-Sobre el objeto `database` se agrego funcionalidad uniformar el acceso a la base
-de datos por los módulos de Protopy y encapsular los `ResulSet` en cursores a
-los que se incorporo iteradores, registro de funciones para tipos de datos, etc.
+        Sobre el objeto `database` se agrego funcionalidad uniformar el acceso a la base
+        de datos por los módulos de Protopy y encapsular los `ResulSet` en cursores a
+        los que se incorporo iteradores, registro de funciones para tipos de datos, etc.
 
 Auditando el codigo
 ===================

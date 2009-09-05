@@ -230,13 +230,13 @@ JavaScript
 
 Javascript es un lenguaje de programación interpretado creado originalmente por
 Brendan Eich para la empresa Netscape con el nombre de Mocha. El lenguaje surge
-a principios de 1996 como una solución para la interacción directa con el
-usuario de páginas Web.
+a principios de 1996, como un lenguaje de scripting para la Web y apuntado a la
+interacción directa con el usuario.
 
 Con una sintaxis semejante a la de Java y C, JavaScript dista mucho de ser Java
 y debe su nombre más a cuestiones de marketing que a principios de diseño, de
-hecho se reconocen mayores influencias de lenguajes como self, Scheme, Perl e
-incluso en versiones modernas de Python. 
+hecho se reconocen mayores influencias de lenguajes como Self, Scheme, Perl e
+incluso en versiones modernas de Python.
 
 En junio de 1997 la European Computer Manufacturers' Association ECMA, adopta
 como un estándar a JavaScript, con el nombre de ECMAScript. Este importante paso
@@ -252,13 +252,18 @@ pero estos dos estandares representan la base para un desarrollo web compatible.
 
 .. [*] Por que sera?.
 
+En la actualidad, todo computador personal en el mundo tiene, al menos, ún
+interprete de JavaScript instalado y activo en el. A pesar de su popularidad,
+solo algunos saben que JavaScript es un muy buen lenguaje de programación
+dinámico, orientado a objetos y de proposito general.
+
 Incluir JavaScript en un documento
 ----------------------------------
 
-Actualmente cualquier documento HTML puede incluir JavaScript y el método
-correcto que define la W3C es incluir javascript como un archivo externo,
-tanto por cuestiones de accesibilidad, como practicidad y velocidad en la
-navegación. Para esto basta con escribir en el documento HTML:
+Cualquier documento HTML puede incluir JavaScript y el método correcto que
+define la W3C es incluir javascript como un archivo externo, tanto por
+cuestiones de accesibilidad, como practicidad y velocidad en la navegación.
+Para esto basta con escribir en el documento HTML:
 
 .. code-block:: html
 
@@ -285,7 +290,7 @@ De forma similar a la anterior, el navegador comienza con la interpretacion del
 codigo al encontrar la etiqueta y luego continua con la lectura del resto de las
 etiquetas.
 
-Creación de Objetos
+Orientado a Objetos
 -------------------
 
 JavaScript es un lenguaje orientado a objetos, es más, todo en este lenguaje es
@@ -293,9 +298,12 @@ un objeto. Normalmente a muchos programadores de Java o C++ les cuesta
 comprender la implementación de objetos que provee JavaScript y esto es así
 porque el lenguaje esta orientado a prototipos.
 
-A continuacion se explica como 
+Algunos argumentan que JavaScript no es verdaderamente orientado a objetos
+porque no provee ocultación de la información. Pero resulta ser que los objetos
+de JavaScript pueden tener variables privadas y métodos privados gracias a las
+clausuras.
 
-Crear un objeto:
+A continuacion se explica como crear un objeto:
 
 .. code-block:: javascript
 
@@ -305,8 +313,8 @@ Crear un objeto:
 En este primer ejemplo se ver que hay dos formas de crear objetos, en particular
 la segunda forma hace uso de una característica propia del lenguaje para
 declarar estructuras de datos y resulta de mucha utilidad en los casos de
-intercambio de mensajes mediante el estándar JSON. Otros tipos de objetos pueden
-ser declarados de esta manera, como:
+intercambio de mensajes mediante el estándar :term:`JSON`. Otros tipos de
+objetos pueden ser declarados de esta manera, como:
 
 .. code-block:: javascript
 
@@ -316,27 +324,24 @@ ser declarados de esta manera, como:
 
 Las caracteristicas dinámicas de lenguaje posibilitan la modificación de los
 objetos en tiempo de ejecución, esto quiere decir que a un objeto, luego de ser
-creado, se le pueden agregar o eliminar métodos y propiedades.
-
-Agregar miembros:
+creado, se le pueden agregar o eliminar métodos y propiedades:
 
 .. code-block:: javascript
 
     uno.variable = “hola”;
     dos.metodo = new Function();
 
-De esta forma se crearon dos objetos personalizados uno con un "atributo" y otro
-con un "metodo", de esta forma se pueden continuar agregando miembros de
-cualquier tipo y hacer crecer los objetos. Sin embargo, crear objetos de esta
-manera no es cómodo, ya que si se quisiéra crear una copia de este objeto se
-deberían declarar nuevamente todos sus miembros, debido a que este objeto no se
-puede instanciar.
+De esta forma se tienen dos objetos personalizados uno con un "atributo" y otro
+con un "metodo", de esta manera se pueden continuar agregando miembros de
+cualquier tipo y hacer crecer los objetos. Sin embargo, crear objetos así no es
+cómodo, ya que si se quisiéra crear una copia de este objeto se deberían
+declarar nuevamente todos sus miembros.
 
 Creando ‘Clases’:
 
 La forma en que los lenguajes orientados a objetos comúnmente resuelven el
-problema anterior es mediante el uso de Clases, en JavaScript no es posible
-declarar Clases, pero si es posible instanciar objetos a partir de un
+problema anterior es mediante el uso de clases, en JavaScript no es posible
+declarar clases, pero si es posible instanciar objetos a partir de un
 constructor.
 
 El objeto Function se utiliza como objeto instanciable en JavaScript, y el
@@ -390,107 +395,71 @@ poder usar la palabra reservada instanceof para determinar si un objeto es
 instancia de un constructor.
 
 ..
-    De Wikipedia, la enciclopedia libre
 
-    Programación basada en prototipos
-
-    Programación basada en prototipos es un estilo de programación orientada a
-    objetos en el cual, las "clases" no están presentes, y la re-utilización de
-    procesos (conocida como herencia en lenguajes basados en clases) se obtiene
-    a través de la clonación de objetos ya existentes, que sirven de prototipos,
-    extendiendo sus funcionalidades. Este modelo es conocido como orientado a
-    prototipos, o programación basada en instancias.
-
-    El original (y el más canónico) ejemplo de lenguaje prototipado es el
-    lenguaje Self, desarrollado por David Ungar y Randall Smith. Sin embargo el 
-    paradigma sin clases está comenzando a popularizarse y ya ha sido
-    implementado en lenguajes de programación como JavaScript, Cecil,
-    NewtonScript, Ío, MOO, REBOL y varios otros.
-
-    En lenguajes basados en clases los objetos pueden ser de dos tipos generales,
-    las clases y las instancias. Las clases definen la disposición y la
-    funcionalidad básicas de los objetos, y las instancias son objetos "utilizables"
-    basados en los patrones de una clase particular. En este modelo, las clases
-    actúan como colecciones de comportamiento (métodos) y estructuras que son
-    iguales para todas las instancias, mientras que las instancias llevan los datos
-    de los objetos. La distinción del papel se basa así sobre todo en una distinción
-    entre la estructura y el comportamiento en un lado, y el estado en el otro.
-
-    Los entusiastas de la programación basada en prototipos a menudo argumentan que
-    los lenguajes basados en clases animan un modelo del desarrollo que se centra
-    primero en la taxonomía y las relaciones entre las clases. En cambio, la
-    programación basada en prototipos intenta animar al programador que se centre en
-    el comportamiento de un cierto sistema de ejemplos y después de clasificar estos
-    objetos en objetos arquetipos que se utilizan más adelante en una manera similar
-    a las clases. Como tal, muchos sistemas basados en prototipos animan la
-    alteración de prototipos durante tiempo de ejecución, mientras que solamente muy
-    pocos sistemas orientados a objeto, basados en clase (como el primer sistema
-    orientados al objetos dinámicos, Smalltalk) permiten que las clases sean
-    alteradas durante la ejecución de un programa.
-
-    Mientras que basan la amplia mayoría de sistemas basados en prototipos se hacen
-    con lenguajes de programación interpretados y de tipos de datos dinámicos, es
-    importante precisar que los sistemas de tipos de datos estáticos son
-    técnicamente factibles. El lenguaje de programación de Omega que es basado en
-    prototipos es un ejemplo de tal sistema, aunque según el Web site de Omega,
-    Omega no es exclusivamente de tipos de datos estáticos, pero su "compilador
-    puede elegir utilizar el tipo de dato estático donde es posible esto y puede
-    mejorar la eficacia del programa.”
-
-.. 
     http://javis.wordpress.com/2006/10/23/javascript-orientado-a-objetos/
-    Algo de introduccion a objetos en javascript. sustento de prtopy y el constructor de clases
 
 ************************
 Evolución del JavaScript
 ************************
 
-========
 Herencia
 ========
 
-Como en normal en Javascript, hay más de una forma de implementar herencia,
-esto es debido a que la herencia no es explicita, es emulada. Vamos a ver
-los dos métodos mas utilizados.
+JavaScript no puede tener herencia orientada a clases, pero tiene herencia
+"prototipal". Existen muchos autores que implementan su forma de emular la
+herencia en JavaScript y entre los métodos mas utilizados se detallan a
+continuacion dos prinsipios basicos ampliamente difundidos. 
 
 Object masquerading
 -------------------
 
-Este método hace provecho del comportamiento de la palabra reservada this
-dentro de las funciones, más específicamente, dentro de los constructores.
+Este método saca provecho del comportamiento de la palabra reservada this
+dentro de los constructores.
 El funcionamiento es el siguiente: Un constructor asigna propiedades y métodos
-a un objeto referenciándolo con la palabra clave this, como un constructor es simplemente una función,  se puede usar el constructor de una clase A como método de una clase B.  Tenemos, por ejemplo, el siguiente constructor:
+a un objeto referenciándolo con la palabra clave this, como un constructor es
+simplemente una función, se puede usar el constructor de una clase A como
+método de una clase B.
 
 .. code-block:: javascript
     
     function ClaseA(nombre){
-        this.nombre=nombre;
-        this.identificarse=function(){
+        this.nombre = nombre;
+        this.identificarse = function(){
             alert(this.nombre);
         }
     }
 
-Recordemos que en un constructor, this hace referencia al nuevo objeto que será retornado. Pero en un método, this hace referencia al objeto desde el cual fue llamado. Analicemos que pasa si lo usamos dentro de otro constructor como en el caso siguiente:
+Recordemos que en un constructor, this hace referencia al nuevo objeto que será
+retornado. Pero en un método, this hace referencia al objeto desde el cual fue
+llamado.
 
 .. code-block:: javascript
      
     function ClaseB(nombre){
-        this.superClase=ClaseA;
+        this.superClase = ClaseA;
         this.superClase(nombre);
         delete this.superClase;
     }
 
-En el código anterior, el constructor ‘ClaseA’, es llamado como método del nuevo objeto que se esta creando en ‘ClaseB’, por lo tanto, todas las propiedades y métodos que se crean en ClaseA se van a agregar al nuevo objeto de ClaseB.
+En el código anterior, el constructor ‘ClaseA’, es llamado como método del nuevo
+objeto que se esta creando en ‘ClaseB’, por lo tanto, todas las propiedades y
+métodos que se crean en ClaseA se van a agregar al nuevo objeto de ClaseB.
 
 Quizás el punto mas interesante del Object masquerading, frente a otros métodos
-de emular herencia, es que soporta la herencia múltiple,  esto significa que un objeto puede heredar de mas de una clase al mismo tiempo. Solo basta con llamar a cuantos constructores sean necesarios dentro del constructor de la clase hija.
+de emular herencia, es que soporta la herencia múltiple, esto significa que un
+objeto puede heredar de mas de una clase al mismo tiempo. Solo basta con llamar
+a cuantos constructores sean necesarios dentro del constructor de la clase hija.
 
 Prototype chaining
 ------------------
 
-En el post anterior mostré como definir clases utilizando el objeto prototype. Prototype chaining se basa en este paradigma para implementar herencia de una manera muy interesante.
-
-Prototype es una propiedad del objeto Function, que actúa como un template sobre el cual se van a crear nuevos objetos. Mas precisamente, las propiedades y métodos del objeto prototype van a ser pasados a todas las instancias de esa clase.
+Anteriormente se mostro como definir clases utilizando el objeto prototype.
+Prototype chaining se basa en este objeto y es el método recomendado por el
+standard ECMA Script.
+Prototype es una propiedad del objeto Function, que actúa como un template sobre
+el cual se van a crear nuevos objetos. Mas precisamente, las propiedades y
+métodos del objeto prototype van a ser pasados a todas las instancias de esa
+clase.
 
 El ejemplo anterior utilizando prototype chaining quedaría de la siguiente manera:
 
@@ -504,29 +473,26 @@ El ejemplo anterior utilizando prototype chaining quedaría de la siguiente mane
     function ClassB() {}    
     ClassB.prototype = new ClassA();
 
-La última línea del ejemplo muestra el funcionamiento del prototype chaining. Lo que ocurre es que asignamos al prototipo de ‘ClassB’ una nueva instancia de ‘ClassA’.
-De ahora en adelante, todos los objetos creados con ‘ClassB’ van a tener, también, los mismos métodos y propiedades de la instancia de ‘ClassA’. Y si queremos agregar mas métodos y propiedades, lo único que tenemos que hacer es agregárselos al prototype
-de ‘ClassB’.
+La última línea del ejemplo muestra el funcionamiento del prototype chaining.
+Lo que ocurre es que asignamos al prototipo de ‘ClassB’ una nueva instancia de
+‘ClassA’.
+De ahora en adelante, todos los objetos creados con ‘ClassB’ van a tener,
+también, los mismos métodos y propiedades de la instancia de ‘ClassA’. Y si
+queremos agregar mas métodos y propiedades, lo único que tenemos que hacer es
+agregárselos al prototype de ‘ClassB’.
 
 Lo malo de este método para emular herencia, es que no se puede pasar parámetros
 a la clase base, como hicimos en el ejemplo de Object masquerading.
 
-Lo bueno,  es que el operador instanceof funciona de una manera única: por cada instancia de ClaseB, instanceof nos retorna true tanto con ‘ClaseA’ como con ‘ClaseB’:
+Lo bueno, es que el operador instanceof funciona de una manera única: por cada
+instancia de ClaseB, instanceof nos retorna true tanto con ‘ClaseA’ como con
+‘ClaseB’:
 
 .. code-block:: javascript
 
     var miobjeto = new ClassB();
     alert(miobjeto instanceof ClassB); // true
     alert(miobjeto instanceof ClassA); // true
-
-Conclusión
-
-Estos son solo 2 de las formas utilizadas para emular herencia en Javascript, quizás las más difundidas. Personalmente prefiero el prototype chaining, porque es la recomendada por el Standard ECMA Script, y por el funcionamiento del operador instanceof,
-que permite tener un poco mas de control sobre los objetos, algo que se agradece
-muchísimo en un lenguaje tan poco tipeado como Javascript. Sin embargo, los
-dos métodos son igual de eficaces y cada uno tiene sus ventajas y desventajas,
-por lo que la decisión de cual usar, esta en el programador.
-
 
 .. Note:: 
     
@@ -552,6 +518,7 @@ contiene.
 Los tres componentes principales que incorpora gears son:
 
     * Local Server
+
         Permite almacenar localmente datos correspondientes a las páginas webs.
         Tanto HTML, JavaScript e imágenes entre otros, pueden ser almacenados
         localmente por el cliente e interponerse entre el requerimiento del
@@ -563,6 +530,7 @@ Los tres componentes principales que incorpora gears son:
         que almacena es mantenida y realizada por el desarrollador.
     
     * Database
+
         Permite almacenar localmente datos que no correspondan a una página web
         pero son parte de la logica de la aplicacion y requieren de un
         almacenamiento presistente.
@@ -575,6 +543,7 @@ Los tres componentes principales que incorpora gears son:
         del tipo relacional en la máquina huésped. 
     
     * Worker Pool
+
         De manera similar a los "hilos" del sistema operativo, el manejador de
         hilos permite ejecutar acciones en segundo plano sin bloquear la
         ejecución del hilo principal del navegador.
