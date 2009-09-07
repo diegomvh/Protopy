@@ -1,8 +1,8 @@
 require('doff.core.http', 'Http404');
 require('doff.core.exceptions', 'ViewDoesNotExist');
 
-var Resolver404 = type('Resolver404', Http404);
-var NoReverseMatch = type('NoReverseMatch', Exception);
+var Resolver404 = type('Resolver404', [ Http404 ]);
+var NoReverseMatch = type('NoReverseMatch', [ Exception ]);
 
 /*
 Convert a string version of a function name to the callable object.
@@ -49,8 +49,8 @@ function get_mod_func(callback) {
     return [callback.slice(0, dot), callback.slice(dot + 1)];
 }
 
-var RegexURLPattern = type('RegexURLPattern', object, {
-    __init__: function __init__(regex, callback, default_args, name) {
+var RegexURLPattern = type('RegexURLPattern', [ object ], {
+    __init__: function(regex, callback, default_args, name) {
         // regex is a string representing a regular expression.
         // callback is either a string like 'foo.views.news.stories.story_detail'
         // which represents the path to a module and a view function name, or a
@@ -66,14 +66,14 @@ var RegexURLPattern = type('RegexURLPattern', object, {
         this.name = name;
     },
 
-    add_prefix: function add_prefix(prefix) {
+    add_prefix: function(prefix) {
         //Adds the prefix string to a string-based callback.
         if (!prefix || !hasattr(this, '_callback_str'))
             return;
         this._callback_str = prefix + '.' + this._callback_str;
     },
 
-    resolve: function resolve(path) {
+    resolve: function(path) {
         var match = path.match(this.regex);
         if (bool(match)) {
 	    // In both cases, pass any extra_kwargs as **kwargs.
@@ -97,7 +97,7 @@ var RegexURLPattern = type('RegexURLPattern', object, {
     }
 });
 
-var RegexURLResolver = type('RegexURLResolver', object, {
+var RegexURLResolver = type('RegexURLResolver', [ object ], {
     __init__: function(regex, urlconf_name, default_kwargs) {
         // regex is a string representing a regular expression.
         // urlconf_name is a string representing the module containing urlconfs.
@@ -111,7 +111,7 @@ var RegexURLResolver = type('RegexURLResolver', object, {
     resolve: function resolve(path) {
         var tried = [];
         var index = path.search(this.regex);
-	var match = path.match(this.regex);
+        var match = path.match(this.regex);
         if (index != -1) {
             var new_path = path.slice(match[0].length + index);
             for each (var pattern in this.urlconf_module.urlpatterns) {
@@ -120,28 +120,28 @@ var RegexURLResolver = type('RegexURLResolver', object, {
                 } catch (e if isinstance(e, Resolver404)) {
                     tried = tried.concat([(pattern.regex.pattern + '   ' + t) for (t in e.args[0]['tried'])]);
                 }
-		if (sub_match) {
-		    return [sub_match[0], sub_match[1], this.default_kwargs];
-		}
-		tried.push(pattern.regex.pattern);
-	    }
+            if (sub_match) {
+                return [sub_match[0], sub_match[1], this.default_kwargs];
+            }
+            tried.push(pattern.regex.pattern);
+            }
             throw new Resolver404({'tried': tried, 'path': new_path});
-	}
+        }
     },
 
     get urlconf_module() {
         var ret = this._urlconf_module;
-	if (!ret) {
-	    ret = this._urlconf_module = require(this.urlconf_name);
-	}
-	return ret;
+        if (!ret) {
+            ret = this._urlconf_module = require(this.urlconf_name);
+        }
+        return ret;
     },
 
     get url_patterns() {
         return this.urlconf_module.urlpatterns;
     },
 
-    _resolve_special: function _resolve_special(view_type) {
+    _resolve_special: function(view_type) {
         callback = getattr(this.urlconf_module, 'handler%s'.subs(view_type));
         var [mod_name, func_name] = get_mod_func(callback);
         try {
@@ -151,11 +151,11 @@ var RegexURLResolver = type('RegexURLResolver', object, {
 	}
     },
 
-    resolve404: function resolve404() {
+    resolve404: function() {
         return this._resolve_special('404');
     },
 
-    resolve500: function resolve500() {
+    resolve500: function() {
         return this._resolve_special('500');
     }
 /*

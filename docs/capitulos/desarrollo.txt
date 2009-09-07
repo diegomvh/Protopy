@@ -18,17 +18,20 @@ resultan para nada triviales al momento de codificar.
 
 * Se requieren varias lineas de codigo para implementar un framework.
 * Como llega el codigo al navegador y se inicia su ejecucion.
-* La cara visible o vista debe ser fasilmente manipulable por la aplicacion de usuario.
+* La cara visible o vista debe ser fasilmente manipulable por la aplicacion de
+usuario.
 * Como los datos generados en el cliente son informados al servidor.
-* El framework debe brindar soporte a la aplicacion de usuario de una forma natural y transparente.
+* El framework debe brindar soporte a la aplicacion de usuario de una forma
+natural y transparente.
 * Se debe promover al reuso y la extension de funcionalidad del framework.
-* Como se ponen en marcha los mecanimos o acciones que la aplicacion de usuario define.
+* Como se ponen en marcha los mecanimos o acciones que la aplicacion de usuario
+define.
 
 En este capitulo se introducen las ideas principales que motivaron la
-creacion de una libreria en JavaScript, que brinde el soporte necesario al
+creacion de una biblioteca en JavaScript, que brinde el soporte necesario al
 framework y a buena parte de los items expuestos.
 
-Si bien el desarrollo de la libreria se mantuvo en paralelo a la del
+Si bien el desarrollo de la biblioteca se mantuvo en paralelo a la del
 framework, existen aspectos basicos a los que esta brinda soporte y permiten
 presentarla en un apartado separado como "Una Biblioteca en JavaScript", esta
 constituye la base para posteriores construcciones y auna herramientas que
@@ -39,18 +42,19 @@ simplifican el desarrollo client-side.
 "La creación nace del caos", la libreria "Protopy" no escapa a esta
 afirmacion e inicialmente nace de la integracion de Prototype con
 las primeras funciones para lograr la modularizacion; con el correr de las
-lineas de codigo [*]_ el desarrollo del framework torna el enfoque inicial poco sustentable,
-requiriendo este de funciones mas Python-compatibles se desecha la libreria
-base y se continua con un enfoque más "pythonico", persiguiendo de esta forma
-acercar la semántica de JavaScript 1.7 a la del lenguaje de programacion Python.
+lineas de codigo [*]_ el desarrollo del framework torna el enfoque inicial poco
+sustentable, requiriendo este de funciones más Python-compatibles se desecha la
+libreria base y se continua con un enfoque "pythonico", persiguiendo de esta
+forma acercar la semántica de JavaScript 1.7 a la del lenguaje de programacion
+Python.
 
 .. [*] Forma en que los informaticos miden el paso del tiempo.
 
 No es arbitrario que el navegador sobre el cual corre Protopy sea Firefox y
 mas particularmente sobre la version 1.7 de JavaScript. El proyecto mozilla
-esta hacercando, con cada nueva versiones del lenguaje, la semantica de JavaScript a
-la de Python, incluyendo en esta version generadores e iteradores los cuales
-son muy bien explotados por Protopy y el framework.
+esta hacercando, con cada nueva versiones del lenguaje, la semantica de
+JavaScript a la de Python, incluyendo en esta version generadores e iteradores
+los cuales son muy bien explotados por Protopy y el framework.
 
 Protopy
 =======
@@ -166,6 +170,7 @@ A continuación se presenta un fragmento de código que ejemplifica el uso de la
 dos funciones presentadas.
 
 .. code-block:: javascript Figura algo
+    :linenos:
 
      //Obtengo la funcion copy y deepcopy del modulo copy
     require('copy', 'copy', 'deepcopy');
@@ -206,7 +211,7 @@ dos funciones presentadas.
             return super(Dict, this).unset(key);
         }
     });
-    
+
     //Publico el tipo de objeto SortedDict
     publish({ 
         SortedDict: SortedDict 
@@ -236,22 +241,62 @@ Creando tipos de objeto
 
 .. note:: Hacer la referencia al codigo anterior
 
-En el apartado teórico se menciono ya que en JavaScript todo es un objeto y que
-estos se crean y modifican dinamicamente en tiempo de ejecución.
+En el apartado teórico se toco el tema de construcción de objetos en base a
+"clases" y de la emulacion de herencia en JavaScript. Aunque muchos autores
+cuestionan estas practicas alegando, con justa razon, que no tiene sentido
+emular un paradigma dentro de otro; en la practica tener una implementación de
+objetos tipados mediante clases en JavaScript ayuda a los programadores a
+acercarse a este lenguaje y al reuso de código.
 
-Sin embargo, la creacion de objetos en Javascript carece de "clases" o si se
-quiere "tipos de objeto" y para crear dos o mas objetos de un mismo tipo se
-deben volver a declarar todos los miembros del objeto.
+La función contrcuctora de tipos en la biblioteca surgue como herramienta para
+proveer al framework de mecanismos de extensión.
 
-__init__
-__iter__
-__deepcopy__
-__str__
+Protopy define un constructor de "tipos de objetos" llamado `type`. Notese que
+aquí nos referimos a tipos y no a clases.
 
-Como ya se menciono anteriormente Protopy explota las novedades de JavaScript
-1.7, para los iteradores el constructor de tipos prevee el metodo
-__iter__ con la finalidad de que los objetos generados en base al tipo
-sean iterables.
+Al igual que muchas partes de Protopy `type` cambio a lo largo del desarrollo,
+sumando soporte para herencia multiple, metodos magicos e incluso "metatipos".
+
+En el ejemplo presentado se utiliza la funcion type para definir el tipo
+SortedDict, el cual es una especializacion del tipo base Dict. En la definicion
+se detalla bastante bien el comprotambiento de esta type; como primer argumento
+recibe el nombre para el nuevo tipo, seguidamente un arreglo con los tipo base y
+para terminar un objeto con los atributos y metodos.
+
+Metodo importentes:
+
+    * __init__
+
+        Este es el metodo que se invoca inmediatamente después de contruir un
+        nuevo objeto de este tipo. Sería tentador decir que es el “constructor”
+        de la clase. Si bien se parece un constructor de Java, actúa como si lo
+        fuese ya que el objeto ya esta instanciado cuando se llama a esta
+        función.
+
+    * __str__
+
+        Este metodo se llama cuando es necesario proveer de una reprecentacion
+        en texto del objeto, JavaScript provee para este objetivo el metodo
+        toString, pero por cuestiones de nombres se prefirio usar este metodo en
+        su lugar y hacer internamente una relacion entre las funciones.
+
+    * __iter__
+
+        Protopy se vale de versiones modernas de JavaScript y brinda soporte a
+        iteradores, este es el método que el desarrollador debe definir si
+        quiere objetos iterable, la funcion debe retornar un objeto que
+        implemente el metodo next (un iterador o un generado), los bucles
+        for hacen esto automáticamente, pero también se puede hacer manualmente.
+
+Otros metodos:
+
+    * __deepcopy__
+    * __copy__
+    * __json__
+    * __html__
+
+Para instanciar un nuevo tipo se utiliza el operador new de JavaScript, este
+operador crea el nuevo objeto e invoca a la funcion __init__.
 
 Los primeros tipos que surgen para la organizacion de datos dentro de la
 librerias con los "Sets" y los "Diccionarios", hambos aproximan su
@@ -260,31 +305,26 @@ similar. Si bien la estructura "hasheable" nativa a JavaScript en un objeto,
 los diccionarios de Protopy permiten el uso de objetos como claves en lugar de
 solo cadenas.
 
-Extendiendo JavaScript
-======================
+Extendiendo DOM y JavaScript
+============================
+
 Si bien el :term:`DOM` ofrece ya una :term:`API` muy completa para acceder,
 añadir y cambiar dinámicamente el contenido del documento HTML, existen
 funciones muy utiles y comunes en los desarrollos que los programadores
 incorporan al HTML y se intentaron englobar y mantener dentro del nucleo de
-Protopy, 
+Protopy. Funciones para modificar e incorporar elementos al documento son muy
+comunes y estan disponibles en Protopy, en conjunto con otras para el manejo de
+formularios, como serializacion, obtencion de valores, etc.
+
+Otra extension interesante de mencionar es la de los tipos de datos en
+JavaScript, en manejo de cadenas incorpora nuevas funciones que simplifican
+tareas comunes, los numeros y fechas tambien tiene su aporte.
+
+Los eventos estan uniforamdos bajo un modulo de manejo de eventos, que permite
+conectar eventos del :term:DOM con funciones en JavaScript, así tambien como
+funciones entre si.
 
 .. note:: Poner los nombres de las funciones para destacar el laburo
-
-Extendiendo DOM
-===============
-Si bien el :term:`DOM` ofrece ya una :term:`API` muy completa para acceder,
-añadir y cambiar dinámicamente el contenido del documento HTML, existen
-funciones muy utiles y comunes para la manipulación del DOM, que los
-programadores incorporan al proyecto en forma de bibliotecas propias o de
-terceros, este tipo de funciones se integraron al nucleo de Protopy con el
-objetivo de fasilitar el desarrollo.
-
-Funciones para modificar e incorporar elementos al documento son muy comunes y
-estan disponibles en Protopy, en conjunto con otras para el manejo de
-formularios, como serializacion, obtencion de valores.
-
-En cuanto a los eventos 
-
 
 Envolviendo a gears
 ===================
@@ -319,19 +359,17 @@ desde distintos lugares.
 El desarrollo del framework implico extender algunos objetos Gears, concretamente
 al paquete `gears` se incorporaron los siguientes módulos:
 
-desktop
--------
+    * desktop
 
-El objeto `desktop` de Gears permite interactuar con el escritorio del cliente. 
-Aquí se extendio la creacción de accesos directos para simplificar la generación
-de los mismos y agregar la posibilidad de manejar `Icon` y algunos `IconTheme`.
+        El objeto `desktop` de Gears permite interactuar con el escritorio del cliente. 
+        Aquí se extendio la creacción de accesos directos para simplificar la generación
+        de los mismos y agregar la posibilidad de manejar `Icon` y algunos `IconTheme`.
 
-database
---------
+    * database
 
-Sobre el objeto `database` se agrego funcionalidad uniformar el acceso a la base
-de datos por los módulos de Protopy y encapsular los `ResulSet` en cursores a
-los que se incorporo iteradores, registro de funciones para tipos de datos, etc.
+        Sobre el objeto `database` se agrego funcionalidad uniformar el acceso a la base
+        de datos por los módulos de Protopy y encapsular los `ResulSet` en cursores a
+        los que se incorporo iteradores, registro de funciones para tipos de datos, etc.
 
 Auditando el codigo
 ===================
@@ -339,7 +377,7 @@ Auditando el codigo
 Una queja recurrente de los desarrolladores que trabajan con JavaScript es lo
 complejo que resulta el lenguaje para depurar errores. Encontrar errores en
 el código resulta molesto y mas todavía si la salida de los mismos no esta en un
-formato adecuado y encausada en una salida especifica.
+formato adecuado y encausada en un lugar especifico.
 
 Tradicionalmente lo que se hace para detectar errores es valerse de funciones
 `alert` diseminadas por el código con textos del estilo "Paso por aquí", pero
@@ -433,68 +471,42 @@ Interactuando con el servidor
 
 Soporte para json
 =================
-.. JSON REF http://www.json.org/
-.. Esto es algo sobre json, quiza no valla aca
-JSON brinda un buen soporte al intercambio de datos, resultando de fásil
-lectura/escritura para las personas y de un rapido interpretacion/generacion
-para las maquinas. Se basa en un subconjunto del lenguaje de programación
-JavaScript, estándar ECMA-262 3ª Edición - Diciembre de 1999. Este formato de
-texto es completamente independiente del lenguaje de programacion, pero utiliza
-convenciones que son familiares para los programadores de lenguajes de la
-familia ``C'', incluyendo C, C + +, C#, Java, JavaScript, Perl, Python y muchos otros.
 
-JSON se basa en dos estructuras:
-* Una colección de pares nombre / valor. En varios lenguajes esto se
-  representa mediante un objeto, registro, estructura, diccionario, tabla hash,
-  introducido lista o matriz asociativa.
-* Una lista ordenada de valores. En la mayoría de los lenguajes esto se
-  representa como un arreglo, matriz, vector, lista, o secuencia.
+La idea detras del soporte para JSON en Protopy es la transimisión de datos
+generados offline por el cliente, en el momento de recuperar la conexion con el
+servidor el cliente debe serializar los datos y enviarlos al servidor; otro uso
+para es el intercambio de mensajes de control.
 
-Estas son estructuras de datos universales. Prácticamente todos los lenguajes
-de programación modernos las soportan de una forma u otra. Tiene sentido que un
-formato de datos que es intercambiable con los lenguajes de programación
-también se basan en estas estructuras.
-
-Para mas informacion sobre JSON http://www.json.org/
-
-.. Ahora vemos que hace protopy, la necesidad
-Mientras que un cliente se encuentre sin conexion con el servidor web, es capaz
-de generar y almacenar datos usando su base de datos local. Al reestablecer
-la conexion con el servidor web, estos datos deben ser transimitos a la base de
-datos central para su actulizacion y posterior sincronizacion del resto de los
-clinetes.
 La transferencia de datos involucra varios temas, uno de ellos y que compete
 a este apartado, es el formato de los datos que se deben pasar por
-la conexcion; este formato debe ser ``comprendido'' tanto por el cliente como
+la conexcion; este formato debe ser "comprendido" tanto por el cliente como
 por el servidor. Desde un primer momento se penso en JSON como el formato
-de datos a utilizar, es por esto que Protopy incluye un modulo para trabajar con el mismo.
+de datos a utilizar, es por esto que Protopy incluye un modulo para trabajar
+con el mismo.
 
-.. Porque no xml?
-No existe una razon concreta por la cual se deja de lado el soporte en Protopy
-para XML como formato de datos; aunque se puede mencionar la simplicidad de
-implementacion de un parser JSON contra la implementacion de uno en XML.
-Para el leector interesado agregar el sporte para XML en Protopy consta de
-escribir un modulo que realize esa tarea y agregarlo al paquete base.
-
-.. El como
-El soporte para JSON se encuentra en el modulo ``json" entre los modulos
+El soporte para JSON se encuentra en el modulo "json" entre los módulos
 estandar de Protopy. Este brinda soporte al pasaje de estructuras de datos
 JavaScript a JSON y viceversa.
+
 Los tipos base del lenguje JavaScript estan soportados y tienen su
 reprecentacion correspondiente, object, array, number, string, etc. pero este
 modulo interpreta ademas de una forma particular a aquellos objetos que
 implementen el metodo __json__, dejando de este modo en manos del
 desarrollador la reprecentacion en JSON de determinado objetos.
-La inclusion del metodo __json__  resulta de especial impotancia a la
-hora de pasar a JSON los objetos creados en base a tipos definidos por el
-desarrollador mediante el contructor "type".
 
 Con el soporte de datos ya establecidos en la libreria, el framework solo
-debe limitarce a hacer uso de él y asegurar la correcta sincronizacion de datos
+debe limitarse a hacer uso de él y asegurar la correcta sincronizacion de datos
 entre el cliente y el servidor web, este tema se retomara en el capitulo de
 sincronizacion.
-.. TODO: retomar este tema para no ser un mentiroso :)
 
+XML?
+---
+
+No existe una razon concreta por la cual se deja de lado el soporte en Protopy
+para XML como formato de datos; aunque se puede mencionar la simplicidad de
+implementacion de un parser JSON contra la implementacion de uno en XML.
+Para el leector interesado agregar el sporte para XML en Protopy consta de
+escribir un modulo que realize esa tarea y agregarlo al paquete base.
 
 Ejecutando codigo remoto
 ========================
@@ -543,6 +555,21 @@ El framework
 ************
 
     | **d** jango + **off** line = **doff**
+
+Mientras que un cliente se encuentre sin conexion con el servidor web, es capaz
+de generar y almacenar datos usando su base de datos local. Al reestablecer
+la conexion con el servidor web, estos datos deben ser transimitos a la base de
+datos central para su actulizacion y posterior sincronizacion del resto de los
+clinetes.
+
+Modelos
+=======
+
+Plantillas
+==========
+
+Formularios
+===========
 
 *************
 La aplicación

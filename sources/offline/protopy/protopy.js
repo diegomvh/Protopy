@@ -489,7 +489,7 @@
         // return disconnect package
         return [ obj, event, h, lid ];
     }
-    
+
     function _disconnect(obj, event, handle, listener) {
         ([Listener, EventListener][listener]).remove(obj, event, handle);
     }
@@ -2452,7 +2452,7 @@
             this.disabled = false;
         }
         }
-        
+
         Form.Serializers = {
         input: function(element, value) {
             switch (element.type.toLowerCase()) {
@@ -2514,7 +2514,7 @@
             return opt.hasAttribute('value') ? opt.value : opt.text;
         }
         }
-        
+
         //For firefox
         extend(HTMLFormElement.prototype, Form );
         extend(HTMLInputElement.prototype, Form.Element );

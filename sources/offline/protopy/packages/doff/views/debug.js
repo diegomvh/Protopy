@@ -1,6 +1,6 @@
 require('doff.template.base', 'Template', 'TemplateDoesNotExist');
 require('doff.template.context', 'Context');
-require('doff.core.http', 'HttpResponse', 'HttpResponseServerError', 'HttpResponseNotFound');
+require('doff.utils.http', 'HttpResponse', 'HttpResponseServerError', 'HttpResponseNotFound');
 
 var HIDDEN_SETTINGS = new RegExp('SECRET|PASSWORD|PROFANITIES_LIST');
 

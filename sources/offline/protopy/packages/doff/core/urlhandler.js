@@ -2,16 +2,16 @@ require('sys');
 require('event');
 require('doff.core.exceptions');
 require('doff.core.urlresolvers');
-require('doff.core.http');
+require('doff.utils.http');
 
-var Handler = type('Handler', object, {
+var Handler = type('Handler', [ object ], {
     __init__: function(urlconf, html) {
         this.html = html;
         //Crear el resolver
         this._resolver = new urlresolvers.RegexURLResolver('^/', urlconf);
     },
 
-    handle: function handle(value) {
+    handle: function(value) {
         var request;
         if (Element.isElement(value)) {
             //Es un elemento del html
@@ -29,7 +29,7 @@ var Handler = type('Handler', object, {
             return this.handle(value.target);
         }
 
-	if (!isundefined(request) && request.is_valid()) {
+        if (!isundefined(request) && request.is_valid()) {
             if (!request.is_same_origin()) //kickoff
                 window.location = request.source;
             else {
@@ -68,20 +68,20 @@ var Handler = type('Handler', object, {
                 var [callback, param_dict] = this._resolver.resolve404();
                 return callback(request, param_dict);
             }
-	}
+        }
     },
 
-    parse_form: function form(element) {
+    parse_form: function(element) {
         var request = new http.HttpRequest(element.action);
         request.method = element.method;
         request[element.method] = element.serialize();
         return request;
     },
 
-    parse_a: function a(element) {
+    parse_a: function(element) {
         var request = new http.HttpRequest(element.href);
-	request.method = 'get';
-	return request;
+        request.method = 'get';
+        return request;
     }
 });
 

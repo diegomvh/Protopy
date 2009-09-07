@@ -12,6 +12,10 @@ Desde la perspectiva de un usuario, la Web consiste en una enorme cantidad de
 documentos interconectados a nivel mundial llamados *paginas Web*.
 En el clinete las paginas se ven mediante un programa llamado navegadores  
 
+JavaScript ha tenido durante mucho tiempo la reputación de lenguaje torpe e inadecuado para el desarrollo serio. Esto ha sido en gran parte debido a las implementaciones incompatibles del lenguaje y del DOM en varios navegadores, y al uso extenso de código "pegado" lleno de errores por parte de los aficionados. Los errores en tiempo de ejecución eran tan frecuentes y difíciles de solucionar que pocos programadores intentaban corregirlos.
+
+La reciente aparición de navegadores con un soporte adecuado de los estándares web, frameworks para JavaScript tales como Prototype, y herramientas de depuración de alta calidad han facilitado enormemente la creación de código organizado y escalable en JavaScript, y la aparición de AJAX lo ha hecho esencial. Mientras hasta hace poco JavaScript era solo utilizado para las tareas relativamente simples y no críticas (validación de formularios y decoraciones llamativas), actualmente se está utilizando para escribir código complejo que a menudo es responsable de buena parte de la funcionalidad básica de un sitio. Los errores en tiempo de ejecución y el comportamiento imprevisible ya no son molestias de menor importancia; son errores fatales.
+
 **************************
 Estructura de un navegador
 **************************
@@ -226,279 +230,302 @@ consistencia en el estilo.
 JavaScript
 ==========
 
-.. Explicar como meter codigo javascript en un doc da sustento a protopy
+Javascript es un lenguaje de programación interpretado creado originalmente por
+Brendan Eich para la empresa Netscape con el nombre de Mocha. El lenguaje surge
+a principios de 1996, como un lenguaje de scripting para la Web y apuntado a la
+interacción directa con el usuario.
 
-Javascript es un lenguaje de programación interpretado, de ámbito dinámico y orientado
-a objetos mediante protipos.
+Con una sintaxis semejante a la de Java y C, JavaScript dista mucho de ser Java
+y debe su nombre más a cuestiones de marketing que a principios de diseño, de
+hecho se reconocen mayores influencias de lenguajes como Self, Scheme, Perl e
+incluso en versiones modernas de Python.
 
-al archivo que contiene la funcionalidad. Mas tarde cuando el navegador descarga
-el documento y comienza su lectura al encontrar esta etiqueta solicita
-al servidor el archivo referenciado y lo interpreta, para continuar luego con la
-lectura del resto de las etiquetas. 
+En junio de 1997 la European Computer Manufacturers' Association ECMA, adopta
+como un estándar a JavaScript, con el nombre de ECMAScript. Este importante paso
+marco un inicio para la compatibilidad entre navegadores y tras él las empresas
+comenzaron a desarrollar sus propias versiones del lenguaje, JScript es la
+implementación de Microsoft, muy similar al la de Netscape, pero con ciertas
+diferencias en el modelo de objetos del navegador [*]_; con la finalidad de
+evitar la incopatibilidad que se avecinaba, el World Wide Web Consortium diseñó
+el estándar Document Object Model (DOM) que en conjunto con el lenguaje
+resuelven la modificación de la página Web en el cliente. La batalla entre los
+navegadores se continua luchando y probablemente de para unos cuantos años más,
+pero estos dos estandares representan la base para un desarrollo web compatible.
 
-JavaScript es un lenguaje orientado a objetos, pero no es muy fácil comprenderlo
-en este aspecto. A pesar de la sintaxis y el nombre, la forma en que JavaScript
-implementa objetos es bastante diferente al que conocemos de C++ o Java, esto
-suele llevar a la confusión. Mi intención es describir como es que se trabaja
-con OOP en JavaScript intentando no confundir al compararlo con otros lenguajes.
+.. [*] Por que sera?.
 
-Creación de Objetos
+En la actualidad, todo computador personal en el mundo tiene, al menos, ún
+interprete de JavaScript instalado y activo en el. A pesar de su popularidad,
+solo algunos saben que JavaScript es un muy buen lenguaje de programación
+dinámico, orientado a objetos y de proposito general.
+
+Incluir JavaScript en un documento
+----------------------------------
+
+Cualquier documento HTML puede incluir JavaScript y el método correcto que
+define la W3C es incluir javascript como un archivo externo, tanto por
+cuestiones de accesibilidad, como practicidad y velocidad en la navegación.
+Para esto basta con escribir en el documento HTML:
+
+.. code-block:: html
+
+    <script type="text/javascript" src="[URL]"></script>
+
+Siendo [URL] la URL relativa o absoluta del recurso con código JavaScript.
+Cuando el navegador descarga el documento y comienza su lectura al encontrar
+esta etiqueta solicita al servidor el archivo referenciado por URL y lo
+interpreta, para continuar luego con la lectura del resto de las etiquetas. 
+
+El otro método para incluir código, es hacerlo directamente en el documento
+entre los elementos <script> y </script>, aunque esta practica no es la
+recomendada:
+
+.. code-block:: html
+
+    <script type="text/javascript">
+    <!--    
+        // código JavaScript
+    -->
+    </script>
+
+De forma similar a la anterior, el navegador comienza con la interpretacion del
+codigo al encontrar la etiqueta y luego continua con la lectura del resto de las
+etiquetas.
+
+Orientado a Objetos
 -------------------
 
-No existe en JavaScript nada que no sea un objeto, lo son todos los tipos de
-datos e inclusive las funciones, pudiendo contener estos propiedades y métodos.
+JavaScript es un lenguaje orientado a objetos, es más, todo en este lenguaje es
+un objeto. Normalmente a muchos programadores de Java o C++ les cuesta
+comprender la implementación de objetos que provee JavaScript y esto es así
+porque el lenguaje esta orientado a prototipos.
 
-Para crear un objeto desde cero basta con hacer:
+Algunos argumentan que JavaScript no es verdaderamente orientado a objetos
+porque no provee ocultación de la información. Pero resulta ser que los objetos
+de JavaScript pueden tener variables privadas y métodos privados gracias a las
+clausuras.
 
-miobjeto = new Object();
+A continuacion se explica como crear un objeto:
 
-Lo que equivale a hacer:
+.. code-block:: javascript
 
-miobjeto = {};
+    uno = new Object();
+    dos = {};
 
-La primera forma de declarar un objeto les puede resultar familiar, la segunda
-hace uso de una característica propia del lenguaje para declarar estructuras de
-datos. Todos los tipos de datos pueden declararse de las dos maneras, por
-ejemplo, una cadena de texto se declara:micadena = new String();
+En este primer ejemplo se ver que hay dos formas de crear objetos, en particular
+la segunda forma hace uso de una característica propia del lenguaje para
+declarar estructuras de datos y resulta de mucha utilidad en los casos de
+intercambio de mensajes mediante el estándar :term:`JSON`. Otros tipos de
+objetos pueden ser declarados de esta manera, como:
 
-Y de la forma declarativa:micadena = “”;
+.. code-block:: javascript
 
-Un array se declara:miarray = new Array();
+    cadenas = "";
+    arreglos = [];
+    funciones = function() {};
 
-Ó también:miarray = [];
-
-Esta forma de declarar objetos es muy útil en algunos casos y es la base del
-intercambio de mensajes mediante el estándar JSON.
-
-Agregar miembros
-
-Javascript es un lenguaje dinámico, esto posibilita la modificación de los
+Las caracteristicas dinámicas de lenguaje posibilitan la modificación de los
 objetos en tiempo de ejecución, esto quiere decir que a un objeto, luego de ser
-creado, se le pueden agregar o eliminar métodos y propiedades.
+creado, se le pueden agregar o eliminar métodos y propiedades:
 
-Para agregar miembros al objeto creado anteriormente solo basta con declararlo y
-asignarle algún valor.
+.. code-block:: javascript
 
-miobjeto.variable = “hola”;
+    uno.variable = “hola”;
+    dos.metodo = new Function();
 
-miobjeto.metodo = new Function();
+De esta forma se tienen dos objetos personalizados uno con un "atributo" y otro
+con un "metodo", de esta manera se pueden continuar agregando miembros de
+cualquier tipo y hacer crecer los objetos. Sin embargo, crear objetos así no es
+cómodo, ya que si se quisiéra crear una copia de este objeto se deberían
+declarar nuevamente todos sus miembros.
 
-Listo, ya disponemos de un objeto personalizado creado desde cero, de este modo
-se pueden agregar mas miembros de cualquier tipo a nuestro objeto. Sin embargo,
-crear objetos de esta manera no es muy cómodo, ya que si quisiéramos crear una
-copia de este objeto deberíamos declarar nuevamente todos sus miembros, debido a
-que este objeto no se puede instanciar.
-
-Creando ‘Clases’ en JavaScript
+Creando ‘Clases’:
 
 La forma en que los lenguajes orientados a objetos comúnmente resuelven el
-problema anterior es mediante el uso de Clases, en JavaScript no es posible
-declarar Clases, pero si es posible instanciar objetos a partir de un
+problema anterior es mediante el uso de clases, en JavaScript no es posible
+declarar clases, pero si es posible instanciar objetos a partir de un
 constructor.
 
-El objeto Function es utilizado como objeto instanciable en JavaScript, y el
-cuerpo de la función es el constructor del nuestros objetos. Una vez que tenemos
-un constructor, podemos llamarlo con el operador new.
+El objeto Function se utiliza como objeto instanciable en JavaScript, y el
+cuerpo de la función es el constructor del objeto. Para emular el
+comprortamiento propio de una clase el método mas difundido es aprovechar el
+funcionamiento de la plabra reservada this dentro del constructor y las
+funciones miembro. Cuándo una función es llamada con el operador new, this hace
+referencia al objeto que será retornado.
 
-/*clase de ejemplo*/
+.. code-block:: javascript
 
-miClase = new Function();
+    /*clase de ejemplo*/
 
-nuevoObjeto = new miClase(); // instanciamos ‘miClase’
+    Clase = function() {
+        this.propiedad = “hola!”;
+        this.metodo = function(){
+            alert(this.propiedad);
+        }
+    }
+    objeto = new Clase(); // instanciamos ‘Clase’
 
-El método mas difundido para emular las clases en JavaScript es aprovechar el
-funcionamiento de la palabra clave this dentro de los constructores. Cuándo una
-función es llamada con el operador new, this hace referencia al objeto que será
-retornado. Veamos como funciona.
+Podria parecer que aquí se terminan los problemas pero no es así, esta forma de
+crear clases provoca que cada objeto tenga una versión unica de sus ‘metodos’,
+cuando lo ideal seria que todos los objetos compartieran la misma función.
 
-/*clase de ejemplo*/
-
-miClase = function(){
-
-/*
-
-agregamos miembros dinamicamente
-
-al objeto que será retornado
-
-*/
-
-this.propiedad = “hola!”;
-
-this.metodo = function(){
-
-/* aqui ‘this’ hace referencia al objeto al que pertenece el metodo */
-
-alert(this.propiedad);
-
-}
-
-}
-
-nuevoObjeto = new miClase(); // instanciamos ‘miClase’
-
-Ahora, ‘nuevoObjeto’ va a referenciar al objeto que se retornó cuando se llamó a
-‘miClase’ usando el operador new, por lo tanto, va a tener todas las propiedades
-y metodos que se crearon dentro del constructor.
-
-El problema de esta forma de crear clases es que cada vez que la función
-‘miClase’ es llamada, se crea una nueva función llamada ‘metodo’, de modo que
-cada objeto tiene su propia versión de ‘metodo’ cuando, en realidad, todos los
-objetos deberían compartir la misma función.
-
-La propiedad ‘Prototype’
+La propiedad ‘Prototype’:
 
 Todas las funciones tienen una propiedad llamada prototype, esta propiedad es un
 objeto que será utilizado como ‘modelo’ inicial de todos los objetos que sean
 creados con esta función cuando sea utilizada como constructor.
 
-Inicialmente esta propiedad es un objeto vacío, pero debemos modificarla para
-aprovechar esta característica del lenguaje. Reescribiendo el ejemplo anterior
-el código quedaría así:
+Reescribiendo el ejemplo anterior el código quedaría así:
 
-/* creamos un constructor limpio */
+.. code-block:: javascript
 
-miClase = new Function();
+    /* creamos un constructor limpio */
 
-miClase.prototype.propiedad = “hola!”;
+    Clase = new Function();
+    Clase.prototype.propiedad = “hola!”;
+    Clase.prototype.metodo = function(){
+        alert(this.propiedad);
+    }
+    objeto = new Clase(); // instanciamos ‘miClase’
 
-miClase.prototype.metodo = function(){
-
-/* aqui ‘this’ hace referencia al objeto al que pertenece el metodo */
-
-alert(this.propiedad);
-
-}
-
-nuevoObjeto = new miClase(); // instanciamos ‘miClase’
-
-Ahora todos los objetos creados a partir de ‘miClase’ compartirán inicialmente
-las mismas referencias en todas sus propiedades, esto significa que, todos los
+Ahora todos los objetos creados a partir de ‘Clase’ comparten inicialmente las
+mismas referencias en todas sus propiedades, esto significa que, todos los
 objetos van a compartir la misma versión de ‘metodo’.
 
-Adicionalmente, al utilizar la propiedad prototype, obtenemos otra ventaja,
-podemos usar la palabra reservada instanceof. Vemos como se usa si
-escribimos:alert(nuevoObjeto instanceof miClase) // muestra ‘true’
-
-El problema del uso de prototype, es que todas las propiedades hacen referencia
-a las mismas del prototipo, por lo que si modificamos estos objetos se van a
-modificar también en todos los objetos creados con esta clase. En siguiente
-ejemplo cambiamos nuestra propiedad a un array para poder modificarla sin
-cambiar nuestra referencia, de modo que podamos ver lo que explico con un
-ejemplo:
-
-/* creamos un constructor limpio */
-
-miClase = new Function();
-
-miClase.prototype.propiedad = new Array(“hola”,“hello”);
-
-miClase.prototype.metodo = function(){
-
-/* aqui ‘this’ hace referencia al objeto al que pertenece el metodo */
-
-alert(this.propiedad);
-
-}
-
-nuevoObjeto = new miClase(); // instanciamos ‘miClase’
-
-otroObjeto = new miClase(); // instanciamos ‘miClase’
-
-nuevoObjeto.propiedad.push(“olá”);
-
-otroObjeto.metodo(); // muestra “hola”,”hello”,”olá”
-
-Como pueden ver en el ejemplo anterior, ‘nuevoObjeto’ y ‘otroObjeto’ hacen
-referencia al mismo array, para solucionar este problema solo debemos asignar
-un objeto diferente a cada propiedad de nuestros objetos. El constructor es un
-buen lugar para realizar esta tarea:
-
-miClase = function(){
-
-this.propiedad = new Array(“hola”,“hello”); // reemplazamos el valor de nuestra propiedad con un nuevo objeto
-
-};
-
-miClase.prototype.propiedad = new Array(“hola”,“hello”);
-
-miClase.prototype.metodo = function(){
-
-/* aqui ‘this’ hace referencia al objeto al que pertenece el metodo */
-
-alert(this.propiedad);
-
-}
-
-nuevoObjeto = new miClase(); // instanciamos ‘miClase’
-
-otroObjeto = new miClase(); // instanciamos ‘miClase’
-
-nuevoObjeto.propiedad.push(“olá”);
-
-otroObjeto.metodo(); // muestra “hola”,”hello” :)
-
-Listo, tenemos clase y tenemos objetos que funcionan bien. Espero que les haya
-resultado claro, en el próximo post voy a explicar el mecanismo de la herencia
-en JavaScript (si!!, se puede!!). Hasta entonces.
-
+Adicionalmente, al utilizar la propiedad prototype, se obtiene otra ventaja y es
+poder usar la palabra reservada instanceof para determinar si un objeto es
+instancia de un constructor.
 
 ..
-    De Wikipedia, la enciclopedia libre
 
-    Programación basada en prototipos
-
-    Programación basada en prototipos es un estilo de programación orientada a
-    objetos en el cual, las "clases" no están presentes, y la re-utilización de
-    procesos (conocida como herencia en lenguajes basados en clases) se obtiene
-    a través de la clonación de objetos ya existentes, que sirven de prototipos,
-    extendiendo sus funcionalidades. Este modelo es conocido como orientado a
-    prototipos, o programación basada en instancias.
-
-    El original (y el más canónico) ejemplo de lenguaje prototipado es el
-    lenguaje Self, desarrollado por David Ungar y Randall Smith. Sin embargo el 
-    paradigma sin clases está comenzando a popularizarse y ya ha sido
-    implementado en lenguajes de programación como JavaScript, Cecil,
-    NewtonScript, Ío, MOO, REBOL y varios otros.
-
-    En lenguajes basados en clases los objetos pueden ser de dos tipos generales,
-    las clases y las instancias. Las clases definen la disposición y la
-    funcionalidad básicas de los objetos, y las instancias son objetos "utilizables"
-    basados en los patrones de una clase particular. En este modelo, las clases
-    actúan como colecciones de comportamiento (métodos) y estructuras que son
-    iguales para todas las instancias, mientras que las instancias llevan los datos
-    de los objetos. La distinción del papel se basa así sobre todo en una distinción
-    entre la estructura y el comportamiento en un lado, y el estado en el otro.
-
-    Los entusiastas de la programación basada en prototipos a menudo argumentan que
-    los lenguajes basados en clases animan un modelo del desarrollo que se centra
-    primero en la taxonomía y las relaciones entre las clases. En cambio, la
-    programación basada en prototipos intenta animar al programador que se centre en
-    el comportamiento de un cierto sistema de ejemplos y después de clasificar estos
-    objetos en objetos arquetipos que se utilizan más adelante en una manera similar
-    a las clases. Como tal, muchos sistemas basados en prototipos animan la
-    alteración de prototipos durante tiempo de ejecución, mientras que solamente muy
-    pocos sistemas orientados a objeto, basados en clase (como el primer sistema
-    orientados al objetos dinámicos, Smalltalk) permiten que las clases sean
-    alteradas durante la ejecución de un programa.
-
-    Mientras que basan la amplia mayoría de sistemas basados en prototipos se hacen
-    con lenguajes de programación interpretados y de tipos de datos dinámicos, es
-    importante precisar que los sistemas de tipos de datos estáticos son
-    técnicamente factibles. El lenguaje de programación de Omega que es basado en
-    prototipos es un ejemplo de tal sistema, aunque según el Web site de Omega,
-    Omega no es exclusivamente de tipos de datos estáticos, pero su "compilador
-    puede elegir utilizar el tipo de dato estático donde es posible esto y puede
-    mejorar la eficacia del programa.”
-
-.. 
     http://javis.wordpress.com/2006/10/23/javascript-orientado-a-objetos/
-    Algo de introduccion a objetos en javascript. sustento de prtopy y el constructor de clases
 
 ************************
 Evolución del JavaScript
 ************************
 
+Herencia
+========
+
+JavaScript no puede tener herencia orientada a clases, pero tiene herencia
+"prototipal". Existen muchos autores que implementan su forma de emular la
+herencia en JavaScript y entre los métodos mas utilizados se detallan a
+continuacion dos prinsipios basicos ampliamente difundidos. 
+
+Object masquerading
+-------------------
+
+Este método saca provecho del comportamiento de la palabra reservada this
+dentro de los constructores.
+El funcionamiento es el siguiente: Un constructor asigna propiedades y métodos
+a un objeto referenciándolo con la palabra clave this, como un constructor es
+simplemente una función, se puede usar el constructor de una clase A como
+método de una clase B.
+
+.. code-block:: javascript
+    
+    function ClaseA(nombre){
+        this.nombre = nombre;
+        this.identificarse = function(){
+            alert(this.nombre);
+        }
+    }
+
+Recordemos que en un constructor, this hace referencia al nuevo objeto que será
+retornado. Pero en un método, this hace referencia al objeto desde el cual fue
+llamado.
+
+.. code-block:: javascript
+     
+    function ClaseB(nombre){
+        this.superClase = ClaseA;
+        this.superClase(nombre);
+        delete this.superClase;
+    }
+
+En el código anterior, el constructor ‘ClaseA’, es llamado como método del nuevo
+objeto que se esta creando en ‘ClaseB’, por lo tanto, todas las propiedades y
+métodos que se crean en ClaseA se van a agregar al nuevo objeto de ClaseB.
+
+Quizás el punto mas interesante del Object masquerading, frente a otros métodos
+de emular herencia, es que soporta la herencia múltiple, esto significa que un
+objeto puede heredar de mas de una clase al mismo tiempo. Solo basta con llamar
+a cuantos constructores sean necesarios dentro del constructor de la clase hija.
+
+Prototype chaining
+------------------
+
+Anteriormente se mostro como definir clases utilizando el objeto prototype.
+Prototype chaining se basa en este objeto y es el método recomendado por el
+standard ECMA Script.
+Prototype es una propiedad del objeto Function, que actúa como un template sobre
+el cual se van a crear nuevos objetos. Mas precisamente, las propiedades y
+métodos del objeto prototype van a ser pasados a todas las instancias de esa
+clase.
+
+El ejemplo anterior utilizando prototype chaining quedaría de la siguiente manera:
+
+.. code-block:: javascript
+
+    function ClassA() {}
+    ClassA.prototype.nombre = “”;
+    ClassA.prototype.identificarse = function() {
+        alert(this.nombre);
+    }
+    function ClassB() {}    
+    ClassB.prototype = new ClassA();
+
+La última línea del ejemplo muestra el funcionamiento del prototype chaining.
+Lo que ocurre es que asignamos al prototipo de ‘ClassB’ una nueva instancia de
+‘ClassA’.
+De ahora en adelante, todos los objetos creados con ‘ClassB’ van a tener,
+también, los mismos métodos y propiedades de la instancia de ‘ClassA’. Y si
+queremos agregar mas métodos y propiedades, lo único que tenemos que hacer es
+agregárselos al prototype de ‘ClassB’.
+
+Lo malo de este método para emular herencia, es que no se puede pasar parámetros
+a la clase base, como hicimos en el ejemplo de Object masquerading.
+
+Lo bueno, es que el operador instanceof funciona de una manera única: por cada
+instancia de ClaseB, instanceof nos retorna true tanto con ‘ClaseA’ como con
+‘ClaseB’:
+
+.. code-block:: javascript
+
+    var miobjeto = new ClassB();
+    alert(miobjeto instanceof ClassB); // true
+    alert(miobjeto instanceof ClassA); // true
+
+JSON
+====
+
+JSON brinda un buen soporte al intercambio de datos, resultando de fásil
+lectura/escritura para las personas y de un rapido interpretacion/generacion
+para las maquinas. Se basa en un subconjunto del lenguaje de programación
+JavaScript, estándar ECMA-262 3ª Edición - Diciembre de 1999. Este formato de
+texto es completamente independiente del lenguaje de programacion, pero utiliza
+convenciones que son familiares para los programadores de lenguajes de la
+familia ``C'', incluyendo C, C + +, C#, Java, JavaScript, Perl, Python y muchos
+otros.
+
+JSON se basa en dos estructuras:
+* Una colección de pares nombre / valor. En varios lenguajes esto se
+  representa mediante un objeto, registro, estructura, diccionario, tabla hash,
+  introducido lista o matriz asociativa.
+* Una lista ordenada de valores. En la mayoría de los lenguajes esto se
+  representa como un arreglo, matriz, vector, lista, o secuencia.
+
+Estas son estructuras de datos universales. Prácticamente todos los lenguajes
+de programación modernos las soportan de una forma u otra. Tiene sentido que un
+formato de datos que es intercambiable con los lenguajes de programación
+también se basan en estas estructuras.
+
+Para mas informacion sobre JSON http://www.json.org/
+
+.. Note:: 
+
+    AJAX
+    Iteradores
 
 ************
 Google Gears
@@ -519,6 +546,7 @@ contiene.
 Los tres componentes principales que incorpora gears son:
 
     * Local Server
+
         Permite almacenar localmente datos correspondientes a las páginas webs.
         Tanto HTML, JavaScript e imágenes entre otros, pueden ser almacenados
         localmente por el cliente e interponerse entre el requerimiento del
@@ -530,6 +558,7 @@ Los tres componentes principales que incorpora gears son:
         que almacena es mantenida y realizada por el desarrollador.
     
     * Database
+
         Permite almacenar localmente datos que no correspondan a una página web
         pero son parte de la logica de la aplicacion y requieren de un
         almacenamiento presistente.
@@ -542,6 +571,7 @@ Los tres componentes principales que incorpora gears son:
         del tipo relacional en la máquina huésped. 
     
     * Worker Pool
+
         De manera similar a los "hilos" del sistema operativo, el manejador de
         hilos permite ejecutar acciones en segundo plano sin bloquear la
         ejecución del hilo principal del navegador.

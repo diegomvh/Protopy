@@ -44,7 +44,7 @@ var Node = type('Node', [ object ], {
     must_be_first: false,
     render: function(context) { },
     __iter__: function() { 
-	yield this; 
+        yield this; 
     },
 
     get_nodes_by_type: function(nodetype){
@@ -107,7 +107,7 @@ var TextNode = type('TextNode', [ Node ], {
     },
 
     render: function(context) { 
-	return this.s;
+        return this.s;
     }
 });
 
@@ -126,7 +126,7 @@ function compile_string(template_string) {
     var lexer = new Lexer(template_string);
     var parser = new Parser(lexer.tokenize());
     return parser.parse();
-};
+}
 
 var Template = type('Template', [ object ], {
     __init__: function(template, name) {
@@ -362,7 +362,7 @@ var FilterExpression = type('FilterExpression', [ object ], {
         this.filters = filters;
         this.value = new Variable(value);
     },
-    
+
     __str__: function() {
         return this.token;
     },
@@ -399,7 +399,6 @@ var FilterExpression = type('FilterExpression', [ object ], {
     }
 });
 
-
 var Variable = type('Variable', [ object ], {
     __init__: function(value) {
         this.value = value;
@@ -410,9 +409,9 @@ var Variable = type('Variable', [ object ], {
             // No es un numero
             if (include(["'", '"'], value[0]) && value[0] == value[value.length - 1]) {
                 this.literal = value.substring(1, value.length -1);
-	    } else {
+            } else {
                 this.lookups = value.split(VARIABLE_ATTRIBUTE_SEPARATOR);
-	    }
+            }
         }
     },
 
@@ -425,7 +424,7 @@ var Variable = type('Variable', [ object ], {
             return this._resolve_lookup(context);
         } else {
             return this.literal;
-	}
+        }
     },
 
     _resolve_lookup: function(context) {
@@ -462,7 +461,7 @@ var Library = type('Library', [ object ], {
             return compile_function;
         } else {
             throw new InvalidTemplateLibrary("Unsupported arguments to Library.tag: (%s, %s)".subs(name, compile_function));
-	}
+        }
     },
 
     filter: function(name, filter_func) {
@@ -474,29 +473,29 @@ var Library = type('Library', [ object ], {
             return filter_func;
         } else {
             throw new InvalidTemplateLibrary("Unsupported arguments to Library.filter: (%s, %s)".subs(name, filter_func));
-	}
+        }
     }
 });
 
-function get_library(module_name){
+function get_library(module_name) {
     var lib = libraries[module_name];
     if (!lib) {
         try {
-	    var mod = require(module_name);
+            var mod = require(module_name);
         } catch (e if isinstance(e, LoadError)) {
-	    throw new InvalidTemplateLibrary("Could not load template library from %s, %s".subs(module_name, e));
-	}
-	lib = mod.register;
+            throw new InvalidTemplateLibrary("Could not load template library from %s, %s".subs(module_name, e));
+        }
+        lib = mod.register;
         if (lib) {
             libraries[module_name] = lib;
         } else {
             throw new InvalidTemplateLibrary("Template library %s does not have a variable named 'register'".subs(module_name));
-	}
+        }
     }
     return lib;
-};
+}
 
-publish({ 
+publish({
     TemplateSyntaxError: TemplateSyntaxError,
     TemplateDoesNotExist: TemplateDoesNotExist,
     TemplateEncodingError: TemplateEncodingError,

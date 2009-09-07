@@ -226,13 +226,15 @@ su implementación no es sencilla.
 Jhon Cownan [Cowan2005]_ adempas hace una clasificación interesante sobre la utilización de los lenguajes de 
 programación, diferenciando la *programación de sistema* de la *programación de aplicaciones*.
 
-	* *Programación de sistemas*
-		En la programación de sistemas, el programador se centra en adaptar un nuevo dominio
-		a interfases genéricas preexistentes.
-	
-	* *Programación de aplicaciones*
-		En la programación de aplicaciones, por el contrario, modela el dominio de la aplicación
-		de manera específica como paso inicial (análisis y diseño) y luego de la integración (si existe).
+    * *Programación de sistemas*
+
+        En la programación de sistemas, el programador se centra en adaptar un nuevo dominio
+        a interfases genéricas preexistentes.
+
+    * *Programación de aplicaciones*
+
+        En la programación de aplicaciones, por el contrario, modela el dominio de la aplicación
+        de manera específica como paso inicial (análisis y diseño) y luego de la integración (si existe).
 
 Podemos ejemplificar la programación de sistemas con la creación de un shellscript por parte de un administrador de sistemas basados en UNIX,
 donde existe un legnguaje de integración, shellscript [*]_ y las un set de utilidades de sistema con interfase conocida que le brindan
@@ -409,6 +411,7 @@ ciertas características que diferencian al framework de una librería o
 aplicaciones normales de usuario:
 
     * Inversion de control
+
         Al contrario que las bibliotecas en las aplicaciones de usuario, en un
         framework, el flujo de control no es manejado por el llamador,
         sino por el framework. Es decir, cuando se utilizan bibliotecas o
@@ -418,15 +421,18 @@ aplicaciones normales de usuario:
         está definido por el framework.
 
     * Comportamiento por defecto definido
+
         Un framework tiene un comportamiento por defecto definido. En cada
         componete del framework, existe un comportamineto genérico con alguna
         utilidad, que puede ser redefinido con funcionalidad del usuario.
 
     * Extensibiliad
+
         Un framework suele ser extendido por el usuario mediante redefinición o
         especialización para proveer una funcionalidad específica.
 
     * No modificabilidad del código del framework
+
         En general no se permite la modificación del código del framework. Los
         programadores pueden extender el framework, pero no modificar su código. 
 
@@ -488,15 +494,18 @@ en Smalltalk-80(TM): Como utilizar Modelo Vista Controlador [SmallMVC]_.
 Descripción del patrón:
 
     * Modelo
+
         Esta es la capa de datos, una representación de la información con la
         cual el sistema opera. La lógica de datos asegura la integridad y
         permite derivar nuevos datos.
 
     * Vista
+
         Esta es la capa de presentación del modelo, seleccionando qué mostrar y 
         cómo mostrarlo, usualmente la interfaz de usuario.
 
     * Controlador
+
         Esta capa responde a eventos, usualmente acciones del usuario, e invoca
         cambios en el modelo y probablemente en la vista.
 
@@ -766,12 +775,15 @@ recibe como primer argumento un nombre de comando de django.
 Los comandos de django permiten entre otras cosas:
 
     * startapp <nombre de aplicación>
+
         Crear una aplicación
 
     * runserver
+
         Correr el proyecto en un servidor de desarrollo.
 
     * syncdb
+
         Generar las tablas en la base de datos de las aplicaciones instaladas
 
 Módulo urls
