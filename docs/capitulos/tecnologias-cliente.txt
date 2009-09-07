@@ -494,8 +494,34 @@ instancia de ClaseB, instanceof nos retorna true tanto con ‘ClaseA’ como con
     alert(miobjeto instanceof ClassB); // true
     alert(miobjeto instanceof ClassA); // true
 
+JSON
+====
+
+JSON brinda un buen soporte al intercambio de datos, resultando de fásil
+lectura/escritura para las personas y de un rapido interpretacion/generacion
+para las maquinas. Se basa en un subconjunto del lenguaje de programación
+JavaScript, estándar ECMA-262 3ª Edición - Diciembre de 1999. Este formato de
+texto es completamente independiente del lenguaje de programacion, pero utiliza
+convenciones que son familiares para los programadores de lenguajes de la
+familia ``C'', incluyendo C, C + +, C#, Java, JavaScript, Perl, Python y muchos
+otros.
+
+JSON se basa en dos estructuras:
+* Una colección de pares nombre / valor. En varios lenguajes esto se
+  representa mediante un objeto, registro, estructura, diccionario, tabla hash,
+  introducido lista o matriz asociativa.
+* Una lista ordenada de valores. En la mayoría de los lenguajes esto se
+  representa como un arreglo, matriz, vector, lista, o secuencia.
+
+Estas son estructuras de datos universales. Prácticamente todos los lenguajes
+de programación modernos las soportan de una forma u otra. Tiene sentido que un
+formato de datos que es intercambiable con los lenguajes de programación
+también se basan en estas estructuras.
+
+Para mas informacion sobre JSON http://www.json.org/
+
 .. Note:: 
-    
+
     AJAX
     Iteradores
 

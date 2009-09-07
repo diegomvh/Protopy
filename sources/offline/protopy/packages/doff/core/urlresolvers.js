@@ -1,8 +1,8 @@
-require('doff.utils.http', 'Http404');
+require('doff.core.http', 'Http404');
 require('doff.core.exceptions', 'ViewDoesNotExist');
 
-var Resolver404 = type('Resolver404', Http404);
-var NoReverseMatch = type('NoReverseMatch', Exception);
+var Resolver404 = type('Resolver404', [ Http404 ]);
+var NoReverseMatch = type('NoReverseMatch', [ Exception ]);
 
 /*
 Convert a string version of a function name to the callable object.
@@ -76,7 +76,7 @@ var RegexURLPattern = type('RegexURLPattern', [ object ], {
     resolve: function(path) {
         var match = path.match(this.regex);
         if (bool(match)) {
-            // In both cases, pass any extra_kwargs as **kwargs.
+	    // In both cases, pass any extra_kwargs as **kwargs.
             return [this.callback, match.slice(1), this.default_args];
        }
     },
@@ -97,7 +97,7 @@ var RegexURLPattern = type('RegexURLPattern', [ object ], {
     }
 });
 
-var RegexURLResolver = type('RegexURLResolver', object, {
+var RegexURLResolver = type('RegexURLResolver', [ object ], {
     __init__: function(regex, urlconf_name, default_kwargs) {
         // regex is a string representing a regular expression.
         // urlconf_name is a string representing the module containing urlconfs.
@@ -123,7 +123,7 @@ var RegexURLResolver = type('RegexURLResolver', object, {
             if (sub_match) {
                 return [sub_match[0], sub_match[1], this.default_kwargs];
             }
-                tried.push(pattern.regex.pattern);
+            tried.push(pattern.regex.pattern);
             }
             throw new Resolver404({'tried': tried, 'path': new_path});
         }
@@ -148,7 +148,7 @@ var RegexURLResolver = type('RegexURLResolver', object, {
             return [require(mod_name, func_name), {}];
         } catch (e if isinstance(e, LoadError)) {
             throw new ViewDoesNotExist("Tried %s. Error was: %s".subs(callback, e));
-        }
+	}
     },
 
     resolve404: function() {

@@ -52,7 +52,7 @@ record also includes information such as when the record was created,
 the source line where the logging call was made, and any exception
 information to be logged.
 */
-var LogRecord = type('LogRecord', object, {
+var LogRecord = type('LogRecord', [ object ], {
     //Initialize a logging record with interesting information.
     __init__: function(name, level, pathname, lineno, msg, args, kwargs) {
         var ct = new Date();
@@ -101,7 +101,7 @@ var _default_formatter = "%(levelname)s:%(name)s:%(message)s";
 //   Filter classes and functions
 //---------------------------------------------------------------------------
 
-var Filter = type('Filter', object, {
+var Filter = type('Filter', [ object ], {
     /*
     Filter instances are used to perform arbitrary filtering of LogRecords.
 
@@ -266,7 +266,7 @@ var Manager = type('Manager', object, {
         this.disable = 0;
         this.emittedNoHandlerWarning = 0;
         this.logger_dict = {};
-	this.loggers = [];
+        this.loggers = [];
     },
 
     get_logger: function(name) {
@@ -282,21 +282,21 @@ var Manager = type('Manager', object, {
         */
         var rv = null;
         if (this.logger_dict[name]) {
-	    rv = this.logger_dict[name];
-	    if (!isinstance(rv, Logger)) {
-		var ph = rv;
-		rv = new Logger(name);
-		rv.manager = this;
-		this.logger_dict[name] = rv;
-		this._fixup_children(ph, rv);
-		this._fixup_parents(rv);
-	    }
+            rv = this.logger_dict[name];
+            if (!isinstance(rv, Logger)) {
+                var ph = rv;
+                rv = new Logger(name);
+                rv.manager = this;
+                this.logger_dict[name] = rv;
+                this._fixup_children(ph, rv);
+                this._fixup_parents(rv);
+            }
         } else {
-	    rv = new Logger(name);
-	    rv.manager = this;
-	    this.logger_dict[name] = rv;
-	    this._fixup_parents(rv);
-	    this.loggers.push(rv);
+            rv = new Logger(name);
+            rv.manager = this;
+            this.logger_dict[name] = rv;
+            this._fixup_parents(rv);
+            this.loggers.push(rv);
         }
         return rv;
     },
@@ -318,11 +318,11 @@ var Manager = type('Manager', object, {
                 if (isinstance(obj, Logger))
                     rv = obj;
                 else
-		    obj['loggers'].push(alogger);
-	    }
+                    obj['loggers'].push(alogger);
+            }
             i = substr.lastIndexOf(".");
         }
-	if (!rv)
+        if (!rv)
             rv = this.root;
         alogger.parent = rv;
     },
@@ -338,8 +338,8 @@ var Manager = type('Manager', object, {
             if (c.parent.name.slice(0, namelen) != name) {
                 alogger.parent = c.parent;
                 c.parent = alogger;
-	    }
-	}
+            }
+        }
     }
 });
 
@@ -423,7 +423,7 @@ var Logger = type('Logger', [ Filterer ], {
         if (this.manager.disable >= WARNING)
             return;
         if (this.is_enabled_for(WARNING))
-	    this._log(WARNING, msg, arguments.args, arguments.kwargs);
+            this._log(WARNING, msg, arguments.args, arguments.kwargs);
     },
 
     warn: function warn(msg) { return this.warning(msg);},
@@ -483,7 +483,7 @@ var Logger = type('Logger', [ Filterer ], {
                 throw new TypeError("level must be an integer");
             else
                 return;
-	}
+        }
         if (this.manager.disable >= level)
             return;
         if (this.is_enabled_for(level))
@@ -494,12 +494,12 @@ var Logger = type('Logger', [ Filterer ], {
         /*
         Low-level logging routine which creates a LogRecord and then calls
         all the handlers of this logger to handle the record.
-        
+
         if _srcfile:
             fn, lno, func = self.findCaller()
         else:
-	*/
-	//TODO: Agregar a sys un poco de informacion sobre la ejecucion
+        */
+        //TODO: Agregar a sys un poco de informacion sobre la ejecucion
         var [fn, lno, func] = ["(unknown file)", 0, "(unknown function)"];
         var record = new LogRecord(this.name, level, fn, lno, msg, args, kwargs);
         this.handle(record);
@@ -528,7 +528,7 @@ var Logger = type('Logger', [ Filterer ], {
         /*
         Remove the specified handler from this logger.
         */
-	var index = this.handlers.indexOf(hdlr);
+        var index = this.handlers.indexOf(hdlr);
         if (index >= 0)
             delete this.handlers[index];
     },
@@ -537,7 +537,7 @@ var Logger = type('Logger', [ Filterer ], {
         /*
         Remove all the handlers from this logger.
         */
-	this.handlers.length = 0;
+        this.handlers.length = 0;
     },
 
     call_handlers: function call_handlers(record) {
@@ -556,16 +556,16 @@ var Logger = type('Logger', [ Filterer ], {
                 var found = found + 1
                 if (record.levelno >= hdlr.level)
                     hdlr.handle(record);
-	    }
+            }
             if (!c.propagate)
                 c = null;
             else
                 c = c.parent;
-	}
+        }
         if ((found == 0) && raiseExceptions && !this.manager.emittedNoHandlerWarning) {
             alert("No handlers could be found for logger \"%s\"".subs(this.name));
             this.manager.emittedNoHandlerWarning = 1;
-	}
+        }
     },
 
     get_effective_level: function get_effective_level() {
@@ -579,7 +579,7 @@ var Logger = type('Logger', [ Filterer ], {
             if (logger.level)
                 return logger.level;
             logger = logger.parent;
-	}
+        }
         return NOTSET;
     },
 

@@ -3,7 +3,7 @@ var logging = require('logging.base');
 var FirebugHandler = type('FirebugHandler', [ logging.Handler ], {
     functions: {},
 
-    '__init__': function __init__() {
+    __init__: function() {
 
         if (window.console) {
             //Ok tengo firebug

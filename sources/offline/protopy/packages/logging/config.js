@@ -42,7 +42,7 @@ function _install_loggers(cp, hlers) {
     delete llist['root'];
 
     var existing = keys(root.manager.logger_dict);
-    
+
     for (var lname in llist) {
         opts = llist[lname];
         var logger = logging.get_logger(lname);
