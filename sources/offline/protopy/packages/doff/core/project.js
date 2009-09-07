@@ -47,6 +47,7 @@ var FakeHtml = type('FakeHtml', [ object ], {
         });
     },
 });
+
 var Project = type('Project', object, {
     is_online: true,
     NET_CHECK: 5,
@@ -160,7 +161,7 @@ var Project = type('Project', object, {
     go_offline: function() { 
         this.html.add_hooks();
     },
-	
+
     go_online: function(callback) {
         this.html.remove_hooks();
     },

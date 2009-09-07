@@ -1,4 +1,4 @@
-require('doff.core.http');
+require('doff.utils.http');
 require('doff.template.context', 'Context', 'RequestContext');
 require('doff.template.loader');
 

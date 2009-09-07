@@ -337,7 +337,7 @@ Auditando el codigo
 Una queja recurrente de los desarrolladores que trabajan con JavaScript es lo
 complejo que resulta el lenguaje para depurar errores. Encontrar errores en
 el código resulta molesto y mas todavía si la salida de los mismos no esta en un
-formato adecuado y encausada en una salida especifica.
+formato adecuado y encausada en un lugar especifico.
 
 Tradicionalmente lo que se hace para detectar errores es valerse de funciones
 `alert` diseminadas por el código con textos del estilo "Paso por aquí", pero
