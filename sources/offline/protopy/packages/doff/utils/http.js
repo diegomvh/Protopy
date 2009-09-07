@@ -36,7 +36,7 @@ function parse_uri(str) {
 /*A basic HTTP request.*/
 var HttpRequest = type ('HttpRequest', [ object ], {
 
-    __init__: function __init__(uri) {
+    __init__: function(uri) {
         this.GET = {};
         this.POST  = {};
         this.META = {};
@@ -61,20 +61,20 @@ var HttpRequest = type ('HttpRequest', [ object ], {
     get_full_path: function() {
         return '';
     },
-	
+
     get_host: function(){
-	return '%s%s'.subs(this.host, (this.port) ? ':' + this.port : ''); 
+        return '%s%s'.subs(this.host, (this.port) ? ':' + this.port : ''); 
     },
 
     build_absolute_uri: function(location) {
         if (!location)
             location = this.get_full_path();
         if (!absolute_http_url_re.test(location)) {
-	    var current_uri = '%s://%s%s'.subs(this.protocol, this.get_host(), this.path);
+            var current_uri = '%s://%s%s'.subs(this.protocol, this.get_host(), this.path);
             //TODO: algo para unir urls, quiza tocando un poco module_url
-	    location = current_uri + location;
-	}
-	return location;
+            location = current_uri + location;
+        }
+        return location;
     },
 
     is_secure: function(){
@@ -95,31 +95,31 @@ var HttpRequest = type ('HttpRequest', [ object ], {
     },
     
     is_valid: function() {
-	return !!this.path;
+        return !!this.path;
     },
 
     set method(value) {
-	this._method = value && value.toUpperCase();
+        this._method = value && value.toUpperCase();
     },
     
     get method() {
-	return this._method;
+        return this._method;
     },
 
     set post(value) {
-	this.POST = value;
+        this.POST = value;
     },
 
     get post() {
-	return this.POST;
+        return this.POST;
     },
 
     set get(value) {
-	this.GET = value;
+        this.GET = value;
     },
     
     get get() {
-	return this.GET;
+        return this.GET;
     },
 });
 
@@ -127,8 +127,8 @@ var HttpRequest = type ('HttpRequest', [ object ], {
 var HttpResponse = type('HttpResponse', object, {
     status_code: 200,
 
-    __init__: function __init__(content, content_type) {
-	content = content || '';
+    __init__: function(content, content_type) {
+        content = content || '';
         if (!content_type)
             content_type = "%s; charset=%s".subs('text/html', 'utf-8');
         if (!isinstance(content, String) && hasattr(content, '__iter__')) {
@@ -137,7 +137,7 @@ var HttpResponse = type('HttpResponse', object, {
         } else {
             this._container = [content];
             this._is_string = true;
-	}
+        }
         this.cookies = {};
 
         this._headers = {'content-type': ['Content-Type', content_type]};
