@@ -575,4 +575,95 @@ Formularios
 La aplicación
 *************
 
-RemoteSite
+Un proyecto django consta de un conjunto de aplicaciones. Podemos hacer una distinción
+entre los tipos de aplicaciones en función de su objetivo:
+
+ * Las aplicaciones de usuario
+ 	Son aquellas aplicaciones que resuelven un problema específico. Suelen estar 
+	dispuestas en un subdirectorio del proyecto.
+ 	
+ * Las aplicaciones de soporte
+ 	Las aplicaciones de soporte son las aplicaciones que resuelven un problema general,
+ 	como autenticación, envío de correo, interacción con servicos provistos por sitios
+ 	de terceros (Google Maps, Google Charts, AdSense, Yahoo Maps, Yahoo Pipes, Feedburner, etc.),
+ 	etc. Django provee varias aplicaciones que están disponibles por defecto ante la 
+ 	creación de un proyecto con el comando *create-app*.
+ 	
+ * Aplicaciones template
+ 	Esta caracterización se puede aplicar tanto a proyectos como a aplicaciones y consite
+ 	en una aplicación distribuida como plantilla para lograr una aplicación de usuario, pero
+ 	que tiene varios factores engorrosos resueltos. Podemos citar en este caso, a el proyecto
+ 	*Pinax* [*]_ que provee un conjunto de aplicaciones de soporte y aplicaciones de template.
+ 	
+ .. [*] *Pinax Project* http://pinaxproject.com/
+ 
+El enfoque inicial fue realizar un "espejo" de la aplicación que se ejecuta en el servidor 
+sobre el cliente. Django está escrito en Python y si bien la ejecución de Python es posible
+en un browser, la solución es engorrosa y no es cross-browser. En la plataforma Mozilla, la
+integración se puede realizar mediante PyXPCOM [*]_ , PyShell[*]_ y también existe una 
+extensión para XUL [*]_
+
+.. [*] *PyXPCOM*, conexión del modelo de objetos multiplataforma de Mozilla con Python, https://developer.mozilla.org/en/PyXPCOM 
+.. [*] *PyShell*, consola interactiva 
+.. [*] *Luxor, Python for XUL* http://mail.python.org/pipermail/python-announce-list/2003-March/002084.html
+
+Sobre la plataforma Windows, existen dos formas de ejecutar Python en el navegador, 
+la primera consiste en la ejecución 
+de un control ActiveX sobre el browser que cuente con el intérprete
+de Python embebdio. Un control ActiveX es un componente ejecutable empotrable, 
+que puede ser dibujado en una página web. 
+Los controles ActiveX son peligrosos en el ámbito de la web debido 
+a que fueron ideados para ser utilizados como elemento incrustable entre aplicaciones 
+o para el uso en entornos confiables. Un control ActiveX cuenta 
+con privilegios similares a los de una aplicacion tradicional sobre el equipo del clinete. 
+La mayoría de los antivirus y herramientas
+de seguridad los eliminan o hacen responsable de la seguridad al usuario a partir de 
+la ejecución del ActiveX.
+Si bien esta técncia se presenta atractiva gracias a que Python es un lenguaje que ha sido
+diseñado para ser embebdio, los controles ActiveX no cumplen con las garantías de seguridad
+necesarias para el desarrollo de aplicaciones para la web. 
+Es posible considerar esta solución "cross-browser" gracias a proyectos como
+un *host para ActiveX sobre la plataforma mozilla* [*]_ pero no es multiplatafoma. 
+
+.. [*] *ActiveX para Mozilla* http://www.iol.ie/~locka/mozilla/plugin.htm
+
+La segunda alternativa es utilizar el framework Silverlight de Microsoft, que 
+permite generar aplicaciones para browsers badasdos en la plataforma :term:`.Net`.
+Silverlight es un runtime similar al popular Adobe Flash Player, pero las 
+aplicaciones pueden ser creadas en cualquier lenguaje de la plataforma .Net, 
+incluyendo Python y Ruby [*]_ [*]_ a partir de la versión 4, auque en sus versiones
+para .Net.
+
+.. note:: 
+	Preguntar en el IRC de *pyar* desde cuando tiene la API standard IronPython
+	si no volar el párrafo
+	
+Esta tecnología exige que el navegador cuente con un plugin para la plataforma, siendo
+el más completo el desarrollado por Microsoft, propulsor de la plataforma .Net.
+IronPython es una implementación de Python sobre .Net que no cuenta con la API standard [*]_
+de la versión CPython, por lo que no se puede ejecutar django de manera nativa. 
+  
+
+.. [*] *SilverLight, a new way for Python?* http://mail.python.org/pipermail/python-list/2007-May/610021.html
+.. [*] *Sitio de Michael Frood, donde explica como ejecutar IronPython sobre .Net* http://www.voidspace.org.uk/ironpython/silverlight/index.shtml#id2
+.. [*] *Listado de Módulos de la API standard* http://docs.python.org/modindex.html 
+
+Aunque en un principio no era posible ejecutar Django sobre la IronPython, gracias
+a la popularidad del framework, con la version 2.0 se superó esta dificultad [*]_.
+
+
+.. [*] *Django On IronPython* http://www.infoq.com/news/2008/03/django-and-ironpython 
+
+Generar este espejo conlleva poseer un equivalente al framework Django que 
+pueda ser ejecutado en un browser, brindando los componentes básicos de Django:
+
+ * Mapeador Objeto Relacional
+ * Renderización de templates
+ * Asociación de expresiones regulares a funciones.
+ 
+Esta idea surge en parte gracias al proyecto "Gars On Rails" [*]_ , un equivalente al objetivo del proyecto
+sobre el framework Rails. 
+
+.. [*] *Gears On Rails* 
+
+  	
