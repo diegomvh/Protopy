@@ -12,9 +12,23 @@ Desde la perspectiva de un usuario, la Web consiste en una enorme cantidad de
 documentos interconectados a nivel mundial llamados *paginas Web*.
 En el clinete las paginas se ven mediante un programa llamado navegadores  
 
-JavaScript ha tenido durante mucho tiempo la reputación de lenguaje torpe e inadecuado para el desarrollo serio. Esto ha sido en gran parte debido a las implementaciones incompatibles del lenguaje y del DOM en varios navegadores, y al uso extenso de código "pegado" lleno de errores por parte de los aficionados. Los errores en tiempo de ejecución eran tan frecuentes y difíciles de solucionar que pocos programadores intentaban corregirlos.
+JavaScript ha tenido durante mucho tiempo la reputación de lenguaje torpe e
+inadecuado para el desarrollo serio. Esto ha sido en gran parte debido a las
+implementaciones incompatibles del lenguaje y del DOM en varios navegadores, y
+al uso extenso de código "pegado" lleno de errores por parte de los aficionados.
+Los errores en tiempo de ejecución eran tan frecuentes y difíciles de solucionar
+que pocos programadores intentaban corregirlos.
 
-La reciente aparición de navegadores con un soporte adecuado de los estándares web, frameworks para JavaScript tales como Prototype, y herramientas de depuración de alta calidad han facilitado enormemente la creación de código organizado y escalable en JavaScript, y la aparición de AJAX lo ha hecho esencial. Mientras hasta hace poco JavaScript era solo utilizado para las tareas relativamente simples y no críticas (validación de formularios y decoraciones llamativas), actualmente se está utilizando para escribir código complejo que a menudo es responsable de buena parte de la funcionalidad básica de un sitio. Los errores en tiempo de ejecución y el comportamiento imprevisible ya no son molestias de menor importancia; son errores fatales.
+La reciente aparición de navegadores con un soporte adecuado de los estándares
+web, frameworks para JavaScript tales como Prototype, y herramientas de
+depuración de alta calidad han facilitado enormemente la creación de código
+organizado y escalable en JavaScript, y la aparición de AJAX lo ha hecho
+esencial. Mientras hasta hace poco JavaScript era solo utilizado para las tareas
+relativamente simples y no críticas (validación de formularios y decoraciones
+llamativas), actualmente se está utilizando para escribir código complejo que a
+menudo es responsable de buena parte de la funcionalidad básica de un sitio. Los
+errores en tiempo de ejecución y el comportamiento imprevisible ya no son
+molestias de menor importancia; son errores fatales.
 
 **************************
 Estructura de un navegador
@@ -30,21 +44,27 @@ Navegador Web
 	
 	
 Un navegador web o *web browser*, es un software encargado de representar 
-documentos de hípertexto al usuario, siendo los lenguajes de codificación de hipertexto más 
-populares HTML y XHTML. Un navegador no solo representa los documentos de hipertexto, sino
+documentos de hípertexto al usuario, siendo los lenguajes de codificación de
+hipertexto más 
+populares HTML y XHTML. Un navegador no solo representa los documentos de
+hipertexto, sino
 que puede representar otros tipos de documentos, como imágenes
 (:term:JPEG, :term:GIF, :term:PNG, etc.), 
 sonido (:term:WAV, :term:MP3, :term:OGG) y contenido
 multimedial como video (:term:MPEG, :term:H264, :term:RM, :term:MOV), 
-e interactivos como es el caso de Macromedia Flash, applets Java o controles ActiveX en
-la plataforma Windows. Debido a la cantidad de recursos que debe manejar un navegador, 
+e interactivos como es el caso de Macromedia Flash, applets Java o controles
+ActiveX en
+la plataforma Windows. Debido a la cantidad de recursos que debe manejar un
+navegador, 
 el servidor web agrega a cada respuesta al cliente una cabecera donde le indica 
 el tipo de recurso que está engregado. Esta especificación se realiza con el 
 standard :term:MIME.
 
 
-Un navegador web acepta como entrada del usuario una URL, comunmente conocida como dirección 
-de internet. Una vez validada la URL, el navegador web descarga el recurso apuntado por la URL
+Un navegador web acepta como entrada del usuario una URL, comunmente conocida
+como dirección 
+de internet. Una vez validada la URL, el navegador web descarga el recurso
+apuntado por la URL
 mediante el protcolo HTTP.
 
 Una URL tiene el siguiente esquema, donde podemos diferenciar varios comopnentes
@@ -56,45 +76,59 @@ Una URL tiene el siguiente esquema, donde podemos diferenciar varios comopnentes
 Los componetes de una URL son:
 
 	* esquema
-		Especifica el mecanismo de comunicación. Generalmente HTTP y HTTPS en una comunicación
+		Especifica el mecanismo de comunicación. Generalmente HTTP y HTTPS en
+una comunicación
 		asegurada mediante TLS [*]_ .
 		
 	* anfitrión
-		Especifica el nombre de dominio del servidor en internet, por ejemplo: *google.com*, 
+		Especifica el nombre de dominio del servidor en internet, por ejemplo:
+*google.com*, 
 		*nasa.gov*, *wikipedia.com*, etc.
-		Se popularizó la utilización de el subdominio "www" para identificar el aniftrión
-		que ejecuta el servidor web, dando lugar a direcciones del tipo *www.google.com*, 
+		Se popularizó la utilización de el subdominio "www" para identificar el
+aniftrión
+		que ejecuta el servidor web, dando lugar a direcciones del tipo
+*www.google.com*, 
 		*www.nasa.gov*, etc.
 		
-		El *puerto* es un parametro de conexión TCP, y suele ser omitido debido a que 
+		El *puerto* es un parametro de conexión TCP, y suele ser omitido debido
+a que 
 		el esquema suele determinarlo, sindo 80 para HTTP y 443 para HTTPS. 
 		 
 	* recurso
 		Especifica dentro del servidor, la ruta para acceder al recurso
 		
 	* query
-		El parámetro query tiene sentido cuando el recurso apuntado por la ruta no
+		El parámetro query tiene sentido cuando el recurso apuntado por la ruta
+no
 		se trata de una página estática y sirve para el pasaje de parámetros.
-		El programa que genera el recurso puede recbir como argumentos estos parámetros, 
-		por ejemplo, cuando se ingresa la palaba *foo* en el buscador google, la 
+		El programa que genera el recurso puede recbir como argumentos estos
+parámetros, 
+		por ejemplo, cuando se ingresa la palaba *foo* en el buscador google,
+la 
 		url que provee el resutlado de la búsqueda es la siguiente::
 			
 			http://www.google.com/search?*q=foo*
 		
 	
 	* enlace
-		Dentro de un documento de hipertexto pueden existir destinos de enlaces, 
+		Dentro de un documento de hipertexto pueden existir destinos de
+enlaces, 
 		o enlaces internos. Gracias a este parámeto se puede enlazar a una 
 		sección epecífica de un documento, permitiendo al navegador ubicarse
 		visualmente.
 
-.. [*] *Transport Security Layer* es el sucesor de *Secure Socket Layer* (SSL), es un protocolo
-criptográfico que provee conexiones seguras a traves de una red, típicamente internet [WikiSSL2009]_ .
+.. [*] *Transport Security Layer* es el sucesor de *Secure Socket Layer* (SSL),
+es un protocolo
+criptográfico que provee conexiones seguras a traves de una red, típicamente
+internet [WikiSSL2009]_ .
 
-.. [WikiSSL2009] *Transport Layer Security*, Wikipedia, 2009, último acceso, Agosto 2009.
+.. [WikiSSL2009] *Transport Layer Security*, Wikipedia, 2009, último acceso,
+Agosto 2009.
 
-Cuando el recurso apuntado se encuentra en internet, el navegador realiza una conexión hacia
-el servidor web indicado por el dominio y mediante el prtocolo HTTP le informandole a que
+Cuando el recurso apuntado se encuentra en internet, el navegador realiza una
+conexión hacia
+el servidor web indicado por el dominio y mediante el prtocolo HTTP le
+informandole a que
 recurso dese acceder.
 
 
@@ -102,7 +136,8 @@ HTTP
 ====
 
 Para acceder al recurso *~ndefosse/introducion_lenguaje_python.html* en
-el servidor *students.unp.edu.ar*, de la url http://students.unp.edu.ar/~ndefosse/introducion_lenguaje_python.html, el
+el servidor *students.unp.edu.ar*, de la url
+http://students.unp.edu.ar/~ndefosse/introducion_lenguaje_python.html, el
 navegador conforma la siguiente consulta::
 
 	GET /~ndefosse/introduccion-lenguaje-python.html HTTP/1.1
@@ -116,37 +151,45 @@ navegador conforma la siguiente consulta::
 
 .. _http_request:
 
-Esto conforma lo que se conoce como una consulta HTTP o *HTTP Request*. En la primera
-linea se conforma de el método HTTP y el nombre del recurso, finalizando con la versión
+Esto conforma lo que se conoce como una consulta HTTP o *HTTP Request*. En la
+primera
+linea se conforma de el método HTTP y el nombre del recurso, finalizando con la
+versión
 del prtocolo que soporta el navegador (o cliente)::
 	
 	GET /~ndefosse/introduccion-lenguaje-python.html HTTP/1.1
 	
-La sgunda linea es el host al cual se accede. Un mismo servidor web puede estar publicado
-en varios dominos, mediante esta linea se puede discriminar desde cual se intenta acceder
+La sgunda linea es el host al cual se accede. Un mismo servidor web puede estar
+publicado
+en varios dominos, mediante esta linea se puede discriminar desde cual se
+intenta acceder
 al recurso::
 
 	Host: students.unp.edu.ar
 	
-El siguiente componente del *request* es la linea que identifica al cliente, en este caso
+El siguiente componente del *request* es la linea que identifica al cliente, en
+este caso
 el navegador informa que se trata de Mozila, versión 5::
 	User-Agent: Mozilla/5.0
 
 
-Una vez que el servidor web a localizado y accedido al recurso, precede a enviar la respuesta
+Una vez que el servidor web a localizado y accedido al recurso, precede a enviar
+la respuesta
 	
 .. _cliente-html:
 
 HTML
 ====
-HTML es un lenguaje de marcado que teiene como objetivo describir un documento de hipertexto.
+HTML es un lenguaje de marcado que teiene como objetivo describir un documento
+de hipertexto.
 Un documento HTML se conforma por una serie de *tags* o etiquetas.
 
 .. figure:: ../_svg/etiqueta_html.png
     
     Una etiqueta HTML.
  
-Un documento HTML está delimitado por las etiquetas o *tags* html y contiene una cabecera
+Un documento HTML está delimitado por las etiquetas o *tags* html y contiene una
+cabecera
 delimitada por *head* y un cuerpo, delmitado por *body*.
 
 .. code-block:: html
@@ -161,10 +204,12 @@ delimitada por *head* y un cuerpo, delmitado por *body*.
 		</body>
 	</html>
 
-Un documento HTML contener enlaces a recursos entendibles para el navegador, como los
+Un documento HTML contener enlaces a recursos entendibles para el navegador,
+como los
 enlaces a hojas de estilos o código javascript.
 
-La inclusión de una hoja de estilo se realiza mediante el tag *link*, de la siguiente manera:
+La inclusión de una hoja de estilo se realiza mediante el tag *link*, de la
+siguiente manera:
 
 .. code-block:: html
 
@@ -183,10 +228,12 @@ Se puede además embeber en la página el estilo, de la siguente manera
 		}
 	</style>
 	
-Al haberse incrustado el estilo en una página en particular, este solo tiene validés
+Al haberse incrustado el estilo en una página en particular, este solo tiene
+validés
 para ese recurso en particular.
 
-Otro tipo de recurso entendible para el navegador constituye la inclusión de código
+Otro tipo de recurso entendible para el navegador constituye la inclusión de
+código
 de ejecución en el clinete, mediante el tag script.
 
 .. code-block:: html
@@ -194,19 +241,22 @@ de ejecución en el clinete, mediante el tag script.
 	<script type="text/javscript" src="mi_codigo.js"></script>
 	
 Además de la inclusión de recursos javascript externos, el código javascript se
-puede embeber en el código html de varias maneras [StephenChapmanJS2009]_, entre ellas:
+puede embeber en el código html de varias maneras [StephenChapmanJS2009]_, entre
+ellas:
 
 .. code-block:: html
 
 	<script type="text/javascript">
-	<!-- // Javascript en un comentario, para pasar validadores XHTML y ocultar de navegadores
+	<!-- // Javascript en un comentario, para pasar validadores XHTML y ocultar
+de navegadores
 		// que no soporten Javascript
 		var x = 2;
 		var y = 4;
 	// -->
 	</script> 
 
-.. [StephenChapmanJS2009] *Javascript and XML*, Stephen Chapman, About.com, último acceso Agosto 2009, http://javascript.about.com/library/blxhtml.htm
+.. [StephenChapmanJS2009] *Javascript and XML*, Stephen Chapman, About.com,
+último acceso Agosto 2009, http://javascript.about.com/library/blxhtml.htm
 
 
 .. _cliente-css:
@@ -214,16 +264,21 @@ puede embeber en el código html de varias maneras [StephenChapmanJS2009]_, entr
 CSS
 ===
 
-Una hoja de estilo en cascada especfica como se va a mostrar un documento en pantalla, como
-se va a imprimir o inclusive como se realiza la pronunciación a través de un dispositivo de
+Una hoja de estilo en cascada especfica como se va a mostrar un documento en
+pantalla, como
+se va a imprimir o inclusive como se realiza la pronunciación a través de un
+dispositivo de
 lectura [W3cCSS2009]_ .
 
-El objetivo de CSS es separar el contendio de la presentación de un documento HTML o XML. Una
-hoja de estilo puede ser enlazada desde varias paginas, permitiendo mantener coherencia y 
+El objetivo de CSS es separar el contendio de la presentación de un documento
+HTML o XML. Una
+hoja de estilo puede ser enlazada desde varias paginas, permitiendo mantener
+coherencia y 
 consistencia en el estilo. 
 
 
-.. [W3cCSS2009] *Guia breve de CSS*, W3C, español, último acceso Agosto 2009, http://www.w3c.es/divulgacion/guiasbreves/HojasEstilo
+.. [W3cCSS2009] *Guia breve de CSS*, W3C, español, último acceso Agosto 2009,
+http://www.w3c.es/divulgacion/guiasbreves/HojasEstilo
 
 .. _cliente-javascript:
 
@@ -463,7 +518,8 @@ el cual se van a crear nuevos objetos. Mas precisamente, las propiedades y
 métodos del objeto prototype van a ser pasados a todas las instancias de esa
 clase.
 
-El ejemplo anterior utilizando prototype chaining quedaría de la siguiente manera:
+El ejemplo anterior utilizando prototype chaining quedaría de la siguiente
+manera:
 
 .. code-block:: javascript
 
@@ -496,6 +552,124 @@ instancia de ClaseB, instanceof nos retorna true tanto con ‘ClaseA’ como con
     alert(miobjeto instanceof ClassB); // true
     alert(miobjeto instanceof ClassA); // true
 
+AJAX
+====
+
+La expansión y masificación de la Web, llevó a que el ciclo de petición
+respuesta en el navegador resultara insuficiente para proveer al usuario de
+aplicaciones interactivas o :term:´RIA´, por este motivo se comenzo a trabajar
+sobre nuevas técnica de desarrollo que culminaron el en nacimiento de AJAX,
+acrónimo de Asynchronous JavaScript And XML (JavaScript asíncrono y XML).
+
+Una aplicacion Web que trabaje con AJAX se ejecutan en el cliente o navegador y
+mantiene una comunicación asíncrona con el servidor en segundo plano. De esta
+forma le es posible realizar cambios sobre las páginas sin necesidad de
+recargarla, lo que significa un aumento de la interactividad, velocidad y
+usabilidad en las aplicaciones.
+
+AJAX es una tecnología asíncrona, en el sentido de que los datos adicionales se
+requieren al servidor y se cargan en segundo plano sin interferir con la
+visualización ni el comportamiento de la página. JavaScript es el lenguaje en el
+que normalmente se efectúan las funciones de llamada de AJAX mientras que el
+acceso a los datos se realiza mediante XMLHttpRequest. En cualquier caso, no es
+necesario que el contenido asíncrono esté formateado en XML.
+
+En la practica AJAX no constituye una tecnología en sí, sino que es
+un término que engloba a éstas cuatro tecnologías:
+
+    * XHTML (o HTML) y hojas de estilos en cascada (CSS) para el diseño que
+acompaña a la información.
+    * Document Object Model (DOM) accedido con un lenguaje de scripting por
+parte del usuario, especialmente implementaciones ECMAScript como JavaScript y
+JScript, para mostrar e interactuar dinámicamente con la información presentada.
+    * El objeto XMLHttpRequest para intercambiar datos de forma asíncrona con el
+servidor web. En algunos frameworks y en algunas situaciones concretas, se usa
+un objeto iframe en lugar del XMLHttpRequest para realizar dichos intercambios.
+    * XML es el formato usado generalmente para la transferencia de datos
+solicitados al servidor, aunque cualquier formato puede funcionar, incluyendo
+HTML preformateado, texto plano, JSON y hasta EBML.
+
+Funcionamiento de AJAX
+----------------------
+
+# Se crea y configura un objeto XMLHttpRequest.
+# El objeto XMLHttpRequest realiza una llamada al servidor.
+# La petición se procesa en el servidor.
+# El servidor retorna un documento XML que contienen el resultado.
+# El objeto XMLHttpRequest llama a la función callback() y procesa el resultado.
+# Se actualiza el DOM (Document Object Model)de la página asociado con la
+petición con el resultado devuelto
+
+Las ventajas de AJAX
+
+* Mayor interactividad
+* Recuperación asíncrona de datos, reduciendo el tiempo de espera del usuario
+* Facilidad de manejo del usuario
+* El usuario tiene un mayor conocimiento de las aplicaciones de escritorio
+* Se reduce el tamaño de la información intercambiada
+* Portabilidad entre plataformas
+* No requieren instalación de complementos, applets de Java, ni ningún otro
+elemento
+* Código público
+
+Las desventajas de AJAX
+
+* Usabilidad: Comportamiento del usuario ante la navegación
+* Botón de volver atrás del navegador
+* Empleo de iframes ocultos para almacenar el historial
+* Empleo de fragmento identificador del URL (‘#’) y recuperación mediante
+JavaScript
+* Problema al agregar marcadores/favoritos en un momento determinado de la
+aplicación
+* Problemas al imprimir páginas renderizadas dinámicamente
+* Tiempos de respuesta entre la petición del usuario y la respuesta del
+servidor
+* Empleo de feedback visual para indicar el estado de la petición al usuario
+* Requiere que los usuarios tengan el JavaScript activado en el navegador
+* En el caso de Internet Explorer 6 y anteriores, que necesita tener
+activado el ActiveX
+
+.. note:: 
+
+    terminar este tema
+
+    A pesar de que el término «AJAX» fuese creado en 2005, la historia de las
+    tecnologías que permiten AJAX se remonta a una década antes con la iniciativa de
+    Microsoft en el desarrollo de Scripting Remoto. Sin embargo, las técnicas para
+    la carga asíncrona de contenidos en una página existente sin requerir recarga
+    completa remontan al tiempo del elemento iframe (introducido en Internet
+    Explorer 3 en 1996) y el tipo de elemento layer (introducido en Netscape 4 en
+    1997, abandonado durante las primeras etapas de desarrollo de Mozilla). Ambos
+    tipos de elemento tenían el atributo src que podía tomar cualquier dirección URL
+    externa, y cargando una página que contenga javascript que manipule la página
+    paterna, pueden lograrse efectos parecidos al AJAX.
+    
+    El Microsoft's Remote Scripting (o MSRS, introducido en 1998) resultó un
+    sustituto más elegante para estas técnicas, con envío de datos a través de un
+    applet Java el cual se puede comunicar con el cliente usando JavaScript. Esta
+    técnica funcionó en ambos navegadores, Internet Explorer versión 4 y Netscape
+    Navigator versión 4. Microsoft la utilizó en el Outlook Web Access provisto con
+    la versión 2000 de Microsoft Exchange Server.
+    
+    La comunidad de desarrolladores web, primero colaborando por medio del grupo de
+    noticias microsoft.public.scripting.remote y después usando blogs, desarrollaron
+    una gama de técnicas de scripting remoto para conseguir los mismos resultados en
+    diferentes navegadores. Los primeros ejemplos incluyen la librería JSRS en el
+    año 2000, la introducción a la técnica imagen/cookie[1] en el mismo año y la
+    técnica JavaScript bajo demanda (JavaScript on Demand)[2] en 2002. En ese año,
+    se realizó una modificación por parte de la comunidad de usuarios[3] al
+    Microsoft's Remote Scripting para reemplazar el applet Java por XMLHttpRequest.
+    
+    Frameworks de Scripting Remoto como el ARSCIF[4] aparecieron en 2003 poco antes
+    de que Microsoft introdujera Callbacks en ASP. NET.[5]
+    
+    Desde que XMLHttpRequest está implementado en la mayoría de los navegadores,
+    raramente se usan técnicas alternativas. Sin embargo, todavía se utilizan donde
+    se requiere una mayor compatibilidad, una reducida implementación, o acceso
+    cruzado entre sitios web. Una alternativa, el Terminal SVG[6] (basado en SVG),
+    emplea una conexión persistente para el intercambio continuo entre el navegador
+    y el servidor.
+
 JSON
 ====
 
@@ -524,7 +698,6 @@ Para mas informacion sobre JSON http://www.json.org/
 
 .. Note:: 
 
-    AJAX
     Iteradores
 
 ************

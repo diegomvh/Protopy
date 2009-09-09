@@ -172,8 +172,72 @@ dos funciones presentadas.
 .. code-block:: javascript Figura algo
     :linenos:
 
-     //Obtengo la funcion copy y deepcopy del modulo copy
+     /* Obtengo la funcion copy y deepcopy del modulo copy
+        estas funciones son para copia de objetos
+        superficiales y en profundidad respectivamente. */
     require('copy', 'copy', 'deepcopy');
+
+    /* Representa la cantidad maxima de caches */
+    var MAX = 1000;
+
+    /* Objeto para guardar las cache */
+    var cache = {};
+
+    ...
+
+    /* Estructura de datos que representa a una cache */
+    var Cache = type('Cache', [ Dict ], {
+        ...
+    });
+
+    /* Funcion que retorna una cache */
+    function get_cache(name) {
+        if (len(cache) > 1000)
+            throw new Exception('%s caches creadas'.subs(MAX));
+        var c = cache[name];
+        if (!isundefined(c)) {
+            c = new Cache();
+            cache[name] = c;
+        }
+        return d;
+    }
+
+    /* Publico la cantidad maxima de caches
+       la funcion para obtener caches. */
+    publish({
+        MAX: MAX,
+        get_cache: get_cache
+    });
+
+Asumiendo que el código presentado está en un archivo llamado `caches.js` en
+la url base, éste representa un módulo en sí mismo y el acceso se obtiene
+mediante la invocación de 'require('caches')'.
+
+.. note:: describir de forma rápida los módulos principales
+
+.. _protopy-tipos:
+
+Creando tipos de objeto
+=======================
+
+.. note:: Hacer la referencia al codigo anterior
+
+En el apartado teórico se toco el tema de construcción de objetos en base a
+"clases" y de la emulacion de herencia en JavaScript. Aunque muchos autores
+cuestionan estas practicas alegando, con justa razon, que no tiene sentido
+emular un paradigma dentro de otro; en la practica tener una implementación de
+objetos tipados mediante clases en JavaScript ayuda a los programadores a
+acercarse a este lenguaje y al reuso de código.
+
+La función contrcuctora de tipos en la biblioteca surgue como herramienta para
+proveer al framework de mecanismos de extensión.
+
+.. code-block:: javascript Figura algo
+    :linenos:
+
+    var Dict = type('Dict', object, {
+        ...
+    });
 
     var SortedDict = type('SortedDict', [ Dict ], {
         __init__: function(object) {
@@ -211,45 +275,6 @@ dos funciones presentadas.
             return super(Dict, this).unset(key);
         }
     });
-
-    //Publico el tipo de objeto SortedDict
-    publish({ 
-        SortedDict: SortedDict 
-    });
-
-Asumiendo que el código presentado está en un archivo llamado `sortedict.js` en
-la url base, éste representa un módulo en sí mismo y el acceso se obtiene
-mediante la invocación de 'require('sortedict')'. El ejemplo presenta muchas
-cosas nuevas, que serán abordadas a lo largo de este apartado, por ahora sólo
-interesa la parte que corresponde al requerimiento de `copy` y la publicación de
-`SortedDict`.
-
-La primera líneas del ejemplo incian requirendo la funcion copy y deepcopy del
-módulo `copy`, ambas funciones se utilizan para realizar copias de objetos,
-superficial y en profundidad respectivamente. El ejemplo continua con una
-definición de un nuevo tipo de objeto llamado `SortedDict` que posteriormente
-publica en la ultima linea de código.
-
-.. note:: queda mas o menos claro?
-
-.. note:: describir de forma rápida los módulos principales
-
-.. _protopy-tipos:
-
-Creando tipos de objeto
-=======================
-
-.. note:: Hacer la referencia al codigo anterior
-
-En el apartado teórico se toco el tema de construcción de objetos en base a
-"clases" y de la emulacion de herencia en JavaScript. Aunque muchos autores
-cuestionan estas practicas alegando, con justa razon, que no tiene sentido
-emular un paradigma dentro de otro; en la practica tener una implementación de
-objetos tipados mediante clases en JavaScript ayuda a los programadores a
-acercarse a este lenguaje y al reuso de código.
-
-La función contrcuctora de tipos en la biblioteca surgue como herramienta para
-proveer al framework de mecanismos de extensión.
 
 Protopy define un constructor de "tipos de objetos" llamado `type`. Notese que
 aquí nos referimos a tipos y no a clases.
@@ -499,7 +524,7 @@ debe limitarse a hacer uso de él y asegurar la correcta sincronizacion de datos
 entre el cliente y el servidor web, este tema se retomara en el capitulo de
 sincronizacion.
 
-XML?
+XML
 ---
 
 No existe una razon concreta por la cual se deja de lado el soporte en Protopy
