@@ -80,7 +80,8 @@ sentencias JavaScript y las interpreta en el contexto del documento.
 El enfoque tradicional resulta sustentable para pequeños proyectos, donde el
 lenguaje brinda mayormente soporte a la interacción con el usuario (validacion,
 accesibilidad, etc) y los fragmentos de código que se pasan al cliente son
-bien conocidos por el desarrollador, pero en proyectos que implican mayor cantidad
+bien conocidos por el desarrollador, pero en proyectos que implican mayor
+cantidad
 de funcionalidad JavaScript, con grandes cantidades de código, este enfoque
 resulta complejo de mantener y evolucionar en el tiempo. Es por esto que para
 Protopy se busco como primera medida una forma de organizar y obtener el código
@@ -116,7 +117,8 @@ Obtener un módulo
 
 La función `require` es la encargada de obtener un módulo del servidor e
 incorporarlo al :ref:`espacio de nombres <servidor-lenguajes-python>` del
-llamador. Por ejemplo, cuando un módulo llamado spam es requerido, Protopy busca un archivo
+llamador. Por ejemplo, cuando un módulo llamado spam es requerido, Protopy busca
+un archivo
 llamado spam.js en la url base [*]_, de no encontrar el archivo el error
 ``LoadError`` es lanzado a la función que requirio el módulo.
 
@@ -133,7 +135,8 @@ ubicación, por otra parte si sys.paths no contiene una url asociada a foo el
 archivo foo/spam.js es buscado en la url base. 
 
 El uso del objeto sys.paths permite a los modulos de JavaScript que saben lo
-que están haciendo modificar o reemplazar el camino de búsqueda para los módulos.
+que están haciendo modificar o reemplazar el camino de búsqueda para los
+módulos.
 Nótese que es importante que el script no tenga el mismo nombre que un
 :ref:`módulo estandar <apendices-protopy-modulos>`.
 
@@ -152,7 +155,8 @@ Para ver más :ref:`Apendice Protopy <apendices-protopy>`.
 Publicar un módulo
 ------------------
 
-La acción de publicar un modulo implica exponer la funcionalidad que este define.
+La acción de publicar un modulo implica exponer la funcionalidad que este
+define.
 En Python no es necesario explicitar que funcionalidad del módulo se expone a
 los llamadores, ya que todo lo definido en él es público; pero los módulos en
 Protopy se evaluan dentro de una clausura y los llamadores no podran acceder
@@ -241,7 +245,8 @@ proveer al framework de mecanismos de extensión.
 
     var SortedDict = type('SortedDict', [ Dict ], {
         __init__: function(object) {
-            this.keyOrder = (object && isinstance(object, SortedDict))? copy(object.keyOrder) : [];
+            this.keyOrder = (object && isinstance(object, SortedDict))?
+copy(object.keyOrder) : [];
             super(Dict, this).__init__(object);
         },
         __iter__: function() {
@@ -355,7 +360,8 @@ Envolviendo a gears
 ===================
 
 La biblioteca puede funcionar independiente de la instalación de Google Gears,
-debido a que su principal funcionalidad como ya se menciono es la de extención de
+debido a que su principal funcionalidad como ya se menciono es la de extención
+de
 JavaScript y posterior soporte al framework, pese a esto Protopy provee
 mecanismos para uniformar el acceso y extender los objetos de Gears cuando éste
 se encuentra instalado en el navegador.
@@ -381,20 +387,27 @@ comienzo de del desarrollo y fue una idea que se maduro luego de observar que
 resultaba complejo y costoso requerir los módulos que involucraban a Gears
 desde distintos lugares.
 
-El desarrollo del framework implico extender algunos objetos Gears, concretamente
+El desarrollo del framework implico extender algunos objetos Gears,
+concretamente
 al paquete `gears` se incorporaron los siguientes módulos:
 
     * desktop
 
-        El objeto `desktop` de Gears permite interactuar con el escritorio del cliente. 
-        Aquí se extendio la creacción de accesos directos para simplificar la generación
-        de los mismos y agregar la posibilidad de manejar `Icon` y algunos `IconTheme`.
+        El objeto `desktop` de Gears permite interactuar con el escritorio del
+cliente. 
+        Aquí se extendio la creacción de accesos directos para simplificar la
+generación
+        de los mismos y agregar la posibilidad de manejar `Icon` y algunos
+`IconTheme`.
 
     * database
 
-        Sobre el objeto `database` se agrego funcionalidad uniformar el acceso a la base
-        de datos por los módulos de Protopy y encapsular los `ResulSet` en cursores a
-        los que se incorporo iteradores, registro de funciones para tipos de datos, etc.
+        Sobre el objeto `database` se agrego funcionalidad uniformar el acceso a
+la base
+        de datos por los módulos de Protopy y encapsular los `ResulSet` en
+cursores a
+        los que se incorporo iteradores, registro de funciones para tipos de
+datos, etc.
 
 Auditando el codigo
 ===================
@@ -526,7 +539,8 @@ disparados.
 
 En el ejemplo se presentan dos funciones, onSuccess y onFailure, para manejar
 los eventos correspondientes. A cada manejador se le pasa un objeto que
-representa la respuesta obtenida y que esta en relación con el evento capturando.
+representa la respuesta obtenida y que esta en relación con el evento
+capturando.
 
 Otros manejadores que se pueden definir son:
     
@@ -588,17 +602,20 @@ Ejecutando codigo remoto
 .. XML-RPC http://www.xmlrpc.com/
 El RPC (del inglés Remote Procedure Call, Llamada a Procedimiento Remoto) es un
 protocolo que permite a un programa de ordenador ejecutar código en otra máquina
-remota sin tener que preocuparse por las comunicaciones entre ambos. El protocolo
+remota sin tener que preocuparse por las comunicaciones entre ambos. El
+protocolo
 es un gran avance sobre los sockets usados hasta el momento. De esta manera el
 programador no tenía que estar pendiente de las comunicaciones, estando éstas
 encapsuladas dentro de las RPC.
 
 Las RPC son muy utilizadas dentro del paradigma cliente-servidor. Siendo el
 cliente el que inicia el proceso solicitando al servidor que ejecute cierto
-procedimiento o función y enviando éste de vuelta el resultado de dicha operación
+procedimiento o función y enviando éste de vuelta el resultado de dicha
+operación
 al cliente.
 
-Hay distintos tipos de RPC, muchos de ellos estandarizados como pueden ser el RPC
+Hay distintos tipos de RPC, muchos de ellos estandarizados como pueden ser el
+RPC
 de Sun denominado ONC RPC (RFC 1057), el RPC de OSF denominado DCE/RPC y el
 Modelo de Objetos de Componentes Distribuidos de Microsoft DCOM, aunque ninguno
 de estos es compatible entre sí. La mayoría de ellos utilizan un lenguaje de
@@ -606,7 +623,8 @@ descripción de interfaz (IDL) que define los métodos exportados por el servido
 
 Hoy en día se está utilizando el XML como lenguaje para definir el IDL y el HTTP
 como protocolo de red, dando lugar a lo que se conoce como servicios web.
-Ejemplos de éstos pueden ser SOAP o XML-RPC. XML-RPC es un protocolo de llamada a
+Ejemplos de éstos pueden ser SOAP o XML-RPC. XML-RPC es un protocolo de llamada
+a
 procedimiento remoto que usa XML para codificar los datos y HTTP como protocolo
 de transmisión de mensajes.[1]
 
@@ -636,11 +654,156 @@ la conexion con el servidor web, estos datos deben ser transimitos a la base de
 datos central para su actulizacion y posterior sincronizacion del resto de los
 clinetes.
 
+El framework fue construido con el objeto de ser compatible con los modelos y
+las plantillas de django, intentando acercar así al desarrollador que tenga
+experiencia en este framework.
+
 Modelos
 =======
 
+.. note:: 
+
+    Hacer la referencia correspondiente al anexo de modelos
+
 Plantillas
 ==========
+
+Doff brinda soporte al sistema de plantillas de Django. La idea detras de esto
+es que las plantillas creadas para una apilcacion on-line en Django pueda ser
+utilizada en la aplicación off-line de una forma simple y mantenible.
+
+Retomando el ejemplo presentado en la seccion de plantillas en Django,
+continuamos desde aquí describiendo como es el trabajo con esta plantilla en
+Doff.
+
+Rapidamente, la forma de obtener un producto de la plantilla es:
+
+    # Crea un objeto ``Template`` brindando el código crudo de la plantilla
+       como una cadena.
+
+    # Llama al método ``render()`` del objeto ``Template`` con un conjunto de
+       variables (o sea, el contexto). Este retorna una plantilla totalmente
+       renderizada como una cadena de caracteres, con todas las variables y
+       etiquetas de bloques evaluadas de acuerdo al contexto.
+
+Creación de objetos Template
+----------------------------
+
+Doff provee su versión del objeto ``Template`` para crear plantillas, y esté
+puede ser importado del módulo ``doff.template.base``, el argumento para la
+construccion del objeto es el texto en crudo de la plantilla. 
+
+    >>> require('doff.template.base', 'Template');
+    >>> t = new Template("Mi nombre es {{ name }}.");
+    >>> print(t);
+
+En este ejemplo `t` es un objeto template listo para ser renderizado. Si se
+obtubo el objeto es porque la plantilla esta correctamente analizada y no se
+econtraron errores en la misma, algunos errores por los que puede fallar la
+construccion son:
+
+    * Bloques de etiquetas inválidos
+    * Argumentos inválidos de una etiqueta válida
+    * Filtros inválidos
+    * Argumentos inválidos para filtros válidos
+    * Sintaxis de plantilla inválida
+    * Etiquetas de bloque sin cerrar (para etiquetas de bloque que requieran la
+      etiqueta de cierre)
+
+En todos los casos el sistema lanza una excepción ``TemplateSyntaxError``.
+
+Renderizar una plantilla
+------------------------
+
+Una vez que se tiene el objeto ``Template``, se esta en condiciones de obtener
+una salida procesada en un determinado *contexto*. Un contexto es simplemente un
+conjunto de variables y sus valores asociados. Una plantilla usa las variables
+para poblar la plantilla evaluando las etiquetas de bloque.
+
+El contexto esta representado en el tipo ``Context``, el cual se encuentra en el
+módulo ``doff.template.base``. La construccion del objeto toma un argumento
+opcional: un hash mapeando nombres de variables con valores. La llamada al
+método ``render()`` del objeto ``Template`` con el contexto "rellena" la
+plantilla::
+
+    >>> requiere('doff.template.base', 'Context', 'Template');
+    >>> t = new Template("Mi nombre es {{ name }}.")
+    >>> c = new Context({"name": "Pedro"})
+    >>> t.render(c)
+    'My name is Pedro.'
+
+El objeto ``Template`` puede ser renderizado con múltiples contextos, obteniendo
+así salidas diferentes para la misma plantilla. Por cuestiones de eficiencia es
+conveniente crear un objeto ``Template`` y luego llamar a ``render()``
+sobre este muchas veces::
+
+    # Mal chico
+    for each (var name in ['John', 'Julie', 'Pat']) {
+        var t = new Template('Hello, {{ name }}');
+        print(t.render(new Context({'name': name})));
+    }
+
+    # Buen chico
+    t = new Template('Hello, {{ name }}');
+    for each (var name in ['John', 'Julie', 'Pat'])
+        print(t.render(new Context({'name': name})));
+
+Al igual que en Django el objeto contexto puede contener variables mas complejas
+y la forma de inspeccionar dentro de estas es con el operador `.`. Usando el
+punto se puede acceder a objetos, atributos, índices, o métodos de un objeto.
+
+Cuando un sistema de plantillas encuentra un punto en una variable el orden de
+busqueda es el siguiente:
+
+    * Diccionario (por ej. ``foo["bar"]``)
+    * Atributo (por ej. ``foo.bar``)
+    * Llamada de método (por ej. ``foo.bar()``)
+    * Índice de lista (por ej. ``foo[bar]``)
+
+El sistema utiliza el primer tipo de búsqueda que funcione. Es la lógica de
+cortocircuito.
+
+Para terminar con este objeto, si una variable no existe en el contexto, el
+sistema de plantillas renderiza este como un string vacío, fallando
+silenciosamente. Es posible cambiar este comportamiento modificando el valor de
+la variable de configuración `TEMPLATE_STRING_IF_INVALID` en el módulo
+`settings`.
+
+Cargador de plantillas
+----------------------
+
+Se ve a continuación un ejemplo de una vista que retorna HTML generado por una
+plantilla::
+
+    require('doff.template.base', 'Template', 'Context');
+    require('doff.utils.http', 'HttpResponse');
+    require('doff.template.loader', 'get_template');
+
+    function current_datetime(request) {
+        var t = get_template('mytemplate.html');
+        html = t.render(new Context({'current_date': new Date()}))
+        return new HttpResponse(html);
+    }
+
+En esta vista se utiliza la API para cargar plantillas, a la cual se accede 
+mediante la funcion `get_template`, antes de poder utilizar esta funcion es
+necesario indicarle al framework donde están las plantillas. El lugar para hacer
+esto es en el *archivo de configuración*.
+
+Existen varios cargadores de plantillas que se pueden habilitar en el archivo de 
+configuración, este se vera en profundidad en el Apéndice E, por ahora se vera
+el cargador realacionado con la variable de configuración ``TEMPLATE_URL``. Esta
+variable le indica al mecanismo de carga de plantillas dónde buscar las
+plantillas. Por omisión, ésta es una cadena vacia. El valor para esta varible es
+la url del servidor en donde se sirven los templates que se renderizan
+localmente, por defecto si no se especifica la variable los archivos se buscan
+en la base del soporte off-line /templates/.
+
+.. note:: 
+
+    Terminar esto. con el tema de la base del soporte off-line
+    Introducir el concepto al inicio de doff
+    Hacer la referencia correspondiente al anexo de plantillas
 
 Formularios
 ===========
@@ -649,84 +812,117 @@ Formularios
 La aplicación
 *************
 
-Un proyecto django consta de un conjunto de aplicaciones. Podemos hacer una distinción
+Un proyecto django consta de un conjunto de aplicaciones. Podemos hacer una
+distinción
 entre los tipos de aplicaciones en función de su objetivo:
 
  * Las aplicaciones de usuario
- 	Son aquellas aplicaciones que resuelven un problema específico. Suelen estar 
+ 	Son aquellas aplicaciones que resuelven un problema específico. Suelen
+estar 
 	dispuestas en un subdirectorio del proyecto.
  	
  * Las aplicaciones de soporte
- 	Las aplicaciones de soporte son las aplicaciones que resuelven un problema general,
- 	como autenticación, envío de correo, interacción con servicos provistos por sitios
- 	de terceros (Google Maps, Google Charts, AdSense, Yahoo Maps, Yahoo Pipes, Feedburner, etc.),
- 	etc. Django provee varias aplicaciones que están disponibles por defecto ante la 
+ 	Las aplicaciones de soporte son las aplicaciones que resuelven un problema
+general,
+ 	como autenticación, envío de correo, interacción con servicos provistos por
+sitios
+ 	de terceros (Google Maps, Google Charts, AdSense, Yahoo Maps, Yahoo Pipes,
+Feedburner, etc.),
+ 	etc. Django provee varias aplicaciones que están disponibles por defecto
+ante la 
  	creación de un proyecto con el comando *create-app*.
  	
  * Aplicaciones template
- 	Esta caracterización se puede aplicar tanto a proyectos como a aplicaciones y consite
- 	en una aplicación distribuida como plantilla para lograr una aplicación de usuario, pero
- 	que tiene varios factores engorrosos resueltos. Podemos citar en este caso, a el proyecto
- 	*Pinax* [*]_ que provee un conjunto de aplicaciones de soporte y aplicaciones de template.
+ 	Esta caracterización se puede aplicar tanto a proyectos como a aplicaciones
+y consite
+ 	en una aplicación distribuida como plantilla para lograr una aplicación de
+usuario, pero
+ 	que tiene varios factores engorrosos resueltos. Podemos citar en este caso,
+a el proyecto
+ 	*Pinax* [*]_ que provee un conjunto de aplicaciones de soporte y
+aplicaciones de template.
  	
  .. [*] *Pinax Project* http://pinaxproject.com/
  
-El enfoque inicial fue realizar un "espejo" de la aplicación que se ejecuta en el servidor 
-sobre el cliente. Django está escrito en Python y si bien la ejecución de Python es posible
-en un browser, la solución es engorrosa y no es cross-browser. En la plataforma Mozilla, la
-integración se puede realizar mediante PyXPCOM [*]_ , PyShell[*]_ y también existe una 
+El enfoque inicial fue realizar un "espejo" de la aplicación que se ejecuta en
+el servidor 
+sobre el cliente. Django está escrito en Python y si bien la ejecución de Python
+es posible
+en un browser, la solución es engorrosa y no es cross-browser. En la plataforma
+Mozilla, la
+integración se puede realizar mediante PyXPCOM [*]_ , PyShell[*]_ y también
+existe una 
 extensión para XUL [*]_
 
-.. [*] *PyXPCOM*, conexión del modelo de objetos multiplataforma de Mozilla con Python, https://developer.mozilla.org/en/PyXPCOM 
+.. [*] *PyXPCOM*, conexión del modelo de objetos multiplataforma de Mozilla con
+Python, https://developer.mozilla.org/en/PyXPCOM 
 .. [*] *PyShell*, consola interactiva 
-.. [*] *Luxor, Python for XUL* http://mail.python.org/pipermail/python-announce-list/2003-March/002084.html
+.. [*] *Luxor, Python for XUL*
+http://mail.python.org/pipermail/python-announce-list/2003-March/002084.html
 
-Sobre la plataforma Windows, existen dos formas de ejecutar Python en el navegador, 
+Sobre la plataforma Windows, existen dos formas de ejecutar Python en el
+navegador, 
 la primera consiste en la ejecución 
 de un control ActiveX sobre el browser que cuente con el intérprete
 de Python embebdio. Un control ActiveX es un componente ejecutable empotrable, 
 que puede ser dibujado en una página web. 
 Los controles ActiveX son peligrosos en el ámbito de la web debido 
-a que fueron ideados para ser utilizados como elemento incrustable entre aplicaciones 
+a que fueron ideados para ser utilizados como elemento incrustable entre
+aplicaciones 
 o para el uso en entornos confiables. Un control ActiveX cuenta 
-con privilegios similares a los de una aplicacion tradicional sobre el equipo del clinete. 
+con privilegios similares a los de una aplicacion tradicional sobre el equipo
+del clinete. 
 La mayoría de los antivirus y herramientas
-de seguridad los eliminan o hacen responsable de la seguridad al usuario a partir de 
+de seguridad los eliminan o hacen responsable de la seguridad al usuario a
+partir de 
 la ejecución del ActiveX.
-Si bien esta técncia se presenta atractiva gracias a que Python es un lenguaje que ha sido
-diseñado para ser embebdio, los controles ActiveX no cumplen con las garantías de seguridad
+Si bien esta técncia se presenta atractiva gracias a que Python es un lenguaje
+que ha sido
+diseñado para ser embebdio, los controles ActiveX no cumplen con las garantías
+de seguridad
 necesarias para el desarrollo de aplicaciones para la web. 
 Es posible considerar esta solución "cross-browser" gracias a proyectos como
-un *host para ActiveX sobre la plataforma mozilla* [*]_ pero no es multiplatafoma. 
+un *host para ActiveX sobre la plataforma mozilla* [*]_ pero no es
+multiplatafoma. 
 
 .. [*] *ActiveX para Mozilla* http://www.iol.ie/~locka/mozilla/plugin.htm
 
 La segunda alternativa es utilizar el framework Silverlight de Microsoft, que 
-permite generar aplicaciones para browsers badasdos en la plataforma :term:`.Net`.
+permite generar aplicaciones para browsers badasdos en la plataforma
+:term:`.Net`.
 Silverlight es un runtime similar al popular Adobe Flash Player, pero las 
 aplicaciones pueden ser creadas en cualquier lenguaje de la plataforma .Net, 
-incluyendo Python y Ruby [*]_ [*]_ a partir de la versión 4, auque en sus versiones
+incluyendo Python y Ruby [*]_ [*]_ a partir de la versión 4, auque en sus
+versiones
 para .Net.
 
 .. note:: 
 	Preguntar en el IRC de *pyar* desde cuando tiene la API standard IronPython
 	si no volar el párrafo
 	
-Esta tecnología exige que el navegador cuente con un plugin para la plataforma, siendo
+Esta tecnología exige que el navegador cuente con un plugin para la plataforma,
+siendo
 el más completo el desarrollado por Microsoft, propulsor de la plataforma .Net.
-IronPython es una implementación de Python sobre .Net que no cuenta con la API standard [*]_
+IronPython es una implementación de Python sobre .Net que no cuenta con la API
+standard [*]_
 de la versión CPython, por lo que no se puede ejecutar django de manera nativa. 
   
 
-.. [*] *SilverLight, a new way for Python?* http://mail.python.org/pipermail/python-list/2007-May/610021.html
-.. [*] *Sitio de Michael Frood, donde explica como ejecutar IronPython sobre .Net* http://www.voidspace.org.uk/ironpython/silverlight/index.shtml#id2
-.. [*] *Listado de Módulos de la API standard* http://docs.python.org/modindex.html 
+.. [*] *SilverLight, a new way for Python?*
+http://mail.python.org/pipermail/python-list/2007-May/610021.html
+.. [*] *Sitio de Michael Frood, donde explica como ejecutar IronPython sobre
+.Net* http://www.voidspace.org.uk/ironpython/silverlight/index.shtml#id2
+.. [*] *Listado de Módulos de la API standard*
+http://docs.python.org/modindex.html 
 
-Aunque en un principio no era posible ejecutar Django sobre la IronPython, gracias
-a la popularidad del framework, con la version 2.0 se superó esta dificultad [*]_.
+Aunque en un principio no era posible ejecutar Django sobre la IronPython,
+gracias
+a la popularidad del framework, con la version 2.0 se superó esta dificultad
+[*]_.
 
 
-.. [*] *Django On IronPython* http://www.infoq.com/news/2008/03/django-and-ironpython 
+.. [*] *Django On IronPython*
+http://www.infoq.com/news/2008/03/django-and-ironpython 
 
 Generar este espejo conlleva poseer un equivalente al framework Django que 
 pueda ser ejecutado en un browser, brindando los componentes básicos de Django:
@@ -735,7 +931,8 @@ pueda ser ejecutado en un browser, brindando los componentes básicos de Django:
  * Renderización de templates
  * Asociación de expresiones regulares a funciones.
  
-Esta idea surge en parte gracias al proyecto "Gars On Rails" [*]_ , un equivalente al objetivo del proyecto
+Esta idea surge en parte gracias al proyecto "Gars On Rails" [*]_ , un
+equivalente al objetivo del proyecto
 sobre el framework Rails. 
 
 .. [*] *Gears On Rails* 
