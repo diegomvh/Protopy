@@ -18,6 +18,7 @@ var FakeHtml = type('FakeHtml', [ object ], {
         $$('body')[0].insert(this.body);
         this.update(content);
     },
+
     update: function(content) {
         this.remove_hooks();
         var head = content.match(new RegExp('<head[^>]*>([\\S\\s]*?)<\/head>', 'im'));

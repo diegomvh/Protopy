@@ -491,8 +491,57 @@ código en la consola de firebug y en una url con distintos formatos.
 
 Interactuando con el servidor
 =============================
-.. HttpRequest
 
+Protopy permite al desarrollador trabajar con AJAX de forma simple y segura,
+encapuslando en objetos la lógica de petición y los valores de retorno del
+servidor.
+
+Todo lo relacionado con AJAX se encuentra en el modulo `ajax`. El objeto de
+transporte para ajax es `XMLHttpRequest` e internamente se salvan las
+diferencias que existen entre los distintos navegadores. La forma de realizar
+una peticion es creando una instancia del objeto ajax.Request.
+
+.. code-block:: javascript
+
+    new ajax.Request('una/url', {method: 'get'});
+
+La primera opcion es la url de la solicitud, y el segundo parametro es el hash
+de opciones, en este caso el metodo a utilizar es GET, si no se especifica, el
+metodo por defecto es POST.
+
+Por defecto la respuesta del servidor es asincrona, para este caso se debe
+explicitar en el hash de opciones las funciones que manejaran los eventos
+disparados.   
+
+.. code-block:: javascript
+
+    new ajax.Request('una/url', { 
+        method:'get',
+        onSuccess: function(transport){ 
+            var response = transport.responseText || "sin texto";
+            alert("Success! \n\n" + response); }, 
+        onFailure: function(){ 
+            alert('Algo esta mal...'); } 
+    }); 
+
+En el ejemplo se presentan dos funciones, onSuccess y onFailure, para manejar
+los eventos correspondientes. A cada manejador se le pasa un objeto que
+representa la respuesta obtenida y que esta en relación con el evento capturando.
+
+Otros manejadores que se pueden definir son:
+    
+    * onUninitialized
+    * onLoading
+    * onLoaded
+    * onInteractive
+    * onComplete
+    * onException 
+
+Todos estos dependen de un estado del objeto `XMLHttpRequest`.
+
+De igual manera que el resto de las opciones es posible agregar parametros a la
+peticion, estos pueden ser pasados como un objeto "hasheable" o como una cadena
+clave-valor.
 
 Soporte para json
 =================
