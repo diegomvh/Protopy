@@ -649,6 +649,9 @@ Formularios
 La aplicación
 *************
 
+.. note::
+	Esto tendría que ir en el apartado de Django
+
 Un proyecto django consta de un conjunto de aplicaciones. Podemos hacer una distinción
 entre los tipos de aplicaciones en función de su objetivo:
 
@@ -671,10 +674,24 @@ entre los tipos de aplicaciones en función de su objetivo:
  	
  .. [*] *Pinax Project* http://pinaxproject.com/
  
+
+
+Tras la elección de Django como framework web, se emprendió el análisis de las posiblidades de 
+ejecución de una aplicación web dearrollada en Django en el browser.
+Surgen puntos de interes como: *si es posible ejecutar el esquema de
+servidor web en un cliente*, *es posible ejecutar Python y mod_wsgi en el cliente*,
+*que posibilidades hay de brindar seguridad sobre los datos que se
+transfieran al cliente*, *una vez lograda la transferencia de una aplicación web al clinete,
+que posiblidad existe de sincronizar los datos con la aplicación "madre"*,
+entre otras que se analizaran más adelante en el texto. 
+
+En un principio, el código, los datos y algún modo de realizar el arranque de 
+la aplicación.
+ 
 El enfoque inicial fue realizar un "espejo" de la aplicación que se ejecuta en el servidor 
 sobre el cliente. Django está escrito en Python y si bien la ejecución de Python es posible
 en un browser, la solución es engorrosa y no es cross-browser. En la plataforma Mozilla, la
-integración se puede realizar mediante PyXPCOM [*]_ , PyShell[*]_ y también existe una 
+integración se puede realizar mediante PyXPCOM [*]_ , PyShell [*]_ y también existe una 
 extensión para XUL [*]_
 
 .. [*] *PyXPCOM*, conexión del modelo de objetos multiplataforma de Mozilla con Python, https://developer.mozilla.org/en/PyXPCOM 
@@ -705,8 +722,8 @@ La segunda alternativa es utilizar el framework Silverlight de Microsoft, que
 permite generar aplicaciones para browsers badasdos en la plataforma :term:`.Net`.
 Silverlight es un runtime similar al popular Adobe Flash Player, pero las 
 aplicaciones pueden ser creadas en cualquier lenguaje de la plataforma .Net, 
-incluyendo Python y Ruby [*]_ [*]_ a partir de la versión 4, auque en sus versiones
-para .Net.
+incluyendo Python y Ruby [*]_ [*]_ a partir de la versión 4, bajo sus implementaciones
+sobre CLR.
 
 .. note:: 
 	Preguntar en el IRC de *pyar* desde cuando tiene la API standard IronPython
@@ -727,6 +744,21 @@ a la popularidad del framework, con la version 2.0 se superó esta dificultad [*
 
 
 .. [*] *Django On IronPython* http://www.infoq.com/news/2008/03/django-and-ironpython 
+
+Gracias a la posibilidad de acceso a DOM por medio de una aplicación construida con
+Silverlight [*]_ y al  almacenamiento local en el clinete introducido en 
+en Silverligh 2.0, se hace posible ejecutar Django en el cliente con accceso a 
+una base de datos local.
+
+La posiblidad de almacenamiento.
+
+
+.. [*] *Silverlight Tutorial - Interaction With The DOM* http://www.switchonthecode.com/tutorials/silverlight-tutorial-interaction-with-the-dom
+.. [*] *Isolated Storage in Silverlight 2.0* http://www.ddj.com/windows/208300036
+.. [*] *Silverlight out-of-browser apps: Local Data Store* http://nerddawg.blogspot.com/2009/04/silverlight-out-of-browser-apps-local.html
+.. note:: 
+	Una vez que
+
 
 Generar este espejo conlleva poseer un equivalente al framework Django que 
 pueda ser ejecutado en un browser, brindando los componentes básicos de Django:
