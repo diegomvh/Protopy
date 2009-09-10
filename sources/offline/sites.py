@@ -238,8 +238,8 @@ class RemoteSite(RemoteBaseSite):
         except Http404, e:
             match = re.compile(r'^(?P<app_name>.*)/models.js$').match(path)
             if match:
-                match.groupdict()['app_name']
-                return render_to_response('djangoffline/models_example.js', mimetype = 'text/javascript')
+                app = match.groupdict()['app_name']
+                return self.export_models(app)
             raise e
 
     @expose(r'^network_check/?$')
@@ -387,37 +387,22 @@ class RemoteSite(RemoteBaseSite):
     #===========================================================================
     # Models
     #===========================================================================
-    @expose(r'^export/(?P<app_name>.*)/models.js$')
-    def export_models_for_app(self, request, app_name):
-        return render_to_response('djangoffline/models_example.js', mimetype = 'text/javascript')
-
-    @expose(r'^export_/(?P<app_name>.*)/models.js$')
-    def export_models_for_app_(self, request, app_name):
+    def export_models(self, app_name):
         from django.db.models.loading import get_app, get_models
         from offline.export_models import export_remotes
 
         try:
 
-            model_remotes = filter(lambda x: x._meta.app_label == app_name, self._registry.values())
-            #print model_remotes
-            #app = get_app(app_name)
-
-            #app_models = get_models(app)
+            model_remotes = filter(lambda x: x._meta.app_label == app_name, self._registry[app_name].values())
             models = export_remotes(model_remotes)
 
             return render_to_response('djangoffline/models.js', 
-                           locals(),
+                           {'models': models, 'app': app_name, 'site': self},
                            mimetype = 'text/javascript')
 
         except ImproperlyConfigured, e:
             return HttpResponseNotFound(str(e))
 
-#        return render_to_response('djangoffline/models.js', locals(),
-#                              mimetype = 'text/javascript')
-#        
-#        
-#        return HttpResponse('a', mimetype = 'text/javascript')
-    
     #===========================================================================
     # Model handling
     #===========================================================================
@@ -438,8 +423,9 @@ class RemoteSite(RemoteBaseSite):
                                 (RemoteModelProxy, ), 
                                 {'Meta': RemoteOptions(basic_meta)} )
 
-        self._registry[model] = remote_proxy
-        
+        app = self._registry.setdefault(model._meta.app_label, {})
+        app[model] = remote_proxy
+
         signals.post_save.connect(self.model_saved, model)
         signals.post_delete.connect(self.model_deleted, model)
         
@@ -525,24 +511,6 @@ class RemoteModelMetaclass(type):
 
 class RemoteModelProxy(object):
     __metaclass__ = RemoteModelMetaclass
-    STATUS_CHOICES = (
-                      ('s', 'Synced'),
-                      ('c', 'Created'),
-                      ('m', 'Modified'),
-                      ('d', 'Deleted'),
-                      # Otro cliente modifico la MISMA instancia y la comprobación de igualdad 
-                      # dio falso.
-                      ('b', 'Bogus'),
-    )
-    # Client ID
-    #remote_id_column = models.CharField(max_length = 160, default = 'id')
-    #_created_at = models.DateTimeField(editable = False)
-    #_updated_at = models.DateTimeField(editable = False)
-    _sync_log = models.ForeignKey(SyncLog, blank = True, null = True)
-    _active = models.BooleanField(editable = False, default = True)
-    _status = models.CharField(choices = STATUS_CHOICES, max_length = 1)
-    #id_start = models.PositiveIntegerField()
-    #_synced_at = models.DateTimeField(editable = False)
 
     def dump(self):
         '''
