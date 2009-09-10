@@ -12,7 +12,6 @@ class Vendedor(models.Model):
     apellido = models.CharField(max_length = 50)
     ciudades_asignadas = models.ManyToManyField(Ciudad)
 
-
 class Cliente(models.Model):
     '''
     El cliente
@@ -35,7 +34,6 @@ class Categoria(models.Model):
     '''
     nombre = models.CharField(max_length = 50)
     
-    
 class Producto(models.Model):
     '''
     Un producto es provisto por un proveedor o mas de un proveedor
@@ -45,19 +43,13 @@ class Producto(models.Model):
     categoria = models.ForeignKey(Categoria, blank = True)
     provisto_por = models.ManyToManyField(Proveedor)
     precio_uniatario = models.DecimalField(default = 0.0)
-    
+
 class Pedido(models.CharField):
     cliente = models.ForeignKey(Cliente)
     numero = models.PositiveIntegerField()
     fecha = models.DateField()
-    
+
 class ItemPedido(models.CharField):
     cantidad = models.PositiveIntegerField()
     producto = models.ForeignKey(Producto)
     precio = models.DecimalField()
-    
-    
-    
-
-
-    
