@@ -9,7 +9,7 @@ from django.http import Http404
 from django.core.urlresolvers import Resolver404, RegexURLPattern
 from django.utils.encoding import smart_str
 from offline.models import SyncLog, GearsManifest, SyncData
-from django.template import TemplateDoesNotExist
+from django.template import TemplateDoesNotExist, Template, Context
 from django.utils.safestring import SafeString
 from offline.debug import html_output
 from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
@@ -191,7 +191,22 @@ class RemoteSite(RemoteBaseSite):
     #===========================================================================
     @expose(r'^$')
     def index(self, request):
-        return HttpResponse('Yo soy el RemoteSite %s' % self.name)
+        content = '''
+            <html>
+            <head>
+                <script type="text/javascript;version=1.7" src="{{ site.lib_url }}/protopy.js"></script>
+                <script type="text/javascript;version=1.7">
+                    require('doff.core.project', 'new_project');
+                    var {{ site.name }} = new_project('{{ site.name }}', '{{ site.url }}');
+                    {{ site.name }}.bootstrap();
+                </script>
+            </head>
+            <body>
+            </body>
+            </html>
+        '''
+        template = Template(content);
+        return HttpResponse(template.render(Context({'site': self})));
 
     @expose(r'^%s/(.*)$' % TEMPLATES_PREFIX)
     def templates_static_serve(self, request, path):

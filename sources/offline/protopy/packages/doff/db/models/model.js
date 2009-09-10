@@ -25,8 +25,15 @@ var Model = type('Model', [ object ], {
         }
         var parents = [b for each (b in bases) if (issubclass(b, Model))];
 
+        //Armar attributos falsos para protopy
         var module = this.__module__;
-        super(Model, this).__new__(name, bases, {'__module__': module});
+        var fake_attrs = {};
+        fake_attrs['__module__'] = module;
+        if (callable(attrs['__str__']))
+            fake_attrs['__str__'] = attrs['__str__'];
+        if (callable(attrs['__iter__']))
+            fake_attrs['__iter__'] = attrs['__iter__'];
+        super(Model, this).__new__(name, bases, fake_attrs);
 
         var attr_meta = attrs['Meta'];
         var abstract = getattr(attr_meta, 'abstract', false);
@@ -72,7 +79,7 @@ var Model = type('Model', [ object ], {
         var o2o_map = new Dict([[f.rel.to, f] for (f in this._meta.local_fields) if (isinstance(f, OneToOneField))]);
         for each (var base in parents) {
             if (!hasattr(base, '_meta')) continue;
-            
+
             var new_fields = this._meta.local_fields.concat(this._meta.local_many_to_many).concat(this._meta.virtual_fields);
             var field_names = new Set([f.name for each (f in new_fields)]);
 

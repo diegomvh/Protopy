@@ -8,7 +8,7 @@
 {% block middle %}
 <h1>Estos son los Tags</h1>
 {% for tag in tags %}
-    <a href="/blog/remove_tag/{{tag.slug}}/">{{ tag }}</a>
+    <a href="/remove_tag/{{tag.slug}}/">{{ tag }}</a>
 {% endfor %}
 <h1>Estos son los Posts</h1>
 {% for post in posts %}
@@ -17,7 +17,7 @@
         <h4>{{ post.date }}</h4>
         <p>{{ post.body }}</p>
         <p>Tags: {{ post.tags.all|join:", " }}</p>
-        <a href="/blog/remove_post/{{ post.slug }}/">eliminar</a></h2>
+        <a href="/remove_post/{{ post.slug }}/">eliminar</a></h2>
     </div>
 {% endfor %}
 {% endblock %}

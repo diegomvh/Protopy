@@ -7,7 +7,6 @@ var Tag = type('Tag', [ SyncModel ], extend(mixin.Tag, {
     title: new models.CharField('Title', {'max_length':30}),
 }));
 
-
 var Post = type('Post', [ SyncModel ], extend(mixin.Post, {
     slug: new models.SlugField('Slug', {'primary_key':true}),
     title: new models.CharField('Title', {'max_length':30}),
@@ -31,7 +30,6 @@ var Empleado = type('Empleado', [ Persona ], {
 var Jefe = type('Jefe', [ Empleado ], {
     empleados: new models.ManyToManyField(Empleado)
 });
-
 
 publish({
     Tag: Tag,

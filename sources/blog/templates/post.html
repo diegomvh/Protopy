@@ -3,11 +3,11 @@
 <h1>Todos los Tags</h1>
 <h4>Haga click en un tag para quitarlo</h4>
 {% for tag in tags %}
-    <a href="/blog/remove_tag/{{ tag.slug }}/">{{ tag.title }}</a>
+    <a href="/remove_tag/{{ tag.slug }}/">{{ tag.title }}</a>
 {% endfor %}
 <h1>Inserte un nuevo Tag</h1>
 <div>
-<form id='{{ formpost.__name__ }}' action="/blog/add_post/" method="post">
+<form id='{{ formpost.__name__ }}' action="/add_post/" method="post">
 {{ formpost.as_ul }}
 <input type='submit' value='guardar'>
 </from>

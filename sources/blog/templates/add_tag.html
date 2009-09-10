@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block middle %}
 <h1>Inserte un nuevo Tag</h1>
-    <form action="/blog/add_tag/" method="post">
+    <form action="/add_tag/" method="post">
 	{{ formtag.as_ul }}
         <input type='submit' value='guardar' />
     </form>

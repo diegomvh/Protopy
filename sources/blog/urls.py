@@ -20,15 +20,9 @@ urlpatterns = patterns('',
 
     # index
     (r'^$', 'blog.views.index'),
-    (r'^blog/', include('blog.post.urls')),
-    # Install offline
-    (r'^offline$', 'django.views.generic.simple.direct_to_template', {'template': 'offline_installer.html'}),
-
-    (r'^%s/(.*)' % site.urlregex, site.root ),
-    (r'^rpc/test', 'offline.sync.rpc_handler' ),
+    (r'^', include('blog.post.urls')),
     
-    # OLD CODE
-    #(r'^' + settings.OFFLINE_BASE + '/', include('offline.urls'), ),
+    (r'^%s/(.*)' % site.urlregex, site.root ),
 )
 
 # static media

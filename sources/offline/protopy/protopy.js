@@ -177,9 +177,12 @@
         for each (var base in bases.reverse()) {
             __extend__(true, superbase.prototype, base.prototype);
         }
-        this.prototype.__proto__ = superbase.prototype;
 
-        __extend__(true, this.prototype, attrs);
+        __extend__(true, superbase.prototype, attrs);
+
+        this.prototype = new superbase();
+
+        //__extend__(true, this.prototype, attrs);
 
         // Decorate javascript
         this.prototype.toString = this.prototype.__str__;
@@ -195,8 +198,8 @@
     object.__static__ = {};
 
     //Prototype
-    object.prototype.__init__ = function __init__(){};
-    object.prototype.__str__ = function __str__(){ return this['__module__'] + '.' + this['__name__'] };
+    object.prototype.__init__ = function (){};
+    object.prototype.__str__ = function (){ return this['__module__'] + '.' + this['__name__'] };
 
     // Constructor de tipos o clases
     function type(name) {

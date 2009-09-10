@@ -1,7 +1,7 @@
 require('blog.post.models', 'Post', 'Tag');
 require('doff.template.context', 'RequestContext');
 require('doff.template.loader');
-require('doff.core.http', 'HttpResponse', 'HttpResponseRedirect');
+require('doff.utils.http', 'HttpResponse', 'HttpResponseRedirect');
 
 function index(request) {
     require('doff.db.base', 'connection');

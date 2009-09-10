@@ -36,12 +36,12 @@
         <div class="right">
             {% block right %}
             <h2>{{ pepe|yesno }}</h2>
-            <h2><a href="/blog/">Inicio</a></h2>
+            <h2><a href="/">Inicio</a></h2>
             <h2><a href="/doffline/list_templates/">Lista de Templates</a></h2>
             <h2><a id='google' href="http://www.google.com">Google</a></h2>
 	    {% if not sin_tablas %}
-		<h2><a href="/blog/add_tag/">Agregar Tag</a></h2>
-		<h2><a href="/blog/add_post/">Agregar Post</a></h2>
+		<h2><a href="/add_tag/">Agregar Tag</a></h2>
+		<h2><a href="/add_post/">Agregar Post</a></h2>
 	    {% endif %}
 	    {% endblock %}
         </div>
