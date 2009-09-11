@@ -113,9 +113,9 @@ var Query = type('Query', object, {
         */
     'clone': function clone(klass) {
 
-        arguments = new Arguments(arguments);
-        var args = arguments.args;
-        var kwargs = arguments.kwargs;
+        var arg = new Arguments(arguments);
+        var args = arg.args;
+        var kwargs = arg.kwargs;
         klass = klass || this.constructor;
         var obj = type('Empty', object);
         obj.prototype.__proto__ = klass.prototype;
@@ -1731,8 +1731,8 @@ var Query = type('Query', object, {
         */
     'add_ordering': function add_ordering() {
 
-        arguments = new Arguments(arguments);
-        var ordering = arguments.args;
+        var arg = new Arguments(arguments);
+        var ordering = arg.args;
         var errors = [];
         for each (var item in ordering) {
             var m = item.match(ORDER_PATTERN);

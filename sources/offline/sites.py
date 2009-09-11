@@ -396,7 +396,7 @@ class RemoteSite(RemoteBaseSite):
             model_remotes = filter(lambda x: x._meta.app_label == app_name, self._registry[app_name].values())
             models = export_remotes(model_remotes)
 
-            return render_to_response('djangoffline/models.js', 
+            return render_to_response('djangoffline/models_example.js', 
                            {'models': models, 'app': app_name, 'site': self},
                            mimetype = 'text/javascript')
 

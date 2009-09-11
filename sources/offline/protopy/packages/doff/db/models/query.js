@@ -11,7 +11,7 @@ require('event');
 var CHUNK_SIZE = 100;
 var ITER_CHUNK_SIZE = CHUNK_SIZE;
 
-var CyclicDependency = type('CyclicDependency', Exception);
+var CyclicDependency = type('CyclicDependency', [ Exception ]);
 
 /*
  * A container that stores keys and lists of values along with remembering the
@@ -19,8 +19,8 @@ var CyclicDependency = type('CyclicDependency', Exception);
  * This is used for the database object deletion routines so that we can
  * calculate the 'leaf' objects which should be deleted first.
  */
-var CollectedObjects = type('CollectedObjects', object, {
-    '__init__': function __init__() {
+var CollectedObjects = type('CollectedObjects', [ object ], {
+    __init__: function() {
         this.data = new Dict();
         this.children = new Dict();
     },
@@ -37,12 +37,12 @@ var CollectedObjects = type('CollectedObjects', object, {
      * Returns True if the item already existed in the structure and
      * False otherwise.
      */
-    'add': function add(model, pk, obj, parent_model, nullable) {
+    add: function(model, pk, obj, parent_model, nullable) {
         nullable = nullable || false;
         if (!this.data.has_key(model))
             this.data.set(model, {});
         var d = this.data.get(model);
-	var retval = pk in d;
+        var retval = pk in d;
         this.data.get(model)[pk] = obj;
         if (parent_model && !nullable) {
             if (!this.children.has_key(parent_model))
@@ -52,34 +52,34 @@ var CollectedObjects = type('CollectedObjects', object, {
         return retval;
     },
 
-    '__contains__': function __contains__(key) {
+    __contains__: function(key) {
         return include(this.data, key);
     },
 
-    '__getitem__': function __getitem__(key) {
+    __getitem__: function(key) {
         return this.data.get(key);
     },
 
-    '__nonzero__': function __nonzero__() {
+    __nonzero__: function() {
         return bool(this.data);
     },
 
-    'get': function get(key){
-	return this.__getitem__(key);
+    get: function(key){
+        return this.__getitem__(key);
     },
 
-    'iteritems': function iteritems() {
+    iteritems: function() {
         for each (k in this.ordered_keys()) {
             var ret = [k, this.get(k)];
             yield ret;
         }
     },
 
-    'items': function items(){
+    items: function() {
         return this.iteritems();
     },
 
-    'keys': function keys(){
+    keys: function() {
         return this.ordered_keys();
     },
 
@@ -87,7 +87,7 @@ var CollectedObjects = type('CollectedObjects', object, {
      *  Returns the models in the order that they should be dealt with (i.e.
      *  models with no dependencies first).
      */
-    'ordered_keys': function ordered_keys() {
+    ordered_keys: function() {
         var dealt_with = new SortedDict();
         // Start with items that have no children
         var models = this.data.keys();
@@ -96,8 +96,8 @@ var CollectedObjects = type('CollectedObjects', object, {
             for each (var model in models) {
                 if (dealt_with.has_key(model))
                     continue;
-		if (!this.children.has_key(model))
-		    this.children.set(model, []);
+                if (!this.children.has_key(model))
+                    this.children.set(model, []);
                 var children = this.children.get(model);
                 var list = [c for each (c in children) if (!include(dealt_with, c))];
                 if (len(list) == 0) {
@@ -114,7 +114,7 @@ var CollectedObjects = type('CollectedObjects', object, {
     /*
      * Fallback for the case where is a cyclic dependency but we don't care.
      */
-    'unordered_keys': function unordered_keys() {
+    unordered_keys: function() {
         return keys(this.data);
     }
 });
@@ -123,9 +123,9 @@ var CollectedObjects = type('CollectedObjects', object, {
 /*
  * Represents a lazy database lookup for a set of objects.
  */
-var QuerySet = type('QuerySet', object, {
+var QuerySet = type('QuerySet', [ object ], {
 
-    '__init__': function __init__(model, query) {
+    __init__: function(model, query) {
         this.model = model || null;
         this.query = query || new sql.Query(this.model, connection);
         this._result_cache = null;
@@ -133,7 +133,7 @@ var QuerySet = type('QuerySet', object, {
         this._sticky_filter = false;
     },
 
-    '_result_iter': function _result_iter() {
+    _result_iter: function() {
         var pos = 0;
         while (true) {
             var upper = this._result_cache.length;
@@ -150,7 +150,7 @@ var QuerySet = type('QuerySet', object, {
     },
 
     //I whish __nonzero__ , but
-    '__nonzero__': function __nonzero__(){
+    __nonzero__: function() {
         if (this._result_cache)
             return bool(this._result_cache);
         try {
@@ -162,7 +162,7 @@ var QuerySet = type('QuerySet', object, {
         return true;
     },
 
-    '__iter__': function __iter__() {
+    __iter__: function() {
         if (this._result_cache == null) {
             this._iter = this.iterator();
             this._result_cache = [];
@@ -178,7 +178,7 @@ var QuerySet = type('QuerySet', object, {
         return array_iter(this._result_cache);
     },
 
-    '__len__': function __len__(){
+    __len__: function(){
         // Since __len__ is called quite frequently (for example, as part of
         // list(qs), we make some effort here to be as efficient as possible
         // whilst not messing up any existing iterators against the QuerySet.
@@ -202,11 +202,11 @@ var QuerySet = type('QuerySet', object, {
      * Retrieves an item or slice from the set of results.
      * k is a number or array where k[0] = start k[1] = stop
      */
-    '__getitem__': function __getitem__(k) {
+    __getitem__: function(k) {
         if (!isinstance(k, [Number, Array]))
             throw new TypeError();
         assert ((!isinstance(k, Array) && (k >= 0)) || 
-		(isinstance(k, Array) && (k[0] == null || k[0] >= 0) && (k[1] == null || k[1] >= 0)), "Negative indexing is not supported.");
+            (isinstance(k, Array) && (k[0] == null || k[0] >= 0) && (k[1] == null || k[1] >= 0)), "Negative indexing is not supported.");
         if (this._result_cache != null) {
             if (this._iter != null) {
                 // The result cache has only been partially populated, so we may need to fill it out a bit more.
@@ -218,15 +218,15 @@ var QuerySet = type('QuerySet', object, {
                         var bound = null;
                 } else {
                     var bound = k + 1;
-		}
+            }
                 if (len(this._result_cache) < bound)
                     this._fill_cache(bound - len(this._result_cache));
             }
-	    if (isinstance(k, Array))
-		return this._result_cache.slice(k[0], k[1]);
-	    else 
-		return this._result_cache[k];
-	}
+            if (isinstance(k, Array))
+                return this._result_cache.slice(k[0], k[1]);
+            else 
+                return this._result_cache[k];
+        }
         if (isinstance(k, Array)) {
             var qs = this._clone();
             if (k[0] != null)
@@ -239,22 +239,22 @@ var QuerySet = type('QuerySet', object, {
                 var stop = null;
             qs.query.set_limits(start, stop);
             return qs;
-	}
+        }
         try {
             var qs = this._clone();
             qs.query.set_limits(k, k + 1);
             return array(qs)[0];
         } catch (e if isinstance(e, this.model.DoesNotExist)) {
             throw new IndexError(e.args);
-	}
+        }
     },
 
-    'slice': function(start, stop){
+    slice: function(start, stop){
         return this.__getitem__([start, stop]);
     },
 
     //I whish __and__ , but
-    'and': function and(other) {
+    and: function(other) {
         this._merge_sanity_check(other);
         if (other instanceof EmptyQuerySet)
             return other._clone();
@@ -264,7 +264,7 @@ var QuerySet = type('QuerySet', object, {
     },
 
     //I whish __or__ , but
-    'or': function or(other){
+    or: function(other){
         this._merge_sanity_check(other)
         combined = this._clone();
         if (other instanceof EmptyQuerySet)
@@ -277,7 +277,7 @@ var QuerySet = type('QuerySet', object, {
     /*
      * An iterator over the results from applying this QuerySet to the database.
      */
-    'iterator': function iterator() {
+    iterator: function() {
         var fill_cache = this.query.select_related;
         if (fill_cache instanceof Object)
             var requested = fill_cache;
@@ -304,7 +304,7 @@ var QuerySet = type('QuerySet', object, {
      * If the QuerySet is already fully cached this simply returns the length
      * of the cached results set to avoid multiple SELECT COUNT(*) calls.
      */
-    'count': function count() {
+    count: function() {
         if (this._result_cache && !this._iter)
             return this._result_cache.length;
         return this.query.get_count();
@@ -314,12 +314,12 @@ var QuerySet = type('QuerySet', object, {
      * Performs the query and returns a single object matching the given
      * keyword arguments.
      */
-    'get': function get() {
-	// If call whit number then call to __getitem__
-        arguments = new Arguments(arguments);
-        if (len(arguments.args) == 1 && isinstance(arguments.args[0], Number))
-	    return this.__getitem__(arguments.args[0]);
-	var clone = this.filter.apply(this, arguments.argskwargs);
+    get: function() {
+        // If call whit number then call to __getitem__
+        var arg = new Arguments(arguments);
+        if (len(arg.args) == 1 && isinstance(arg.args[0], Number))
+            return this.__getitem__(arg.args[0]);
+        var clone = this.filter.apply(this, arg.argskwargs);
         var num = len(clone);
         if (num == 1)
             return clone._result_cache[0];
@@ -332,7 +332,7 @@ var QuerySet = type('QuerySet', object, {
      * Creates a new object with the given kwargs, saving it to the database
      * and returning the created object.
      */
-    'create': function create(kwargs) {
+    create: function(kwargs) {
         var obj = this.model(kwargs);
         obj.save(true);
         return obj;
@@ -343,9 +343,9 @@ var QuerySet = type('QuerySet', object, {
         Returns a tuple of (object, created), where created is a boolean
         specifying whether an object was created.
     */
-    'get_or_create': function get_or_create() {
-        arguments = new Arguments(arguments);
-        var kwargs = arguments.kwargs;
+    get_or_create: function() {
+        var arg = new Arguments(arguments);
+        var kwargs = arg.kwargs;
         assert (bool(kwargs), 'get_or_create() must be passed at least one keyword argument')
         var defaults = kwargs['defaults'] || {};
         delete kwargs['defaults'];
@@ -374,7 +374,7 @@ var QuerySet = type('QuerySet', object, {
      * Returns the latest object, according to the model's 'get_latest_by'
      * option or optional given field_name.
      */
-    'latest': function latest(field_name) {
+    latest: function(field_name) {
         var latest_by = field_name || this.model._meta.get_latest_by;
         if (!latest_by) throw "Assert latest() requires either a field_name parameter or 'get_latest_by' in the model";
         if (!this.query.can_filter()) "Assert Cannot change a query once a slice has been taken.";
@@ -385,7 +385,7 @@ var QuerySet = type('QuerySet', object, {
     },
 
     /* Returns a dictionary mapping each of the given IDs to the object with that ID. */
-    'in_bulk': function in_bulk(id_list) {
+    in_bulk: function(id_list) {
         if (!this.query.can_filter()) throw " Assert Cannot use 'limit' or 'offset' with in_bulk.";
         if (type(id_list) != Array) throw " Assert in_bulk() must be provided with a list of IDs.";
         if (bool(id_list))
@@ -397,7 +397,7 @@ var QuerySet = type('QuerySet', object, {
     },
 
     /* Deletes the records in the current QuerySet. */
-    'delete': function delete() {
+    delete: function() {
         if (!this.query.can_filter()) throw " Assert Cannot use 'limit' or 'offset' with delete.";
 
         var del_query = this._clone();
@@ -425,7 +425,7 @@ var QuerySet = type('QuerySet', object, {
      * Updates all elements in the current QuerySet, setting all the given
      * fields to the appropriate values.
      */
-    'update': function update(kwargs) {
+    update: function(kwargs) {
         if (!this.query.can_filter()) throw " Assert Cannot update a query once a slice has been taken.";
         var query = this.query.clone(sql.UpdateQuery);
         query.add_update_values(kwargs);
@@ -441,7 +441,7 @@ var QuerySet = type('QuerySet', object, {
      * code (it requires too much poking around at model internals to be
      * useful at that level).
      */
-    '_update': function _update(values) {
+    _update: function(values) {
         if (!this.query.can_filter()) throw " Assert Cannot update a query once a slice has been taken.";
         var query = this.query.clone(sql.UpdateQuery);
         query.add_update_fields(values);
@@ -451,18 +451,18 @@ var QuerySet = type('QuerySet', object, {
 
     // PUBLIC METHODS THAT RETURN A QUERYSET SUBCLASS
 
-    'values': function values() {
-        arguments = new Arguments(arguments);
-        var fields = arguments.args;
+    values: function() {
+        var arg = new Arguments(arguments);
+        var fields = arg.args;
         return this._clone(ValuesQuerySet, true, {'_fields': fields});
     },
 
-    'values_list': function values_list() {
-        arguments = new Arguments(arguments);
-        var fields = arguments.args;
-        var flat = arguments.kwargs['flat'] || false;
-        if (bool(arguments.kwargs))
-            throw new TypeError('Unexpected keyword arguments to values_list: %s'.subs(keys(arguments.kwargs)));
+    values_list: function() {
+        var arg = new Arguments(arguments);
+        var fields = arg.args;
+        var flat = arg.kwargs['flat'] || false;
+        if (bool(arg.kwargs))
+            throw new TypeError('Unexpected keyword arguments to values_list: %s'.subs(keys(arg.kwargs)));
         if (flat && fields.length > 1)
             throw new TypeError("'flat' is not valid when values_list is called with more than one field.");
         return this._clone(ValuesListQuerySet, true, {'flat':flat, '_fields':fields});
@@ -472,7 +472,7 @@ var QuerySet = type('QuerySet', object, {
      * Returns a list of datetime objects representing all available dates for
      * the given field_name, scoped to 'kind'.
      */
-    'dates': function dates(field_name, kind, order) {
+    dates: function(field_name, kind, order) {
 
         var order = order || 'ASC';
         if (include(["month", "year", "day"], kind)) throw "Assert 'kind' must be one of 'year', 'month' or 'day'.";
@@ -481,7 +481,7 @@ var QuerySet = type('QuerySet', object, {
     },
 
     /* Returns an empty QuerySet. */
-    'none': function none() {
+    none: function() {
         return this._clone(EmptyQuerySet);
     },
 
@@ -491,36 +491,36 @@ var QuerySet = type('QuerySet', object, {
      * Returns a new QuerySet that is a copy of the current one. This allows a
      * QuerySet to proxy for a model manager in some cases.
      */
-    'all': function all(){
+    all: function(){
         return this._clone();
     },
 
     /*
      * Returns a new QuerySet instance with the args ANDed to the existing set.
      */
-    'filter': function filter() {
-        arguments = new Arguments(arguments);
-        return this._filter_or_exclude.apply(this, [false].concat(arguments.argskwargs));
+    filter: function() {
+        var arg = new Arguments(arguments);
+        return this._filter_or_exclude.apply(this, [false].concat(arg.argskwargs));
     },
 
     /*
      * Returns a new QuerySet instance with NOT (args) ANDed to the existing set.
      */
-    'exclude': function exclude(){
-        arguments = new Arguments(arguments);
-        return this._filter_or_exclude.apply(this, [true].concat(arguments.argskwargs));
+    exclude: function(){
+        var arg = new Arguments(arguments);
+        return this._filter_or_exclude.apply(this, [true].concat(arg.argskwargs));
     },
 
-    '_filter_or_exclude': function _filter_or_exclude(negate) {
-        arguments = new Arguments(arguments);
-        if (bool(arguments.args) || bool(keys(arguments.kwargs)))
+    _filter_or_exclude: function(negate) {
+        var arg = new Arguments(arguments);
+        if (bool(arg.args) || bool(keys(arg.kwargs)))
             if (!this.query.can_filter())
                 throw new Exception("Cannot filter a query once a slice has been taken.");
         var clone = this._clone();
         if (negate)
-            clone.query.add_q(new Q(arguments.args, arguments.kwargs).invert());
+            clone.query.add_q(new Q(arg.args, arg.kwargs).invert());
         else
-            clone.query.add_q(new Q(arguments.args, arguments.kwargs));
+            clone.query.add_q(new Q(arg.args, arg.kwargs));
         return clone;
     },
 
@@ -531,7 +531,7 @@ var QuerySet = type('QuerySet', object, {
      * This exists to support framework features such as 'limit_choices_to',
      * and usually it will be more natural to use other methods.
      */
-    'complex_filter': function complex_filter(filter_obj) {
+    complex_filter: function(filter_obj) {
         if (isinstance(filter_obj, Q) || callable(filter_obj['add_to_query'])) {
             clone = this._clone();
             clone.query.add_q(filter_obj);
@@ -546,10 +546,10 @@ var QuerySet = type('QuerySet', object, {
      * If fields are specified, they must be ForeignKey fields and only those
      * related objects are included in the selection.
      */
-    'select_related': function select_related() {
-        arguments = new Arguments(arguments);
-        var fields = arguments.args;
-        var kwargs = arguments.kwargs;
+    select_related: function() {
+        var arg = new Arguments(arguments);
+        var fields = arg.args;
+        var kwargs = arg.kwargs;
         var depth = kwargs['depth'] || 0;
         delete kwargs['depth'];
         if (bool(keys(kwargs)))
@@ -571,15 +571,15 @@ var QuerySet = type('QuerySet', object, {
      * Copies the related selection status from the QuerySet 'other' to the
      * current QuerySet.
      */
-    'dup_select_related': function dup_select_related(other) {
+    dup_select_related: function(other) {
         this.query.select_related = other.query.select_related;
     },
 
      /* Returns a new QuerySet instance with the ordering changed. */
-    'order_by': function order_by() {
-        arguments = new Arguments(arguments);
-        var field_names = arguments.args;
-        var kwargs = arguments.kwargs;
+    order_by: function() {
+        var arg = new Arguments(arguments);
+        var field_names = arg.args;
+        var kwargs = arg.kwargs;
         assert(this.query.can_filter(), "Assert Cannot reorder a query once a slice has been taken.");
         var obj = this._clone();
         obj.query.clear_ordering();
@@ -588,7 +588,7 @@ var QuerySet = type('QuerySet', object, {
     },
 
     /* Returns a new QuerySet instance that will select only distinct results. */
-    'distinct': function distinct(true_or_false) {
+    distinct: function(true_or_false) {
         true_or_false = true_or_false || true;
         obj = this._clone();
         obj.query.distinct = true_or_false;
@@ -596,7 +596,7 @@ var QuerySet = type('QuerySet', object, {
     },
 
     /* Adds extra SQL fragments to the query. */
-    'extra': function extra(select, where, params, tables, order_by, select_params) {
+    extra: function(select, where, params, tables, order_by, select_params) {
         if (!this.query.can_filter()) throw " Assert Cannot change a query once a slice has been taken.";
         var clone = this._clone();
         clone.query.add_extra(select, select_params, where, params, tables, order_by);
@@ -604,7 +604,7 @@ var QuerySet = type('QuerySet', object, {
     },
 
     /* Reverses the ordering of the QuerySet. */
-    'reverse': function reverse() {
+    reverse: function() {
         var clone = this._clone();
         clone.query.standard_ordering = !clone.query.standard_ordering;
         return clone;
@@ -612,7 +612,7 @@ var QuerySet = type('QuerySet', object, {
 
     // PRIVATE METHODS
 
-    '_clone': function _clone(klass, setup, extra) {
+    _clone: function(klass, setup, extra) {
         setup = setup || false;
         klass = klass || this.constructor;
         var query = this.query.clone()
@@ -630,7 +630,7 @@ var QuerySet = type('QuerySet', object, {
      * Fills the result cache with 'num' more entries (or until the results
      * iterator is exhausted).
      */
-    '_fill_cache': function _fill_cache(num) {
+    _fill_cache: function(num) {
         num = num || ITER_CHUNK_SIZE;
         if (this._iter != null)
             try {
@@ -650,12 +650,12 @@ var QuerySet = type('QuerySet', object, {
      * "this"). The method is only used internally and should be immediately
      * followed by a filter() that does create a clone.
      */
-    '_next_is_sticky': function _next_is_sticky() {
+    _next_is_sticky: function() {
         this._sticky_filter = true;
         return this;
     },
 
-    '_merge_sanity_check': function _merge_sanity_check(other) {
+    _merge_sanity_check: function(other) {
     }
 });
 
@@ -663,17 +663,17 @@ QuerySet.prototype.delete.alters_data = true;
 QuerySet.prototype.update.alters_data = true;
 QuerySet.prototype._update.alters_data = true;
 
-var ValuesQuerySet = type('ValuesQuerySet', QuerySet, {
-    '__init__': function __init__() {
-        arguments = new Arguments(arguments);
-        super(QuerySet, this).__init__(arguments);
+var ValuesQuerySet = type('ValuesQuerySet', [ QuerySet ], {
+    __init__: function() {
+        var arg = new Arguments(arguments);
+        super(QuerySet, this).__init__(arg);
         this.query.select_related = false;
 
         // QuerySet.clone() will also set up the _fields attribute with the
         // names of the model fields to select.
     },
 
-    'iterator': function iterator() {
+    iterator: function() {
         if (!bool(this.extra_names) && this.field_names.length != this.model._meta.fields.length)
             this.query.trim_extra_select(this.extra_names);
         var names = this.query.extra_select.keys().concat(this.field_names);
@@ -689,7 +689,7 @@ var ValuesQuerySet = type('ValuesQuerySet', QuerySet, {
      * Called by the _clone() method after initializing the rest of the
      * instance.
      */
-    '_setup_query': function _setup_query() {
+    _setup_query: function() {
 
         this.extra_names = [];
         if (bool(this._fields)) {
@@ -715,7 +715,7 @@ var ValuesQuerySet = type('ValuesQuerySet', QuerySet, {
     /*
      * Cloning a ValuesQuerySet preserves the current fields.
      */
-    '_clone': function _clone(klass, setup, extra) {
+    _clone: function(klass, setup, extra) {
         var c = super(QuerySet, this)._clone(klass, setup, extra);
         c._fields = copy(this._fields);
         c.field_names = this.field_names;
@@ -725,7 +725,7 @@ var ValuesQuerySet = type('ValuesQuerySet', QuerySet, {
         return c;
     },
 
-    '_merge_sanity_check': function _merge_sanity_check(other) {
+    _merge_sanity_check: function(other) {
         super(QuerySet, this)._merge_sanity_check(other);
         if (new Set(this.extra_names).ne(new Set(other.extra_names)) ||
             new Set(this.field_names).ne(new Set(other.field_names)))
@@ -733,8 +733,8 @@ var ValuesQuerySet = type('ValuesQuerySet', QuerySet, {
     }
 });
 
-var ValuesListQuerySet = type('ValuesListQuerySet', ValuesQuerySet, {
-    'iterator': function iterator() {
+var ValuesListQuerySet = type('ValuesListQuerySet', [ ValuesQuerySet ], {
+    iterator: function() {
         this.query.trim_extra_select(this.extra_names);
         if ((this.flat) && (this._fields.length == 1)) {
             for each (var row in this.query.results_iter())
@@ -755,16 +755,16 @@ var ValuesListQuerySet = type('ValuesListQuerySet', ValuesQuerySet, {
         }
     },
 
-    '_clone': function _clone() {
-        arguments = new Arguments(arguments);
-        clone = super(ValuesQuerySet, this)._clone(arguments);
+    _clone: function() {
+        var arg = new Arguments(arguments);
+        clone = super(ValuesQuerySet, this)._clone(arg);
         clone.flat = this.flat;
         return clone;
     }
 });
 
-var DateQuerySet = type('DateQuerySet', QuerySet, {
-    'iterator': function iterator() {
+var DateQuerySet = type('DateQuerySet', [ QuerySet ], {
+    iterator: function() {
         return this.query.results_iter();
     },
 
@@ -773,7 +773,7 @@ var DateQuerySet = type('DateQuerySet', QuerySet, {
      * Called by the _clone() method after initializing the rest of the
      * instance.
      */
-    '_setup_query': function _setup_query() {
+    _setup_query: function() {
 
         this.query = this.query.clone(sql.DateQuery, {'setup': true});
         this.query.select = [];
@@ -784,7 +784,7 @@ var DateQuerySet = type('DateQuerySet', QuerySet, {
             this.query.add_filter(['%s__isnull'.subs(field.name), false])
     },
 
-    '_clone': function _clone(klass, setup, extra) {
+    _clone: function(klass, setup, extra) {
         var c = super(QuerySet, this)._clone(klass, false, extra);
         c._field_name = this._field_name;
         c._kind = this._kind;
@@ -794,33 +794,33 @@ var DateQuerySet = type('DateQuerySet', QuerySet, {
     }
 });
 
-var EmptyQuerySet = type('EmptyQuerySet', QuerySet, {
-    '__init__': function __init__(model, query) {
+var EmptyQuerySet = type('EmptyQuerySet', [ QuerySet ], {
+    __init__: function(model, query) {
         super(QuerySet, this).__init__(model, query);
         this._result_cache = [];
     },
 
-    'and': function and(other) {
+    and: function(other) {
         return this._clone();
     },
 
-    'or': function or(other) {
+    or: function(other) {
         return other._clone();
     },
 
-    'count': function count() {
+    count: function() {
         return 0;
     },
 
-    'del': function del() {},
+    delete: function() {},
 
-    '_clone': function _clone(klass, setup, extra) {
+    _clone: function(klass, setup, extra) {
         var c = super(QuerySet, this)._clone(klass, setup, extra);
         c._result_cache = [];
         return c;
     },
 
-    'iterator': function iterator() {
+    iterator: function() {
         yield Iterator([]).next();
     }
 });

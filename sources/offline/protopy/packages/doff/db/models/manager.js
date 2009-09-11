@@ -16,14 +16,16 @@ function ensure_default_manager(cls) {
 
 var hcp = event.subscribe('class_prepared', ensure_default_manager);
 
-var Manager = type('Manager', object, {
-        '__init__': function __init__(){
+var Manager = type('Manager', [ object ], {
+    creation_counter: 0
+},{
+    __init__: function(){
         this._set_creation_counter();
         this.model = null;
         this._inherited = false;
     },
 
-    'contribute_to_class': function contribute_to_class(model, name){
+    contribute_to_class: function(model, name){
         this.model = model;
         var md = new ManagerDescriptor(this);
         model.__defineGetter__(name, function(){ return md.__get__(this, this.constructor); });
@@ -31,14 +33,14 @@ var Manager = type('Manager', object, {
             model._default_manager = this;
         if (model._meta['abstract'] || this._inherited)
             model._meta.abstract_managers.push([this.creation_counter, name, this]);
-        },
+    },
 
-    '_set_creation_counter': function _set_creation_counter(){
+    _set_creation_counter: function(){
         this.creation_counter = Manager.creation_counter;
         Manager.creation_counter += 1;
     },
 
-    '_copy_to_model': function _copy_to_model(model){
+    _copy_to_model: function(model){
         assert(issubclass(model, this.model));
         var mgr = copy(this);
         mgr._set_creation_counter();
@@ -49,162 +51,161 @@ var Manager = type('Manager', object, {
 
     // PROXIES TO QUERYSET
 
-    'get_empty_query_set': function get_empty_query_set(){
+    get_empty_query_set: function(){
         return new EmptyQuerySet(this.model);
     },
 
-    'get_query_set': function get_query_set(){
+    get_query_set: function(){
         return new QuerySet(this.model);
     },
 
-    'empty': function empty() {
+    empty: function() {
         return this.get_empty_query_set();
     },
 
-    'all': function all() {
+    all: function() {
         return this.get_query_set();
     },
 
-    'count': function count() {
+    count: function() {
         return this.get_query_set().count();
     },
 
-    'dates': function dates(){
-        arguments = new Arguments(arguments);
+    dates: function() {
+        var arg = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.dates.apply(qs, arguments.argskwargs);
+        return qs.dates.apply(qs, arg.argskwargs);
     },
     
-    'distinct': function distinct(){
-        arguments = new Arguments(arguments);
+    distinct: function() {
+        var arg = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.distinct.apply(qs, arguments.argskwargs);
+        return qs.distinct.apply(qs, arg.argskwargs);
     },
 
-    'extra': function extra(){
-        arguments = new Arguments(arguments);
+    extra: function() {
+        var arg = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.extra.apply(qs, arguments.argskwargs);
+        return qs.extra.apply(qs, arg.argskwargs);
     },
 
-    'get': function get(){
-        arguments = new Arguments(arguments);
+    get: function() {
+        var arg = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.get.apply(qs, arguments.argskwargs);
+        return qs.get.apply(qs, arg.argskwargs);
     },
 
-    'get_or_create': function get_or_create(){
-        arguments = new Arguments(arguments);
+    get_or_create: function() {
+        var arg = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.get_or_create.apply(qs, arguments.argskwargs);
+        return qs.get_or_create.apply(qs, arg.argskwargs);
     },
 
-    'create': function create(){
-        arguments = new Arguments(arguments);
+    create: function(){
+        var arg = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.create.apply(qs, arguments.argskwargs);
+        return qs.create.apply(qs, arg.argskwargs);
     },
 
-    'filter': function filter(){
-        arguments = new Arguments(arguments);
+    filter: function(){
+        var arg = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.filter.apply(qs, arguments.argskwargs);
+        return qs.filter.apply(qs, arg.argskwargs);
     },
 
-    'complex_filter': function complex_filter(){
-        arguments = new Arguments(arguments);
+    complex_filter: function(){
+        var arg = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.complex_filter.apply(qs, arguments.argskwargs);
+        return qs.complex_filter.apply(qs, arg.argskwargs);
     },
 
-    'exclude': function exclude(){
-        arguments = new Arguments(arguments);
+    exclude: function(){
+        var arg = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.exclude.apply(qs, arguments.argskwargs);
+        return qs.exclude.apply(qs, arg.argskwargs);
     },
 
-    'in_bulk': function in_bulk(){
-        arguments = new Arguments(arguments);
+    in_bulk: function(){
+        var arg = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.in_bulk.apply(qs, arguments.argskwargs);
+        return qs.in_bulk.apply(qs, arg.argskwargs);
     },
 
-    'iterator': function iterator(){
-        arguments = new Arguments(arguments);
+    iterator: function(){
+        var arg = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.iterator.apply(qs, arguments.argskwargs);
+        return qs.iterator.apply(qs, arg.argskwargs);
     },
 
-    'latest': function latest(){
-        arguments = new Arguments(arguments);
+    latest: function(){
+        var arg = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.latest.apply(qs, arguments.argskwargs);
+        return qs.latest.apply(qs, arg.argskwargs);
     },
 
-    'order_by': function order_by(){
-        arguments = new Arguments(arguments);
+    order_by: function(){
+        var arg = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.order_by.apply(qs, arguments.argskwargs);
+        return qs.order_by.apply(qs, arg.argskwargs);
     },
 
-    'select_related': function select_related(){
-        arguments = new Arguments(arguments);
+    select_related: function(){
+        var arg = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.select_related.apply(qs, arguments.argskwargs);
+        return qs.select_related.apply(qs, arg.argskwargs);
     },
 
-    'values': function values(){
-        arguments = new Arguments(arguments);
+    values: function(){
+        var arg = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.values.apply(qs, arguments.argskwargs);
+        return qs.values.apply(qs, arg.argskwargs);
     },
 
-    'values_list': function values_list() {
-        arguments = new Arguments(arguments);
+    values_list: function() {
+        var arg = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.values_list.apply(qs, arguments.argskwargs);
+        return qs.values_list.apply(qs, arg.argskwargs);
     },
     
-    'update': function update() {
-        arguments = new Arguments(arguments);
+    update: function() {
+        var arg = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.update.apply(qs, arguments.argskwargs);
+        return qs.update.apply(qs, arg.argskwargs);
     },
 
-    'reverse': function reverse(){
-        arguments = new Arguments(arguments);
+    reverse: function(){
+        var arg = new Arguments(arguments);
         var qs = this.get_query_set();
-        return qs.reverse.apply(qs, arguments.argskwargs);
+        return qs.reverse.apply(qs, arg.argskwargs);
     },
 
-    '_insert': function _insert(values) {
-        arguments = new Arguments(arguments);
-        return insert_query(this.model, values, arguments.kwargs['return_id'], arguments.kwargs['raw_values']);
+    _insert: function(values) {
+        var arg = new Arguments(arguments);
+        return insert_query(this.model, values, arg.kwargs['return_id'], arg.kwargs['raw_values']);
     },
 
-    '_update': function _update(values){
-        arguments = new Arguments(arguments);
+    _update: function(values){
+        var arg = new Arguments(arguments);
         args.push(kwargs);
         var qs = this.get_query_set();
         return qs._update.apply(qs, args);
     }
-    });
-Manager.creation_counter = 0;
+});
 
-var ManagerDescriptor = type('ManagerDescriptor', object, {
-    '__init__': function __init__(manager){
+var ManagerDescriptor = type('ManagerDescriptor', [ object ], {
+    __init__: function(manager){
         this.manager = manager;
     },
     
-    '__get__': function __get__(instance, type){
+    __get__: function(instance, type) {
         if (!isinstance(instance, type))
             throw new AttributeError("Manager isn't accessible via %s instances".subs(type.__name__));
         return this.manager;
     }
 });
 
-var EmptyManager = type('EmptyManager', Manager, {
-    'get_query_set': function get_query_set(){
+var EmptyManager = type('EmptyManager', [ Manager ], {
+    get_query_set: function() {
         return this.get_empty_query_set();
     }
 });

@@ -334,11 +334,9 @@ se pueden utilizar.
 .. _doff-plantillas-now-tabla:
 .. table:: Cadenas de formato para fechas y horas
 
-    ==============  ======================================== 
-============================================================================
+    ==============  ========================================  ============================================================================
     Carác. formato  Descripción                               Ejemplo de salida
-    ==============  ======================================== 
-============================================================================
+    ==============  ========================================  ============================================================================
     a               ``'a.m.'`` o ``'p.m.'``. (Obsérvese       ``'a.m.'``
                     que la salida es ligeramente distinta
                     de la de PHP, ya que aquí se incluyen
@@ -349,16 +347,14 @@ se pueden utilizar.
     b               El nombre del mes, en forma de            ``'jan'``
                     abreviatura de tres letras minúsculas.
 
-    d               Día del mes, dos dígitos que incluyen     ``'01'`` a
-``'31'``
+    d               Día del mes, dos dígitos que incluyen     ``'01'`` a ``'31'``
                     rellenando con cero por la izquierda si
                     fuera necesario.
 
     D               Día de la semana, en forma de             ``'Fri'``
                     abreviatura de tres letras.
 
-    f               La hora, en formato de 12 horas y         ``'1'``,
-``'1:30'``
+    f               La hora, en formato de 12 horas y         ``'1'``, ``'1:30'``
                     minutos, omitiendo los minutos
                     si estos son cero.
 
@@ -370,26 +366,21 @@ se pueden utilizar.
     G               La hora, en formato de 24 horas, sin      ``'0'`` a ``'23'``
                     rellenar por la izquierda con ceros.
 
-    h               La hora, en formato de 12 horas.          ``'01'`` a
-``'12'``
+    h               La hora, en formato de 12 horas.          ``'01'`` a ``'12'``
 
-    H               La hora, en formato de 24 horas.          ``'00'`` a
-``'23'``
+    H               La hora, en formato de 24 horas.          ``'00'`` a ``'23'``
 
-    i               Minutos.                                  ``'00'`` a
-``'59'``
+    i               Minutos.                                  ``'00'`` a ``'59'``
 
     j               El día del mes, sin rellenar por          ``'1'`` a ``'31'``
                     la izquierda con ceros.
 
     l               El nombre del día de la semana.           ``'Friday'``
 
-    L               Booleano que indica si el año es          ``True`` o
-``False``
+    L               Booleano que indica si el año es          ``True`` o ``False``
                     bisiesto.
 
-    m               El día del mes, rellenando por            ``'01'`` a
-``'12'``
+    m               El día del mes, rellenando por            ``'01'`` a ``'12'``
                     la izquierda con ceros si fuera
                     necesario.
 
@@ -398,43 +389,34 @@ se pueden utilizar.
 
     n               El mes, sin rellenar con ceros            ``'1'`` a ``'12'``
 
-    N               La abreviatura del mes siguiendo          ``'Jan.'``,
-``'Feb.'``
-                    el estilo de la Associated Press.         , ``'March'``,
-``'May'``
+    N               La abreviatura del mes siguiendo          ``'Jan.'``, ``'Feb.'``
+                    el estilo de la Associated Press.         , ``'March'``, ``'May'``
 
     O               Diferencia con respecto al                ``'+0200'``
                     tiempo medio de Grennwich (*Greenwich
                     Mean Time* - GMT)
 
-    P               La hora, en formato de 12 horas, más      ``'1 a.m.'``,
-``'1:30 p.m.'``
-                    los minutos, recto si estos son cero      , ``'midnight'``,
-``'noon'``
+    P               La hora, en formato de 12 horas, más      ``'1 a.m.'``, ``'1:30 p.m.'``
+                    los minutos, recto si estos son cero      , ``'midnight'``, ``'noon'``
                     y con la indicación a.m./p.m. Además,     , ``'12:30 p.m.'``
                     se usarán las cadenas de texto
                     especiales ``'midnight'`` y ``'noon'``
                     para la medianoche y el mediodía
                     respectivamente.
 
-    r               La fecha en formato RFC 822.              ``'Thu, 21 Dec
-2000 16:01:07 +0200'``
+    r               La fecha en formato RFC 822.              ``'Thu, 21 Dec 2000 16:01:07 +0200'``
 
-    s               Los segundos, rellenos con ceros por la   ``'00'`` a
-``'59'``
+    s               Los segundos, rellenos con ceros por la   ``'00'`` a ``'59'``
                     izquierda de ser necesario.
 
-    S               El sufijo inglés para el día del          ``'st'``,
-``'nd'``, ``'rd'``
+    S               El sufijo inglés para el día del          ``'st'``, ``'nd'``, ``'rd'``
                     mes (dos caracteres).                     o ``'th'``
 
     t               Número de días del mes.                   ``28`` a ``31``
 
-    T               Zona horaria                              ``'EST'``,
-``'MDT'``
+    T               Zona horaria                              ``'EST'``, ``'MDT'``
 
-    w               Día de la semana, en forma de dígito.     ``'0'`` (Domingo)
-a ``'6'`` (Sábado)
+    w               Día de la semana, en forma de dígito.     ``'0'`` (Domingo) a ``'6'`` (Sábado)
 
     W               Semana del año, siguiente la norma        ``1``, ``23``
                     ISO-8601, con la semana empezando el
@@ -446,14 +428,12 @@ a ``'6'`` (Sábado)
 
     z               Día del año                               ``0`` a ``365``
 
-    Z               Desfase de la zona horaria, en            ``-43200`` a
-``43200``
+    Z               Desfase de la zona horaria, en            ``-43200`` a ``43200``
                     segundos. El desplazamiento siempre
                     es negativo para las zonas al oeste
                     del meridiano de Greenwich, y positivo
                     para las zonas que están al este.
-    ==============  ======================================== 
-============================================================================
+    ==============  ========================================  ============================================================================
 
 He aquí un ejemplo::
 
