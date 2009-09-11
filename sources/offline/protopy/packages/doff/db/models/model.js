@@ -267,7 +267,7 @@ var Model = type('Model', [ object ], {
     set pk(value) {
         this._set_pk_val(value);
     },
-    
+
     /*
         * Saves the current instance. Override this in a subclass if you want to
         control the saving process.
@@ -337,8 +337,8 @@ var Model = type('Model', [ object ], {
                         throw new DatabaseError('Forced update did not affect any rows.');
                 }
             } else { 
-		record_exists = false; 
-	    }
+                record_exists = false; 
+            }
         }
         if (!pk_set || !record_exists) {
             if (!pk_set) {
@@ -371,7 +371,7 @@ var Model = type('Model', [ object ], {
         //transaction.commit_unless_managed()
 
         if (signal)
-	    event.publish('post_save', [this.constructor, this, !record_exists, raw]);
+            event.publish('post_save', [this.constructor, this, !record_exists, raw]);
     },
 
     /*

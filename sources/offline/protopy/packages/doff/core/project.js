@@ -53,7 +53,6 @@ var Project = type('Project', object, {
     is_online: true,
     NET_CHECK: 5,
     availability_url: null,
-    jsonrpc_url: null,
     do_net_checking: true,
 
     onLoad: function() {
@@ -94,13 +93,11 @@ var Project = type('Project', object, {
         // Url para ver si estoy conectado
         this.availability_url = this.offline_support + '/network_check';
 
-        // Url para jsonrpc
-        this.jsonrpc_url = this.offline_support + '/jsonrpc';
-
         this.templates_url = this.offline_support + '/templates/';
 
         if (sys.gears.installed && sys.gears.hasPermission)
             this._create_stores();
+        this._create_jsonrpc();
     },
 
     _create_toolbar: function(){
@@ -128,7 +125,7 @@ var Project = type('Project', object, {
 
     _create_jsonrpc: function() {
         require('rpc');
-        this.jsonrpc = new rpc.ServiceProxy(this.jsonrpc_url, {asynchronous: false});
+        this.jsonrpc = new rpc.ServiceProxy(this.offline_support + '/jsonrpc', {asynchronous: false});
     },
 
     bootstrap: function(){

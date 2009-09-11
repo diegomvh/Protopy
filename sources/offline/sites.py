@@ -25,13 +25,16 @@ from django.db.models.loading import get_app
 import copy
 from offline.util.jsonrpc import SimpleJSONRPCDispatcher
 from datetime import datetime
-from django.db.models.loading import get_app, get_models
+from django.db.models.loading import get_app, get_models, get_model
 from offline.export_models import export_remotes
 from offline.util import full_template_list, abswalk_with_simlinks
 from django.db.models import signals
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import exceptions
+from django.core.serializers import json
+
+
 __all__ = ('RemoteSite',
            'expose',
            'RemoteModelProxy',
@@ -333,16 +336,16 @@ class RemoteSite(RemoteBaseSite):
                 'current_time': date,
                 'sync_id': None
                 }
-    
+
     @jsonrpc
-    def model_dump(self, sync_request):
+    def damedatos(self, model, method, query = {}):
         '''
         4) El cliente envía en SyncRequest con el primer contenttype de sr1.model_order (lista de dependencias)
             for each (var model in sr1.model_order){
                 sreq.model = model;
                 sreq.sync_id = sr1.sync_id
                 sresp2 = send_sync_request(sreq);
-                
+
                 for each (var data in sr2.reponse) {
                     // Falta pasar del contenttype a la clase del lado del clinete
                     // Asumimos que el _active y el _status viene del servidor
@@ -351,10 +354,17 @@ class RemoteSite(RemoteBaseSite):
                 }
             }
         '''
-        return {'app_name': 'foo',
-                'model_name': 'bar', 
-                'instances': []
-        }
+        app_label, model_name = model.split('.')
+        model = get_model(app_label, model_name)
+        func = getattr(model._default_manager, method)
+        query = dict([(str(v[0]), str(v[1])) for v in query.iteritems()])
+        data = func(**query)
+        s = json.Serializer()
+        try:
+            data = s.serialize(data)
+        except:
+            pass
+        return data
     
     #===========================================================================
     # Manifests

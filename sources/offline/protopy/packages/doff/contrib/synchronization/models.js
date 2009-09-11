@@ -1,4 +1,5 @@
 var models = require('doff.db.models.base');
+require('doff.contrib.synchronization.proxy');
 
 var SyncLog = type('SyncLog', [ models.Model ], {
     SYNC_STATUS: [["s", "Synced"], ["c", "Created"], ["m", "Modified"], ["d", "Deleted"], ["b", "Bogus"]]
@@ -12,9 +13,11 @@ var SyncModel = type('SyncModel', [ models.Model ], {
     _active: new models.BooleanField( {"default": true, "blank": true, "editable": false, "serialize": false}),
     _status: new models.CharField( {"max_length": 1, "choices": SyncLog.SYNC_STATUS, "editable": false, "default": "c", "serialize": false}),
     server_pk: new models.PositiveIntegerField( {"null": true, "blank": true, "editable": false, "serialize": false}),
+
     Meta: {
         abstract: false
     }
+
 });
 
 publish({
