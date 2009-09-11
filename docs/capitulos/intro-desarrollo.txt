@@ -1,0 +1,113 @@
+******************************
+Introducción de desarrollo
+******************************
+
+Frameworks Webs y Navegadores Web
+---------------------------------
+
+Tras la elección de Django como framework web, se emprendió el análisis de las posiblidades de 
+ejecución de una aplicación web dearrollada en Django en el browser.
+Surgen puntos de interes como:
+ 
+	* ¿Es posible ejecutar el esquema de servidor web en un cliente?
+	* ¿Es posible ejecutar Python y mod_wsgi en el cliente?
+	* ¿Que posibilidades hay de brindar seguridad sobre los datos que se transfieran al cliente?
+	* Una vez lograda la transferencia de una aplicación web al clinete, ¿Que posiblidad existe de sincronizar los datos con la aplicación "madre"?
+	
+entre otras que se analizaran más adelante en el texto. 
+
+.. note::
+	En un principio, el código, los datos y algún modo de realizar el arranque de 
+	la aplicación.
+ 
+El enfoque inicial fue realizar un "espejo" de la aplicación que se ejecuta en el servidor 
+sobre el cliente. 
+
+.. figure:: ../_svg/esquema_tranfer_app_inicial.png
+	
+	Elementos a transferir desde la aplicación online
+
+
+Django está escrito en Python y si bien la ejecución de Python es posible
+en un browser, la solución es engorrosa y no es cross-browser. En la plataforma Mozilla, la
+integración se puede realizar mediante PyXPCOM [*]_ , PyShell [*]_ y también existe una 
+extensión para XUL [*]_
+
+.. [*] *PyXPCOM*, conexión del modelo de objetos multiplataforma de Mozilla con Python, https://developer.mozilla.org/en/PyXPCOM 
+.. [*] *PyShell*, consola interactiva 
+.. [*] *Luxor, Python for XUL* http://mail.python.org/pipermail/python-announce-list/2003-March/002084.html
+
+Sobre la plataforma Windows, existen dos formas de ejecutar Python en el navegador, 
+la primera consiste en la ejecución 
+de un control ActiveX sobre el browser que cuente con el intérprete
+de Python embebdio. Un control ActiveX es un componente ejecutable empotrable, 
+que puede ser dibujado en una página web. 
+Los controles ActiveX son peligrosos en el ámbito de la web debido 
+a que fueron ideados para ser utilizados como elemento incrustable entre aplicaciones 
+o para el uso en entornos confiables. Un control ActiveX cuenta 
+con privilegios similares a los de una aplicacion tradicional sobre el equipo del clinete. 
+La mayoría de los antivirus y herramientas
+de seguridad los eliminan o hacen responsable de la seguridad al usuario a partir de 
+la ejecución del ActiveX.
+Si bien esta técncia se presenta atractiva gracias a que Python es un lenguaje que ha sido
+diseñado para ser embebdio, los controles ActiveX no cumplen con las garantías de seguridad
+necesarias para el desarrollo de aplicaciones para la web. 
+Es posible considerar esta solución "cross-browser" gracias a proyectos como
+un *host para ActiveX sobre la plataforma mozilla* [*]_ pero no es multiplatafoma. 
+
+.. [*] *ActiveX para Mozilla* http://www.iol.ie/~locka/mozilla/plugin.htm
+
+La segunda alternativa es utilizar el framework Silverlight de Microsoft, que 
+permite generar aplicaciones para browsers badasdos en la plataforma :term:`.Net`.
+Silverlight es un runtime similar al popular Adobe Flash Player, pero las 
+aplicaciones pueden ser creadas en cualquier lenguaje de la plataforma .Net, 
+incluyendo Python y Ruby [*]_ [*]_ a partir de la versión 4, bajo sus implementaciones
+sobre CLR.
+
+.. note:: 
+	Preguntar en el IRC de *pyar* desde cuando tiene la API standard IronPython
+	si no volar el párrafo
+	
+Esta tecnología exige que el navegador cuente con un plugin para la plataforma, siendo
+el más completo el desarrollado por Microsoft, propulsor de la plataforma .Net.
+IronPython es una implementación de Python sobre .Net que no cuenta con la API standard [*]_
+de la versión CPython, por lo que no se puede ejecutar django de manera nativa. 
+  
+
+.. [*] *SilverLight, a new way for Python?* http://mail.python.org/pipermail/python-list/2007-May/610021.html
+.. [*] *Sitio de Michael Frood, donde explica como ejecutar IronPython sobre .Net* http://www.voidspace.org.uk/ironpython/silverlight/index.shtml#id2
+.. [*] *Listado de Módulos de la API standard* http://docs.python.org/modindex.html 
+
+Aunque en un principio no era posible ejecutar Django sobre la IronPython, gracias
+a la popularidad del framework, con la version 2.0 se superó esta dificultad [*]_.
+
+
+.. [*] *Django On IronPython* http://www.infoq.com/news/2008/03/django-and-ironpython 
+
+Gracias a la posibilidad de acceso a DOM por medio de una aplicación construida con
+Silverlight [*]_ y al  almacenamiento local en el clinete introducido en 
+en Silverligh 2.0, se hace posible ejecutar Django en el cliente con accceso a 
+una base de datos local.
+
+
+
+
+.. [*] *Silverlight Tutorial - Interaction With The DOM* http://www.switchonthecode.com/tutorials/silverlight-tutorial-interaction-with-the-dom
+.. [*] *Isolated Storage in Silverlight 2.0* http://www.ddj.com/windows/208300036
+.. [*] *Silverlight out-of-browser apps: Local Data Store* http://nerddawg.blogspot.com/2009/04/silverlight-out-of-browser-apps-local.html
+
+
+
+
+
+Generar este espejo conlleva poseer un equivalente al framework Django que 
+pueda ser ejecutado en un browser, brindando los componentes básicos de Django:
+
+ * Mapeador Objeto Relacional
+ * Renderización de templates
+ * Asociación de expresiones regulares a funciones.
+ 
+Esta idea surge en parte gracias al proyecto "Gars On Rails" [*]_ , un equivalente al objetivo de la presente tesis 
+sobre el framework Rails. 
+
+.. [*] *Gears On Rails* 
