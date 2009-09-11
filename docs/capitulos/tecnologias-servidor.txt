@@ -846,6 +846,74 @@ esta el codigo HTML que debe ser enviado al cliente o navegador, Django separar
 el diseño de la página del código Python correspondiente a la logica de negocio
 usando un *sistema de plantillas* para generar el HTML.
 
+Una plantilla en Django es una cadena de texto que separar la presentación de un
+documento de sus datos. Una plantilla define rellenos y diversos bits de lógica
+básica (esto es, etiquetas de plantillas) que regulan como el documento debe ser
+mostrado. Normalmente, las plantillas son usadas para producir HTML, pero las
+plantillas de Django son igualmente capaces de generar cualquier formato basado
+en texto.
+
+Sistema básico de plantillas
+=============================
+
+Una plantilla de Django es una cadena de texto que pretende separar la
+presentación de un documento de sus datos. Una plantilla define rellenos y
+diversos bits de lógica básica (esto es, etiquetas de plantillas) que regulan
+como el documento debe ser mostrado. Normalmente, las plantillas son usadas para
+producir HTML, pero las plantillas de Django son igualmente capaces de generar
+cualquier formato basado en texto.
+
+A continuación se presenta una simple plantilla de ejemplo::
+
+    <html>
+    <head><title>Ordering notice</title></head>
+
+    <body>
+
+    <p>Dear {{ person_name }},</p>
+
+    <p>Thanks for placing an order from {{ company }}. It's scheduled to
+    ship on {{ ship_date|date:"F j, Y" }}.</p>
+
+    <p>Here are the items you've ordered:</p>
+
+    <ul>
+    {% for item in item_list %}
+    <li>{{ item }}</li>
+    {% endfor %}
+    </ul>
+
+    {% if ordered_warranty %}
+    <p>Your warranty information will be included in the packaging.</p>
+    {% endif %}
+
+    <p>Sincerely,<br />{{ company }}</p>
+
+    </body>
+    </html>
+
+Esta plantilla es un HTML básico con algunas variables y etiquetas de plantillas
+agregadas.
+
+    * Cualquier texto encerrado por un par de llaves es una *variable*.
+        Esto significa "insertar el valor de la variable con el nombre tomado".
+
+    * Cualquier texto que esté rodeado por llaves y signos de porcentaje
+        es una *etiqueta de plantilla*. Una etiqueta le indica al sistema
+        de plantilla que debe hacer algo.
+
+        Este ejemplo de plantilla contiene dos etiquetas: la etiqueta
+        ``{% for item in item_list %}`` (una etiqueta ``for``) y la etiqueta
+        ``{% if ordered_warranty %}`` (una etiqueta ``if``).
+
+        Una etiqueta ``for`` actúa como un simple constructor de bucle.
+        Una etiqueta ``if`` actúa como una cláusula lógica "if".
+
+    * Finalmente, el segundo párrafo de esta plantilla tiene un ejemplo de un
+        *filtro*, con el cual se alteran la exposición de una variable.
+
+Cada plantilla de Django tiene acceso a varias etiquetas y filtros incorporados.
+
 .. note:: quiza completar un poco
 
 Estructura de una aplicación Django

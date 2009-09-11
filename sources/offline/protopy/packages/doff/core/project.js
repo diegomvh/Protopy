@@ -71,11 +71,11 @@ var Project = type('Project', object, {
             file_config(sys.module_url(this.package, 'logging.js'));
         } catch (except) {}
 
-        // this._create_toolbar();
+        this._create_toolbar();
         // this.network_check();
         // this._start_network_thread();
         // this.go_offline();
-        // this.handler.handle('/');
+        this.handler.handle('/');
     },
 
     onNetwork: function(type) {

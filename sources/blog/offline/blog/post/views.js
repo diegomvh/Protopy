@@ -3,7 +3,7 @@ require('blog.post.models', 'Tag', 'Post');
 require('doff.forms.base', 'ModelForm');
 require('doff.template.loader');
 require('doff.template.context', 'RequestContext');
-require('doff.core.http', 'HttpResponse', 'HttpResponseRedirect');
+require('doff.utils.http', 'HttpResponse', 'HttpResponseRedirect');
 
 var PostForm = type('PostForm', ModelForm, {
     'Meta': {

@@ -41,8 +41,8 @@ var Handler = type('Handler', [ object ], {
                     return this.handle(response['Location']);
                 } else if (response.status_code == 404) {
                     //Agregar a las url no manjeadas
-                    value.setOpacity(0.2);
-                    return null;
+                    //value.setOpacity(0.2);
+                    return this.html.update(response.content);
                 }
             }
         }

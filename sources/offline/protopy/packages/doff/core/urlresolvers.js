@@ -1,4 +1,4 @@
-require('doff.core.http', 'Http404');
+require('doff.utils.http', 'Http404');
 require('doff.core.exceptions', 'ViewDoesNotExist');
 
 var Resolver404 = type('Resolver404', [ Http404 ]);
