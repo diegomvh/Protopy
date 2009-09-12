@@ -2,8 +2,8 @@
 Introducción de desarrollo
 ******************************
 
-Frameworks Webs y Navegadores Web
----------------------------------
+Soporte de lenguajes de programación en el browser
+--------------------------------------------------
 
 Tras la elección de Django como framework web, se emprendió el análisis de las posiblidades de 
 ejecución de una aplicación web dearrollada en Django en el browser.
@@ -84,10 +84,32 @@ a la popularidad del framework, con la version 2.0 se superó esta dificultad [*
 
 .. [*] *Django On IronPython* http://www.infoq.com/news/2008/03/django-and-ironpython 
 
+En
+
 Gracias a la posibilidad de acceso a DOM por medio de una aplicación construida con
-Silverlight [*]_ y al  almacenamiento local en el clinete introducido en 
+Silverlight [*]_ y al  almacenamiento local en el cliente introducido en 
 en Silverligh 2.0, se hace posible ejecutar Django en el cliente con accceso a 
-una base de datos local.
+una base de datos local, sin embargo, la arquitectura de software necesaria para
+desplegar este tipo de aplicaciones se hace compleja, que en cierta forma apunta
+contra los ideales de Python y Django: 
+ * Es necesario un plugin en el browser que no se encuentra disponible para todas las plataformas *no cross-browser*.
+ 	O al menos, no en su estado más maduro
+ * Las herramientas de desarrollo solo están en su estado más maduro sobre la plataforma Windows
+ 	Si bien existen compiladores gratuitos, las herramientas son propietarias y las IDEs que
+ 	permiten un desarrollo más eficiente son pagas y propietarias.
+ * No existe soporte para IronPython en la IDE defacto, VisualStudio.
+ * La implementación de Python no es la estándard, y por ahora poco soportada [IronPythonFAQ2009]_ .
+ 
+.. [IronPythonFAQ2009] *Diferencias entre IronPython y CPython* http://ironpython.codeplex.com/Wiki/View.aspx?title=IPy2.0.xCPyDifferences&referringTitle=Home
+ 
+Tras el análisis de Silverlight como tecnología de soporte, se decide analizar las posiblidades
+nativas de los navegadores web. Esto conlleva el análisis de las posiblidades de Javascript 
+como lenguaje de soporte para la pogramación del lado del cliente.
+
+Más allá de la ejecución de Python, el servidor necesita un medio para almacenar los datos, 
+típicamente una base de datos y un mecanismo para servir estáticamente los :term:`archivos de medios`.
+
+
 
 
 
