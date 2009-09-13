@@ -967,6 +967,42 @@ Dentro del módulo de urls
 
 .. [*] Mediante el comando syncdb del módulo manage del proyecto
 
+.. tecnologias-servidor-django-static:
+
+Contenido dinámico y estático en Django
+=======================================
+
+Django está orientado a la generación de *solo* contenido dinámico.
+Pero generalmente se reuiqre en una aplicación web la inclusión de recursos
+de tipo estático, como imágenes, javascript u hojas de estilo.
+
+Django delega esta tarea al servidor web [DjangoDoc2009]_, sin embargo 
+para desarrollo se prové un servidor de contenido estático.
+
+La puesta en producción de una aplicación desarrollada en Django consta
+de la configuración del servidor web en 2 aspectos:
+
+ * Configuración del soporte para ejecución de Python
+ 	En la presente tesis nos focalizamos en WSGI ya que es un 
+	estándard Pythonico, pero existen toros como mod_python para Apache.
+	Independientemente de que tipo de soporte se utilize es necesario
+	asegurarse que tanto Django, como así aplicaciones de terceros
+	estén incluidas en el PythonPath con el cual se invoca al 
+	script con el entry point de la aplicación.
+	
+ * Configuración de los medios estáticos.
+ 	Generalmente suele ser una ruta, o dos, pero no está limitado.
+
+
+.. figure:: ../_svg/esquema_django_static.png
+
+	Deployment de Django
+	
+		Una aplicación escrita en Django puesta en producción consta de contenido dinámico 
+		manejado por WSGI y contenido estático servido por el web server.
+
+.. [DjangoDoc2009] *Sirviendo archivos esáticos con Django*, Django Wiki, http://docs.djangoproject.com/en/dev/howto/static-files/#the-big-fat-disclaimer
+
 El cliclo de una petición
 =========================
 
