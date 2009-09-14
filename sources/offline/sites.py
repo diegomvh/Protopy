@@ -406,7 +406,7 @@ class RemoteSite(RemoteBaseSite):
             model_remotes = filter(lambda x: x._meta.app_label == app_name, self._registry[app_name].values())
             models = export_remotes(model_remotes)
 
-            return render_to_response('djangoffline/models_example.js', 
+            return render_to_response('djangoffline/models.js', 
                            {'models': models, 'app': app_name, 'site': self},
                            mimetype = 'text/javascript')
 
@@ -468,30 +468,6 @@ class RemoteModelMetaclass(type):
                 raise ImproperlyConfigured("%s has no Meta" % name)
         else:
             opts = RemoteOptions(meta)
-            #server_id_class = type(opts.model.pk)
-#            server_pk = copy.copy(opts.model._meta.pk)
-#            server_pk.primary_key = False
-#            server_pk.blank = True
-#            server_pk.null = True
-#            server_pk.help_text = 
-#            attrs['server_pk'] = server_pk
-            server_pk_type = type(opts.model._meta.pk)
-            if server_pk_type is AutoField:
-                server_pk_type = models.PositiveIntegerField
-            server_pk = server_pk_type(
-                                      name = "server_pk",
-                                      #help_text = "Server ID",
-                                      primary_key = False,
-                                      null = True,
-                                      blank = True
-            )
-            attrs['server_pk'] = server_pk
-            #attrs['server_pk'] = copy.copy(opts.model._meta.pk)
-            #attrs['server_pk'] = opts.model._meta.pk
-            
-            if not isinstance(opts.model._meta.pk, AutoField):
-                pk_name = opts.model._meta.pk.name
-                attrs[ pk_name ] = opts.model._meta.pk 
             
             attrs['_meta'] = opts
             #print attrs

@@ -1,4 +1,5 @@
-from blog.post.models import Tag, Post
+# -*- coding: utf-8 -*-
+from blog.post.models import Tag, Post, Persona, Empleado, Jefe
 from offline.sites import RemoteSite 
 from offline.sites import RemoteModelProxy
 
@@ -26,7 +27,8 @@ class TagRemote(RemoteModelProxy):
 
 class BlogRemoteSite(RemoteSite):
     exclude_patterns = (r'.*~$', )
-#site = RemoteSite('blog')
+
 site = BlogRemoteSite('blog')
 site.register(Post)
 site.register(Tag, TagRemote)
+site.register(Persona)
