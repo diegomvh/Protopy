@@ -359,7 +359,7 @@ var Model = type('Model', [ object ], {
             var update_pk = bool(meta.has_auto_field && !pk_set);
             if (bool(values))
                 // Create a new record.
-                var result = manager._insert(values, {'return_id':update_pk});
+                var result = manager._insert(values, {'return_id': update_pk});
             else
                 // Create a new record with defaults for everything.
                 var result = manager._insert([[meta.pk, connection.ops.pk_default_value()]], {'return_id':update_pk, 'raw_values':true});

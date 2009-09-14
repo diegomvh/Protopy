@@ -32,7 +32,7 @@ from django.db.models import signals
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import exceptions
-from django.core.serializers import json
+from django.core import serializers
 
 
 __all__ = ('RemoteSite',
@@ -284,7 +284,41 @@ class RemoteSite(RemoteBaseSite):
 
         response['Content-length'] = str(len(response.content))
         return response
-    
+
+    @expose(r'^data/(?P<app_label>\w+)/(?P<model_name>\w+)/$')
+    def data(self, request, app_label, model_name):
+        response = HttpResponse()
+        models = self._registry.get(app_label, None)
+        model = get_model(app_label, model_name)
+        print model in models 
+        if len(request.POST) and models != None and model != None and model in models:
+            proxy = models[model]
+            response.write(proxy.remotes._marshaled_dispatch(request.raw_post_data))
+        elif models != None and model != None and model in models:
+            proxy = models[model]
+            response.write("<b>This is an JSON-RPC Service.</b><br>")
+            response.write("You need to invoke it using an JSON-RPC Client!<br>")
+            response.write("The following methods are available:<ul>")
+            methods = proxy.remotes.system_listMethods()
+
+            for method in methods:
+                # right now, my version of SimpleXMLRPCDispatcher always
+                # returns "signatures not supported"... :(
+                # but, in an ideal world it will tell users what args are expected
+                sig = proxy.remotes.system_methodSignature(method)
+
+                # this just reads your docblock, so fill it in!
+                help =  proxy.remotes.system_methodHelp(method)
+
+                response.write("<li><b>%s</b>: [%s] %s" % (method, sig, help))
+
+            response.write("</ul>")
+        else:
+            response.write("<b>This is an JSON-RPC Service.</b><br>")
+            response.write("You need to invoke it using an JSON-RPC Client!<br>")
+        response['Content-length'] = str(len(response.content))
+        return response
+
     def __str__(self):
         return "<RemoteSite '%s'>" % self.name
     
@@ -337,35 +371,6 @@ class RemoteSite(RemoteBaseSite):
                 'sync_id': None
                 }
 
-    @jsonrpc
-    def damedatos(self, model, method, query = {}):
-        '''
-        4) El cliente envía en SyncRequest con el primer contenttype de sr1.model_order (lista de dependencias)
-            for each (var model in sr1.model_order){
-                sreq.model = model;
-                sreq.sync_id = sr1.sync_id
-                sresp2 = send_sync_request(sreq);
-
-                for each (var data in sr2.reponse) {
-                    // Falta pasar del contenttype a la clase del lado del clinete
-                    // Asumimos que el _active y el _status viene del servidor
-                    m = model(data.extend({_sync_log = sl}));
-                    m.save()
-                }
-            }
-        '''
-        app_label, model_name = model.split('.')
-        model = get_model(app_label, model_name)
-        func = getattr(model._default_manager, method)
-        query = dict([(str(v[0]), str(v[1])) for v in query.iteritems()])
-        data = func(**query)
-        s = json.Serializer()
-        try:
-            data = s.serialize(data)
-        except:
-            pass
-        return data
-    
     #===========================================================================
     # Manifests
     #===========================================================================
@@ -406,7 +411,7 @@ class RemoteSite(RemoteBaseSite):
             model_remotes = filter(lambda x: x._meta.app_label == app_name, self._registry[app_name].values())
             models = export_remotes(model_remotes)
 
-            return render_to_response('djangoffline/models.js', 
+            return render_to_response('djangoffline/models_example.js', 
                            {'models': models, 'app': app_name, 'site': self},
                            mimetype = 'text/javascript')
 
@@ -466,13 +471,14 @@ class RemoteModelMetaclass(type):
         if not meta:
             if name is not "RemoteModelProxy":
                 raise ImproperlyConfigured("%s has no Meta" % name)
+            return super(RemoteModelMetaclass, cls).__new__(cls, name, bases, attrs)
         else:
             opts = RemoteOptions(meta)
-            
+
             attrs['_meta'] = opts
             #print attrs
             class_fields = {}
-            
+
             field_check = lambda field: isinstance(field, models.Field)
 
             opts.fields = []
@@ -492,6 +498,15 @@ class RemoteModelMetaclass(type):
                     #print "Agregando field interno", f_name
 
         new_class = super(RemoteModelMetaclass, cls).__new__(cls, name, bases, attrs)
+
+        try:
+            mgr = getattr(opts, 'manager')
+        except AttributeError, e:
+            mgr = getattr(opts.model, '_default_manager')
+
+        new_class.remotes = SimpleJSONRPCDispatcher(allow_none=False, encoding=None)
+        new_class.remotes.register_introspection_functions() #Un poco de azucar
+        new_class.remotes.register_instance(RemoteDataServer(mgr))
         return new_class
 
 
@@ -529,3 +544,37 @@ class RemoteOptions(object):
 
     def __str__(self):
         return unicode("<RemoteOptions for %s>" % self.model._meta.object_name)
+
+class RemoteDataServer(object):
+    def __init__(self, manager):
+        self._manager = manager
+        self._format = 'python'
+
+    def _methods(self):
+        return filter(lambda m: not m.startswith('_'), dir(self))
+
+    def _listMethods(self):
+        return self._methods() or []
+
+    def _methodHelp(self, method):
+        methods = self._methods() or []
+        if method in methods:
+            return getattr(self, method).__doc__
+        return ""
+
+    def _dispatch(self, method, params):
+        methods = self._methods() or []
+        if method in methods:
+            return getattr(self, method)(*params)
+        else:
+            raise 'bad method'
+
+    def all(self):
+        return serializers.serialize(self._format, self._manager.all())
+
+    def filter(self, kwargs):
+        kwargs = dict([(str(v[0]), str(v[1])) for v in kwargs.iteritems()])
+        return serializers.serialize(self._format, self._manager.filter(**kwargs))
+
+    def count(self):
+        return self._manager.count()

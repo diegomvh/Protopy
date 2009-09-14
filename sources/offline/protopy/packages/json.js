@@ -84,7 +84,7 @@ var decode_dates = function(obj) {
     //Parse date strings
     if(isinstance(obj, String)) {
         //ISO8601
-        if(matches = obj.match(/^(?:(\d\d\d\d)-(\d\d)(?:-(\d\d)(?:T(\d\d)(?::(\d\d)(?::(\d\d)(?:\.(\d+))?)?)?)?)?)$/)){
+        if(matches = obj.match(/^(?:(\d\d\d\d)-(\d\d)(?:-(\d\d)(?:T| (\d\d)(?::(\d\d)(?::(\d\d)(?:\.(\d+))?)?)?)?)?)$/)){
             obj = new Date(0);
             if(matches[1]) obj.setUTCFullYear(parseInt(matches[1]));
             if(matches[2]) obj.setUTCMonth(parseInt(matches[2]-1));
@@ -104,12 +104,15 @@ var decode_dates = function(obj) {
     } else if(isinstance(obj, Object)) {
         //JSON 1.0 Class Hinting: {"__jsonclass__":["constructor", [param1,...]], "prop1": ...}
         if(!isundefined(obj.__jsonclass__) &&  isinstance(obj.__jsonclass__, Array)) {
-            if(obj.__jsonclass__[0] == 'Date'){
+            if(obj.__jsonclass__[0] == 'Date') {
                 if(isinstance(obj.__jsonclass__[1], Array) && !isundefined(obj.__jsonclass__[1][0]))
                     obj = new Date(obj.__jsonclass__[1][0]);
                 else
                     obj[key] = new Date();
             }
+        } else {
+            for (var key in obj)
+                obj[key] = decode_dates(obj[key]);
         }
     } else {
         for (var key in obj)

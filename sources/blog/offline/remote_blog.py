@@ -17,7 +17,7 @@ class TagRemote(RemoteModelProxy):
     class Meta:
         model = Tag
         exclude = ('title', )
-        #manager = Tag.objects
+        manager = Tag.objects
 
 #
 #class PostRemote(RemoteModelProxy):

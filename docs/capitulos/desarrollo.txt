@@ -1,5 +1,5 @@
 ##########
-Desarrollo 
+Desarrollo
 ##########
 
 El desarrollo consistió en el siguiente diagrama:
@@ -12,18 +12,62 @@ El desarrollo consistió en el siguiente diagrama:
 La biblioteca
 *************
 
-La idea de diseñar y desarrollar un framework en que funcione en el hambiente
-de un navegador web, como es Firefox, deja entrever muchos aspectos que no
-resultan para nada triviales al momento de codificar.
+.. note:: 
 
-* Se requieren varias lineas de codigo para implementar un framework.
-* Como llega el codigo al navegador y se inicia su ejecucion.
+    Ver donde poner estos dos parrafos, que estan buenos pero creo que no van aca :)
+
+    En apartados teóricos se menciono, entre otras cosas, que la creación de un
+    framework generalmente surge de la identificación de objetos reusables en
+    el desarrollo de software. Posteriormente los objetos identificadas decantan en
+    componentes que forman parte de la arquitectura del framework y a los cuales se
+    accede mediante la extención y la configuración.
+    Esta forma de obtener un producto que permita arquitecturar proyectos de
+    caracteristicas similares a los que lé dieron origen, implica pasar por varias
+    etapas de maduración en el desarrollo, pero requieren de un punto de partida
+    primordial y es justamente un proyecto que oriente la identificacion de las
+    partes reusables. Nuestro caso se complica en este punto, ya que la intención
+    panteada desde el principio es la de "desarrollar un framework" y la realidad
+    del desarrollo es que muchas de las partes surguieron en paralelo y de la mano
+    de aplicaciones de prueba.
+
+Si bien la intención primaria es la de brindar un prodcuto que permita ejecutar
+"aplicaciones desconectadas" en los navegadores, existen aspectos complejos en
+el ambiente de un navegador que dificultan el desarrollo y que requieren de una
+capa soporte. Entre estas podemos mencionar:
+
+* Organizar y obtener código.
+
+    Un framework con funciones minimas, como una API de base de datos y un motor
+    de plantillas, requiere de varias lineas de código para su implementación.
+    Es por esto que resulta deseable que existan formas de organizar y obtener
+    código en el cliente; liberando así al desarrollador de estas tareas
+    tediosas y permitiendole enfocarse en la funcionalidad.
+
+* Reuso y extensión.
+
+    No es una buena practica modificar un framework y su utilizacion debe estar 
+    basa en la extención y la configuración. JavaScript es el lenguaje para el
+    framework y si se quiere promover el reuso y la extensión es conveniente
+    proveer al lenguaje de objetos extensibles o contrucciones que fasilmente
+    sean asimiladas por el desarrollador.
+
+* Guerra de los navegadores.
+
+    Si bien se han logrado muchos avanzes con la estandarizacion de APIs, en
+    general existen muchas diferencias entre navegadores para trabajar con el
+    DOM o con los objetos de JavaScript.
+    Una capa uniforme de acceso al DOM, funciones y objetos que trabajen sobre
+    APIs heterogeneas, entre otras cosas, resultan buenas herramientas para el
+    desarrollo client-side.
+
+* Interacción entre cliente servidor.
+
+    
 * La cara visible o vista debe ser fasilmente manipulable por la aplicacion de
 usuario.
 * Como los datos generados en el cliente son informados al servidor.
 * El framework debe brindar soporte a la aplicacion de usuario de una forma
 natural y transparente.
-* Se debe promover al reuso y la extension de funcionalidad del framework.
 * Como se ponen en marcha los mecanimos o acciones que la aplicacion de usuario
 define.
 
