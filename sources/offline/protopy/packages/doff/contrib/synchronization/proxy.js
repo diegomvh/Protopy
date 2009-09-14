@@ -1,12 +1,12 @@
 /* "doff.contrib.synchronization.proxy" */
 require('event');
+require('rpc');
 require('doff.db.models.fields.base', 'FieldDoesNotExist');
 require('doff.core.project', 'get_project');
+var JavaScriptDeserializer = require('doff.core.serializers.javascript', 'Deserializer');
 
 //TODO: no me gusta mucho esto de tomar el rpc asi por la fuerza
 var url_base = get_project().offline_support + '/data';
-
-require('rpc');
 
 function ensure_default_proxy(cls) {
     require('doff.contrib.synchronization.models', 'SyncModel');
@@ -28,6 +28,17 @@ var DataProxy = type('DataProxy', [ rpc.ServiceProxy ], {
         this.model = model;
         var pd = new ProxyDescriptor(this);
         model.__defineGetter__(name, function(){ return pd.__get__(this, this.constructor); });
+    },
+
+    __callMethod: function(methodName, params, successHandler, exceptionHandler, completeHandler) {
+        var ret = super(rpc.ServiceProxy, this).__callMethod(methodName, params, successHandler, exceptionHandler, completeHandler);
+        if (isinstance(ret, Array) && !isundefined(ret[0]['model'])) {
+            var new_ret = [];
+            for each (var obj in JavaScriptDeserializer(ret))
+                new_ret.push(obj);
+            ret = new_ret;
+        }
+        return ret;
     }
 });
 

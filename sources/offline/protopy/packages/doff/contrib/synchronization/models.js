@@ -15,7 +15,7 @@ var SyncModel = type('SyncModel', [ models.Model ], {
     server_pk: new models.PositiveIntegerField( {"null": true, "blank": true, "editable": false, "serialize": false}),
 
     Meta: {
-        abstract: false
+        abstract: true
     }
 
 });
