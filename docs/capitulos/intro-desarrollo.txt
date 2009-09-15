@@ -1,4 +1,4 @@
-******************************
+d******************************
 Introducción de desarrollo
 ******************************
 
@@ -95,13 +95,17 @@ en Silverlight 2.0, se hace posible ejecutar Django en el cliente con acceso a
 una base de datos local, sin embargo, la arquitectura de software necesaria para
 desplegar este tipo de aplicaciones se hace compleja, que en cierta forma apunta
 contra los ideales de Python y Django: 
- * Es necesario un plugin en el browser que no se encuentra disponible para todas las plataformas *no cross-browser*.
+ * Plugin necesario
+ 	Es necesario un plugin en el browser que no se encuentra disponible para todas las
+ 	plataformas *no cross-browser*.
  	O al menos, no en su estado más maduro
- * Las herramientas de desarrollo solo están en su estado más maduro sobre la plataforma Windows
+ * Madurez de la herramientas fuera de la plataforma Windows 
+ 	Las herramientas de desarrollo solo están en su estado más maduro sobre la plataforma Windows
  	Si bien existen compiladores gratuitos, las herramientas son propietarias y las IDEs que
  	permiten un desarrollo más eficiente son pagas y propietarias.
  * No existe soporte para IronPython en la IDE de facto, VisualStudio.
  * La implementación de Python no es la estándar, y por ahora poco soportada [IronPythonFAQ2009]_ .
+ 
  
 .. [IronPythonFAQ2009] *Diferencias entre IronPython y CPython* http://ironpython.codeplex.com/Wiki/View.aspx?title=IPy2.0.xCPyDifferences&referringTitle=Home
  
