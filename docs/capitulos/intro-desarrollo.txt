@@ -37,6 +37,9 @@ extensión para XUL [*]_
 .. [*] *PyShell*, consola interactiva 
 .. [*] *Luxor, Python for XUL* http://mail.python.org/pipermail/python-announce-list/2003-March/002084.html
 
+Soluciones existentes
+---------------------
+
 Sobre la plataforma Windows, existen dos formas de ejecutar Python en el navegador, 
 la primera consiste en la ejecución 
 de un control ActiveX sobre el browser que cuente con el intérprete
@@ -103,8 +106,21 @@ contra los ideales de Python y Django:
 .. [IronPythonFAQ2009] *Diferencias entre IronPython y CPython* http://ironpython.codeplex.com/Wiki/View.aspx?title=IPy2.0.xCPyDifferences&referringTitle=Home
  
 Tras el análisis de Silverlight como tecnología de soporte, se decide analizar las posiblidades
-nativas de los navegadores web. Esto conlleva el análisis de las posiblidades de Javascript 
+nativas de los navegadores web. En particular se focalizó el análisis sobre las implementaciones de Javascript 
 como lenguaje de soporte para la pogramación del lado del cliente.
+
+Un lengauje adecuado para ejecución de la aplicación en el clinete
+------------------------------------------------------------------
+
+En principio, Javascript y Python parecen lenguajes bastante diferentes en su sintaxis, sin
+embargo, comparten ciertas características como ser orientados a objetos basados en prototipos y
+permitir la definición de clausuras [AtulVarma2009]_ .
+
+
+
+
+.. [AtulVarma2009] *Python For Javascript Programmers*, Atul Varma http://hg.toolness.com/python-for-js-programmers/raw-file/tip/PythonForJsProgrammers.html
+ 
 
 Más allá de la ejecución de Python, el servidor necesita un medio para almacenar los datos, 
 típicamente una base de datos y un mecanismo para servir estáticamente los archivos de medios.
@@ -119,8 +135,6 @@ estos dos elementos en conjunto.
 .. [*] *Silverlight Tutorial - Interaction With The DOM* http://www.switchonthecode.com/tutorials/silverlight-tutorial-interaction-with-the-dom
 .. [*] *Isolated Storage in Silverlight 2.0* http://www.ddj.com/windows/208300036
 .. [*] *Silverlight out-of-browser apps: Local Data Store* http://nerddawg.blogspot.com/2009/04/silverlight-out-of-browser-apps-local.html
-
-
 
 
 
