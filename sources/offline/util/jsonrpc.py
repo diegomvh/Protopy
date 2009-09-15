@@ -112,6 +112,7 @@ import os
 
 import SimpleXMLRPCServer
 from django.utils import simplejson
+from django.core.serializers.json import DjangoJSONEncoder #Para que pueda hacer fechas tambien
 
 import traceback
 
@@ -169,7 +170,7 @@ class SimpleJSONRPCDispatcher(SimpleXMLRPCServer.SimpleXMLRPCDispatcher):
             #    )
             responseDict['error'] = "%s:%s" % (sys.exc_type, sys.exc_value)
     
-        return simplejson.dumps(responseDict)
+        return simplejson.dumps(responseDict, cls=DjangoJSONEncoder)
     
 
 #class SimpleXMLRPCRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
