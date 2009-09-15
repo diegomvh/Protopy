@@ -1184,3 +1184,42 @@ los datos, también posee una colección de métodos orientados a conuslta, como
 igual que en un mánager, devuelven instancias de *QuerySet* como resultado.
 Gracias a esta característica recursiva, se pueden generar consultas
 medinate encadenamiento.
+
+
+Clasificación de aplicaciones Django
+------------------------------------
+
+.. note::
+	Mejorar esto
+	
+	
+	
+Podemos hacer una clasificación entre los tipos de aplicaciones en función de su objetivo:
+
+ * Las aplicaciones de usuario
+ 	Son aquellas aplicaciones que resuelven un problema específico. Suelen
+estar 
+	dispuestas en un subdirectorio del proyecto.
+ 	
+ * Las aplicaciones de soporte
+ 	Las aplicaciones de soporte son las aplicaciones que resuelven un problema
+general,
+ 	como autenticación, envío de correo, interacción con servicos provistos por
+sitios
+ 	de terceros (Google Maps, Google Charts, AdSense, Yahoo Maps, Yahoo Pipes,
+Feedburner, etc.),
+ 	etc. Django provee varias aplicaciones que están disponibles por defecto
+ante la 
+ 	creación de un proyecto con el comando *create-app*.
+ 	
+ * Aplicaciones template
+ 	Esta caracterización se puede aplicar tanto a proyectos como a aplicaciones
+y consite
+ 	en una aplicación distribuida como plantilla para lograr una aplicación de
+usuario, pero
+ 	que tiene varios factores engorrosos resueltos. Podemos citar en este caso,
+a el proyecto
+ 	*Pinax* [*]_ que provee un conjunto de aplicaciones de soporte y
+aplicaciones de template.
+ 	
+ .. [*] *Pinax Project* http://pinaxproject.com/
