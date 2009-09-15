@@ -5,14 +5,14 @@ Introducción de desarrollo
 Soporte de lenguajes de programación en el browser
 --------------------------------------------------
 
-Tras la elección de Django como framework web, se emprendió el análisis de las posiblidades de 
-ejecución de una aplicación web dearrollada en Django en el browser.
-Surgen puntos de interes como:
+Tras la elección de Django como framework web, se emprendió el análisis de las posibilidades de 
+ejecución de una aplicación web desarrollada en Django en el browser.
+Surgen puntos de interés como:
  
 	* ¿Es posible ejecutar el esquema de servidor web en un cliente?
 	* ¿Es posible ejecutar Python y mod_wsgi en el cliente?
 	* ¿Que posibilidades hay de brindar seguridad sobre los datos que se transfieran al cliente?
-	* Una vez lograda la transferencia de una aplicación web al clinete, ¿Que posiblidad existe de sincronizar los datos con la aplicación "madre"?
+	* Una vez lograda la transferencia de una aplicación web al cliente, ¿Que posibilidad existe de sincronizar los datos con la aplicación "madre"?
 	
 entre otras que se analizaran más adelante en el texto. 
 
@@ -43,25 +43,25 @@ Soluciones existentes
 Sobre la plataforma Windows, existen dos formas de ejecutar Python en el navegador, 
 la primera consiste en la ejecución 
 de un control ActiveX sobre el browser que cuente con el intérprete
-de Python embebdio. Un control ActiveX es un componente ejecutable empotrable, 
+de Python embebido. Un control ActiveX es un componente ejecutable empotrable, 
 que puede ser dibujado en una página web. 
 Los controles ActiveX son peligrosos en el ámbito de la web debido 
 a que fueron ideados para ser utilizados como elemento incrustable entre aplicaciones 
 o para el uso en entornos confiables. Un control ActiveX cuenta 
-con privilegios similares a los de una aplicacion tradicional sobre el equipo del clinete. 
+con privilegios similares a los de una aplicación tradicional sobre el equipo del cliente. 
 La mayoría de los antivirus y herramientas
 de seguridad los eliminan o hacen responsable de la seguridad al usuario a partir de 
 la ejecución del ActiveX.
-Si bien esta técncia se presenta atractiva gracias a que Python es un lenguaje que ha sido
-diseñado para ser embebdio, los controles ActiveX no cumplen con las garantías de seguridad
+Si bien esta técnica se presenta atractiva gracias a que Python es un lenguaje que ha sido
+diseñado para ser embebido, los controles ActiveX no cumplen con las garantías de seguridad
 necesarias para el desarrollo de aplicaciones para la web. 
 Es posible considerar esta solución "cross-browser" gracias a proyectos como
-un *host para ActiveX sobre la plataforma mozilla* [*]_ pero no es multiplatafoma. 
+un *host para ActiveX sobre la plataforma mozilla* [*]_ pero no es multiplataforma. 
 
 .. [*] *ActiveX para Mozilla* http://www.iol.ie/~locka/mozilla/plugin.htm
 
 La segunda alternativa es utilizar el framework Silverlight de Microsoft, que 
-permite generar aplicaciones para browsers badasdos en la plataforma :term:`.Net`.
+permite generar aplicaciones para browsers basados en la plataforma :term:`.Net`.
 Silverlight es un runtime similar al popular Adobe Flash Player, pero las 
 aplicaciones pueden ser creadas en cualquier lenguaje de la plataforma .Net, 
 incluyendo Python y Ruby [*]_ [*]_ a partir de la versión 4, bajo sus implementaciones
@@ -77,12 +77,12 @@ IronPython es una implementación de Python sobre .Net que no cuenta con la API 
 de la versión CPython, por lo que no se puede ejecutar django de manera nativa. 
   
 
-.. [*] *SilverLight, a new way for Python?* http://mail.python.org/pipermail/python-list/2007-May/610021.html
+.. [*] *Silverlight, a new way for Python?* http://mail.python.org/pipermail/python-list/2007-May/610021.html
 .. [*] *Sitio de Michael Frood, donde explica como ejecutar IronPython sobre .Net* http://www.voidspace.org.uk/ironpython/silverlight/index.shtml#id2
 .. [*] *Listado de Módulos de la API standard* http://docs.python.org/modindex.html 
 
 Aunque en un principio no era posible ejecutar Django sobre la IronPython, gracias
-a la popularidad del framework, con la version 2.0 se superó esta dificultad [*]_.
+a la popularidad del framework, con la versión 2.0 se superó esta dificultad [*]_.
 
 
 .. [*] *Django On IronPython* http://www.infoq.com/news/2008/03/django-and-ironpython 
@@ -91,7 +91,7 @@ En
 
 Gracias a la posibilidad de acceso a DOM por medio de una aplicación construida con
 Silverlight [*]_ y al  almacenamiento local en el cliente introducido en 
-en Silverligh 2.0, se hace posible ejecutar Django en el cliente con accceso a 
+en Silverlight 2.0, se hace posible ejecutar Django en el cliente con acceso a 
 una base de datos local, sin embargo, la arquitectura de software necesaria para
 desplegar este tipo de aplicaciones se hace compleja, que en cierta forma apunta
 contra los ideales de Python y Django: 
@@ -100,16 +100,16 @@ contra los ideales de Python y Django:
  * Las herramientas de desarrollo solo están en su estado más maduro sobre la plataforma Windows
  	Si bien existen compiladores gratuitos, las herramientas son propietarias y las IDEs que
  	permiten un desarrollo más eficiente son pagas y propietarias.
- * No existe soporte para IronPython en la IDE defacto, VisualStudio.
- * La implementación de Python no es la estándard, y por ahora poco soportada [IronPythonFAQ2009]_ .
+ * No existe soporte para IronPython en la IDE de facto, VisualStudio.
+ * La implementación de Python no es la estándar, y por ahora poco soportada [IronPythonFAQ2009]_ .
  
 .. [IronPythonFAQ2009] *Diferencias entre IronPython y CPython* http://ironpython.codeplex.com/Wiki/View.aspx?title=IPy2.0.xCPyDifferences&referringTitle=Home
  
-Tras el análisis de Silverlight como tecnología de soporte, se decide analizar las posiblidades
+Tras el análisis de Silverlight como tecnología de soporte, se decide analizar las posibilidades
 nativas de los navegadores web. En particular se focalizó el análisis sobre las implementaciones de Javascript 
-como lenguaje de soporte para la pogramación del lado del cliente.
+como lenguaje de soporte para la programación del lado del cliente.
 
-Un lengauje adecuado para ejecución de la aplicación en el clinete
+Un lenguaje adecuado para ejecución de la aplicación en el cliente
 ------------------------------------------------------------------
 
 En principio, Javascript y Python parecen lenguajes bastante diferentes en su sintaxis, sin
