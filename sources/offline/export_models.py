@@ -166,9 +166,9 @@ def export_models(models):
     #print processed_models
     return processed_models
 
-def export_remotes(remotes):
+def export_remotes(remote_model_proxies):
     processed_models = SortedDict()
-    for remote in remotes:
+    for remote in remote_model_proxies:
         print remote
         model = remote._meta.model
         name = model._meta.object_name

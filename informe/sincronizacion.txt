@@ -1,20 +1,20 @@
 Escenario: Clienete requiere todos los datos
 
 1) El cliente envía SyncRequest
-	sreq = new SyncRequest()
-	sreq.first = True
-	sync_resp = send_sync_request(sreq); // Le pega a una url y un método de json-rpc
-	
+	sreq = new SyncRequest( last_update = null ) // El cliente envía el ultimo SyncLog
+												 // si en null, el servidor sabe que quiere
+												 // todo
+												 
 2) El server le envía SyncResponse sr1:
 	
 	- model_order lista de dependencias de modelos
 	- current_time
-	- sync_id Identificación de sincronización (transacción) (el cliente lo envía con cada SyncRequest)
-	
+	- sync_id Identificación de sincronización (transacción) (el cliente lo envía con cada SyncRequest)												
+
 3) El cliente genera una instancia de SyscLog con
-	sl = new SyncLog()
-	sl.synced_at = sr1.current_time
-	sl.synced_id = sr1.sync_id
+								
+	var sync_log = new SyncLog( { 'synced_at': sreq.current_time, 'sync_id': sreq.sync_id } );
+	
 
 4) El cliente envía en SyncRequest con el primer contenttype de sr1.model_order (lista de dependencias)
 	for each (var model in sr1.model_order){
@@ -30,3 +30,34 @@ Escenario: Clienete requiere todos los datos
 		}
 	}
 
+Escenario: Cliente Envía Actualizaciones
+
+1) El cliente envía SyncRequest
+	var last_sync_req = SyncRequest.objects.latest('synced_at')
+	
+	sreq = new SyncRequest( last_update = last_sync_req ) // El cliente envía el ultimo SyncLog
+												 // si en null, el servidor sabe que quiere
+												 // todo
+	
+2) El server le envía SyncResponse sr1:
+	
+	- model_order Lista de modelos alterados en orden desde la última sincronización
+	- current_time
+	- sync_id Identificación de sincronización (transacción) (el cliente lo envía con cada SyncRequest)												
+
+3) El cliente genera una instancia de SyscLog con
+								
+	var sync_log = new SyncLog( { 'synced_at': sreq.current_time, 'sync_id': sreq.sync_id } );
+
+4) for each (var model in sr1.model_order){
+		sreq.model = model;
+		sreq.sync_id = sr1.sync_id
+		sresp2 = send_sync_request(sreq);
+		
+		for each (var data in sr2.reponse) {
+			// Falta pasar del contenttype a la clase del lado del clinete
+			// Asumimos que el _active y el _status viene del servidor
+			m = model(data.extend({_sync_log = sl}));
+			m.save()
+		}
+	}

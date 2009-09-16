@@ -25,3 +25,82 @@ Es el equivalente al proyecto en el lado del servidor. Controla:
  * Seguridad
  * Sincronización
  * Consistencia
+
+Registro de modelos
+-------------------
+
+RemoteModelProxy:
+	- exclude
+		Excluye campos de los modelos para remotizar.
+
+
+
+Modelos de solo lectura
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Por cada modelo que tenga un campo ForeignKey y/o ManyToManyField y no se halla regitrado
+el RemoteModelProxy correspondiente se crea y asocia con un modelo ReadOnly. Esto ocurre
+en la mataclase.
+
+Se puede filtrar las instancias que se lleva el cliente mediante el registro de un RemoteModelProxy
+que especifica que es read only.
+
+
+Problemas con la consistencia temporal
+--------------------------------------
+
+Reloj lógico
+~~~~~~~~~~~~
+ 
+Sincronización de datos
+-----------------------
+
+La posibilidad de generar duplicación de datos en cada cliente, se debe
+pesentar un mecanismo para que los cambios que cada uno realice sobre 
+los datos puedan reingresar al sistema, tanto desde la aplicación base a 
+los clinetnes, como de los clientes a la aplicación base.
+
+El caso más simple es aquel en el cual no puede realizar cambios sobre los 
+datos.
+
+
+
+
+
+.. note::
+	Reescribir esto con Diego
+	
+	Consideraciones:
+		* Online con soporte offline, Offline con soporte
+		* Seguridad
+		* Integridad
+		* Prioridad de modificación
+		* Resolución de conflictos:
+		* Logging
+	
+Una de las tareas de coordinación entre el RemoteSite y el proyecto offline es la 
+sincronización.
+
+Existen 3 escenarios de sincronización, **Sincronización Inicial**,
+**desde el servidor al clinete** y desde **el clinete al servidor**.
+
+.. note::
+	Creo que esto estría bueno ejemplificarlo con un gráficos
+
+
+Sincornización inicial
+----------------------
+Este escenario es trivial, la sincronización consite en la copia de los modelos
+registrados en el RemoteSite.
+
+Desde el servidor al clinete
+----------------------------
+En este escenario, al menos una instancia de las sincronizadas desde el servidor
+se han modificado en el clinete. La instancia del servidor puede encontrarse
+sincronizada o alterada desde la copia inicial del clinete.
+	
+Desde el cliente al servidor
+----------------------------
+En este caso, pueden exitir los siguientes escenarios
+	- El modelo no se modificó en el cliente
+		
