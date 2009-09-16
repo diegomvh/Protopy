@@ -13,6 +13,8 @@ Sistemas Web Desconectados
     capitulos/tecnologias-servidor
     capitulos/tecnologias-cliente
     capitulos/intro-desarrollo
-    capitulos/desarrollo
+    capitulos/library-desarrollo
+    capitulos/framework-desarrollo
+    capitulos/remotesite-desarrollo
     capitulos/conclusiones
     glosario

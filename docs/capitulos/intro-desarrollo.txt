@@ -1,4 +1,4 @@
-d******************************
+******************************
 Introducción de desarrollo
 ******************************
 
@@ -131,6 +131,19 @@ típicamente una base de datos y un mecanismo para servir estáticamente los arc
 Transportar la aplicación a un cliente web requiere un mecanismo de almacenamiento que brinde 
 estos dos elementos en conjunto.
 
+Google desarrolló un plugin multiplataforma y cross-browser llamado *Google Gears* que tiene 
+como objetivo facilitar el sporte offline de aplicaciones web. 
+Gears se compone de 3 componentes básicos:
+
+	* LocalServer
+		Un servidor de archivos estáticos en el clinete
+	* DataBase
+		Una base de datos relacional
+	* WorkerPool 
+		Un sistema de procesos, para realizar tareas concurrentes de manera aislada y 
+		no provocar retrasos en el dibujado de la pantalla. 
+
+
 
 
 
@@ -150,6 +163,18 @@ pueda ser ejecutado en un browser, brindando los componentes básicos de Django:
  * Asociación de expresiones regulares a funciones.
  
 Esta idea surge en parte gracias al proyecto "Gars On Rails" [*]_ , un equivalente al objetivo de la presente tesis 
-sobre el framework Rails. 
+sobre el framework Rails.
 
-.. [*] *Gears On Rails* 
+
+
+.. [*] *Gears On Rails*
+
+
+
+
+El desarrollo consistió en el siguiente diagrama:
+
+.. image:: ../_svg/esquema_general.png
+
+
+

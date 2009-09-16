@@ -1,0 +1,523 @@
+************
+El framework
+************
+
+    | **d** jango + **off** line = **doff**
+
+Mientras que un cliente se encuentre sin conexion con el servidor web, es capaz
+de generar y almacenar datos usando su base de datos local. Al reestablecer
+la conexion con el servidor web, estos datos deben ser transimitos a la base de
+datos central para su actulizacion y posterior sincronizacion del resto de los
+clinetes.
+
+El framework fue construido con el objeto de ser compatible con los modelos y
+las plantillas de django, intentando acercar así al desarrollador que tenga
+experiencia en este framework.
+
+Modelos
+=======
+
+La forma de interactuar con la base de datos es a traves de los modelos, siendo 
+consistente con Django, Doff abstrae la logica de negocios dentro de los modelos.
+
+Continuando con la linea de ejemplos se presenta a continuación una
+configuración de datos básica sobre libro/autor/editor, esta estructura debe
+estar contenida en un archivo models.js dentro de una aplicacion:
+
+    var models = require('doff.db.models.base');
+
+    var Publisher = type('Publisher', [ models.Model ], {
+        name: new models.CharField({ maxlength: 30 }),
+        address: new models.CharField({ maxlength: 50 }),
+        city: new models.CharField({ maxlength: 60 }),
+        state_province: new models.CharField({ maxlength: 30 }),
+        country: new models.CharField({ maxlength: 50 }),
+        website: new models.URLField()
+    });
+
+    var Author = type('Author', [ models.Model ], {
+        salutation: new models.CharField({ maxlength: 10 }),
+        first_name: new models.CharField({ maxlength: 30 }),
+        last_name: new models.CharField({ maxlength: 40 }),
+        email: new models.EmailField(),
+        headshot: new models.ImageField({ upload_to: '/tmp' })
+    });
+
+    var Book = type('Book', [ models.Model ], {
+        title: new models.CharField({ maxlength: 100 }),
+        authors: new models.ManyToManyField(Author),
+        publisher: new models.ForeignKey(Publisher),
+        publication_date: new models.DateField()
+    });
+
+Cada modelo es representado por un tipo de Protopy que es un subtipo de
+``doff.db.models.model.Model``. El tipo ``Model`` contiene toda la maquinaria
+necesaria para hacer que los nuevos tipos sean capaces de interactuar con la
+base de datos.
+
+Cada modelo se corresponde con una tabla única de la base de datos, y cada
+atributo de un modelo con una columna en esa tabla. El nombre de atributo
+corresponde al nombre de columna, y el tipo de campo corresponde al tipo de
+columna de la base de datos. Por ejemplo, el modelo ``Publisher`` es equivalente
+a la siguiente tabla:
+
+    CREATE TABLE "books_publisher" (
+        "id" serial NOT NULL PRIMARY KEY,
+        "name" varchar(30) NOT NULL,
+        "address" varchar(50) NOT NULL,
+        "city" varchar(60) NOT NULL,
+        "state_province" varchar(30) NOT NULL,
+        "country" varchar(50) NOT NULL,
+        "website" varchar(200) NOT NULL
+    );
+
+La excepción a la regla una-clase-por-tabla es el caso de las relaciones
+muchos-a-muchos. En el ejemplo, ``Book`` tiene un ``ManyToManyField`` llamado
+``authors``. Esto significa que un libro tiene uno o más autores, pero la tabla
+de la base de datos ``Book``  no tiene una columna ``authors``. En su lugar, se
+crea una tabla adicional que maneja la correlación entre libros y autores.
+
+Para una lista completa de tipos de campo y opciones de sintaxis de modelos,
+ver el Apéndice B.
+
+Finalmente, no se define explícitamente una clave primaria en ninguno de estos
+modelos. A no ser que se le indique lo contrario, Doff dará automáticamente a
+cada modelo un campo de clave primaria entera llamado ``id``.
+
+Para activar los modelos en el proyecto, la aplicación que los contine debe
+estar incluida en la lista de aplicaciones instaladas de Doff. Esto es, edita
+el archivo ``settings.js``, y examina la variable de configuración ``INSTALLED_APPS``
+
+Posteriormente, cuando el usuario instala la aplicación en su navegador, el
+sistema recorre las aplicaciones en ``INSTALLED_APPS`` y genera el SQL para
+cada modelo, creando las tablas en la base de datos. 
+
+Doff provee entre las herramientas del desarrollador, un interprete de SQL sobre
+la base de datos del cliente para conslutas.
+
+Acceso básico a datos
+---------------------
+
+Una vez que se creo el modelo, Doff provee automáticamente una API JavaScript
+de alto nivel para trabajar con estos modelos:
+
+    >>> require('books.models', 'Publisher');
+    >>> p1 = new Publisher({ name: 'Addison-Wesley', address: '75 Arlington Street',
+    ...     city: 'Boston', state_province: 'MA', country: 'U.S.A.',
+    ...     website: 'http://www.apress.com/'});
+    >>> p1.save();
+    >>> publisher_list = Publisher.objects.all();
+    >>> print(array(publisher_list));
+    [<Publisher: Publisher object>]
+
+Se puede hacer mucho con la API de base de datos de Doff y para mejorar la
+interactividad se recomienda implementar __str__ de Protopy. Con este
+método los objetos tendran su representación en "string", es imporante que eso
+sea así ya que el framework utiliza esta representacion en muchos lugares, como
+templates y salidas por consola.
+
+Insertando y actualizando datos
+-------------------------------
+
+En el ejemplo presentado anteriormente se ve cómo se hace para insertar una fila
+en la base de datos, primero se crea una instancia del modelo pasando argumentos
+nombrados y luego se llama al método ``save()`` del objeto:
+
+En el caso de ``Publisher`` se usa una clave primaria autoincremental ``id``,
+por lo tanto la llamada inicial a ``save()`` hace una cosa más: calcula el valor
+de la clave primaria para el registro y lo establece como el valor del atributo
+``id``  de la instancia.
+
+Las subsecuentes llamadas a ``save()`` guardarán el registro en su lugar, sin
+crear un nuevo registro (es decir, ejecutarán una sentencia SQL ``UPDATE`` en
+lugar de un ``INSERT``).
+
+Seleccionar objetos
+-------------------
+
+La forma de seleccionar y tamizar los datos se consige a traves de los
+administradores de consultas, en el ejmplo la linea ``Publisher.objects.all()``
+pide al administrador objects de Publisher que obtenga todos los registros,
+internamente esto genera una consulta SQL::
+
+    SELECT
+        id, name, address, city, state_province, country, website
+    FROM book_publisher;
+
+Todos los modelos automáticamente obtienen un administrador ``objects`` que debe
+ser usado cada vez que se quiera consultar sobre una instancia del modelo. El
+metodo ``all()`` es un método del administrador ``objects`` que retorna todas
+las filas de la base de datos. Aunque este objeto se *parece* a una lista, es
+actualmente un *QuerySet* -- un objeto que representa algún conjunto de filas de
+la base de datos. El Apéndice C describe QuerySets en detalle.
+
+Cualquier búsqueda en base de datos va a seguir esta pauta general.
+
+Filtrar datos
+-------------
+
+Aunque obtener todos los objetos es algo que ciertamente tiene su utilidad, la
+mayoría de las veces lo que vamos a necesitar es manejarnos sólo con un
+subconjunto de los datos. Para ello usaremos el método ``filter()``::
+
+    >>> Publisher.objects.filter(name="Apress Publishing")
+    [<Publisher: Apress Publishing>]
+
+``filter()`` toma argumentos de palabra clave que son traducidos en las
+cláusulas SQL ``WHERE`` apropiadas. El ejemplo anterior sería traducido en algo
+como::
+
+    SELECT
+        id, name, address, city, state_province, country, website
+    FROM book_publisher
+    WHERE name = 'Apress Publishing';
+
+Puedes pasarle a ``filter()`` múltiples argumentos para reducir las cosas aún
+más::
+
+    >>> Publisher.objects.filter(country="U.S.A.", state_province="CA")
+    [<Publisher: Apress Publishing>]
+
+Esos múltiples argumentos son traducidos a cláusulas SQL ``AND``. Por lo tanto
+el ejemplo en el fragmento de código se traduce a lo siguiente::
+
+    SELECT
+        id, name, address, city, state_province, country, website
+    FROM book_publisher
+    WHERE country = 'U.S.A.' AND state_province = 'CA';
+
+Notar que por omisión la búsqueda usa el operador SQL ``=`` para realizar
+búsquedas exactas. Existen también otros tipos de búsquedas::
+
+    >>> Publisher.objects.filter(name__contains="press")
+    [<Publisher: Apress Publishing>]
+
+Notar el doble guión bajo entre ``name`` y ``contains``. Del mismo modo que
+Python, Django usa el doble guión bajo para indicar que algo "mágico" está
+sucediendo -- aquí la parte ``__contains`` es traducida por Django en una
+sentencia SQL ``LIKE``::
+
+    SELECT
+        id, name, address, city, state_province, country, website
+    FROM book_publisher
+    WHERE name LIKE '%press%';
+
+Hay disponibles varios otos tipos de búsqueda, incluyendo ``icontains`` (``LIKE`` no
+sensible a diferencias de mayúsculas/minúsculas), ``startswith`` y ``endswith``,
+y ``range`` (consultas SQL ``BETWEEN``). El Apéndice C describe en detalle todos
+esos tipos de búsqueda.
+
+Obteniendo objetos individuales
+-------------------------------
+
+En ocasiones desearás obtener un único objeto. Para esto existe el método
+``get()``::
+
+    >>> Publisher.objects.get(name="Apress Publishing")
+    <Publisher: Apress Publishing>
+
+En lugar de una lista (o más bien, un QuerySet), este método retorna un objeto
+individual. Debido a eso, una consulta cuyo resultado sean múltiples objetos
+causará una excepción::
+
+    >>> Publisher.objects.get(country="U.S.A.")
+    Traceback (most recent call last):
+        ...
+    AssertionError: get() returned more than one Publisher -- it returned 2!
+
+Una consulta que no retorne objeto alguno también causará una excepción::
+
+    >>> Publisher.objects.get(name="Penguin")
+    Traceback (most recent call last):
+        ...
+    DoesNotExist: Publisher matching query does not exist.
+
+Ordenando datos
+---------------
+
+A medida que juegas con los ejemplos anteriores, podrías descubrir que los
+objetos so devueltos en lo que parece ser un orden aleatorio. No estás
+imaginándote cosas, hasta ahora no le hemos indicado a la base de datos cómo
+ordenar sus resultados, de manera que simplemente estamos recibiendo datos con
+algún orden arbitrario seleccionado por la base de datos.
+
+Eso es, obviamente, un poco ***silly*** (tonto), no querríamos que una página Web que
+muestra una lista de editores estuviera ordenada aleatoriamente. Así que, en la
+práctica, probablemente querremos usar ``order_by()`` para reordenar nuestros
+datos en listas más útiles::
+
+    >>> Publisher.objects.order_by("name")
+    [<Publisher: Apress Publishing>, <Publisher: Addison-Wesley>, <Publisher: O'Reilly>]
+
+Esto no se ve muy diferente del ejemplo de ``all()`` anterior, pero el SQL
+incluye ahora un ordenamiento específico::
+
+    SELECT
+        id, name, address, city, state_province, country, website
+    FROM book_publisher
+    ORDER BY name;
+
+Podemos ordenar por cualquier campo que deseemos::
+
+    >>> Publisher.objects.order_by("address")
+    [<Publisher: O'Reilly>, <Publisher: Apress Publishing>, <Publisher: Addison-Wesley>]
+
+    >>> Publisher.objects.order_by("state_province")
+    [<Publisher: Apress Publishing>, <Publisher: Addison-Wesley>, <Publisher: O'Reilly>]
+
+y por múltiples campos::
+
+    >>> Publisher.objects.order_by("state_provice", "address")
+     [<Publisher: Apress Publishing>, <Publisher: O'Reilly>, <Publisher: Addison-Wesley>]
+
+También podemos especificar un ordenamiento inverso antecediendo al nombre del
+campo un prefijo ``-`` (el símbolo menos)::
+
+    >>> Publisher.objects.order_by("-name")
+    [<Publisher: O'Reilly>, <Publisher: Apress Publishing>, <Publisher: Addison-Wesley>]
+
+Aunque esta flexibilidad es útil, usar ``order_by()`` todo el tiempo puede ser
+demasiado repetitivo. La mayor parte del tiempo tendrás un campo particular por
+el que usualmente desearás ordenar. Es esos casos Django te permite anexar al
+modelo un ordenamiento por omisión para el mismo:
+
+.. literal-evaluado::
+
+    class Publisher(models.Model):
+        name = models.CharField(maxlength=30)
+        address = models.CharField(maxlength=50)
+        city = models.CharField(maxlength=60)
+        state_province = models.CharField(maxlength=30)
+        country = models.CharField(maxlength=50)
+        website = models.URLField()
+
+        def __str__(self):
+            return self.name
+
+        **class Meta:**
+            **ordering = ["name"]**
+
+Este fragmento ``ordering = ["name"]`` le indica a Django que a menos que se
+proporcione un ordenamiento mediante ``order_by()``, todos los editores deberán
+ser ordenados por su nombre.
+
+.. exhortacion:: ¿Qué es este asunto de Meta?
+
+    Django usa esta ``class Meta`` interna como un lugar en el cual se pueden
+    especificar metadatos  adicionales acerca de un modelo. Es completamente
+    opcional, pero puede realizar algunas cosas muy útiles. Examina el Apéndice
+    B para conocer las opciones que puede poner bajo ``Meta``.
+
+Encadenando búsquedas
+---------------------
+
+Has visto cómo puedes filtrar datos y has visto cómo ordenarlos. En ocasiones,
+por supuesto, vas a desear realizar ambas cosas. En esos casos simplemente
+"encadenas" las búsquedas entre sí::
+
+    >>> Publisher.objects.filter(country="U.S.A.").order_by("-name")
+    [<Publisher: O'Reilly>, <Publisher: Apress Publishing>, <Publisher: Addison-Wesley>]
+
+Como podrías esperar, esto se traduce a una consulta SQL conteniendo tanto un
+``WHERE`` como un ``ORDER BY``::
+
+    SELECT
+        id, name, address, city, state_province, country, website
+    FROM book_publisher
+    WHERE country = 'U.S.A'
+    ORDER BY name DESC;
+
+Puedes encadenar consultas en forma consecutiva tantas veces como desees. No
+existe un límite para esto.
+
+Rebanando datos
+---------------
+
+Otra necesidad común es buscar sólo un número fijo de filas. Imagina que tienes
+miles de editores en tu base de datos, pero quieres mostrar sólo el primero.
+Puedes hacer eso usando la sintaxis estándar de Python para el rebanado de
+listas::
+
+    >>> Publisher.objects.all()[0]
+    <Publisher: Addison-Wesley>
+
+Esto se traduce, someramente, a::
+
+    SELECT
+        id, name, address, city, state_province, country, website
+    FROM book_publisher
+    ORDER BY name
+    LIMIT 1;
+
+.. exhortacion::  Y más...
+
+    Hemos sólo arañado la superficie del manejo de modelos, pero deberías ya
+    conocer lo suficiente para entender todos los ejemplos del resto del libro.
+    Cuando estés listo para aprender los detalles completos detrás de las
+    búsquedas de objetos, échale una mirada al Apéndice C.
+
+Eliminando objetos
+------------------
+
+Para eliminar objetos, simplemente se debe llamar al método ``delete()`` del objeto:
+
+    >>> p = Publisher.objects.get({ name: "Addison-Wesley" });
+    >>> p.delete();
+    >>> array(Publisher.objects.all());
+    []
+
+Se pueden borrar objetos al por mayor llamando a ``delete()`` en el resultado de
+una búsqueda::
+
+    >>> publishers = Publisher.objects.all();
+    >>> publishers.delete();
+    >>> array(Publisher.objects.all());
+    []
+
+.. note:: 
+
+    Mixin en RemoteSite, los modelos se registran en RemoteSite o se pueden hacer a mano.
+    Hacer la referencia correspondiente al anexo de modelos
+
+Plantillas
+==========
+
+Doff brinda soporte al sistema de plantillas de Django. La idea detras de esto
+es que las plantillas creadas para una apilcacion on-line en Django pueda ser
+utilizada en la aplicación off-line de una forma simple y mantenible.
+
+Retomando el ejemplo presentado en la seccion de plantillas en Django,
+continuamos desde aquí describiendo como es el trabajo con esta plantilla en
+Doff.
+
+Rapidamente, la forma de obtener un producto de la plantilla es:
+
+    # Crea un objeto ``Template`` brindando el código crudo de la plantilla
+       como una cadena.
+
+    # Llama al método ``render()`` del objeto ``Template`` con un conjunto de
+       variables (o sea, el contexto). Este retorna una plantilla totalmente
+       renderizada como una cadena de caracteres, con todas las variables y
+       etiquetas de bloques evaluadas de acuerdo al contexto.
+
+Creación de objetos Template
+----------------------------
+
+Doff provee su versión del objeto ``Template`` para crear plantillas, y esté
+puede ser importado del módulo ``doff.template.base``, el argumento para la
+construccion del objeto es el texto en crudo de la plantilla. 
+
+    >>> require('doff.template.base', 'Template');
+    >>> t = new Template("Mi nombre es {{ name }}.");
+    >>> print(t);
+
+En este ejemplo `t` es un objeto template listo para ser renderizado. Si se
+obtubo el objeto es porque la plantilla esta correctamente analizada y no se
+econtraron errores en la misma, algunos errores por los que puede fallar la
+construccion son:
+
+    * Bloques de etiquetas inválidos
+    * Argumentos inválidos de una etiqueta válida
+    * Filtros inválidos
+    * Argumentos inválidos para filtros válidos
+    * Sintaxis de plantilla inválida
+    * Etiquetas de bloque sin cerrar (para etiquetas de bloque que requieran la
+      etiqueta de cierre)
+
+En todos los casos el sistema lanza una excepción ``TemplateSyntaxError``.
+
+Renderizar una plantilla
+------------------------
+
+Una vez que se tiene el objeto ``Template``, se esta en condiciones de obtener
+una salida procesada en un determinado *contexto*. Un contexto es simplemente un
+conjunto de variables y sus valores asociados. Una plantilla usa las variables
+para poblar la plantilla evaluando las etiquetas de bloque.
+
+El contexto esta representado en el tipo ``Context``, el cual se encuentra en el
+módulo ``doff.template.base``. La construccion del objeto toma un argumento
+opcional: un hash mapeando nombres de variables con valores. La llamada al
+método ``render()`` del objeto ``Template`` con el contexto "rellena" la
+plantilla::
+
+    >>> requiere('doff.template.base', 'Context', 'Template');
+    >>> t = new Template("Mi nombre es {{ name }}.")
+    >>> c = new Context({"name": "Pedro"})
+    >>> t.render(c)
+    'My name is Pedro.'
+
+El objeto ``Template`` puede ser renderizado con múltiples contextos, obteniendo
+así salidas diferentes para la misma plantilla. Por cuestiones de eficiencia es
+conveniente crear un objeto ``Template`` y luego llamar a ``render()``
+sobre este muchas veces::
+
+    # Mal chico
+    for each (var name in ['John', 'Julie', 'Pat']) {
+        var t = new Template('Hello, {{ name }}');
+        print(t.render(new Context({'name': name})));
+    }
+
+    # Buen chico
+    t = new Template('Hello, {{ name }}');
+    for each (var name in ['John', 'Julie', 'Pat'])
+        print(t.render(new Context({'name': name})));
+
+Al igual que en Django el objeto contexto puede contener variables mas complejas
+y la forma de inspeccionar dentro de estas es con el operador `.`. Usando el
+punto se puede acceder a objetos, atributos, índices, o métodos de un objeto.
+
+Cuando un sistema de plantillas encuentra un punto en una variable el orden de
+busqueda es el siguiente:
+
+    * Diccionario (por ej. ``foo["bar"]``)
+    * Atributo (por ej. ``foo.bar``)
+    * Llamada de método (por ej. ``foo.bar()``)
+    * Índice de lista (por ej. ``foo[bar]``)
+
+El sistema utiliza el primer tipo de búsqueda que funcione. Es la lógica de
+cortocircuito.
+
+Para terminar con este objeto, si una variable no existe en el contexto, el
+sistema de plantillas renderiza este como un string vacío, fallando
+silenciosamente. Es posible cambiar este comportamiento modificando el valor de
+la variable de configuración `TEMPLATE_STRING_IF_INVALID` en el módulo
+`settings`.
+
+Cargador de plantillas
+----------------------
+
+Se ve a continuación un ejemplo de una vista que retorna HTML generado por una
+plantilla::
+
+    require('doff.template.base', 'Template', 'Context');
+    require('doff.utils.http', 'HttpResponse');
+    require('doff.template.loader', 'get_template');
+
+    function current_datetime(request) {
+        var t = get_template('mytemplate.html');
+        html = t.render(new Context({'current_date': new Date()}))
+        return new HttpResponse(html);
+    }
+
+En esta vista se utiliza la API para cargar plantillas, a la cual se accede 
+mediante la funcion `get_template`, antes de poder utilizar esta funcion es
+necesario indicarle al framework donde están las plantillas. El lugar para hacer
+esto es en el *archivo de configuración*.
+
+Existen varios cargadores de plantillas que se pueden habilitar en el archivo de 
+configuración, este se vera en profundidad en el Apéndice E, por ahora se vera
+el cargador realacionado con la variable de configuración ``TEMPLATE_URL``. Esta
+variable le indica al mecanismo de carga de plantillas dónde buscar las
+plantillas. Por omisión, ésta es una cadena vacia. El valor para esta varible es
+la url del servidor en donde se sirven los templates que se renderizan
+localmente, por defecto si no se especifica la variable los archivos se buscan
+en la base del soporte off-line /templates/.
+
+.. note:: 
+
+    Terminar esto. con el tema de la base del soporte off-line
+    Introducir el concepto al inicio de doff
+    Hacer la referencia correspondiente al anexo de plantillas
+
+Formularios
+===========
