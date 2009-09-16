@@ -10,7 +10,7 @@ Generación dinámica de páginas Web
 
 Desde la perspectiva de un usuario, la Web consiste en una enorme cantidad de
 documentos interconectados a nivel mundial llamados *paginas Web*.
-En el clinete las paginas se ven mediante un programa llamado navegadores  
+En el cliente las paginas se ven mediante un programa llamado navegadores  
 
 JavaScript ha tenido durante mucho tiempo la reputación de lenguaje torpe e
 inadecuado para el desarrollo serio. Esto ha sido en gran parte debido a las
@@ -40,40 +40,40 @@ Navegador Web
 =============
 
 .. note::
-	Acá abordamos desde la perspectiva del navegador HTTP, HTML y Javascript
+	Acá abordamos desde la perspectiva del navegador HTTP, HTML y JavaScript
 	
 	
 Un navegador web o *web browser*, es un software encargado de representar 
-documentos de hípertexto al usuario, siendo los lenguajes de codificación de
+documentos de hipertexto al usuario, siendo los lenguajes de codificación de
 hipertexto más 
 populares HTML y XHTML. Un navegador no solo representa los documentos de
 hipertexto, sino
 que puede representar otros tipos de documentos, como imágenes
 (:term:JPEG, :term:GIF, :term:PNG, etc.), 
 sonido (:term:WAV, :term:MP3, :term:OGG) y contenido
-multimedial como video (:term:MPEG, :term:H264, :term:RM, :term:MOV), 
+multimedia como vídeo (:term:MPEG, :term:H264, :term:RM, :term:MOV), 
 e interactivos como es el caso de Macromedia Flash, applets Java o controles
 ActiveX en
 la plataforma Windows. Debido a la cantidad de recursos que debe manejar un
 navegador, 
 el servidor web agrega a cada respuesta al cliente una cabecera donde le indica 
-el tipo de recurso que está engregado. Esta especificación se realiza con el 
-standard :term:MIME.
+el tipo de recurso que está entregando. Esta especificación se realiza con el 
+estándar :term:MIME.
 
 
-Un navegador web acepta como entrada del usuario una URL, comunmente conocida
+Un navegador web acepta como entrada del usuario una URL, comúnmente conocida
 como dirección 
-de internet. Una vez validada la URL, el navegador web descarga el recurso
+de Internet. Una vez validada la URL, el navegador web descarga el recurso
 apuntado por la URL
-mediante el protcolo HTTP.
+mediante el protocolo HTTP.
 
-Una URL tiene el siguiente esquema, donde podemos diferenciar varios comopnentes
+Una URL tiene el siguiente esquema, donde podemos diferenciar varios componentes
 
 .. figure:: ../_svg/esquema_urls.png
     
     Forma de una URL.
 
-Los componetes de una URL son:
+Los componentes de una URL son:
 
 	* esquema
 		Especifica el mecanismo de comunicación. Generalmente HTTP y HTTPS en
@@ -81,18 +81,18 @@ una comunicación
 		asegurada mediante TLS [*]_ .
 		
 	* anfitrión
-		Especifica el nombre de dominio del servidor en internet, por ejemplo:
+		Especifica el nombre de dominio del servidor en Internet, por ejemplo:
 *google.com*, 
 		*nasa.gov*, *wikipedia.com*, etc.
 		Se popularizó la utilización de el subdominio "www" para identificar el
-aniftrión
+anfitrión
 		que ejecuta el servidor web, dando lugar a direcciones del tipo
 *www.google.com*, 
 		*www.nasa.gov*, etc.
 		
-		El *puerto* es un parametro de conexión TCP, y suele ser omitido debido
+		El *puerto* es un parámetro de conexión TCP, y suele ser omitido debido
 a que 
-		el esquema suele determinarlo, sindo 80 para HTTP y 443 para HTTPS. 
+		el esquema suele determinarlo, siendo 80 para HTTP y 443 para HTTPS. 
 		 
 	* recurso
 		Especifica dentro del servidor, la ruta para acceder al recurso
@@ -101,11 +101,11 @@ a que
 		El parámetro query tiene sentido cuando el recurso apuntado por la ruta
 no
 		se trata de una página estática y sirve para el pasaje de parámetros.
-		El programa que genera el recurso puede recbir como argumentos estos
+		El programa que genera el recurso puede recibir como argumentos estos
 parámetros, 
-		por ejemplo, cuando se ingresa la palaba *foo* en el buscador google,
+		por ejemplo, cuando se ingresa la palabra *foo* en el buscador google,
 la 
-		url que provee el resutlado de la búsqueda es la siguiente::
+		URL que provee el resultado de la búsqueda es la siguiente::
 			
 			http://www.google.com/search?*q=foo*
 		
@@ -113,23 +113,23 @@ la
 	* enlace
 		Dentro de un documento de hipertexto pueden existir destinos de
 enlaces, 
-		o enlaces internos. Gracias a este parámeto se puede enlazar a una 
-		sección epecífica de un documento, permitiendo al navegador ubicarse
+		o enlaces internos. Gracias a este parámetro se puede enlazar a una 
+		sección específica de un documento, permitiendo al navegador ubicarse
 		visualmente.
 
 .. [*] *Transport Security Layer* es el sucesor de *Secure Socket Layer* (SSL),
 es un protocolo
-criptográfico que provee conexiones seguras a traves de una red, típicamente
-internet [WikiSSL2009]_ .
+criptográfico que provee conexiones seguras a través de una red, típicamente
+Internet [WikiSSL2009]_ .
 
 .. [WikiSSL2009] *Transport Layer Security*, Wikipedia, 2009, último acceso,
 Agosto 2009.
 
-Cuando el recurso apuntado se encuentra en internet, el navegador realiza una
+Cuando el recurso apuntado se encuentra en Internet, el navegador realiza una
 conexión hacia
-el servidor web indicado por el dominio y mediante el prtocolo HTTP le
-informandole a que
-recurso dese acceder.
+el servidor web indicado por el dominio y mediante el protocolo HTTP le
+informándole a que
+recurso debe acceder.
 
 
 HTTP
