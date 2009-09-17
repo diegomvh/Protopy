@@ -4,7 +4,26 @@ La aplicación
 
 Una vez lograda la implementación de Django en el clinete sobre el framework
 de aplicaciones Doff, aparece la necesidad de conectar el proyecto online
-con el browser. 
+con el browser. Surge la necesidad de crear un equivalente al proyecto para
+ser instalado en el clinete.
+
+El desarrollo de los doff.models sigue el esquma de aplicaciones de Django.
+
+
+
+
+Sitio Remoto
+------------
+
+Un sitio remoto se crea de la siguiente manera:
+
+.. code-block:: python
+	
+	fr
+
+
+URLs del sitio remoto
+---------------------
 
 
 
