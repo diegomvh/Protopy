@@ -1485,7 +1485,7 @@
     }
 
     //Arguments wraped, whit esteroids
-    var Arguments = type('Arguments', object, {
+    var Arguments = type('Arguments', [ object ], {
         __init__: function(args, def) {
             this.func = args.callee;
             this.collect = Array.prototype.slice.call(args);
@@ -1496,7 +1496,7 @@
             this[this.names[i]] = this[i] = this.collect[i];
             this.populated = false;
         },
-        
+
         __iter__ : function(){
             for each (var arg in this.collect)
                 yield arg;
