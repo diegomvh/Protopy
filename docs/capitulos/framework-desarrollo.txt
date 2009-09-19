@@ -480,8 +480,16 @@ Plantillas
 ==========
 
 Doff brinda soporte al sistema de plantillas de Django. La idea detras de esto
-es que las plantillas creadas para una apilcacion on-line en Django pueda ser
-utilizada en la aplicación off-line de una forma simple y mantenible.
+es que las plantillas escritas para una apilcacion on-line en Django pueda ser
+utilizada en la aplicación off-line de una forma consistente.
+
+.. note::
+
+	Existen sin emabargo algunos factores a tener en cuenta a la hora de
+	realizar plantillas para aplicaciones offline. Cuando una aplicación se
+	ejecuta de manera desconectada, el browser solo realiza una carga de documento
+	y la navegación se basa en la inserción y supresión de nodos sobre el elemento
+	document. Esto implica que el estado de la aplicación
 
 Retomando el ejemplo presentado en la seccion de plantillas en Django,
 continuamos desde aquí describiendo como es el trabajo con esta plantilla en

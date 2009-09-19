@@ -2,6 +2,43 @@
 Sincronizacion
 **************
 
+Se ha analizado hasta aquí la transferencia de un proyecto Django a un equivalente
+en un browser con soprte para Javascript 1.7 y GoogleGears. Tras la instalación
+de la aplicación en el cliente, se requiere la transferencia de los datos.
+
+Muchas aplicaciones requieren cierto contendio de datos iniciales o de trabajo
+para poder funcionar. Estos datos residen en la base de datos del servidor y
+para que la aplicación offline pueda trabajar, es necesario proveer un 
+al menos un mecanismo de transferencia de datos desde el servidor hacia el cliente.
+
+Debido a que el desarrollo se realizó apegandose al las estructuras de Django,
+tanto para la definición de proyecto, como de las aplicaciones y sus
+componentes, se decide realizar una sincronización a nivel ORM y no a bajo
+nivel, es decir, se utiliza la API de acceso a datos de Django, en vez de plantear
+sincronización mediante SQL.
+
+En el framework Django, el acceso a la base de datos se realiza mediante el 
+mapeador objeto relacional, en particular para la las consultas, 
+mediante las instancias de Managers definidas en cada modelo.
+En Doff se birnda la misma API,  de menara que el acceso a datos en 
+cualquiera de las aplicaciones es transparente.
+
+
+.. figure:: ../_svg/esquema_sync_simple.png
+	
+	Esquema de sincronización simple
+	
+Cada modelo definido en la aplicación del servidor posee al menos el manager
+*objects* que equivale a un consulta por todas las filas de la tabla a la cual
+está asociado el modelo. 
+
+
+	
+
+
+
+
+
 Modelos
 =======
 

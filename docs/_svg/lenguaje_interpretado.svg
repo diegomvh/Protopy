@@ -120,7 +120,7 @@
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1430"
-     inkscape:window-height="783"
+     inkscape:window-height="782"
      inkscape:window-x="2"
      inkscape:window-y="35" />
   <metadata
@@ -240,12 +240,12 @@
     <text
        id="text4931"
        y="219.12851"
-       x="676.27802"
+       x="666.27802"
        style="font-size:14.76507568px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
        xml:space="preserve"><tspan
          y="219.12851"
-         x="676.27802"
+         x="666.27802"
          id="tspan4933"
-         sodipodi:role="line">Salida</tspan></text>
+         sodipodi:role="line">Bytecode</tspan></text>
   </g>
 </svg>
