@@ -1,8 +1,11 @@
 .. _capitulos-protopy:
 
-*************
-La biblioteca
-*************
+#######
+Protopy
+#######
+
+Introducción
+============
 
 .. note:: 
 
@@ -67,8 +70,21 @@ En este capitulo se introducen las ideas principales que motivaron la
 creacion de una biblioteca en JavaScript, que brinde el soporte necesario al
 framework y a buena parte de los items expuestos.
 
+Biblioteca
+----------
+
+Protopy es una biblioteca JavaScript para el desarrollo de aplicaciones
+web dinamicas. Aporta un enfoque modular para la inclusión de código,
+orientación a objetos, manejo de AJAX, DOM y eventos.
+
+Para una referencia completa de la API de Protopy remitase al apandice
+:ref:`Protopy <apendices-protopy>`
+
+Historia
+--------
+
 Si bien el desarrollo de la biblioteca se mantuvo en paralelo a la del
-framework, existen aspectos basicos a los que esta brinda soporte y permiten
+Framework, existen aspectos basicos a los que esta brinda soporte y permiten
 presentarla en un apartado separado como "Una Biblioteca en JavaScript", esta
 constituye la base para posteriores construcciones y auna herramientas que
 simplifican el desarrollo client-side.
@@ -88,18 +104,9 @@ Python.
 
 No es arbitrario que el navegador sobre el cual corre Protopy sea Firefox y
 mas particularmente sobre la version 1.7 de JavaScript. El proyecto mozilla
-esta hacercando, con cada nueva versiones del lenguaje, la semantica de
+esta acercando, con cada nueva versiones del lenguaje, la semantica de
 JavaScript a la de Python, incluyendo en esta version generadores e iteradores
-los cuales son muy bien explotados por Protopy y el framework.
-
-Protopy
-=======
-Protopy es una biblioteca JavaScript para el desarrollo de aplicaciones
-web dinamicas. Aporta un enfoque modular para la inclusión de código,
-orientación a objetos, manejo de AJAX, DOM y eventos.
-
-Para una referencia completa de la API de Protopy remitase al apandice
-:ref:`Protopy <apendices-doff-dbapi>`
+los cuales son muy bien explotados por Protopy y el Framework.
 
 .. _protopy-modulos:
 
@@ -209,7 +216,7 @@ definiciones son las que efectivamente seran publicadas como funcionalidad.
 A continuación se presenta un fragmento de código que ejemplifica el uso de las 
 dos funciones presentadas.
 
-.. code-block:: javascript Figura algo
+.. code-block:: javascript
     :linenos:
 
      /* Obtengo la funcion copy y deepcopy del modulo copy
@@ -263,16 +270,19 @@ Creando tipos de objeto
 .. note:: Hacer la referencia al codigo anterior
 
 En el apartado teórico se toco el tema de construcción de objetos en base a
-"clases" y de la emulacion de herencia en JavaScript. Aunque muchos autores
+"clases" y de la emulación de herencia en JavaScript. Aunque muchos autores
 cuestionan estas practicas alegando, con justa razon, que no tiene sentido
 emular un paradigma dentro de otro; en la practica tener una implementación de
-objetos tipados mediante clases en JavaScript ayuda a los programadores a
-acercarse a este lenguaje y al reuso de código.
+objetos tipados mediante clases en JavaScript ayuda al reuso de código y en gran
+medida a que los programadores se acerquen al lenguaje.
 
 La función contrcuctora de tipos en la biblioteca surgue como herramienta para
-proveer al framework de mecanismos de extensión.
+proveer al Framework de mecanismos de extensión.
 
-.. code-block:: javascript Figura algo
+A continuacion se presenta un fragmento de codigo que ejemplifica la creacion de
+tipos en Protopy.
+
+.. code-block:: javascript
     :linenos:
 
     var Dict = type('Dict', object, {
@@ -281,8 +291,7 @@ proveer al framework de mecanismos de extensión.
 
     var SortedDict = type('SortedDict', [ Dict ], {
         __init__: function(object) {
-            this.keyOrder = (object && isinstance(object, SortedDict))?
-copy(object.keyOrder) : [];
+            this.keyOrder = (object && isinstance(object, SortedDict))? copy(object.keyOrder) : [];
             super(Dict, this).__init__(object);
         },
         __iter__: function() {
@@ -370,6 +379,22 @@ estructura a las estructuras homonimas en python, brindando una funcionalidad
 similar. Si bien la estructura "hasheable" nativa a JavaScript en un objeto,
 los diccionarios de Protopy permiten el uso de objetos como claves en lugar de
 solo cadenas.
+
+Arguments
+
+isinstance
+
+Herencia
+--------
+
+issubclass
+
+super
+
+
+Metodos y atributos de tipo
+---------------------------
+
 
 Extendiendo DOM y JavaScript
 ============================

@@ -1,6 +1,48 @@
-************
-El framework
-************
+####
+Doff
+####
+
+Introducción
+============
+
+
+---------------------- OJO CON ESTO QUE TIENE PONIES ---------------------------
+
+
+Este libro es sobre Django, un framework de desarrollo Web que ahorra tiempo y
+hace que el desarrollo Web sea divertido. Utilizando Django puedes crear y
+mantener aplicaciones Web de alta calidad con un mínimo esfuerzo.
+
+En el mejor de los casos, el desarrollo web es un acto entretenido y creativo;
+en el peor, puede ser una molestia repetitiva y frustrante. Django te permite
+enfocarte en la parte divertida -- el quid de tus aplicaciones Web -- al mismo
+tiempo que mitiga el esfuerzo de las partes repetitivas. De esta forma, provee
+un alto nivel de abstracción de patrones comunes en el desarrollo Web, atajos
+para tareas frecuentes de programación y convenciones claras sobre cómo
+solucionar problemas. Al mismo tiempo, Django intenta no entrometerse, dejándote
+trabajar fuera del ámbito del framework según sea necesario.
+
+El objetivo de este libro es convertirte en un experto de Django. El enfoque es
+doble. Primero, explicamos en profundidad lo que hace Django, y cómo crear
+aplicaciones Web con él. Segundo, discutiremos conceptos de alto nivel cuando
+se considere apropiado, contestando la pregunta "¿Cómo puedo aplicar estas
+herramientas de forma efectiva en mis propios proyectos?" Al leer este libro,
+aprenderás las habilidades necesarias para desarrollar sitios Web poderosos de
+forma rápida, con código limpio y de fácil mantenimiento.
+
+En este capítulo ofrecemos una visión general de Django.
+
+Framework
+---------
+
+Doff en un Framework Web escrito en JavaScript que provee un marco de desarrollo
+para las aplicaciones Web cliente-side.
+
+Para una referencia completa de la API de Doff remitase al apandice
+:ref:`Doff <apendices-doff-dbapi>`
+
+Historia
+--------
 
     | **d** jango + **off** line = **doff**
 
@@ -13,6 +55,61 @@ clinetes.
 El framework fue construido con el objeto de ser compatible con los modelos y
 las plantillas de django, intentando acercar así al desarrollador que tenga
 experiencia en este framework.
+
+Django nació naturalmente de aplicaciones de la vida real escritas por un equipo
+de desarrolladores Web en Lawrence, Kansas. Nació en el otoño boreal de 2003, cuando
+los programadores Web del diario *Lawrence Journal-World*, Adrian Holovaty y
+Simon Willison, comenzaron a usar Python para crear sus aplicaciones. El equipo
+de The World Online, responsable de la producción y mantenimiento de varios sitios
+locales de noticias, prosperaban en un entorno de desarrollo dictado por las
+fechas límite del periodismo. Para los sitios -- incluidos LJWorld.com,
+Lawrence.com y KUsports.com -- los periodistas (y los directivos) exigían que se
+agregaran nuevas características y que aplicaciones enteras se crearan a una
+velocidad vertiginosa, a menudo con sólo días u horas de preaviso. Es así que
+Adrian y Simon desarrollaron por necesidad un framework de desarrollo Web que
+les ahorrara tiempo -- era la única forma en que podían crear aplicaciones
+mantenibles en tan poco tiempo -- .
+
+En el verano boreal de 2005, luego de haber desarrollado este framework hasta
+el punto en que estaba haciendo funcionar la mayoría de los sitios World Online,
+el equipo de World Online, que ahora incluía a Jacob Kaplan-Moss, decidió
+liberar el framework como software de código abierto. Lo liberaron en julio de
+2005 y lo llamaron Django, por el guitarrista de jazz Django Reinhardt.
+
+A pesar de que Django ahora es un proyecto de código abierto con colaboradores
+por todo el mundo, los desarrolladores originales de World Online todavía
+aportan una guía centralizada para el crecimiento del framework, y World Online
+colabora con otros aspectos importantes tales como tiempo de trabajo, materiales
+de marketing, y hosting/ancho de banda para el Web site del framework
+(http://www.djangoproject.com/).
+
+Esta historia es relevante porque ayuda a explicar dos cuestiones clave. La
+primera es el "punto dulce" de Django. Debido a que Django nació en un entorno
+de noticias, ofrece varias características (en particular la interfaz admin,
+tratada en el `Capítulo 6`_) que son particularmente apropiadas para sitios de
+"contenido" -- sitios como eBay, craigslist.org y washingtonpost.com que ofrecen
+información basada en bases de datos --. (De todas formas, no dejes que eso te
+quite las ganas -- a pesar de que Django es particularmente bueno para
+desarrollar esa clase de sitios, eso no significa que no sea una herramienta
+efectiva para crear cualquier tipo de sitio Web dinámico --. Existe una
+diferencia entre ser *particularmente efectivo* para algo y *no ser efectivo*
+para otras cosas).
+
+La segunda cuestión a resaltar es cómo los orígenes de Django le han dado forma
+a la cultura de su comunidad de código abierto. Debido a que Django fue extraído
+de código de la vida real, en lugar de ser un ejercicio académico o un producto
+comercial, está especialmente enfocado en resolver problemas de desarrollo Web
+con los que los desarrolladores de Django se han encontrado -- y con los que
+continúan encontrándose --. Como resultado de eso, Django es activamente mejorado
+casi diariamente. Los desarrolladores del framework tienen un alto grado de
+interés en asegurarse de que Django les ahorre tiempo a los desarrolladores,
+produzca aplicaciones que son fáciles de mantener y rindan bajo mucha
+carga. Aunque existan otras razones, los desarrolladores están motivados por
+sus propios deseos egoístas de ahorrarse tiempo a ellos mismos y disfrutar de
+sus trabajos. (Para decirlo sin vueltas, se comen su propia comida para perros).
+
+----------------------------------------------------------------------------------
+
 
 Modelos
 =======
