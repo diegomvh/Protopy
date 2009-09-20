@@ -1096,11 +1096,9 @@ formateo de datos, etc).
 El template se entrega como un HttpResponse. La responsabilidad de la vista es entregar
 una instancia de esta clase.
 
-.. figure:: ../_static/get_response.png
-    :height: 200
-    :width: 200
-
-    Poceso de un request.
+.. figure:: ../_svg/esquema_django.png
+	
+	Proceso de un request
 
 .. _django-orm:
 

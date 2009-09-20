@@ -10,48 +10,83 @@ ser instalado en el clinete.
 El desarrollo de los doff.models sigue el esquma de aplicaciones de Django.
 
 
+Definición de un proyecto en el cliente
+---------------------------------------
+
+.. note:: hacer la referencia al capítulo de django
+
+Doff fue desarrollado con el objetivo de realizar la menor cantidad de 
+reescritura posible de las aplicaciones Django para ser ejecutadas de manera
+desconectada. La transferencia del proyecto al clinete conlleva
+la transferencia de la configuración, las aplicaciones y la base de datos.
+
+Una aplicación está conformada por al menos un módulo de vistas, uno de 
+urls y un módulo de modelos.
+
+En el caso de las vistas, estas deben ser reescritas debido a que 
+si bien Porotpy está diseñado para que los dearrolladores encunetren en
+Javascript 1.7 una sintaxis y semántica cercana a la de Python, pueden
+existir módulos de la API de Python que Protopy no soprte.
+Así como también pueden hacer uso de módulos de terceros, el caso 
+de ReportLab para la genreación de PDF,
+MatplotLib para la generación de gráficas, o alguna otra librería.
+
+Por lo tanto vemos que no podemos realizar una reescritura uno a uno
+de las vistas. Además las vists que se rendericen sobre templates que
+accedan a datos o servicios de otros dominios tampoco pueden ser transformadas
+de modo directo, sinedo un caso dificilmente salvable.
+
+En cuanto a la base de datos por razones de seguirad y eficiencia, 
+es posible que no se desee realizar una transferencia total de los 
+datos al cliente. 
+
+Por ejempo, tablas que almacenan datos con información privada o confidencial, 
+también es posible que un usuario o grupo tenga diferentes niveles de accesso 
+sobre los datos que otros.
 
 
-Sitio Remoto
-------------
-
-Un sitio remoto se crea de la siguiente manera:
-
-.. code-block:: python
+.. figure:: ../_svg/esquema_offline_simple.png
 	
-	fr
+	Análisis inicial de elementos a transferir para lograr una versión offline de un proyecto
+
+Se arriba a la conclusión de que una aplicación offline puede diferir tanto 
+en funcionalidad como en datos de una versión en linea. Por lo tanto se 
+hace necesario definir un proyecto offline, analizando como se realiza la 
+equivalencia de cada elemento de la  versión offline.
+
+Módulo de vistas y urls en una aplicación offline
+-------------------------------------------------
+
+Como hemos se analizó en el apartado anterior, las vistas deben ser
+reescritas para la versión offline.
+
+Bootstrap
+---------
+
+Transferencia de los modelos
+----------------------------
 
 
-URLs del sitio remoto
----------------------
+Debido a que la API de base de datos posee diferencias mínimas,
+la transferencia de la definición de los modelos al cliente se ideó de tal forma
+que sea posible mediante introspección. 
 
+Para que el clinete conozca la definción de un modelo, realiza una 
 
-
-
-
-
-
-Identificación de instancias en el servidor
--------------------------------------------
-
-.. note::
-	No se donde está la aclaración de pk e id para hacer la aclaración
-
-Django provee un sub frameowork llamado *Content Types Framework* que permite 
-generar relaciones genéricas en los instancias arbitrarias del modelo. Cada modelo posee un
-identificador único entero en Conent Types y en conjunción con la clave del 
-objeto (id o pk) se obtiene una calve única para cualquier instancia, sin importar su
-tipo.
 
 
 
 Sitio Remoto
 ------------
 
-Un sitio remoto es una vista de un conjunto de aplicaciones de un proyecto.
-Es el equivalente al proyecto en el lado del servidor. Controla:
- * Funcionlidad
- * Seguridad
- * Sincronización
- * Consistencia
+Se creó la entidad RemoteSite para definir un proyecto desconectado.
+Un proyecto puede tener uno o más RemoteSites. Cada sitio remoto está 
+publicado en una URL.
+
+Un sitio remoto consiste en una instancia de una clase que posee un nombre.
+Este nombre coincide con el nombre del directorio que almacena las vistas.
+
+El sitio remoto tiene la responsabilidad de servir el código del framework
+doff y el proyecto offline (vistas, modelos, urls, templates).
+
 

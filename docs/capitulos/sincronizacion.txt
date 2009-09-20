@@ -27,15 +27,31 @@ cualquiera de las aplicaciones es transparente.
 .. figure:: ../_svg/esquema_sync_simple.png
 	
 	Esquema de sincronización simple
-	
-Cada modelo definido en la aplicación del servidor posee al menos el manager
-*objects* que equivale a un consulta por todas las filas de la tabla a la cual
-está asociado el modelo. 
+
+Sincronización simple de servidor a cliente
+-------------------------------------------
+
+Cada entidad del modelo definido en la aplicación del servidor posee al menos el manager
+*objects*, que equivale a un consulta por todas las filas de la tabla a la cual
+está asociada la entidad. 
+
+Django provee un mecanismo de serialización de QuerySets,
+que son los objetos que encapsulan las consultas, en varios formatos.
 
 
 	
 
+Identificación de instancias en el servidor
+-------------------------------------------
 
+.. note::
+	No se donde está la aclaración de pk e id para hacer la aclaración
+
+Django provee un sub frameowork llamado *Content Types Framework* que permite 
+generar relaciones genéricas en los instancias arbitrarias del modelo. Cada modelo posee un
+identificador único entero en Conent Types y en conjunción con la clave del 
+objeto (id o pk) se obtiene una calve única para cualquier instancia, sin importar su
+tipo.
 
 
 
