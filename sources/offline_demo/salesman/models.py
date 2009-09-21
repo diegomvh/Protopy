@@ -42,7 +42,7 @@ class Producto(models.Model):
     descripcion = models.CharField(max_length = 500)
     categoria = models.ForeignKey(Categoria, blank = True)
     provisto_por = models.ManyToManyField(Proveedor)
-    precio_uniatario = models.DecimalField(default = 0.0)
+    precio_uniatario = models.DecimalField(default = 0.0, max_digits = 5, decimal_places = 3)
 
 class Pedido(models.CharField):
     cliente = models.ForeignKey(Cliente)
