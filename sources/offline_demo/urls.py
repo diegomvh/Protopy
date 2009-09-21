@@ -1,5 +1,5 @@
 from django.conf.urls.defaults import *
-
+from offline_demo.salesman.admin import site
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
 # admin.autodiscover()
@@ -14,4 +14,6 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     # (r'^admin/', include(admin.site.urls)),
+    ('^$', 'django.views.generic.simple.direct_to_template', {'template': 'index.html'}),
+    ('^admin/(.*)', site.root, ),
 )

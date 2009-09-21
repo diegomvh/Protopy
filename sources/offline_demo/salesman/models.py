@@ -1,3 +1,4 @@
+# coding: utf-8
 '''
 Modelo de prueba
 '''
@@ -6,12 +7,21 @@ from django.db import models
 class Ciudad(models.Model):
     nombre = models.CharField(max_length = 50)
     cp = models.CharField(max_length = 40)
+    class Meta:
+        verbose_name_plural = "Ciudades"
 
+    def __unicode__(self):
+        return self.nombre
+        
 class Vendedor(models.Model):
     nombre = models.CharField(max_length = 50)
     apellido = models.CharField(max_length = 50)
     ciudades_asignadas = models.ManyToManyField(Ciudad)
-
+    class Meta:
+        verbose_name_plural = "Vendedores"
+    def __unicode__(self):
+        return u','.join((self.nombre, self.apellido))
+        
 class Cliente(models.Model):
     '''
     El cliente
@@ -20,6 +30,9 @@ class Cliente(models.Model):
     ciudad = models.ForeignKey(Ciudad)
     correo = models.EmailField()
 
+    def __unicode__(self):
+        return u'%s, %s' % (self.razon_social, self.ciudad)
+    
 class Proveedor(models.Model):
     '''
     El proveedor
@@ -27,12 +40,22 @@ class Proveedor(models.Model):
     razon_social = models.CharField(max_length = 50)
     direccion = models.CharField(max_length = 200)
     correo = models.EmailField()
+    class Meta:
+        verbose_name_plural = "Proveedores"
+        
+    def __unicode__(self):
+        return self.razon_social
 
 class Categoria(models.Model):
     '''
     Cada producto tiene una categoria
     '''
     nombre = models.CharField(max_length = 50)
+    class Meta:
+        verbose_name = "Categoría"
+        verbose_name_plural = "Categorías"
+
+    
     
 class Producto(models.Model):
     '''
@@ -44,12 +67,21 @@ class Producto(models.Model):
     provisto_por = models.ManyToManyField(Proveedor)
     precio_uniatario = models.DecimalField(default = 0.0, max_digits = 5, decimal_places = 3)
 
-class Pedido(models.CharField):
+    def __unicode__(self):
+        return self.nombre
+        
+class Pedido(models.Model):
     cliente = models.ForeignKey(Cliente)
     numero = models.PositiveIntegerField()
     fecha = models.DateField()
-
-class ItemPedido(models.CharField):
+    def __unicode__(self):
+        return u"%s %s" % (self.numero, self.cliente)
+        
+class ItemPedido(models.Model):
     cantidad = models.PositiveIntegerField()
     producto = models.ForeignKey(Producto)
-    precio = models.DecimalField()
+    precio = models.DecimalField(default = 0.0, max_digits = 5, decimal_places = 3)
+
+    class Meta:
+        verbose_name_plural = 'Items de Pedido'
+    

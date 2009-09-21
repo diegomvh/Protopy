@@ -7,4 +7,13 @@ class AdminSalesman(AdminSite):
 site = AdminSalesman()
 
 site.register(Ciudad)
+site.register(Vendedor)
+site.register(Cliente)
+site.register(Proveedor)
+site.register(Producto)
+site.register(Categoria)
+
+site.register(Pedido)
+site.register(ItemPedido)
+
 
