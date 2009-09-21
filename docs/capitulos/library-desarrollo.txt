@@ -267,19 +267,21 @@ mediante la invocación de 'require('caches')'.
 Creando tipos de objeto
 =======================
 
-.. note:: Hacer la referencia al codigo anterior
-
 En el apartado teórico se toco el tema de construcción de objetos en base a
 "clases" y de la emulación de herencia en JavaScript. Aunque muchos autores
 cuestionan estas practicas alegando, con justa razon, que no tiene sentido
 emular un paradigma dentro de otro; en la practica tener una implementación de
-objetos tipados mediante clases en JavaScript ayuda al reuso de código y en gran
-medida a que los programadores se acerquen al lenguaje.
+objetos tipados en JavaScript ayuda al reuso de código y en gran medida a que
+los programadores se acerquen al lenguaje.
 
-La función contrcuctora de tipos en la biblioteca surgue como herramienta para
-proveer al Framework de mecanismos de extensión.
+La forma de crear nuevos "tipos de objetos" en Protopy es a traves de la función
+`type`. Esta funcion no fue parte de la biblioteca hasta que no se observo la
+necesidad de otrogar mayor "poder" al constructor de clases que brindaba
+Prototype, y su aparcición posibilito nuevas formas de construir tipos, 
+similares a las construcciones de tipos que brinda la funcion homónima en
+Python, a la cual debe su nombre.
 
-A continuacion se presenta un fragmento de codigo que ejemplifica la creacion de
+A continuación se presenta un fragmento de código que ejemplifica la creación de
 tipos en Protopy.
 
 .. code-block:: javascript
@@ -326,27 +328,62 @@ tipos en Protopy.
         }
     });
 
-Protopy define un constructor de "tipos de objetos" llamado `type`. Notese que
-aquí nos referimos a tipos y no a clases.
+Rapidamente, este ejemplo presenta la definición del tipo SortedDict, el cual es
+una especialización del tipo base Dict. Como se observa la función constructora 
+recibe, como primer argumento el nombre para el nuevo tipo, seguidamente un
+arreglo con los tipo base y para terminar un objeto con los atributos y metodos
+para los objetos de ese tipo.
 
-Al igual que muchas partes de Protopy `type` cambio a lo largo del desarrollo,
-sumando soporte para herencia multiple, metodos magicos e incluso "metatipos".
+Con estos dos nuevos constructores ya es posible crear "objetos tipados" que se
+comporten en función de sus respectivas definiciones.
 
-En el ejemplo presentado se utiliza la funcion type para definir el tipo
-SortedDict, el cual es una especializacion del tipo base Dict. En la definicion
-se detalla bastante bien el comprotambiento de esta type; como primer argumento
-recibe el nombre para el nuevo tipo, seguidamente un arreglo con los tipo base y
-para terminar un objeto con los atributos y metodos.
+.. code-block:: javascript
 
-Metodo importentes:
+    >>> d = new SortedDict({'uno': 1})
+    >>> d.set('dos', 2)
+    >>> d.get('dos')
+    2
+    >>> d.items()
+    [["uno", 1 ], ["dos", 2 ]]
 
-    * __init__
+Como se observa, para instanciar un nuevo tipo se utiliza el operador `new` de
+JavaScript, este operador crea el nuevo objeto e invoca a la funcion __init__.
+    
+En los métodos la palabra reservada `this` tiene el comportamiento esperado,
+presentado en la parte teorica, el cual es hacer referencia al objeto
+instanciado con `new`.
 
-        Este es el metodo que se invoca inmediatamente después de contruir un
-        nuevo objeto de este tipo. Sería tentador decir que es el “constructor”
-        de la clase. Si bien se parece un constructor de Java, actúa como si lo
-        fuese ya que el objeto ya esta instanciado cuando se llama a esta
-        función.
+Internamente `type` utiliza el objeto `prototype` para la construcción, con lo
+cual el operador `instanceof` presenta un comportamiento coherente, pese a esto
+se recomienda usar la funcion `isinstance` que trae Protopy, ya que esta permite
+navegar por la cadena de herencia.  
+
+.. code-block:: javascript
+
+    >>> d instanceof SortedDict
+    true
+    >>> d instanceof Dict
+    false
+    >>> isinstance(d, Dict)
+    true
+
+Inicialización
+--------------
+
+En el ejemplo se muestra la inicialización del tipo SorteDict usando una funcion
+llamada __init__. Este método es llamado por el operador `new` inmediatamente
+despues de crear una instancia. Sería tentador decir que es el “constructor”
+de la clase. Si bien se parece un constructor de Java, actúa como si lo fuese ya
+que el objeto ya esta instanciado cuando se llama a esta función.
+
+Los métodos __init__ pueden tomar cualquier cantidad de argumentos, e igual que
+las funciones en JavaScript estos son opcionales para quien invoca.
+
+Los métodos __init__ son opcionales, pero cuando se define uno, se debe recordar
+llamar explícitamente al método __init__ del ancestro.
+
+Otros métodos
+-------------
 
     * __str__
 
@@ -363,15 +400,10 @@ Metodo importentes:
         implemente el metodo next (un iterador o un generado), los bucles
         for hacen esto automáticamente, pero también se puede hacer manualmente.
 
-Otros metodos:
-
     * __deepcopy__
     * __copy__
     * __json__
     * __html__
-
-Para instanciar un nuevo tipo se utiliza el operador new de JavaScript, este
-operador crea el nuevo objeto e invoca a la funcion __init__.
 
 Los primeros tipos que surgen para la organizacion de datos dentro de la
 librerias con los "Sets" y los "Diccionarios", hambos aproximan su
@@ -380,12 +412,19 @@ similar. Si bien la estructura "hasheable" nativa a JavaScript en un objeto,
 los diccionarios de Protopy permiten el uso de objetos como claves en lugar de
 solo cadenas.
 
+Al igual que muchas partes de Protopy `type` cambio a lo largo del desarrollo,
+sumando soporte para herencia multiple, metodos magicos e incluso "metatipos".
+
+
 Arguments
 
 isinstance
 
 Herencia
 --------
+
+La función contrcuctora de tipos en la biblioteca surgue como herramienta para
+proveer al Framework de mecanismos de extensión.
 
 issubclass
 
