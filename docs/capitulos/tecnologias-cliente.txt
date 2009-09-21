@@ -404,8 +404,8 @@ constructor.
 El objeto Function se utiliza como objeto instanciable en JavaScript, y el
 cuerpo de la función es el constructor del objeto. Para emular el
 comprortamiento propio de una clase el método mas difundido es aprovechar el
-funcionamiento de la plabra reservada this dentro del constructor y las
-funciones miembro. Cuándo una función es llamada con el operador new, this hace
+funcionamiento de la plabra reservada `this` dentro del constructor y las
+funciones miembro. Cuándo una función es llamada con el operador `new`, `this` hace
 referencia al objeto que será retornado.
 
 .. code-block:: javascript
