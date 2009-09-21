@@ -1,6 +1,8 @@
 ##########################
-Introducción de desarrollo
+Introducción al desarrollo
 ##########################
+
+.. note:: Un mejor titulo no vendría mal
 
 Soporte de lenguajes de programación en el browser
 --------------------------------------------------
@@ -16,12 +18,8 @@ Surgen puntos de interés como:
 	
 entre otras que se analizaran más adelante en el texto. 
 
-.. note::
-	En un principio, el código, los datos y algún modo de realizar el arranque de 
-	la aplicación.
- 
 El enfoque inicial fue realizar un "espejo" de la aplicación que se ejecuta en el servidor 
-sobre el cliente. 
+en el cliente.
 
 .. figure:: ../_svg/esquema_tranfer_app_inicial.png
 	
