@@ -334,7 +334,7 @@ recibe, como primer argumento el nombre para el nuevo tipo, seguidamente un
 arreglo con los tipo base y para terminar un objeto con los atributos y metodos
 para los objetos de ese tipo.
 
-Con estos dos nuevos constructores ya es posible crear "objetos tipados" que se
+Con los constructores así definidos es posible crear "objetos tipados" que se
 comporten en función de sus respectivas definiciones.
 
 .. code-block:: javascript
@@ -347,7 +347,7 @@ comporten en función de sus respectivas definiciones.
     [["uno", 1 ], ["dos", 2 ]]
 
 Como se observa, para instanciar un nuevo tipo se utiliza el operador `new` de
-JavaScript, este operador crea el nuevo objeto e invoca a la funcion __init__.
+JavaScript, este operador crea el nuevo objeto e invoca a la función `__init__`.
     
 En los métodos la palabra reservada `this` tiene el comportamiento esperado,
 presentado en la parte teorica, el cual es hacer referencia al objeto
@@ -356,7 +356,7 @@ instanciado con `new`.
 Internamente `type` utiliza el objeto `prototype` para la construcción, con lo
 cual el operador `instanceof` presenta un comportamiento coherente, pese a esto
 se recomienda usar la funcion `isinstance` que trae Protopy, ya que esta permite
-navegar por la cadena de herencia.  
+navegar por la cadena de herencia.
 
 .. code-block:: javascript
 
@@ -371,28 +371,30 @@ Inicialización
 --------------
 
 En el ejemplo se muestra la inicialización del tipo SorteDict usando una funcion
-llamada __init__. Este método es llamado por el operador `new` inmediatamente
+llamada `__init__`. Este método es llamado por el operador `new` inmediatamente
 despues de crear una instancia. Sería tentador decir que es el “constructor”
 de la clase. Si bien se parece un constructor de Java, actúa como si lo fuese ya
 que el objeto ya esta instanciado cuando se llama a esta función.
 
-Los métodos __init__ pueden tomar cualquier cantidad de argumentos, e igual que
-las funciones en JavaScript estos son opcionales para quien invoca.
-
-Los métodos __init__ son opcionales, pero cuando se define uno, se debe recordar
-llamar explícitamente al método __init__ del ancestro.
+Los métodos `__init__` son opcionales, pero cuando se define uno, se debe recordar
+llamar explícitamente al método `__init__` del ancestro.
 
 Otros métodos
 -------------
 
-    * __str__
+Además de los métodos normales, Protopy prevee algunos métodos especiales para
+los objetos, estos en lugar de ser llamarlos directamente, se invocan por la
+biblioteca en circunstancias particulares o cuando se use una sintaxis
+específica. 
+
+    * `__str__`
 
         Este metodo se llama cuando es necesario proveer de una reprecentacion
         en texto del objeto, JavaScript provee para este objetivo el metodo
         toString, pero por cuestiones de nombres se prefirio usar este metodo en
         su lugar y hacer internamente una relacion entre las funciones.
 
-    * __iter__
+    * `__iter__`
 
         Protopy se vale de versiones modernas de JavaScript y brinda soporte a
         iteradores, este es el método que el desarrollador debe definir si
@@ -400,10 +402,76 @@ Otros métodos
         implemente el metodo next (un iterador o un generado), los bucles
         for hacen esto automáticamente, pero también se puede hacer manualmente.
 
-    * __deepcopy__
-    * __copy__
-    * __json__
-    * __html__
+    * `__cmp__`
+    
+        Llamado al comparar dos instancias de tipo con las funciones `equal` o
+        `nequal`.
+
+    * `__len__`
+
+        Se invoca con la llamada a la funcion `len`. La función incorporada len
+        devuelve la longitud de un objeto. Funciona sobre cualquier objeto del
+        que se pueda pensar razonablemente que tiene longitud.
+
+    * `__copy__` y `__deepcopy__`
+    * `__json__` y `__html__`
+
+Protopy tiene otros métodos especiales, general todos estos apuntan a emular
+algun comportambiento de Python en JavaScript. 
+
+Herencia
+--------
+
+Como ya se menciono, el codigo de un Framework no debe ser modificado y su
+utilizacion esta respaldada en algun mecanimos de extención, redefiniendo o 
+especializando componentes. Es en este punto donde proveer de una forma de
+herencia al constructor de tipos resulta un paso en la dirección correcta,
+eventualmente el desarrollador que requiera componentes especificos podra
+heredar de los tipos correspondientes e implementar solo lo que haga falta. 
+
+Protopy utiliza la herencia del tipo ** Prototype chaining **, aunque lo hace de
+una forma un poco "rebuscada" con el objeto de dar soporte a una herencia
+multiple. 
+
+Para implementar la herencia y en particular la herencia multiple, el contructor
+de tipos recibe una lista de los tipos base e internamente crea un
+objeto que agrega de derecha a izquierda todos los metodos de las bases,
+posteriormente crea el tipo requerido tomando como base el objeto generado. Es
+en este punto donde se pierde el poder del operador `instanceof` y es por eso
+que Protopy provee una funcion para determinar la correspondencia entre
+instancias y tipos llamada `isinstance`.
+
+Otra funcion interesante importada de Python es `issubclass`, bajo determinadas
+condiciones resulta util determinar si un tipo es una sub-clase de otro y para
+ello esta funcion inspecciona la cadena de herencia hacia adelante entre los
+"hijos" de un tipo.
+
+Bien, ya se tiene un mecanismo de herencia casi completo, solo falta ver como se
+accede a las funciones de tipos base cuando se esta redefiniendo un método, para
+esto existe la funcion `super`, nuevamente y similar a Python esta función
+asocia un tipo con una instancia, con lo cual logra el objetivo de llamar a un
+método que se encuentre en un tipo base. Este comportamiento, es el equivalente,
+en JavaScript, al de llamar al metodo del tipo base con la funcion `apply`.
+
+Para terminar con herencia se debe destacar que todos los tipos deben heredar de
+`object`, si no se especifica en la construccion del tipo este es establecido
+por defecto. Object como tipo provee de los principales metodos y atributos a
+todos los nuevos tipos, como `__init__`, `__str__`, `__bases__`, `__hash__`, etc.
+
+Metodos y atributos de tipo
+---------------------------
+
+Objetos nativos
+---------------
+
+Dict
+
+Set
+
+Arguments
+
+Los métodos __init__ pueden tomar cualquier cantidad de argumentos, e igual que
+las funciones en JavaScript estos son opcionales para quien invoca.
 
 Los primeros tipos que surgen para la organizacion de datos dentro de la
 librerias con los "Sets" y los "Diccionarios", hambos aproximan su
@@ -415,25 +483,7 @@ solo cadenas.
 Al igual que muchas partes de Protopy `type` cambio a lo largo del desarrollo,
 sumando soporte para herencia multiple, metodos magicos e incluso "metatipos".
 
-
-Arguments
-
 isinstance
-
-Herencia
---------
-
-La función contrcuctora de tipos en la biblioteca surgue como herramienta para
-proveer al Framework de mecanismos de extensión.
-
-issubclass
-
-super
-
-
-Metodos y atributos de tipo
----------------------------
-
 
 Extendiendo DOM y JavaScript
 ============================
@@ -451,7 +501,7 @@ JavaScript, en manejo de cadenas incorpora nuevas funciones que simplifican
 tareas comunes, los numeros y fechas tambien tiene su aporte.
 
 Los eventos estan uniforamdos bajo un modulo de manejo de eventos, que permite
-conectar eventos del :term:DOM con funciones en JavaScript, así tambien como
+conectar eventos del :term:`DOM` con funciones en JavaScript, así tambien como
 funciones entre si.
 
 .. note:: Poner los nombres de las funciones para destacar el laburo
@@ -494,20 +544,16 @@ al paquete `gears` se incorporaron los siguientes módulos:
     * desktop
 
         El objeto `desktop` de Gears permite interactuar con el escritorio del
-cliente. 
-        Aquí se extendio la creacción de accesos directos para simplificar la
-generación
-        de los mismos y agregar la posibilidad de manejar `Icon` y algunos
-`IconTheme`.
+        cliente. Aquí se extendio la creacción de accesos directos para
+        simplificar la generación de los mismos y agregar la posibilidad de
+        manejar `Icon` y algunos `IconTheme`.
 
     * database
 
         Sobre el objeto `database` se agrego funcionalidad uniformar el acceso a
-la base
-        de datos por los módulos de Protopy y encapsular los `ResulSet` en
-cursores a
-        los que se incorporo iteradores, registro de funciones para tipos de
-datos, etc.
+        la base de datos por los módulos de Protopy y encapsular los `ResulSet`
+        en cursores a los que se incorporo iteradores, registro de funciones
+        para tipos de datos, etc.
 
 Auditando el codigo
 ===================

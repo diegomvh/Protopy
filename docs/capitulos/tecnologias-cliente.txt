@@ -462,7 +462,7 @@ Evolución del JavaScript
 Herencia
 ========
 
-JavaScript no puede tener herencia orientada a clases, pero tiene herencia
+JavaScript puede no tener herencia orientada a clases, pero tiene herencia
 "prototipal". Existen muchos autores que implementan su forma de emular la
 herencia en JavaScript y entre los métodos mas utilizados se detallan a
 continuacion dos prinsipios basicos ampliamente difundidos. 
@@ -601,6 +601,7 @@ Funcionamiento de AJAX
 petición con el resultado devuelto
 
 Las ventajas de AJAX
+--------------------
 
 * Mayor interactividad
 * Recuperación asíncrona de datos, reduciendo el tiempo de espera del usuario
@@ -613,6 +614,7 @@ elemento
 * Código público
 
 Las desventajas de AJAX
+-----------------------
 
 * Usabilidad: Comportamiento del usuario ante la navegación
 * Botón de volver atrás del navegador
