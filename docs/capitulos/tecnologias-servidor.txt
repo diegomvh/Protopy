@@ -14,24 +14,49 @@ Generación dinámica de páginas Web
     aca vamos a los bifes dinamicos.
 
 Esta sección tiene como finalidad introducir los conceptos básicos concernientes
-a la generación dinamica contenido en el servidor.
-En el enfoque dinámico cuando un usuario realiza una solicitud, el mensaje
+a la *generación dinamica contenido* en el servidor.
+
+En el enfoque dinámico, cuando un usuario realiza una solicitud, el mensaje
 enviado tiene como objetivo la ejecución de un programa o secuencia de comandos
 en el servidor. Por lo general, el procesamiento involucra el uso de la
 información proporcianda por el usuario para buscar registros en una base de
 datos y genrerar una página HTML personalizada para el cliente.
 
-La forma tradicional de manejar páginas Web interactivas se llama :term:`CGI`,
-éste representa un estandar a la hora de comunicar un servidor Web con un
-back-end escrito en un lenguaje de programación. Otra forma es incrustar
-secuencias de comandos dentro de la páginas HTML y hacer que el servidor mismo
-sea quien las ejecute. :term:`PHP` es un claro ejemplo de este caso, para
-utilizarlo un servidor tiene que entender el lenguaje y relizar una
-diferenciación entre un archivo que debe ser interpretado por PHP y uno que debe
-ser retornado sin interpretar.
 
-Existen otras formas de generar contendio al vuelo y generalmente todas estas se
-engloban dentro del termino **HTML dinámico**.
+La forma tradicional de manejar páginas Web interactivas se conoce como :term:`CGI`,
+éste es un estandar que consiste en delegar la generación de contenido a un
+programa. CGI se limita a definir la entrada y salida del programa.
+
+Los servidores web primigenios y monolíticos avanzaron a una arquitectura
+modular [ApacheMod2009]_ [MicrosoftIIS2009]_ , en la cual, un módulo brinda soporte para una tarea específica.
+Módulos comunes son autenticación, bitácora, balance de carga, entre otros
+como los de generación de contenido.
+
+.. [ApacheMod2009] *Módulos del servidor Apache 2.2*, último acceso, Septiembre de 2009, http://httpd.apache.org/docs/2.2/mod/
+.. [MicrosoftIIS2009] *Módulos en Microsoft IIS*, último acceso Septiembre 2009, http://msdn.microsoft.com/en-us/library/bb757040.aspx
+
+
+Un enfoque más moderno para la generación de contenido dinámico 
+es la incrustación de secuencias de comandos dentro de 
+la páginas HTML. Estas sentencias son leidas y ejecutadas por un módulo del servidor
+al momento de responder a la solicitud del cliente, como es el caso del lenguaje :term:`PHP`, o
+:term:`ASP`.
+
+Más recientemente han aparecido mejoras sobre CGI, como FastCGI y SCGI, que 
+suponen una simplificación y reducción de recursos a la hora de satisfacer una
+petición. Para satisfacer necesidades más complejas, que no fueron abordadas
+en la genericidad de CGI, se fueron desarrollando alternativas como servidores
+orientados a aplicaciones,  como el servidor de aplicaciones Tomcat para
+el lenguaje de progarmación Java [ApacheTomcat2009]_ [SunServlet2009]_
+o módulos de lenguajes de programación específicos.
+
+.. [ApacheTomcat2009] http://tomcat.apache.org/index.html
+.. [SunServlet2009] http://java.sun.com/products/servlet/
+
+
+
+.. Existen otras formas de generar contendio al vuelo y generalmente todas estas se
+.. engloban dentro del termino **HTML dinámico**.
 
 Servidor Web
 ============

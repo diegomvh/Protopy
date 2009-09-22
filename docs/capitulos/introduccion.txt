@@ -12,16 +12,29 @@ Motivación
 
 Hoy más que ayer, pero seguremente menos que mañana, Internet es "la red de
 redes". El alto contenido de información 
-Hoy en día Internet supone más que un medio para obtener información,
-su constante expanción a convetido a esta red en un terreno muy atractivo para
+
+
+Hoy en día Internet supone más que un medio de intercambio de información,
+su constante expansión la ha convetido un terreno muy atractivo para
 la implementación de sistemas de información.
 
-Las aplicaciones web son populares debido a lo práctico que resulta el navegador
-web como cliente de acceso a las mismas.
-También resulta fácil actualizar y mantener aplicaciones web sin distribuir e
-instalar software a miles de usuarios potenciales.
-En la actualidad, existe una gran oferta de frameworks web para facilitar el
-desarrollo de aplicaciones web.
+
+Las tareas de mantenimiento y actualización de aplicaciones son posibles
+sin necesidad de distribuir software adicional a miles de usuarios potenciales.
+
+.. También resulta fácil actualizar y mantener aplicaciones web sin distribuir e
+.. instalar software a miles de usuarios potenciales.
+
+Con la necesidad de acelerar y estandarizar la forma en la que se desarrollan
+las aplicaciones web han aparecido plataformas de desarrollo, o frameworks,
+para la mayoría de los lenguajes. A lo largo de los últimos 10 años ha existido
+una importante evolución de los mismos. Muchas tareas comunes son resueltas
+de una manera predefinida y modificable, permitendo al programador focalizarse
+en resolver el problema particular de su desarrollo.
+
+.. En la actualidad, existe una gran oferta de frameworks web para facilitar el
+.. desarrollo de aplicaciones web.
+
 Una ventaja significativa de las aplicaciones web es que funcionan
 independientemente de la versión del sistema operativo instalado en el cliente.
 En vez de crear clientes para los múltiples sistemas operativos, la aplicación
