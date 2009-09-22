@@ -6,14 +6,37 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <title>{% if title %}{{title}}{% else %}Sitio Offline de Prueba{% endif %}</title>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+            font-family: "Verdana";
+        }
+        
+        div#wrapper {
+            padding: 14px;
+            width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            background: #BAD1E7;
+            border-left: 1px solid #777;
+            border-right: 1px solid #777;
+            border-bottom: 1px solid #777;
+        }
+        {% block extra_style %}
+
+        {% endblock %}
+    </style>
     {% block extra_headers %}
 
     {% endblock %}
   </head>
   <body>
+    <div id="wrapper">
     {% block content %}
     
 
     {% endblock%}
+    </div>
   </body>
 </html>

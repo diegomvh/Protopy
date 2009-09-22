@@ -1,8 +1,101 @@
 {% extends "base.html" %}
 
+{% block extra_style %}
+
+#links  {
+	padding: 3px;
+		       
+}
+
+ul  {
+	
+	list-style-type: none;
+	background: #6598FF;
+	list-style-display: none;
+	
+	
+}
+ul li {
+	border-left: 4px solid #222;
+	margin-bottom: 2px;
+	border-right: 1px dashed #222;
+	border-bottom: 1px dashed #222;
+	border-top: 1px solid #222;
+}
+       
+ul li p {
+	padding: 0px; margin: 0px; padding-left: 20px;
+	font-size: 13px;	
+}
+
+p a.nuevo, p a.lista{
+	display: box;
+	padding-left: 18px;
+
+}
+
+ul li {
+	
+}      
+{% endblock %}
+
 {% block content %}
 <h2>Sitio de demostración</h2>
 <div id="links">
-    <a href="/admin/">Sitio de administración</a>
+	<ul>
+		<li><a href="/admin/">Sitio de administración</a></li>
+	</ul>
+	<h3>Entidades de la aplicación</h3>
+	<ul>
+		<li><em>Categorías</em>
+			<p>
+				<a class="nuevo" href="categoria/add">Agregar nuevo/a</a>
+				<a class="lista" href="categorias">Ver</a>
+			</p>
+		</li>
+		<li><em>Ciudades</em>
+			<p>
+				<a class="nuevo" href="categoria/add">Agregar nuevo/a</a>
+				<a class="lista" href="categorias">Ver</a>
+			</p>
+		</li>
+		<li><em>Clientes</em>
+			<p>
+				<a class="nuevo" href="categoria/add">Agregar nuevo/a</a>
+				<a class="lista" href="categorias">Ver</a>
+			</p>
+		</li>
+		<li><em>Items de Pedido</em>
+			<p>
+				<a class="nuevo" href="categoria/add">Agregar nuevo/a</a>
+				<a class="lista" href="categorias">Ver</a>
+			</p>
+		</li>
+		<li><em>Pedidos</em>
+			<p>
+				<a class="nuevo" href="categoria/add">Agregar nuevo/a</a>
+				<a class="lista" href="categorias">Ver</a>
+			</p>
+		</li>
+		<li><em>Productos</em>
+			<p>
+				<a class="nuevo" href="categoria/add">Agregar nuevo/a</a>
+				<a class="lista" href="categorias">Ver</a>
+			</p>
+		</li>
+		<li><em>Proveedores</em>
+			<p>
+				<a class="nuevo" href="categoria/add">Agregar nuevo/a</a>
+				<a class="lista" href="categorias">Ver</a>
+			</p>
+		</li>
+		<li><em>Vendedores</em>
+			<p>
+				<a class="nuevo" href="categoria/add">Agregar nuevo/a</a>
+				<a class="lista" href="categorias">Ver</a>
+			</p>
+		</li>				
+	</ul>
+    
 </div>
 {% endblock %}
