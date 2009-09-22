@@ -32,6 +32,13 @@ informe/*
 sphinx-env/*
 build/*
 
+
+# Aplicacion de demostracion
+sources/offline_demo/static/devkit/*
+sources/offline_demo/static/*.zip
+sources/offline_demo/static/*.txt
+
+
 syntax: regexp
 ^nbproject
 ^.*~$
