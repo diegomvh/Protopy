@@ -19,7 +19,7 @@ def list_ciudad(request, per_page = None, from_page = None):
 
 def view_ciudad(request, ciudad_id):
     ciudad = get_object_or_404(Ciudad, id =  ciudad_id)
-    return render_to_response('')
+    return render_to_response('salesman/ver_ciudad.html', locals())
 
 def add_edit_ciudad(request, ciudad_id = None):
     ''' 

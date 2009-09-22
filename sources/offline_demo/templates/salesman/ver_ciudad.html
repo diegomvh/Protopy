@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+	<h3>Ciudad: {{ ciudad.nombre }}</h3>
+	<dl>
+		<dt>Código Postal</dt> <dd>{{ ciudad.cp }}</dd>
+	</dl>
+	<div class="item_actions">
+		<a href="./edit">Editar</a>
+	</div>
+{% endblock %}
