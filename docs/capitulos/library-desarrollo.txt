@@ -451,24 +451,77 @@ accede a las funciones de tipos base cuando se esta redefiniendo un método, par
 esto existe la funcion `super`, nuevamente y similar a Python esta función
 asocia un tipo con una instancia, con lo cual logra el objetivo de llamar a un
 método que se encuentre en un tipo base. Este comportamiento, es el equivalente,
-en JavaScript, al de llamar al metodo del tipo base con la funcion `apply`.
+en JavaScript, al de llamar al metodo del tipo base con la funcion `apply` o `call`.
 
-Para terminar con herencia se debe destacar que todos los tipos deben heredar de
-`object`, si no se especifica en la construccion del tipo este es establecido
-por defecto. Object como tipo provee de los principales metodos y atributos a
-todos los nuevos tipos, como `__init__`, `__str__`, `__bases__`, `__hash__`, etc.
+Para terminar con herencia se debe destacar que de no especificar por lo menos
+un tipo base, Protopy establce por defecto como base al tipo `object`. Object
+como provee de los principales metodos (`__init__`, `__str__`) a todos los
+nuevos tipos.
 
 Metodos y atributos de tipo
 ---------------------------
 
+Hasta aqui se vio como crear nuevos tipos de objetos y la posterior construccion
+de instancias de un determinado tipo, Protopy tambien prevee una forma de
+definir metodos y atributos de tipo, estos pertenecen al tipo en si, y no a las
+instancias.
+
+La forma de agregar atributos y metodos de tipo es a traves de un objeto
+opcional que se pasa a la función constructora antes del objeto de instancia.
+
+.. code-block:: javascript
+
+    var Planeta = new type('Planeta', [ object ], {
+        // Atributos y metodos de tipo
+        count: 0,
+        reset: function() {
+            this.count = 0;
+        }
+    }, {
+        // Atributos y metodos de instancia
+        __init__: function(name) {
+            this.name = name;
+            this.count = Planeta.count++;
+            // Otra forma puede ser con this.__class__.count++
+        }
+    });
+
+El ejemplo presentado define el tipo "Planeta", este tipo internamente lleva un
+contador que las instancias utilizan para numerarse en la construccion y una
+funcion de reset para reiniciar el contador. Dentro de las funciones de tipo la
+palabra reservada `this`, como es de esperar, hace referencia al tipo.
+A continuacion se ve como usar el tipo.
+
+.. code-block:: javascript
+
+    >>> p = new Planeta('Tierra')
+    window.Planeta name=Tierra count=0 __name__=Planeta
+    >>> Planeta.reset()
+    >>> sol = new Planeta('Sol')
+    window.Planeta name=Sol count=0 __name__=Planeta __module__=window
+    >>> mercurio = new Planeta('Mercurio')
+    window.Planeta name=Mercurio count=1 __name__=Planeta
+    >>> venus = new Planeta('Venus')
+    window.Planeta name=Venus count=2 __name__=Planeta
+    >>> tierra = new Planeta('Tierra')
+    window.Planeta name=Tierra count=3 __name__=Planeta
+
+Existe una funcion muy importante que se puede definir para el tipo, buscando la
+emulacion de Python se adopto el metodo `__new__`. Este metodo permite al
+desarrollador tomar parte en la constuccion del tipo, los parametros son de una
+forma similar a Python, el nombre del nuevo tipo, el arreglo con los tipos base
+y el objeto con atributos y metodos de instancia. 
+
 Objetos nativos
 ---------------
 
-Dict
+Algunos objetos que trae Protopy son:
 
-Set
+    * Dict
 
-Arguments
+    * Set
+
+    * Arguments
 
 Los métodos __init__ pueden tomar cualquier cantidad de argumentos, e igual que
 las funciones en JavaScript estos son opcionales para quien invoca.
@@ -479,11 +532,6 @@ estructura a las estructuras homonimas en python, brindando una funcionalidad
 similar. Si bien la estructura "hasheable" nativa a JavaScript en un objeto,
 los diccionarios de Protopy permiten el uso de objetos como claves en lugar de
 solo cadenas.
-
-Al igual que muchas partes de Protopy `type` cambio a lo largo del desarrollo,
-sumando soporte para herencia multiple, metodos magicos e incluso "metatipos".
-
-isinstance
 
 Extendiendo DOM y JavaScript
 ============================
