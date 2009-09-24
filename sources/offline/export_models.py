@@ -277,4 +277,38 @@ def get_fields_from_apps(filter_callback = filter_field):
         fields.update( analize_mod(app, filter_callback))
     #print fields
     
+#from django.db.models.loading import get_app, get_models
+
+related_class = lambda relation: relation.rel.to
+ 
+def get_model_order(model_lists):
+    from django.db import models
+    model_adj = SortedDict()
+    for model in model_lists:
+        #model_adj[model] = filter(lambda f: f
+        fks = filter(lambda f: isinstance(f, models.ForeignKey), model._meta.fields)
+        fks = map(related_class, fks)
+        
+        model_adj[ model ]  = fks + map(related_class, model._meta.many_to_many)
+    
+    order = filter(lambda m: not model_adj[m], model_adj.keys())
+    
+    while len(order) < len(model_adj):
+        for model in model_adj:
+            if model in order:
+                continue
+            deps = model_adj[model]
+            if all(map(lambda d: d in order, deps)):
+                order.append(model)
+    return order
+    
+def model_order_for_app(app_label):
+    from django.db.models.loading import get_app, get_models
+    models = get_models(get_app(app_label))
+    return get_model_order(models)
+
+
+
+
+    
     

@@ -88,3 +88,11 @@ INSTALLED_APPS = (
     # User apps
     'offline_demo.salesman',
 )
+
+try:
+    import django_extensions
+except ImportError:
+    pass
+else:
+    INSTALLED_APPS = INSTALLED_APPS + ('django_extensions', )
+    

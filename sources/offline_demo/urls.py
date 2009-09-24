@@ -16,4 +16,5 @@ urlpatterns = patterns('',
     # (r'^admin/', include(admin.site.urls)),
     ('^$', 'django.views.generic.simple.direct_to_template', {'template': 'index.html'}),
     ('^admin/(.*)', site.root, ),
+    ('^salesman', include('offline_demo.salesman.urls')),
 )
