@@ -137,8 +137,14 @@ desarrollo de Protopy se oriento en pequeñas unidades funcionales llamadas
 Además de la sanidad mental que implica organizar el código en distintos
 archivos, los módulos representan un cambio muy importante en la obtención de
 funcionalidad; ya no es el documento HTML el que dice al cliente que archivo
-cargar del servidor, sino que el mismo código interpretado va obteniendo la
+cargar del servidor, sino que el mismo código interpretado obtiene la
 funcionalidad a medida que la requiere.
+
+    "Namespaces are one honking great idea -- let's do more of those!"
+
+    -- import this
+
+http://www.gulic.org/almacen/diveintopython-5.4-es/html_processing/locals_and_globals.html
 
 El enfoque modular no es nuevo en programación y basicamente, la implementación
 de Protopy, implica llevar el concepto de "divide y vencerás" ó "análisis
@@ -260,7 +266,26 @@ Asumiendo que el código presentado está en un archivo llamado `caches.js` en
 la url base, éste representa un módulo en sí mismo y el acceso se obtiene
 mediante la invocación de 'require('caches')'.
 
+.. note:: Poner algo de espacio de nombres antes de entrar de lleno con escribir modulos y leer modulos
+
+Modulos nativos
+---------------
+
 .. note:: describir de forma rápida los módulos principales
+
+    * builtin
+
+    * dom
+
+    * sys
+
+    * event
+
+    * ajax
+
+    * exceptions
+
+    * timer
 
 .. _protopy-tipos:
 
@@ -515,23 +540,27 @@ y el objeto con atributos y metodos de instancia.
 Objetos nativos
 ---------------
 
-Algunos objetos que trae Protopy son:
+Algunos objetos que se encuentran el la biblioteca son:
 
     * Dict
 
+        Si bien la estructura "hasheable" nativa de JavaScript en un objeto,
+        los diccionarios de Protopy permiten mejores formas de trabajar con la
+        dupla clave-valor, posibilitando ademas el uso de objetos como claves en
+        lugar de solo cadenas.
+
     * Set
+        
+        Los sets o conjuntos tomados de las matematicas, permiten crear bolasa
+        de objetos únicos y trabajar con las operaciones propias, union,
+        intersección, diferencia, etc.
 
     * Arguments
 
-Los métodos __init__ pueden tomar cualquier cantidad de argumentos, e igual que
-las funciones en JavaScript estos son opcionales para quien invoca.
-
-Los primeros tipos que surgen para la organizacion de datos dentro de la
-librerias con los "Sets" y los "Diccionarios", hambos aproximan su
-estructura a las estructuras homonimas en python, brindando una funcionalidad
-similar. Si bien la estructura "hasheable" nativa a JavaScript en un objeto,
-los diccionarios de Protopy permiten el uso de objetos como claves en lugar de
-solo cadenas.
+        Las funciones en JavaScript pueden recibir opcionalmente cualquier
+        cantidad de argumentos, los objetos del tipo Arguments encapsulan y
+        uniforman los argumentos pasados a una funcion y permiten establecer
+        entre otras cosas valores por defecto. 
 
 Extendiendo DOM y JavaScript
 ============================
