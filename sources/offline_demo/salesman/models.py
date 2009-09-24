@@ -4,6 +4,12 @@ Modelo de prueba
 '''
 from django.db import models
 
+
+   
+mod_name = __name__.split('.')[-2]
+abs_url = lambda inst: '/%s' % '/'.join( [mod_name, inst._meta.module_name, str(inst.id)])
+
+
 class Ciudad(models.Model):
     nombre = models.CharField(max_length = 50)
     cp = models.CharField(max_length = 40)
@@ -12,6 +18,9 @@ class Ciudad(models.Model):
 
     def __unicode__(self):
         return self.nombre
+    
+    get_absolute_url = abs_url
+
         
 class Vendedor(models.Model):
     nombre = models.CharField(max_length = 50)

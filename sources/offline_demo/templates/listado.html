@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block extra_style %}
+	table.item-list {
+		background: #FFF;
+		width: 100%;
+		font-size: 13px;
+		border: 1px solid #999;
+	
+	}
+	
+	table.item-list th {
+		border: 1px solid #acd;
+	
+	}
+	
+	table.item-list td.actions {
+		width: 100px;
+	}
+	
+	table.item-list tr.data:hover {
+		background: #dec;
+		border: 1px solid #dec;
+	}
+	
+	table.item-list td.actions {
+	
+	}
+	
+	table.item-list td.actions edit {
+		{{ MEDIA_URL }}/icons/cross.png
+	}
+	
+	table.item-list td.actions delete {
+		{{ MEDIA_URL }}/icons/highlighter.png
+	}
+	
+
+{% endblock %}
+
+{% block content %}
+<h2>{{ listing_title }}</h2>
+
+<table class="item-list">
+	<tr>
+	{% block table_heading %}
+	<th>Sample TH</th>
+	<th>Sample TH</th>
+	{% endblock %}
+	<th>Acciones</th>
+	</tr>
+	
+	{% for item in object_list %}
+		<tr class='data'>
+		{% block item_iteration_row %}
+		  	<!-- Put your code here -->
+	  	{% endblock %}
+		<td class="actions">
+			<a class="edit" href="{{ item.get_absolute_url }}/edit">Editar</a>
+			<a class="delete" href="{{ item.get_absolute_url }}/delete">Eliminar</a>
+		</td>  	
+	  	</tr>
+  	{% endfor %}
+  	
+</table>
+
+
+{% endblock %} 

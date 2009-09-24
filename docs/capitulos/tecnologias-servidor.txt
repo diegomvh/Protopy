@@ -23,32 +23,54 @@ información proporcianda por el usuario para buscar registros en una base de
 datos y genrerar una página HTML personalizada para el cliente.
 
 
-La forma tradicional de manejar páginas Web interactivas se conoce como :term:`CGI`,
-éste es un estandar que consiste en delegar la generación de contenido a un
-programa. CGI se limita a definir la entrada y salida del programa.
+Tradicionalmente la tecnología utilizada se conoce como :term:`CGI`,
+estandar que consiste en delegar la generación de contenido a un
+programa. CGI se limita a definir la entrada y salida del proceso.
 
-Los servidores web primigenios y monolíticos avanzaron a una arquitectura
+Un enfoque más moderno para la generación de contenido dinámico 
+es la incrustación de secuencias de comandos dentro de 
+las páginas HTML. Estas sentencias son leidas y ejecutadas el servidor
+al momento de responder a la solicitud del cliente, 
+como es el caso del lenguaje :term:`PHP`, o
+:term:`ASP`.
+
+.. tecnologias-servidor-server-modular:
+
+Los servidores web primigenios y monolíticos evolucionaron a una arquitectura
 modular [ApacheMod2009]_ [MicrosoftIIS2009]_ , en la cual, un módulo brinda soporte para una tarea específica.
-Módulos comunes son autenticación, bitácora, balance de carga, entre otros
-como los de generación de contenido.
+Módulos comunes son autenticación, bitácora, balance de carga, así como también como 
+los de generación de contenido.
 
 .. [ApacheMod2009] *Módulos del servidor Apache 2.2*, último acceso, Septiembre de 2009, http://httpd.apache.org/docs/2.2/mod/
 .. [MicrosoftIIS2009] *Módulos en Microsoft IIS*, último acceso Septiembre 2009, http://msdn.microsoft.com/en-us/library/bb757040.aspx
 
 
-Un enfoque más moderno para la generación de contenido dinámico 
-es la incrustación de secuencias de comandos dentro de 
-la páginas HTML. Estas sentencias son leidas y ejecutadas por un módulo del servidor
-al momento de responder a la solicitud del cliente, como es el caso del lenguaje :term:`PHP`, o
-:term:`ASP`.
+Nuevas formas de interacción entre un servidor web
+y un programa fueron desarrolladas con el objeto de satisfacer necesidades más complejas, 
+que no fueron tenidas en cuenta en la genericidad de CGI.
 
-Más recientemente han aparecido mejoras sobre CGI, como FastCGI y SCGI, que 
-suponen una simplificación y reducción de recursos a la hora de satisfacer una
-petición. Para satisfacer necesidades más complejas, que no fueron abordadas
-en la genericidad de CGI, se fueron desarrollando alternativas como servidores
-orientados a aplicaciones,  como el servidor de aplicaciones Tomcat para
-el lenguaje de progarmación Java [ApacheTomcat2009]_ [SunServlet2009]_
-o módulos de lenguajes de programación específicos.
+En la plataforma Java, se especifiaron
+los Servlets [SunServlet2009]_ , 
+.. con implementaciones como Tomcat [ApacheTomcat2009]_ 
+y en 1996, se publicó la especificación J2EE, que formula una arquitectura de
+aplicación web dividida en capas que corre un servidor de aplicaciones.
+
+Basados en especificación J2EE, se crearon numerosos frameworks 
+cuyos lineamientos determinaron la manera de concebir las aplicaciones web durante
+casi una década.
+
+En junio de 2004 se publica el proyecto Ruby On Rails, un framework de aplicaciones
+web desarrollado en el lenguaje de programación Ruby, que revolucionó la forma de 
+concebir los frameworks y la web.
+
+
+James Duncan Davidson el creador de Tomcat y Ant llegó a decir que Rails
+es el framework web mejor pensado que el ha usado. Davison pasó
+10 años desarrollando aplicaciones web, frameworks y la especificación de los
+Servlets para el lenguaje Java [RailsQuotes2009]_ [*]_ .
+
+.. [RailsQuotes2009] Cistas de Ruby On Rails, http://rubyonrails.org/quotes
+.. [*] *"Rails is the most well thought-out web development framework I’ve ever used. And that’s in a decade of doing web applications for a living. I’ve built my own frameworks, helped develop the Servlet API, and have created more than a few web servers from scratch. Nobody has done it like this before."*
 
 .. [ApacheTomcat2009] http://tomcat.apache.org/index.html
 .. [SunServlet2009] http://java.sun.com/products/servlet/
@@ -58,14 +80,18 @@ o módulos de lenguajes de programación específicos.
 .. Existen otras formas de generar contendio al vuelo y generalmente todas estas se
 .. engloban dentro del termino **HTML dinámico**.
 
+Se realiza a continuación un revisón general sobre los componentes de un servidor web para
+dar paso a posteriori al análisis de los lenguajes dinámicos y sus frameworks.
+
 Servidor Web
 ============
+
 Un servidor web, o *web server* es un software encargado de recibir solicitudes
 de un cliente, típicamente un :ref:`navegador web <navegador-web>`, a través del
-protcolo :term:`HTTP` y generar una respuesta a la solicitud.
+protcolo :term:`HTTP` y generar una respuesta.
 Mediante la especificación :term:`MIME` que se incluye en el encabezado de la
-respuesta que es enviada al cliente, se puede identificar que tipo de archivo es
-devuelto, siendo el tipo más común :term:`HTML` o :term:`XHTML`. 
+respuesta, se puede identificar que tipo de archivo es devuelto, 
+siendo el tipo más común :term:`HTML`. 
 
 El contenido que es enviado al cliente puede ser de origen *estático* o *dinámico*.
 
@@ -77,48 +103,42 @@ archivos sin ninguna modificación.
 .. _conteido-dinamico:
 
 El contenido dinámico en contraposición al :ref:`contenido estático
-<conteido-estatico>` es generado por algún programa, un :term:`script` o algún
-tipo de API invocada por el web server, como SSI, :ref:`CGI <servidor-cgi>`,
+<conteido-estatico>` proviene de la salida de algún programa, un :term:`script` o algún
+tipo de API invocada por el web server (como SSI, :ref:`CGI <servidor-cgi>`,
 SCGI, FastCGI, JSP, ColdFusion, NSAPI o ISAPI).
 
-El clinete web accede a los recursos del web server mediante una dirección de recurso, u :term:`URL`.
-
+.. El clinete web accede a los recursos del web server mediante una dirección de recurso, u :term:`URL`.
+La única forma de acceder a los recursos es a traves de una URL independientemente de su 
+naturaleza.
 
 .. _servidor-cgi:
 
 CGI
 ===
 
-El estándar Common Gateway Interface (CGI) [*]_ surge alrededor del año 1998,
-como un estándar de comunicación o :term:`API` entre un servidor web y un
-programa de usuario. Al permitir ejecutar un proceso, CGI permite generar
-contenido de manera dinámica a traves de un servidor web.
+Common Gateway Interface (CGI) [*]_ surge alrededor del año 1998,
+como el primer estándar de comunicación o :term:`API` entre un servidor web y un
+programa de usuario. 
 
-Es decir, el usuario puede recuperar datos de un programa que se ejecuta en el
-equipo en el que reside el servidor web, donde la salida puede ser un documento
+La salida del proceso invocado puede ser un documento
 HTML entendible para el navegador, o culaquier otro tipo de archivo, como
-imágenes, contenido multimedial, sonidos, etc.
+imágenes, sonidos, contenido interactivo, etc.
 
-CGI fue la primera estandarización de un mecanismo para generar :ref:`contenido
-dinámico <conteido-dinamico>` en la web.
+Las variables de entorno y la entrada estándar, constituyen los mecanismos de entrada
+del programa, mientras que el contenido devuelto al servidor web proviene de la salida estándar
+del proceso.
+Dentro de la información provista por el servidor web se tienen los parámetros HTTP (como la :term:`URL`, el método, el nombre del host, el puerto, etc.) además de información 
+sobre el servidor. Éstos datos se transfieren mediante variables de entorno.
 
-Los mecanismos de comunicación de entrada son las variables de
-entorno y la entrada estandar, mientras que para la salida se utiliza la salida estandard del
-proceso.
-
-Los parámetros HTTP, como la :term:`URL`, el método (GET, POST, PUSH, etc.), nombre del
-servidor o host, puerto, etc.) e información sobre el servidor son trasferidos a la
-aplicación CGI como variables de entorno.
 
 Si existiese un cuerpo en la petición HTTP, como por ejemplo, el contenido de un
-formulario, bajo el método POST, la aplicación CGI accede a esta como entrada
-estandard.
+formulario, la aplicación CGI accede a esta información como entrada estandard.
 
 El resultado de la ejecución de la aplicación CGI se escribe en la salida
-estándard, anteponiendo las cabeceras HTTP respuesta, para que el servidor
-responda al clinete. En los encabezados de respuesta, el tipo MIME determina
-como interpreta el clinete la respuesta. Es decir, la invocación de un CGI puede
-devolover diferentes tipos de contenido al clinete (html, imágenes, javascript,
+estándard, anteponiendo las cabeceras HTTP de respuesta.
+En dichos encabezados, el tipo MIME determina como se interpreta la respuesta.
+Es decir, la invocación de un CGI puede
+devolover diferentes tipos de contenido al cliente (html, imágenes, javascript,
 contenido multimedia, etc.)
 
 .. figure:: ../_svg/esquema_cgi.png
@@ -160,74 +180,78 @@ aplicaciones.
 .. note:: Faltan referencias sobre la popularidad de los lenguajes
 
 
-Históricamente las aplicaciones CGI han sido escritas en lenguajes interpretados, sinedo muy popular Perl y más recientemente el lenguaje PHP. En los :ref:`lenguajes interpretados <servidor-lenguajes>`, el código ejecutable es
-texto plano, por lo que puede ser editado en una terminal directamente en el servidor. Otra ventaja
-importante de ser texto plano, es que es más sencillo de mantener con alguna herramienta de :term:SCM.
+.. Históricamente las aplicaciones CGI han sido escritas en lenguajes interpretados, 
+.. sinedo muy popular Perl.
+.. En los :ref:`lenguajes interpretados <servidor-lenguajes>`, el código ejecutable es
+.. texto plano, por lo que puede ser editado en una terminal directamente en el servidor. Otra ventaja
+.. importante de ser texto plano, es que es más sencillo de mantener con alguna herramienta de :term:SCM.
+
+CGI posee dos limitaciones importantes, una es el overhead produccido por la ejecución de un 
+proagrama y la segunda, que no fue diseñado para mantener información sobre la
+sesión. Cada petición se trata de manera independiente [DwightErwin1996]_ .
 
 .. [WikiCGI2009] *Interfaz de entrada común*, Wikipedia, 2009, último acceso Agosto 2009, http://es.wikipedia.org/wiki/Common_Gateway_Interface#Intercambio_de_informaci.C3.B3n:_Variables_de_entorno
+
+.. [DwightErwin1996] *Limitaciones de CGI*, *Using CGI*,  http://www.bjnet.edu.cn/tech/book/seucgi/ch3.htm#CGILimitations
 
 .. [*] A veces traducido como pasarela común de acceso.
 
 .. _servidor-lenguajes:
 
-Lenguajes de programación para la web
+Relevancia de los lenguajes dinámicos
 =====================================
 
-.. note::
-	Acá introducimos los conceptos de
-	
-	* Propósito General vs DSL
-	
-	* Compilado vs Intepretado, -> VMs
-	
-	* Dinámico vs Estático
-	
-	* Plataforma Específica vs Multiplataforma
-	
-	* Porgramación de sistema y programación de aplicaciones
+
+A continuación se analizan las características que hacen relevante 
+el estudio de los lengaujes dinámicos, como plataforma de desarrollo de aplicaciones
+web dinámicas, para dar paso luego, a al estudio de los frameworks.
+
 
 
 Una de las clasificaciones más generales que se suelen realizar sobre los lenguajes de programación es identificar su objetivo.
 Los lenguajes de programación de *propósito general* están orientados a resolver cualquier tipo
-de problema, mientras que los lenguajes de *propósito específico* o *DSL* están enfocados en reolver un tipo de problemas
+de problema, mientras que los lenguajes de *propósito específico* o *DSL* están enfocados en reolver un tipo de problema
 de manera más eficáz. Un ejemplo muy popular de DSL es la planilla de cálculo Microsoft Excel [DavidPollak2006]_.
 
 .. [DavidPollak2006] *Ruby Sig:How To Design A Domain Specific Language*, Google Tech Talk, 2:44, http://video.google.com/videoplay?docid=-8103284744220333344
 
-Además de la división entre lenguaje de porposito general y DSL, exiten otras clasificaciones de interés
-en el estudio de los lenguajes de programación populares en la Web, como la divsión entre leguajes
-interpretados y compilados.
+Además de la división entre lenguaje de porposito general y DSL, exiten otras, como la divsión entre leguajes interpretados y compilados.
 
 Un lenguaje de programación interpretado es aquel en el cual los programas son ejecutados
-por un intérprete, en vez de realizarse una traducción a lenguaje máquina, conocido como proceso
+por un intérprete, en lugar de realizarse una traducción a lenguaje máquina, conocido como proceso
 de compilación.
 
 En teoría cualquier lenguaje de programación podría ser compilado o interpretado. 
 
-En un lengauje de programación interpretado se puede decir que el código fuente es el código ejecutable
-(a través del intérprete). Para llegar a la ejecución de un programa escrito en un lenguaje compilado,
-se debe pasar generalmente por dos etapas, una de compilación, donde se traducen las sentencias
-del lenguaje por código máquina y otra de enlace, donde se ensambla el código objeto resultado de la compilación 
-y se resuleven los enlaces entre los diferentes módulos compilados.
+En un lengauje interpretado el código fuente es el ejecutable. En cambio,
+para llegar a ejecutar un programa escrito en un lenguaje compilado,
+se deben atravesar dos etapas.
+La primera consiste en la traducción de las sentencias por código máquina 
+y otra de enlace, en la cual se ensambla el código objeto resultado de la compilación.
+En esta última etapa también se resuleven los enlaces entre los diferentes módulos compilados.
 
 .. figure:: ../_svg/lenguaje_interpretado.png
 
     Lenguaje interpretado.
 
-Existe un mecanismo intermedio de ejecución, que se conoce como máquina virtual, en el cual, existe
-un proceso de compilación de el código fuente a un lenguaje intermedio, comunmente denominado
+Existe un mecanismo intermedio de ejecución, conocido como máquina virtual. En éste existe
+un proceso de compilación del código fuente a un lenguaje intermedio, comunmente denominado
 *bytecode*. Este bytecode es luego ejecutado sobre un intérprete, al cual se denomina comunmente
 como máquina virutal. La traducción del código fuente a *bytecode* puede ser explícita, como en el
 lenguaje Java, o implícita como en Python, donde se mezcla en el intérprete la funcionalidad de 
 compilación a bytecode e interpretación en un solo programa.
 
-Los lenguajes de programación interpreteados suelen ser de alto nivel y de *tipo dinámico*, es decir
-que la mayoría de las comprobaciones que se realizan en tiempo de compilación en otros lenguajes [*]_ , se
-realizan en tiempo de ejecución.
+Los lenguajes de programación interpreteados suelen ser de alto nivel y de *tipado dinámico*, es decir
+que la mayoría de las comprobaciones realizadas en tiempo de compilación son evaluadas durante
+la ejecución [*]_ .
 
-.. [*] Estas comprobaciones comprenden el checkeo de tipos de datos, resolución de métodos entro otros.
+.. [*] Estas comprobaciones comprenden el checkeo de tipos de datos, resolución de métodos entre otros.
 
-Si un lenguaje provee la posibilidad de ser ejecutado en varias plataformas [*]_ decimos que es multiplataforma.
+Un lenguaje es multiplataforma si permite ser ejecutado en varias plataformas [*]_ .
+
+Leer hasta acá
+--------------
+
 En el caso de los lenguaje compilados, es necesario disponer de un compilador para la plataforma, mientras que 
 en un lenguaje interpretado, es necesario compilar el intérprete con el compilador de la plataforma.
 
@@ -365,20 +389,21 @@ de Perl a Python [EricRaymon2000]_.
 
 Muchos de las sistemas webs basados en CGI, están
 escritos en Perl, por lo cual no es sorpresa encontrar una buena cantidad de 
-proyectos del lenguaje Python orientados a la Web [*]_.
+proyectos del lenguaje Python orientados a la Web [PythonPyPi2009]_.
 
-.. [*] En el repositorio de proyectos del lenguaje se encuentran más 1100 resultados para paquetes relacionados con el término "web". http://pypi.python.org/pypi?%3Aaction=search&term=web&submit=search
+.. [PythonPyPi2009] En el repositorio de proyectos del lenguaje se encuentran más 1100 resultados para paquetes relacionados con el término "web". http://pypi.python.org/pypi?%3Aaction=search&term=web&submit=search
 
+Para emprender la implementación del desarrollo, se seleccionó el lenguaje Python dibido a:
 
-
-Selección de un lenguaje de programación
-========================================
-
-Jhon Crockford 
-.. Con la masificación de la World Wide Web se hizo necesario encontrar formas de desarrollo
-
-
-
+	* Popularidad [PythonPyPi2009]_
+		
+	* Performance
+		- Si bien Perl es más velóz para tareas de tratamiento de texto, su sintaxis es compleja
+	
+	* Filosofía de simplicidad
+		- Sintaxis clara
+		- Zen de Python
+		
 
 En el :ref:`apéndice <apendices-python>` se encuentra una referecia detallada del lenguaje.
 

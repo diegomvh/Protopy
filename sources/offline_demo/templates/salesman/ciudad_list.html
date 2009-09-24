@@ -1,16 +1,14 @@
-{% extends "base.html" %}
+{% extends "listado.html" %}
 
-{% block content %}
-	<table class="listado">
-	<tbody>
-	<th>Nombre</th><th>Código postal</th>
-		{% for ciudad in object_list %}
-		<tr>
-			<td>{{ ciudad.nombre }}</td>
-			<td>{{ ciudad.cp }}</td>
-		</tr>
-		
-		{% endfor %}
-	</tbody>
-	</table>
-{% endblock %}
+
+
+	{% block table_heading %}
+		<th>Nombre</th><th>Código postal</th>
+	{% endblock %}
+
+	
+	{% block item_iteration_row %}
+		<td>{{ item.nombre }}</td> <td>{{ item.cp }}</td>
+  	{% endblock %}
+  	
+ 
