@@ -248,20 +248,19 @@ la ejecución [*]_ .
 .. [*] Estas comprobaciones comprenden el checkeo de tipos de datos, resolución de métodos entre otros.
 
 Un lenguaje es multiplataforma si permite ser ejecutado en varias plataformas [*]_ .
+La mayoría de los lengaujes interpretados son multiplataforma, ya que solo es necesario disponer
+de un intérprete compilado para la plataforma específica.
 
-Leer hasta acá
---------------
-
-En el caso de los lenguaje compilados, es necesario disponer de un compilador para la plataforma, mientras que 
-en un lenguaje interpretado, es necesario compilar el intérprete con el compilador de la plataforma.
+En el caso de los lenguaje compilados, es necesario disponer de un compilador para la plataforma y
+compilar el código.
 
 .. [*] *Una plataforma es una combinación de hardware y software usada para ejecutar aplicaciones; en su forma más simple consiste únicamente de un sistema operativo, una arquitectura, o una combinación de ambos. La plataforma más conocida es probablemente Microsoft Windows en una arquitectura x86* [WikiPlataforma2009]_
 
 .. [WikiPlataforma2009] *Multiplataforma*, Wikipedia, 2009, último acceso, Agosto de 2009, http://es.wikipedia.org/wiki/Multiplataforma
 
+
 Un lenguaje dinámico admite de manera directa en tiempo de ejecución, el agregado de código, extensión o redefinición de objetos 
-o hasta inclusive modificar tipos de datos. Si bien estas tareas pueden ser realizadas en lenguajes no dinámicos, 
-su implementación no es sencilla. 
+o hasta inclusive modificar tipos de datos. Si bien estas tareas pueden ser realizadas en lenguajes no dinámicos, su implementación no es sencilla. 
 
 ..
 	Systems vs. applications programming
@@ -275,7 +274,7 @@ su implementación no es sencilla.
 	about integration afterwards (if at all)
 	
 Jhon Cownan [Cowan2005]_ adempas hace una clasificación interesante sobre la utilización de los lenguajes de 
-programación, diferenciando la *programación de sistema* de la *programación de aplicaciones*.
+programación, diferenciando la *programación de sistema* de la *programación de aplicaciones* [*]_.
 
     * *Programación de sistemas*
 
@@ -287,21 +286,13 @@ programación, diferenciando la *programación de sistema* de la *programación 
         En la programación de aplicaciones, por el contrario, modela el dominio de la aplicación
         de manera específica como paso inicial (análisis y diseño) y luego de la integración (si existe).
 
-Podemos ejemplificar la programación de sistemas con la creación de un shellscript por parte de un administrador de sistemas basados en UNIX,
-donde existe un legnguaje de integración, shellscript [*]_ y las un set de utilidades de sistema con interfase conocida que le brindan
-funcionalidades como ordenamiento de caddenas, busqueda y reemplazo de patrones, inicio y detencción de procesos, interacción con el SO, etc.
-
-.. [*] Bash, Sh, Csh, Ksh, Zsh, etc.
+.. [*] Podemos ejemplificar la programación de sistemas con la creación de un shellscript por parte de un administrador de sistemas basados en UNIX,
+donde existe un legnguaje de integración, shellscript y las un set de utilidades de sistema con interfase conocida que le brindan funcionalidades como ordenamiento de caddenas, busqueda y reemplazo de patrones, inicio y detencción de procesos, interacción con el SO, etc.
 
 .. [Cowan2005] *RESTful Web Services, An introduction to building Web Services without tears (i.e., without SOAP or WSDL)*, 2005, http://home.ccil.org/~cowan/restws.pdf
 
-**Java** es un lenguaje de progamación orientado a objetos, multiplataforma y multiproposito, basado en máquina virtual, 
-de compilación explícita.
-Java ha definido algunos elementos importantes en cuanto a la web dinámica, como los applets [*]_ y la especificación 
-J2EE.
-
-.. [*] Pequeños programaas que se ejecutan en el navegaor web
-
+A continuación se describen algunos de los lenguajes más populares para el desarrollo de aplicaciones
+web.
 
 **Perl** es un lenguaje de programación de propósito general diseñado por Larry Wall en 1987. Perl toma características del lenguaje C,
 del lenguaje interpretado shell (sh), AWK, sed, Lisp y, en un grado inferior, de muchos otros lenguajes de programación.
@@ -316,21 +307,38 @@ Su sintaxis es compleja y ambigua, una tarea puede ser realizada de muchas maner
 lugar a confusión.
 
 
-**PHP** es un lenguaje interpreteado, originalmente diseñado para ser embebido
-dentro del código HTML y procesado en el servidor (DSL) y que con los años
-ha intentado convertirse en un lenguaje de porpósito general. Toma elementos de Perl y shellscript, C, y 
-recientemente Java.
-Cuando el cliente solicita a través de una URL un módulo php, el interprete busca los 
-los tags del lenguaje, y los reemplaza por la salida del bloque.
-Presenta una ventaja importante sobre la escritura de CGI, ya que no es necesario 
-confeccionar un programa de usuario, la resolución de URLs está dada por la estructura del 
-sistema de archivos. 
-Si bien es muy popular [*]_ y está disponible en la gran mayoría de los servidores UNIX, simplificando el :ref:`deployment`
-es criticado por no poseer ámbito de nombres para los módulos, 
-promover el código desordenado, de dificil optimización y orientado a la web [BlogHardz2008]_ .
-Hoy es posible escribir aplicaciones gráficas mediante toolkits como Qt y GTK.
 
-.. [*] `Utilización de PHP según php.net <http://www.php.net/usage.php>`_
+**Java** es un lenguaje de progamación orientado a objetos, multiplataforma y multiproposito, basado en máquina virtual, de compilación explícita.
+Java ha definido algunos elementos importantes en cuanto a la web dinámica, como los applets [*]_ y la especificación J2EE.
+Java posé tipado estático, al igual que su predecesor C++, del cual heredó una sintaxis verborragica [SeanKellyRecFromAdict2009]_.
+
+La máquina virutal de java, o JVM, ha sido utilizada para implementar nuevos lenguajes [TolksdorfJVM2009]_. Scala es uno de estos lenguajes y hoy cuenta con frameworks con una concepción post RubyOnRails, sin embargo, todavía no han alcanzado la popularidad de J2EE o ROR.
+
+.. [*] Pequeños programaas que se ejecutan en el navegaor web
+http://www.archive.org/details/SeanKellyRecoveryfromAddiction
+.. [SeanKellyRecFromAdict2009] *Recuperandose de la adicción*, Sean Kelly, Video hospedado en *The Internet Archive*, último acceso Septiembre de 2009, http://www.archive.org/details/SeanKellyRecoveryfromAddiction
+
+.. [TolksdorfJVM2009] *Programming languages for the Java Virtual Machine JVM*, Robert Tolksdorf, último acceso Septiembre de 2009, http://www.is-research.de/info/vmlanguages/
+
+
+**PHP** es un lenguaje interpreteado, originalmente diseñado para ser embebido
+dentro del código HTML y procesado en el servidor, lo cual lo convierte en un DSL. 
+Con los años ha intentado convertirse en un lenguaje de porpósito general.
+
+Toma elementos de Perl y shellscript, C, y recientemente Java.
+
+Cuando el cliente solicita a través de una URL un archivo con sentencias php, el interprete busca los 
+los tags del lenguaje, y los reemplaza por la salida del bloque.
+Presenta una ventaja importante sobre la escritura de una aplicación que corre bajo CGI, ya que no es necesario confeccionar un programa de usuario, la resolución de URLs está dada por la estructura del 
+sistema de archivos. 
+Si bien es muy popular [PHPNetPopularity2009]_ y está disponible en la gran mayoría de los servidores UNIX, simplificando el :ref:`deployment`.
+PHP es criticado por no poseer ámbito de nombres para los módulos, 
+y promover el código desordenado, de dificil optimización [BlogHardz2008]_ .
+Los autores de Django y Ruby On Rails admiten haber venido de PHP en [SnakesAndRubies2005]_ .
+
+
+.. [PHPNetPopularity2009] *Utilización de PHP según php.net*,  último acceso Septiembre de 2009, <http://www.php.net/usage.php>
+.. [SnakesAndRubies2005] Video de la charla *Snakes and Rubies*,  `Universidad DePaul, Chicago <http://www.depaul.edu/>`_ http://www.djangoproject.com/snakesandrubies/
 
 
 .. [BlogHardz2008] http://hardz.wordpress.com/2008/02/07/php-hipertexto-pre-procesado/
