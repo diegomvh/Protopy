@@ -9,8 +9,13 @@ form label {
 	float: left;
 }
 form input {
-	border: 1px solid #ccc;
+	border: 1px solid #888;
+	padding: 2px;
 }
+.buttons input, .buttons button {
+	padding: 4px;
+}
+
 
 {% endblock %}
 
@@ -25,10 +30,17 @@ form input {
 		{{ field.label_tag }} {{ field }}
 		</p>
 	{% endfor %}
-	
-	<input type="submit" value="Crear">
-	<input type="reset" value="Reset">
-	<button id="cancelar_form">Cancelar</button>
+	<div class="buttons">	
+		<input type="submit" value="{% if submit_text %} {{submit_text}} {%else%} Crear {% endif %}">
+		<input type="reset" value="Reset">
+		<button id="cancelar_form">Cancelar</button>
+	</div>
 </form>
+<script type="text/javascript">
+window.onload = function () {
+	document.getElementsByTagName('input')[0].focus();
 
+}
+
+</script>
 {% endblock %}
