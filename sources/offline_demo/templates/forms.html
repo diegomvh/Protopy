@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block extra_style %}
+
+form label {
+	display: block;
+	width: 8em;
+	font-weight: bolder;
+	float: left;
+}
+form input {
+	border: 1px solid #ccc;
+}
+
+{% endblock %}
+
+
+{% block content %}
+
+<form action="" method="post">
+	
+	{% for field in form %}
+		<p>
+		{% if field.errors %} {{ field.errors }} {% endif %}
+		{{ field.label_tag }} {{ field }}
+		</p>
+	{% endfor %}
+	
+	<input type="submit" value="Crear">
+	<input type="reset" value="Reset">
+	<button id="cancelar_form">Cancelar</button>
+</form>
+
+{% endblock %}

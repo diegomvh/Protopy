@@ -83,6 +83,7 @@ class Pedido(models.Model):
     cliente = models.ForeignKey(Cliente)
     numero = models.PositiveIntegerField()
     fecha = models.DateField()
+    
     def __unicode__(self):
         return u"%s %s" % (self.numero, self.cliente)
         
@@ -90,6 +91,7 @@ class ItemPedido(models.Model):
     cantidad = models.PositiveIntegerField()
     producto = models.ForeignKey(Producto)
     precio = models.DecimalField(default = 0.0, max_digits = 5, decimal_places = 3)
+    pedido = models.ForeignKey(Pedido)
 
     class Meta:
         verbose_name_plural = 'Items de Pedido'

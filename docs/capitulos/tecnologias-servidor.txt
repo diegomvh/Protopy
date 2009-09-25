@@ -1307,6 +1307,39 @@ igual que en un mánager, devuelven instancias de *QuerySet* como resultado.
 Gracias a esta característica recursiva, se pueden generar consultas
 medinate encadenamiento.
 
+Formularios
+-----------
+
+El elemento de entrada tradicional de las aplicaciones web son los formularios.
+En un sistema de infrmación, las operaciones CRUD son muy comunes, y la forma de.
+
+
+El ciclo de trabajo normal para la entrada de datos suele ser:
+	1. El usuario carga una página en la cual existe un formulario
+	2. El usuario completa los campos del formulario (pueden existir campos opcionales)
+	3. El usuario envía el formulario, utilizando típicamente un botón, el navegador
+	   se encarga de codificar los datos y enviarlos a la URL indicada en el campo
+	   "action" del :ref:markup del formulario.
+	4. El servidor recibe los datos y evalúa cual es el método HTTP utilizado,
+	   si el método es "POST", valida los datos. Si la validación es incorrecta
+	   devuelve al usuario el formulario con los datos que hallan sido válidos, 
+	   y muestra los mensajes pertinentes de los errores que hallan podido ocurrir,
+	   volviendo al paso 2.
+	   Si los datos son correctos, generalmente se envía una respuesta 300 indicando 
+	   que la carga ha sido existosa.
+
+La validación de los formularios puede ser una tarea compleja.
+Django provee un mecanismo para generar formularios en el módulo *django.forms*.
+En django, un formulario es una entidad que posee un conjunto de campos. Cada campo
+a su vez conoce un *widget*.
+Al momento de la validación, cada campo valida sus datos. Una vez que cada campo
+ha sido validado,  
+	
+	
+.. figure:: ../_svg/esquema_django_forms.png
+
+	Estructura de objetos de los formularios en Django
+
 
 Clasificación de aplicaciones Django
 ------------------------------------

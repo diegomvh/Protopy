@@ -412,8 +412,8 @@ class RemoteSite(RemoteBaseSite):
             models = export_remotes(model_remotes)
 
             return render_to_response(
-                            #'djangoffline/models_example.js',
-                             'djangoffline/models.js',
+                            'djangoffline/models_example.js',
+                            #'djangoffline/models.js',
                            {'models': models, 'app': app_name, 'site': self},
                            mimetype = 'text/javascript')
 
