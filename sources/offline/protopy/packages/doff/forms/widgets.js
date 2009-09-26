@@ -20,13 +20,13 @@ from urlparse import urljoin
 */
 var MEDIA_TYPES = ['css','js'];
 
-var Media = type('Media', object, {
+var Media = type('Media', [ object ], {
     __init__: function(media) {
-        arguments = new Arguments(arguments);
+        var arg = new Arguments(arguments);
         if (media)
             media_attrs = media;
         else
-            media_attrs = arguments.kwargs
+            media_attrs = arg.kwargs;
 
         this._css = {};
         this._js = [];
@@ -40,7 +40,7 @@ var Media = type('Media', object, {
     },
 
     render: function() {
-        var result = []
+        var result = [];
         for each (var name in MEDIA_TYPES) {
             result = result.concat(getattr(this, 'render_' + name)());
         }

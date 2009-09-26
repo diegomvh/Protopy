@@ -354,6 +354,7 @@ var AutoField = type('AutoField', [ Field ], {
         var n = Number(value);
         if (isNaN(n))
             throw new ValidationError("This value must be an integer.");
+        return n;
     },
 
     get_db_prep_value: function(value) {
@@ -370,7 +371,7 @@ var AutoField = type('AutoField', [ Field ], {
     },
 
     formfield: function() {
-	return null;
+        return null;
     }
 });
 

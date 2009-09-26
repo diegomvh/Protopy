@@ -164,10 +164,10 @@ var FloatField = type('FloatField', Field, {
                                 'min_value': 'Ensure this value is greater than || equal to %s.' },
 
     '__init__': function __init__() {
-        arguments = new Arguments(arguments, {'max_value':null, 'min_value':null});
-        this.max_value = arguments.kwargs['max_value'];
-        this.min_value = arguments.kwargs['min_value'];
-        super(Field, this).__init__(arguments);
+        var arg = new Arguments(arguments, {'max_value':null, 'min_value':null});
+        this.max_value = arg.kwargs['max_value'];
+        this.min_value = arg.kwargs['min_value'];
+        super(Field, this).__init__(arg);
     },
 
     /*

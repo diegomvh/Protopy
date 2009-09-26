@@ -8,10 +8,10 @@ function index(request) {
     var response = new HttpResponse();
     if (!bool(connection.introspection.table_names())) {
         var t = loader.get_template('base.html');
-	response.write(t.render(new RequestContext(request, {'sin_tablas': true})));
+        response.write(t.render(new RequestContext(request, {'sin_tablas': true})));
     } else {
         var t = loader.get_template('show_posts.html');
-	response.write(t.render(new RequestContext(request, {'posts': Post.objects.all().order_by('-date'), 'tags': Tag.objects.all().order_by('title')})));
+        response.write(t.render(new RequestContext(request, {'posts': Post.objects.all().order_by('-date'), 'tags': Tag.objects.all().order_by('title')})));
     }
     return response;
 }

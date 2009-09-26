@@ -592,13 +592,13 @@ var InlineForeignKeyField = type('InlineForeignKeyField', Field, {
     }
 });
 
-var ModelChoiceIterator = type('ModelChoiceIterator', object, {
-    '__init__': function __init__(field) {
+var ModelChoiceIterator = type('ModelChoiceIterator', [ object ], {
+    __init__: function(field) {
         this.field = field;
         this.queryset = field.queryset;
     },
 
-    '__iter__': function __iter__() {
+    __iter__: function() {
         if (this.field.empty_label)
             yield ["", this.field.empty_label];
         if (this.field.cache_choices) {
@@ -609,21 +609,15 @@ var ModelChoiceIterator = type('ModelChoiceIterator', object, {
         } else {
             for each (var obj in this.queryset.all())
                 yield this.choice(obj);
-	}
+        }
     },
 
-    'choice': function choice(obj) {
-        if (this.field.to_field_name) {
-            // FIXME: The try..except shouldn't be necessary here. But this is
-            // going in just before 1.0, so I want to be careful. Will check it
-            // out later.
-            var key = getattr(obj, this.field.to_field_name).pk;
-            if (typeof(key) === 'undefined')
-                key = getattr(obj, this.field.to_field_name);
-        } else {
+    choice: function(obj) {
+        if (this.field.to_field_name)
+            var key = obj.serializable_value(this.field.to_field_name);
+        else
             var key = obj.pk;
-	}
-        return [key, this.field.label_from_instance(obj)];
+        return [ key, this.field.label_from_instance(obj)];
     }
 });
 

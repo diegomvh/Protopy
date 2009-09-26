@@ -23,20 +23,20 @@ function add_lazy_relation(cls, field, relation, operation){
     } else {
         //Look for an "app.Model" relation
         [app_label, model_name] = relation.split(".");
-	if (!model_name) {
-	    app_label = cls._meta.app_label;
-	    model_name = relation;
-	}
+        if (!model_name) {
+            app_label = cls._meta.app_label;
+            model_name = relation;
+        }
     }
     model = get_model(app_label, model_name, false);
     if (model)
         operation(field, model, cls);
     else {
         var key = app_label + model_name;
-	var value = [cls, field, operation];
-	if (!pending_lookups[key])
-	    pending_lookups[key] = [];
-	pending_lookups[key].push(value);
+        var value = [cls, field, operation];
+        if (!pending_lookups[key])
+            pending_lookups[key] = [];
+        pending_lookups[key].push(value);
     }
 }
 
@@ -623,18 +623,17 @@ var ForeignKey = type('ForeignKey', RelatedField, {
 
         try {
             var to_name = to._meta.object_name.toLowerCase();
-        } catch (e if e instanceof TypeError ) {
-            assert(type(to) == String, "%s is invalid. First parameter to ForeignKey must be either a model, a model name, or the string %s".subs(to, RECURSIVE_RELATIONSHIP_CONSTANT));
-        } finally {
             assert (!to._meta['abstract'], "cannot define a relation with abstract class %s".subs(to._meta.object_name));
             to_field = arg.kwargs['to_field'] || to._meta.pk.name;
+        } catch (e if isinstance(e, TypeError)) {
+            assert(isinstance(to, String), "%s is invalid. First parameter to ForeignKey must be either a model, a model name, or the string %s".subs(to, RECURSIVE_RELATIONSHIP_CONSTANT));
         }
 
         arg.kwargs['rel'] = new rel_class(to, to_field, arg.kwargs);
         super(RelatedField, this).__init__(arg.kwargs);
 
         this.db_index = true;
-        },
+    },
 
     get_attname: function() {
         return '%s_id'.subs(this.name);
@@ -645,8 +644,8 @@ var ForeignKey = type('ForeignKey', RelatedField, {
     },
 
     /*
-	* Here we check if the default value is an object and return the to_field if so.
-	*/
+     * Here we check if the default value is an object and return the to_field if so.
+     */
     get_default: function() {
         var field_default = super(RelatedField, this).get_default();
         if (field_default instanceof this.rel.to)

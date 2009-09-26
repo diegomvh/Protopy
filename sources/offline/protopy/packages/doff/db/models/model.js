@@ -268,6 +268,25 @@ var Model = type('Model', [ object ], {
         this._set_pk_val(value);
     },
 
+    serializable_value: function(field_name) {
+        /*
+        Returns the value of the field name for this instance. If the field is
+        a foreign key, returns the id value, instead of the object. If there's
+        no Field object with this name on the model, the model attribute's
+        value is returned directly.
+
+        Used to serialize a field's value (in the serializer, or form output,
+        for example). Normally, you would just access the attribute directly
+        and not use this method.
+        */
+        try {
+            var field = this._meta.get_field_by_name(field_name)[0];
+        } catch (e if isinstance(e, FieldDoesNotExist)) {
+            return getattr(this, field_name);
+        }
+        return getattr(this, field.attname);
+    },
+
     /*
         * Saves the current instance. Override this in a subclass if you want to
         control the saving process.

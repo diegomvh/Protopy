@@ -454,7 +454,7 @@ herencia al constructor de tipos resulta un paso en la dirección correcta,
 eventualmente el desarrollador que requiera componentes especificos podra
 heredar de los tipos correspondientes e implementar solo lo que haga falta. 
 
-Protopy utiliza la herencia del tipo ** Prototype chaining **, aunque lo hace de
+Protopy utiliza la herencia del tipo **Prototype chaining**, aunque lo hace de
 una forma un poco "rebuscada" con el objeto de dar soporte a una herencia
 multiple. 
 
@@ -819,7 +819,7 @@ implementacion de un parser JSON contra la implementacion de uno en XML.
 Para el leector interesado agregar el sporte para XML en Protopy consta de
 escribir un modulo que realize esa tarea y agregarlo al paquete base.
 
-Ejecutando codigo remoto
+Ejecutando código remoto
 ========================
 .. JSON-RPC http://json-rpc.org/ 
 .. XML-RPC http://www.xmlrpc.com/

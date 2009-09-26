@@ -13,6 +13,7 @@ var Post = type('Post', [ SyncModel ], extend(mixin.Post, {
     tags: new models.ManyToManyField(Tag),
     date: new models.DateTimeField('Date', {'editable': false, 'auto_now': true}),
     body: new models.TextField('Body Text'),
+    persona: new models.ForeignKey('Persona'),
 
     Meta: {
         ordering: ['-date']

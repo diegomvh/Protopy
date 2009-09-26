@@ -63,3 +63,8 @@ Los modelos que son sincronizables, en el cliente deben extender al tipo
 
 A estos modelos se los provee con un Proxy que interactua con el servidor para
 service de los datos
+
+
+.. note:
+    
+    

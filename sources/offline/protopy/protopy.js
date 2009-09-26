@@ -358,8 +358,8 @@
         __init__: function(message) {
             //TODO: Ver como tomar mas informacion de quien larga la exception
             //this.caller = arguments.callee.caller;
-            this.args = arguments;
-            this.message = (message && type(message) == String)? message : '';
+            this.name = this.__name__;
+            //this.message = (message && type(message) == String)? message : '';
         },
         __str__: function() { return this.__name__ + ': ' + this.message; }
     });
@@ -371,7 +371,7 @@
         LoadError: type('LoadError', Exception),
         KeyError: type('KeyError', Exception),
         NotImplementedError: type('NotImplementedError', Exception),
-        TypeError: type('TypeError', Exception),
+        TypeError: TypeError || type('TypeError', Exception),
         ValueError: type('ValueError', Exception),
     });
 

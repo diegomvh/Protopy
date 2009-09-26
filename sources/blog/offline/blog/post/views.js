@@ -19,11 +19,11 @@ var TagForm = type('TagForm', ModelForm, {
 
 function add_tag(request){
     if (request.method == 'POST') {
-	var formtag = new TagForm({ data: request.POST });
-	if (formtag.is_valid()) {
-	    formtag.save();
-	    return new HttpResponseRedirect('/');
-	}
+        var formtag = new TagForm({ data: request.POST });
+        if (formtag.is_valid()) {
+            formtag.save();
+            return new HttpResponseRedirect('/');
+        }
     } else {
         var formtag = new TagForm();
     }
@@ -47,13 +47,13 @@ function remove_post(request, slug){
 
 function add_post(request) {
     if (request.method == 'POST') {
-	var formpost = new PostForm({ data: request.POST });
-	if (formpost.is_valid()) {
+        var formpost = new PostForm({ data: request.POST });
+        if (formpost.is_valid()) {
             formpost.save();
         return new HttpResponseRedirect('/');
-	}
+        }
     } else {
-	var formpost = new PostForm();
+        var formpost = new PostForm();
     }
     var t = loader.get_template('add_post.html');
     var response = new HttpResponse();
