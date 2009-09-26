@@ -95,4 +95,7 @@ except ImportError:
     pass
 else:
     INSTALLED_APPS = INSTALLED_APPS + ('django_extensions', )
-    
+
+
+OFFLINE_BASE = 'trabajo_offline'
+  

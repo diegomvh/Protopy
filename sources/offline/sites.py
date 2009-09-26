@@ -118,7 +118,8 @@ class RemoteSite(RemoteBaseSite):
     TEMPLATES_PREFIX = 'templates'
     JS_PREFIX = 'js'
     LIB_PREFIX = 'lib'
-    OFFLINE_ROOT = 'offline'
+    #OFFLINE_ROOT = 'offline'
+    OFFLINE_ROOT = settings.OFFLINE_BASE
     
     TEMPLATE_RE_EXCLUDE = map(re.compile, (r'\.svn', r'\.hg', r'\.*~$'))
     #TODO: (nahuel) es necesario?
@@ -208,7 +209,9 @@ class RemoteSite(RemoteBaseSite):
             </body>
             </html>
         '''
+        
         template = Template(content);
+        print self.name, self.url 
         return HttpResponse(template.render(Context({'site': self})));
 
     @expose(r'^%s/(.*)$' % TEMPLATES_PREFIX)

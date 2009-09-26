@@ -8,25 +8,25 @@
 
 //Database
 'DATABASE_ENGINE': 'gears',
-'DATABASE_NAME': '{{ remote_name }}_sqlite.db',
+'DATABASE_NAME': 'contadores_sqlite.db',
 'DATABASE_OPTIONS': {},
 
 
-{# Aca tenemos que meter la URL de los medios #}
-'MEDIA_URL': '{{ settings.MEDIA_URL }}',
 
-'ROOT_URLCONF': '{{ remote_name}}.urls',
+'MEDIA_URL': '',
+
+'ROOT_URLCONF': 'contadores.urls',
 
 
 'INSTALLED_APPS': [ 
                     
-                    {# 'blog.apps.post' #} 
+                     
                     
                     ],
 
 
 'TEMPLATE_URLS': [ 
-                   '{{ settings.OFFLINE_BASE }}/templates/' 
+                   'trabajo_offline/templates/' 
                    ],
                    
 

@@ -1308,7 +1308,7 @@ Gracias a esta característica recursiva, se pueden generar consultas
 medinate encadenamiento.
 
 Formularios
------------
+===========
 
 El elemento de entrada tradicional de las aplicaciones web son los formularios.
 En un sistema de infrmación, las operaciones CRUD son muy comunes, y la forma de.
@@ -1342,7 +1342,7 @@ ha sido validado,
 
 
 Clasificación de aplicaciones Django
-------------------------------------
+====================================
 
 .. note::
 	Mejorar esto

@@ -34,13 +34,14 @@ class Command(LabelCommand):
             sys.exit(-3)
         else:
             offline_base = settings.OFFLINE_BASE
-        offline_root = join( os.getcwd(), 'offline')
+        offline_root = join( os.getcwd(), settings.OFFLINE_BASE)
         if not exists(offline_root):
             mkdir(offline_root)
+            
 
         package_init = join (offline_root, "__init__.py")
         if not exists(package_init):
-            f = open(package_init)
+            f = open(package_init, 'w')
             f.close()
 
         remote_site_root = join(offline_root, remote_name)

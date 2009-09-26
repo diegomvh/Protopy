@@ -1,0 +1,35 @@
+Como hacer un remote site
+-------------------------
+
+1. Agregar a offline al PYTHON_PATH, si es relativo se puede
+   user sys.path.append('..').
+   
+2. Agrear a INSALLED_APPS la cadena 'offline'
+	Ej:
+	
+3. Agregar la url donde se publican los remote sites, OFFLINE_BASE.
+   Esta cadena también se usa para crear un directorio en el proyecto
+   donde se implementarán los remote sites.
+   
+	Ej: OFFLINE_BASE = 'offline'
+
+4. Ejecutar el script de inicio de remote site con el nombre de la aplicación
+   offline.
+   	
+5. Añadir modelos al remote para ser publicados en
+   <OFFLINE_BASE>/<REMOTE_SITE_NAME>/remote_<REMOTE_SITE_NAME>.py
+   
+6. Agregar el remote site al urlpatterns del proyecto en <nombre_proyecto>/urls.py
+	# Agregar al comienzo de urls.py
+	from <nombre_proyecto>.<offline_base>.remote_<nomnbre_remote_site import <nomnbre_remote>_site
+	
+	# Más abajo 
+	(r'^%s/(.*)' % <nombre_remote_site>_site.urlregex, <nombre_remote_site>_site.root ),
+	
+7. Con esto ya podríamos acceder la URL /<OFFLINE_BASE>/<REMOTE_SITE_NAME>/
+	TODO: Agregar un "It' worked"
+	
+8. Mapear los modelos necesarios
+
+9. Crear las aplicaciones utilizando los modelos creados en 8
+	
