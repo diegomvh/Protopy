@@ -21,7 +21,9 @@ form input {
 
 
 {% block content %}
-
+{% if title %}
+	<h2>{{ title }}</h2>
+{% endif %}
 <form action="" method="post">
 	
 	{% for field in form %}
@@ -39,7 +41,11 @@ form input {
 <script type="text/javascript">
 window.onload = function () {
 	document.getElementsByTagName('input')[0].focus();
-
+	document.getElementById('cancelar_form').onClick = function(e){
+		alert('hola');
+		e.cancel();
+	};
+	
 }
 
 </script>
