@@ -3,16 +3,39 @@
 Modelo de prueba
 '''
 from django.db import models
+from django.db.models import signals
 
 
+
+
+
+# Some useful things
    
 mod_name = __name__.split('.')[-2]
 abs_url = lambda inst: '/%s' % '/'.join( [mod_name, inst._meta.module_name, str(inst.id)])
 
 
+class Pais(models.Model):
+    nombre = models.CharField(max_length = 45)
+    simbolo_moneda = models.CharField(max_length = 8)
+    
+    class Meta:
+        verbose_name = u"País"
+        verbose_name_plural = u"Paises"
+    
+    get_absolute_url = abs_url
+
+class Provincia(models.Model):
+    pais = models.ForeignKey(Pais)
+    nombre = models.CharField(max_length = 140)
+    
+    get_absolute_url = abs_url
+
 class Ciudad(models.Model):
     nombre = models.CharField(max_length = 50)
     cp = models.CharField(max_length = 40)
+    provincia = models.ForeignKey(Provincia)
+    
     class Meta:
         verbose_name_plural = "Ciudades"
 
@@ -96,3 +119,7 @@ class ItemPedido(models.Model):
     class Meta:
         verbose_name_plural = 'Items de Pedido'
     
+        
+
+
+#signals.post_syncdb.connect(receiver, sender, weak, dispatch_uid)
