@@ -4,15 +4,22 @@
 Crawls some local data such as States and Provinces for 
 testing
 '''
+from pprint import pprint
 
 def get_data():
     import re
     from lxml.html import parse
     from urlparse import urljoin
     BASE_URL = 'http://www.datacraft.com.ar/postal.html'
+    
     CP_RE = re.compile(r'(?P<cp>\d{1,6})\s(?P<nombre>[\w\d\-\s]+)')
     VALID_URLS = re.compile(r'postal-(?P<nombre_prov>\w*).html$')
     
+    paises = []
+    
+    argentina = {'nombre': 'Argentina', 'signo_moneda': 'AR$'}
+    paises.append(argentina)
+    argentina['provincias'] = []
     
     base = parse(BASE_URL)
     document = base.getroot()
@@ -35,7 +42,7 @@ def get_data():
                     ciudad = cp_match.groupdict()['nombre']
                     ciudad = ' '.join(map(lambda x:x.capitalize(), ciudad.lower().split()))
                     print cp, ciudad, '(%s)' % nombre
-
+                    
 #                for line in text:
 #                    print "***", line, "***"
 #                    match = CP_RE.search(line)
@@ -43,7 +50,7 @@ def get_data():
 #                        print match.groupdict()
                 
             
-                
+    pprint(paises)
     
     
     

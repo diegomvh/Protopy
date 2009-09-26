@@ -119,7 +119,7 @@ class ItemPedido(models.Model):
     class Meta:
         verbose_name_plural = 'Items de Pedido'
     
-
+        
 
 
 #signals.post_syncdb.connect(receiver, sender, weak, dispatch_uid)
