@@ -4,7 +4,8 @@ require('doff.conf.urls', '*');
 require('agentes.views', '*');
 
 var urlpatterns = patterns('',
-    ['^$', index]
+    ['^$', index],
+    ['^/salesman/ciudades$', index]
 //    ['^ventas/', include('agentes.ventas.urls') ]
 )
 
