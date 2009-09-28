@@ -1,0 +1,150 @@
+Programación de sistemas vs aplicaciones
+----------------------------------------
+
+Jhon Cownan [Cowan2005]_ además hace una clasificación interesante sobre la utilización de los lenguajes de 
+programación, diferenciando la *programación de sistema* de la *programación de aplicaciones* [*]_.
+
+    * *Programación de sistemas*
+
+        En la programación de sistemas, el programador se centra en adaptar un nuevo dominio
+        a interfases genéricas preexistentes.
+
+    * *Programación de aplicaciones*
+
+        En la programación de aplicaciones, por el contrario, modela el dominio de la aplicación
+        de manera específica como paso inicial (análisis y diseño) y luego de la integración (si existe).
+
+.. [*] Podemos ejemplificar la programación de sistemas con la creación de un shellscript por parte de un administrador de sistemas basados en UNIX,
+donde existe un legnguaje de integración, shellscript y las un set de utilidades de sistema con interfase conocida que le brindan funcionalidades como ordenamiento de caddenas, busqueda y reemplazo de patrones, inicio y detencción de procesos, interacción con el SO, etc.
+
+.. [Cowan2005] *RESTful Web Services, An introduction to building Web Services without tears (i.e., without SOAP or WSDL)*, 2005, http://home.ccil.org/~cowan/	restws.pdf
+
+
+Framework
+---------	
+	
+Un framework Web, es un framework de software que permite implementar
+aplicaciones Web, brindando soporte para tareas comunes. Su objetivo es
+facilitar el desarrollo de aplicaciones Web.
+
+Para entender mejor esto, se presenta a continuación un ejemplo de aplicación
+Web escrita usando CGI; este fragmento de código en Python, muestra los diez
+libros más recientemente publicados de una base de datos::
+
+    #!/usr/bin/python
+
+    import MySQLdb
+
+    # Se imprime el Content-Type y una linea en blanco, tal como requiere CGI
+    print "Content-Type: text/html"
+    print
+
+    # Algo de HTML introductorio que de forma al documento
+    print "<html><head><title>Libros</title></head>"
+    print "<body>"
+    print "<h1>Los ultimos 10 libros</h1>"
+    print "<ul>"
+
+    # Contectar con la base de datos y obtener los utlimos libros publicados
+    conexion = MySQLdb.connect(user='yo', passwd='dejame_entrar', db='mi_base')
+    cursor = conexion.cursor()
+    cursor.execute("SELECT nombre FROM libros ORDER BY fecha_pub DESC LIMIT 10")
+    
+    # Iterar sobre la lista de libros e imprimir HTML con los datos obtenidos
+    for fila in cursor.fetchall():
+        print "<li>%s</li>" % fila[0]
+
+    # Cerrar el documento HTML
+    print "</ul>"
+    print "</body></html>"
+
+    # Cerrar la conexion con la base de datos
+    conexion.close()
+
+Si bien el código es sencillo de comprender y utilizar, cuando la aplicación
+Web comienza a crecer más allá de lo trivial, este enfoque se desmorona y surgen
+una serie de problemas:
+
+    * ¿Qué sucede cuando múltiples páginas necesitan conectarse a la base de datos?
+      Seguro que ese código de conexión a la base de datos no debería estar duplicado
+      en cada uno de los scripts CGI, así que la forma pragmática de hacerlo sería
+      refactorizarlo en una función compartida.
+
+    * ¿Debería un desarrollador *realmente* tener que preocuparse por imprimir
+      la línea de "Content-Type" y acordarse de cerrar la conexión con la base de datos?
+      Este tipo de código repetitivo reduce la productividad del programador e
+      introduce la oportunidad para que se cometan errores. Estas tareas de configuración y
+      cierre estarían mejor manejadas por una infraestructura común.
+
+    * ¿Qué sucede cuando este código es reutilizado en múltiples entornos,
+      cada uno con una base de datos y contraseñas diferentes? En ese punto,
+      se vuelve esencial alguna configuración específica del entorno.
+
+    * ¿Qué sucede cuando un diseñador Web que no tiene experiencia programando
+      en Python desea rediseñar la página? Lo ideal sería que la lógica de la página
+      -- la búsqueda de libros en la base de datos -- esté separada del código HTML
+      de la página, de modo que el diseñador pueda hacer modificaciones sin afectar
+      la búsqueda.
+
+Precisamente estos son los problemas que un framework Web intenta resolver.
+Un framework Web provee una infraestructura de programación para las
+aplicaciones, para que el desarrollador se pueda concentrar en escribir código
+limpio y de fácil mantenimiento sin tener que reinventar la rueda.
+
+
+ORM
+---
+
+En las aplicaciones modernas, la lógica arbitraria a menudo implica interactuar
+con una base de datos. Detrás de escena, un *programa impulsado por una base de
+datos* se conecta a un servidor de base de datos, recupera algunos datos de
+esta, y los presenta al usuario con un formato agradable para su interpretacion.
+Una aplicacion web no escapa a esta aseveración, solo que presenta los datos 
+representados en HTML, así mismo un sitio puede proporcionar funcionalidad que
+permita a los visitantes del sitio poblar la base de datos por su propia cuenta.
+
+Amazon.com, por ejemplo, es un buen ejemplo de un sitio que maneja una base de
+datos. Cada página de un producto es esencialmente una consulta a la base de
+datos de productos de Amazon formateada en HTML, y cuando se envian datos al 
+servidor, como opiniónes de cliente, estos son insertadados en la base de datos
+de opiniones.
+
+La forma simple de interactuar con una base de datos, es mediante el uso de
+bibliotecas provistas por los lenguajes para ejecutar consultas SQL y una vez 
+obtenidos los datos, procesarlos.
+
+En este ejemplo se usa la biblioteca ``MySQLdb`` para conectar con una base de
+datos MySQL, recuperar algunos registros::
+
+    import MySQLdb
+
+    db = MySQLdb.connect(user='me', db='mydb', passwd='secret', host='localhost')
+    cursor = db.cursor()
+    cursor.execute('SELECT name FROM books ORDER BY name')
+    names = [row[0] for row in cursor.fetchall()]
+    db.close()
+
+Este enfoque funciona, pero presenta algunos problemas:
+
+    * Los parametros de la conexión a la base de datos estan codificandos 
+        *en duro* (*hard-coding*).
+
+    * Se debe escribir una cantidad de código estereotípico: crear una
+        conexión, un cursor, ejecutar una sentencia, y cerrar la conexión.
+
+    * Ata a las aplicaciones a MySQL. Si, en el camino, se quiere cambiar MySQL
+        por PostgreSQL por ejemplo, se deben alterar todas las lineas que hagan
+        falta para la nueva biblioteca o conector, parámetros de conexión, 
+        posiblemente reescribir el SQL, etc.
+
+Por otro lado y quiza mas importante a la hora de desarrollar un programador que 
+trabajé con programación orientada a objetos y bases de datos relacionales, debe
+realizar un cambio de contexto cada vez que requiera interactuar con la base de
+datos, escribiendo consultas en SQL y luego lidear con los resultados obtenidos
+de las consultas entre los objetos. Este *cambio de contexto* es debido a una
+diferencia que existe entre los dos paradigmas involucrados. Mientras que el
+modelo relacional trata con relaciones, conjuntos y la logica matemática 
+correspondiente, el paradigma orientado a objetos trata con objetos, atributos
+y asociaciones de unos con otros. Tan pronto como se quieran persistir los
+objetos utilizando una base de datos relacional esta desaveniencia resulta
+evidente. 

@@ -132,18 +132,27 @@ Glossary
     	Etapa en el dearrollo de sistemas en la cual el producto es puesto en producción.
     	El deployment involucra todas las actividades necesarias para poner el sistema en
     	funcionamiento para el usuario final.
+    	
     CGI
         Common Gateway Interfase
+        
     PHP
         Lenguaje de programación diseñado para ser incrustado en documentos HTML.
+        
     MIME
         Estandar de especificación de tipo de contenido para correo electrónico
         utilizado también en encabezados HTTP.
+        
     Script
         Porgrama escrito en un lenguaje interpretado
+        
     Deplpyment
         Etapa del desarrollo que consiste en la puesta en producción de una aplicación
+        
     .net
         Plataforma de desarrollo creada por Microsoft.
+        
+    Killer App
+       Aplicación que populariza un lenguaje
     
 
