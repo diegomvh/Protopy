@@ -735,29 +735,30 @@ var SplitDateTimeWidget = type('SplitDateTimeWidget', MultiWidget, {
  * A Widget that splits datetime input into two <input type="hidden"> inputs.
  */ 
 var SplitHiddenDateTimeWidget = type('SplitHiddenDateTimeWidget', SplitDateTimeWidget, {
-    '__init__': function __init__(attrs){
+    __init__: function(attrs){
         var widgets = [new HiddenInput({'attrs':attrs}), new HiddenInput({'attrs':attrs})];
         super(SplitDateTimeWidget, this).__init__(widgets, attrs);
     }
 });
 
-publish({    'Media': Media,
-        'media_property': media_property,
-        'Widget': Widget,
-        'TextInput': TextInput,
-        'PasswordInput': PasswordInput,
-        'HiddenInput': HiddenInput,
-        'MultipleHiddenInput': MultipleHiddenInput,
-        'FileInput': FileInput,
-        'DateTimeInput': DateTimeInput,
-        'TimeInput': TimeInput,
-        'Textarea': Textarea,
-        'CheckboxInput': CheckboxInput,
-        'Select': Select,
-        'NullBooleanSelect': NullBooleanSelect,
-        'SelectMultiple': SelectMultiple,
-        'RadioSelect': RadioSelect,
-        'CheckboxSelectMultiple': CheckboxSelectMultiple,
-        'MultiWidget': MultiWidget,
-        'SplitDateTimeWidget': SplitDateTimeWidget
+publish({    
+    Media: Media,
+    media_property: media_property,
+    Widget: Widget,
+    TextInput: TextInput,
+    PasswordInput: PasswordInput,
+    HiddenInput: HiddenInput,
+    MultipleHiddenInput: MultipleHiddenInput,
+    FileInput: FileInput,
+    DateTimeInput: DateTimeInput,
+    TimeInput: TimeInput,
+    Textarea: Textarea,
+    CheckboxInput: CheckboxInput,
+    Select: Select,
+    NullBooleanSelect: NullBooleanSelect,
+    SelectMultiple: SelectMultiple,
+    RadioSelect: RadioSelect,
+    CheckboxSelectMultiple: CheckboxSelectMultiple,
+    MultiWidget: MultiWidget,
+    SplitDateTimeWidget: SplitDateTimeWidget
 });
