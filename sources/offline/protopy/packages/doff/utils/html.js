@@ -1,13 +1,64 @@
 /* 'HTML utilities suitable for global use.' */
+require('dom');
+require('event');
 
-import re
-import string
+var FakeHtml = type('FakeHtml', [ object ], {
+    event_elements: {'FORM': 'onsubmit', 'A': 'onclick'},
+    event_handlers: [],
 
-from django.utils.safestring import SafeData, mark_safe
-from django.utils.encoding import force_unicode
-from django.utils.functional import allow_lazy
-from django.utils.http import urlquote
+    __init__: function(content) {
+        this.head = document.createElement('div');
+        this.head.id = "fake_head";
+        this.body = document.createElement('div');
+        this.body.id = "fake_body";
+        // Apagando la chache del selector
+        dom.cache(false);
+        $$('body')[0].update(this.head);
+        $$('body')[0].insert(this.body);
+        this.update(content);
+    },
 
+    update: function(content) {
+        this.remove_hooks();
+        var head = content.match(new RegExp('<head[^>]*>([\\S\\s]*?)<\/head>', 'im'));
+        if (head)
+            this.head.update(head[1]);
+        var body = content.match(new RegExp('<body[^>]*>([\\S\\s]*?)<\/body>', 'im'));
+        if (body)
+            this.body.update(body[1]);
+        else this.body.update(content);
+        this.add_hooks();
+    },
+
+    onEvent: function(event) {},
+
+    add_hooks: function() {
+        var self = this;
+        var re = keys(this.event_elements).reduce(
+            function(previous, current) { return previous.concat(self.body.select(current)); }, []);
+        re.forEach(function(e) {
+            self.event_handlers.push(event.connect(e, self.event_elements[e.tagName], getattr(self, 'onEvent')));
+        });
+    },
+
+    remove_hooks: function() {
+        this.event_handlers.forEach(function(hler) {
+            event.disconnect(hler);
+        });
+    },
+});
+
+window.location.watch('hash', function(id, oldval, newval) {
+    console.log('Old: ', oldval);
+    console.log('New: ', newval);
+    return newval;
+});
+
+publish({
+    FakeHtml: FakeHtml
+});
+
+/*
 // Configuration for urlize() function.
 var LEADING_PUNCTUATION  = ['(', '<', '&lt;'];
 var TRAILING_PUNCTUATION = ['.', ',', ')', '>', '\n', '&gt;'];
@@ -163,3 +214,4 @@ def clean_html(text):
     text = trailing_empty_content_re.sub('', text)
     return text
 clean_html = allow_lazy(clean_html, unicode)
+*/
