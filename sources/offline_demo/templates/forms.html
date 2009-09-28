@@ -38,16 +38,32 @@ form input {
 		<button id="cancelar_form">Cancelar</button>
 	</div>
 </form>
-<script type="text/javascript">
+<script type="text/javascript"><!--
 window.onload = function () {
+	function cancelEvent(e) {
+	    if (!e) e = window.event;
+	    if (e.preventDefault) {
+	        e.preventDefault();
+	    } else {
+	        e.returnValue = false;
+	    }
+	}
+	function stopEvent(e) {
+	    if (!e) e = window.event;
+	    if (e.stopPropagation) {
+	        e.stopPropagation();
+	    } else {
+	        e.cancelBubble = true;
+	    }
+	}
+	
 	document.getElementsByTagName('input')[0].focus();
 	document.getElementById('cancelar_form').onClick = function(e){
-		
-		alert('hola');
-		e.cancel();
+		cancelEvent(e);
+		stopEvent(e);	
 	};
 	
 }
 
-</script>
+--></script>
 {% endblock %}

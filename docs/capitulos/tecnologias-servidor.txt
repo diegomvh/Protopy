@@ -248,93 +248,75 @@ la ejecución [*]_ .
 .. [*] Estas comprobaciones comprenden el checkeo de tipos de datos, resolución de métodos entre otros.
 
 Un lenguaje es multiplataforma si permite ser ejecutado en varias plataformas [*]_ .
-La mayoría de los lengaujes interpretados son multiplataforma, ya que solo es necesario disponer
-de un intérprete compilado para la plataforma específica.
 
-En el caso de los lenguaje compilados, es necesario disponer de un compilador para la plataforma y
-compilar el código.
+Hasta acá llegó la revisión del jueves 24 de Septiembre
+-------------------------------------------------------
+
+
+La mayoría de los lengaujes interpretados son multiplataforma, ya que solo es necesario disponer
+de un intérprete compilado, a diferencia de los lenguajes compilados en los cuales se requiere disponer
+ de un compilador para la plataforma y compilar el código.
 
 .. [*] *Una plataforma es una combinación de hardware y software usada para ejecutar aplicaciones; en su forma más simple consiste únicamente de un sistema operativo, una arquitectura, o una combinación de ambos. La plataforma más conocida es probablemente Microsoft Windows en una arquitectura x86* [WikiPlataforma2009]_
 
 .. [WikiPlataforma2009] *Multiplataforma*, Wikipedia, 2009, último acceso, Agosto de 2009, http://es.wikipedia.org/wiki/Multiplataforma
 
+La mayoría de los lenguajes interpretados son lenguajes dinámicos, esto permite el agregado de código, extensión o redefinición de objetos 
+y hasta inclusive modificar tipos de datos, en tiempo de ejecución.
+Cabe destacar que si bien estas características son factibles de implementar sobre lengujaes estáticos, no resulta sencillo.
 
-Un lenguaje dinámico admite de manera directa en tiempo de ejecución, el agregado de código, extensión o redefinición de objetos 
-o hasta inclusive modificar tipos de datos. Si bien estas tareas pueden ser realizadas en lenguajes no dinámicos, su implementación no es sencilla. 
 
-..
-	Systems vs. applications programming
-
-	Systems programming emphasizes making the
-	new domain fit into the existing generic
-	interfaces
-	
-	Applications programming models the
-	application domain precisely first, worries
-	about integration afterwards (if at all)
-	
-Jhon Cownan [Cowan2005]_ adempas hace una clasificación interesante sobre la utilización de los lenguajes de 
-programación, diferenciando la *programación de sistema* de la *programación de aplicaciones* [*]_.
-
-    * *Programación de sistemas*
-
-        En la programación de sistemas, el programador se centra en adaptar un nuevo dominio
-        a interfases genéricas preexistentes.
-
-    * *Programación de aplicaciones*
-
-        En la programación de aplicaciones, por el contrario, modela el dominio de la aplicación
-        de manera específica como paso inicial (análisis y diseño) y luego de la integración (si existe).
-
-.. [*] Podemos ejemplificar la programación de sistemas con la creación de un shellscript por parte de un administrador de sistemas basados en UNIX,
-donde existe un legnguaje de integración, shellscript y las un set de utilidades de sistema con interfase conocida que le brindan funcionalidades como ordenamiento de caddenas, busqueda y reemplazo de patrones, inicio y detencción de procesos, interacción con el SO, etc.
-
-.. [Cowan2005] *RESTful Web Services, An introduction to building Web Services without tears (i.e., without SOAP or WSDL)*, 2005, http://home.ccil.org/~cowan/restws.pdf
-
-A continuación se describen algunos de los lenguajes más populares para el desarrollo de aplicaciones
-web.
+En base a la clasificación antes mencionada, se analizan los lenguajes de programación más 
+populares para el desarrollo de aplicaciones web.
 
 **Perl** es un lenguaje de programación de propósito general diseñado por Larry Wall en 1987. Perl toma características del lenguaje C,
-del lenguaje interpretado shell (sh), AWK, sed, Lisp y, en un grado inferior, de muchos otros lenguajes de programación.
+del lenguaje interpretado shell (sh), AWK, sed, Lisp y, en menor medida, de muchos otros lenguajes de programación.
 Su uso principal es el procesamiento de texto, siendo muy popular en programación de sistemas. Muchos sistemas basados
 en CGI están escritos en Perl (sistemas de administración de servidores, correo, etc.). Perl esta disponible para
 muchas plataformas, incluyendo todas las variantes de UNIX.
 
 Estructuralmente, Perl está basado en un estilo de bloques como los del C o AWK, y fue ampliamente adoptado por su 
-destreza en el procesado de texto.
+destreza en el procesamiento de texto.
 
-Su sintaxis es compleja y ambigua, una tarea puede ser realizada de muchas maneras diferentes, dado
-lugar a confusión.
+La principal crítica al lenguaje es la ambiguedad y complejidad de su sintaxis, una tarea puede ser realizada de 
+varias maneras diferentes, dado lugar a confusión en grupos de trabajo.
 
 
 
-**Java** es un lenguaje de progamación orientado a objetos, multiplataforma y multiproposito, basado en máquina virtual, de compilación explícita.
+**Java** es un lenguaje de progamación orientado a objetos, multiplataforma y porpósito general, basado en máquina virtual, de compilación explícita.
 Java ha definido algunos elementos importantes en cuanto a la web dinámica, como los applets [*]_ y la especificación J2EE.
-Java posé tipado estático, al igual que su predecesor C++, del cual heredó una sintaxis verborragica [SeanKellyRecFromAdict2009]_.
+Dos desventajas que presenta este lenguaje, al igual que su predecesor C++, del cual heredó una sintaxis verborragica [SeanKellyRecFromAdict2009]_
+además del tipado estático. Como contrapartida resulta una alternativa velóz para ciertas tareas _ponert_citas_, lo que
+motivó el desarrollo de lenguajes dinámicos [TolksdorfJVM2009]_ que hacen uso de su máquina virtual [*]_. Se destaca, Scala, que hoy cuenta con frameworks con una concepción post RubyOnRails. 
 
-La máquina virutal de java, o JVM, ha sido utilizada para implementar nuevos lenguajes [TolksdorfJVM2009]_. Scala es uno de estos lenguajes y hoy cuenta con frameworks con una concepción post RubyOnRails, sin embargo, todavía no han alcanzado la popularidad de J2EE o ROR.
+.. sin embargo, todavía no han alcanzado la popularidad de J2EE o ROR.
 
 .. [*] Pequeños programaas que se ejecutan en el navegaor web
+.. [*] Estos lenguajes interpretados utilizan compilación JIT a bytecode de la JVM.
+
 http://www.archive.org/details/SeanKellyRecoveryfromAddiction
 .. [SeanKellyRecFromAdict2009] *Recuperandose de la adicción*, Sean Kelly, Video hospedado en *The Internet Archive*, último acceso Septiembre de 2009, http://www.archive.org/details/SeanKellyRecoveryfromAddiction
 
 .. [TolksdorfJVM2009] *Programming languages for the Java Virtual Machine JVM*, Robert Tolksdorf, último acceso Septiembre de 2009, http://www.is-research.de/info/vmlanguages/
 
 
-**PHP** es un lenguaje interpreteado, originalmente diseñado para ser embebido
-dentro del código HTML y procesado en el servidor, lo cual lo convierte en un DSL. 
-Con los años ha intentado convertirse en un lenguaje de porpósito general.
-
+**PHP** es un lenguaje interpreteado, originalmente diseñado para ser embebido 
+dentro del código HTML y procesado en el servidor, lo cual lo convierte en un DSL.
+Con los años evolucionó hacia un lenguaje de porpósito general.
 Toma elementos de Perl y shellscript, C, y recientemente Java.
 
-Cuando el cliente solicita a través de una URL un archivo con sentencias php, el interprete busca los 
-los tags del lenguaje, y los reemplaza por la salida del bloque.
-Presenta una ventaja importante sobre la escritura de una aplicación que corre bajo CGI, ya que no es necesario confeccionar un programa de usuario, la resolución de URLs está dada por la estructura del 
-sistema de archivos. 
-Si bien es muy popular [PHPNetPopularity2009]_ y está disponible en la gran mayoría de los servidores UNIX, simplificando el :ref:`deployment`.
+
+Tradicionalmente el ciclo de ejcución consiste en:
+	* A partir de la URL de la solicitud del cliente se determina el archivo PHP que se encargará de generar la respuesta
+	* El servidor, activa el módulo encargado de la interpretación de PHP con el archivo y la solicitud como entrada
+	* La salida es devuelta al cliente.
+	
+Presenta importantes ventajas sobre CGI, ya que no es necesario confeccionar un programa de usuario y 
+la resolución de URLs está dada por la estructura del  sistema de archivos. 
+Si bien es muy popular [PHPNetPopularity2009]_ y está disponible en la gran mayoría de los servidores UNIX, simplificando el :ref:`deployment`
 PHP es criticado por no poseer ámbito de nombres para los módulos, 
-y promover el código desordenado, de dificil optimización [BlogHardz2008]_ .
-Los autores de Django y Ruby On Rails admiten haber venido de PHP en [SnakesAndRubies2005]_ .
+promover el código desordenado y tener serios problemas a la hora de la optimización [BlogHardz2008]_ .
+Los autores de Django y Ruby On Rails provenir del lenguaje PHP en [SnakesAndRubies2005]_ .
 
 
 .. [PHPNetPopularity2009] *Utilización de PHP según php.net*,  último acceso Septiembre de 2009, <http://www.php.net/usage.php>
@@ -346,52 +328,46 @@ Los autores de Django y Ruby On Rails admiten haber venido de PHP en [SnakesAndR
 **Ruby** es un lenguaje orientado fuertemente objetos, multiplataforma, creado en 1995 por 
 Yukihiro "Matz" Matsumoto, en Japón.
 A menudo comparado con *Smalltak*, se suele decir que Ruby es un lenguaje de objetos puro, 
-ya que *todo* es un objeto. Posee muchas caracteríticas avanzadas como metaclases, clausuras, iteradores, integración de expresiones regulares en el lenguje, etc.
-Su sintaxis toma elementos de Perl, por lo cual, suelen existir convenciones de nombrado
-a las que cuesta acostumbrarse.
+ya que *todo* es un objeto. Posee muchas caracteríticas avanzadas como metaclases, clausuras, iteradores, integración natural de expresiones regulares en la sintaxis, etc.
+
+Su sintaxis es compacta, gracias a la utilización de simbología, parte de la cual fue tomada de Perl.
 Existen varios intérpretes de Ruby, siendo la oficial escrita en C, se concen 
-YARV [*]_ , 
-JRuby [*]_ , 
-Rubinius [*]_ , 
-IronRuby [*]_ ,
-y MacRuby [*]_ .
+YARV [YARV2009]_ , 
+JRuby [JRuby2009]_ , 
+Rubinius [Rubinius2009]_ , 
+IronRuby [IronRuby2009]_ ,
+y MacRuby [MacRuby2009]_ .
 
-.. [*] Yet Another Ruby VM, escrita por Sacasada Kiochi http://www.atdot.net/yarv/
-.. [*] JRuby es una máquina virtual de Ruby escrita sobre la máquina virtual de **Java**, http://jruby.codehaus.org/
-.. [*] Rubinius es una máquina vritual de Ruby escrita en **C++** http://rubini.us/
-.. [*] IronRuby es una implementación de Ruby sobre la plataforma **.Net** http://www.ironruby.net/
-.. [*] MacRuby es una implementación de Ruby sobre **Objective-C** para el sistema Mac OS X, http://www.macruby.org/
+.. [YARV2009] Yet Another Ruby VM, escrita por Sacasada Kiochi http://www.atdot.net/yarv/
+.. [JRuby2009] JRuby es una máquina virtual de Ruby escrita sobre la máquina virtual de **Java**, http://jruby.codehaus.org/
+.. [Rubinius2009] Rubinius es una máquina vritual de Ruby escrita en **C++** http://rubini.us/
+.. [IronRuby2009] IronRuby es una implementación de Ruby sobre la plataforma **.Net** http://www.ironruby.net/
+.. [MacRuby2009] MacRuby es una implementación de Ruby sobre **Objective-C** para el sistema Mac OS X, http://www.macruby.org/
 
-Una de las Killer App [*]_ según el autor es el framework para contenido web denominado `"Ruby on Rails" <www.rubyonrails.com>`_ 
-que alcanzó su versión 1.0 en el año 2005, que poroponía un cambio radical al enfoque complejo de *J2EE*.
+Una de las :term:`Killer App` según el autor es el framework para contenido web denominado `"Ruby on Rails" <www.rubyonrails.com>`_ .
+Su versión estable oficial fue liberada en el año 2005 y proponía un cambio radical al enfoque complejo de *J2EE* [RailsQuotes2009]_ .
 
-Su principales desventajas son la baja aceptación, quizás debido a que la documentación oficial solía estar
+Ruby aún posee baja aceptación debido, quizás, a que la documentación oficial solía estar
 en idioma Japonés (auque la situación se ha venido revirtiendo ultimamente). Otra desventaja importante es que
-la velocidad del intérprete oficial es bastante baja cuando se la compara con otros lenguajes de programación y
-muestra variaciones importantes entre plataformas.
+la velocidad del intérprete oficial es bastante baja (cuando se la compara con otros lenguajes dinámicos similares como Python) y
+variables entre plataformas.
 
-.. [*] Aplicación que populariza un lenguaje.
 
 .. _lenguaje-python:
 
 **Python** es un lenguaje de programación interpretado multiparadigma, 
 de propósito general. Fue creado por por Guido van Rossum en el año
 1991.
-Se trata de un lenguaje dinámico, y toma elmentos de varios lenguajes, como C, Java,
-Scheme, entre otros. Gracias a su naturaleza dinámica, toda resolución de nombres (o símbolos) se
-realiza en tiempo de ejecución (*dynamic binding*). En la jerga del lenguaje se suele llamar a este
-hecho, *duck typing* y se lo asocia con el siguiente broma, *si tiene pico y 
-hace cuac, se trata de un pato*.
+Se trata de un lenguaje dinámico que toma elmentos de varios lenguajes, como C, Java,
+Scheme, entre otros.
 
-Python puede ser extendido meidante módulos escritos en C o C++, y también 
-se puede embeber el intérprete en otros lenguajes. Python permite actualmente
-cargar bibliotecas de enlace dinámico, de manera dinámica y realizar llamadas
-incluso con callbacks escritos en Pyhton.
+Python puede ser extendido mediante módulos escritos en C o C++, y también 
+se puede embeber el intérprete en otros lenguajes. 
+Permite cargar bibliotecas de enlace dinámico.
 
 Python es considerado por parte de la comunidad UNIX, como una evolución de Perl, 
-de sintaxis limpia y potente. Un caso sitable de esta "evolución" es el 
-árticulo escrito por Eric Raymond, "Why Python?", donde explica su conversión
-de Perl a Python [EricRaymon2000]_. 
+de sintaxis limpia y potente. Eric Raymond, en el artículo "Why Python?", explica 
+su conversión de Perl a Python [EricRaymon2000]_. 
 
 .. [EricRaymon2000] *Why Python*, Linux Journal, publicado el 1° de Mayo de 2000, http://www.linuxjournal.com/article/3882
 
@@ -401,41 +377,50 @@ proyectos del lenguaje Python orientados a la Web [PythonPyPi2009]_.
 
 .. [PythonPyPi2009] En el repositorio de proyectos del lenguaje se encuentran más 1100 resultados para paquetes relacionados con el término "web". http://pypi.python.org/pypi?%3Aaction=search&term=web&submit=search
 
-Para emprender la implementación del desarrollo, se seleccionó el lenguaje Python dibido a:
+Los motivos por los cuales se seleccionó [*]_ el leguaje Python para el desarrollo de
+la aplicación, son los que a continuacion se enumeran:
 
 	* Popularidad [PythonPyPi2009]_
 		
-	* Performance
+	* Performance adecuada en función de las lineas de código escritas [DhananjayNene2009]_
 		- Si bien Perl es más velóz para tareas de tratamiento de texto, su sintaxis es compleja
 	
 	* Filosofía de simplicidad
 		- Sintaxis clara
-		- Zen de Python
-		
+		- Zen de Python [PythonOrgZen2009]_
+	
+.. [DhananjayNene2009] *Performance Comparison – C++ / Java / Python / Ruby/ Jython / JRuby / Groovy*, blog de Dhananjay Nene, último acceso, septiembre de 2009, http://blog.dhananjaynene.com/2008/07/performance-comparison-c-java-python-ruby-jython-jruby-groovy/
 
 En el :ref:`apéndice <apendices-python>` se encuentra una referecia detallada del lenguaje.
 
+.. [PythonOrgZen2009] *El zen de Python*, último acceso Septimebre de 2009, http://www.python.org/dev/peps/pep-0020/
+
+.. [*] Por sin no les quedaba duda del fanatismo del defo, by **gisE**!!!
+
 .. _servidor-wsgi:
 
-WSGI
-----
+Módulo de interconexión de servidor web con Python
+---------------------------------------------------
 
-WSGI o Web Server Gateway Interfase es una especidicación para que un web server y una aplicación
-se comuniquen. Es un estándar del lenguaje Python, descrito en el PEP [*]_ 333. Si bien WSGI es
-similar en su concepción a CGI, su objetivo es estandarizar la aparición de estructras de software
-cada vez más complejas (frameworks :ref:`servidor-frameworks_ <framework>`)
+Existen varios módulos para interconexión de intérprete de Python con un servidor web. Phillip J. Eby formuló
+un método que sigue la filosofía del lenguaje, en la [PEP333]_, que denominó WSGI (Web Server Gateway Interface).
+Informalmente se puede decir que WSGI es una traducción de CGI al lenguaje Python.
+Su objetivo principal fue estaandarizar sobre el lenguaje el macanismo de comunicación entre el servidor y una aplicación.
 
-.. [*] PEP *Python Enhancement Proposals* son documentos en los que se proponen mejoras para el lenguaje
+.. [PEP333] PEP *Python Enhancement Proposals* son documentos en los que se proponen mejoras para el lenguaje
 Python, son albergados en el sitio oficial http://www.python.org
 
-WSGI propone que una aplicación es una función que recibe 2 argumentos. Como primer argumento, un diccionario con las variables de entorno, al igual que en CGI, y como segundo argumento una función (u :ref:`objeto llamable <apendice_python_callables>` ) al cual se invoca para iniciar la respuesta.
+Para satifacer una solicitud bajo WSGI, se invoca la función de entrada. Esta recibe 2 argumentos:
+	1. Un diccionario con las variables de entorno, al igual que en CGI
+	2. Una función (u :ref:`objeto llamable <apendice_python_callables>` ) al cual se invoca para iniciar la respuesta.
 
 .. figure:: ../_svg/esquema_wsgi.png
 
     Esquema WSGI.
 
-En el siguente ejemplo, la función app devuelve *Hello World* informandole al navegador web, que el
-contenido se trata de texto plano.
+En el siguente ejemplo constituye una aplicación mínima en WSGI. La función app es el punto de entrada y devuelve *Hello World*.
+Utiliza la función que recibe como segundo argumento, 'start_response', para que el cliente determine como tratar la respuesta.
+En este caso, texto plano.
 
 .. code-block:: python
 
@@ -471,52 +456,46 @@ ciertas características que diferencian al framework de una librería o
 aplicaciones normales de usuario:
 
     * Inversion de control
+		
+		Tradicionalmente se escriben las aplicaciones haciendo
+		llamadas a las bibliotecas de manera explicita. El flujo de control
+		es definido por el programador. En el caso de una aplicación escrita 
+		sobre un framework, el flujo es definido por éste.
 
-        Al contrario que las bibliotecas en las aplicaciones de usuario, en un
-        framework, el flujo de control no es manejado por el llamador,
-        sino por el framework. Es decir, cuando se utilizan bibliotecas o
-        programas de usuario como soporte para brindar funcionalidad, estas son
-        llamados o invocados en el código de aplicación principal que es
-        definido por el usuario. En un framework, el flujo de control principal
-        está definido por el framework.
 
     * Comportamiento por defecto definido
 
-        Un framework tiene un comportamiento por defecto definido. En cada
-        componete del framework, existe un comportamineto genérico con alguna
-        utilidad, que puede ser redefinido con funcionalidad del usuario.
+        En cada elemento del framework, existe un comportamiento genérico con alguna
+        utilidad.
 
     * Extensibiliad
 
-        Un framework suele ser extendido por el usuario mediante redefinición o
-        especialización para proveer una funcionalidad específica.
+		El comportamiento predefinido de cada componete es generlamnete
+		modificado por el programador con algún fin específico. Los métodos
+		utilizados en los frameworks realizados sobre lenguajes orientados
+		a objetos suelen ser redefinición o especialización.
 
-    * No modificabilidad del código del framework
+    * No modificabilidad del código propio del framework
+		
+		Las extensiones y definiciones propias de una aplicación se realizan sobre 
+		el código proyecto y no sobre el código del framework.
 
-        En general no se permite la modificación del código del framework. Los
-        programadores pueden extender el framework, pero no modificar su código. 
+Se utiliza un framework con el objeto de simplificar el desarrollo de
+un proyecto, permitendo a los programadores desligarse de resolver detalles 
+comunes de bajo nivel.
 
-Los diseñadores de frameworks tienen como objetivo facilitar el desarrollo de
-software, permitiendo a los programadores enfocarse en cumplimentar los
-requermientos del análisis y diseño, en vez de dedicar tiempo a resolver los
-detalles comunes de bajo nivel. En general la utilización de un framework reduce
-el tiempo de desarrollo.
-
-Por ejemplo, en un equipo donde se utiliza un framework web para desarrollar un
+A modo de ejemplo, un equipo donde se utiliza un framework web para desarrollar un
 sitio de banca electrónica, los desarrolladores pueden enfocarse en la lógica
 necesaria para realizar las extraciones de dinero, en vez de la mecánica para
 preserver el estado entre las peticiones del navegador.
 
-.. Carga != Incertidumbre
 
-Sin embargo, se suele argumentar que los frameworks pueden ser una carga,
-debido a la complejidad de sus APIs o la incertidumbre que generar la existencia
-de varios frameworks para un mismo tipo de aplicación. A pesar de tener como
-objetivo estandarizar y reducir el tiempo de desarrollo, el aprendizaje de un
-framework suele requerir tiempo extra en el desarrollo, que debe ser tenido en
-cuenta por el quipo de desarrollo. Trás completar el desarrollo en un framework,
-el equipo de desarrllo no debe volver a invertir tiempo en aprendizaje en
-sucesivos desarrollos.
+Sin embargo una serie de argumentos comunes existen contra la utilización 
+de frameworks:
+ * La complejidad de sus APIs
+ * Incertidumbre ante  la existencia de múltiples alternativas para un mismo tipo de aplicación.
+ * El aprendizaje de un framework suele requerir tiempo extra, que debe ser tenido en cuenta. 
+
 
 .. figure:: ../_svg/esquema_libreria_vs_framework.png
 
@@ -527,26 +506,24 @@ sucesivos desarrollos.
 
 .. _servidor-mvc:
 
-Model View Controler
-====================
+El patrón Model View Controler en frameworks web
+================================================
 
-En aplicaciones complejas que impliquen sofisticadas interfaces, como las
-aplicaciones web, la lógica de la interfaz de usuario cambia con más frecuencia
-que los almacenes de datos y la lógica de negocio. Si se realiza un diseño
-mezclando los componentes de interfaz y de negocio, entonces las consecuencias
-serán que, cuando se necesite cambiar la interfaz, se tendra que modificar
-trabajosamente los componentes de negocio, teniendo de esta forma mayor trabajo
-y mayor riesgo de error.
+Normalmente en el desarrollo de las aplicaciones web, mediante lenguajes
+de etiquetas como PHP o ASP, el diseño de la interfase, la lógica de la
+aplicación y el acceso a datos suelen estar agrupados en un solo módulo.
+Esto conlleva un mantenimiento dificultoso y una baja interacción entre
+los diseñadores (artistas) y los programadores.
 
-El patrón arquitectural MVC, *Modelo Vista Controlador* trata de realizar un
-diseño que desacople la interfaz o vista del modelo, con la finalidad de mejorar
-la reusabilidad. De esta forma las modificaciones en las vistas impactan en menor
-medida en la lógica de negocio o de datos.
+El patrón arquitectural MVC, *Modelo Vista Controlador* propone discriminar
+la aplicación en 3 capas. La interfase con el usuario (vista) se desacopla 
+de la lógica (controlador) y ésta a su vez, del acceso a datos (modelo).
+Esta división favorece la reutilización de componentes.
 
 Este patrón fue descrito por primera vez en 1979 por Trygve Reenskaug [Tryg1979]_,
-entonces trabajando en Smalltalk en laboratorios de investigación de Xerox.
-La implementación original está descrita a fondo en Programación de Aplicaciones
-en Smalltalk-80(TM): Como utilizar Modelo Vista Controlador [SmallMVC]_.
+quien se encontraba entonces trabajando en Smalltalk en laboratorios de investigación de Xerox.
+La implementación original se describe por completo en "Programación de Aplicaciones
+en Smalltalk-80(TM): Como utilizar Modelo Vista Controlador" [SmallMVC]_.
 
 .. [Tryg1979] Trygve Reenskaug, http://heim.ifi.uio.no/~trygver/themes/mvc/mvc-index.html
 .. [SmallMVC] Steve Burbeck, Ph.D. http://st-www.cs.illinois.edu/users/smarch/st-docs/mvc.html
@@ -554,10 +531,10 @@ en Smalltalk-80(TM): Como utilizar Modelo Vista Controlador [SmallMVC]_.
 Descripción del patrón:
 
     * Modelo
-
-        Esta es la capa de datos, una representación de la información con la
-        cual el sistema opera. La lógica de datos asegura la integridad y
-        permite derivar nuevos datos.
+    
+    	Esta capa define los datos, sus relaciones y la manera de acceder a estos.
+    	Se asegura de la integridad de los datos entre otras cosas. Suele permitir
+    	definir nuevas abstracciones de datos.
 
     * Vista
 
@@ -569,190 +546,120 @@ Descripción del patrón:
         Esta capa responde a eventos, usualmente acciones del usuario, e invoca
         cambios en el modelo y probablemente en la vista.
 
-El patrón MVC se ve frecuentemente en aplicaciones web, donde la vista es la
-página HTML y el código que provee de datos dinámicos a la página. El modelo es
-el sistema de gestión de base de datos y la lógica de negocio, y el controlador
-es el responsable de recibir los eventos de entrada desde la vista.
+J2EE fue el primer framework que aplicó el concepto de MVC al desarrollo de aplicaciones
+web. Gran cantidad frameworks que surgieron desde entonces han aplicado en
+mayor o menos grado este concepto.
 
-Framework Web
--------------
+Componentes de un framework web MVC
+-----------------------------------
 
-.. note::
-
-    Ver diferencia entre sitio y aplicación
-    http://www.javahispano.org/contenidos/es/comparativa_de_frameworks_web/
-
-Un framework Web, es un framework de software que permite implementar
-aplicaciones Web, brindando soporte para tareas comunes. Su objetivo es
-facilitar el desarrollo de aplicaciones Web.
-
-Para entender mejor esto, se presenta a continuación un ejemplo de aplicación
-Web escrita usando CGI; este fragmento de código en Python, muestra los diez
-libros más recientemente publicados de una base de datos::
-
-    #!/usr/bin/python
-
-    import MySQLdb
-
-    # Se imprime el Content-Type y una linea en blanco, tal como requiere CGI
-    print "Content-Type: text/html"
-    print
-
-    # Algo de HTML introductorio que de forma al documento
-    print "<html><head><title>Libros</title></head>"
-    print "<body>"
-    print "<h1>Los ultimos 10 libros</h1>"
-    print "<ul>"
-
-    # Contectar con la base de datos y obtener los utlimos libros publicados
-    conexion = MySQLdb.connect(user='yo', passwd='dejame_entrar', db='mi_base')
-    cursor = conexion.cursor()
-    cursor.execute("SELECT nombre FROM libros ORDER BY fecha_pub DESC LIMIT 10")
-    
-    # Iterar sobre la lista de libros e imprimir HTML con los datos obtenidos
-    for fila in cursor.fetchall():
-        print "<li>%s</li>" % fila[0]
-
-    # Cerrar el documento HTML
-    print "</ul>"
-    print "</body></html>"
-
-    # Cerrar la conexion con la base de datos
-    conexion.close()
-
-Si bien el código es sencillo de comprender y utilizar, cuando la aplicación
-Web comienza a crecer más allá de lo trivial, este enfoque se desmorona y surgen
-una serie de problemas:
-
-    * ¿Qué sucede cuando múltiples páginas necesitan conectarse a la base de datos?
-      Seguro que ese código de conexión a la base de datos no debería estar duplicado
-      en cada uno de los scripts CGI, así que la forma pragmática de hacerlo sería
-      refactorizarlo en una función compartida.
-
-    * ¿Debería un desarrollador *realmente* tener que preocuparse por imprimir
-      la línea de "Content-Type" y acordarse de cerrar la conexión con la base de datos?
-      Este tipo de código repetitivo reduce la productividad del programador e
-      introduce la oportunidad para que se cometan errores. Estas tareas de configuración y
-      cierre estarían mejor manejadas por una infraestructura común.
-
-    * ¿Qué sucede cuando este código es reutilizado en múltiples entornos,
-      cada uno con una base de datos y contraseñas diferentes? En ese punto,
-      se vuelve esencial alguna configuración específica del entorno.
-
-    * ¿Qué sucede cuando un diseñador Web que no tiene experiencia programando
-      en Python desea rediseñar la página? Lo ideal sería que la lógica de la página
-      -- la búsqueda de libros en la base de datos -- esté separada del código HTML
-      de la página, de modo que el diseñador pueda hacer modificaciones sin afectar
-      la búsqueda.
-
-Precisamente estos son los problemas que un framework Web intenta resolver.
-Un framework Web provee una infraestructura de programación para las
-aplicaciones, para que el desarrollador se pueda concentrar en escribir código
-limpio y de fácil mantenimiento sin tener que reinventar la rueda.
-
-En Wikipeida [WIKI002]_
+Un framework web MVC suele contar con los siguientes componentes [WIKI002]_
 	
 	* Acceso a datos
-		ORM
+	
+		Los tipos de datos de los lenguajes orientados a objetos difieren de 
+		el modelo ER utilizado para la definición de bases de datos. Un ORM
+		tiene como objetivo acortar esta brecha, permtiendo definir entidades
+		en objetos que luego se transportan a la base de datos, además de la
+		capacidad de CRUD y consultas sobre estos.
 
     * Seguridad
+    	
+		Existen diversos aspectos de seguridad que deben ser tenidos en cuenta
+		cuando se implementa una aplicación web, como la vlidación de entrada,
+		protección de Cross Site Scripting, etc.
 
     * Mapeo de URLs
+    
+    	Cada URL activa algún compoenente del controlador. La definción de esta
+    	asociación (o mapeo) generalmente está centralizada y bien especificada en
+    	un framework.
 
     * Sistema de plantillas
+    	
+    	Las plantillas corresponden a la capa vista del patrón MVC. Su objetivo
+    	principal es definir la forma en la cual se muestran los datos al usuario,
+    	provenientes del controlador.
+    	Para definir la plantilla se utiliza un lenguaje básico que se integra
+    	con HTML o XML.
+    	La utilización de plantillas facilita la modificación de la fachada sin
+    	acceder al modelo o contolador.
 
     * Caché
+    	
+    	La generación de ciertas páginas dentro de la aplicación puede requerir
+    	un timpo considerable por lo que es normalmente utilizada alguna técnica
+    	de caché, que consiste en almacenar la salida durante un tiempo determinado,
+    	de manera de obtener una respuesta *cacheada*, lo que repercute en mayor
+    	velocidad.
+    	Algunos frameworks hacen uso de algun mecanismo unificado para realizar caché.
+    	
 
     * AJAX
+    	
+    	Hoy en día es común la técnica de incorporar elementos dinámicos que 
+    	modifican el estado de una página de manera asincrónica. Es decir
+    	partes de la página pueden realizar nuevas requermientos al servidor
+    	cuya respuesta no fuerza una recarga de la página.
+    	Esta técnica es conocida como AJAX. Algunos frameworks como Ruby On Rails soportan 
+    	AJAX directamente en el sistema de plantillas.
 
     * Configuración mínima y simplificada
+    	
+    	Existen ciertos parámetros de las diversas capas que en algunos frameworks se
+    	encuentran especificados en un único archivo XML. Hoy en día se prefieren
+    	los lenguajes más "human readable" como YAML, archivos INI o código.
+    	
 
 .. [WIKI002] *Web Framework*, Wikipedia, 2009, http://en.wikipedia.org/wiki/Web_application_framework, última visita Agosto de 2009.
-
-.. note:: completar tema framework un poco, antes de caer en django
 
 
 Mapeador Objeto-Relacional
 ==========================
 
-En las aplicaciones modernas, la lógica arbitraria a menudo implica interactuar
-con una base de datos. Detrás de escena, un *programa impulsado por una base de
-datos* se conecta a un servidor de base de datos, recupera algunos datos de
-esta, y los presenta al usuario con un formato agradable para su interpretacion.
-Una aplicacion web no escapa a esta aseveración, solo que presenta los datos 
-representados en HTML, así mismo un sitio puede proporcionar funcionalidad que
-permita a los visitantes del sitio poblar la base de datos por su propia cuenta.
 
-Amazon.com, por ejemplo, es un buen ejemplo de un sitio que maneja una base de
-datos. Cada página de un producto es esencialmente una consulta a la base de
-datos de productos de Amazon formateada en HTML, y cuando se envian datos al 
-servidor, como opiniónes de cliente, estos son insertadados en la base de datos
-de opiniones.
+Los lenguajes orientados a objetos utilizan clases, atributos y referencias para
+modelar el dominio de la aplicación, mientras que las bases de datos relacionales 
+lo hacen a través de tablas y relaciones entre ellas. En el paradigma orientado a objetos
+una de las características que se enuncia es la persistencia, sin embargo, 
+las implementaciones actuales de persistencias de objetos no brindan el performance
+ni la facilidad de consultas que ofrecen las bases de datos relacionales (RDBMS).
+El lenguaje utilizado para definir y modificar los datos en los RDBMS, se conoce como SQL,
+el cual difiere radicalmente de la concepción de los lenguajes OO.
 
-La forma simple de interactuar con una base de datos, es mediante el uso de
-bibliotecas provistas por los lenguajes para ejecutar consultas SQL y una vez 
-obtenidos los datos, procesarlos.
 
-En este ejemplo se usa la biblioteca ``MySQLdb`` para conectar con una base de
-datos MySQL, recuperar algunos registros::
+Es deseable utilizar una base de datos relacional para el almacenamiento.
+Un ORM libera la carga de la conversión explícita del lenguaje OO a SQL y 
+logra independizar la estructura de almacenamiento del modelo de dominio.
 
-    import MySQLdb
+Un ORM realiza en principio tres tipos de conversión del lenguaje OO a SQL:
+ * Converisión de definición de entidades.
+ * Creacíon, modificación y eliminación de entidades a partir de instancias 
+ de clases de modelo (persistencia).
+ * Definición de consultas en lenguaje OO y recuperación de datos en instancias 
+ de clases de modelo.
+  
+..
+	Las primeras aproximaciones al mapeo relacional de objetos surgen de convertir
+	los valores de los objetos en grupos de valores simples para almacenarlos en la
+	base de datos (y volverlos a convertir luego de recuperarlos de la base de
+	datos). Sin embargo, esta traduccion simple dista mucho del concepto de *objetos 
+	persistentes*, la idea de estos es la traducción automatica de objetos en formas
+	almacenables en la base de datos y su posterior recuperación conservando las
+	propiedades y las relaciones ente los mismos.
+	
+	Con la finalidad de lograr *objetos persistentes* un buen número de sistemas
+	de mapeo objeto-relacional se han desarrollado a lo largo de los años y aunque 
+	su efectividad es muy discutida la realidad es que estos permiten agilizar el
+	proceso de desarrollo, paleando mucho de los problemas presentados con
+	anterioridad.
 
-    db = MySQLdb.connect(user='me', db='mydb', passwd='secret', host='localhost')
-    cursor = db.cursor()
-    cursor.execute('SELECT name FROM books ORDER BY name')
-    names = [row[0] for row in cursor.fetchall()]
-    db.close()
-
-Este enfoque funciona, pero presenta algunos problemas:
-
-    * Los parametros de la conexión a la base de datos estan codificandos 
-        *en duro* (*hard-coding*).
-
-    * Se debe escribir una cantidad de código estereotípico: crear una
-        conexión, un cursor, ejecutar una sentencia, y cerrar la conexión.
-
-    * Ata a las aplicaciones a MySQL. Si, en el camino, se quiere cambiar MySQL
-        por PostgreSQL por ejemplo, se deben alterar todas las lineas que hagan
-        falta para la nueva biblioteca o conector, parámetros de conexión, 
-        posiblemente reescribir el SQL, etc.
-
-Por otro lado y quiza mas importante a la hora de desarrollar un programador que 
-trabajé con programación orientada a objetos y bases de datos relacionales, debe
-realizar un cambio de contexto cada vez que requiera interactuar con la base de
-datos, escribiendo consultas en SQL y luego lidear con los resultados obtenidos
-de las consultas entre los objetos. Este *cambio de contexto* es debido a una
-diferencia que existe entre los dos paradigmas involucrados. Mientras que el
-modelo relacional trata con relaciones, conjuntos y la logica matemática 
-correspondiente, el paradigma orientado a objetos trata con objetos, atributos
- y asociaciones de unos con otros. Tan pronto como se quieran persistir los
-objetos utilizando una base de datos relacional esta desaveniencia resulta
-evidente. 
-
-Las primeras aproximaciones al mapeo relacional de objetos, surgen de convertir
-los valores de los objetos en grupos de valores simples para almacenarlos en la
-base de datos (y volverlos a convertir luego de recuperarlos de la base de
-datos). Sin embargo, esta traduccion simple dista mucho del concepto de *objetos 
-persistentes*, la idea de estos es la traducción automatica de objetos en formas
-almacenables en la base de datos y su posterior recuperación conservando las
-propiedades y las relaciones ente los mismos.
-
-Con la finalidad de lograr *objetos persistentes* un buen número de sistemas
-de mapeo objeto-relacional se han desarrollado a lo largo de los años y aunque 
-su efectividad es muy discutida la realidad es que estos permiten agilizar el
-proceso de desarrollo, paleando mucho de los problemas presentados con
-anterioridad.
-
-Desde el punto de vista de un programador, un ORM debe lucir como un almacén
-de objetos persistentes. Uno puede crear objetos y trabajar normalmente con
-ellos, los cambios que sufran terminarán siendo reflejados en la base de datos.
+A través de una API bien definida un ORM se presenta como un mecanismo de presitencia
+de objetos.
 
 .. http://es.wikipedia.org/wiki/Mapeo_objeto-relacional
 
-
-
-
-
+_hasta_aca_
 
 .. _servidor-django:
 
