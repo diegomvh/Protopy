@@ -659,8 +659,6 @@ de objetos.
 
 .. http://es.wikipedia.org/wiki/Mapeo_objeto-relacional
 
-_hasta_aca_
-
 .. _servidor-django:
 
 ******
@@ -768,8 +766,8 @@ mostraría la siguiente estructura::
 
     mi_proyecto/
         __init__.py
-        manage.py
         settings.py
+        manage.py
         urls.py
 
 El proyecto funciona como un contenedor de aplicaciones regidas bajo una misma
@@ -781,174 +779,128 @@ configuración que comprende:
 
 Se analizan a continuación la función de cada uno de estos 3 módulos.
 
-HASTA AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIII :) 
-
 .. _django-proyecto-settings:
 
 Módulo settings
 ---------------
 
-Este módulo define la configuración del proyecto, siendo sus atributos
-principales la configuración de la base de datos a utilizar, la ruta en la cual
-se encuentran los médios estáticos, cuál es el nombre del archivo raíz de urls
-(generalmente urls.py).
-Otros atributos son las clases middleware, las rutas de los templates, el idioma
-para las aplicaciones que soportan :ref:`i18n`, etc.
+Este módulo configura globalmente el proyecto. Define las aplicaciones instaladas (*INSTALLED_APPS*),
+la base de datos que utilizarán (*DATABASE_**), el módulo de 
+:ref:`urls inicial <_django-proyecto-urls>`_ (*ROOT_URLCONF*),
+la ruta en la cual se encuentran los medios estáticos y
+la URL donde serán publicados [*]_ (*MEDIA_URL*, *MEDIA_ROOT*). Otras configuraciones son idioma, 
+zona horaria, clases de middleware [*]_ , ruta a los templates, etc. 
 
-.. Subir como ventaja
-.. Poner algo mas sobre la base de datos
+El modulo settings es código fuente y es posible realizar configuraciones en tiempo de ejecución, tarea
+que no es factible utilzando lenguajes de marcado como XML, YAML, archivos INI, etc.
 
-Al ser un módulo del lengauje python, la confguración se puede editar muy facilmente
-a diferencia de configuraciones realizadas en XML, además de contar con la ventaja de 
-poder configurar en caliente algunos parametros que así lo requieran.
-
-Un parametro fundamental es la lista denominada INSTALLED_APPS que contiene los nombres
-de las aplicaciones instaladas en le proyecto.
+.. [*] Imágenes, sonido, flash, etc.
+.. [*] En django una clase middleware conecta los componentes de MTV, el usuario puede definir un comportamiento
+personalizado.
 
 .. _django-proyecto-manage:
 
 Módulo manage
 -------------
 
-Esta es la interfase con el framework. Éste módulo es un script ejecutable, que
-recibe como primer argumento un nombre de comando de django.
+Este módulo a diferencia de settings y urls, es ejecutable. Sirve como interfase
+con el framework. Su invocación recibe como primer argumento un nombre de comando
+como *startapp*, que crea una aplicación en el proyecto, *runserver* que lanza el 
+servidor de desarrollo o *syncdb* que mediante el ORM crea el esquema en la base
+de datos a partir de el módulo :ref:`*models*<_django-proyecto-models>`_ de cada aplicación.
 
-Los comandos de django permiten entre otras cosas:
+Existen otros comandos que pemiten realizar testing, iniciar la consola interactiva,
+administrar usuarios, etc.
 
-    * startapp <nombre de aplicación>
-
-        Crear una aplicación
-
-    * runserver
-
-        Correr el proyecto en un servidor de desarrollo.
-
-    * syncdb
-
-        Generar las tablas en la base de datos de las aplicaciones instaladas
+.. _django-proyecto-urls:
 
 Módulo urls
 -----------
 
-Este nombre de módulo aparece a nivel proyecto, pero también puede aparecer a
-nivel aplicación. Su misión es definir las asociaciones entre URLs y vistas, de
-manera que el framework sepa que vista utilizar en función de la URL que está
-requiriendo el clinete.
-Las URLs se ecriben mediante expresiones regulares del lenguaje Python. Este 
-sistema de URLs aprovecha muy bien el modulo de expreciones regulares del
-lenguaje permitiendo por ejemplo recuperar gurpos nombrados (en contraposición
-al enfoque ordinal tradicional).
+Este módulo define las asociaciones entre las urls y las vistas a nivel proyecto.
+Puede lograrse modularidad derivando el tratdo de ciertas urls en módulos similares
+de aplicaciones instaladas en el proyecto.
 
-La asociación url-vistas se define en el módulo bajo el nombre :term:`urlpatterns`. 
-También es posible derivar el tratado de una parte de la expresión reuglar
-a otro módulo de urls. Generalmente esto ocurre cuando se desea delegar el
-tratado de las urls a una aplicación particular.
+Cuando el usuario reliza una solicitud, djangco busca una asociación que concuerde con
+la url dada. De encontrala ejecuta la vista correspondiente a ésta.
+
+La url en las asociaciones se definen mediante expresiones regulares que soportan
+recuperación de gurpos nombrados (una subcadena identificada con un nombre). Los grupos nombrados
+definidos en cada asociación son argumentos de la función vista.
+
+
+La asociación url-vistas se define  bajo el nombre :term:`urlpatterns`. 
 
     Ej:
         Derivar el tratado de todo lo que comience con la cadena personas a 
         al módulo de urls de la aplicación personas.
 
         .. code-block:: python
+        
+        	from mi_proyecto.personas.views import ver_personas
+        	urlpatterns = patterns('',
+				# Derivación en módulo de aplicacion personas
+	            (r'^personas', include('mi_proyecto.personas.urls')),
+	            
+	            # Recuperación de datos de la url
+	            (r'^personas/(?P<perona_id>\d{1,4}})', ver_persona),
+	        )
 
-            (r'^personas', include('mi_proyecto.personas.urls'))
-
-Mapeando URLs a Vistas
-======================
-
-Con la estructura del proyecto así definida y las herramientas que provee Django,
-es posible ya ver resultados en el navegador web corriendo el servidor de
-desarrollo incluido en el framework para tal fin.
-
-Es posible tambien en este momento definir algo de logica de negocios 
-implementando vistas dentro del proyecto para dotar al sitio de algo de
-funcionalidad dinamica. Una función vista, es una simple función de Python que
-toma como argumento una petición Web y retorna una respuesta Web. En el momento
-de procesar una peticion HTTP Django seleccionara y ejecutara la vista. Lo
-importante de este punto es como decirle a Django que vista ejecutar ante
-determinada url, es en este punto donde surgen las *URLconfs*.
-
-La *URLconf* es como una tabla de contenido para el sitio web. Básicamente,
-es un mapeo entre los patrones URL y las funciones de vista que deben
-ser llamadas por esos patrones URL. Es como decirle a Django, "Para esta URL,
-llama a este código, y para esta URL, llama a este otro código".
-
-En el apartado de modulos del proyecto se observo el modulo sobre el cual el objeto
-URLconf es creado automáticamente: el archivo ``urls.py``, este modulo tiene
-como requisito indispensable la definicion de la variable ``urlpatterns``, 
-la cual Django espera encontrar en el módulo ``ROOT_URLCONF`` definido en
-``settings``. Esta es la variable que define el mapeo entre las URLs y el código
-que manejan esas URLs.
 
 El sistema de plantillas
 ========================
 
-Las vistas son las encargadas de retornar respuestas Web, entre estas respuestas
-esta el codigo HTML que debe ser enviado al cliente o navegador, Django separar
-el diseño de la página del código Python correspondiente a la logica de negocio
-usando un *sistema de plantillas* para generar el HTML.
+El sistema de plantillas aparece en la última fase de la generación de la respuesta
+al cliente. Tiene como objetivo la speración del procesamiento de datos 
+la presentación.
+Una vez hallada la vista asociada a la url de la solicitud, django ejecuta la vista.
+Ésta tras completar su procesmiento deriva la presetnación de los datos al template o
+plantilla.
 
-Una plantilla en Django es una cadena de texto que separar la presentación de un
-documento de sus datos. Una plantilla define rellenos y diversos bits de lógica
-básica (esto es, etiquetas de plantillas) que regulan como el documento debe ser
-mostrado. Normalmente, las plantillas son usadas para producir HTML, pero las
-plantillas de Django son igualmente capaces de generar cualquier formato basado
-en texto.
+Django incluye por defecto funciones cargadoras de temaplates [*]_ que realizan la búsqueda
+del template que requiere la vista.
 
-Sistema básico de plantillas
-=============================
+.. [*] Definidas bajo TEMPLATE_LOADERS en el módulo settings
 
-Una plantilla de Django es una cadena de texto que pretende separar la
-presentación de un documento de sus datos. Una plantilla define rellenos y
-diversos bits de lógica básica (esto es, etiquetas de plantillas) que regulan
-como el documento debe ser mostrado. Normalmente, las plantillas son usadas para
-producir HTML, pero las plantillas de Django son igualmente capaces de generar
-cualquier formato basado en texto.
+Con los datos provistos por la vista, la plantilla escogida es renderizada. Este proceso
+consiste en reemplazar etiquetas y ejecutar alguna lógica básica de iteración y
+bifurcaciones condicionales.
 
 A continuación se presenta una simple plantilla de ejemplo::
 
     <html>
-    <head><title>Ordering notice</title></head>
+	    <head><title>{{title}}</title></head>
 
     <body>
 
-    <p>Dear {{ person_name }},</p>
-
-    <p>Thanks for placing an order from {{ company }}. It's scheduled to
-    ship on {{ ship_date|date:"F j, Y" }}.</p>
-
-    <p>Here are the items you've ordered:</p>
-
-    <ul>
-    {% for item in item_list %}
-    <li>{{ item }}</li>
-    {% endfor %}
-    </ul>
-
-    {% if ordered_warranty %}
-    <p>Your warranty information will be included in the packaging.</p>
-    {% endif %}
-
-    <p>Sincerely,<br />{{ company }}</p>
+    	<p>Hola {{ nombre }},</p>
+    	
 
     </body>
     </html>
 
-Esta plantilla es un HTML básico con algunas variables y etiquetas de plantillas
-agregadas.
+Si este template fuera "base.html", una vista para el mismo podría ser:
+.. code-block:: python
+	
+	def mi_vista(request):
+		return render_to_response('base.html', {'nombre': 'pepe})
 
-    * Cualquier texto encerrado por un par de llaves es una *variable*.
-        Esto significa "insertar el valor de la variable con el nombre tomado".
+Esta plantilla es un HTML básico con algunas variables y etiquetas agregadas.
+
+    * Cualquier texto encerrado por un par de llaves es una etiqueta de *variable*.
+        Esto le indica al sistema de templates que debe reemplazarla por 
+        el contenido de la variable entregada por la vista.
+        
+	* La representación de una variable de etiqueta puede ser alterada
+	  mediante un filtro. El cual se define mediante el caracter |.
+	  Ej:
+	  	{{ fecha_de_nacimiento|date:"y" }}
+	  	Toma el año de una variable date.
 
     * Cualquier texto que esté rodeado por llaves y signos de porcentaje
-        es una *etiqueta de plantilla*. Una etiqueta le indica al sistema
-        de plantilla que debe hacer algo.
+        es una etiqueta de lógica o define algún bloque.
 
-        Este ejemplo de plantilla contiene dos etiquetas: la etiqueta
-        ``{% for item in item_list %}`` (una etiqueta ``for``) y la etiqueta
-        ``{% if ordered_warranty %}`` (una etiqueta ``if``).
-
-        Una etiqueta ``for`` actúa como un simple constructor de bucle.
-        Una etiqueta ``if`` actúa como una cláusula lógica "if".
+	* 
 
     * Finalmente, el segundo párrafo de esta plantilla tiene un ejemplo de un
         *filtro*, con el cual se alteran la exposición de una variable.
@@ -976,6 +928,8 @@ El resultado de este comando genera la siguiente estructura en el proyecto::
             models.py
             views.py
         ...
+
+.. _django-proyecto-models:
 
 Módulo models
 -------------
