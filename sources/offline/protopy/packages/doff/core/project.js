@@ -29,7 +29,7 @@ var Project = type('Project', object, {
         // this.network_check();
         // this._start_network_thread();
         // this.go_offline();
-        this.adapter.location = '/';
+        this.adapter.location = this.adapter.history.get_hash() || '/';
     },
 
     onNetwork: function(type) {

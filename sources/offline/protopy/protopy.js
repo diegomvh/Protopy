@@ -381,14 +381,14 @@
         // create a dispatcher function
         getDispatcher: function() {
             return function() {
-            var callee = arguments.callee, listeners = callee._listeners, target = callee.target;
-            // return value comes from original target function
-            var ret = target && target.apply(this, arguments);
-            // invoke listeners after target function
-            for each (var listener in listeners)
-                listener.apply(this, arguments);
-            // return value comes from original target function
-            return ret;
+                var callee = arguments.callee, listeners = callee._listeners, target = callee.target;
+                // return value comes from original target function
+                var ret = target && target.apply(this, arguments);
+                // invoke listeners after target function
+                for each (var listener in listeners)
+                    listener.apply(this, arguments);
+                // return value comes from original target function
+                return ret;
             }
         },
         // add a listener to an object

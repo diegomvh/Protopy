@@ -2,12 +2,38 @@
 require('dom');
 require('event');
 require('doff.utils.http');
-
+//http://www.contentwithstyle.co.uk/content/fixing-the-back-button-and-enabling-bookmarking-for-ajax-apps
 var History = type('History', [ object ], {
-    __init__: function(){ 
+    __init__: function() {
+        this.state = document.createElement('input');
+        this.state.id = "history";
+        this.state.hide();
+        $$('body')[0].insert(this.state);
+        this.states = [];
+        this.hash = this.get_hash();
+        this.counter = 0;
+        this.thread = window.setInterval(getattr(this, 'check_hash'), 50);
     },
-    
+
+    check_hash: function() {
+        var self = this;
+        var state, newHash, newCounter;
+        newHash = this.get_hash();
+        if (newHash !== this.current_hash && this.counter) {
+            this.current_hash = newHash;
+            print('Navega en el historial:' + this.current_hash);
+        }
+    },
+
+    get_hash: function() {
+        var hash = location.hash;
+        return hash.substr(1);
+    },
+
     navigate: function(request) {
+        this.states.push(request);
+        this.hash = request.path;
+        this.counter++;
         location.hash = request.path;
     }
 });
@@ -15,12 +41,12 @@ var History = type('History', [ object ], {
 var Document = type('Document', [ object ], {
     __init__: function() {
         this.head = document.createElement('div');
-        this.head.id = "fake_head";
+        this.head.id = "head";
         this.body = document.createElement('div');
-        this.body.id = "fake_body";
+        this.body.id = "body";
         // Apagando la chache del selector
         dom.cache(false);
-        $$('body')[0].update(this.head);
+        $$('body')[0].insert(this.head);
         $$('body')[0].insert(this.body);
     },
 
@@ -42,8 +68,9 @@ var DOMAdapter = type('DOMAdapter', [ object ], {
     event_handlers: [],
 
     __init__: function() {
-        this.document = new Document();
+        $$('body')[0].update('');
         this.history = new History();
+        this.document = new Document();
     },
 
     send: function(request) {
@@ -65,8 +92,9 @@ var DOMAdapter = type('DOMAdapter', [ object ], {
     },
 
     set location(value) {
-        var response = new http.HttpRequest(value);
-        this.send(response);
+        var request = new http.HttpRequest(value);
+        if (this.history.get_hash() !== request.path )
+            this.send(request);
     },
 
     add_hooks: function() {
@@ -84,14 +112,15 @@ var DOMAdapter = type('DOMAdapter', [ object ], {
             event.disconnect(hler);
         });
     },
-    
+
     _forms: function(e) {
         event.stopEvent(e);
         var element = e.target;
         var request = new http.HttpRequest(element.action);
         request.method = element.method;
         request[element.method] = element.serialize();
-        this.send(request);
+        if (this.history.get_hash() !== request.path )
+            this.send(request);
     },
 
     _links: function(e) {
@@ -99,17 +128,18 @@ var DOMAdapter = type('DOMAdapter', [ object ], {
         var element = e.target;
         var request = new http.HttpRequest(element.href);
         request.method = 'get';
-        this.send(request);
+        if (this.history.get_hash() !== request.path )
+            this.send(request);
     }
 });
 
-
+/*
 window.location.watch('hash', function(id, oldval, newval) {
     console.log('Old: ', oldval);
     console.log('New: ', newval);
     return newval;
 });
-
+*/
 publish({
     DOMAdapter: DOMAdapter
 });
