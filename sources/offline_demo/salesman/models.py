@@ -87,6 +87,8 @@ class Categoria(models.Model):
         verbose_name = "Categoría"
         verbose_name_plural = "Categorías"
 
+    def __unicode__(self):
+        return self.nombre
     
     
 class Producto(models.Model):

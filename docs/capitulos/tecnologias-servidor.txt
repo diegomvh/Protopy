@@ -635,9 +635,9 @@ logra independizar la estructura de almacenamiento del modelo de dominio.
 Un ORM realiza en principio tres tipos de conversión del lenguaje OO a SQL:
  * Converisión de definición de entidades.
  * Creacíon, modificación y eliminación de entidades a partir de instancias 
- de clases de modelo (persistencia).
+   de clases de modelo (persistencia).
  * Definición de consultas en lenguaje OO y recuperación de datos en instancias 
- de clases de modelo.
+   de clases de modelo.
   
 ..
 	Las primeras aproximaciones al mapeo relacional de objetos surgen de convertir
@@ -672,69 +672,74 @@ Introducción
 
 .. note:: Acá tenemos que justificar por que django
 
+
+
 `Django <http://www.djangoproject.com>`_ es un framework web escrito en Python
-el cual sigue vagamente el concepto de Modelo Vista Controlador.
-Ideado inicialmente como un adminsitrador de contenido para varios sitios de
-noticias, los desarrolladores encontraron que su CMS era lo sufcientemente
+el cual se apoya en el patrón de Modelo Vista Controlador.
+
+En principio surge como un adminsitrador de contenido para varios sitios de
+noticias, luego, los desarrolladores encontraron que su CMS era lo sufcientemente
 genérico como para curbir un ámbito más aplio de aplicaciones.
 
-En honor al músico Django Reinhart, fue liberado el código base bajo la licencia 
-:term:`BSD` en Julio del 2005 como Django Web Framework. El slogan del framework
+.. En honor al músico Django Reinhart
+
+Fue liberado el código base bajo la licencia :term:`BSD` en Julio del 2005 
+como Django Web Framework. El slogan del framework
 fue "Django, Él framework para perfeccionistas con fechas límites" [*]_.
 
 .. [*] Del ingles "The Web framework for perfectionists with deadlines"
 
-En junio del 2008 fue anuncidada la cereación de la Django Software Fundation,
-la cual se hace cargo hasta la fecha del desarrollo y mantenimiento.
+En junio del 2008 fue anuncidada la creación de la Django Software Fundation,
+la cual se encarga del desarrollo y mantenimiento.
 
-Los orígenes de Django en la administración de páginas de noticias son evidentes
-en su diseño, ya que proporciona una serie de características que facilitan el
+Los orígenes de Django en la administración de páginas de noticias se ponen 
+de manifiesto en su diseño, ya que proporciona una serie de características que facilitan el
 desarrollo rápido de páginas orientadas a contenidos. 
-Por ejemplo, en lugar de requerir que los desarrolladores escriban controladores 
-y vistas para las áreas de administración de la página, Django proporciona una
-aplicación incorporada para administrar los contenidos que puede incluirse como
-parte de cualquier proyecto; la aplicación administrativa permite la creación,
-actualización y eliminación de objetos de contenido, llevando un registro de
-todas las acciones realizadas sobre cada uno (sistema de logging o bitácora), y
-proporciona una interfaz para administrar los usuarios y los grupos de usuarios
-(incluyendo una asignación detallada de permisos).
-
-Con Django también se distribuyen aplicaciones que proporcionan un sistema de 
-comentarios, herramientas para sindicar contenido via RSS y/o Atom, "páginas
-planas" que permiten gestionar páginas de contenido sin necesidad de escribir
-controladores o vistas para esas páginas, y un sistema de redirección de URLs.
 
 Django como framework de desarrollo consiste en un conjunto de utilidades de
-consola que permiten crear y manipular proyectos y aplicaciones. Este sigue el
-patrón MVC y como el controlador "C" es manejado por el mismo sistema los
-desarrolladores dieron a conocer a Django como un *Framework MTV*.
-
-    * *M* significa "Model" (Modelo), la capa de acceso a la base de datos. Esta
-      capa contiene toda la información sobre los datos: cómo acceder a estos,
-      cómo validarlos, cuál es el comportamiento que tiene, y las relaciones
-      entre los datos.
-
-    * *T* significa "Template" (Plantilla), la capa de presentación. Esta capa
-      contiene las decisiones relacionadas a la presentación: como algunas cosas
-      son mostradas sobre una página web o otro tipo de documento.
-
-    * *V* significa "View" (Vista), la capa de la lógica de negocios. Esta capa
-      contiene la lógica que accede al modelo y la delega a la plantilla
-      apropiada: puedes pensar en esto como un puente entre el modelos y las
-      plantillas.
-
-MVC o MTV la realidad es que ninguna de las interpretaciones es más "correcta"
-que otra. Lo importante es entender los conceptos subyacentes.
-
-.. note::
-	Justificacción
-	
-		* completitud
+consola (CLI) que permiten crear y manipular proyectos.
+Un proyecto está constituido por una o más aplicaciones. Se clasifican
+las aplicaciones de la siguiente manera:
+	* Aplicaciones de usuario
+		Son aquellas que resuelven algún problema específico (ej: ventas, alquileres, blog, noticias, etc.)
+	* Aplicaciones genéricas
+		Son aquellas que resulven problemas comunes, como la autenticación, bitácora,
+		sindicación, etc. Algunas aplicaciones genericas se distribuyen con Django, de
+		las cuales resulta interesante destacar:
 		
-		* popularidad
+		- *django.contrib.admin* 
+			Provee de manera automática un sitio de adminstración que permite realizar 
+			operaciones CRUD sobre el modelo (definido a travéz del ORM), administrar 
+			usuarios y permisos, llevando un registro de todas las acciones realizadas 
+			sobre cada entidad (sistema de logging o bitácora).
+
+		- *django.contirb.comments*
+			Sistema de comentarios
+			
+		- *django.contrib.syndication*
+			Herramientas para sindicar contenido via RSS y/o Atom
 		
-		* simplicidad
+		- *django.contrib.gis*		
+			Sistema de información geográfico
 		
+		- *django.contrib.localflavour*		
+			Localización (l10n) e internacionalización (i18n)
+
+La concepción de MVC de Django difiere ligeramente del enfoque tradicional, 
+se denomina al controlador vista y a la vista, template; resultando el 
+acrónimo MTV.
+El controlador de MVC, se presneta en Django como conjunto de funciones
+y asociaciones de URLs a las mismas.
+Cada función de la vista delega la presentación de los datos al sistema
+de plantillas.
+
+Django simplifica el patrón MVC, sin comprometer la separación de las capas. 
+Debido a la creciente popularidad y a la sencillez del framework descripto, 
+se seleccionó el mismo como plataforma para la implementación del desarrollo, 
+puesto que se buscan tales características en el trabajo a realizar.
+
+A continuación se describe de manera detallada la estructura de un proyecto
+realizado en Django.
 
 Estructuración de un proyecto en Django
 =======================================
@@ -743,7 +748,7 @@ Durante la instalación del framework en el sistema del desarrollador, se añade
 al PATH un comando con el nombre django-admin.py. Mediante este comando se crean
 proyectos y se los administra.
 
-Un proyecto se crea mediante la siguiente orden:
+El siguiente ejemplo demuestra la creación de un proyecto:
 
 .. code-block:: bash
 
@@ -758,7 +763,7 @@ Un proyecto es un paquete Python que contiene 3 módulos:
     * settings.py
         Configuración de la base de datos, directorios de plantillas, etc.
  
-En el ejemplo anterior, un listado gerárquico del sistema de archivos 
+En el ejemplo anterior, un listado jerárquico del sistema de archivos 
 mostraría la siguiente estructura::
 
     mi_proyecto/
@@ -767,11 +772,16 @@ mostraría la siguiente estructura::
         settings.py
         urls.py
 
-El proyecto funciona como un contenedor de aplicaciones que ser rigen bajo
-la misma base de datos, los mismos templates, las mismas clases de middleware entre 
-otros parámetros.
+El proyecto funciona como un contenedor de aplicaciones regidas bajo una misma
+configuración que comprende:
+	* Base de datos
+	* Templates
+	* Clases de Middleware
 
-Analicemos a continuación la función de cada uno de estos 3 módulos.
+
+Se analizan a continuación la función de cada uno de estos 3 módulos.
+
+HASTA AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIII :) 
 
 .. _django-proyecto-settings:
 
