@@ -9,14 +9,15 @@ var Project = type('Project', object, {
     do_net_checking: true,
 
     onLoad: function() {
-        require('doff.utils.html', 'FakeHtml');
+        require('doff.core.client', 'DOMAdapter');
         // Creo el objeto html
-        this.html = new FakeHtml($$('html')[0].innerHTML);
+        this.adapter = new DOMAdapter();
         // Inicio del handler para las url
-        require('doff.core.urlhandler', 'Handler');
-        this.handler = new Handler(this.settings.ROOT_URLCONF, this.html);
+        require('doff.core.server', 'Butler');
+        this.butler = new Butler(this.settings.ROOT_URLCONF);
 
-        event.connect(this.html, 'onEvent', this.handler, 'handle');
+        event.connect(this.adapter, 'send', this.butler, 'receive');
+        event.connect(this.butler, 'send', this.adapter, 'receive');
 
         // Inicio el logging, si no hay hay archivo de configuracion no pasa nada
         require('logging.config', 'file_config');
@@ -28,7 +29,7 @@ var Project = type('Project', object, {
         // this.network_check();
         // this._start_network_thread();
         // this.go_offline();
-        this.handler.handle('/');
+        this.adapter.location = '/';
     },
 
     onNetwork: function(type) {
@@ -111,11 +112,11 @@ var Project = type('Project', object, {
     },
 
     go_offline: function() { 
-        this.html.add_hooks();
+        this.adapter.add_hooks();
     },
 
     go_online: function(callback) {
-        this.html.remove_hooks();
+        this.adapter.remove_hooks();
     },
 
     get_permission: function() {

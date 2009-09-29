@@ -1,12 +1,19 @@
 /* 'HTML utilities suitable for global use.' */
 require('dom');
 require('event');
+require('doff.utils.http');
 
-var FakeHtml = type('FakeHtml', [ object ], {
-    event_elements: {'FORM': 'onsubmit', 'A': 'onclick'},
-    event_handlers: [],
+var History = type('History', [ object ], {
+    __init__: function(){ 
+    },
+    
+    navigate: function(request) {
+        location.hash = request.path;
+    }
+});
 
-    __init__: function(content) {
+var Document = type('Document', [ object ], {
+    __init__: function() {
         this.head = document.createElement('div');
         this.head.id = "fake_head";
         this.body = document.createElement('div');
@@ -15,29 +22,60 @@ var FakeHtml = type('FakeHtml', [ object ], {
         dom.cache(false);
         $$('body')[0].update(this.head);
         $$('body')[0].insert(this.body);
-        this.update(content);
     },
 
     update: function(content) {
-        this.remove_hooks();
         var head = content.match(new RegExp('<head[^>]*>([\\S\\s]*?)<\/head>', 'im'));
         if (head)
             this.head.update(head[1]);
         var body = content.match(new RegExp('<body[^>]*>([\\S\\s]*?)<\/body>', 'im'));
         if (body)
             this.body.update(body[1]);
-        else this.body.update(content);
-        this.add_hooks();
+        else 
+            this.body.update(content);
+        this.forms = this.body.select('FORMS');
+        this.links = this.body.select('A');
+    }
+});
+
+var DOMAdapter = type('DOMAdapter', [ object ], {
+    event_handlers: [],
+
+    __init__: function() {
+        this.document = new Document();
+        this.history = new History();
     },
 
-    onEvent: function(event) {},
+    send: function(request) {
+        this.history.navigate(request);
+    },
+
+    receive: function(response) {
+        if (response.status_code == 200) {
+            this.remove_hooks();
+            this.document.update(response.content);
+            this.add_hooks();
+        } else if (response.status_code == 302) {
+            return this.handle(response['Location']);
+        } else if (response.status_code == 404) {
+            //Agregar a las url no manjeadas
+            //value.setOpacity(0.2);
+            return this.document.update(response.content);
+        }
+    },
+
+    set location(value) {
+        var response = new http.HttpRequest(value);
+        this.send(response);
+    },
 
     add_hooks: function() {
         var self = this;
-        var re = keys(this.event_elements).reduce(
-            function(previous, current) { return previous.concat(self.body.select(current)); }, []);
-        re.forEach(function(e) {
-            self.event_handlers.push(event.connect(e, self.event_elements[e.tagName], getattr(self, 'onEvent')));
+        this.document.forms.forEach(function(f) {
+            self.event_handlers.push(event.connect(f, 'onsubmit', getattr(self, '_forms')));
+        });
+        this.document.links.forEach(function(l) {
+            self.event_handlers.push(event.connect(l, 'onclick', getattr(self, '_links')));
         });
     },
 
@@ -46,7 +84,25 @@ var FakeHtml = type('FakeHtml', [ object ], {
             event.disconnect(hler);
         });
     },
+    
+    _forms: function(e) {
+        event.stopEvent(e);
+        var element = e.target;
+        var request = new http.HttpRequest(element.action);
+        request.method = element.method;
+        request[element.method] = element.serialize();
+        this.send(request);
+    },
+
+    _links: function(e) {
+        event.stopEvent(e);
+        var element = e.target;
+        var request = new http.HttpRequest(element.href);
+        request.method = 'get';
+        this.send(request);
+    }
 });
+
 
 window.location.watch('hash', function(id, oldval, newval) {
     console.log('Old: ', oldval);
@@ -55,7 +111,7 @@ window.location.watch('hash', function(id, oldval, newval) {
 });
 
 publish({
-    FakeHtml: FakeHtml
+    DOMAdapter: DOMAdapter
 });
 
 /*

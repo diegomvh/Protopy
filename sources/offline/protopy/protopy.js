@@ -541,7 +541,7 @@
         },
         stopEvent: function(evt){
             evt.preventDefault();
-        evt.stopPropagation();
+            evt.stopPropagation();
         },
         keys: { BACKSPACE: 8, TAB: 9, CLEAR: 12, ENTER: 13, SHIFT: 16, CTRL: 17, ALT: 18, PAUSE: 19, CAPS_LOCK: 20, 
                 ESCAPE: 27, SPACE: 32, PAGE_UP: 33, PAGE_DOWN: 34, END: 35, HOME: 36, LEFT_ARROW: 37, UP_ARROW: 38,
