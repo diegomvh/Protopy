@@ -1,13 +1,120 @@
 /* 'HTML utilities suitable for global use.' */
+require('dom');
+require('event');
+require('doff.utils.http');
 
-import re
-import string
+var History = type('History', [ object ], {
+    __init__: function(){ 
+    },
+    
+    navigate: function(request) {
+        location.hash = request.path;
+    }
+});
 
-from django.utils.safestring import SafeData, mark_safe
-from django.utils.encoding import force_unicode
-from django.utils.functional import allow_lazy
-from django.utils.http import urlquote
+var Document = type('Document', [ object ], {
+    __init__: function() {
+        this.head = document.createElement('div');
+        this.head.id = "fake_head";
+        this.body = document.createElement('div');
+        this.body.id = "fake_body";
+        // Apagando la chache del selector
+        dom.cache(false);
+        $$('body')[0].update(this.head);
+        $$('body')[0].insert(this.body);
+    },
 
+    update: function(content) {
+        var head = content.match(new RegExp('<head[^>]*>([\\S\\s]*?)<\/head>', 'im'));
+        if (head)
+            this.head.update(head[1]);
+        var body = content.match(new RegExp('<body[^>]*>([\\S\\s]*?)<\/body>', 'im'));
+        if (body)
+            this.body.update(body[1]);
+        else 
+            this.body.update(content);
+        this.forms = this.body.select('FORMS');
+        this.links = this.body.select('A');
+    }
+});
+
+var DOMAdapter = type('DOMAdapter', [ object ], {
+    event_handlers: [],
+
+    __init__: function() {
+        this.document = new Document();
+        this.history = new History();
+    },
+
+    send: function(request) {
+        this.history.navigate(request);
+    },
+
+    receive: function(response) {
+        if (response.status_code == 200) {
+            this.remove_hooks();
+            this.document.update(response.content);
+            this.add_hooks();
+        } else if (response.status_code == 302) {
+            return this.handle(response['Location']);
+        } else if (response.status_code == 404) {
+            //Agregar a las url no manjeadas
+            //value.setOpacity(0.2);
+            return this.document.update(response.content);
+        }
+    },
+
+    set location(value) {
+        var response = new http.HttpRequest(value);
+        this.send(response);
+    },
+
+    add_hooks: function() {
+        var self = this;
+        this.document.forms.forEach(function(f) {
+            self.event_handlers.push(event.connect(f, 'onsubmit', getattr(self, '_forms')));
+        });
+        this.document.links.forEach(function(l) {
+            self.event_handlers.push(event.connect(l, 'onclick', getattr(self, '_links')));
+        });
+    },
+
+    remove_hooks: function() {
+        this.event_handlers.forEach(function(hler) {
+            event.disconnect(hler);
+        });
+    },
+    
+    _forms: function(e) {
+        event.stopEvent(e);
+        var element = e.target;
+        var request = new http.HttpRequest(element.action);
+        request.method = element.method;
+        request[element.method] = element.serialize();
+        this.send(request);
+    },
+
+    _links: function(e) {
+        event.stopEvent(e);
+        var element = e.target;
+        var request = new http.HttpRequest(element.href);
+        request.method = 'get';
+        this.send(request);
+    }
+});
+
+
+window.location.watch('hash', function(id, oldval, newval) {
+    console.log('Old: ', oldval);
+    console.log('New: ', newval);
+    return newval;
+});
+
+publish({
+    DOMAdapter: DOMAdapter
+});
+
+/*
 // Configuration for urlize() function.
 var LEADING_PUNCTUATION  = ['(', '<', '&lt;'];
 var TRAILING_PUNCTUATION = ['.', ',', ')', '>', '\n', '&gt;'];
@@ -163,3 +270,4 @@ def clean_html(text):
     text = trailing_empty_content_re.sub('', text)
     return text
 clean_html = allow_lazy(clean_html, unicode)
+*/

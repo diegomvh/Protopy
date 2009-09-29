@@ -1,53 +1,6 @@
 require('sys');
 require('event');
-require('dom');
 require('ajax');
-
-var FakeHtml = type('FakeHtml', [ object ], {
-    event_elements: {'FORM': 'onsubmit', 'A': 'onclick'},
-    event_handlers: [],
-
-    __init__: function(content) {
-        this.head = document.createElement('div');
-        this.head.id = "fake_head";
-        this.body = document.createElement('div');
-        this.body.id = "fake_body";
-        // Apagando la chache del selector
-        dom.cache(false);
-        $$('body')[0].update(this.head);
-        $$('body')[0].insert(this.body);
-        this.update(content);
-    },
-
-    update: function(content) {
-        this.remove_hooks();
-        var head = content.match(new RegExp('<head[^>]*>([\\S\\s]*?)<\/head>', 'im'));
-        if (head)
-            this.head.update(head[1]);
-        var body = content.match(new RegExp('<body[^>]*>([\\S\\s]*?)<\/body>', 'im'));
-        if (body)
-            this.body.update(body[1]);
-        else this.body.update(content);
-        this.add_hooks();
-    },
-
-    onEvent: function(event) {},
-
-    add_hooks: function() {
-        var self = this;
-        var re = keys(this.event_elements).reduce(
-            function(previous, current) { return previous.concat(self.body.select(current)); }, []);
-            re.forEach(function(e) {
-                self.event_handlers.push(event.connect(e, self.event_elements[e.tagName], getattr(self, 'onEvent')));
-            });
-    },
-
-    remove_hooks: function() {
-        this.event_handlers.forEach(function(hler) {
-            event.disconnect(hler);
-        });
-    },
-});
 
 var Project = type('Project', object, {
     is_online: true,
@@ -56,13 +9,15 @@ var Project = type('Project', object, {
     do_net_checking: true,
 
     onLoad: function() {
+        require('doff.core.client', 'DOMAdapter');
         // Creo el objeto html
-        this.html = new FakeHtml($$('html')[0].innerHTML);
+        this.adapter = new DOMAdapter();
         // Inicio del handler para las url
-        require('doff.core.urlhandler', 'Handler');
-        this.handler = new Handler(this.settings.ROOT_URLCONF, this.html);
+        require('doff.core.server', 'Butler');
+        this.butler = new Butler(this.settings.ROOT_URLCONF);
 
-        event.connect(this.html, 'onEvent', this.handler, 'handle');
+        event.connect(this.adapter, 'send', this.butler, 'receive');
+        event.connect(this.butler, 'send', this.adapter, 'receive');
 
         // Inicio el logging, si no hay hay archivo de configuracion no pasa nada
         require('logging.config', 'file_config');
@@ -74,7 +29,7 @@ var Project = type('Project', object, {
         // this.network_check();
         // this._start_network_thread();
         // this.go_offline();
-        this.handler.handle('/');
+        this.adapter.location = '/';
     },
 
     onNetwork: function(type) {
@@ -157,11 +112,11 @@ var Project = type('Project', object, {
     },
 
     go_offline: function() { 
-        this.html.add_hooks();
+        this.adapter.add_hooks();
     },
 
     go_online: function(callback) {
-        this.html.remove_hooks();
+        this.adapter.remove_hooks();
     },
 
     get_permission: function() {
