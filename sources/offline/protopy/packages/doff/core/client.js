@@ -1,8 +1,10 @@
 /* 'HTML utilities suitable for global use.' */
 require('dom');
 require('event');
+require('ajax');
 require('doff.utils.http');
 //http://www.contentwithstyle.co.uk/content/fixing-the-back-button-and-enabling-bookmarking-for-ajax-apps
+
 var History = type('History', [ object ], {
     __init__: function() {
         this.state = document.createElement('input');
@@ -15,13 +17,13 @@ var History = type('History', [ object ], {
         this.thread = window.setInterval(getattr(this, 'check_hash'), 50);
     },
 
+    onChange: function(request) {},
+
     check_hash: function() {
-        var self = this;
-        var state, newHash, newCounter;
-        newHash = this.get_hash();
-        if (newHash !== this.current_hash && this.counter) {
-            this.current_hash = newHash;
-            print('Navega en el historial:' + this.current_hash);
+        if (this.path !== this.current_path) {
+            this.current_path = this.path;
+            var request = this.states[this.entry];
+            this.onChange(this.states[this.entry]);
         }
     },
 
@@ -30,11 +32,19 @@ var History = type('History', [ object ], {
         return hash.substr(1);
     },
 
+    get entry(){
+        return Number(ajax.toQueryParams(this.get_hash())['entry']);
+    },
+    
+    get path(){
+        return ajax.toQueryParams(this.get_hash())['path'];
+    },
+
     navigate: function(request) {
+        this.states = this.states.slice(0, this.entry);
         this.states.push(request);
-        this.hash = request.path;
-        this.counter++;
-        location.hash = request.path;
+        this.current_path = request.path;
+        location.hash = 'entry=' + len(this.states) + '&path=' + request.path;
     }
 });
 
@@ -69,13 +79,13 @@ var DOMAdapter = type('DOMAdapter', [ object ], {
 
     __init__: function() {
         $$('body')[0].update('');
+        this._location = window.location;
         this.history = new History();
         this.document = new Document();
+        event.connect(this.history, 'onChange', this, 'process_request');
     },
 
-    send: function(request) {
-        this.history.navigate(request);
-    },
+    send: function(request) {},
 
     receive: function(response) {
         if (response.status_code == 200) {
@@ -91,10 +101,22 @@ var DOMAdapter = type('DOMAdapter', [ object ], {
         }
     },
 
+    process_request: function(request) {
+        //Te queres ir?
+        if (!request.is_same_origin())
+            window.location = request.source;
+        if (request.relative.startswith(this._location.pathname))
+            request.fix_location(this._location.pathname, this.history.get_hash());
+        //hace falta mandarlo?
+        if (this.history.path !== request.path ) {
+            this.send(request);
+            this.history.navigate(request);
+        }
+    }, 
+
     set location(value) {
         var request = new http.HttpRequest(value);
-        if (this.history.get_hash() !== request.path )
-            this.send(request);
+        this.process_request(request);
     },
 
     add_hooks: function() {
@@ -119,8 +141,7 @@ var DOMAdapter = type('DOMAdapter', [ object ], {
         var request = new http.HttpRequest(element.action);
         request.method = element.method;
         request[element.method] = element.serialize();
-        if (this.history.get_hash() !== request.path )
-            this.send(request);
+        this.process_request(request);
     },
 
     _links: function(e) {
@@ -128,8 +149,7 @@ var DOMAdapter = type('DOMAdapter', [ object ], {
         var element = e.target;
         var request = new http.HttpRequest(element.href);
         request.method = 'get';
-        if (this.history.get_hash() !== request.path )
-            this.send(request);
+        this.process_request(request);
     }
 });
 

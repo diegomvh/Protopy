@@ -85,9 +85,14 @@ var HttpRequest = type ('HttpRequest', [ object ], {
         var m = '%s://%s'.subs(this.protocol, this.get_host());
         return !m || (m == '%(protocol)s//%(domain)s%(port)s'.subs({
             protocol: location.protocol,
-            domain: document.domain,
+            domain: location.hostname,
             port: location.port ? ':' + location.port : ''
         }));
+    },
+    
+    fix_location: function(oldvalue, newvalue){
+        for each (var attr in ['relative','path','directory','source'])
+            this[attr] = this[attr].replace(oldvalue, newvalue);
     },
 
     is_ajax: function() {

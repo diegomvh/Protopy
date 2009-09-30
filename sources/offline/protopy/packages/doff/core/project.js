@@ -29,7 +29,7 @@ var Project = type('Project', object, {
         // this.network_check();
         // this._start_network_thread();
         // this.go_offline();
-        this.adapter.location = this.adapter.history.get_hash() || '/';
+        this.adapter.location = '/';
     },
 
     onNetwork: function(type) {
@@ -40,7 +40,6 @@ var Project = type('Project', object, {
     __init__: function(package, offline_support) {
         this.package = package;
         this.offline_support = offline_support;
-        this.start_url = location.pathname;
 
         // Registro la ruta al proyecto
         sys.register_path(this.package, this.offline_support + '/js');
@@ -75,7 +74,8 @@ var Project = type('Project', object, {
     _create_stores: function() {
         var localserver = sys.gears.create('beta.localserver');
         this.managed_store = localserver.createManagedStore(this.package + '_manifest');
-        this.managed_store.manifestUrl = this.offline_support + '/manifest.json?refered=' + this.start_url;
+        this.managed_store.manifestUrl = this.offline_support + '/manifest.json';
+        //this.managed_store.manifestUrl = this.offline_support + '/manifest.json?refered=' + this.start_url;
     },
 
     _create_jsonrpc: function() {
