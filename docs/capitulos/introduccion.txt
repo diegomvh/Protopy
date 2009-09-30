@@ -1,5 +1,5 @@
 ############
-Introduccion 
+Introducción 
 ############
 
     "Yo sólo puedo mostrarte la puerta. Tú eres quien debe atravesarla."
@@ -10,12 +10,12 @@ Introduccion
 Motivación
 **********
 
-.. Hoy más que ayer, pero seguremente menos que mañana, Internet es "la red de
+.. Hoy más que ayer, pero seguramente menos que mañana, Internet es "la red de
 .. redes". El alto contenido de información 
 
 
 Hoy en día Internet supone más que un medio de intercambio de información,
-su constante expansión la ha convetido un terreno muy atractivo para
+su constante expansión la ha convertido un terreno muy atractivo para
 la implementación de sistemas de información.
 
 
@@ -30,7 +30,7 @@ las aplicaciones web han aparecido plataformas de desarrollo, o frameworks,
 para la mayoría de los lenguajes de programación [WikiListFramework2009]_. 
 A lo largo de los últimos 10 años ha existido una importante evolución 
 de los mismos [ApacheSlingEv2009]_ . Muchas tareas comunes son resueltas
-de una manera predefinida y modificable, permitendo al programador focalizarse
+de una manera predefinida y modificable, permitiendo al programador focalizarse
 en resolver el problema particular de su desarrollo.
 
 .. [WikiListFramework2009] *Lista de Web Application Frameworks* http://en.wikipedia.org/wiki/List_of_web_application_frameworks
@@ -85,8 +85,8 @@ Objetivos
 *********
 
 La principal limitación de las aplicaciones web en comparación con las
-aplicaciones tradicionales, es la necesidad de contar con conexion constante
-para funcionar. Dotar de la capicacidad de trabajo sin conexión a una aplicación web 
+aplicaciones tradicionales, es la necesidad de contar con conexión constante
+para funcionar. Dotar de la capacidad de trabajo sin conexión a una aplicación web 
 ataca la principal limitación de este tipo de aplicaciones.
 
 Si bien los elementos necesarios para llevar a cabo esta tarea están disponibles
@@ -104,7 +104,7 @@ El objetivo principal del presente trabajo de tesis es aportar una extensión
 a un framework web que permita de alguna manera migrar las aplicaciones de manera simple,
 convergiendo en un único proceso de desarrollo.
 
-Trás el estudio de las características se determinará el framework
+Tras el estudio de las características se determinará el framework
 a utilizar. Se tendrán en cuenta características tales como como la calidad del
 mapeador de objetos, la simplicidad del controlador,
 extensibilidad del sistema de escritura de plantillas y flexibilidad general.
@@ -118,7 +118,7 @@ Alcance
 Se realizará un estudio sobre los componentes que intervienen en el desarrollo de 
 aplicaciones web: El navegador y el Servidor web. Se abordará un lenguaje de 
 programación y un framework web de el lenguaje seleccionado, se 
-desarrollando para este un frámework básico. Se formulará un esquema de sincronización
+desarrollando para este un framework básico. Se formulará un esquema de sincronización
 para pequeñas aplicaciones.
 
 .. Si es un framework es extensible por definición
