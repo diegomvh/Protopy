@@ -8,10 +8,6 @@ Tecnologías del servidor
 Generación dinámica de páginas Web
 **********************************
 
-.. note::
-    Introduccion de la mano de Tanenbaum
-    La parte estatica de la cuestion dejarla para la introduccion como cuentito,
-    aca vamos a los bifes dinamicos.
 
 Esta sección tiene como finalidad introducir los conceptos básicos concernientes
 a la *generación dinamica contenido* en el servidor.
@@ -176,8 +172,6 @@ Variables de entorno que se intercambian de servidor a CGI:
 Debido a la popularidad de las aplicaciones CGI, los servidores web incluyen
 generalmente un directorio llamado **cgi-bin** donde se albergan estas
 aplicaciones.
-
-.. note:: Faltan referencias sobre la popularidad de los lenguajes
 
 
 .. Históricamente las aplicaciones CGI han sido escritas en lenguajes interpretados, 
@@ -439,8 +433,6 @@ Frameworks Web
 Frameworks
 ==========
 
-.. Usamos la traducción redefinir para override
-.. note:: Poner CLI
 
 Según la la wikipedia [WIK001]_ un framework de software es *una abstracción en
 la cual un código común, que provee una funcionalidad genérica, puede ser
@@ -501,7 +493,7 @@ de frameworks:
 
     Libreria vs Framework.
 
-.. note:: Breve introducción a patrones arquitecturales y mvc
+
 
 
 .. _servidor-mvc:
@@ -668,9 +660,6 @@ Django
 Introducción
 ============
 
-.. note:: Acá tenemos que justificar por que django
-
-
 
 `Django <http://www.djangoproject.com>`_ es un framework web escrito en Python
 el cual se apoya en el patrón de Modelo Vista Controlador.
@@ -786,7 +775,7 @@ Módulo settings
 
 Este módulo configura globalmente el proyecto. Define las aplicaciones instaladas (*INSTALLED_APPS*),
 la base de datos que utilizarán (*DATABASE_**), el módulo de 
-:ref:`urls inicial <_django-proyecto-urls>`_ (*ROOT_URLCONF*),
+:ref:`urls inicial <_django-proyecto-urls>` (*ROOT_URLCONF*),
 la ruta en la cual se encuentran los medios estáticos y
 la URL donde serán publicados [*]_ (*MEDIA_URL*, *MEDIA_ROOT*). Otras configuraciones son idioma, 
 zona horaria, clases de middleware [*]_ , ruta a los templates, etc. 
@@ -796,8 +785,8 @@ que no es factible utilzando lenguajes de marcado como XML, YAML, archivos INI, 
 
 .. [*] Imágenes, sonido, flash, etc.
 .. [*] En django una clase middleware conecta los componentes de MTV, el usuario puede definir un comportamiento
-personalizado.
-
+	   personalizado.
+	
 .. _django-proyecto-manage:
 
 Módulo manage
@@ -807,7 +796,7 @@ Este módulo a diferencia de settings y urls, es ejecutable. Sirve como interfas
 con el framework. Su invocación recibe como primer argumento un nombre de comando
 como *startapp*, que crea una aplicación en el proyecto, *runserver* que lanza el 
 servidor de desarrollo o *syncdb* que mediante el ORM crea el esquema en la base
-de datos a partir de el módulo :ref:`*models*<_django-proyecto-models>`_ de cada aplicación.
+de datos a partir de el módulo :ref:`*models*<_django-proyecto-models>` de cada aplicación.
 
 Existen otros comandos que pemiten realizar testing, iniciar la consola interactiva,
 administrar usuarios, etc.
@@ -892,28 +881,41 @@ Esta plantilla es un HTML básico con algunas variables y etiquetas agregadas.
         el contenido de la variable entregada por la vista.
         
 	* La representación de una variable de etiqueta puede ser alterada
-	  mediante un filtro. El cual se define mediante el caracter |.
-	  Ej:
-	  	{{ fecha_de_nacimiento|date:"y" }}
-	  	Toma el año de una variable date.
+	  mediante un filtro. El cual se define mediante el caracter `|`.
+	  Ej::
+	  
+	  	{{ fecha|date:"D d M Y" }}
+	  	
+	  Si la variable fecha es un datetime, la salida es 'Wed 09 Jan 2008'.
+
 
     * Cualquier texto que esté rodeado por llaves y signos de porcentaje
-        es una etiqueta de lógica o define algún bloque.
+        es una etiqueta de lógica o define algún bloque. Algunas etiquetas
+        son if, for, extends, load entre otros.
+        
+    * Es posible definir template tags (o etiquetas de tempalte) de usuario, 
+      que actuan como una fucnión en el template. 
+    
+    * Django posee un sistema jerárquico de templates que propone una estructura
+      de herencia. Un template base puede definir una serie de bloques y entre
+      otras cosas el diseño general de una página. Un template particular puede
+      utilizar el tag extends y redefinir uno o más bloques, conservando intacto
+      todo lo que se encuentre fuera de los bloques redefinidos.
+      
+Si bien los templates suelen estar orientados a la generación de HTML, es posible
+obtener otros formatos.
 
-	* 
+Normalmente los archivos de template se ubican en el directorio "templates" en la raíz del proyeco.
+Puede incluirse también  un directorio "templates"" en cada aplicación del proyecto. Los
+TEMPLATE_LOADERS definidos en settings relizan la búsuqeda cuando la vista lo requiera.
 
-    * Finalmente, el segundo párrafo de esta plantilla tiene un ejemplo de un
-        *filtro*, con el cual se alteran la exposición de una variable.
-
-Cada plantilla de Django tiene acceso a varias etiquetas y filtros incorporados.
-
-.. note:: quiza completar un poco
+Una referencia detallada se encuentra en la `documentación de Django <http://docs.djangoproject.com/en/dev/ref/templates/builtins/>`_ 
 
 Estructura de una aplicación Django
 ===================================
 
-Una aplicación es un paquete python que consta de un módulo models y un módulo
-views, para crear una aplicacion se utiliza el comando **startapp** del modulo 
+Una aplicación es un paquete python, que consta de un módulo models y un módulo
+views. Para crear una aplicacion se utiliza el comando **startapp** del modulo 
 :ref:`manage <django-proyecto-manage>` de la siguiente manera:
 
 .. code-block:: bash
@@ -927,66 +929,82 @@ El resultado de este comando genera la siguiente estructura en el proyecto::
             __init__.py
             models.py
             views.py
-        ...
+            tests.py
+
+Como antes se mencionó puede crearse un módulo urls dentro de la aplicación para
+que delegue el tratado desde el urlpatterns raíz sobre este.
 
 .. _django-proyecto-models:
 
 Módulo models
 -------------
 
-Cada vez que se crea una aplicación, se genera un módulo models.py, en el cual
-se le permite al programador definir modelos de objetos, que luego son
-transformados en tablas relacionales [*]_.
+Al crear una aplicación es generado un módulos models.py en cual se definen 
+las clases que extienden de *django.db.models.Model*. Estas definiciones
+son transforamadas por el ORM en tablas relacionales [*]_.
 
-Módulo views
-------------
-
-Cada aplicacion posee un módulo views, donde se definen las funcinoes que atienden
-al cliente y son activadas gracias a el mapeo definido en el módulo urls del proyecto
-o de la aplicación.
-
-Las funciones que trabajan como vistas deben recibir como primer parámetro el request
-y opcionalmente parámetros que pueden ser recuperados del mapeo de urls.
-
-Dentro del módulo de urls
+Ej:
 
 .. code-block:: python
 
+	class Persona(models.Model):
+	    nombre = models.CharField(max_length = 50)
+	    apellido = models.CharField(max_length = 50)
+	    nacimiento = models.DateField()
+	    dni = models.PositiveIntegerField()
+
+.. [*] Mediante el comando syncdb del módulo manage del proyecto
+	    
+Módulo views
+------------
+
+Cada aplicacion posee un módulo views, donde se definen las funcinoes que responden
+al cliente y se activan por medio del mapeo definido en el módulo urls del proyecto
+o de la aplicación.
+
+Las funciones que trabajan como vistas deben recibir como primer parámetro el request
+y opcionalmente parámetros obtenidos de los grupos nombrados de la url.
+
+El siguiente ejemplo integra un fragmento de los módulos urls y views.
+.. code-block:: python
+
     # Tras un mapeo como el sigunete
-    (r'^persona/(?P<id_persona>\d)/$', mi_vista)
+    (r'^persona/(?P<id_persona>\d{1,4}})/$', mi_vista)
+    
     # la vista se define como
     def mi_vista(request, id_persona):
         persona = Personas.objects.get(id = id_persona)
         datos = {'persona':persona, }
         return render_to_response('plantilla.html', datos)
 
-.. [*] Mediante el comando syncdb del módulo manage del proyecto
 
 .. tecnologias-servidor-django-static:
 
 Contenido dinámico y estático en Django
 =======================================
 
-Django está orientado a la generación de *solo* contenido dinámico.
-Pero generalmente se reuiqre en una aplicación web la inclusión de recursos
-de tipo estático, como imágenes, javascript u hojas de estilo.
-
+Django no se ocupa de generar contenido estático, sin embargo éste es
+necesario para el desarrollo completo de una apliación web (imágenes, javascript y hojas de estilo).
 Django delega esta tarea al servidor web [DjangoDoc2009]_, sin embargo 
-para desarrollo se prové un servidor de contenido estático.
+para desarrollo se prové un una vista que devuelve contenido estático (*django.views.static.serve*).
 
-La puesta en producción de una aplicación desarrollada en Django consta
-de la configuración del servidor web en 2 aspectos:
+Hasta acá
+---------
+
+Al momento de la puesta en producción del proyecto desarrollado en Django,
+se realizan dos tareas:
 
  * Configuración del soporte para ejecución de Python
- 	En la presente tesis nos focalizamos en WSGI ya que es un 
-	estándard Pythonico, pero existen toros como mod_python para Apache.
+ 	En la presente tesis focalizamos el estudio de WSGI ya que es un 
+	estándard Pythonico. Pero existen toros como mod_python para Apache.
 	Independientemente de que tipo de soporte se utilize es necesario
 	asegurarse que tanto Django, como así aplicaciones de terceros
 	estén incluidas en el PythonPath con el cual se invoca al 
 	script con el entry point de la aplicación.
 	
  * Configuración de los medios estáticos.
- 	Generalmente suele ser una ruta, o dos, pero no está limitado.
+ 	Se delega al servidor web la tarea de responder las requisiciones
+ 	sobre los medios estáticos. 
 
 
 .. figure:: ../_svg/esquema_django_static.png
@@ -998,102 +1016,144 @@ de la configuración del servidor web en 2 aspectos:
 
 .. [DjangoDoc2009] *Sirviendo archivos esáticos con Django*, Django Wiki, http://docs.djangoproject.com/en/dev/howto/static-files/#the-big-fat-disclaimer
 
-El cliclo de una petición
+El cliclo de una petición 
 =========================
 
-Cada vez que un browser realiza una petición a un proyecto desarrollado en
-django, la petición HTTP pasa por varias capas.
+Se describe a continuación de manera más detallada el clico de una petición
+en Django. Durante el proceso de la petición existen clases que relizan tareas
+transversales, algunas de bajo nivel y otras de alto nivel como caché, sesión y autenticación, 
+manejo de cabeceras HTTP, etc. y reciben el nombre de clases de Middleware.
 
-Inicialmente atraviesa los Middlewares, en la cual, el middleware de Request,
-empaqueta las variables del request en una instancia de la calse Request.
+Según que métodos implementen pueden anteponerse o anexarse a una o más etapas del
+proceso del request.
 
-Luego de atravesar los middlewares de request, mediante las definciones de URLs, 
-se selecciona la vista a ser ejecutada.
+.. _middleware_classes:
 
-.. algo de vista hay tambien en la parte de mapeo de url ver como hacer
-Una vista es una función que recibe como primer argumento el request y
-opcionalmente una serie de parámetros que puede recuperar de la propia URL.
+.. figure:: ../_svg/esquema_middlewares.png
+	
+	Intracción de los métodos de una clase de middleware en el proceso del request
 
-Dentro de la vista se suelen hacer llamadas al ORM, para realizar consultas sobre
-la base de datos. Una vez que la vista a completado la lógica, genera un mapeo que es
-transferido a la capa de templates.
+El ciclo de una petición se completa mediante los siguientes pasos:
 
-El template rellena sus comodines en función de los valores del mapeo que le entrega
-la vista. Un template puede poseer lógica muy básica (bifurcaciones, bucles de repetición, 
-formateo de datos, etc).
+ * Entrada por Middlewares de Request
+	El primer componete en tratar la solicitud es el conjunto de middlewares de request.
+	Se encargan de envolver la petición en una instancia de la clase HttpRequest 
+	(*django.middleware.common.CommonMiddleware*), adicionar la sesión al request
+	(*django.contrib.sessions.middleware.SessionMiddleware*) y la relación entre
+	la sesión y el usuario de la aplicación de autenticación
+	(*django.contrib.auth.middleware.AuthenticationMiddleware*).
 
-El template se entrega como un HttpResponse. La responsabilidad de la vista es entregar
-una instancia de esta clase.
+ * URLConf y View Middlewares
+	El siguiente paso es la búsqueda de la url (que se encuentra en el atributo *path*
+	de la instancia de *HttpRequest* generada por el middleware de request) en los
+	patrones de urls asociados a las vistas. La búsqueda comienza en el módulo indicado
+	por la constante ROOT_URLCONF del módulo settings del  proyecto.
+	Una vez obtenida la vista, los middleware de vistas pueden anteponerse o 
+	anexarse a la ejecución de la vista. Un middleware de vista importante es el
+	de transacciones de bases de datos que inicia una transacción antes de la ejecución
+	de la vista y la cierra exitosamente tras la ejecución de la vista. Este middleware
+	realiza un "rollback" en caso de encontrarse una excepción.
+	
+ * Salida mediante Middleware de Response
+ 	Finalmente, cunado la vista a generado una respuesta, esta es procesada por los
+ 	middlewares de respuesta (*Response Middlewares*). Algunas tareas que se 
+ 	pueden relizar con este tipo de middlewares es compresión de la salida, 
+ 	inclusión de librerías de javascript muy modulares, como YUI, etc.
+ 	
+ * Middlewares de Excepciones
+ 	Cuando se lanza una excepción que no es capturada en la vista o urls, 
+ 	el middleware de excepciones las captura y genera una respuesta informando
+ 	el error. Cuando el modulo settings posee la badera DEBUG en verdadero,
+ 	se muestra la traza de la excepción.
+	
+Las clases de middleware generalmente están provistas por Django y son incluidas
+en la generación del proyecto en la escritura del módulo settings. Una clase de 
+middleware puede implementar uno o más métodos de los mostrados en la :ref:`figura  <_middleware_classes>`
+
 
 .. figure:: ../_svg/esquema_django.png
 	
-	Proceso de un request
+	Otra forma de ver el procesamiento de un request con la interacción de los middlewares.
 
-.. _django-orm:
-
-Interactuar con una base de datos
-=================================
-
-Django incluye una manera fácil pero poderosa de realizar consultas a bases de
-datos utilizando Python.
-
-Una ves configurada la conexión a la base de datos en el módulo de configuración
-:ref:`settings <django-proyecto-settings>` se esta condiciones de comenzar
-a usar la capa del sistema de Mapeo Objeto-Relacional del framework.
-
-Si bien existen pocas reglas estrictas sobre cómo desarrollar dentro de Django, 
-existe un requisito respecto a la convención de la aplicación: "si se va a usar 
-la capa de base de datos de Django (modelos), se debe crear una aplicación de 
-Django. Los modelos deben vivir dentro de una aplicaciones". Para crear una
-aplicación se debe proceder con el procedimiento ya mencionado en :ref:`manage <django-proyecto-manage>`.
 
 .. _django-orm-modelos:
 
-Modelos
-=======
+La API de modelos (ORM)
+=======================
 
-Un modelo de Django es una descripción de los datos en la base de datos,
-representada como código de Python.
+Un modelo de Django es una descripción de alto nivel de la estructura 
+de la base de datos. Esta descripción se realiza en lenguaje Python en cada 
+cada aplicación en el modulo models.py, en vez de realizarse en SQL. Es posible
+tamibén realizar auto generación básica de modelos mediante la introspección de
+la base de datos para adaptar el ORM a sistemas legacy.
 
-Esta es la capa de datos -- lo equivalente a sentencias SQL -- excepto que están
-en Python en vez de SQL, e incluye más que sólo definición de columnas de la
-base de datos. Django usa un modelo para ejecutar código SQL detrás de las
-escenas y retornar estructuras de datos convenientes en Python representando las
-filas de las tablas base de datos. Django también usa modelos para representar
-conceptos de alto nivel que no necesariamente pueden ser manejados por SQL.
+Dentro del módulo se define cada entidad como una clase que exitende a *django.db.models.Model*.
+Si bien la entidad queda identificada con el nombre de clase, pueden existir colisiones entre
+nombres iguales en diferentes aplicaciones. Por esto, el *nombre completo de las entidades*
+se define como una cadena compuesta por el nombre de la aplicación y el nombre de la entidad
+unidos por un punto (Ej: ``"personal.Persona"``, ``"auth.User"``, ``"ventas.Producto"``, etc.).
 
-Django define los modelos en Python por varias razones: 
-    
-    * La introspección requiere **overhead** y es imperfecta. Django necesita
-        conocer la capa de la base de datos para porveer una buena API de
-        consultas y hay dos formas de lograr esto. Una opción sería la 
-        introspección de la base de datos en tiempo de ejecución, la segunda y
-        adoptada por Django es describir explícitamente los datos en Python.
-    
-    * Escribir Python es divertido, y dejar todo en Python limita el número de
-        veces que el cerebro tiene que realizar un "cambio de contexto".
-    
-    * El codigo que describe a los modelos se puede dejar fácilmente bajo un
-        control de versiones.
-    
-    * SQL permite sólo un cierto nivel de metadatos y tipos de datos basicos, 
-        mientras que un modelo puede contener tipos de datos especializado. La
-        ventaja de un tipo de datos de alto nivel es la alta productividad 
-        y la reusabilidad de código.
-    
-    * SQL es inconsistente a través de distintas plataformas.
+.. note::
+	Nombre *Modelo*:
+	
+		Si bien se utilizó el término *endiad* para definir los integrantes del modelo
+		de una aplicación, se suele utilizar la palabra *modelo* en singular.
 
-Una contra de esta aproximación, sin embargo, es que es posible que el código
-Python quede fuera de sincronía respecto a lo que hay actualmente en la base. Si
-se hacen cambios en un modelo Django, se necesitara hacer los mismos cambios dentro
-de la base de datos para mantenerla consistente con el modelo.
+Las tarea del ORM son:
 
-Finalmente, Django incluye una utilidad que puede generar modelos haciendo
-introspección sobre una base de datos existente. Esto es útil para comenzar
-a trabajar rápidamente sobre datos heredados.
+	* Creación de Tablas Relacionales
+	
+		Esta operación realiza mediante el DDL [*]_ de SQL.
+		Se toma como nombre de tabla el nombre completo de entidad intercambiando
+		el punto por un guión bajo `_`. Si existiesen relaciones que requieran
+		tablas intermedias, son creadas.
+		
+		Esta operación se activa mediante el comando *syncdb* del modulo
+		*manage* del proyecto.
+		 
+	* CRUD
+		- Creación, Modificación y Eliminación
+			La creación de entradas en la base de datos se realiza cuando
+			una instancia de una clase del modelo recibe el mensaje ``save()`` (*INSERT*).
+			Sobre una instancia creada o recuperada, el mensaje ``save()``
+			actualiza la entidad con los valores (*UPDATE*)
+			Cuando una instancia existente en la base recibe el mensaje 
+			``delete()`` se elimina (*DELETE*).
 
-Este modelo de ejemplo define una ``Persona`` que encapsula los datos
-correspondientes al ``nombre`` y el ``apellido``.
+			
+		- Recuperación (Administradores de consultas)
+			La recuperación de datos de una base de datos relacional se 
+			realiza típicamente mediante la sentencia sql SELECT. Pero
+			los criterios de búsqueda pueden llegar a ser complejos, sobre todo cuando
+			existen relaciones. Por esto, Django agrega un objeto manager
+			a cada entidad y a cada relación. Un manager soporta una API
+			definida para las consultas.
+			
+	* Sistema de señales
+		
+		El sistema de señales permite registrar funciones para ser ejecutadas
+		antes o despues de ciertos eventos, como la creaión de instancias del 
+		modelo, la elminiación, o la creación (*syncdb*). Son equivalentes a
+		triggers en la base de datos.
+	
+	* Inclusión de metadatos
+		
+		Existen ciertos metadatos que no pueden incluirse fácilmente en SQL
+		de manera standard, como el nombre visible para el usuario de una
+		entidad, en plural y en singular, o la url absoluta del elemento en
+		el sistema. Esta información puede almacenarse mediante una clase
+		interna Meta y métodos de instancia.
+		
+		
+		
+.. [*] **Data Definition Language** son las intstrucciones encargadas de la definición
+de la estructura, la componen las sentencias CREATE, ALTER y DROP.
+.. [*] **Data Manipulation Language** son las instrucciones encargadas de la creación,
+recuperación, modificación
+
+
+En el siguiente ejemplo define una ``Persona`` que posee los atributos
+nombre y apellido.
 
 .. code-block:: python
 
@@ -1102,8 +1162,10 @@ correspondientes al ``nombre`` y el ``apellido``.
     class Persona(models.Model):
         nombre = models.CharField(max_length = 30)
         apellido = models.CharField(max_length = 30)
+        
+(``nombre`` y ``apellido`` son atributos de clase)
 
-``nombre`` y ``apellido`` son atributos de clase
+genera el siguiente código SQL al momento de la ejecución del cmando syncdb.
 
 .. code-block:: sql
 
@@ -1113,11 +1175,11 @@ correspondientes al ``nombre`` y el ``apellido``.
         "apellido" varchar(30) NOT NULL
     );
 
-En el ejemplo presentado se observa que un modelo es una clase Python que hereda
-de ``django.db.models.Model`` y cada atributo representa un campo requerido por
-el módelo de datos de la aplicación.
-Con esta informacion Django genera automaticamente la :term:`API` de acceso a
-los datos en la base. 
+Claves en los modelos
+---------------------
+
+PK vs ID
+
 
 Usando la API
 -------------
@@ -1149,34 +1211,115 @@ anterior por ``Persona.objects``.
 
 .. _django_managers:
 
-Administradores de consultas
-----------------------------
+Managers
+--------
 
-Los managers o administradores de consultas son los objetos que representan la
-interfase de comunicacion con la base de datos. Cada modelo tiene por lo menos
-un administrador para acceder a los datos almacenados.
-Cada entidad presente en el modelo, tiene al menos un *Manager*. Este *Manager*
-encapsula en una semántica de objetos las opreaciones de consulta (*query*) de
-la base de datos [*]_ . Un *Manager* consiste en una instancia de la clase
-*django.db.models.manager.Manager* donde se definen, entre otros métodos,
-*all()*, *filter()*, *exclude()* y *get()*.
+Los managers son los encargados de realizar las consultas sobre las entidades
+de la base de datos. Presentan una API para realizar las consultas y devuelven
+instancias de objetos ``QuerySet``. Un QuerySet representa una consulta *lazy*,
+es decir, la consulta se hace efectiva cuando realmente es necesario [*]_. 
 
-Cada uno de éstos métodos genera como resultado una instancia de la calse
-*QuerySet*. Un *QuerySet* envuelve el "resultado" de una consulta a la base
-de datos. Se dice que envuelven el "resultado" porque la estrategia de acceso a
-la base de datos es *evaluación retardada* [*]_, es decir, que la consulta que
-representa el *QuerySet* no será evaluada hasta que no sea necesario acceder a
-los resultados.
+.. [*] Generalmente esto ocurre en la iteración en el template.
 
-.. [*] En el lenguaje SQL, las consultas se realizan miediante la sentecia SELECT.
-.. [*] También conocida como *Lazy Evaluation*
+Dado el siguiente ejemplo:
 
-Un *QuerySet*, además de presentar la posibilidad de ser iterado, para recuperar
-los datos, también posee una colección de métodos orientados a conuslta, como
-*all()*, *filter()*, *exclude()* y *get()*. Cada uno de estos métodos, al
-igual que en un mánager, devuelven instancias de *QuerySet* como resultado.
-Gracias a esta característica recursiva, se pueden generar consultas
-medinate encadenamiento.
+.. code-block:: python
+
+	from django.db import models
+	
+    class Persona(models.Model):
+        nombre = models.CharField(max_length = 30)
+        apellido = models.CharField(max_length = 30)
+        
+    class Vehiculo(models.Model):
+    	marca = models.CharField(max_length = 4)
+    	modelo = models.DateField()
+        propietario = models.ForeignKey(Persona)
+        
+Los manages están presentes en:
+
+	* En el atributo ``objects`` de cada entidad del modelo.
+	
+		El programador puede definir nuevos managers para conusltas frecuentes.
+		
+		Ej::
+			
+			Persona.objects.all() # Recupera todas las personas
+			Vehiculo.objects.all() # Recupera todos los vehículos
+			
+		
+	* En cada relación, ya sea ``1 a N`` o ``N a N``
+		Por ejemplo, si se define una entidad Vehiculo
+		
+		Ej::
+			
+			p = Persona.obects.get(nombre = "nahuel")
+			Vehiculo.objects.filter( propietario = p )
+			
+			# O lo que es lo mismo
+			Persona.obects.get(nombre = "nahuel").vehiculo_set() # Relación inversa resuelta por django
+
+API de los Managers
+-------------------
+
+La API provista por los managers consite en dos grupos de métodos: los que retornan instancias de QuerySet y los que no. El primer gurpo está definido como siguie:
+
+    * ``filter( **argumentos )`` [*]_
+    	Filtrar que cumplen con el criterio definido en ``argumentos``
+    	
+    * ``exclude( **argumentos )``
+    	Excluye elementos que cumplan con el criterio definido en argumentos
+    	
+    * ``order_by(*campos)``
+    	Ordena el resultado por el/los campos ``campos``
+    	
+    * ``distinct()``
+    	Solo admite una instancia de cada elemento.
+    	
+    * ``values(*campos)``
+    	Retorna solo los campos ``campos`` como un diccionario.
+    	
+    * ``dates(campo, tipo, order='ASC')``
+    	Retorna fechas
+    	
+    * ``none()``
+    	Evalua a QuerySet vacío.
+    	
+    * ``select_related()``
+    	Preselecciona en la consulta los datos relacionados para evitar
+    	el overhad de multiples consultas sobre QuerySets grandes y con muchas relaciones.
+    	
+    * ``extra(select=None, where=None, params=None, tables=None)``
+    	Permite realizar una consulta de bajo nivel
+    		
+
+.. [*] El doble asterisco (``**``) representa argumentos del tipo ``clave = valor``, mientras que
+el asterisco simple (``*``), define que son argumentos variables.
+
+El conjunto que no devuelve ``QuerySet``s es el siguiente:
+
+.. # QuerySet methods that do not return QuerySets
+
+    * ``get(**campos)``
+    	Obtiene una única entidad identificada por ``campos``
+    * ``create(**campos)``
+    	Crea una entidad basada con los valores ``campos``
+
+    * ``get_or_create(**kwargs)``
+    	Crea una entidad basada con los valores ``campos`` o la modifica si existe.
+    	
+    * ``count()``
+    	Retorna la cantidad de elementos del QuerySet.
+    	
+    * ``in_bulk(lista_de_identificadores)``
+    	Retorna un diccionario dode la clave es cada identificador y el valor es
+    	la instancia.
+    	
+    * ``latest(campo = None)``
+		Retorna la última instancia por el campo ``campo``. Debe ser del tipo DateField.
+
+Encadenamiento
+
 
 Formularios
 ===========
@@ -1211,41 +1354,3 @@ ha sido validado,
 
 	Estructura de objetos de los formularios en Django
 
-
-Clasificación de aplicaciones Django
-====================================
-
-.. note::
-	Mejorar esto
-	
-	
-	
-Podemos hacer una clasificación entre los tipos de aplicaciones en función de su objetivo:
-
- * Las aplicaciones de usuario
- 	Son aquellas aplicaciones que resuelven un problema específico. Suelen
-estar 
-	dispuestas en un subdirectorio del proyecto.
- 	
- * Las aplicaciones de soporte
- 	Las aplicaciones de soporte son las aplicaciones que resuelven un problema
-general,
- 	como autenticación, envío de correo, interacción con servicos provistos por
-sitios
- 	de terceros (Google Maps, Google Charts, AdSense, Yahoo Maps, Yahoo Pipes,
-Feedburner, etc.),
- 	etc. Django provee varias aplicaciones que están disponibles por defecto
-ante la 
- 	creación de un proyecto con el comando *create-app*.
- 	
- * Aplicaciones template
- 	Esta caracterización se puede aplicar tanto a proyectos como a aplicaciones
-y consite
- 	en una aplicación distribuida como plantilla para lograr una aplicación de
-usuario, pero
- 	que tiene varios factores engorrosos resueltos. Podemos citar en este caso,
-a el proyecto
- 	*Pinax* [*]_ que provee un conjunto de aplicaciones de soporte y
-aplicaciones de template.
- 	
- .. [*] *Pinax Project* http://pinaxproject.com/

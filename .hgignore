@@ -31,7 +31,7 @@ informe/*
 # Virutalenv para probar sphinx
 sphinx-env/*
 build/*
-
+*.bak
 
 # Aplicacion de demostracion
 sources/offline_demo/static/devkit/*
