@@ -132,10 +132,14 @@ var HttpRequest = type ('HttpRequest', [ object ], {
 var HttpResponse = type('HttpResponse', object, {
     status_code: 200,
 
-    __init__: function(content, content_type) {
+    __init__: function(content) {
+        var arg = new Arguments(arguments, {mimetype:null, status:null, content_type:null});
         content = content || '';
-        if (!content_type)
-            content_type = "%s; charset=%s".subs('text/html', 'utf-8');
+    
+        if (arg.kwargs['mimetype'])
+            arg.kwargs['content_type'] = arg.kwargs['mimetype'];
+        if (!arg.kwargs['content_type'])
+            arg.kwargs['content_type'] = "%s; charset=%s".subs('text/html', 'utf-8');
         if (!isinstance(content, String) && hasattr(content, '__iter__')) {
             this._container = array(content);
             this._is_string = false;
@@ -144,8 +148,10 @@ var HttpResponse = type('HttpResponse', object, {
             this._is_string = true;
         }
         this.cookies = {};
+        if (arg.kwargs['status'])
+            this.status_code = arg.kwargs['status'];
 
-        this._headers = {'content-type': ['Content-Type', content_type]};
+        this._headers = {'content-type': ['Content-Type', arg.kwargs['content_type']]};
     },
 
     __str__: function __str__() {
@@ -261,5 +267,6 @@ publish({
     HttpResponseForbidden: HttpResponseForbidden, 
     HttpResponseNotAllowed: HttpResponseNotAllowed,
     HttpResponseGone: HttpResponseGone,
-    HttpResponseServerError: HttpResponseServerError
+    HttpResponseServerError: HttpResponseServerError,
+    absolute_http_url_re: absolute_http_url_re
 });

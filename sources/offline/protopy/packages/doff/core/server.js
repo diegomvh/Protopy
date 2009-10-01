@@ -2,6 +2,7 @@ require('sys');
 require('event');
 require('doff.core.exceptions');
 require('doff.core.urlresolvers');
+require('doff.utils.http');
 
 var Butler = type('Butler', [ object ], {
     __init__: function(urlconf) {
@@ -12,14 +13,7 @@ var Butler = type('Butler', [ object ], {
     send: function(responses){},
 
     receive: function(request) {
-        var response = null;
-        if (request.is_valid()) {
-            var response = this.get_response(request);
-        }
-        if (response == null) {
-            var d = require('doff.views.debug');
-            response = d.technical_404_response(request, e);
-        }
+        var response = this.get_response(request);
         this.send(response);
     },
 

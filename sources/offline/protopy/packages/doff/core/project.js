@@ -27,9 +27,9 @@ var Project = type('Project', object, {
 
         this._create_toolbar();
         // this.network_check();
-        // this._start_network_thread();
+        // this.start_network_thread();
         // this.go_offline();
-        this.adapter.location = '/';
+        //this.adapter.location = '/';
     },
 
     onNetwork: function(type) {
@@ -163,7 +163,7 @@ var Project = type('Project', object, {
     /***************************************************************************
      * Network Check
      */
-    network_check: function network_check(){
+    _network_check: function network_check(){
         var self = this;
         var get = new ajax.Request(this._get_availability_url(), {
             method: 'GET',
@@ -181,12 +181,12 @@ var Project = type('Project', object, {
         });
     },
 
-    _start_network_thread: function(){
+    start_network_thread: function(){
         if(!this.do_net_checking)
             return;
-        this.thread = window.setInterval(getattr(this, 'network_check'), this.NET_CHECK * 1000);
+        this.thread = window.setInterval(getattr(this, '_network_check'), this.NET_CHECK * 1000);
     },
-    _stop_network_thread: function(){
+    stop_network_thread: function(){
         if (this.thread != null) {
             window.clearInterval(this.thread);
             this.thread = null;

@@ -1,18 +1,15 @@
 require('blog.post.models', 'Post', 'Tag');
+require('doff.utils.shortcuts', 'render_to_response');
 require('doff.template.context', 'RequestContext');
-require('doff.template.loader');
-require('doff.utils.http', 'HttpResponse', 'HttpResponseRedirect');
 
 function index(request) {
     require('doff.db.base', 'connection');
-    var response = new HttpResponse();
-    if (!bool(connection.introspection.table_names())) {
-        var t = loader.get_template('base.html');
-        response.write(t.render(new RequestContext(request, {'sin_tablas': true})));
-    } else {
-        var t = loader.get_template('show_posts.html');
-        response.write(t.render(new RequestContext(request, {'posts': Post.objects.all().order_by('-date'), 'tags': Tag.objects.all().order_by('title')})));
-    }
+    if (!bool(connection.introspection.table_names()))
+        var response = render_to_response('base.html', {'sin_tablas': true}, new RequestContext(request));
+    else
+        var response = render_to_response('show_posts.html', {  'posts': Post.objects.all().order_by('-date'), 
+                                                                'tags': Tag.objects.all().order_by('title')
+                                                             }, new RequestContext(request));
     return response;
 }
 

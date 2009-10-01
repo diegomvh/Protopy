@@ -621,12 +621,12 @@ var ForeignKey = type('ForeignKey', RelatedField, {
         var arg = new Arguments(arguments, {to_field:null, rel_class:ManyToOneRel, verbose_name: null});
         var to_field = null, rel_class = arg.kwargs['rel_class'];
 
-        try {
+        if (!isundefined(to._meta)) {
             var to_name = to._meta.object_name.toLowerCase();
             assert (!to._meta['abstract'], "cannot define a relation with abstract class %s".subs(to._meta.object_name));
             to_field = arg.kwargs['to_field'] || to._meta.pk.name;
-        } catch (e if isinstance(e, TypeError)) {
-            assert(isinstance(to, String), "%s is invalid. First parameter to ForeignKey must be either a model, a model name, or the string %s".subs(to, RECURSIVE_RELATIONSHIP_CONSTANT));
+        } else {
+            assert(isinstance(to, String), '%s is invalid. First parameter to ForeignKey must be either a model, a model name, or the string %s'.subs(to, RECURSIVE_RELATIONSHIP_CONSTANT));
         }
 
         arg.kwargs['rel'] = new rel_class(to, to_field, arg.kwargs);
