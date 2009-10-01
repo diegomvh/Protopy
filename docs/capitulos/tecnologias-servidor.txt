@@ -10,22 +10,22 @@ Generación dinámica de páginas Web
 
 
 Esta sección tiene como finalidad introducir los conceptos básicos concernientes
-a la *generación dinamica contenido* en el servidor.
+a la *generación dinámica contenido* en el servidor.
 
 En el enfoque dinámico, cuando un usuario realiza una solicitud, el mensaje
 enviado tiene como objetivo la ejecución de un programa o secuencia de comandos
 en el servidor. Por lo general, el procesamiento involucra el uso de la
-información proporcianda por el usuario para buscar registros en una base de
-datos y genrerar una página HTML personalizada para el cliente.
+información proporcionada por el usuario para buscar registros en una base de
+datos y generar una página HTML personalizada para el cliente.
 
 
 Tradicionalmente la tecnología utilizada se conoce como :term:`CGI`,
-estandar que consiste en delegar la generación de contenido a un
+estándar que consiste en delegar la generación de contenido a un
 programa. CGI se limita a definir la entrada y salida del proceso.
 
 Un enfoque más moderno para la generación de contenido dinámico 
 es la incrustación de secuencias de comandos dentro de 
-las páginas HTML. Estas sentencias son leidas y ejecutadas el servidor
+las páginas HTML. Estas sentencias son leídas y ejecutadas el servidor
 al momento de responder a la solicitud del cliente, 
 como es el caso del lenguaje :term:`PHP`, o
 :term:`ASP`.
@@ -45,7 +45,7 @@ Nuevas formas de interacción entre un servidor web
 y un programa fueron desarrolladas con el objeto de satisfacer necesidades más complejas, 
 que no fueron tenidas en cuenta en la genericidad de CGI.
 
-En la plataforma Java, se especifiaron
+En la plataforma Java, se especificaron
 los Servlets [SunServlet2009]_ , 
 .. con implementaciones como Tomcat [ApacheTomcat2009]_ 
 y en 1996, se publicó la especificación J2EE, que formula una arquitectura de
@@ -65,7 +65,7 @@ es el framework web mejor pensado que el ha usado. Davison pasó
 10 años desarrollando aplicaciones web, frameworks y la especificación de los
 Servlets para el lenguaje Java [RailsQuotes2009]_ [*]_ .
 
-.. [RailsQuotes2009] Cistas de Ruby On Rails, http://rubyonrails.org/quotes
+.. [RailsQuotes2009] Citas de Ruby On Rails, http://rubyonrails.org/quotes
 .. [*] *"Rails is the most well thought-out web development framework I’ve ever used. And that’s in a decade of doing web applications for a living. I’ve built my own frameworks, helped develop the Servlet API, and have created more than a few web servers from scratch. Nobody has done it like this before."*
 
 .. [ApacheTomcat2009] http://tomcat.apache.org/index.html
@@ -73,10 +73,10 @@ Servlets para el lenguaje Java [RailsQuotes2009]_ [*]_ .
 
 
 
-.. Existen otras formas de generar contendio al vuelo y generalmente todas estas se
+.. Existen otras formas de generar contenido al vuelo y generalmente todas estas se
 .. engloban dentro del termino **HTML dinámico**.
 
-Se realiza a continuación un revisón general sobre los componentes de un servidor web para
+Se realiza a continuación un revisión general sobre los componentes de un servidor web para
 dar paso a posteriori al análisis de los lenguajes dinámicos y sus frameworks.
 
 Servidor Web
@@ -84,27 +84,27 @@ Servidor Web
 
 Un servidor web, o *web server* es un software encargado de recibir solicitudes
 de un cliente, típicamente un :ref:`navegador web <navegador-web>`, a través del
-protcolo :term:`HTTP` y generar una respuesta.
+protocolo :term:`HTTP` y generar una respuesta.
 Mediante la especificación :term:`MIME` que se incluye en el encabezado de la
 respuesta, se puede identificar que tipo de archivo es devuelto, 
 siendo el tipo más común :term:`HTML`. 
 
 El contenido que es enviado al cliente puede ser de origen *estático* o *dinámico*.
 
-.. _conteido-estatico:
+.. _contenido-estatico:
 
-El contendio estático es aquél que proviene desde un archivo en el sistema de
+El contenido estático es aquél que proviene desde un archivo en el sistema de
 archivos sin ninguna modificación. 
 
-.. _conteido-dinamico:
+.. _contenido-dinamico:
 
 El contenido dinámico en contraposición al :ref:`contenido estático
-<conteido-estatico>` proviene de la salida de algún programa, un :term:`script` o algún
+<contenido-estatico>` proviene de la salida de algún programa, un :term:`script` o algún
 tipo de API invocada por el web server (como SSI, :ref:`CGI <servidor-cgi>`,
 SCGI, FastCGI, JSP, ColdFusion, NSAPI o ISAPI).
 
-.. El clinete web accede a los recursos del web server mediante una dirección de recurso, u :term:`URL`.
-La única forma de acceder a los recursos es a traves de una URL independientemente de su 
+.. El cliente web accede a los recursos del web server mediante una dirección de recurso, u :term:`URL`.
+La única forma de acceder a los recursos es a través de una URL independientemente de su 
 naturaleza.
 
 .. _servidor-cgi:
@@ -117,7 +117,7 @@ como el primer estándar de comunicación o :term:`API` entre un servidor web y 
 programa de usuario. 
 
 La salida del proceso invocado puede ser un documento
-HTML entendible para el navegador, o culaquier otro tipo de archivo, como
+HTML entendible para el navegador, o cualquier otro tipo de archivo, como
 imágenes, sonidos, contenido interactivo, etc.
 
 Las variables de entorno y la entrada estándar, constituyen los mecanismos de entrada
@@ -128,20 +128,20 @@ sobre el servidor. Éstos datos se transfieren mediante variables de entorno.
 
 
 Si existiese un cuerpo en la petición HTTP, como por ejemplo, el contenido de un
-formulario, la aplicación CGI accede a esta información como entrada estandard.
+formulario, la aplicación CGI accede a esta información como entrada estándar.
 
 El resultado de la ejecución de la aplicación CGI se escribe en la salida
-estándard, anteponiendo las cabeceras HTTP de respuesta.
+estándar, anteponiendo las cabeceras HTTP de respuesta.
 En dichos encabezados, el tipo MIME determina como se interpreta la respuesta.
 Es decir, la invocación de un CGI puede
-devolover diferentes tipos de contenido al cliente (html, imágenes, javascript,
+devolver diferentes tipos de contenido al cliente (html, imágenes, javascript,
 contenido multimedia, etc.)
 
 .. figure:: ../_svg/esquema_cgi.png
     
-    Poceso de una solicitud con CGI.
+    Proceso de una solicitud con CGI.
 
-Dentor de las varaibles de entorno, la Wikipedia [WikiCGI2009]_ menciona:
+Dentro de las variables de entorno, la Wikipedia [WikiCGI2009]_ menciona:
 
     * QUERY_STRING
         Es la cadena de entrada del CGI cuando se utiliza el método GET sustituyendo algunos símbolos especiales por otros. Cada elemento se envía como una pareja Variable=Valor. Si se utiliza el método POST esta variable de entorno está vacía.
@@ -175,13 +175,13 @@ aplicaciones.
 
 
 .. Históricamente las aplicaciones CGI han sido escritas en lenguajes interpretados, 
-.. sinedo muy popular Perl.
+.. siendo muy popular Perl.
 .. En los :ref:`lenguajes interpretados <servidor-lenguajes>`, el código ejecutable es
 .. texto plano, por lo que puede ser editado en una terminal directamente en el servidor. Otra ventaja
 .. importante de ser texto plano, es que es más sencillo de mantener con alguna herramienta de :term:SCM.
 
-CGI posee dos limitaciones importantes, una es el overhead produccido por la ejecución de un 
-proagrama y la segunda, que no fue diseñado para mantener información sobre la
+CGI posee dos limitaciones importantes, una es el overhead producido por la ejecución de un 
+programa y la segunda, que no fue diseñado para mantener información sobre la
 sesión. Cada petición se trata de manera independiente [DwightErwin1996]_ .
 
 .. [WikiCGI2009] *Interfaz de entrada común*, Wikipedia, 2009, último acceso Agosto 2009, http://es.wikipedia.org/wiki/Common_Gateway_Interface#Intercambio_de_informaci.C3.B3n:_Variables_de_entorno
@@ -197,19 +197,19 @@ Relevancia de los lenguajes dinámicos
 
 
 A continuación se analizan las características que hacen relevante 
-el estudio de los lengaujes dinámicos, como plataforma de desarrollo de aplicaciones
+el estudio de los lenguajes dinámicos, como plataforma de desarrollo de aplicaciones
 web dinámicas, para dar paso luego, a al estudio de los frameworks.
 
 
 
 Una de las clasificaciones más generales que se suelen realizar sobre los lenguajes de programación es identificar su objetivo.
 Los lenguajes de programación de *propósito general* están orientados a resolver cualquier tipo
-de problema, mientras que los lenguajes de *propósito específico* o *DSL* están enfocados en reolver un tipo de problema
-de manera más eficáz. Un ejemplo muy popular de DSL es la planilla de cálculo Microsoft Excel [DavidPollak2006]_.
+de problema, mientras que los lenguajes de *propósito específico* o *DSL* están enfocados en resolver un tipo de problema
+de manera más eficaz. Un ejemplo muy popular de DSL es la planilla de cálculo Microsoft Excel [DavidPollak2006]_.
 
 .. [DavidPollak2006] *Ruby Sig:How To Design A Domain Specific Language*, Google Tech Talk, 2:44, http://video.google.com/videoplay?docid=-8103284744220333344
 
-Además de la división entre lenguaje de porposito general y DSL, exiten otras, como la divsión entre leguajes interpretados y compilados.
+Además de la división entre lenguaje de propósito general y DSL, existen otras, como la división entre lenguajes interpretados y compilados.
 
 Un lenguaje de programación interpretado es aquel en el cual los programas son ejecutados
 por un intérprete, en lugar de realizarse una traducción a lenguaje máquina, conocido como proceso
@@ -217,25 +217,25 @@ de compilación.
 
 En teoría cualquier lenguaje de programación podría ser compilado o interpretado. 
 
-En un lengauje interpretado el código fuente es el ejecutable. En cambio,
+En un lenguaje interpretado el código fuente es el ejecutable. En cambio,
 para llegar a ejecutar un programa escrito en un lenguaje compilado,
 se deben atravesar dos etapas.
 La primera consiste en la traducción de las sentencias por código máquina 
 y otra de enlace, en la cual se ensambla el código objeto resultado de la compilación.
-En esta última etapa también se resuleven los enlaces entre los diferentes módulos compilados.
+En esta última etapa también se resuelven los enlaces entre los diferentes módulos compilados.
 
 .. figure:: ../_svg/lenguaje_interpretado.png
 
     Lenguaje interpretado.
 
 Existe un mecanismo intermedio de ejecución, conocido como máquina virtual. En éste existe
-un proceso de compilación del código fuente a un lenguaje intermedio, comunmente denominado
-*bytecode*. Este bytecode es luego ejecutado sobre un intérprete, al cual se denomina comunmente
-como máquina virutal. La traducción del código fuente a *bytecode* puede ser explícita, como en el
+un proceso de compilación del código fuente a un lenguaje intermedio, comúnmente denominado
+*bytecode*. Este bytecode es luego ejecutado sobre un intérprete, al cual se denomina comúnmente
+como máquina virtual. La traducción del código fuente a *bytecode* puede ser explícita, como en el
 lenguaje Java, o implícita como en Python, donde se mezcla en el intérprete la funcionalidad de 
 compilación a bytecode e interpretación en un solo programa.
 
-Los lenguajes de programación interpreteados suelen ser de alto nivel y de *tipado dinámico*, es decir
+Los lenguajes de programación interpretados suelen ser de alto nivel y de *tipado dinámico*, es decir
 que la mayoría de las comprobaciones realizadas en tiempo de compilación son evaluadas durante
 la ejecución [*]_ .
 
@@ -247,7 +247,7 @@ Hasta acá llegó la revisión del jueves 24 de Septiembre
 -------------------------------------------------------
 
 
-La mayoría de los lengaujes interpretados son multiplataforma, ya que solo es necesario disponer
+La mayoría de los lenguajes interpretados son multiplataforma, ya que solo es necesario disponer
 de un intérprete compilado, a diferencia de los lenguajes compilados en los cuales se requiere disponer
  de un compilador para la plataforma y compilar el código.
 
@@ -257,7 +257,7 @@ de un intérprete compilado, a diferencia de los lenguajes compilados en los cua
 
 La mayoría de los lenguajes interpretados son lenguajes dinámicos, esto permite el agregado de código, extensión o redefinición de objetos 
 y hasta inclusive modificar tipos de datos, en tiempo de ejecución.
-Cabe destacar que si bien estas características son factibles de implementar sobre lengujaes estáticos, no resulta sencillo.
+Cabe destacar que si bien estas características son factibles de implementar sobre lenguajes estáticos, no resulta sencillo.
 
 
 En base a la clasificación antes mencionada, se analizan los lenguajes de programación más 
@@ -272,35 +272,35 @@ muchas plataformas, incluyendo todas las variantes de UNIX.
 Estructuralmente, Perl está basado en un estilo de bloques como los del C o AWK, y fue ampliamente adoptado por su 
 destreza en el procesamiento de texto.
 
-La principal crítica al lenguaje es la ambiguedad y complejidad de su sintaxis, una tarea puede ser realizada de 
+La principal crítica al lenguaje es la ambigüedad y complejidad de su sintaxis, una tarea puede ser realizada de 
 varias maneras diferentes, dado lugar a confusión en grupos de trabajo.
 
 
 
-**Java** es un lenguaje de progamación orientado a objetos, multiplataforma y porpósito general, basado en máquina virtual, de compilación explícita.
+**Java** es un lenguaje de programación orientado a objetos, multiplataforma y propósito general, basado en máquina virtual, de compilación explícita.
 Java ha definido algunos elementos importantes en cuanto a la web dinámica, como los applets [*]_ y la especificación J2EE.
 Dos desventajas que presenta este lenguaje, al igual que su predecesor C++, del cual heredó una sintaxis verborragica [SeanKellyRecFromAdict2009]_
-además del tipado estático. Como contrapartida resulta una alternativa velóz para ciertas tareas _ponert_citas_, lo que
+además del tipado estático. Como contrapartida resulta una alternativa veloz para ciertas tareas _poner_citas_, lo que
 motivó el desarrollo de lenguajes dinámicos [TolksdorfJVM2009]_ que hacen uso de su máquina virtual [*]_. Se destaca, Scala, que hoy cuenta con frameworks con una concepción post RubyOnRails. 
 
 .. sin embargo, todavía no han alcanzado la popularidad de J2EE o ROR.
 
-.. [*] Pequeños programaas que se ejecutan en el navegaor web
+.. [*] Pequeños programas que se ejecutan en el navegador web
 .. [*] Estos lenguajes interpretados utilizan compilación JIT a bytecode de la JVM.
 
 http://www.archive.org/details/SeanKellyRecoveryfromAddiction
-.. [SeanKellyRecFromAdict2009] *Recuperandose de la adicción*, Sean Kelly, Video hospedado en *The Internet Archive*, último acceso Septiembre de 2009, http://www.archive.org/details/SeanKellyRecoveryfromAddiction
+.. [SeanKellyRecFromAdict2009] *Recuperándose de la adicción*, Sean Kelly, Vídeo hospedado en *The Internet Archive*, último acceso Septiembre de 2009, http://www.archive.org/details/SeanKellyRecoveryfromAddiction
 
 .. [TolksdorfJVM2009] *Programming languages for the Java Virtual Machine JVM*, Robert Tolksdorf, último acceso Septiembre de 2009, http://www.is-research.de/info/vmlanguages/
 
 
-**PHP** es un lenguaje interpreteado, originalmente diseñado para ser embebido 
+**PHP** es un lenguaje interpretado, originalmente diseñado para ser embebido 
 dentro del código HTML y procesado en el servidor, lo cual lo convierte en un DSL.
-Con los años evolucionó hacia un lenguaje de porpósito general.
+Con los años evolucionó hacia un lenguaje de propósito general.
 Toma elementos de Perl y shellscript, C, y recientemente Java.
 
 
-Tradicionalmente el ciclo de ejcución consiste en:
+Tradicionalmente el ciclo de ejecución consiste en:
 	* A partir de la URL de la solicitud del cliente se determina el archivo PHP que se encargará de generar la respuesta
 	* El servidor, activa el módulo encargado de la interpretación de PHP con el archivo y la solicitud como entrada
 	* La salida es devuelta al cliente.
@@ -322,10 +322,10 @@ Los autores de Django y Ruby On Rails provenir del lenguaje PHP en [SnakesAndRub
 **Ruby** es un lenguaje orientado fuertemente objetos, multiplataforma, creado en 1995 por 
 Yukihiro "Matz" Matsumoto, en Japón.
 A menudo comparado con *Smalltak*, se suele decir que Ruby es un lenguaje de objetos puro, 
-ya que *todo* es un objeto. Posee muchas caracteríticas avanzadas como metaclases, clausuras, iteradores, integración natural de expresiones regulares en la sintaxis, etc.
+ya que *todo* es un objeto. Posee muchas características avanzadas como metaclases, clausuras, iteradores, integración natural de expresiones regulares en la sintaxis, etc.
 
 Su sintaxis es compacta, gracias a la utilización de simbología, parte de la cual fue tomada de Perl.
-Existen varios intérpretes de Ruby, siendo la oficial escrita en C, se concen 
+Existen varios intérpretes de Ruby, siendo la oficial escrita en C, se conocen 
 YARV [YARV2009]_ , 
 JRuby [JRuby2009]_ , 
 Rubinius [Rubinius2009]_ , 
@@ -342,7 +342,7 @@ Una de las :term:`Killer App` según el autor es el framework para contenido web
 Su versión estable oficial fue liberada en el año 2005 y proponía un cambio radical al enfoque complejo de *J2EE* [RailsQuotes2009]_ .
 
 Ruby aún posee baja aceptación debido, quizás, a que la documentación oficial solía estar
-en idioma Japonés (auque la situación se ha venido revirtiendo ultimamente). Otra desventaja importante es que
+en idioma Japonés (aunque la situación se ha venido revirtiendo últimamente). Otra desventaja importante es que
 la velocidad del intérprete oficial es bastante baja (cuando se la compara con otros lenguajes dinámicos similares como Python) y
 variables entre plataformas.
 
@@ -352,7 +352,7 @@ variables entre plataformas.
 **Python** es un lenguaje de programación interpretado multiparadigma, 
 de propósito general. Fue creado por por Guido van Rossum en el año
 1991.
-Se trata de un lenguaje dinámico que toma elmentos de varios lenguajes, como C, Java,
+Se trata de un lenguaje dinámico que toma elementos de varios lenguajes, como C, Java,
 Scheme, entre otros.
 
 Python puede ser extendido mediante módulos escritos en C o C++, y también 
@@ -371,13 +371,13 @@ proyectos del lenguaje Python orientados a la Web [PythonPyPi2009]_.
 
 .. [PythonPyPi2009] En el repositorio de proyectos del lenguaje se encuentran más 1100 resultados para paquetes relacionados con el término "web". http://pypi.python.org/pypi?%3Aaction=search&term=web&submit=search
 
-Los motivos por los cuales se seleccionó [*]_ el leguaje Python para el desarrollo de
-la aplicación, son los que a continuacion se enumeran:
+Los motivos por los cuales se seleccionó [*]_ el lenguaje Python para el desarrollo de
+la aplicación, son los que a continuación se enumeran:
 
 	* Popularidad [PythonPyPi2009]_
 		
 	* Performance adecuada en función de las lineas de código escritas [DhananjayNene2009]_
-		- Si bien Perl es más velóz para tareas de tratamiento de texto, su sintaxis es compleja
+		- Si bien Perl es más veloz para tareas de tratamiento de texto, su sintaxis es compleja
 	
 	* Filosofía de simplicidad
 		- Sintaxis clara
@@ -387,7 +387,7 @@ la aplicación, son los que a continuacion se enumeran:
 
 En el :ref:`apéndice <apendices-python>` se encuentra una referecia detallada del lenguaje.
 
-.. [PythonOrgZen2009] *El zen de Python*, último acceso Septimebre de 2009, http://www.python.org/dev/peps/pep-0020/
+.. [PythonOrgZen2009] *El zen de Python*, último acceso Septiembre de 2009, http://www.python.org/dev/peps/pep-0020/
 
 .. [*] Por sin no les quedaba duda del fanatismo del defo, by **gisE**!!!
 
@@ -399,12 +399,12 @@ Módulo de interconexión de servidor web con Python
 Existen varios módulos para interconexión de intérprete de Python con un servidor web. Phillip J. Eby formuló
 un método que sigue la filosofía del lenguaje, en la [PEP333]_, que denominó WSGI (Web Server Gateway Interface).
 Informalmente se puede decir que WSGI es una traducción de CGI al lenguaje Python.
-Su objetivo principal fue estaandarizar sobre el lenguaje el macanismo de comunicación entre el servidor y una aplicación.
+Su objetivo principal fue estandarizar sobre el lenguaje el mecanismo de comunicación entre el servidor y una aplicación.
 
 .. [PEP333] PEP *Python Enhancement Proposals* son documentos en los que se proponen mejoras para el lenguaje
 Python, son albergados en el sitio oficial http://www.python.org
 
-Para satifacer una solicitud bajo WSGI, se invoca la función de entrada. Esta recibe 2 argumentos:
+Para satisfacer una solicitud bajo WSGI, se invoca la función de entrada. Esta recibe 2 argumentos:
 	1. Un diccionario con las variables de entorno, al igual que en CGI
 	2. Una función (u :ref:`objeto llamable <apendice_python_callables>` ) al cual se invoca para iniciar la respuesta.
 
@@ -412,7 +412,7 @@ Para satifacer una solicitud bajo WSGI, se invoca la función de entrada. Esta r
 
     Esquema WSGI.
 
-En el siguente ejemplo constituye una aplicación mínima en WSGI. La función app es el punto de entrada y devuelve *Hello World*.
+En el siguiente ejemplo constituye una aplicación mínima en WSGI. La función app es el punto de entrada y devuelve *Hello World*.
 Utiliza la función que recibe como segundo argumento, 'start_response', para que el cliente determine como tratar la respuesta.
 En este caso, texto plano.
 
@@ -447,7 +447,7 @@ a las cuales se accede mediante una API bien definida. Sin embargo, existen
 ciertas características que diferencian al framework de una librería o
 aplicaciones normales de usuario:
 
-    * Inversion de control
+    * Inversión de control
 		
 		Tradicionalmente se escriben las aplicaciones haciendo
 		llamadas a las bibliotecas de manera explicita. El flujo de control
@@ -460,9 +460,9 @@ aplicaciones normales de usuario:
         En cada elemento del framework, existe un comportamiento genérico con alguna
         utilidad.
 
-    * Extensibiliad
+    * Extensibilidad
 
-		El comportamiento predefinido de cada componete es generlamnete
+		El comportamiento predefinido de cada componente es generalmente
 		modificado por el programador con algún fin específico. Los métodos
 		utilizados en los frameworks realizados sobre lenguajes orientados
 		a objetos suelen ser redefinición o especialización.
@@ -473,13 +473,13 @@ aplicaciones normales de usuario:
 		el código proyecto y no sobre el código del framework.
 
 Se utiliza un framework con el objeto de simplificar el desarrollo de
-un proyecto, permitendo a los programadores desligarse de resolver detalles 
+un proyecto, permitiendo a los programadores desligarse de resolver detalles 
 comunes de bajo nivel.
 
 A modo de ejemplo, un equipo donde se utiliza un framework web para desarrollar un
 sitio de banca electrónica, los desarrolladores pueden enfocarse en la lógica
-necesaria para realizar las extraciones de dinero, en vez de la mecánica para
-preserver el estado entre las peticiones del navegador.
+necesaria para realizar las extracciones de dinero, en vez de la mecánica para
+preservar el estado entre las peticiones del navegador.
 
 
 Sin embargo una serie de argumentos comunes existen contra la utilización 
@@ -491,7 +491,7 @@ de frameworks:
 
 .. figure:: ../_svg/esquema_libreria_vs_framework.png
 
-    Libreria vs Framework.
+    Librería vs Framework.
 
 
 
@@ -551,19 +551,19 @@ Un framework web MVC suele contar con los siguientes componentes [WIKI002]_
 	
 		Los tipos de datos de los lenguajes orientados a objetos difieren de 
 		el modelo ER utilizado para la definición de bases de datos. Un ORM
-		tiene como objetivo acortar esta brecha, permtiendo definir entidades
+		tiene como objetivo acortar esta brecha, permitiendo definir entidades
 		en objetos que luego se transportan a la base de datos, además de la
 		capacidad de CRUD y consultas sobre estos.
 
     * Seguridad
     	
 		Existen diversos aspectos de seguridad que deben ser tenidos en cuenta
-		cuando se implementa una aplicación web, como la vlidación de entrada,
+		cuando se implementa una aplicación web, como la validación de entrada,
 		protección de Cross Site Scripting, etc.
 
     * Mapeo de URLs
     
-    	Cada URL activa algún compoenente del controlador. La definción de esta
+    	Cada URL activa algún componente del controlador. La definición de esta
     	asociación (o mapeo) generalmente está centralizada y bien especificada en
     	un framework.
 
@@ -575,23 +575,23 @@ Un framework web MVC suele contar con los siguientes componentes [WIKI002]_
     	Para definir la plantilla se utiliza un lenguaje básico que se integra
     	con HTML o XML.
     	La utilización de plantillas facilita la modificación de la fachada sin
-    	acceder al modelo o contolador.
+    	acceder al modelo o controlador.
 
     * Caché
     	
     	La generación de ciertas páginas dentro de la aplicación puede requerir
-    	un timpo considerable por lo que es normalmente utilizada alguna técnica
+    	un tiempo considerable por lo que es normalmente utilizada alguna técnica
     	de caché, que consiste en almacenar la salida durante un tiempo determinado,
     	de manera de obtener una respuesta *cacheada*, lo que repercute en mayor
     	velocidad.
-    	Algunos frameworks hacen uso de algun mecanismo unificado para realizar caché.
+    	Algunos frameworks hacen uso de algún mecanismo unificado para realizar caché.
     	
 
     * AJAX
     	
     	Hoy en día es común la técnica de incorporar elementos dinámicos que 
     	modifican el estado de una página de manera asincrónica. Es decir
-    	partes de la página pueden realizar nuevas requermientos al servidor
+    	partes de la página pueden realizar nuevas requerimientos al servidor
     	cuya respuesta no fuerza una recarga de la página.
     	Esta técnica es conocida como AJAX. Algunos frameworks como Ruby On Rails soportan 
     	AJAX directamente en el sistema de plantillas.
@@ -625,8 +625,8 @@ Un ORM libera la carga de la conversión explícita del lenguaje OO a SQL y
 logra independizar la estructura de almacenamiento del modelo de dominio.
 
 Un ORM realiza en principio tres tipos de conversión del lenguaje OO a SQL:
- * Converisión de definición de entidades.
- * Creacíon, modificación y eliminación de entidades a partir de instancias 
+ * Conversión de definición de entidades.
+ * Creaci n, modificación y eliminación de entidades a partir de instancias 
    de clases de modelo (persistencia).
  * Definición de consultas en lenguaje OO y recuperación de datos en instancias 
    de clases de modelo.
@@ -635,8 +635,8 @@ Un ORM realiza en principio tres tipos de conversión del lenguaje OO a SQL:
 	Las primeras aproximaciones al mapeo relacional de objetos surgen de convertir
 	los valores de los objetos en grupos de valores simples para almacenarlos en la
 	base de datos (y volverlos a convertir luego de recuperarlos de la base de
-	datos). Sin embargo, esta traduccion simple dista mucho del concepto de *objetos 
-	persistentes*, la idea de estos es la traducción automatica de objetos en formas
+	datos). Sin embargo, esta traducción simple dista mucho del concepto de *objetos 
+	persistentes*, la idea de estos es la traducción automática de objetos en formas
 	almacenables en la base de datos y su posterior recuperación conservando las
 	propiedades y las relaciones ente los mismos.
 	
@@ -664,9 +664,9 @@ Introducción
 `Django <http://www.djangoproject.com>`_ es un framework web escrito en Python
 el cual se apoya en el patrón de Modelo Vista Controlador.
 
-En principio surge como un adminsitrador de contenido para varios sitios de
-noticias, luego, los desarrolladores encontraron que su CMS era lo sufcientemente
-genérico como para curbir un ámbito más aplio de aplicaciones.
+En principio surge como un administrador de contenido para varios sitios de
+noticias, luego, los desarrolladores encontraron que su CMS era lo suficientemente
+genérico como para cubrir un ámbito más amplio de aplicaciones.
 
 .. En honor al músico Django Reinhart
 
@@ -676,7 +676,7 @@ fue "Django, Él framework para perfeccionistas con fechas límites" [*]_.
 
 .. [*] Del ingles "The Web framework for perfectionists with deadlines"
 
-En junio del 2008 fue anuncidada la creación de la Django Software Fundation,
+En junio del 2008 fue anunciada la creación de la Django Software Fundation,
 la cual se encarga del desarrollo y mantenimiento.
 
 Los orígenes de Django en la administración de páginas de noticias se ponen 
@@ -690,13 +690,13 @@ las aplicaciones de la siguiente manera:
 	* Aplicaciones de usuario
 		Son aquellas que resuelven algún problema específico (ej: ventas, alquileres, blog, noticias, etc.)
 	* Aplicaciones genéricas
-		Son aquellas que resulven problemas comunes, como la autenticación, bitácora,
-		sindicación, etc. Algunas aplicaciones genericas se distribuyen con Django, de
+		Son aquellas que resuelven problemas comunes, como la autenticación, bitácora,
+		sindicación, etc. Algunas aplicaciones genéricas se distribuyen con Django, de
 		las cuales resulta interesante destacar:
 		
 		- *django.contrib.admin* 
-			Provee de manera automática un sitio de adminstración que permite realizar 
-			operaciones CRUD sobre el modelo (definido a travéz del ORM), administrar 
+			Provee de manera automática un sitio de administración que permite realizar 
+			operaciones CRUD sobre el modelo (definido a través del ORM), administrar 
 			usuarios y permisos, llevando un registro de todas las acciones realizadas 
 			sobre cada entidad (sistema de logging o bitácora).
 
@@ -704,7 +704,7 @@ las aplicaciones de la siguiente manera:
 			Sistema de comentarios
 			
 		- *django.contrib.syndication*
-			Herramientas para sindicar contenido via RSS y/o Atom
+			Herramientas para sindicar contenido vía RSS y/o Atom
 		
 		- *django.contrib.gis*		
 			Sistema de información geográfico
@@ -715,7 +715,7 @@ las aplicaciones de la siguiente manera:
 La concepción de MVC de Django difiere ligeramente del enfoque tradicional, 
 se denomina al controlador vista y a la vista, template; resultando el 
 acrónimo MTV.
-El controlador de MVC, se presneta en Django como conjunto de funciones
+El controlador de MVC, se presenta en Django como conjunto de funciones
 y asociaciones de URLs a las mismas.
 Cada función de la vista delega la presentación de los datos al sistema
 de plantillas.
@@ -781,7 +781,7 @@ la URL donde serán publicados [*]_ (*MEDIA_URL*, *MEDIA_ROOT*). Otras configura
 zona horaria, clases de middleware [*]_ , ruta a los templates, etc. 
 
 El modulo settings es código fuente y es posible realizar configuraciones en tiempo de ejecución, tarea
-que no es factible utilzando lenguajes de marcado como XML, YAML, archivos INI, etc.
+que no es factible utilizando lenguajes de marcado como XML, YAML, archivos INI, etc.
 
 .. [*] Imágenes, sonido, flash, etc.
 .. [*] En django una clase middleware conecta los componentes de MTV, el usuario puede definir un comportamiento
@@ -798,7 +798,7 @@ como *startapp*, que crea una aplicación en el proyecto, *runserver* que lanza 
 servidor de desarrollo o *syncdb* que mediante el ORM crea el esquema en la base
 de datos a partir de el módulo :ref:`*models*<_django-proyecto-models>` de cada aplicación.
 
-Existen otros comandos que pemiten realizar testing, iniciar la consola interactiva,
+Existen otros comandos que permiten realizar testing, iniciar la consola interactiva,
 administrar usuarios, etc.
 
 .. _django-proyecto-urls:
@@ -807,14 +807,14 @@ Módulo urls
 -----------
 
 Este módulo define las asociaciones entre las urls y las vistas a nivel proyecto.
-Puede lograrse modularidad derivando el tratdo de ciertas urls en módulos similares
+Puede lograrse modularidad derivando el tratado de ciertas urls en módulos similares
 de aplicaciones instaladas en el proyecto.
 
-Cuando el usuario reliza una solicitud, djangco busca una asociación que concuerde con
-la url dada. De encontrala ejecuta la vista correspondiente a ésta.
+Cuando el usuario realiza una solicitud, Django busca una asociación que concuerde con
+la url dada. De encontrarla ejecuta la vista correspondiente a ésta.
 
 La url en las asociaciones se definen mediante expresiones regulares que soportan
-recuperación de gurpos nombrados (una subcadena identificada con un nombre). Los grupos nombrados
+recuperación de grupos nombrados (una subcadena identificada con un nombre). Los grupos nombrados
 definidos en cada asociación son argumentos de la función vista.
 
 
@@ -828,11 +828,11 @@ La asociación url-vistas se define  bajo el nombre :term:`urlpatterns`.
         
         	from mi_proyecto.personas.views import ver_personas
         	urlpatterns = patterns('',
-				# Derivación en módulo de aplicacion personas
+				# Derivación en módulo de aplicación personas
 	            (r'^personas', include('mi_proyecto.personas.urls')),
 	            
 	            # Recuperación de datos de la url
-	            (r'^personas/(?P<perona_id>\d{1,4}})', ver_persona),
+	            (r'^personas/(?P<persona_id>\d{1,4}})', ver_persona),
 	        )
 
 
@@ -840,10 +840,10 @@ El sistema de plantillas
 ========================
 
 El sistema de plantillas aparece en la última fase de la generación de la respuesta
-al cliente. Tiene como objetivo la speración del procesamiento de datos 
+al cliente. Tiene como objetivo la separación del procesamiento de datos 
 la presentación.
 Una vez hallada la vista asociada a la url de la solicitud, django ejecuta la vista.
-Ésta tras completar su procesmiento deriva la presetnación de los datos al template o
+Ésta tras completar su procesamiento deriva la presentación de los datos al template o
 plantilla.
 
 Django incluye por defecto funciones cargadoras de temaplates [*]_ que realizan la búsqueda
@@ -893,8 +893,8 @@ Esta plantilla es un HTML básico con algunas variables y etiquetas agregadas.
         es una etiqueta de lógica o define algún bloque. Algunas etiquetas
         son if, for, extends, load entre otros.
         
-    * Es posible definir template tags (o etiquetas de tempalte) de usuario, 
-      que actuan como una fucnión en el template. 
+    * Es posible definir template tags (o etiquetas de template) de usuario, 
+      que actúan como una función en el template. 
     
     * Django posee un sistema jerárquico de templates que propone una estructura
       de herencia. Un template base puede definir una serie de bloques y entre
@@ -905,9 +905,9 @@ Esta plantilla es un HTML básico con algunas variables y etiquetas agregadas.
 Si bien los templates suelen estar orientados a la generación de HTML, es posible
 obtener otros formatos.
 
-Normalmente los archivos de template se ubican en el directorio "templates" en la raíz del proyeco.
+Normalmente los archivos de template se ubican en el directorio "templates" en la raíz del proyecto.
 Puede incluirse también  un directorio "templates"" en cada aplicación del proyecto. Los
-TEMPLATE_LOADERS definidos en settings relizan la búsuqeda cuando la vista lo requiera.
+TEMPLATE_LOADERS definidos en settings realizan la búsqueda cuando la vista lo requiera.
 
 Una referencia detallada se encuentra en la `documentación de Django <http://docs.djangoproject.com/en/dev/ref/templates/builtins/>`_ 
 
@@ -915,12 +915,12 @@ Estructura de una aplicación Django
 ===================================
 
 Una aplicación es un paquete python, que consta de un módulo models y un módulo
-views. Para crear una aplicacion se utiliza el comando **startapp** del modulo 
+views. Para crear una aplicación se utiliza el comando **startapp** del modulo 
 :ref:`manage <django-proyecto-manage>` de la siguiente manera:
 
 .. code-block:: bash
 
-    $ python manage.py startapp mi_aplicacion # Crea la aplicacion
+    $ python manage.py startapp mi_aplicacion # Crea la aplicación
 
 El resultado de este comando genera la siguiente estructura en el proyecto::
 
@@ -941,8 +941,9 @@ Módulo models
 
 Al crear una aplicación es generado un módulos models.py en cual se definen 
 las clases que extienden de *django.db.models.Model*. Estas definiciones
-son transforamadas por el ORM en tablas relacionales [*]_.
+son transformadas por el ORM en tablas relacionales [*]_.
 
+.. ejemplo-orm-simple:
 Ej:
 
 .. code-block:: python
@@ -950,15 +951,14 @@ Ej:
 	class Persona(models.Model):
 	    nombre = models.CharField(max_length = 50)
 	    apellido = models.CharField(max_length = 50)
-	    nacimiento = models.DateField()
-	    dni = models.PositiveIntegerField()
+
 
 .. [*] Mediante el comando syncdb del módulo manage del proyecto
 	    
 Módulo views
 ------------
 
-Cada aplicacion posee un módulo views, donde se definen las funcinoes que responden
+Cada aplicación posee un módulo views, donde se definen las funciones que responden
 al cliente y se activan por medio del mapeo definido en el módulo urls del proyecto
 o de la aplicación.
 
@@ -968,7 +968,7 @@ y opcionalmente parámetros obtenidos de los grupos nombrados de la url.
 El siguiente ejemplo integra un fragmento de los módulos urls y views.
 .. code-block:: python
 
-    # Tras un mapeo como el sigunete
+    # Tras un mapeo como el siguiente
     (r'^persona/(?P<id_persona>\d{1,4}})/$', mi_vista)
     
     # la vista se define como
@@ -984,29 +984,18 @@ Contenido dinámico y estático en Django
 =======================================
 
 Django no se ocupa de generar contenido estático, sin embargo éste es
-necesario para el desarrollo completo de una apliación web (imágenes, javascript y hojas de estilo).
+necesario para el desarrollo completo de una aplicación web (imágenes, 
+javascript y hojas de estilo).
 Django delega esta tarea al servidor web [DjangoDoc2009]_, sin embargo 
-para desarrollo se prové un una vista que devuelve contenido estático (*django.views.static.serve*).
-
-Hasta acá
----------
+para desarrollo se provee un una vista que devuelve contenido estático (*django.views.static.serve*).
 
 Al momento de la puesta en producción del proyecto desarrollado en Django,
-se realizan dos tareas:
-
- * Configuración del soporte para ejecución de Python
- 	En la presente tesis focalizamos el estudio de WSGI ya que es un 
-	estándard Pythonico. Pero existen toros como mod_python para Apache.
-	Independientemente de que tipo de soporte se utilize es necesario
-	asegurarse que tanto Django, como así aplicaciones de terceros
-	estén incluidas en el PythonPath con el cual se invoca al 
-	script con el entry point de la aplicación.
+se deberá realizar la configuración del soporte para ejecución de Python
+(en la presente tesis se opto por el estudio de WSGI ya que es un 
+estándar Pythonico), en este momento se reemplaza el uso de las static views 
+para ser delegadas al server web, tal como antes se menciono.
 	
- * Configuración de los medios estáticos.
- 	Se delega al servidor web la tarea de responder las requisiciones
- 	sobre los medios estáticos. 
-
-
+	
 .. figure:: ../_svg/esquema_django_static.png
 
 	Deployment de Django
@@ -1014,17 +1003,19 @@ se realizan dos tareas:
 		Una aplicación escrita en Django puesta en producción consta de contenido dinámico 
 		manejado por WSGI y contenido estático servido por el web server.
 
-.. [DjangoDoc2009] *Sirviendo archivos esáticos con Django*, Django Wiki, http://docs.djangoproject.com/en/dev/howto/static-files/#the-big-fat-disclaimer
+.. [DjangoDoc2009] *Sirviendo archivos estáticos con Django*, Django Wiki, http://docs.djangoproject.com/en/dev/howto/static-files/#the-big-fat-disclaimer
 
-El cliclo de una petición 
+
+El ciclo de una petición 
 =========================
 
-Se describe a continuación de manera más detallada el clico de una petición
-en Django. Durante el proceso de la petición existen clases que relizan tareas
-transversales, algunas de bajo nivel y otras de alto nivel como caché, sesión y autenticación, 
-manejo de cabeceras HTTP, etc. y reciben el nombre de clases de Middleware.
+Se describe a continuación de manera más detallada el ciclo de una petición
+en Django. Durante este proceso existen clases que realizan tareas
+transversales, algunas de bajo y otras de alto nivel como caché, 
+sesión y autenticación, manejo de cabeceras HTTP, etc. y reciben el nombre 
+de clases de Middleware.
 
-Según que métodos implementen pueden anteponerse o anexarse a una o más etapas del
+Según que métodos se implementen pueden anteponerse o anexarse a una o más etapas del
 proceso del request.
 
 .. _middleware_classes:
@@ -1035,45 +1026,50 @@ proceso del request.
 
 El ciclo de una petición se completa mediante los siguientes pasos:
 
- * Entrada por Middlewares de Request
-	El primer componete en tratar la solicitud es el conjunto de middlewares de request.
+ #. Entrada por Middlewares de Request
+	El primer componente en tratar la solicitud es el conjunto de middlewares de request.
 	Se encargan de envolver la petición en una instancia de la clase HttpRequest 
 	(*django.middleware.common.CommonMiddleware*), adicionar la sesión al request
 	(*django.contrib.sessions.middleware.SessionMiddleware*) y la relación entre
 	la sesión y el usuario de la aplicación de autenticación
 	(*django.contrib.auth.middleware.AuthenticationMiddleware*).
 
- * URLConf y View Middlewares
-	El siguiente paso es la búsqueda de la url (que se encuentra en el atributo *path*
+ #. URLConf y View Middlewares
+	El siguiente paso es la búsqueda de la vista a partir de la url de la
+	solicitud (que se encuentra en el atributo *path*
 	de la instancia de *HttpRequest* generada por el middleware de request) en los
-	patrones de urls asociados a las vistas. La búsqueda comienza en el módulo indicado
-	por la constante ROOT_URLCONF del módulo settings del  proyecto.
-	Una vez obtenida la vista, los middleware de vistas pueden anteponerse o 
-	anexarse a la ejecución de la vista. Un middleware de vista importante es el
-	de transacciones de bases de datos que inicia una transacción antes de la ejecución
-	de la vista y la cierra exitosamente tras la ejecución de la vista. Este middleware
-	realiza un "rollback" en caso de encontrarse una excepción.
+	patrones de urls asociados a las vistas.
+	La constante ROOT_URLCONF (del módulo settings del proyecto) determina donde
+	comienza dicha búsqueda.
+	Una vez obtenida la vista, los middleware de vistas pueden posicionar su 
+	ejecución antes o después de ésta. 
 	
- * Salida mediante Middleware de Response
- 	Finalmente, cunado la vista a generado una respuesta, esta es procesada por los
+	Un middleware de vista importante es el transacciones.
+	Previa a la ejecución de la vista inicia una transacción, al completarse 
+	de manera exitosa dicha vista se realiza un COMMIT. De existir algún error
+	se cierra la transacción con un ROLLBACK.
+	
+ #. Salida mediante Middleware de Response
+ 	Finalmente, cunado la vista a generado una respuesta, ésta es procesada por los
  	middlewares de respuesta (*Response Middlewares*). Algunas tareas que se 
- 	pueden relizar con este tipo de middlewares es compresión de la salida, 
+ 	pueden realizar con este tipo de middlewares es compresión de la salida, 
  	inclusión de librerías de javascript muy modulares, como YUI, etc.
  	
- * Middlewares de Excepciones
- 	Cuando se lanza una excepción que no es capturada en la vista o urls, 
- 	el middleware de excepciones las captura y genera una respuesta informando
- 	el error. Cuando el modulo settings posee la badera DEBUG en verdadero,
- 	se muestra la traza de la excepción.
+ #. Middlewares de Excepciones
+ 	De lanzarse una excepción que no es capturada en la vista, modelos o urls, 
+ 	el middleware de excepciones la captura y genera una respuesta informando
+ 	el error (cuando la bandera DEBUG del modulo settings está activada, se genera
+ 	un traceback del error). 
 	
-Las clases de middleware generalmente están provistas por Django y son incluidas
-en la generación del proyecto en la escritura del módulo settings. Una clase de 
-middleware puede implementar uno o más métodos de los mostrados en la :ref:`figura  <_middleware_classes>`
+Las clases de middleware están provistas por Django y son incluidas durante 
+la generación del proyecto en el módulo settings. 
+Una clase de middleware puede implementar uno o más métodos de los 
+mostrados en la :ref:`figura  <_middleware_classes>`
 
 
 .. figure:: ../_svg/esquema_django.png
 	
-	Otra forma de ver el procesamiento de un request con la interacción de los middlewares.
+	Vista alternativa del procesamiento de un request con la interacción de los middlewares.
 
 
 .. _django-orm-modelos:
@@ -1082,40 +1078,54 @@ La API de modelos (ORM)
 =======================
 
 Un modelo de Django es una descripción de alto nivel de la estructura 
-de la base de datos. Esta descripción se realiza en lenguaje Python en cada 
-cada aplicación en el modulo models.py, en vez de realizarse en SQL. Es posible
-tamibén realizar auto generación básica de modelos mediante la introspección de
-la base de datos para adaptar el ORM a sistemas legacy.
+de la base de datos. Esta descripción se realiza en lenguaje Python en el módulo 
+models.py de cada aplicación, en vez de realizarse en SQL. 
 
-Dentro del módulo se define cada entidad como una clase que exitende a *django.db.models.Model*.
-Si bien la entidad queda identificada con el nombre de clase, pueden existir colisiones entre
-nombres iguales en diferentes aplicaciones. Por esto, el *nombre completo de las entidades*
-se define como una cadena compuesta por el nombre de la aplicación y el nombre de la entidad
+De contarse con una base de datos preexistente, Django permite inferir la definición
+de los modelos, con el fin de adaptar el ORM.
+Dentro del módulo se define cada entidad como una clase que extiende a *django.db.models.Model*.
+
+
+Si bien la entidad queda identificada con el nombre de clase, pueden existir 
+colisiones entre nombres iguales en diferentes aplicaciones. Por esto, 
+el *nombre completo de las entidades* se define como una cadena compuesta por 
+el nombre de la aplicación y el nombre de la entidad
 unidos por un punto (Ej: ``"personal.Persona"``, ``"auth.User"``, ``"ventas.Producto"``, etc.).
+
 
 .. note::
 	Nombre *Modelo*:
 	
-		Si bien se utilizó el término *endiad* para definir los integrantes del modelo
-		de una aplicación, se suele utilizar la palabra *modelo* en singular.
+		Si bien se utilizó el término *entidad* para definir los integrantes del modelo
+		de una aplicación, es posible utilizar la palabra *modelo* en singular.
 
-Las tarea del ORM son:
+Las tareas del ORM son:
 
 	* Creación de Tablas Relacionales
-	
 		Esta operación realiza mediante el DDL [*]_ de SQL.
-		Se toma como nombre de tabla el nombre completo de entidad intercambiando
-		el punto por un guión bajo `_`. Si existiesen relaciones que requieran
-		tablas intermedias, son creadas.
+		Se toma como nombre de tabla el nombre completo de entidad reemplazando
+		el punto por un guión bajo. 
+		Si existiesen relaciones que requieran tablas intermedias, son creadas.
 		
 		Esta operación se activa mediante el comando *syncdb* del modulo
 		*manage* del proyecto.
+		
+		En el :ref:`ejemplo <ejemplo-orm-simple>` el ORM se encarga de
+		generar el siguiente código SQL al momento de la ejecución del comando syncdb.
+
+		.. code-block:: sql
+		
+		    CREATE TABLE miapp_persona (
+		        "id" serial NOT NULL PRIMARY KEY,
+		        "nombre" varchar(30) NOT NULL,
+		        "apellido" varchar(30) NOT NULL
+		    );
 		 
 	* CRUD
 		- Creación, Modificación y Eliminación
 			La creación de entradas en la base de datos se realiza cuando
 			una instancia de una clase del modelo recibe el mensaje ``save()`` (*INSERT*).
-			Sobre una instancia creada o recuperada, el mensaje ``save()``
+			Sobre una instancia existente, el mensaje ``save()``
 			actualiza la entidad con los valores (*UPDATE*)
 			Cuando una instancia existente en la base recibe el mensaje 
 			``delete()`` se elimina (*DELETE*).
@@ -1123,101 +1133,108 @@ Las tarea del ORM son:
 			
 		- Recuperación (Administradores de consultas)
 			La recuperación de datos de una base de datos relacional se 
-			realiza típicamente mediante la sentencia sql SELECT. Pero
+			realiza típicamente mediante la sentencia SQL *SELECT*, pero
 			los criterios de búsqueda pueden llegar a ser complejos, sobre todo cuando
-			existen relaciones. Por esto, Django agrega un objeto manager
-			a cada entidad y a cada relación. Un manager soporta una API
-			definida para las consultas.
+			existen relaciones, por esto, Django agrega un objeto (manager) que simplifica la tarea
+			de recuperación de instancias. Existe un manager por cada entidad y cada relación 
+			que esta posea. 
 			
 	* Sistema de señales
-		
 		El sistema de señales permite registrar funciones para ser ejecutadas
-		antes o despues de ciertos eventos, como la creaión de instancias del 
-		modelo, la elminiación, o la creación (*syncdb*). Son equivalentes a
+		antes o después de ciertos eventos, como la creación de instancias del 
+		modelo, la eliminación, o la creación del esquema (*syncdb*). Son equivalentes a
 		triggers en la base de datos.
 	
 	* Inclusión de metadatos
-		
 		Existen ciertos metadatos que no pueden incluirse fácilmente en SQL
-		de manera standard, como el nombre visible para el usuario de una
+		de manera estándar, como el nombre visible para el usuario de una
 		entidad, en plural y en singular, o la url absoluta del elemento en
 		el sistema. Esta información puede almacenarse mediante una clase
 		interna Meta y métodos de instancia.
+	
+	* Herencia de objetos
+		Django permite crear jerarquías de herencia en los modelos. 
+	
+	* Relaciones genéricas
+		Si bien en los RDBMS se requiere especificar el tipo de los campos
+		relacionados (tipado estático fuerte) al momento de definir una relación,
+		mediante el field ``GenericRelation``(provisto por la aplicación genérica ``ConentType``
+		[DjangoDocsConentType2009]_), se pueden realizar relaciones contra 
+		instancias de cualquier tipo.
 		
 		
+.. [DjangoDocsConentType2009] *Framework de ConentType*, Documentación de Django 1.0, último acceso Septiembre de 2009, http://docs.djangoproject.com/en/dev/ref/models/instances/#the-pk-property		
 		
-.. [*] **Data Definition Language** son las intstrucciones encargadas de la definición
+.. [*] **Data Definition Language** son las sentencias encargadas de la definición
 de la estructura, la componen las sentencias CREATE, ALTER y DROP.
 .. [*] **Data Manipulation Language** son las instrucciones encargadas de la creación,
 recuperación, modificación
 
-
-En el siguiente ejemplo define una ``Persona`` que posee los atributos
-nombre y apellido.
-
-.. code-block:: python
-
-    from django.db import models
-
-    class Persona(models.Model):
-        nombre = models.CharField(max_length = 30)
-        apellido = models.CharField(max_length = 30)
-        
-(``nombre`` y ``apellido`` son atributos de clase)
-
-genera el siguiente código SQL al momento de la ejecución del cmando syncdb.
-
-.. code-block:: sql
-
-    CREATE TABLE miapp_persona (
-        "id" serial NOT NULL PRIMARY KEY,
-        "nombre" varchar(30) NOT NULL,
-        "apellido" varchar(30) NOT NULL
-    );
-
 Claves en los modelos
 ---------------------
 
-PK vs ID
+Los modelos en Django poseen un solo campo clave. Si ningún campo es definido como
+clave, con el argumento ``primary_key = True``, se agrega de manera automática un
+campo ``id`` de tipo entero auto incremental [DjangoDocsModelsKey2009]_ .
+
+.. [DjangoDocsModelsKey2009] *Definición de claves foráneas*, Documentación de Django 1.0, último acceso
+Septiembre 2009, http://docs.djangoproject.com/en/dev/ref/models/instances/#the-pk-property
+
+El atributo ``pk`` es un alias del campo ``id`` o del campo que se halla definido
+como clave primaria.
+
+Django no soporta claves compuestas, pero permite definir combinaciones únicas
+de campos para suplir esta carencia. Dentro de la clase de metadatos ``Meta``
+se pueden definir campos ``unique`` y ``unique_together``.
+
+.. code-block:: python
+	
+	class Persona(models.Model):
+		''' Clase persona '''
+        nombre = models.CharField(max_length = 30)
+        apellido = models.CharField(max_length = 30)
+    	
+    	class Meta:
+    		unique_together = ('nombre', 'apellido', )
 
 
-Usando la API
--------------
+Acceso a la API de modelos desde la consola interactiva
+-------------------------------------------------------
 
-Luego de crear los modelos y sincronizar la base de datos :ref:`<django-comandos-syncdb>` 
-generando de esta manera el SQL correspondiente, se esta en condiciones de usar 
-la API de alto nivel en Python que Django provee para accesar los datos::
+Uno de los comandos provistos por el módulo manage es ``shell``, que invoca el intérprete
+de python de manera interactiva agregando al PythonPath el proyecto.
+De esta manera se pueden importar las aplicaciones, vistas, y modelos.
 
-    >>> from models import Persona
+El siguiente listado ejemplifica la importación de la clase Persona desde la 
+aplicación ``mi_aplicacion``:
+
+.. code-block:: python
+    :linenos:
+    >>> from mi_aplicacion.models import Persona
     >>> p1 = Persona(nombre='Pablo', apellido='Perez')
     >>> p1.save()
     >>> personas = Persona.objects.all()
 
-En estas lineas se ven algunos detalles de la interaccion con los modelos:
+El ejemplo anterior permite observar los siguientes puntos
 
-    * Para crear un objeto, se importa la clase del modelo apropiada y se crea
-        una instancia pasándole valores para cada campo.
+    1. Para crear un objeto, se importa la clase del modelo apropiada y se crea
+        una instancia asignando valores para cada campo.
 
-    * Para guardar el objeto en la base de datos, se usa el método ``save()``.
+    2. Para guardar el objeto en la base de datos, se usa el método ``save()``.
 
-    * Para recuperar objetos de la base de datos, se usa ``Persona.objects``.
-
-Internamente Django traduce todas las invocaciones que afecten a los datos en
-secuencias ``INSERT``, ``UPDATE``, ``DELETE`` de SQL
-
-Django provee tambien una forma de seleccionar, filtrar y obtener datos de la 
-base a traves de los administradores de consultas representado en el ejemplo
-anterior por ``Persona.objects``.
+    3. Para recuperar objetos de la base de datos, se usa ``Persona.objects``, que 
+    constituye el manager de la entidad.
 
 .. _django_managers:
 
 Managers
 --------
 
-Los managers son los encargados de realizar las consultas sobre las entidades
+Los managers se encargan de realizar las querys sobre las entidades
 de la base de datos. Presentan una API para realizar las consultas y devuelven
 instancias de objetos ``QuerySet``. Un QuerySet representa una consulta *lazy*,
-es decir, la consulta se hace efectiva cuando realmente es necesario [*]_. 
+es decir, la consulta que se hace efectiva cuando es necesario acceder a los datos[*]_.
+
 
 .. [*] Generalmente esto ocurre en la iteración en el template.
 
@@ -1236,11 +1253,11 @@ Dado el siguiente ejemplo:
     	modelo = models.DateField()
         propietario = models.ForeignKey(Persona)
         
-Los manages están presentes en:
+Los managers están presentes en:
 
 	* En el atributo ``objects`` de cada entidad del modelo.
 	
-		El programador puede definir nuevos managers para conusltas frecuentes.
+		El programador puede definir nuevos managers para consultas frecuentes.
 		
 		Ej::
 			
@@ -1249,8 +1266,7 @@ Los manages están presentes en:
 			
 		
 	* En cada relación, ya sea ``1 a N`` o ``N a N``
-		Por ejemplo, si se define una entidad Vehiculo
-		
+				
 		Ej::
 			
 			p = Persona.obects.get(nombre = "nahuel")
@@ -1258,14 +1274,20 @@ Los manages están presentes en:
 			
 			# O lo que es lo mismo
 			Persona.obects.get(nombre = "nahuel").vehiculo_set() # Relación inversa resuelta por django
+			
+
 
 API de los Managers
--------------------
+~~~~~~~~~~~~~~~~~~~
 
-La API provista por los managers consite en dos grupos de métodos: los que retornan instancias de QuerySet y los que no. El primer gurpo está definido como siguie:
+La API provista por los managers consiste en dos grupos de métodos: los que retornan instancias de QuerySet y los que no. 
+A continuación se listan los métodos que constituyen la API. Si son invocados sobre un manager devuelven un QuerySet, y
+si son ejecutados sobre un QuerySet, devuelven otra instancia del mismo tipo.
+
+El primer grupo está definido como sigue:
 
     * ``filter( **argumentos )`` [*]_
-    	Filtrar que cumplen con el criterio definido en ``argumentos``
+    	Solo incluye las instancias que cumplen con el criterio definido en ``argumentos``
     	
     * ``exclude( **argumentos )``
     	Excluye elementos que cumplan con el criterio definido en argumentos
@@ -1287,21 +1309,19 @@ La API provista por los managers consite en dos grupos de métodos: los que reto
     	
     * ``select_related()``
     	Preselecciona en la consulta los datos relacionados para evitar
-    	el overhad de multiples consultas sobre QuerySets grandes y con muchas relaciones.
+    	el overhead de múltiples consultas sobre QuerySets grandes 
+    	y con muchas relaciones.
     	
     * ``extra(select=None, where=None, params=None, tables=None)``
     	Permite realizar una consulta de bajo nivel
     		
 
-.. [*] El doble asterisco (``**``) representa argumentos del tipo ``clave = valor``, mientras que
-el asterisco simple (``*``), define que son argumentos variables.
 
 El conjunto que no devuelve ``QuerySet``s es el siguiente:
 
-.. # QuerySet methods that do not return QuerySets
-
     * ``get(**campos)``
     	Obtiene una única entidad identificada por ``campos``
+    	
     * ``create(**campos)``
     	Crea una entidad basada con los valores ``campos``
 
@@ -1312,45 +1332,53 @@ El conjunto que no devuelve ``QuerySet``s es el siguiente:
     	Retorna la cantidad de elementos del QuerySet.
     	
     * ``in_bulk(lista_de_identificadores)``
-    	Retorna un diccionario dode la clave es cada identificador y el valor es
+    	Retorna un diccionario donde la clave es cada identificador y el valor es
     	la instancia.
     	
     * ``latest(campo = None)``
 		Retorna la última instancia por el campo ``campo``. Debe ser del tipo DateField.
 
-Encadenamiento
+
+.. [*] El doble asterisco (``**``) representa argumentos del tipo ``clave = valor``, mientras que
+el asterisco simple (``*``), define que son argumentos variables.
+
 
 
 Formularios
 ===========
 
 El elemento de entrada tradicional de las aplicaciones web son los formularios.
-En un sistema de infrmación, las operaciones CRUD son muy comunes, y la forma de.
+En un sistema de información, la forma de realizar las operaciones CRUD es a través de estos.
 
-
-El ciclo de trabajo normal para la entrada de datos suele ser:
-	1. El usuario carga una página en la cual existe un formulario
-	2. El usuario completa los campos del formulario (pueden existir campos opcionales)
-	3. El usuario envía el formulario, utilizando típicamente un botón, el navegador
-	   se encarga de codificar los datos y enviarlos a la URL indicada en el campo
+El ciclo de trabajo normal para la entrada de datos generalmente es:
+	El usuario:
+		1. Carga una página en la cual existe un formulario
+		2. Completa los campos (pueden existir campos opcionales)
+		3. Envía el formulario, utilizando típicamente un botón, el navegador
+	   el cual se encarga de codificar los datos y enviarlos a la URL indicada en el campo
 	   "action" del :ref:markup del formulario.
-	4. El servidor recibe los datos y evalúa cual es el método HTTP utilizado,
-	   si el método es "POST", valida los datos. Si la validación es incorrecta
-	   devuelve al usuario el formulario con los datos que hallan sido válidos, 
-	   y muestra los mensajes pertinentes de los errores que hallan podido ocurrir,
-	   volviendo al paso 2.
-	   Si los datos son correctos, generalmente se envía una respuesta 300 indicando 
-	   que la carga ha sido existosa.
+	El servidor recibe los datos y los valida. Si los datos son correctos, 
+	generalmente se envía una respuesta 300 indicando que la carga ha sido exitosa.
+	Por el contrario si la validación es incorrecta se devuelve al usuario 
+	el formulario con los datos que hallan sido válidos, y se muestran los mensajes 
+	pertinentes de los errores que hallan ocurrido, volviendo al paso 2.
+	
+La validación de los formularios puede ser una tarea compleja, Django provee 
+un mecanismo para generar formularios en el módulo *django.forms* que ameniza la tarea. 
 
-La validación de los formularios puede ser una tarea compleja.
-Django provee un mecanismo para generar formularios en el módulo *django.forms*.
-En django, un formulario es una entidad que posee un conjunto de campos. Cada campo
-a su vez conoce un *widget*.
-Al momento de la validación, cada campo valida sus datos. Una vez que cada campo
-ha sido validado,  
-	
-	
+Un formulario es una entidad que posee un conjunto de campos, cada uno de los cuales
+tiene la responsabilidad de validar los propios datos. A posteriori el formulario
+realiza una comprobación de la coherecia global, tras la cual se obtiene el resultado
+de la validación. 
+
+Mediante los *widget* de los campos que componen el formulario, este puede 
+de renderizarse como HTML.   
+
 .. figure:: ../_svg/esquema_django_forms.png
 
 	Estructura de objetos de los formularios en Django
+	
+	
+Hasta acá   
+-----------
 
