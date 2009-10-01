@@ -1,0 +1,7 @@
+Respecto a la forma
+-------------------
+* Tipo título
+* Cursiva en el glosario, cosas en cursiva, color.
+* Referencia al glosario, no aparece en la primera instancia de la palabra.
+
+

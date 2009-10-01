@@ -4,13 +4,19 @@
 Tecnologías del servidor
 ########################
 
+Este capítulo tiene como finalidad introducir los conceptos básicos concernientes
+a la *generación dinámica de contenido* en el servidor web (2.1).
+
+A continuación se realiza una revisión general de los componentes de un servidor web y, 
+luego, se analizan los lenguajes dinámicos y sus frameworks.
+
+A continuación se analizan las características que hacen relevante 
+el estudio de los lenguajes dinámicos como plataforma de desarrollo de aplicaciones
+web dinámicas.
+
 **********************************
 Generación dinámica de páginas Web
 **********************************
-
-
-Esta sección tiene como finalidad introducir los conceptos básicos concernientes
-a la *generación dinámica contenido* en el servidor.
 
 En el enfoque dinámico, cuando un usuario realiza una solicitud, el mensaje
 enviado tiene como objetivo la ejecución de un programa o secuencia de comandos
@@ -19,51 +25,50 @@ información proporcionada por el usuario para buscar registros en una base de
 datos y generar una página HTML personalizada para el cliente.
 
 
-Tradicionalmente la tecnología utilizada se conoce como :term:`CGI`,
+Tradicionalmente, la tecnología utilizada se conoce como CGI,
 estándar que consiste en delegar la generación de contenido a un
-programa. CGI se limita a definir la entrada y salida del proceso.
+programa. CGI se limita a definir la entrada y salida de éste.
+
 
 Un enfoque más moderno para la generación de contenido dinámico 
 es la incrustación de secuencias de comandos dentro de 
-las páginas HTML. Estas sentencias son leídas y ejecutadas el servidor
+las páginas HTML. Estos comandos son leídos y ejecutados en el servidor
 al momento de responder a la solicitud del cliente, 
-como es el caso del lenguaje :term:`PHP`, o
-:term:`ASP`.
+como es el caso de los lenguajes PHP o ASP.
 
 .. tecnologias-servidor-server-modular:
 
 Los servidores web primigenios y monolíticos evolucionaron a una arquitectura
-modular [ApacheMod2009]_ [MicrosoftIIS2009]_ , en la cual, un módulo brinda soporte para una tarea específica.
-Módulos comunes son autenticación, bitácora, balance de carga, así como también como 
+modular [ApacheMod2009]_ [MicrosoftIIS2009]_, en la cual un módulo brinda soporte para una tarea específica.
+Los módulos más comunes son los de autenticación, bitácora, balance de carga, así como también como 
 los de generación de contenido.
 
 .. [ApacheMod2009] *Módulos del servidor Apache 2.2*, último acceso, Septiembre de 2009, http://httpd.apache.org/docs/2.2/mod/
 .. [MicrosoftIIS2009] *Módulos en Microsoft IIS*, último acceso Septiembre 2009, http://msdn.microsoft.com/en-us/library/bb757040.aspx
 
 
-Nuevas formas de interacción entre un servidor web
-y un programa fueron desarrolladas con el objeto de satisfacer necesidades más complejas, 
+Las nuevas formas de interacción entre un servidor web
+y un programa se desarrolladas con el objeto de satisfacer necesidades más complejas, 
 que no fueron tenidas en cuenta en la genericidad de CGI.
 
-En la plataforma Java, se especificaron
-los Servlets [SunServlet2009]_ , 
-.. con implementaciones como Tomcat [ApacheTomcat2009]_ 
-y en 1996, se publicó la especificación J2EE, que formula una arquitectura de
-aplicación web dividida en capas que corre un servidor de aplicaciones.
+En la plataforma Java, se especificaron los Servlets [SunServlet2009]_, 
+con implementaciones como Tomcat [ApacheTomcat2009]_,
+y en 1996 se publicó la especificación J2EE, que formula una arquitectura de
+aplicación web dividida en capas que ejecuta un servidor de aplicaciones.
 
-Basados en especificación J2EE, se crearon numerosos frameworks 
+Basados en la especificación J2EE, se crearon numerosos frameworks 
 cuyos lineamientos determinaron la manera de concebir las aplicaciones web durante
 casi una década.
 
 En junio de 2004 se publica el proyecto Ruby On Rails, un framework de aplicaciones
-web desarrollado en el lenguaje de programación Ruby, que revolucionó la forma de 
+web, desarrollado en el lenguaje de programación Ruby, que revolucionó la forma de 
 concebir los frameworks y la web.
 
 
-James Duncan Davidson el creador de Tomcat y Ant llegó a decir que Rails
-es el framework web mejor pensado que el ha usado. Davison pasó
+James Duncan Davidson, el creador de Tomcat y Ant, llegó a decir que Ruby On Rails
+es el framework web mejor pensado que él ha usado. Davison pasó
 10 años desarrollando aplicaciones web, frameworks y la especificación de los
-Servlets para el lenguaje Java [RailsQuotes2009]_ [*]_ .
+Servlets para el lenguaje Java [RailsQuotes2009]_ [*]_.
 
 .. [RailsQuotes2009] Citas de Ruby On Rails, http://rubyonrails.org/quotes
 
@@ -77,36 +82,39 @@ Servlets para el lenguaje Java [RailsQuotes2009]_ [*]_ .
 .. Existen otras formas de generar contenido al vuelo y generalmente todas estas se
 .. engloban dentro del termino **HTML dinámico**.
 
-Se realiza a continuación un revisión general sobre los componentes de un servidor web para
-dar paso a posteriori al análisis de los lenguajes dinámicos y sus frameworks.
+.. note:: Esto se copió en la intro
+
+A continuación se realiza una revisión general de los componentes de un servidor web y, 
+luego, se analizan los lenguajes dinámicos y sus frameworks.
 
 Servidor Web
 ============
 
 Un servidor web, o *web server* es un software encargado de recibir solicitudes
-de un cliente, típicamente un :ref:`navegador web <navegador-web>`, a través del
-protocolo :term:`HTTP` y generar una respuesta.
-Mediante la especificación :term:`MIME` que se incluye en el encabezado de la
-respuesta, se puede identificar que tipo de archivo es devuelto, 
-siendo el tipo más común :term:`HTML`. 
+de recursos de un cliente, típicamente un :ref:`navegador web <navegador-web>`, a través del
+protocolo HTTP y de generar una respuesta.
+Mediante la especificación MIME, que se incluye en el encabezado de la
+respuesta, se puede identificar qué tipo de archivo es devuelto, 
+siendo el tipo más común el HTML. 
 
-El contenido que es enviado al cliente puede ser de origen *estático* o *dinámico*.
+El contenido que se envía al cliente puede ser de origen *estático* o *dinámico*.
 
 .. _contenido-estatico:
 
-El contenido estático es aquél que proviene desde un archivo en el sistema de
+El contenido estático es aquel que proviene desde un archivo en el sistema de
 archivos sin ninguna modificación. 
 
 .. _contenido-dinamico:
 
-El contenido dinámico en contraposición al :ref:`contenido estático
-<contenido-estatico>` proviene de la salida de algún programa, un :term:`script` o algún
-tipo de API invocada por el web server (como SSI, :ref:`CGI <servidor-cgi>`,
+El contenido dinámico, en contraposición al contenido estático,
+proviene de la salida de algún programa, un script o algún
+tipo de API invocada por el servidor web (como SSI, :ref:`CGI <servidor-cgi>`,
 SCGI, FastCGI, JSP, ColdFusion, NSAPI o ISAPI).
 
 .. El cliente web accede a los recursos del web server mediante una dirección de recurso, u :term:`URL`.
-La única forma de acceder a los recursos es a través de una URL independientemente de su 
-naturaleza.
+
+La única forma de acceder a los recursos del servidor web
+es a través de una URL, independientemente de su naturaleza.
 
 .. _servidor-cgi:
 
@@ -115,28 +123,29 @@ CGI
 
 Common Gateway Interface (CGI) [*]_ surge alrededor del año 1998,
 como el primer estándar de comunicación o :term:`API` entre un servidor web y un
-programa de usuario. 
+programa de generación de contenidos. 
 
-La salida del proceso invocado puede ser un documento
+La salida del programa invocado por el servidor web puede ser un documento
 HTML entendible para el navegador, o cualquier otro tipo de archivo, como
 imágenes, sonidos, contenido interactivo, etc.
 
-Las variables de entorno y la entrada estándar, constituyen los mecanismos de entrada
-del programa, mientras que el contenido devuelto al servidor web proviene de la salida estándar
-del proceso.
-Dentro de la información provista por el servidor web se tienen los parámetros HTTP (como la :term:`URL`, el método, el nombre del host, el puerto, etc.) además de información 
-sobre el servidor. Éstos datos se transfieren mediante variables de entorno.
+Las variables de entorno y la entrada estándar constituyen los mecanismos de entrada
+del programa, mientras que el contenido devuelto al servidor web proviene de la salida estándar.
+
+Dentro de la información provista por el servidor web se tienen los parámetros HTTP 
+(como la URL, el método, el nombre del host, el puerto, etc.) y la información 
+sobre el servidor. Estos datos se transfieren mediante variables de entorno.
 
 
-Si existiese un cuerpo en la petición HTTP, como por ejemplo, el contenido de un
+Si existiese un cuerpo en la petición HTTP, como por ejemplo el contenido de un
 formulario, la aplicación CGI accede a esta información como entrada estándar.
 
 El resultado de la ejecución de la aplicación CGI se escribe en la salida
 estándar, anteponiendo las cabeceras HTTP de respuesta.
-En dichos encabezados, el tipo MIME determina como se interpreta la respuesta.
+En dichos encabezados, el tipo MIME determina cómo se interpreta la respuesta.
 Es decir, la invocación de un CGI puede
-devolver diferentes tipos de contenido al cliente (html, imágenes, javascript,
-contenido multimedia, etc.)
+devolver diferentes tipos de contenido al cliente (HTML, imágenes, javascript,
+contenido multimedia, etc.).
 
 .. figure:: ../_svg/esquema_cgi.png
     
@@ -145,30 +154,50 @@ contenido multimedia, etc.)
 Dentro de las variables de entorno, la Wikipedia [WikiCGI2009]_ menciona:
 
     * QUERY_STRING
-        Es la cadena de entrada del CGI cuando se utiliza el método GET sustituyendo algunos símbolos especiales por otros. Cada elemento se envía como una pareja Variable=Valor. Si se utiliza el método POST esta variable de entorno está vacía.
+    
+        Cadena de entrada del CGI cuando se utiliza el método GET sustituyendo algunos símbolos especiales por otros. Cada elemento se envía como una pareja Variable=Valor. Si se utiliza el método POST esta variable de entorno está vacía.
+    
     * CONTENT_TYPE
+    
         Tipo MIME de los datos enviados al CGI mediante POST. Con GET está vacía. Un valor típico para esta variable es: Application/X-www-form-urlencoded.
+        
     * CONTENT_LENGTH
+    
         Longitud en bytes de los datos enviados al CGI utilizando el método POST. Con GET está vacía.
+        
     * PATH_INFO
-        Información adicional de la ruta (el "path") tal y como llega al servidor en el URL.
+    
+        Información adicional de la ruta (el "path") tal y como llega al servidor en la URL.
+        
     * REQUEST_METHOD
+    
         Nombre del método (GET o POST) utilizado para invocar al CGI.
+        
     * SCRIPT_NAME
+    
         Nombre del CGI invocado.
+        
     * SERVER_PORT
+    
         Puerto por el que el servidor recibe la conexión.
+        
     * SERVER_PROTOCOL
-        Nombre y versión del protocolo en uso. (Ej.: HTTP/1.0 o 1.1)
+    
+        Nombre y versión del protocolo en uso. (Ej.: HTTP/1.0 o 1.1).
 
-Variables de entorno que se intercambian de servidor a CGI:
+Las variables de entorno que se intercambian del servidor al CGI son:
 
     * SERVER_SOFTWARE
+    
         Nombre y versión del software servidor de www.
+        
     * SERVER_NAME
+    
         Nombre del servidor.
+        
     * GATEWAY_INTERFACE
-        Nombre y versión de la interfaz de comunicación entre servidor y aplicaciones CGI/1.12
+    
+        Nombre y versión de la interfaz de comunicación entre servidor y aplicaciones CGI/1.12.
 
 Debido a la popularidad de las aplicaciones CGI, los servidores web incluyen
 generalmente un directorio llamado **cgi-bin** donde se albergan estas
@@ -181,9 +210,9 @@ aplicaciones.
 .. texto plano, por lo que puede ser editado en una terminal directamente en el servidor. Otra ventaja
 .. importante de ser texto plano, es que es más sencillo de mantener con alguna herramienta de :term:SCM.
 
-CGI posee dos limitaciones importantes, una es el overhead producido por la ejecución de un 
-programa y la segunda, que no fue diseñado para mantener información sobre la
-sesión. Cada petición se trata de manera independiente [DwightErwin1996]_ .
+CGI posee dos limitaciones importantes. Una es la sobrecarga producido por la ejecución de un 
+programa y la segunda es que no fue diseñado para mantener información sobre la
+sesión. Cada petición se trata de manera independiente [DwightErwin1996]_.
 
 .. [WikiCGI2009] *Interfaz de entrada común*, Wikipedia, 2009, último acceso Agosto 2009, http://es.wikipedia.org/wiki/Common_Gateway_Interface#Intercambio_de_informaci.C3.B3n:_Variables_de_entorno
 
@@ -193,66 +222,64 @@ sesión. Cada petición se trata de manera independiente [DwightErwin1996]_ .
 
 .. _servidor-lenguajes:
 
-Relevancia de los lenguajes dinámicos
-=====================================
+Lenguajes Dinámicos
+===================
 
+.. note:: Se copio a la intro
 
 A continuación se analizan las características que hacen relevante 
-el estudio de los lenguajes dinámicos, como plataforma de desarrollo de aplicaciones
-web dinámicas, para dar paso luego, a al estudio de los frameworks.
+el estudio de los lenguajes dinámicos como plataforma de desarrollo de aplicaciones
+web dinámicas.
 
-
-
-Una de las clasificaciones más generales que se suelen realizar sobre los lenguajes de programación es identificar su objetivo.
+Una de las clasificaciones más generales que se realizan de los lenguajes de programación 
+es según la identificación de su objetivo.
 Los lenguajes de programación de *propósito general* están orientados a resolver cualquier tipo
-de problema, mientras que los lenguajes de *propósito específico* o *DSL* están enfocados en resolver un tipo de problema
-de manera más eficaz. Un ejemplo muy popular de DSL es la planilla de cálculo Microsoft Excel [DavidPollak2006]_.
+de problema, mientras que los lenguajes de *propósito específico*, o *DSL*[*]_, están enfocados en resolver un tipo de problema
+de manera más eficaz. Un ejemplo muy popular de DSL es el lenguaje de macros embebido en la planilla de cálculo Microsoft Excel [DavidPollak2006]_.
+
+.. [*] Domain Specific Language
 
 .. [DavidPollak2006] *Ruby Sig:How To Design A Domain Specific Language*, Google Tech Talk, 2:44, http://video.google.com/videoplay?docid=-8103284744220333344
 
-Además de la división entre lenguaje de propósito general y DSL, existen otras, como la división entre lenguajes interpretados y compilados.
 
-Un lenguaje de programación interpretado es aquel en el cual los programas son ejecutados
-por un intérprete, en lugar de realizarse una traducción a lenguaje máquina, conocido como proceso
-de compilación.
-
+Otra clasificación es la de lenguajes interpretados y lenguajes compilados. Un lenguaje de programación 
+interpretado es aquel en el cual los programas son ejecutados
+por un intérprete, en lugar de realizarse una traducción a lenguaje máquina (proceso de compilación).
 En teoría cualquier lenguaje de programación podría ser compilado o interpretado. 
 
 En un lenguaje interpretado el código fuente es el ejecutable. En cambio,
-para llegar a ejecutar un programa escrito en un lenguaje compilado,
+para llegar a ejecutar un programa escrito en un lenguaje compilado
 se deben atravesar dos etapas.
-La primera consiste en la traducción de las sentencias por código máquina 
-y otra de enlace, en la cual se ensambla el código objeto resultado de la compilación.
+La primera consiste en la traducción de las sentencias a código máquina 
+y la segunda, en el enlace en la cual se ensambla el código objeto resultado de la compilación.
 En esta última etapa también se resuelven los enlaces entre los diferentes módulos compilados.
-
-.. figure:: ../_svg/lenguaje_interpretado.png
-
-    Lenguaje interpretado.
 
 Existe un mecanismo intermedio de ejecución, conocido como máquina virtual. En éste existe
 un proceso de compilación del código fuente a un lenguaje intermedio, comúnmente denominado
-*bytecode*. Este bytecode es luego ejecutado sobre un intérprete, al cual se denomina comúnmente
-como máquina virtual. La traducción del código fuente a *bytecode* puede ser explícita, como en el
+*bytecode*. Este bytecode es luego ejecutado sobre un intérprete, al cual se denomina
+máquina virtual. La traducción del código fuente a *bytecode* puede ser explícita, como en el
 lenguaje Java, o implícita como en Python, donde se mezcla en el intérprete la funcionalidad de 
-compilación a bytecode e interpretación en un solo programa.
+compilación a bytecode e interpretación.
+
+.. figure:: ../_svg/lenguaje_interpretado.png
+
+    Lenguaje interpretado con máquina virtual.
 
 Los lenguajes de programación interpretados suelen ser de alto nivel y de *tipado dinámico*, es decir
 que la mayoría de las comprobaciones realizadas en tiempo de compilación son evaluadas durante
 la ejecución [*]_ .
 
-.. [*] Estas comprobaciones comprenden el checkeo de tipos de datos, resolución de métodos entre otros.
-
-Un lenguaje es multiplataforma si permite ser ejecutado en varias plataformas [*]_ .
-
-Hasta acá llegó la revisión del jueves 24 de Septiembre
--------------------------------------------------------
+.. [*] Estas comprobaciones comprenden el chequeo de tipos de datos, la resolución de métodos, etc.
 
 
-La mayoría de los lenguajes interpretados son multiplataforma, ya que solo es necesario disponer
-de un intérprete compilado, a diferencia de los lenguajes compilados en los cuales se requiere disponer
- de un compilador para la plataforma y compilar el código.
+.. note:: Hasta acá llegó la revisión del jueves 24 de Septiembre
 
-.. [*] *Una plataforma es una combinación de hardware y software usada para ejecutar aplicaciones; en su forma más simple consiste únicamente de un sistema operativo, una arquitectura, o una combinación de ambos. La plataforma más conocida es probablemente Microsoft Windows en una arquitectura x86* [WikiPlataforma2009]_
+
+La mayoría de los lenguajes interpretados permiten ser ejecutado en varias plataformas [*]_ (multiplataforma), 
+ya que solo es necesario disponer de un intérprete compilado, a diferencia de los lenguajes compilados en 
+los cuales se requiere disponer de un compilador para la plataforma y compilar el código.
+
+.. [*] *Una plataforma es una combinación de hardware y software usada para ejecutar aplicaciones; en su forma más simple consiste únicamente de un sistema operativo, una arquitectura, o una combinación de ambos. La plataforma más conocida es probablemente Microsoft Windows en una arquitectura x86* [WikiPlataforma2009]_.
 
 .. [WikiPlataforma2009] *Multiplataforma*, Wikipedia, 2009, último acceso, Agosto de 2009, http://es.wikipedia.org/wiki/Multiplataforma
 

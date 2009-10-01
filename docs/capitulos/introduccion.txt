@@ -15,23 +15,25 @@ Motivación
 
 
 Hoy en día Internet supone más que un medio de intercambio de información,
-su constante expansión la ha convertido un terreno muy atractivo para
-la implementación de sistemas de información.
+su constante expansión la ha convertido en un terreno muy atractivo para
+la implementación de sistemas de información y ha posibilitado las tareas 
+de mantenimiento y actualización de aplicaciones sin necesidad de distribuir
+software adicional a miles de usuarios potenciales.
 
-
-Las tareas de mantenimiento y actualización de aplicaciones son posibles
-sin necesidad de distribuir software adicional a miles de usuarios potenciales.
+En vez de crear versiones específicas para los múltiples sistemas operativos existentes
+en el mercado, la aplicación web se escribe una vez y se ejecuta de la misma manera en
+todas las plataformas [SOverAdvWebFwk2009]_.
 
 .. También resulta fácil actualizar y mantener aplicaciones web sin distribuir e
 .. instalar software a miles de usuarios potenciales.
 
-Con la necesidad de acelerar y estandarizar la forma en la que se desarrollan
+A partir de la necesidad de acelerar y estandarizar la forma en la que se desarrollan
 las aplicaciones web han aparecido plataformas de desarrollo, o frameworks,
 para la mayoría de los lenguajes de programación [WikiListFramework2009]_. 
-A lo largo de los últimos 10 años ha existido una importante evolución 
-de los mismos [ApacheSlingEv2009]_ . Muchas tareas comunes son resueltas
-de una manera predefinida y modificable, permitiendo al programador focalizarse
-en resolver el problema particular de su desarrollo.
+A lo largo de los últimos 10 años se ha producido una importante evolución 
+de los frameworks [ApacheSlingEv2009]_, permitiendo que muchas tareas comunes se resuelven
+de una manera predefinida y modificable, ayudando al programador a focalizarse
+en la solución del problema particular de su desarrollo.
 
 .. [WikiListFramework2009] *Lista de Web Application Frameworks* http://en.wikipedia.org/wiki/List_of_web_application_frameworks
 .. [ApacheSlingEv2009] *Evolución de Frameworks*, Alexander Klimetschek y Lars Trieloff, http://cwiki.apache.org/SLING/evolution-of-web-application-frameworks.html
@@ -42,20 +44,21 @@ en resolver el problema particular de su desarrollo.
 
 .. Una ventaja significativa de las aplicaciones web es que funcionan
 .. independientemente de la versión y tipo del sistema operativo.
-En vez de crear versiones específicas para los múltiples sistemas operativos existentes
-en el mercado, la aplicación web se escribe una vez y se ejecuta de la misma manera en
-todas las plataformas [SOverAdvWebFwk2009]_ .
+
 
 .. [SOverAdvWebFwk2009] *Advantages of web applications over desktop applications*, StackOverflow, Dimitri C., último acceso en Septiembre de 2009, http://stackoverflow.com/questions/1072904/advantages-of-web-applications-over-desktop-applications
 
 Las aplicaciones web tienen ciertas limitaciones en cuanto a la funcionalidad que
 ofrecen al usuario. Acciones comunes en las aplicaciones de escritorio, 
-como dibujar en la pantalla o arrastrar y soltar aún no están soportadas de manera
-directa. Sin embargo, existe una corriente que encargada de mejorar la experiencia
-de usuario, que ha acuñando el término RIA o Aplicación Rica basada en Internet [CanalARRIA2005]_ .
+como dibujar en la pantalla o arrastrar y soltar, aún no están soportadas de manera
+directa. Sin embargo, existe una corriente encargada de mejorar la experiencia
+de usuario, que ha acuñando el término RIA [*]_ o Aplicación Rica Basada en Internet [CanalARRIA2005]_.
 Un factor clave en la evolución hacia las RIAs es la incorporación de la tecnología
-denominada AJAX [CanalARRIA2005]_, que permite actualizaciones parciales del contenido
-de una página, entre otras cosas [PerezAJAX2009]_ .
+denominada AJAX [CanalARRIA2005]_, que permite, por ejemplo actualizaciones parciales del contenido
+de una página [PerezAJAX2009]_.
+
+
+.. [*] Rich Internet Application
 
 .. [CanalARRIA2005] *¿Qué son las Rich Internet Applications?*,  Carlos Nascimbene, http://www.canal-ar.com.ar/noticias/noticiamuestra.asp?Id=2639
 
@@ -63,7 +66,7 @@ de una página, entre otras cosas [PerezAJAX2009]_ .
 .. [PerezAJAX2009] *Introducción a AJAX*, Javier Eguíluz Pérez, http://www.librosweb.es/ajax/
 
 
-La web, en el ámbito del software, es un medio singular por su ubicuidad y sus
+La web, en el ámbito del software, constituye un medio singular por su ubicuidad y sus
 estándares abiertos. El conjunto de normas que rigen la forma en que se generan
 y transmiten los documentos a través de la web son regulados por la W3C
 (Consorcio World Wide Web).
@@ -72,7 +75,7 @@ La mayor parte de la web está soportada sobre
 sistemas operativos y software de servidor [NetCraft2009]_
 que se rigen bajo licencias
 OpenSource [OSI2009]_ (Apache, BIND, Linux, OpenBSD, FreeBSD). Los lenguajes con los que
-son desarrolladas las aplicaciones web son generalmente OpenSource, como e PHP,
+se desarrollan las aplicaciones web son generalmente OpenSource, como PHP,
 Python, Ruby, Perl y Java. Los frameworks web escritos sobre estos lenguajes
 utilizan alguna licencia OpenSource para su distribución; incluso frameworks
 basados en lenguajes propietarios son liberados bajo licencias OpenSource.
@@ -84,30 +87,28 @@ basados en lenguajes propietarios son liberados bajo licencias OpenSource.
 Objetivos
 *********
 
-La principal limitación de las aplicaciones web en comparación con las
+La principal limitación de las aplicaciones web, en comparación con las
 aplicaciones tradicionales, es la necesidad de contar con conexión constante
-para funcionar. Dotar de la capacidad de trabajo sin conexión a una aplicación web 
-ataca la principal limitación de este tipo de aplicaciones.
+para funcionar. Dotarlas de la capacidad de trabajo sin conexión  
+ataca su principal limitación.
 
 Si bien los elementos necesarios para llevar a cabo esta tarea están disponibles
 actualmente, aún no están contemplados en los diseños de los frameworks web.
 
 Hoy en día, dotar a una determinada aplicación web de la capacidad de funcionar
-sin conexión requiere  un proceso de desarrollo que difiere al empleado en la 
-aplicación online.
+sin conexión requiere de un proceso de desarrollo que difiere del empleado en la 
+aplicación en linea.
 
 .. Un framework no constituye un producto per sé, sino una plataforma sobre la cual
 .. construir aplicaciones.
 .. Ya vamos a explicar framework
 
 El objetivo principal del presente trabajo de tesis es aportar una extensión
-a un framework web que permita de alguna manera migrar las aplicaciones de manera simple,
+a un framework web que permita migrar las aplicaciones de manera simple,
 convergiendo en un único proceso de desarrollo.
 
-Tras el estudio de las características se determinará el framework
-a utilizar. Se tendrán en cuenta características tales como como la calidad del
-mapeador de objetos, la simplicidad del controlador,
-extensibilidad del sistema de escritura de plantillas y flexibilidad general.
+.. note:: Recuperar objetivos secundarios de la nota
+
 
 .. Citas copadas http://es.wikiquote.org/wiki/The\_Matrix
 
@@ -115,10 +116,17 @@ extensibilidad del sistema de escritura de plantillas y flexibilidad general.
 Alcance
 *******
 
+.. note:: Debe estar en pasado. Hay que de todos modos re-readactar según marta.
+
+Tras el estudio de las características se determinará el framework
+a utilizar. Se tendrán en cuenta características tales como como la calidad del
+mapeador de objetos, la simplicidad del controlador,
+extensibilidad del sistema de escritura de plantillas y flexibilidad general.
+
 Se realizará un estudio sobre los componentes que intervienen en el desarrollo de 
-aplicaciones web: El navegador y el Servidor web. Se abordará un lenguaje de 
-programación y un framework web de el lenguaje seleccionado, se 
-desarrollando para este un framework básico. Se formulará un esquema de sincronización
+aplicaciones web: el navegador y el servidor web. Se abordará un lenguaje de 
+programación y un framework web del lenguaje seleccionado, se 
+desarrollará para este un framework básico. Se formulará un esquema de sincronización
 para pequeñas aplicaciones.
 
 .. Si es un framework es extensible por definición
