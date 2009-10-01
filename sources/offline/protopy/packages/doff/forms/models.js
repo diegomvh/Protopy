@@ -18,8 +18,8 @@ from formsets import BaseFormSet, formset_factory, DELETION_FIELD_NAME
  * If commit=True, then the changes to ``instance`` will be saved to the database. Returns ``instance``.
  */
 function save_instance(form, instance) { 
-    arguments = new Arguments(arguments, {'fields':null, 'fail_message':'saved', 'commit':true, 'exclude':null});
-    var kwargs = arguments.kwargs;
+    var arg = new Arguments(arguments, {'fields':null, 'fail_message':'saved', 'commit':true, 'exclude':null});
+    var kwargs = arg.kwargs;
     var models = require('doff.db.models.base');
     var opts = instance._meta;
     if (bool(form.errors))
@@ -164,8 +164,8 @@ var ModelFormOptions = type('ModelFormOptions', object, {
 
 var BaseModelForm = type('BaseModelForm', BaseForm, {
     __init__: function() {
-        arguments = new Arguments(arguments, {'data':null, 'files':null, 'auto_id':'id_%s', 'prefix':null, 'initial':null, 'error_class':ErrorList, 'label_suffix':':', 'empty_permitted':false, 'instance':null});
-        var kwargs = arguments.kwargs;
+        var arg = new Arguments(arguments, {'data':null, 'files':null, 'auto_id':'id_%s', 'prefix':null, 'initial':null, 'error_class':ErrorList, 'label_suffix':':', 'empty_permitted':false, 'instance':null});
+        var kwargs = arg.kwargs;
         var opts = this._meta;
         if (!kwargs['instance']) {
             // if we didn't get an instance, instantiate a new one
@@ -553,7 +553,7 @@ def inlineformset_factory(parent_model, model, form=ModelForm,
 */
 // Fields //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 var InlineForeignKeyHiddenInput = type('InlineForeignKeyHiddenInput', HiddenInput, {
-    '_has_changed': function _has_changed(initial, data) {
+    _has_changed: function(initial, data) {
         return false;
     }
 });
@@ -562,21 +562,23 @@ var InlineForeignKeyHiddenInput = type('InlineForeignKeyHiddenInput', HiddenInpu
  * A basic integer field that deals with validating the given value to a given parent instance in an inline.
  */
 var InlineForeignKeyField = type('InlineForeignKeyField', Field, {
-    default_error_messages: { 'invalid_choice': 'The inline foreign key did not match the parent instance primary key.' },
-    
-    '__init__': function __init__(parent_instance) {
-	arguments = new Arguments(arguments);
-	this.parent_instance = parent_instance;
-        this.pk_field = arguments.kwargs['pk_field'] || false;
-	delete arguments.kwargs['pk_field'];
-        if (this.parent_instance)
-            arguments.kwargs["initial"] = this.parent_instance.pk;
-        arguments.kwargs["required"] = false;
-        arguments.kwargs["widget"] = InlineForeignKeyHiddenInput;
-        super(Field, this).__init__(arguments);
+    default_error_messages: {
+        'invalid_choice': 'The inline foreign key did not match the parent instance primary key.' 
     },
 
-    'clean': function clean(value) {
+    __init__: function(parent_instance) {
+        var arg = new Arguments(arguments);
+        this.parent_instance = parent_instance;
+        this.pk_field = arg.kwargs['pk_field'] || false;
+        delete arg.kwargs['pk_field'];
+        if (this.parent_instance)
+            arg.kwargs["initial"] = this.parent_instance.pk;
+        arg.kwargs["required"] = false;
+        arg.kwargs["widget"] = InlineForeignKeyHiddenInput;
+        super(Field, this).__init__(arg);
+    },
+
+    clean: function(value) {
         if (include(EMPTY_VALUES, value)) {
             if (this.pk_field)
                 return null;
@@ -625,20 +627,23 @@ var ModelChoiceIterator = type('ModelChoiceIterator', [ object ], {
 var ModelChoiceField = type('ModelChoiceField', ChoiceField, {
     // This class is a subclass of ChoiceField for purity, but it doesn't
     // actually use any of ChoiceField's implementation.
-    default_error_messages: { 'invalid_choice': 'Select a valid choice. That choice is not one of the available choices.' },
+    default_error_messages: { 
+        'invalid_choice': 'Select a valid choice. That choice is not one of the available choices.' 
+    },
 
-    '__init__': function __init__() {
-	arguments = new Arguments(arguments, {	'queryset': null, 'empty_label': "---------", 'cache_choices': false,
-						'required': true, 'widget': null, 'label': null, 'initial': null,
-						'help_text': null, 'to_field_name': null });
-        var kwargs = arguments.kwargs;
-	assert(kwargs['queryset'] != null, 'Falta queryset');
-	this.empty_label = kwargs['empty_label'];
+    __init__: function() {
+        var arg = new Arguments(arguments, {	
+            'queryset': null, 'empty_label': "---------", 'cache_choices': false, 'required': true,
+            'widget': null, 'label': null, 'initial': null, 'help_text': null, 'to_field_name': null 
+        });
+        var kwargs = arg.kwargs;
+        assert(kwargs['queryset'] != null, 'Falta queryset');
+        this.empty_label = kwargs['empty_label'];
         this.cache_choices = kwargs['cache_choices'];
 
         // Call Field instead of ChoiceField __init__() because we don't need
         // ChoiceField.__init__().
-        super(Field, this).__init__(arguments);
+        super(Field, this).__init__(arg);
         this.queryset = kwargs['queryset'];
         this.choice_cache = null;
         this.to_field_name = kwargs['to_field_name'];
@@ -655,7 +660,7 @@ var ModelChoiceField = type('ModelChoiceField', ChoiceField, {
 
     // this method will be used to create object labels by the QuerySetIterator.
     // Override it to customize the label.
-    'label_from_instance': function label_from_instance(obj) {
+    label_from_instance: function(obj) {
         return obj;
     },
 
@@ -679,7 +684,7 @@ var ModelChoiceField = type('ModelChoiceField', ChoiceField, {
         this._choices = this.widget.choices = array(value);
     },
 
-    'clean': function clean(value) {
+    clean: function(value) {
         super(Field, this).clean(value);
         if (include(EMPTY_VALUES, value))
             return null;
@@ -697,17 +702,19 @@ var ModelChoiceField = type('ModelChoiceField', ChoiceField, {
 var ModelMultipleChoiceField = type('ModelMultipleChoiceField', ModelChoiceField, {
     widget: SelectMultiple,
     hidden_widget: MultipleHiddenInput,
-    default_error_messages: {	'list': 'Enter a list of values.',
-				'invalid_choice': 'Select a valid choice. %s is not one of the available choices.' },
-
-    '__init__': function __init__() {
-	arguments = new Arguments(arguments, {	'queryset': null, 'cache_choices': false, 'required': true, 'widget': null, 'label': null, 'initial': null, 'help_text': null });
-        var kwargs = arguments.kwargs;
-	assert(kwargs['queryset'] != null, 'Falta queryset');
-        super(ModelChoiceField, this).__init__(arguments);
+    default_error_messages: {
+        'list': 'Enter a list of values.',
+        'invalid_choice': 'Select a valid choice. %s is not one of the available choices.' 
     },
 
-    'clean': function clean(value) {
+    __init__: function() {
+        var arg = new Arguments(arguments, {	'queryset': null, 'cache_choices': false, 'required': true, 'widget': null, 'label': null, 'initial': null, 'help_text': null });
+        var kwargs = arg.kwargs;
+        assert(kwargs['queryset'] != null, 'Falta queryset');
+        super(ModelChoiceField, this).__init__(arg);
+    },
+
+    clean: function(value) {
         if (this.required && !value)
             throw new ValidationError(this.error_messages['required']);
         else if (!this.required && !value)
@@ -718,11 +725,11 @@ var ModelMultipleChoiceField = type('ModelMultipleChoiceField', ModelChoiceField
         for each (var val in value) {
             try {
                 var obj = this.queryset.get({'pk': val});
-		final_values.push(obj);
+                final_values.push(obj);
             } catch (e if e instanceof this.queryset.model.DoesNotExist) {
                 throw new ValidationError(this.error_messages['invalid_choice'].subs(val));
             }
-	}
+        }
         return final_values;
     }
 });
