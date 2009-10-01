@@ -74,11 +74,85 @@ function update_object(request) {
 
 }
 
-publish({
-    update_object: update_object,
-    get_model_and_form_class: get_model_and_form_class,
-});
 
+//def redirect(post_save_redirect, obj):
+//    """
+//    Returns a HttpResponseRedirect to ``post_save_redirect``.
+//
+//    ``post_save_redirect`` should be a string, and can contain named string-
+//    substitution place holders of ``obj`` field names.
+//
+//    If ``post_save_redirect`` is None, then redirect to ``obj``'s URL returned
+//    by ``get_absolute_url()``.  If ``obj`` has no ``get_absolute_url`` method,
+//    then raise ImproperlyConfigured.
+//
+//    This function is meant to handle the post_save_redirect parameter to the
+//    ``create_object`` and ``update_object`` views.
+//    """
+//    if post_save_redirect:
+//        return HttpResponseRedirect(post_save_redirect % obj.__dict__)
+//    elif hasattr(obj, 'get_absolute_url'):
+//        return HttpResponseRedirect(obj.get_absolute_url())
+//    else:
+//        raise ImproperlyConfigured(
+//            "No URL to redirect to.  Either pass a post_save_redirect"
+//            " parameter to the generic view or define a get_absolute_url"
+//            " method on the Model.")
+function redirect(post_save_redirect, obj) {
+	/**
+	 * 
+	 * 
+	 */
+	if (post_save_redirect) {
+		return new HttpResponseRedirect(post_save_redirect.subs % )
+	}
+		
+	
+}
+//def lookup_object(model, object_id, slug, slug_field):
+//    """
+//    Return the ``model`` object with the passed ``object_id``.  If
+//    ``object_id`` is None, then return the object whose ``slug_field``
+//    equals the passed ``slug``.  If ``slug`` and ``slug_field`` are not passed,
+//    then raise Http404 exception.
+//    """
+//    lookup_kwargs = {}
+//    if object_id:
+//        lookup_kwargs['%s__exact' % model._meta.pk.name] = object_id
+//    elif slug and slug_field:
+//        lookup_kwargs['%s__exact' % slug_field] = slug
+//    else:
+//        raise GenericViewError(
+//            "Generic view must be called with either an object_id or a"
+//            " slug/slug_field.")
+//    try:
+//        return model.objects.get(**lookup_kwargs)
+//    except ObjectDoesNotExist:
+//        raise Http404("No %s found for %s"
+//                      % (model._meta.verbose_name, lookup_kwargs))
+
+function lookup_object(model, object_id, slug, slug_field) {
+	
+	var lookup_kwargs = {};
+	if (object_id){
+		lookup_kwargs[ '%s__exact'.subs(model._meta.pk.name) ] = object_id;
+	} else {
+		if (slug && slug_gield){
+			lookup_kwargs['%s__exact'.subs(slug_field)] = slug;
+		} else {
+			throw GenericViewError(
+					"Generic view must be called with either an object_id or a" +
+					" slug/slug_field.");
+		}
+	}
+	
+	try {
+		return model.objects.get( lookup_kwargs );
+	} catch (e if e isinstance(e, ObjectDoesNotExist)) {
+		throw Http404("No %s found for %s".subs([model._meta.verbose_name, lookup_kwargs]);
+	}
+	
+}
 
 
 // def update_object(request, model=None, object_id=None, slug=None,
@@ -124,3 +198,92 @@ publish({
 //     response = HttpResponse(t.render(c))
 //     populate_xheaders(request, response, model, getattr(obj, obj._meta.pk.attname))
 //     return response
+
+
+//def update_object(request, model=None, object_id=None, slug=None,
+//        slug_field='slug', template_name=None, template_loader=loader,
+//        extra_context=None, post_save_redirect=None, login_required=False,
+//        context_processors=None, template_object_name='object',
+//        form_class=None):
+//    """
+//    Generic object-update function.
+//
+//    Templates: ``<app_label>/<model_name>_form.html``
+//    Context:
+//        form
+//            the form for the object
+//        object
+//            the original object being edited
+//    """
+//    if extra_context is None: extra_context = {}
+//    if login_required and not request.user.is_authenticated():
+//        return redirect_to_login(request.path)
+//
+//    model, form_class = get_model_and_form_class(model, form_class)
+//    obj = lookup_object(model, object_id, slug, slug_field)
+//
+//    if request.method == 'POST':
+//        form = form_class(request.POST, request.FILES, instance=obj)
+//        if form.is_valid():
+//            obj = form.save()
+//            if request.user.is_authenticated():
+//                request.user.message_set.create(message=ugettext("The %(verbose_name)s was updated successfully.") % {"verbose_name": model._meta.verbose_name})
+//            return redirect(post_save_redirect, obj)
+//    else:
+//        form = form_class(instance=obj)
+//
+//    if not template_name:
+//        template_name = "%s/%s_form.html" % (model._meta.app_label, model._meta.object_name.lower())
+//    t = template_loader.get_template(template_name)
+//    c = RequestContext(request, {
+//        'form': form,
+//        template_object_name: obj,
+//    }, context_processors)
+//    apply_extra_context(extra_context, c)
+//    response = HttpResponse(t.render(c))
+//    populate_xheaders(request, response, model, getattr(obj, obj._meta.pk.attname))
+//    return response
+//
+//def delete_object(request, model, post_delete_redirect, object_id=None,
+//        slug=None, slug_field='slug', template_name=None,
+//        template_loader=loader, extra_context=None, login_required=False,
+//        context_processors=None, template_object_name='object'):
+//    """
+//    Generic object-delete function.
+//
+//    The given template will be used to confirm deletetion if this view is
+//    fetched using GET; for safty, deletion will only be performed if this
+//    view is POSTed.
+//
+//    Templates: ``<app_label>/<model_name>_confirm_delete.html``
+//    Context:
+//        object
+//            the original object being deleted
+//    """
+//    if extra_context is None: extra_context = {}
+//    if login_required and not request.user.is_authenticated():
+//        return redirect_to_login(request.path)
+//
+//    obj = lookup_object(model, object_id, slug, slug_field)
+//
+//    if request.method == 'POST':
+//        obj.delete()
+//        if request.user.is_authenticated():
+//            request.user.message_set.create(message=ugettext("The %(verbose_name)s was deleted.") % {"verbose_name": model._meta.verbose_name})
+//        return HttpResponseRedirect(post_delete_redirect)
+//    else:
+//        if not template_name:
+//            template_name = "%s/%s_confirm_delete.html" % (model._meta.app_label, model._meta.object_name.lower())
+//        t = template_loader.get_template(template_name)
+//        c = RequestContext(request, {
+//            template_object_name: obj,
+//        }, context_processors)
+//        apply_extra_context(extra_context, c)
+//        response = HttpResponse(t.render(c))
+//        populate_xheaders(request, response, model, getattr(obj, obj._meta.pk.attname))
+//        return response
+
+publish({
+    update_object: update_object,
+    get_model_and_form_class: get_model_and_form_class,
+});
