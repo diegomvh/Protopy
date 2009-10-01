@@ -859,7 +859,7 @@
     //Based on peppy
     var doc = document;
     var cache = {};
-    var cacheOn = !sys.IE && !sys.WebKit;
+    var cacheOn = !sys.browser.IE && !sys.browser.WebKit;
     var persistCache = {};
     var _uid = 0;
         

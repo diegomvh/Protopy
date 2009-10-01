@@ -2,49 +2,37 @@
 require('dom');
 require('event');
 require('ajax');
+require('sys');
 require('doff.utils.http');
 //http://www.contentwithstyle.co.uk/content/fixing-the-back-button-and-enabling-bookmarking-for-ajax-apps
 
 var History = type('History', [ object ], {
-    __init__: function() {
-        this.state = document.createElement('input');
-        this.state.id = "history";
-        this.state.hide();
-        $$('body')[0].insert(this.state);
-        this.states = [];
-        this.hash = this.get_hash();
-        this.counter = 0;
-        this.thread = window.setInterval(getattr(this, 'check_hash'), 50);
+    __init__: function(initial) {
+        this.states = {};
+        this.initial_state = initial || 'index';
+        this._current_state = location.hash.slice(1) || this.initial_state;
+        window.setInterval(getattr(this, '_hash_check'), 50);
     },
 
-    onChange: function(request) {},
-
-    check_hash: function() {
-        if (this.path !== this.current_path) {
-            this.current_path = this.path;
-            var request = this.states[this.entry];
-            this.onChange(this.states[this.entry]);
+    _hash_check: function() {
+        var newHash = location.hash.slice(1) || this.initial_state;
+        if (newHash !== this._current_state && !isundefined(this.states[newHash])) {
+            this._current_state = newHash;
+            this.onChange(this.states[this._current_state]);
         }
     },
 
-    get_hash: function() {
-        var hash = location.hash;
-        return hash.substr(1);
+    onChange: function(object) {},
+
+    get current_state() {
+        return (this._current_state === this.initial_state)? '' : this._current_state;
     },
 
-    get entry(){
-        return Number(ajax.toQueryParams(this.get_hash())['entry']);
-    },
-    
-    get path(){
-        return ajax.toQueryParams(this.get_hash())['path'];
-    },
-
-    navigate: function(request) {
-        this.states = this.states.slice(0, this.entry);
-        this.states.push(request);
-        this.current_path = request.path;
-        location.hash = 'entry=' + len(this.states) + '&path=' + request.path;
+    navigate: function (state, object) {
+        state = state || this.initial_state;
+        this._current_state = state;
+        location.hash = state;
+        this.states[state] = object;
     }
 });
 
@@ -69,7 +57,7 @@ var Document = type('Document', [ object ], {
             this.body.update(body[1]);
         else 
             this.body.update(content);
-        this.forms = this.body.select('FORMS');
+        this.forms = this.body.select('FORM');
         this.links = this.body.select('A');
     }
 });
@@ -82,7 +70,7 @@ var DOMAdapter = type('DOMAdapter', [ object ], {
         this._location = window.location;
         this.history = new History();
         this.document = new Document();
-        event.connect(this.history, 'onChange', this, 'process_request');
+        event.connect(this.history, 'onChange', this, '_process_from_history');
     },
 
     send: function(request) {},
@@ -93,7 +81,7 @@ var DOMAdapter = type('DOMAdapter', [ object ], {
             this.document.update(response.content);
             this.add_hooks();
         } else if (response.status_code == 302) {
-            return this.handle(response['Location']);
+            return this._process_from_string(response['Location']);
         } else if (response.status_code == 404) {
             //Agregar a las url no manjeadas
             //value.setOpacity(0.2);
@@ -101,31 +89,13 @@ var DOMAdapter = type('DOMAdapter', [ object ], {
         }
     },
 
-    process_request: function(request) {
-        //Te queres ir?
-        if (!request.is_same_origin())
-            window.location = request.source;
-        if (request.relative.startswith(this._location.pathname))
-            request.fix_location(this._location.pathname, this.history.get_hash());
-        //hace falta mandarlo?
-        if (this.history.path !== request.path ) {
-            this.send(request);
-            this.history.navigate(request);
-        }
-    }, 
-
-    set location(value) {
-        var request = new http.HttpRequest(value);
-        this.process_request(request);
-    },
-
     add_hooks: function() {
         var self = this;
         this.document.forms.forEach(function(f) {
-            self.event_handlers.push(event.connect(f, 'onsubmit', getattr(self, '_forms')));
+            self.event_handlers.push(event.connect(f, 'onsubmit', getattr(self, '_process_from_forms')));
         });
         this.document.links.forEach(function(l) {
-            self.event_handlers.push(event.connect(l, 'onclick', getattr(self, '_links')));
+            self.event_handlers.push(event.connect(l, 'onclick', getattr(self, '_process_from_links')));
         });
     },
 
@@ -135,31 +105,77 @@ var DOMAdapter = type('DOMAdapter', [ object ], {
         });
     },
 
-    _forms: function(e) {
-        event.stopEvent(e);
-        var element = e.target;
-        var request = new http.HttpRequest(element.action);
-        request.method = element.method;
-        request[element.method] = element.serialize();
-        this.process_request(request);
+    _state_to_path: function(state) {
+        var path = state;
+        if (!path.startswith('/'))
+            path = '/' + path;
+        if (!path.endswith('/'))
+            path = path + '/';
+        return path;
     },
 
-    _links: function(e) {
+    _path_to_state: function(path) {
+        var state = path;
+        if (state.startswith('/'))
+            state = state.slice(1);
+        if (state.endswith('/'))
+            state = state.slice(0, -1);;
+        return state;
+    },
+
+    _build_request: function(url) {
+        if (http.absolute_http_url_re.test(url))
+            return new http.HttpRequest(url);
+        if (url.startswith('/'))
+            return new http.HttpRequest(url);
+        else {
+            var path = this._state_to_path(this.history.current_state);
+            path = path + url;
+            return new http.HttpRequest(path);
+        }
+    },
+
+    _process_request: function(request) {
+        //Te queres ir?
+        if (!request.is_valid()) return;
+        if (!request.is_same_origin())
+            window.location = request.source;
+        this.history.navigate(this._path_to_state(request.path), request);
+        this.send(request);
+    }, 
+
+    _process_from_forms: function(e) {
         event.stopEvent(e);
         var element = e.target;
-        var request = new http.HttpRequest(element.href);
+        var request = this._build_request(element.getAttribute('action'));
+        request.method = element.method;
+        request[element.method] = element.serialize();
+        this._process_request(request);
+    },
+
+    _process_from_links: function(e) {
+        event.stopEvent(e);
+        var element = e.target;
+        var request = this._build_request(element.getAttribute('href'));
         request.method = 'get';
-        this.process_request(request);
+        this._process_request(request);
+    },
+    
+    _process_from_string: function(s) {
+        var request = this._build_request(s);
+        request.method = 'get';
+        this._process_request(request);
+    },
+
+    _process_from_history: function(request) {
+        this.send(request);
+    },
+
+    set location(value) {
+        this._process_from_string(value);
     }
 });
 
-/*
-window.location.watch('hash', function(id, oldval, newval) {
-    console.log('Old: ', oldval);
-    console.log('New: ', newval);
-    return newval;
-});
-*/
 publish({
     DOMAdapter: DOMAdapter
 });

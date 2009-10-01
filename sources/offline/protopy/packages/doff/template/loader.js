@@ -36,7 +36,7 @@ function find_template_source(name, dirs) {
     for each (var loader in template_source_loaders) {
         try {
             var [source, display_name] = loader(name, dirs);
-            logger.debug("Template: %s, Name: %s, Dirs: %s", display_name, name, dirs);
+            logger.debug('Template: %s, Name: %s, Dirs: %s', display_name, name, dirs);
             return source;
         } catch (e if isinstance(e, TemplateDoesNotExist)) { }
     }
@@ -55,8 +55,32 @@ function get_template_from_string(source, name) {
     return new Template(source, name);
 }
 
+function render_to_string(template_name, dictionary, context_instance) {
+    var dictionary = dictionary || {};
+    if (isinstance(template_name, Array))
+        var t = select_template(template_name);
+    else
+        var t = get_template(template_name);
+    if (context_instance)
+        context_instance.update(dictionary);
+    else
+        context_instance = new Context(dictionary);
+    return t.render(context_instance);
+}
+
+function select_template(template_name_list) {
+    for each (var template_name in template_name_list) {
+        try {
+            return get_template(template_name);
+        } catch (e if isinstance(e, TemplateDoesNotExist)) {}
+    }
+    throw new TemplateDoesNotExist(template_name_list.join(', '));
+}
+
 publish({ 
     find_template_source: find_template_source,
     get_template_from_string: get_template_from_string,
-    get_template: get_template
+    get_template: get_template,
+    render_to_string: render_to_string,
+    select_template: select_template
 });
