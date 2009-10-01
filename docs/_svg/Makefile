@@ -9,4 +9,4 @@ clean:
 # Crear el PNG de los archivos SVG	
 %.png: %.svg
 #	inkscape --file=$< --export-dpi=300 --export-area-drawing --export-png=$@
-	inkscape --file=$< --export-dpi=300 --export-area-canvas --export-png=$@
+	inkscape --file=$< --export-dpi=150 --export-area-canvas --export-png=$@

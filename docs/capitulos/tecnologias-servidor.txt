@@ -66,6 +66,7 @@ es el framework web mejor pensado que el ha usado. Davison pasó
 Servlets para el lenguaje Java [RailsQuotes2009]_ [*]_ .
 
 .. [RailsQuotes2009] Citas de Ruby On Rails, http://rubyonrails.org/quotes
+
 .. [*] *"Rails is the most well thought-out web development framework I’ve ever used. And that’s in a decade of doing web applications for a living. I’ve built my own frameworks, helped develop the Servlet API, and have created more than a few web servers from scratch. Nobody has done it like this before."*
 
 .. [ApacheTomcat2009] http://tomcat.apache.org/index.html
@@ -286,6 +287,7 @@ motivó el desarrollo de lenguajes dinámicos [TolksdorfJVM2009]_ que hacen uso 
 .. sin embargo, todavía no han alcanzado la popularidad de J2EE o ROR.
 
 .. [*] Pequeños programas que se ejecutan en el navegador web
+
 .. [*] Estos lenguajes interpretados utilizan compilación JIT a bytecode de la JVM.
 
 http://www.archive.org/details/SeanKellyRecoveryfromAddiction
@@ -784,6 +786,7 @@ El modulo settings es código fuente y es posible realizar configuraciones en ti
 que no es factible utilizando lenguajes de marcado como XML, YAML, archivos INI, etc.
 
 .. [*] Imágenes, sonido, flash, etc.
+
 .. [*] En django una clase middleware conecta los componentes de MTV, el usuario puede definir un comportamiento
 	   personalizado.
 	
@@ -890,8 +893,8 @@ Esta plantilla es un HTML básico con algunas variables y etiquetas agregadas.
 
 
     * Cualquier texto que esté rodeado por llaves y signos de porcentaje
-        es una etiqueta de lógica o define algún bloque. Algunas etiquetas
-        son if, for, extends, load entre otros.
+      es una etiqueta de lógica o define algún bloque. Algunas etiquetas
+      son if, for, extends, load entre otros.
         
     * Es posible definir template tags (o etiquetas de template) de usuario, 
       que actúan como una función en el template. 
@@ -966,6 +969,7 @@ Las funciones que trabajan como vistas deben recibir como primer parámetro el r
 y opcionalmente parámetros obtenidos de los grupos nombrados de la url.
 
 El siguiente ejemplo integra un fragmento de los módulos urls y views.
+
 .. code-block:: python
 
     # Tras un mapeo como el siguiente
@@ -1165,10 +1169,8 @@ Las tareas del ORM son:
 		
 .. [DjangoDocsConentType2009] *Framework de ConentType*, Documentación de Django 1.0, último acceso Septiembre de 2009, http://docs.djangoproject.com/en/dev/ref/models/instances/#the-pk-property		
 		
-.. [*] **Data Definition Language** son las sentencias encargadas de la definición
-de la estructura, la componen las sentencias CREATE, ALTER y DROP.
-.. [*] **Data Manipulation Language** son las instrucciones encargadas de la creación,
-recuperación, modificación
+.. [*] **Data Definition Language** son las sentencias encargadas de la definición de la estructura, la componen las sentencias CREATE, ALTER y DROP.
+.. [*] **Data Manipulation Language** son las sentencias encargadas de la creación, recuperación, modificación. La compoenen las sentencias INSERT, UPDATE, DELETE.
 
 Claves en los modelos
 ---------------------
@@ -1209,7 +1211,7 @@ El siguiente listado ejemplifica la importación de la clase Persona desde la
 aplicación ``mi_aplicacion``:
 
 .. code-block:: python
-    :linenos:
+
     >>> from mi_aplicacion.models import Persona
     >>> p1 = Persona(nombre='Pablo', apellido='Perez')
     >>> p1.save()
@@ -1223,7 +1225,7 @@ El ejemplo anterior permite observar los siguientes puntos
     2. Para guardar el objeto en la base de datos, se usa el método ``save()``.
 
     3. Para recuperar objetos de la base de datos, se usa ``Persona.objects``, que 
-    constituye el manager de la entidad.
+       constituye el manager de la entidad.
 
 .. _django_managers:
 
@@ -1314,6 +1316,8 @@ El primer grupo está definido como sigue:
     	
     * ``extra(select=None, where=None, params=None, tables=None)``
     	Permite realizar una consulta de bajo nivel
+
+.. [*] El doble asterisco (``**``) representa argumentos del tipo ``clave = valor``, mientras que el asterisco simple (``*``), define que son argumentos variables.
     		
 
 
@@ -1339,8 +1343,6 @@ El conjunto que no devuelve ``QuerySet``s es el siguiente:
 		Retorna la última instancia por el campo ``campo``. Debe ser del tipo DateField.
 
 
-.. [*] El doble asterisco (``**``) representa argumentos del tipo ``clave = valor``, mientras que
-el asterisco simple (``*``), define que son argumentos variables.
 
 
 
@@ -1357,11 +1359,13 @@ El ciclo de trabajo normal para la entrada de datos generalmente es:
 		3. Envía el formulario, utilizando típicamente un botón, el navegador
 	   el cual se encarga de codificar los datos y enviarlos a la URL indicada en el campo
 	   "action" del :ref:markup del formulario.
-	El servidor recibe los datos y los valida. Si los datos son correctos, 
-	generalmente se envía una respuesta 300 indicando que la carga ha sido exitosa.
-	Por el contrario si la validación es incorrecta se devuelve al usuario 
-	el formulario con los datos que hallan sido válidos, y se muestran los mensajes 
-	pertinentes de los errores que hallan ocurrido, volviendo al paso 2.
+	   
+	El servidor:
+		Recibe los datos y los valida. Si los datos son correctos, 
+		generalmente se envía una respuesta 300 indicando que la carga ha sido exitosa.
+		Por el contrario si la validación es incorrecta se devuelve al usuario 
+		el formulario con los datos que hallan sido válidos, y se muestran los mensajes 
+		pertinentes de los errores que hallan ocurrido, volviendo al paso 2.
 	
 La validación de los formularios puede ser una tarea compleja, Django provee 
 un mecanismo para generar formularios en el módulo *django.forms* que ameniza la tarea. 
