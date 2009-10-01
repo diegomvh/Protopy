@@ -51,8 +51,8 @@ function get_declared_fields(bases, attrs, with_base_fields) {
 // class, not to the Form class.
 var BaseForm = type('BaseForm', object, {
     __init__: function() {
-        arguments = new Arguments(arguments, {'data':null, 'files':null, 'auto_id':'id_%s', 'prefix':null, 'initial':null, 'error_class':ErrorList, 'label_suffix':':', 'empty_permitted':false});
-        var kwargs = arguments.kwargs;
+        var arg = new Arguments(arguments, {'data':null, 'files':null, 'auto_id':'id_%s', 'prefix':null, 'initial':null, 'error_class':ErrorList, 'label_suffix':':', 'empty_permitted':false});
+        var kwargs = arg.kwargs;
         this.is_bound = kwargs['data'] != null || kwargs['files'] != null;
         this.data = kwargs['data'] || {};
         this.files = kwargs['files'] || {};
@@ -373,20 +373,20 @@ var BoundField = type('BoundField', object, {
     
     //Returns a string of HTML for representing this as an <input type="text">.
     as_text: function(attrs){
-        arguments = new Arguments(arguments);
-        return this.as_widget(new TextInput(), attrs, arguments.kwargs['only_initial']);
+        var arg = new Arguments(arguments);
+        return this.as_widget(new TextInput(), attrs, arg.kwargs['only_initial']);
     },
 
     //Returns a string of HTML for representing this as a <textarea>."
     as_textarea: function(attrs) {
-        arguments = new Arguments(arguments);
-        return this.as_widget(new Textarea(), attrs, arguments.kwargs['only_initial']);
+        var arg = new Arguments(arguments);
+        return this.as_widget(new Textarea(), attrs, arg.kwargs['only_initial']);
     },
 
     //Returns a string of HTML for representing this as an <input type="hidden">.
     as_hidden: function(attrs) {
-        arguments = new Arguments(arguments);
-        return this.as_widget(this.field.hidden_widget(), attrs, arguments.kwargs['only_initial']);
+        var arg = new Arguments(arguments);
+        return this.as_widget(this.field.hidden_widget(), attrs, arg.kwargs['only_initial']);
     },
 
     //Returns the data for this BoundField, or None if it wasn't given.
@@ -431,6 +431,8 @@ var BoundField = type('BoundField', object, {
     }
 });
 
-publish({    'BaseForm': BaseForm,
-        'get_declared_fields': get_declared_fields,
-        'Form': Form });
+publish({    
+    BaseForm: BaseForm,
+    get_declared_fields: get_declared_fields,
+    Form: Form 
+});
