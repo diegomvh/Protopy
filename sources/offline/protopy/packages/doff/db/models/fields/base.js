@@ -162,40 +162,40 @@ var Field = type('Field', [ object ], {
     },
 
     get_db_prep_lookup: function(lookup_type, value){
-	/* Returns field's value prepared for database lookup. */
-	if (callable(value['as_sql'])) {
-	    var [sql, params] = value.as_sql();
-	    return new QueryWrapper('(%s)'.subs(sql), params);
-	}
+        /* Returns field's value prepared for database lookup. */
+        if (callable(value['as_sql'])) {
+            var [sql, params] = value.as_sql();
+            return new QueryWrapper('(%s)'.subs(sql), params);
+        }
 
-	if (include(['regex', 'iregex', 'month', 'day', 'search'], lookup_type))
-	    return [value];
-	else if (include(['exact', 'gt', 'gte', 'lt', 'lte'], lookup_type))
-	    return [this.get_db_prep_value(value)];
-	else if (include(['range', 'in'], lookup_type))
-	    return [this.get_db_prep_value(v) for each (v in value)];
-	else if (include(['contains', 'icontains'], lookup_type))
-	    return ["%%%s%%".subs(connection.ops.prep_for_like_query(value))];
-	else if (lookup_type == 'iexact')
-	    return [connection.ops.prep_for_iexact_query(value)];
-	else if (include(['startswith', 'istartswith'], lookup_type))
-	    return ["%s%%".subs(connection.ops.prep_for_like_query(value))];
-	else if (include(['endswith', 'iendswith'], lookup_type))
-	    return ["%%%s".subs(connection.ops.prep_for_like_query(value))];
-	else if (lookup_type == 'isnull')
-	    return [];
-	else if (lookup_type == 'year') {
-	    value = Number(value);
-	    if (isNaN(value))
-		throw new ValueError("The __year lookup type requires an integer argument");
+        if (include(['regex', 'iregex', 'month', 'day', 'search'], lookup_type))
+            return [value];
+        else if (include(['exact', 'gt', 'gte', 'lt', 'lte'], lookup_type))
+            return [this.get_db_prep_value(value)];
+        else if (include(['range', 'in'], lookup_type))
+            return [this.get_db_prep_value(v) for each (v in value)];
+        else if (include(['contains', 'icontains'], lookup_type))
+            return ["%%%s%%".subs(connection.ops.prep_for_like_query(value))];
+        else if (lookup_type == 'iexact')
+            return [connection.ops.prep_for_iexact_query(value)];
+        else if (include(['startswith', 'istartswith'], lookup_type))
+            return ["%s%%".subs(connection.ops.prep_for_like_query(value))];
+        else if (include(['endswith', 'iendswith'], lookup_type))
+            return ["%%%s".subs(connection.ops.prep_for_like_query(value))];
+        else if (lookup_type == 'isnull')
+            return [];
+        else if (lookup_type == 'year') {
+            value = Number(value);
+            if (isNaN(value))
+            throw new ValueError("The __year lookup type requires an integer argument");
 
-	    if (this.get_internal_type() == 'DateField')
-		return connection.ops.year_lookup_bounds_for_date_field(value);
-	    else
-		return connection.ops.year_lookup_bounds(value);
-	}
+            if (this.get_internal_type() == 'DateField')
+            return connection.ops.year_lookup_bounds_for_date_field(value);
+            else
+            return connection.ops.year_lookup_bounds(value);
+        }
 
-	throw new TypeError("Field has invalid lookup: %s".subs(lookup_type));
+        throw new TypeError("Field has invalid lookup: %s".subs(lookup_type));
     },
 
     /*
@@ -306,34 +306,35 @@ var Field = type('Field', [ object ], {
     formfield: function() {
         var arg = new Arguments(arguments);
         var kwargs = arg.kwargs;
-	var form_class = kwargs['form_class'] || forms.CharField;
-	var defaults = {'required': !this.blank, 'label': this.verbose_name.capitalize(), 'help_text': this.help_text};
-	if (this.has_default()) {
-	    defaults['initial'] = this.get_default();
-	    if (callable(this.default))
-		defaults['show_hidden_initial'] = true;
+        var form_class = kwargs['form_class'] || forms.CharField;
+        var defaults = {'required': !this.blank, 'label': this.verbose_name.capitalize(), 'help_text': this.help_text};
+        if (this.has_default()) {
+            defaults['initial'] = this.get_default();
+            if (callable(this.default))
+            defaults['show_hidden_initial'] = true;
         }
-	if (bool(this.choices)) {
-	    // Fields with choices get special treatment.
-	    var include_blank = this.blank || !(this.has_default() || 'initial' in kwargs);
-	    defaults['choices'] = this.get_choices(include_blank);
-	    defaults['coerce'] = getattr(this, to_javascript);
-	    if (this.null)
-		defaults['empty_value'] = null;
-	    var form_class = forms.TypedChoiceField;
-	    // Many of the subclass-specific formfield arguments (min_value,
-	    // max_value) don't apply for choice fields, so be sure to only pass
-	    // the values that TypedChoiceField will understand.
-	    for each (k in keys(kwargs))
-		if (!include(['coerce', 'empty_value', 'choices', 'required', 'widget', 'label', 'initial', 'help_text', 'error_messages'], k))
-		    delete kwargs[k];
+        if (bool(this.choices)) {
+            // Fields with choices get special treatment.
+            var include_blank = this.blank || !(this.has_default() || 'initial' in kwargs);
+            defaults['choices'] = this.get_choices(include_blank);
+            defaults['coerce'] = getattr(this, to_javascript);
+            if (this.null)
+            defaults['empty_value'] = null;
+            var form_class = forms.TypedChoiceField;
+            // Many of the subclass-specific formfield arguments (min_value,
+            // max_value) don't apply for choice fields, so be sure to only pass
+            // the values that TypedChoiceField will understand.
+            for each (k in keys(kwargs))
+            if (!include(['coerce', 'empty_value', 'choices', 'required', 'widget', 'label', 'initial', 'help_text', 'error_messages'], k))
+                delete kwargs[k];
         }
-	extend(defaults, kwargs);
-	return new form_class(defaults);
+        extend(defaults, kwargs);
+        return new form_class(defaults);
     },
+
     /*
-	* Returns the value of this field in the given model instance.
-	*/
+    * Returns the value of this field in the given model instance.
+    */
     value_from_object: function(object) {
         return object[this.attname];
     }
