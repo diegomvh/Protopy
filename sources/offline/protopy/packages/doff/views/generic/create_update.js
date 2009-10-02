@@ -210,6 +210,36 @@ function update_object(request) {
 
     var [model, form_class] = get_model_and_form_class(model, form_class);
     var obj = lookup_object(model, object_id, slug, slug_field);
+    if (request.method == "POST") {
+    	var form = new form_class({'data': request.POST, 'files': request.FILES, 'instance': obj});
+    	return redirect(post_save_redirect, obj);
+    } else {
+    	var form = new form_class({'instance':obj})
+    	if (!template_name) {
+    		template_name = "%s/%s_form.html" % (model._meta.app_label, model._meta.object_name.lower())
+    	}
+    }
+//    if request.method == 'POST':
+//        form = form_class(request.POST, request.FILES, instance=obj)
+//        if form.is_valid():
+//            obj = form.save()
+//            if request.user.is_authenticated():
+//                request.user.message_set.create(message=ugettext("The %(verbose_name)s was updated successfully.") % {"verbose_name": model._meta.verbose_name})
+//            return redirect(post_save_redirect, obj)
+//    else:
+//        form = form_class(instance=obj)
+//
+//    if not template_name:
+//        template_name = "%s/%s_form.html" % (model._meta.app_label, model._meta.object_name.lower())
+//    t = template_loader.get_template(template_name)
+//    c = RequestContext(request, {
+//        'form': form,
+//        template_object_name: obj,
+//    }, context_processors)
+//    apply_extra_context(extra_context, c)
+//    response = HttpResponse(t.render(c))
+//    populate_xheaders(request, response, model, getattr(obj, obj._meta.pk.attname))
+//    return response
 
 
 
@@ -253,6 +283,57 @@ function update_object(request) {
 //        response = HttpResponse(t.render(c))
 //        populate_xheaders(request, response, model, getattr(obj, obj._meta.pk.attname))
 //        return response
+
+function delete_object(request, model, post_delete_redirect){
+	var args = new Arguments({
+		object_id : null,
+		slug_field : 'slug',
+		template_name : null,
+		template_loader : loader,
+		extra_context : null,
+		login_required : null,
+		context_processors : null,
+		template_object_name : 'object'
+	});
+	if (!extra_context)
+		extra_context = {};
+	
+	var obj = lookup_object(model, object_id, slug, slug_field);
+
+	if (request.method == 'POST') {
+		obj.delete();
+		return HttpResponseRedirect(post_delete_redirect);
+		
+	} else {
+		if (!template_name) {
+			template_name = "%s/%s_confirm_delete.html".subs([model._meta.app_label, model._meta.object_name.lower()]);
+		}
+		var t = template_loader.get_template(template_name),
+			c = new RequestContext(request, {
+			            template_object_name: obj,
+				        //}, context_processors)
+				        context_processors : context_processors));
+		apply_extra_context(extra_context, c);
+		var response = new HttpResponse(t.render(c));
+		populate_xheaders(request, response, model, getattr(obj, obj._meta.pk.attname));
+		return response;
+		
+	}
+
+//    else:
+//        if not template_name:
+//            template_name = "%s/%s_confirm_delete.html" % (model._meta.app_label, model._meta.object_name.lower())
+//        t = template_loader.get_template(template_name)
+//        c = RequestContext(request, {
+//            template_object_name: obj,
+//        }, context_processors)
+//        apply_extra_context(extra_context, c)
+//        response = HttpResponse(t.render(c))
+//        populate_xheaders(request, response, model, getattr(obj, obj._meta.pk.attname))
+//        return response
+	
+	
+}
 
 publish({
     update_object: update_object,
