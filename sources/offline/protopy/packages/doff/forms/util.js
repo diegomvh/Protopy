@@ -44,7 +44,7 @@ var ErrorList = type('ErrorList', [ object ], {
     __nonzero__: function() {
         return bool(this.errors);
     },
-    
+
     __iter__: function() {
         for each (var e in this.errors)
             yield e;
@@ -71,7 +71,7 @@ var ErrorList = type('ErrorList', [ object ], {
         if (!bool(this)) return '';
         return ['* %s'.subs(e) for each (e in this.errors)].join('\n');
     },
-    
+
     __repr__: function() {
         return repr([e for each (e in this.errors)]);
     }
@@ -86,7 +86,7 @@ var ValidationError = type('ValidationError', [ Exception ], {
         else
             this.messages = new ErrorList([message]);
     },
-    
+
     __str__: function() {
         return repr(this.messages);
     }
