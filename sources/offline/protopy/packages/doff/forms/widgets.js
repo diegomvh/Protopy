@@ -130,7 +130,7 @@ function media_property(cls) {
 
 var Widget = type('Widget', object, {
     //Static
-    '__new__': function __new__(name, bases, attrs) {
+    __new__: function(name, bases, attrs) {
         var new_class = super(Widget, this).__new__(name, bases, attrs);
         if (!('media' in attrs))
             new_class.prototype.__defineGetter__('media', media_property(new_class));
@@ -174,8 +174,8 @@ var Widget = type('Widget', object, {
 
     build_attrs: function(extra_attrs) {
         //Helper function for building an attribute dictionary.
-        arguments = new Arguments(arguments);
-        var attrs = extend(this.attrs, arguments.kwargs);
+        var arg = new Arguments(arguments);
+        var attrs = extend(this.attrs, arg.kwargs);
         if (bool(extra_attrs))
             extend(attrs, extra_attrs);
         return attrs;
@@ -188,7 +188,7 @@ var Widget = type('Widget', object, {
     value_from_datadict: function(data, files, name) {
         return data[name] || null;
     },
-    
+
     //Return True if data differs from initial.
     _has_changed: function(initial, data) {
         // For purposes of seeing whether something has changed, None is
@@ -550,12 +550,12 @@ var RadioSelect = type('RadioSelect', Select, {
 
     __init__: function() {
         // Override the default renderer if we were passed one.
-        arguments = new Arguments(arguments);
-        var renderer = arguments.kwargs['renderer'] || null;
-        delete arguments.kwargs['renderer'];
+        var arg = new Arguments(arguments);
+        var renderer = arg.kwargs['renderer'] || null;
+        delete arg.kwargs['renderer'];
         if (renderer)
             this.renderer = renderer;
-        super(Select, this).__init__(arguments);
+        super(Select, this).__init__(arg);
     },
 
     get_renderer: function(name, value, attrs, choices) {
@@ -741,7 +741,7 @@ var SplitHiddenDateTimeWidget = type('SplitHiddenDateTimeWidget', SplitDateTimeW
     }
 });
 
-publish({    
+publish({
     Media: Media,
     media_property: media_property,
     Widget: Widget,
