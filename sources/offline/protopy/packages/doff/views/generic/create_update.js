@@ -150,6 +150,87 @@ function lookup_object(model, object_id, slug, slug_field) {
 
 
 
+/* def create_object(request, model=None, template_name=None,
+        template_loader=loader, extra_context=None, post_save_redirect=None,
+        login_required=False, context_processors=None, form_class=None):
+    """
+    Generic object-creation function.
+    Templates: ``<app_label>/<model_name>_form.html``
+    Context:
+        form
+            the form for the object
+    """
+    if extra_context is None: extra_context = {}
+    if login_required and not request.user.is_authenticated():
+        return redirect_to_login(request.path)
+
+    model, form_class = get_model_and_form_class(model, form_class)
+    if request.method == 'POST':
+        form = form_class(request.POST, request.FILES)
+        if form.is_valid():
+            new_object = form.save()
+            if request.user.is_authenticated():
+                request.user.message_set.create(message=ugettext("The %(verbose_name)s was created successfully.") % {"verbose_name": model._meta.verbose_name})
+            return redirect(post_save_redirect, new_object)
+    else:
+        form = form_class()
+        
+    # Create the template, context, response
+    if not template_name:
+        template_name = "%s/%s_form.html" % (model._meta.app_label, model._meta.object_name.lower())
+    t = template_loader.get_template(template_name)
+    c = RequestContext(request, {
+        'form': form,
+    }, context_processors)
+    apply_extra_context(extra_context, c)
+    return HttpResponse(t.render(c))
+    
+ */
+
+function create_object(request){
+	var args = new Arguments(arguments, {
+		model: null, 
+		template_name: null,
+        template_loader: loader, 
+        extra_context: null,
+        post_save_redirect: null,
+        login_required: null, 
+        context_processors: null, 
+        form_class: null
+	});
+	
+	var form, new_object, t, c;
+	
+	if (!extra_context)
+		extra_context = {};
+	var [model, form_class] = get_model_and_form_class(args.model, args.form_class);
+	
+	if (request.method == 'POST'){
+        form = new form_class({'data': request.POST, 'files': request.FILES});
+        if (form.is_valid()){
+            new_object = form.save();
+            return redirect(args.post_save_redirect, new_object);
+        }
+	} else {
+        form = new form_class();
+	}
+	
+	if (!args.template_name) {
+		args.template_name = "%s/%s_form.html".subs(model._meta.app_label, model._meta.object_name.lower());
+		
+	}
+
+	t = args.template_loader.get_template(template_name)
+    c = new RequestContext(request, {
+        'form': form,
+        'context_procesors': context_processors
+    });
+    
+    apply_extra_context(args.extra_context, c)
+    return HttpResponse(t.render(c))
+}
+
+
 
 //def update_object(request, model=None, object_id=None, slug=None,
 //        slug_field='slug', template_name=None, template_loader=loader,
@@ -350,6 +431,8 @@ function delete_object(request, model, post_delete_redirect){
 }
 
 publish({
+	create_object: create_object,
     update_object: update_object,
     get_model_and_form_class: get_model_and_form_class,
+    delete_object: delete_object
 });

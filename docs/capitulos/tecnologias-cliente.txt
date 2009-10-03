@@ -4,9 +4,9 @@
 Tecnologías del cliente
 #######################
 
-**********************************
-Generación dinámica de páginas Web
-**********************************
+*********************************************
+Web dinámica desde la perspectiva del cliente
+*********************************************
 
 Desde la perspectiva de un usuario, la Web consiste en una enorme cantidad de
 documentos interconectados a nivel mundial llamados *paginas Web*.
@@ -76,44 +76,42 @@ Una URL tiene el siguiente esquema, donde podemos diferenciar varios componentes
 Los componentes de una URL son:
 
 	* esquema
+	
 		Especifica el mecanismo de comunicación. Generalmente HTTP y HTTPS en
-una comunicación
+		una comunicación
 		asegurada mediante TLS [*]_ .
 		
 	* anfitrión
+	
 		Especifica el nombre de dominio del servidor en Internet, por ejemplo:
-*google.com*, 
-		*nasa.gov*, *wikipedia.com*, etc.
+		*google.com*, *nasa.gov*, *wikipedia.com*, etc.
 		Se popularizó la utilización de el subdominio "www" para identificar el
-anfitrión
+		anfitrión
 		que ejecuta el servidor web, dando lugar a direcciones del tipo
-*www.google.com*, 
-		*www.nasa.gov*, etc.
+		*www.google.com*, *www.nasa.gov*, etc.
 		
 		El *puerto* es un parámetro de conexión TCP, y suele ser omitido debido
-a que 
-		el esquema suele determinarlo, siendo 80 para HTTP y 443 para HTTPS. 
+		a que el esquema suele determinarlo, siendo 80 para HTTP y 443 para HTTPS. 
 		 
 	* recurso
+	
 		Especifica dentro del servidor, la ruta para acceder al recurso
 		
 	* query
+	
 		El parámetro query tiene sentido cuando el recurso apuntado por la ruta
-no
-		se trata de una página estática y sirve para el pasaje de parámetros.
+		no se trata de una página estática y sirve para el pasaje de parámetros.
 		El programa que genera el recurso puede recibir como argumentos estos
-parámetros, 
-		por ejemplo, cuando se ingresa la palabra *foo* en el buscador google,
-la 
-		URL que provee el resultado de la búsqueda es la siguiente::
+		parámetros, por ejemplo, cuando se ingresa la palabra *foo* en el buscador google,
+		la URL que provee el resultado de la búsqueda es la siguiente::
 			
 			http://www.google.com/search?*q=foo*
 		
 	
 	* enlace
+	
 		Dentro de un documento de hipertexto pueden existir destinos de
-enlaces, 
-		o enlaces internos. Gracias a este parámetro se puede enlazar a una 
+		enlaces, o enlaces internos. Gracias a este parámetro se puede enlazar a una 
 		sección específica de un documento, permitiendo al navegador ubicarse
 		visualmente.
 
