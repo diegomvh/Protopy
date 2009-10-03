@@ -89,7 +89,7 @@ function redirect(post_save_redirect, obj) {
             throw new ImproperlyConfigured(
            "No URL to redirect to.  Either pass a post_save_redirect" +
            " parameter to the generic view or define a get_absolute_url" +
-           " method on the Model.")
+           " method on the Model.");
         }
     }
 		
@@ -218,7 +218,7 @@ function update_object(request) {
     } else {
     	var form = new form_class({'instance':obj})
     	if (!template_name) {
-    		template_name = "%s/%s_form.html".subs([model._meta.app_label, model._meta.object_name.lower()])
+    		template_name = "%s/%s_form.html".subs([model._meta.app_label, model._meta.object_name.lower()]);
     	}
     }
 //    if request.method == 'POST':
@@ -314,7 +314,7 @@ function delete_object(request, model, post_delete_redirect){
 			c = new RequestContext(request, {
 			            template_object_name: obj,
 				        //}, context_processors)
-				        context_processors : context_processors));
+				        context_processors : context_processors}));
 		apply_extra_context(extra_context, c);
 		var response = new HttpResponse(t.render(c));
 		populate_xheaders(request, response, model, getattr(obj, obj._meta.pk.attname));
