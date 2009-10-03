@@ -136,7 +136,7 @@ function lookup_object(model, object_id, slug, slug_field) {
 	try {
 		return model.objects.get( lookup_kwargs );
 	} catch (e if e isinstance(e, ObjectDoesNotExist)) {
-		throw Http404("No %s found for %s".subs([model._meta.verbose_name, lookup_kwargs]);
+		throw Http404("No %s found for %s".subs([model._meta.verbose_name, lookup_kwargs]));
 	}
 	
 }
@@ -218,7 +218,7 @@ function update_object(request) {
     } else {
     	var form = new form_class({'instance':obj})
     	if (!template_name) {
-    		template_name = "%s/%s_form.html" % (model._meta.app_label, model._meta.object_name.lower())
+    		template_name = "%s/%s_form.html".subs([model._meta.app_label, model._meta.object_name.lower()])
     	}
     }
 //    if request.method == 'POST':
