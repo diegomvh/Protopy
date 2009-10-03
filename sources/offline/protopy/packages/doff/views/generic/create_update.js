@@ -1,5 +1,6 @@
 require('doff.template.loader');
 require('doff.forms.models', 'ModelForm');
+require('doff.db.models');
 
 // def get_model_and_form_class(model, form_class):
 //     """
@@ -94,6 +95,7 @@ function redirect(post_save_redirect, obj) {
 		
 	
 }
+
 //def lookup_object(model, object_id, slug, slug_field):
 //    """
 //    Return the ``model`` object with the passed ``object_id``.  If
