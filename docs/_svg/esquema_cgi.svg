@@ -56,16 +56,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.49497475"
-     inkscape:cx="723.42588"
-     inkscape:cy="163.77938"
+     inkscape:zoom="0.95145632"
+     inkscape:cx="467.65436"
+     inkscape:cy="215.92618"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1432"
-     inkscape:window-height="783"
-     inkscape:window-x="0"
-     inkscape:window-y="35"
+     inkscape:window-width="1280"
+     inkscape:window-height="735"
+     inkscape:window-x="-4"
+     inkscape:window-y="-3"
      showguides="true"
      inkscape:guide-bbox="true" />
   <metadata
@@ -95,19 +95,19 @@
     <text
        xml:space="preserve"
        style="font-size:24.94233322px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
-       x="487.22906"
+       x="471.22906"
        y="385.88904"
        id="text2385"><tspan
          sodipodi:role="line"
          id="tspan2387"
-         x="487.22906"
-         y="385.88904">Web Server</tspan></text>
+         x="471.22906"
+         y="385.88904">Servidor Web</tspan></text>
     <rect
        style="opacity:1;fill:#ccff00;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.75350118px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        id="rect2389"
        width="143.81673"
        height="113.4073"
-       x="481.77881"
+       x="482.86169"
        y="473.6084"
        ry="5.2884889" />
     <text

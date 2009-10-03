@@ -1,6 +1,11 @@
 require('doff.template.loader');
 require('doff.forms.models', 'ModelForm');
-require('doff.db.models');
+var models = require('doff.db.models.base');
+require('doff.utils.http', 'Http404', 'HttpResponseRedirect');
+require('doff.core.exceptions', 'ObjectDoesNotExist', 'ImproperlyConfigured');
+require('doff.template.context', 'RequestContext');
+
+var GenericViewError = type('GenericViewError', [ Exception ]);
 
 // def get_model_and_form_class(model, form_class):
 //     """
@@ -27,6 +32,19 @@ require('doff.db.models');
 //     raise GenericViewError("Generic view must be called with either a model or"
 //                            " form_class argument.")
 
+function apply_extra_context(extra_context, context) {
+    /*
+    Adds items from extra_context dict to context.  If a value in extra_context
+    is callable, then it is called and the result is added to context.
+    */
+    for each (var [key, value] in items(extra_context)) {
+        if (callable(value))
+            context.set(key, value());
+        else
+            context.set(key, value);
+    }
+}
+
 function get_model_and_form_class(model, form_class) {
 
     if (form_class)
@@ -40,10 +58,8 @@ function get_model_and_form_class(model, form_class) {
 
         var form_class = type(class_name, [ ModelForm ], {'Meta': {model: model}});
         return [ model, form_class ];
-        
     }
-    throw new Exception("Generic view must be called with either a model or"+
-                            " form_class argument.");
+    throw new Exception("Generic view must be called with either a model or form_class argument.");
 }
 
 
@@ -79,21 +95,16 @@ function redirect(post_save_redirect, obj) {
 	 * 
 	 */
 	if (post_save_redirect) {
-		
 		return new HttpResponseRedirect(post_save_redirect.subs(obj.__dict__) );
-		
 	} else {
         if (!isundefined(obj.get_absolute_url)) {
             return new HttpResponseRedirect(obj.get_absolute_url());
         } else {
-            throw new ImproperlyConfigured(
-           "No URL to redirect to.  Either pass a post_save_redirect" +
-           " parameter to the generic view or define a get_absolute_url" +
-           " method on the Model.");
+            throw new ImproperlyConfigured( "No URL to redirect to.  Either pass a post_save_redirect" +
+                                            " parameter to the generic view or define a get_absolute_url" +
+                                            " method on the Model.");
         }
     }
-		
-	
 }
 
 //def lookup_object(model, object_id, slug, slug_field):
@@ -121,24 +132,20 @@ function redirect(post_save_redirect, obj) {
 function lookup_object(model, object_id, slug, slug_field) {
 	
 	var lookup_kwargs = {};
-	if (object_id){http://prensa.vlex.es/libraries/noticias-1
+	if (object_id) {
 		lookup_kwargs[ '%s__exact'.subs(model._meta.pk.name) ] = object_id;
 	} else {
 		if (slug && slug_gield){
 			lookup_kwargs['%s__exact'.subs(slug_field)] = slug;
 		} else {
-			throw GenericViewError(
-					"Generic view must be called with either an object_id or a" +
-					" slug/slug_field.");
+			throw new GenericViewError("Generic view must be called with either an object_id or a slug/slug_field.");
 		}
 	}
-	
 	try {
 		return model.objects.get( lookup_kwargs );
-	} catch (e if e isinstance(e, ObjectDoesNotExist)) {
-		throw Http404("No %s found for %s".subs([model._meta.verbose_name, lookup_kwargs]));
+	} catch (e if isinstance(e, ObjectDoesNotExist)) {
+		throw new Http404("No %s found for %s".subs([model._meta.verbose_name, lookup_kwargs]));
 	}
-	
 }
 
 
@@ -196,7 +203,7 @@ function update_object(request) {
         slug_field:'slug',
         template_name:null,
         template_loader:loader,
-        extra_context:null,
+        extra_context: null,
         post_save_redirect:null,
         login_required:False,
         context_processors:null,
@@ -204,23 +211,33 @@ function update_object(request) {
         form_class:null
     });
 
-    if (!extra_context)
-        extra_context = {};
+    var kwargs = args.kwargs;
+    if (!kwargs['extra_context'])
+        kwargs['extra_context'] = {};
 
     //if login_required and not request.user.is_authenticated():
     //    return redirect_to_login(request.path)
 
-    var [model, form_class] = get_model_and_form_class(model, form_class);
-    var obj = lookup_object(model, object_id, slug, slug_field);
+    var [model, form_class] = get_model_and_form_class(kwargs['model'], kwargs['form_class']);
+    var obj = lookup_object(model, kwargs['object_id'], kwargs['slug'], kwargs['slug_field']);
     if (request.method == "POST") {
     	var form = new form_class({'data': request.POST, 'files': request.FILES, 'instance': obj});
-    	return redirect(post_save_redirect, obj);
+    	return redirect(kwargs['post_save_redirect'], obj);
     } else {
     	var form = new form_class({'instance':obj})
-    	if (!template_name) {
-    		template_name = "%s/%s_form.html".subs([model._meta.app_label, model._meta.object_name.lower()]);
+    	if (!kwargs['template_name']) {
+    		kwargs['template_name'] = "%s/%s_form.html".subs([model._meta.app_label, model._meta.object_name.lower()])
     	}
     }
+    var t = template_loader.get_template(template_name);
+    var c = new RequestContext(request, {
+            form: form,
+            template_object_name: obj,
+            }, context_processors);
+    apply_extra_context(extra_context, c);
+    var response = new HttpResponse(t.render(c));
+    populate_xheaders(request, response, model, getattr(obj, obj._meta.pk.attname));
+    return response;
 //    if request.method == 'POST':
 //        form = form_class(request.POST, request.FILES, instance=obj)
 //        if form.is_valid():
@@ -242,9 +259,6 @@ function update_object(request) {
 //    response = HttpResponse(t.render(c))
 //    populate_xheaders(request, response, model, getattr(obj, obj._meta.pk.attname))
 //    return response
-
-
-
 }
 
 //def delete_object(request, model, post_delete_redirect, object_id=None,
@@ -287,40 +301,40 @@ function update_object(request) {
 //        return response
 
 function delete_object(request, model, post_delete_redirect){
-	var args = new Arguments({
-		object_id : null,
-		slug_field : 'slug',
-		template_name : null,
-		template_loader : loader,
-		extra_context : null,
-		login_required : null,
-		context_processors : null,
-		template_object_name : 'object'
-	});
-	if (!extra_context)
-		extra_context = {};
-	
-	var obj = lookup_object(model, object_id, slug, slug_field);
+    var args = new Arguments({
+        object_id : null,
+        slug_field : 'slug',
+        template_name : null,
+        template_loader : loader,
+        extra_context : null,
+        login_required : null,
+        context_processors : null,
+        template_object_name : 'object'
+    });
 
-	if (request.method == 'POST') {
-		obj.delete();
-		return HttpResponseRedirect(post_delete_redirect);
-		
-	} else {
-		if (!template_name) {
-			template_name = "%s/%s_confirm_delete.html".subs([model._meta.app_label, model._meta.object_name.lower()]);
-		}
-		var t = template_loader.get_template(template_name),
-			c = new RequestContext(request, {
-			            template_object_name: obj,
-				        //}, context_processors)
-				        context_processors : context_processors}));
-		apply_extra_context(extra_context, c);
-		var response = new HttpResponse(t.render(c));
-		populate_xheaders(request, response, model, getattr(obj, obj._meta.pk.attname));
-		return response;
-		
-	}
+    var kwargs = args.kwargs;
+    if (!kwargs['extra_context'])
+        kwargs['extra_context'] = {};
+
+    var obj = lookup_object(model, kwargs['object_id'], kwargs['slug'], kwargs['slug_field']);
+
+    if (request.method == 'POST') {
+        obj.delete();
+        return new HttpResponseRedirect(post_delete_redirect);
+        
+    } else {
+        if (!kwargs['template_name']) {
+            kwargs['template_name'] = "%s/%s_confirm_delete.html".subs([model._meta.app_label, model._meta.object_name.lower()]);
+        }
+        var t = template_loader.get_template(kwargs['template_name']),
+            c = new RequestContext(request, {
+                        template_object_name: obj },
+                        kwargs['context_processors']);
+        apply_extra_context(kwargs['extra_context'], c);
+        var response = new HttpResponse(t.render(c));
+        populate_xheaders(request, response, model, getattr(obj, obj._meta.pk.attname));
+        return response;
+    }
 
 //    else:
 //        if not template_name:
@@ -333,8 +347,6 @@ function delete_object(request, model, post_delete_redirect){
 //        response = HttpResponse(t.render(c))
 //        populate_xheaders(request, response, model, getattr(obj, obj._meta.pk.attname))
 //        return response
-	
-	
 }
 
 publish({

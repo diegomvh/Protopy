@@ -119,7 +119,7 @@ var DOMAdapter = type('DOMAdapter', [ object ], {
         if (state.startswith('/'))
             state = state.slice(1);
         if (state.endswith('/'))
-            state = state.slice(0, -1);;
+            state = state.slice(0, -1);
         return state;
     },
 
