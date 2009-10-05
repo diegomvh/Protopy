@@ -9,8 +9,9 @@ Web dinámica desde la perspectiva del cliente
 *********************************************
 
 Desde la perspectiva de un usuario, la Web consiste en una enorme cantidad de
-documentos interconectados a nivel mundial llamados *paginas Web*.
-En el cliente las paginas se ven mediante un programa llamado navegadores  
+documentos interconectados a nivel mundial llamados *páginas web* a los cuales
+se accede mediante un navegador web.
+
 
 JavaScript ha tenido durante mucho tiempo la reputación de lenguaje torpe e
 inadecuado para el desarrollo serio. Esto ha sido en gran parte debido a las
