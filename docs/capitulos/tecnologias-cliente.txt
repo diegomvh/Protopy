@@ -12,9 +12,13 @@ Desde la perspectiva de un usuario, la Web consiste en una enorme cantidad de
 documentos interconectados a nivel mundial llamados *páginas web* a los cuales
 se accede mediante un navegador web.
 
+Cada uno de estos documento está escrito en un leguaje de marcado (o etiquetas), típicamente
+HTML, que utiliza el lenguaje JavaScript para interactividad y hojas
+de estilo en cascada (CSS) para definir el diseño visual.
 
 JavaScript ha tenido durante mucho tiempo la reputación de lenguaje torpe e
-inadecuado para el desarrollo serio. Esto ha sido en gran parte debido a las
+inadecuado para el desarrollo serio. 
+A pesar de los estándares impuestos por Esto ha sido en gran parte debido a las
 implementaciones incompatibles del lenguaje y del DOM en varios navegadores, y
 al uso extenso de código "pegado" lleno de errores por parte de los aficionados.
 Los errores en tiempo de ejecución eran tan frecuentes y difíciles de solucionar
