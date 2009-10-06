@@ -320,24 +320,17 @@ características comunes en lenguajes de programación C++ o Java como el
 ocultamiento de información.
 
 
-A continuación se explica como crear un objeto:
+Un objeto se puede crear de varias maneras:
 
 .. code-block:: javascript
 
-    var uno = new Object();
-    var dos = {};
-
-En este primer ejemplo se ver que hay dos formas de crear objetos, en particular
-la segunda forma hace uso de una característica propia del lenguaje para
-declarar estructuras de datos y resulta de mucha utilidad en los casos de
-intercambio de mensajes mediante el estándar :term:`JSON`. Otros tipos de
-objetos pueden ser declarados de esta manera, como:
-
-.. code-block:: javascript
-
-    cadenas = "";
-    arreglos = [];
-    funciones = function() {};
+    var uno = new Object();	// Mediante el constructor
+    uno['a'] = 3;			// Asignacion equivalente
+    uno.b = 4;				// Asignación equivalente
+    
+    var dos = {};			// Mediante la sintaxis abreviada
+    dos['a'] = 3;			// Asignacion equivalente
+    dos.b = 4;				// Asignación equivalente
 
 Las caracteristicas dinámicas de lenguaje posibilitan la modificación de los
 objetos en tiempo de ejecución, esto quiere decir que a un objeto, luego de ser
@@ -346,27 +339,27 @@ creado, se le pueden agregar o eliminar métodos y propiedades:
 .. code-block:: javascript
 
     uno.variable = “hola”;
-    dos.metodo = new Function();
+    dos.metodo = function () { this.c = 3; }
 
 De esta forma se tienen dos objetos personalizados uno con un "atributo" y otro
-con un "metodo", de esta manera se pueden continuar agregando miembros de
-cualquier tipo y hacer crecer los objetos. Sin embargo, crear objetos así no es
-cómodo, ya que si se quisiéra crear una copia de este objeto se deberían
-declarar nuevamente todos sus miembros.
-
-Creando ‘Clases’:especifica
+con un "metodo". Sin embargo esta forma de definir un objeto es inadecuado
+para la definción de múltiples instancias.
 
 La forma en que los lenguajes orientados a objetos comúnmente resuelven el
-problema anterior es mediante el uso de clases, en JavaScript no es posible
-declarar clases, pero si es posible instanciar objetos a partir de un
-constructor.
+problema anterior es mediante el uso de clases, que están ausentes en JavaScript,
+pero si es posible instanciar objetos a partir de un constructor.
 
-El objeto Function se utiliza como objeto instanciable en JavaScript, y el
-cuerpo de la función es el constructor del objeto. Para emular el
-comprortamiento propio de una clase el método mas difundido es aprovechar el
-funcionamiento de la plabra reservada `this` dentro del constructor y las
-funciones miembro. Cuándo una función es llamada con el operador `new`, `this` hace
-referencia al objeto que será retornado.
+Una función se comporta como constructora cuando es invocada con la
+palabra reservada *new*. Bajo este comportamiento, dentro del cuerpo
+de la función, el símbolo *this* apunta a la nueva instancia. Generalmente
+se genrea una refrencia a la fucnión la cual hace de equivalente a
+la clase.
+
+Resulta interesante destacar que las funciones miembro de una instancia
+generada a partir de un constructor tienen ligado el nombre *this* a la
+instancia. En las funciones que no son instancias, *this* apunta a el
+objeto *window*, que en DOM se toma como ambito de nombres global.
+
 
 .. code-block:: javascript
 
@@ -380,15 +373,13 @@ referencia al objeto que será retornado.
     }
     objeto = new Clase(); // instanciamos ‘Clase’
 
-Podria parecer que aquí se terminan los problemas pero no es así, esta forma de
-crear clases provoca que cada objeto tenga una versión unica de sus ‘metodos’,
-cuando lo ideal seria que todos los objetos compartieran la misma función.
+Esta primera aproximación posee una importante desventaja: cada
+instancia posee una nueva versión de los métodos.
 
-La propiedad ‘Prototype’:
-
-Todas las funciones tienen una propiedad llamada prototype, esta propiedad es un
-objeto que será utilizado como ‘modelo’ inicial de todos los objetos que sean
-creados con esta función cuando sea utilizada como constructor.
+Para lograr una unificación del protipo al cual pertenecen las instancias
+todas las funciones tienen una propiedad llamada *prototype*. 
+Esta propiedad es un objeto que será utilizado como ‘modelo’ inicial de todos los objetos que sean
+creados cuando esta función cuando sea utilizada como constructor.
 
 Reescribiendo el ejemplo anterior el código quedaría así:
 
@@ -403,17 +394,21 @@ Reescribiendo el ejemplo anterior el código quedaría así:
     }
     objeto = new Clase(); // instanciamos ‘miClase’
 
-Ahora todos los objetos creados a partir de ‘Clase’ comparten inicialmente las
+En este ejemplo, todos los objetos creados a partir de ‘Clase’ comparten las
 mismas referencias en todas sus propiedades, esto significa que, todos los
-objetos van a compartir la misma versión de ‘metodo’.
+objetos van a compartir la misma versión de cada ‘metodo’.
 
 Adicionalmente, al utilizar la propiedad prototype, se obtiene otra ventaja y es
 poder usar la palabra reservada instanceof para determinar si un objeto es
-instancia de un constructor.
+instancia de un constructor:
 
-..
+.. code-block:: javascript
+	
+	var instancia = new Clase();
+	instanceof(instancia, Clase); // -> true
 
-    http://javis.wordpress.com/2006/10/23/javascript-orientado-a-objetos/
+
+.. http://javis.wordpress.com/2006/10/23/javascript-orientado-a-objetos/
 
 ************************
 Evolución del JavaScript
@@ -422,20 +417,20 @@ Evolución del JavaScript
 Herencia
 ========
 
-JavaScript puede no tener herencia orientada a clases, pero tiene herencia
-"prototipal". Existen muchos autores que implementan su forma de emular la
-herencia en JavaScript y entre los métodos mas utilizados se detallan a
-continuacion dos prinsipios basicos ampliamente difundidos. 
+Javascript posee herencia basada en prototipos, pero existen muchas versiones
+de implementarla. Se describen a continuación las técnicas más populares.
 
-Object masquerading
+
+Object Masquerading
 -------------------
 
 Este método saca provecho del comportamiento de la palabra reservada this
 dentro de los constructores.
 El funcionamiento es el siguiente: Un constructor asigna propiedades y métodos
-a un objeto referenciándolo con la palabra clave this, como un constructor es
-simplemente una función, se puede usar el constructor de una clase A como
-método de una clase B.
+a un objeto referenciándolo con la palabra clave *this*. Como un constructor
+es una función, esta puede ser invocada desde una "subclase".
+
+Definendo a la clase A como siguie:
 
 .. code-block:: javascript
     
@@ -460,26 +455,28 @@ llamado.
 
 En el código anterior, el constructor ‘ClaseA’, es llamado como método del nuevo
 objeto que se esta creando en ‘ClaseB’, por lo tanto, todas las propiedades y
-métodos que se crean en ClaseA se van a agregar al nuevo objeto de ClaseB.
+métodos que se crean en ClaseA se añaden a las instancias de ClaseB.
 
-Quizás el punto mas interesante del Object masquerading, frente a otros métodos
-de emular herencia, es que soporta la herencia múltiple, esto significa que un
-objeto puede heredar de mas de una clase al mismo tiempo. Solo basta con llamar
-a cuantos constructores sean necesarios dentro del constructor de la clase hija.
 
-Prototype chaining
+*Object Masquerading* permite, por su forma de invocar a los "superconstructores",
+implementar herencia múltiple, basta con llamar cuantos constructores sean necesarios.
+Al no trabajar con la propiedad *prototype*, *instanceof* no es utilizable y persiste
+el problema de las múltiples versiones de los métodos.
+
+Prototype Chaining
 ------------------
 
-Anteriormente se mostro como definir clases utilizando el objeto prototype.
-Prototype chaining se basa en este objeto y es el método recomendado por el
+Anteriormente se mostró como definir clases utilizando el objeto prototype.
+*Prototype Chaining* se basa en este objeto y es el método recomendado por el
 standard ECMA Script.
-Prototype es una propiedad del objeto Function, que actúa como un template sobre
-el cual se van a crear nuevos objetos. Mas precisamente, las propiedades y
-métodos del objeto prototype van a ser pasados a todas las instancias de esa
-clase.
+El atributo *prototype* de el objeto Function es pasado a todas las instancias
+cuando la función se invoca como constructor.
 
-El ejemplo anterior utilizando prototype chaining quedaría de la siguiente
-manera:
+La idea trás Prototype Chaining es generar una instancia de la clase base
+como instancia inicial del prototipo de la subclase.
+
+Modificando el ejemplo anterior para utilizar Prototype Chaining obtenemos
+el siguiente código.
 
 .. code-block:: javascript
 
@@ -491,20 +488,8 @@ manera:
     function ClassB() {}    
     ClassB.prototype = new ClassA();
 
-La última línea del ejemplo muestra el funcionamiento del prototype chaining.
-Lo que ocurre es que asignamos al prototipo de ‘ClassB’ una nueva instancia de
-‘ClassA’.
-De ahora en adelante, todos los objetos creados con ‘ClassB’ van a tener,
-también, los mismos métodos y propiedades de la instancia de ‘ClassA’. Y si
-queremos agregar mas métodos y propiedades, lo único que tenemos que hacer es
-agregárselos al prototype de ‘ClassB’.
-
-Lo malo de este método para emular herencia, es que no se puede pasar parámetros
-a la clase base, como hicimos en el ejemplo de Object masquerading.
-
-Lo bueno, es que el operador instanceof funciona de una manera única: por cada
-instancia de ClaseB, instanceof nos retorna true tanto con ‘ClaseA’ como con
-‘ClaseB’:
+Este método posee la desventaja que no es posible invocar el constructor
+con parámetros, pero habilita la utilización de la función *instanceof*::
 
 .. code-block:: javascript
 
