@@ -453,11 +453,11 @@ cómo tratar la respuesta (en el ejemplo como texto plano).
         start_response('200 OK', [('Content-Type', 'text/plain')])
         return ['Hello World\n']
 
-En la figura se discriminan las capas intervinientes en WSGI: El cliente
-genera una solicitud, el servidor discrimina que tipo de recurso está siendo
-requerido. Cuando la respuesta se genera a través de WSGI, intervie el 
-intérprete de Python con sus liberías (Site Packages) y finalmente la
-aplicación.
+En la figura 2.3 se detallan las capas intervinientes en WSGI: el cliente
+genera una solicitud, el servidor discrimina qué tipo de recurso está siendo
+requerido. Si se trata de un recurso dinámico, la respuesta se genera a través del
+módulo WSGI. En este caso interviene el intérprete de Python con sus liberías (Site Packages) y la
+aplicación WSGI.
 
 
 .. figura_wsgi:
@@ -1298,7 +1298,7 @@ Managers
 
 Los managers se encargan de realizar las querys sobre las entidades
 de la base de datos. Presentan una API para realizar las consultas y devuelven
-instancias de objetos ``QuerySet``. Un QuerySet representa una consulta *lazy*,
+instancias de objetos ``QuerySet``. Un ``QuerySet`` representa una consulta *lazy*,
 es decir, la consulta que se hace efectiva cuando es necesario acceder a los datos[*]_.
 
 
@@ -1346,9 +1346,9 @@ Los managers están presentes en:
 API de los Managers
 ~~~~~~~~~~~~~~~~~~~
 
-La API provista por los managers consiste en dos grupos de métodos: los que retornan instancias de QuerySet y los que no. 
-A continuación se listan los métodos que constituyen la API. Si son invocados sobre un manager devuelven un QuerySet, y
-si son ejecutados sobre un QuerySet, devuelven otra instancia del mismo tipo.
+La API provista por los managers consiste en dos grupos de métodos: los que retornan instancias de ``QuerySet`` y los que no. 
+A continuación se listan los métodos que constituyen la API. Si son invocados sobre un manager devuelven un ``QuerySet``, y
+si son ejecutados sobre un ``QuerySet``, devuelven otra instancia del mismo tipo.
 
 El primer grupo está definido como sigue:
 
@@ -1385,7 +1385,7 @@ El primer grupo está definido como sigue:
     		
 
 
-El conjunto que no devuelve ``QuerySet``s es el siguiente:
+El conjunto que no devuelve ``QuerySet`` es el siguiente:
 
     * ``get(**campos)``
     	Obtiene una única entidad identificada por ``campos``
