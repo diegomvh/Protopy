@@ -15,7 +15,7 @@ el estudio de los lenguajes dinámicos como plataforma de desarrollo de aplicaci
 web dinámicas.
 
 **********************************
-Generación dinámica de páginas Web
+Generación Dinámica de Páginas Web
 **********************************
 
 En el enfoque dinámico, cuando un usuario realiza una solicitud, el mensaje
@@ -90,8 +90,8 @@ luego, se analizan los lenguajes dinámicos y sus frameworks.
 Servidor Web
 ============
 
-Un servidor web, o *web server* es un software encargado de recibir solicitudes
-de recursos de un cliente, típicamente un :ref:`navegador web <navegador-web>`, a través del
+Un servidor web, o *web server*, es un software encargado de recibir solicitudes
+de recursos de un cliente, típicamente un navegador web, a través del
 protocolo HTTP y de generar una respuesta.
 Mediante la especificación MIME, que se incluye en el encabezado de la
 respuesta, se puede identificar qué tipo de archivo es devuelto, 
@@ -108,7 +108,7 @@ archivos sin ninguna modificación.
 
 El contenido dinámico, en contraposición al contenido estático,
 proviene de la salida de algún programa, un script o algún
-tipo de API invocada por el servidor web (como SSI, :ref:`CGI <servidor-cgi>`,
+tipo de API invocada por el servidor web (como SSI, CGI,
 SCGI, FastCGI, JSP, ColdFusion, NSAPI o ISAPI).
 
 .. El cliente web accede a los recursos del web server mediante una dirección de recurso, u :term:`URL`.
@@ -122,7 +122,7 @@ CGI
 ===
 
 Common Gateway Interface (CGI) [*]_ surge alrededor del año 1998,
-como el primer estándar de comunicación o :term:`API` entre un servidor web y un
+como el primer estándar de comunicación o API entre un servidor web y un
 programa de generación de contenidos. 
 
 La salida del programa invocado por el servidor web puede ser un documento
@@ -234,7 +234,7 @@ web dinámicas.
 Una de las clasificaciones más generales que se realizan de los lenguajes de programación 
 es según la identificación de su objetivo.
 Los lenguajes de programación de *propósito general* están orientados a resolver cualquier tipo
-de problema, mientras que los lenguajes de *propósito específico*, o *DSL*[*]_, están enfocados en resolver un tipo de problema
+de problema, mientras que los lenguajes de *propósito específico*, o DSL [*]_, están enfocados en resolver un tipo de problema
 de manera más eficaz. Un ejemplo muy popular de DSL es el lenguaje de macros embebido en la planilla de cálculo Microsoft Excel [DavidPollak2006]_.
 
 .. [*] Domain Specific Language
@@ -267,49 +267,63 @@ compilación a bytecode e interpretación.
 
 Los lenguajes de programación interpretados suelen ser de alto nivel y de *tipado dinámico*, es decir
 que la mayoría de las comprobaciones realizadas en tiempo de compilación son evaluadas durante
-la ejecución [*]_ .
+la ejecución [*]_.
 
 .. [*] Estas comprobaciones comprenden el chequeo de tipos de datos, la resolución de métodos, etc.
 
 
 .. note:: Hasta acá llegó la revisión del jueves 24 de Septiembre
 
-
-La mayoría de los lenguajes interpretados permiten ser ejecutado en varias plataformas [*]_ (multiplataforma), 
-ya que solo es necesario disponer de un intérprete compilado, a diferencia de los lenguajes compilados en 
-los cuales se requiere disponer de un compilador para la plataforma y compilar el código.
+A diferencia de los lenguajes compilados, en los cuales se requiere disponer de un compilador
+para la plataforma [*]_ y compilar el código, la mayoría de los lenguajes interpretados permiten 
+ser ejecutados en varias plataformas (multiplataforma), ya que sólo es necesario disponer de un
+intérprete compilado.
 
 .. [*] *Una plataforma es una combinación de hardware y software usada para ejecutar aplicaciones; en su forma más simple consiste únicamente de un sistema operativo, una arquitectura, o una combinación de ambos. La plataforma más conocida es probablemente Microsoft Windows en una arquitectura x86* [WikiPlataforma2009]_.
 
 .. [WikiPlataforma2009] *Multiplataforma*, Wikipedia, 2009, último acceso, Agosto de 2009, http://es.wikipedia.org/wiki/Multiplataforma
 
-La mayoría de los lenguajes interpretados son lenguajes dinámicos, esto permite el agregado de código, extensión o redefinición de objetos 
-y hasta inclusive modificar tipos de datos, en tiempo de ejecución.
-Cabe destacar que si bien estas características son factibles de implementar sobre lenguajes estáticos, no resulta sencillo.
+Generalmente los lenguajes interpretados son lenguajes dinámicos. Esto permite el agregado de código,
+extensión o redefinición de objetos y hasta inclusive modificar tipos de datos, en tiempo de ejecución.
+Cabe destacar que si bien estas características son factibles de implementar sobre lenguajes estáticos,
+esto no resulta sencillo.
 
 
-En base a la clasificación antes mencionada, se analizan los lenguajes de programación más 
+En base a la clasificación antes mencionada, a continuacion se analizan los lenguajes de programación más 
 populares para el desarrollo de aplicaciones web.
 
-**Perl** es un lenguaje de programación de propósito general diseñado por Larry Wall en 1987. Perl toma características del lenguaje C,
-del lenguaje interpretado shell (sh), AWK, sed, Lisp y, en menor medida, de muchos otros lenguajes de programación.
-Su uso principal es el procesamiento de texto, siendo muy popular en programación de sistemas. Muchos sistemas basados
-en CGI están escritos en Perl (sistemas de administración de servidores, correo, etc.). Perl esta disponible para
-muchas plataformas, incluyendo todas las variantes de UNIX.
+Perl
+----
+
+Es un lenguaje de programación de propósito general diseñado por Larry Wall en 1987. Perl toma características
+del lenguaje C, del lenguaje interpretado shell (sh), de los lenguajes AWK, sed y Lisp, y, en menor medida, de
+muchos otros lenguajes de programación.
+Se usa principalmente para el procesamiento de texto, siendo muy popular en programación de sistemas.
+Muchos sistemas basados en CGI están escritos en Perl (sistemas de administración de servidores, correo, etc.).
+Perl está disponible para muchas plataformas, incluyendo todas las variantes de UNIX.
 
 Estructuralmente, Perl está basado en un estilo de bloques como los del C o AWK, y fue ampliamente adoptado por su 
 destreza en el procesamiento de texto.
 
-La principal crítica al lenguaje es la ambigüedad y complejidad de su sintaxis, una tarea puede ser realizada de 
-varias maneras diferentes, dado lugar a confusión en grupos de trabajo.
+La principal crítica que se le hace a este lenguaje es la ambigüedad y complejidad de su sintaxis, ya que una tarea
+puede ser realizada de varias maneras diferentes, dando lugar a confusión en los grupos de trabajo.
 
 
 
-**Java** es un lenguaje de programación orientado a objetos, multiplataforma y propósito general, basado en máquina virtual, de compilación explícita.
+Java
+----
+
+Es un lenguaje de programación orientado a objetos, multiplataforma y de propósito general, basado en máquina virtual,
+de compilación explícita.
 Java ha definido algunos elementos importantes en cuanto a la web dinámica, como los applets [*]_ y la especificación J2EE.
-Dos desventajas que presenta este lenguaje, al igual que su predecesor C++, del cual heredó una sintaxis verborragica [SeanKellyRecFromAdict2009]_
-además del tipado estático. Como contrapartida resulta una alternativa veloz para ciertas tareas _poner_citas_, lo que
-motivó el desarrollo de lenguajes dinámicos [TolksdorfJVM2009]_ que hacen uso de su máquina virtual [*]_. Se destaca, Scala, que hoy cuenta con frameworks con una concepción post RubyOnRails. 
+Dos desventajas que presenta este lenguaje son la sintaxis verborrágica y el tipado estático,
+heredados de su predecesor C++ [SeanKellyRecFromAdict2009]_.
+
+.. note:: Poner citas, ver el tema en cuanto a lenguajes dinamicos sobre la jvm
+
+Como contrapartida resulta una alternativa veloz para ciertas tareas, lo que
+motivó el desarrollo de lenguajes dinámicos [TolksdorfJVM2009]_ que hacen uso de la máquina virtual de Java [*]_.
+Entre ellos, se destaca Scala, que hoy cuenta con frameworks con una concepción posterior a RubyOnRails.
 
 .. sin embargo, todavía no han alcanzado la popularidad de J2EE o ROR.
 
@@ -323,23 +337,28 @@ http://www.archive.org/details/SeanKellyRecoveryfromAddiction
 .. [TolksdorfJVM2009] *Programming languages for the Java Virtual Machine JVM*, Robert Tolksdorf, último acceso Septiembre de 2009, http://www.is-research.de/info/vmlanguages/
 
 
-**PHP** es un lenguaje interpretado, originalmente diseñado para ser embebido 
+PHP
+---
+
+Es un lenguaje interpretado, originalmente diseñado para ser embebido 
 dentro del código HTML y procesado en el servidor, lo cual lo convierte en un DSL.
 Con los años evolucionó hacia un lenguaje de propósito general.
-Toma elementos de Perl y shellscript, C, y recientemente Java.
+Toma elementos de Perl, shellscript, C y recientemente de Java.
 
+Tradicionalmente su ciclo de ejecución consiste en:
 
-Tradicionalmente el ciclo de ejecución consiste en:
-	* A partir de la URL de la solicitud del cliente se determina el archivo PHP que se encargará de generar la respuesta
-	* El servidor, activa el módulo encargado de la interpretación de PHP con el archivo y la solicitud como entrada
+	* A partir de la URL de la solicitud del cliente se determina el archivo PHP 
+	    que se encargará de generar la respuesta.
+	* El servidor activa el módulo encargado de la interpretación de PHP,
+	    con el archivo y la solicitud como entrada.
 	* La salida es devuelta al cliente.
-	
+
 Presenta importantes ventajas sobre CGI, ya que no es necesario confeccionar un programa de usuario y 
-la resolución de URLs está dada por la estructura del  sistema de archivos. 
-Si bien es muy popular [PHPNetPopularity2009]_ y está disponible en la gran mayoría de los servidores UNIX, simplificando el :ref:`deployment`
-PHP es criticado por no poseer ámbito de nombres para los módulos, 
-promover el código desordenado y tener serios problemas a la hora de la optimización [BlogHardz2008]_ .
-Los autores de Django y Ruby On Rails provenir del lenguaje PHP en [SnakesAndRubies2005]_ .
+la resolución de URLs está dada por la estructura del sistema de archivos.
+Si bien es muy popular [PHPNetPopularity2009]_ y está disponible en la gran mayoría de los servidores UNIX,
+PHP es criticado por no poseer ámbito de nombres para los módulos, promover el código desordenado y tener
+serios problemas a la hora de la optimización [BlogHardz2008]_.
+Los autores de los frameworks Django y Ruby On Rails provienen del lenguaje PHP [SnakesAndRubies2005]_.
 
 
 .. [PHPNetPopularity2009] *Utilización de PHP según php.net*,  último acceso Septiembre de 2009, <http://www.php.net/usage.php>
@@ -348,18 +367,22 @@ Los autores de Django y Ruby On Rails provenir del lenguaje PHP en [SnakesAndRub
 
 .. [BlogHardz2008] http://hardz.wordpress.com/2008/02/07/php-hipertexto-pre-procesado/
 
-**Ruby** es un lenguaje orientado fuertemente objetos, multiplataforma, creado en 1995 por 
-Yukihiro "Matz" Matsumoto, en Japón.
-A menudo comparado con *Smalltak*, se suele decir que Ruby es un lenguaje de objetos puro, 
-ya que *todo* es un objeto. Posee muchas características avanzadas como metaclases, clausuras, iteradores, integración natural de expresiones regulares en la sintaxis, etc.
+Ruby
+----
 
-Su sintaxis es compacta, gracias a la utilización de simbología, parte de la cual fue tomada de Perl.
-Existen varios intérpretes de Ruby, siendo la oficial escrita en C, se conocen 
-YARV [YARV2009]_ , 
-JRuby [JRuby2009]_ , 
-Rubinius [Rubinius2009]_ , 
-IronRuby [IronRuby2009]_ ,
-y MacRuby [MacRuby2009]_ .
+Es un lenguaje orientado fuertemente a objetos, multiplataforma, creado en 1995 por 
+Yukihiro "Matz" Matsumoto, en Japón.
+A menudo es comparado con *Smalltak* y se suele decir que Ruby es un lenguaje de objetos puro, 
+ya que todo en él es un objeto. Posee muchas características avanzadas como metaclases, clausuras,
+iteradores, integración natural de expresiones regulares en la sintaxis, etc. Su sintaxis es compacta,
+gracias a la utilización de simbología, parte de la cual fue tomada de Perl.
+
+Existen varios intérpretes de Ruby; el oficial escrito en C. ademas se conocen:
+YARV [YARV2009]_,
+JRuby [JRuby2009]_,
+Rubinius [Rubinius2009]_,
+IronRuby [IronRuby2009]_,
+y MacRuby [MacRuby2009]_.
 
 .. [YARV2009] Yet Another Ruby VM, escrita por Sacasada Kiochi http://www.atdot.net/yarv/
 .. [JRuby2009] JRuby es una máquina virtual de Ruby escrita sobre la máquina virtual de **Java**, http://jruby.codehaus.org/
@@ -367,38 +390,74 @@ y MacRuby [MacRuby2009]_ .
 .. [IronRuby2009] IronRuby es una implementación de Ruby sobre la plataforma **.Net** http://www.ironruby.net/
 .. [MacRuby2009] MacRuby es una implementación de Ruby sobre **Objective-C** para el sistema Mac OS X, http://www.macruby.org/
 
-Una de las :term:`Killer App` según el autor es el framework para contenido web denominado `"Ruby on Rails" <www.rubyonrails.com>`_ .
-Su versión estable oficial fue liberada en el año 2005 y proponía un cambio radical al enfoque complejo de *J2EE* [RailsQuotes2009]_ .
+La aplicación que popularizo al lenguaje es el framework `"Ruby on Rails" <www.rubyonrails.com>`_. Su
+versión estable oficial fue liberada en el año 2005 y represento un cambio radical al enfoque complejo de
+*J2EE* [RailsQuotes2009]_.
 
 Ruby aún posee baja aceptación debido, quizás, a que la documentación oficial solía estar
-en idioma Japonés (aunque la situación se ha venido revirtiendo últimamente). Otra desventaja importante es que
-la velocidad del intérprete oficial es bastante baja (cuando se la compara con otros lenguajes dinámicos similares como Python) y
-variables entre plataformas.
+en el idioma japonés (aunque la situación se ha venido revirtiendo últimamente). Otra desventaja importante es que
+la velocidad del intérprete oficial es bastante baja y varía según las plataformas (cuando se la compara con otros
+lenguajes dinámicos similares como Python).
 
 
 .. _lenguaje-python:
 
-**Python** es un lenguaje de programación interpretado multiparadigma, 
-de propósito general. Fue creado por por Guido van Rossum en el año
-1991.
-Se trata de un lenguaje dinámico que toma elementos de varios lenguajes, como C, Java,
+Python
+------
+
+Es un lenguaje de programación interpretado multiparadigma,
+de propósito general. Fue creado por Guido van Rossum en el año 1991.
+Se trata de un lenguaje dinámico que toma elementos de varios lenguajes, como C, Java y
 Scheme, entre otros.
 
-Python puede ser extendido mediante módulos escritos en C o C++, y también 
-se puede embeber el intérprete en otros lenguajes. 
-Permite cargar bibliotecas de enlace dinámico.
+Python puede ser extendido mediante módulos escritos en C o C++, y se puede embeber
+el intérprete en otros lenguajes. También permite cargar bibliotecas de enlace dinámico.
 
-Python es considerado por parte de la comunidad UNIX, como una evolución de Perl, 
-de sintaxis limpia y potente. Eric Raymond, en el artículo "Why Python?", explica 
-su conversión de Perl a Python [EricRaymon2000]_. 
+La comunidad UNIX considera a Python como una evolución de Perl, con sintaxis limpia y potente.
+Eric Raymond, en el artículo "Why Python?", explica su conversión de Perl a Python [EricRaymon2000]_.
 
 .. [EricRaymon2000] *Why Python*, Linux Journal, publicado el 1° de Mayo de 2000, http://www.linuxjournal.com/article/3882
 
-Muchos de las sistemas webs basados en CGI, están
-escritos en Perl, por lo cual no es sorpresa encontrar una buena cantidad de 
-proyectos del lenguaje Python orientados a la Web [PythonPyPi2009]_.
+Muchos de las sistemas web basados en CGI, están escritos en Perl,
+por lo cual no es sorprendente encontrar una buena cantidad de proyectos Python
+orientados a la web [PythonPyPi2009]_.
 
 .. [PythonPyPi2009] En el repositorio de proyectos del lenguaje se encuentran más 1100 resultados para paquetes relacionados con el término "web". http://pypi.python.org/pypi?%3Aaction=search&term=web&submit=search
+
+
+.. _servidor-wsgi:
+
+Se han desarrollado varios módulos para la interconexión del intérprete de Python con un servidor web. Phillip J. Eby formuló
+un método, denominado WSGI (Web Server Gateway Interface), que sigue la filosofía del lenguaje [PEP333]_. Informalmente
+se puede decir que WSGI es una traducción de CGI al lenguaje Python. Su objetivo principal es estandarizar, sobre el lenguaje,
+el mecanismo de comunicación entre el servidor y una aplicación.
+
+.. [PEP333] PEP *Python Enhancement Proposals* son documentos en los que se proponen mejoras para el lenguaje
+    Python, publicados en el sitio oficial http://www.python.org.
+
+Para satisfacer una solicitud bajo WSGI, se invoca la función de entrada con dos argumentos:
+
+	1. Un diccionario con las variables de entorno, al igual que en CGI.
+	2. Una función u objeto llamable, al cual se invoca para iniciar la respuesta.
+
+.. note:: Explicar en un parrafo la figura y relacionar.
+
+.. figure:: ../_svg/esquema_wsgi.png
+
+    Esquema WSGI.
+
+En el siguiente ejemplo se mustra una aplicación mínima en WSGI. La función ``app`` es el punto de entrada y
+devuelve la cadena Hello World1.
+Utiliza la función que recibe como segundo argumento, ``start_response``, para que el cliente determine
+cómo tratar la respuesta (en el ejemplo como texto plano).
+
+.. code-block:: python
+
+    def app(environ, start_response):
+        start_response('200 OK', [('Content-Type', 'text/plain')])
+        return ['Hello World\n']
+
+.. _servidor-orm:
 
 Los motivos por los cuales se seleccionó [*]_ el lenguaje Python para el desarrollo de
 la aplicación, son los que a continuación se enumeran:
@@ -419,39 +478,6 @@ En el :ref:`apéndice <apendices-python>` se encuentra una referecia detallada d
 .. [PythonOrgZen2009] *El zen de Python*, último acceso Septiembre de 2009, http://www.python.org/dev/peps/pep-0020/
 
 .. [*] Por sin no les quedaba duda del fanatismo del defo, by **gisE**!!!
-
-.. _servidor-wsgi:
-
-Módulo de interconexión de servidor web con Python
----------------------------------------------------
-
-Existen varios módulos para interconexión de intérprete de Python con un servidor web. Phillip J. Eby formuló
-un método que sigue la filosofía del lenguaje, en la [PEP333]_, que denominó WSGI (Web Server Gateway Interface).
-Informalmente se puede decir que WSGI es una traducción de CGI al lenguaje Python.
-Su objetivo principal fue estandarizar sobre el lenguaje el mecanismo de comunicación entre el servidor y una aplicación.
-
-.. [PEP333] PEP *Python Enhancement Proposals* son documentos en los que se proponen mejoras para el lenguaje
-Python, son albergados en el sitio oficial http://www.python.org
-
-Para satisfacer una solicitud bajo WSGI, se invoca la función de entrada. Esta recibe 2 argumentos:
-	1. Un diccionario con las variables de entorno, al igual que en CGI
-	2. Una función (u :ref:`objeto llamable <apendice_python_callables>` ) al cual se invoca para iniciar la respuesta.
-
-.. figure:: ../_svg/esquema_wsgi.png
-
-    Esquema WSGI.
-
-En el siguiente ejemplo constituye una aplicación mínima en WSGI. La función app es el punto de entrada y devuelve *Hello World*.
-Utiliza la función que recibe como segundo argumento, 'start_response', para que el cliente determine como tratar la respuesta.
-En este caso, texto plano.
-
-.. code-block:: python
-
-    def app(environ, start_response):
-        start_response('200 OK', [('Content-Type', 'text/plain')])
-        return ['Hello World\n']
-
-.. _servidor-orm:
 
 ***************
 Frameworks Web
