@@ -29,6 +29,6 @@ class BlogRemoteSite(RemoteSite):
     exclude_patterns = (r'.*~$', )
 
 site = BlogRemoteSite('blog')
-site.register(Post)
-site.register(Tag, TagRemote)
-site.register(Persona)
+site.register('post', Post)
+site.register('post', Tag, TagRemote)
+site.register('post', Persona)
