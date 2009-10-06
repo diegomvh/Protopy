@@ -20,6 +20,9 @@ publish({
             //'doff.template.loaders.filesystem.load_template_source',
         ],
 
+        // Whether to append trailing slashes to URLs.
+        APPEND_SLASH: true,
+
         // List of processors used by RequestContext to populate the context.
         // Each one should be a callable that takes the request object as its
         // only parameter and returns a dictionary to add to the context.
@@ -31,6 +34,12 @@ publish({
         ],
 
         TEMPLATE_STRING_IF_INVALID: '',
+
+        MIDDLEWARE_CLASSES: [
+            'doff.middleware.common.CommonMiddleware',
+            //'doff.contrib.sessions.middleware.SessionMiddleware',
+            //'doff.contrib.auth.middleware.AuthenticationMiddleware',
+        ],
 
         //The tablespaces to use for each model when not specified otherwise.
         DEFAULT_TABLESPACE: '',

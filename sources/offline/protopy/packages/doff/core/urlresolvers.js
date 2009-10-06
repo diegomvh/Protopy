@@ -33,8 +33,8 @@ function get_callable(lookup_view, can_fail) {
 
 function get_resolver(urlconf) {
     if (!urlconf) {
-        var settings = require('doff.core.project', 'get_settings');
-	var settings = get_settings();
+        require('doff.core.project', 'get_settings');
+        var settings = get_settings();
         urlconf = settings.ROOT_URLCONF;
     }
     return new RegexURLResolver('^/', urlconf);
@@ -76,7 +76,7 @@ var RegexURLPattern = type('RegexURLPattern', [ object ], {
     resolve: function(path) {
         var match = path.match(this.regex);
         if (bool(match)) {
-	    // In both cases, pass any extra_kwargs as **kwargs.
+            // In both cases, pass any extra_kwargs as **kwargs.
             return [this.callback, match.slice(1), this.default_args];
        }
     },
@@ -120,10 +120,10 @@ var RegexURLResolver = type('RegexURLResolver', [ object ], {
                 } catch (e if isinstance(e, Resolver404)) {
                     tried = tried.concat([(pattern.regex.pattern + '   ' + t) for (t in e.args[0]['tried'])]);
                 }
-            if (sub_match) {
-                return [sub_match[0], sub_match[1], this.default_kwargs];
-            }
-            tried.push(pattern.regex.pattern);
+                if (sub_match) {
+                    return [sub_match[0], sub_match[1], this.default_kwargs];
+                }
+                tried.push(pattern.regex.pattern);
             }
             throw new Resolver404({'tried': tried, 'path': new_path});
         }

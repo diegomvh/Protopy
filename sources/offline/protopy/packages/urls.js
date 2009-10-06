@@ -1,26 +1,3 @@
-/**** keys
-    members of a parsed URI object.
-*/
-var keys = [
-    "url",
-    "protocol",
-    "authorityRoot",
-    "authority",
-        "userInfo",
-            "user",
-            "password",
-        "domain",
-            "domains",
-        "port",
-    "path",
-        "root",
-        "directory",
-            "directories",
-        "file",
-    "query",
-    "anchor"
-];
- 
 /**** expressionKeys
 members of a parsed URI object that you get
 from evaluting the strict regular expression.
@@ -42,7 +19,9 @@ var expressionKeys = [
     "query",
     "anchor"
 ];
- 
+
+var queryExpression = /(?:^|&)([^&=]*)=?([^&]*)/g;        
+
 /**** strictExpression
 */
 var strictExpression = new RegExp( /* url */
@@ -93,6 +72,11 @@ var Parser = function (expression) {
             items[expressionKeys[i]] = parts[i] ? parts[i] : "";
         }
 
+        items.queryKey = {};
+        items.query.replace(queryExpression, function ($0, $1, $2) {
+            if ($1) items.queryKey[$1] = $2;
+        });
+        
         items.root = (items.root || items.authorityRoot) ? '/' : '';
 
         items.directories = items.directory.split("/");

@@ -26,7 +26,6 @@ import copy
 from offline.util.jsonrpc import SimpleJSONRPCDispatcher
 from datetime import datetime
 from django.db.models.loading import get_app, get_models, get_model
-from offline.export_models import export_remotes
 from offline.util import full_template_list, abswalk_with_simlinks
 from django.db.models import signals
 from django.conf import settings
@@ -408,16 +407,13 @@ class RemoteSite(RemoteBaseSite):
     #===========================================================================
     def export_models(self, app_name):
         from django.db.models.loading import get_app, get_models
-        from offline.export_models import export_remotes
+        from offline.export_models import export_remotes, get_model_order
 
         try:
-
-            model_remotes = filter(lambda x: x._meta.app_label == app_name, self._registry[app_name].values())
-            models = export_remotes(model_remotes)
-
+            models = export_remotes(self._registry[app_name])
             return render_to_response(
-                            'djangoffline/models_example.js',
-                            #'djangoffline/models.js',
+                            #'djangoffline/models_example.js',
+                            'djangoffline/models.js',
                            {'models': models, 'app': app_name, 'site': self},
                            mimetype = 'text/javascript')
 
@@ -427,7 +423,7 @@ class RemoteSite(RemoteBaseSite):
     #===========================================================================
     # Model handling
     #===========================================================================
-    def register(self, model, remote_proxy = None):
+    def register(self, app_name, model, remote_proxy = None):
         '''
         Register a proxy for a model
         '''
@@ -444,7 +440,7 @@ class RemoteSite(RemoteBaseSite):
                                 (RemoteModelProxy, ), 
                                 {'Meta': RemoteOptions(basic_meta)} )
 
-        app = self._registry.setdefault(model._meta.app_label, {})
+        app = self._registry.setdefault(app_name, {})
         app[model] = remote_proxy
 
         signals.post_save.connect(self.model_saved, model)

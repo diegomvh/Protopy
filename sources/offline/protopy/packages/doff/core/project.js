@@ -13,11 +13,11 @@ var Project = type('Project', object, {
         // Creo el objeto html
         this.adapter = new DOMAdapter();
         // Inicio del handler para las url
-        require('doff.core.server', 'Butler');
-        this.butler = new Butler(this.settings.ROOT_URLCONF);
+        require('doff.core.handler', 'LocalHandler');
+        var handler = new LocalHandler(this.settings.ROOT_URLCONF);
 
-        event.connect(this.adapter, 'send', this.butler, 'receive');
-        event.connect(this.butler, 'send', this.adapter, 'receive');
+        event.connect(this.adapter, 'send', handler, 'receive');
+        event.connect(handler, 'send', this.adapter, 'receive');
 
         // Inicio el logging, si no hay hay archivo de configuracion no pasa nada
         require('logging.config', 'file_config');

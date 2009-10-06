@@ -10,27 +10,19 @@
 'DATABASE_NAME': 'agentes_sqlite.db',
 'DATABASE_OPTIONS': {},
 
-
-
 'MEDIA_URL': '',
 
 'ROOT_URLCONF': 'agentes.urls',
 
-
 'INSTALLED_APPS': [ 
-                    
-                     
-                    
-                    ],
-
+    'ventas'
+    ],
 
 'TEMPLATE_URLS': [ 
                    'trabajo_offline/templates/' 
                    ],
                    
-
 'TEMPLATE_LOADERS': [
             'doff.template.loaders.url.load_template_source'
         ]
 }
-

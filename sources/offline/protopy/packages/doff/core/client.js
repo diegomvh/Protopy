@@ -123,6 +123,20 @@ var DOMAdapter = type('DOMAdapter', [ object ], {
         return state;
     },
 
+    _build_url: function(url, target) {
+        //urls.relative(location.href, 'http://localhost:8000/trabajo_offline/')
+        //urls.resolve('/pepe/', location.href)
+        if (http.absolute_http_url_re.test(url))
+            return new http.HttpRequest(url);
+        if (url.startswith('/'))
+            return new http.HttpRequest(url);
+        else {
+            var path = this._state_to_path(this.history.current_state);
+            path = path + url;
+            return new http.HttpRequest(path);
+        }
+    },
+
     _build_request: function(url) {
         if (http.absolute_http_url_re.test(url))
             return new http.HttpRequest(url);

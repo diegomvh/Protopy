@@ -1,3 +1,5 @@
+require('urls');
+
 var RESERVED_CHARS = "!*'();:@&=+$,/?%#[]";
 
 var absolute_http_url_re = RegExp("^https?://", 'i');
@@ -36,17 +38,15 @@ function parse_uri(str) {
 /*A basic HTTP request.*/
 var HttpRequest = type ('HttpRequest', [ object ], {
 
-    __init__: function(uri) {
-        this.GET = {};
+    __init__: function(url_object) {
+        if (isinstance(url_object, String)) {
+            url_object = urls.parse(url_object);
+        }
+        this.URL = url_object;
+        this.GET = this.URL.queryKey;
         this.POST  = {};
         this.META = {};
         this.FILES = {};
-        extend(this, parse_uri(uri));
-        if (!this.host) {
-            this.host = location.hostname;
-            this.protocol = location.protocol.substr(0, location.protocol.length - 1);
-            this.port = location.port;
-        }
     },
 
     get_cookie: function( cookie_name ) {
@@ -61,9 +61,24 @@ var HttpRequest = type ('HttpRequest', [ object ], {
     get_full_path: function() {
         return '';
     },
-
-    get_host: function(){
-        return '%s%s'.subs(this.host, (this.port) ? ':' + this.port : ''); 
+    
+    get host() {
+        if (this.URL.domain) {
+            var host = this.URL.domain;
+            if (this.URL.port)
+                host = '%s:%s'.subs(host, this.URL.port);
+        } else {
+            var host = location.host;
+        }
+        return host;
+    },
+    
+    get protocol() {
+        return (this.URL.protocol)? this.URL.protocol : location.protocol.substr(0, location.protocol.length - 1);
+    },
+    
+    get port() {
+        return (this.URL.domain)? this.URL.port : location.port;
     },
 
     build_absolute_uri: function(location) {

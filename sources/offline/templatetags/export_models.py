@@ -61,7 +61,7 @@ class LazyEncoder(JSONEncoder):
         else:
             return super(LazyEncoder, self).default(o)
 
-SKIP_KEYS = ('name', 'rel', )
+SKIP_KEYS = ('name', 'rel', 'verbose_name', 'db_index')
 
 @register.simple_tag
 def get_model_definition(init_args):
@@ -77,6 +77,14 @@ def get_model_definition(init_args):
                 pass
             else:
                 my_args[k] = v
+    elif field_type == 'ForeignKey':
+        first_arg = unicode(args['rel'].to._meta.object_name)
+        
+        for k, v in args.iteritems():
+            if k in SKIP_KEYS:
+                pass
+            else:
+                my_args[k] = v
     else:
         for k, v in args.iteritems():
             if k in SKIP_KEYS:
@@ -85,8 +93,10 @@ def get_model_definition(init_args):
                 first_arg = '"%s"' % v
             else:
                 my_args[k] = v
-            
-    dump = u", ".join([first_arg, dumps(my_args, cls = LazyEncoder)])
+    if (my_args):
+        dump = u", ".join([first_arg, dumps(my_args, cls = LazyEncoder)])
+    else:
+        dump = u", ".join([first_arg])
     dump = dump.strip(',')
     return SafeString(dump)
 

@@ -25,6 +25,7 @@ Lastest Approach:
 from django.utils.datastructures import SortedDict
 import sys
 from django.conf import settings
+from django.db.models.fields import AutoField
 from inspect import isclass, ismodule
 
 python_version = map(int, sys.version.split(' ')[0].split('.'))
@@ -133,49 +134,17 @@ def get_model_class_fields():
 # Cache
 model_class_fields = get_model_class_fields()
 
-def export_models(models):
-    '''
-    Export model definition
-    '''
+def export_remotes(models_and_proxies):
+    models = get_model_order(models_and_proxies.keys())    
     processed_models = SortedDict()
     for model in models:
-        name = model._meta.object_name
-        fields = model._meta.fields + model._meta.many_to_many
-        processed_fields = SortedDict()
-        for f in fields:
-            field_type = f.__class__.__name__
-            try:
-                bases = get_class_bases(f)
-                args = SortedDict()
-                for base in bases:
-                    try:
-                        f_introspect = model_class_fields[base]
-                    except:
-                        pass
-                    else:
-                        args.update( f_introspect.get_init_args(f) )
-                
-                processed_fields[f.name] = (field_type, args )
-                #f_introspect = model_class_fields[f.__class__]
-                #processed_fields[f.name] = (field_type, f_introspect.get_init_args(f))
-            except KeyError, e:
-                #TODO: Implement for more fields
-                processed_fields[f.name] = (field_type, {})
-        
-        processed_models[name] = processed_fields
-    #print processed_models
-    return processed_models
-
-def export_remotes(remote_model_proxies):
-    processed_models = SortedDict()
-    for remote in remote_model_proxies:
-        print remote
-        model = remote._meta.model
+        remote = models_and_proxies[model]
         name = model._meta.object_name
         fields = model._meta.fields + model._meta.many_to_many + remote._meta.fields
         
         processed_fields = SortedDict()
         for f in fields:
+            if isinstance(f, AutoField): continue;
             field_type = f.__class__.__name__
             try:
                 bases = get_class_bases(f)
@@ -306,9 +275,3 @@ def model_order_for_app(app_label):
     from django.db.models.loading import get_app, get_models
     models = get_models(get_app(app_label))
     return get_model_order(models)
-
-
-
-
-    
-    
