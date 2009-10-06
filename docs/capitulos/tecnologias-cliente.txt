@@ -24,8 +24,8 @@ HTML, que utiliza a su vez dos lenguajes:
 JavaScript [WikiJavascript09]_ ha tenido durante mucho tiempo la reputación de lenguaje 
 inadecuado para el desarrollo serio. Una de las razones fue que a pesar 
 de los estándares impuestos por la ECMA [ECMAScript09]_,
-los desarrolladores de navegadores web realizaron sus propias variantes 
-del lenguaje, como Microsoft en el implementación de  JScript [MSFTJScript09]_ para sus navegadores
+los desarrolladores de navegadores realizaron sus propias variantes 
+del lenguaje. como Microsoft en el implementación de  JScript [MSFTJScript09]_ para sus navegadores
 IE. Un problema similar ocurrió con DOM, el mecanismo por el cual se interactúa con el documento y el navegador, 
 estandarizado por la W3C. Sus versiones fueron nombradas como nivel DOM, existiendo nivel 0, 1, 2 y 3.
 No todos los navegadores implementaron por completo los niveles, dando lugar a confusión e incompatibilidades.
@@ -489,13 +489,14 @@ el siguiente código.
     ClassB.prototype = new ClassA();
 
 Este método posee la desventaja que no es posible invocar el constructor
-con parámetros, pero habilita la utilización de la función *instanceof*::
+con parámetros, pero habilita la utilización de la función *instanceof*:
 
 .. code-block:: javascript
 
     var miobjeto = new ClassB();
     alert(miobjeto instanceof ClassB); // true
     alert(miobjeto instanceof ClassA); // true
+
 
 AJAX
 ====
@@ -620,28 +621,55 @@ Las desventajas de AJAX
 JSON
 ====
 
-JSON brinda un buen soporte al intercambio de datos, resultando de fásil
-lectura/escritura para las personas y de un rapido interpretacion/generacion
-para las maquinas. Se basa en un subconjunto del lenguaje de programación
-JavaScript, estándar ECMA-262 3ª Edición - Diciembre de 1999. Este formato de
-texto es completamente independiente del lenguaje de programacion, pero utiliza
-convenciones que son familiares para los programadores de lenguajes de la
-familia ``C'', incluyendo C, C + +, C#, Java, JavaScript, Perl, Python y muchos
-otros.
+JSON [JSONOrg2009]_ (JavaScript Object Notation) es un estándard de codificación de datos, 
+inspirado en la sintaxis de objetos de JavaScript.
+Sus objetivos son: 
 
-JSON se basa en dos estructuras:
-* Una colección de pares nombre / valor. En varios lenguajes esto se
-  representa mediante un objeto, registro, estructura, diccionario, tabla hash,
-  introducido lista o matriz asociativa.
-* Una lista ordenada de valores. En la mayoría de los lenguajes esto se
-  representa como un arreglo, matriz, vector, lista, o secuencia.
+	* Ser legible para los humanos.
+	
+	* Fácil de interpretar para las computadoras.
 
-Estas son estructuras de datos universales. Prácticamente todos los lenguajes
-de programación modernos las soportan de una forma u otra. Tiene sentido que un
-formato de datos que es intercambiable con los lenguajes de programación
-también se basan en estas estructuras.
+Surge como alternativa a XML para el intercambio de datos en aplicaciones
+web. 
 
-Para mas informacion sobre JSON http://www.json.org/
+.. [JSONOrg2009] *JSON*, Sitio Oficial del Estándard, último acceso Octubre de 2009, http://json.org/
+
+Debido a que los navegadores carecen de la capacidad de ejecución de 
+códiog JavaScript en forma concurrente, el bucle de despacho de eventos
+debe competir con el resto de las tareas de la página. En una aplicación
+interaciva que utiliza AJAX, una tarea común es el "parsing" de XML (de las
+respuestas del servidor), 
+que demanda un esfuerzo computacional que debe ser tenido en cuenta si se
+debe realizar frecuentemente.
+
+Los desarrolladores encontraron que formateando los datos como una cadena
+literal para ser luego interpretada por la sentencia ``eval()`` [JSONOrgJS09]_, lograban desepeños
+superiores a los de XML, además de contar con un formato de datos legibles de suma ayuda
+a la hora de realizar depuración.
+
+.. [JSONOrgJS09] *Utilización de JSON en Javascript*, Json.org, ultimo acceso Agosto de 2009, http://json.org/js.html
+
+La sentecia ``eval()`` es considerada peligrosa 
+[SimonWillson24Ways09]_, 
+debido a que abre la posiblidad de 
+inyección de código directa sobre el navegador, razón por la cual las librerías
+de JavaScript comenzaron a brindar parsers serugros para JSON.
+
+.. [SimonWillson24Ways09] http://24ways.org/2005/dont-be-eval
+
+Actualmente algunos navegadores incorporan un parser nativo de JSON
+[MozillaMDCJSONNativo09]_ [IEBlogNativeJSON09]_
+, que 
+incorpora checkeos de seguridad y un tiempo de respuesta corto. Algunas librerías
+de JavaScript sacan provecho de este intérprete nativo [DaveWardEncosia2009]_.
+
+.. [MozillaMDCNativeJSON09] https://developer.mozilla.org/en/Using_JSON_in_Firefox
+.. [IEBlogNativeJSON09] http://blogs.msdn.com/ie/archive/2008/09/10/native-json-in-ie8.aspx
+
+
+.. [DaveWardEncosia2009] Dave Ward, Improving jQuery’s JSON performance and security, Julio de 2009, http://encosia.com/2009/07/07/improving-jquery-json-performance-and-security/
+
+
 
 .. Note:: 
 
