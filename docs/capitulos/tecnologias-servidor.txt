@@ -440,11 +440,7 @@ Para satisfacer una solicitud bajo WSGI, se invoca la función de entrada con do
 	1. Un diccionario con las variables de entorno, al igual que en CGI.
 	2. Una función u objeto llamable, al cual se invoca para iniciar la respuesta.
 
-.. note:: Explicar en un parrafo la figura y relacionar.
 
-.. figure:: ../_svg/esquema_wsgi.png
-
-    Esquema WSGI.
 
 En el siguiente ejemplo se mustra una aplicación mínima en WSGI. La función ``app`` es el punto de entrada y
 devuelve la cadena Hello World1.
@@ -457,7 +453,22 @@ cómo tratar la respuesta (en el ejemplo como texto plano).
         start_response('200 OK', [('Content-Type', 'text/plain')])
         return ['Hello World\n']
 
+En la figura se discriminan las capas intervinientes en WSGI: El cliente
+genera una solicitud, el servidor discrimina que tipo de recurso está siendo
+requerido. Cuando la respuesta se genera a través de WSGI, intervie el 
+intérprete de Python con sus liberías (Site Packages) y finalmente la
+aplicación.
+
+
+.. figura_wsgi:
+
+.. figure:: ../_svg/esquema_wsgi.png
+
+    Esquema WSGI.
+
+
 .. _servidor-orm:
+
 
 Los motivos por los cuales se seleccionó [*]_ el lenguaje Python para el desarrollo de
 la aplicación, son los que a continuación se enumeran:
