@@ -2,7 +2,7 @@ require('doff.template.loader');
 require('doff.template.context', 'RequestContext');
 require('doff.utils.http', 'Http404', 'HttpResponse');
 //WTF: from django.core.xheaders import populate_xheaders
-//TODO; from django.core.paginator import Paginator, InvalidPage  
+require('doff.core.paginator', 'Paginator', 'InvalidPage');
 require('doff.core.exceptions', 'ObjectDoesNotExist');
 
 function object_list(request, queryset) {

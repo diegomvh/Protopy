@@ -187,50 +187,47 @@ function lookup_object(model, object_id, slug, slug_field) {
     
  */
 
-function create_object(request){
-	var args = new Arguments(arguments, {
-		model: null, 
-		template_name: null,
+function create_object(request) {
+    var args = new Arguments(arguments, {
+	model: null, 
+	template_name: null,
         template_loader: loader, 
         extra_context: null,
         post_save_redirect: null,
         login_required: null, 
         context_processors: null, 
         form_class: null
-	});
-	
-	var form, new_object, t, c;
-	
-	if (!extra_context)
-		extra_context = {};
-	var [model, form_class] = get_model_and_form_class(args.model, args.form_class);
-	
-	if (request.method == 'POST'){
-        form = new form_class({'data': request.POST, 'files': request.FILES});
-        if (form.is_valid()){
-            new_object = form.save();
-            return redirect(args.post_save_redirect, new_object);
-        }
-	} else {
-        form = new form_class();
-	}
-	
-	if (!args.template_name) {
-		args.template_name = "%s/%s_form.html".subs(model._meta.app_label, model._meta.object_name.lower());
-		
-	}
-
-	t = args.template_loader.get_template(template_name)
-    c = new RequestContext(request, {
-        'form': form,
-        'context_procesors': context_processors
     });
-    
-    apply_extra_context(args.extra_context, c)
-    return HttpResponse(t.render(c))
+    var kwargs = args.kwargs;
+    var form, new_object, t, c;
+
+    if (!kwargs['extra_context'])
+	kwargs['extra_context'] = {};
+    var [model, form_class] = get_model_and_form_class(kwargs['model'], kwargs['model']form_class);
+
+    if (request.method == 'POST') {
+        var form = new form_class({'data': request.POST, 'files': request.FILES});
+        if (form.is_valid()) {
+            var new_object = form.save();
+            return redirect(kwargs['post_save_redirect'], new_object);
+        }
+    } else {
+        var form = new form_class();
+    }
+
+    if (!kwargs['template_name']) {
+	kwargs['template_name'] = "%s/%s_form.html".subs(model._meta.app_label, model._meta.object_name.lower());
+    }
+
+    var t = kwargs['template_loader'].get_template(template_name)
+    var c = new RequestContext(request, {
+        'form': form,
+        'context_procesors': kwargs['context_processors']
+    });
+
+    apply_extra_context(kwargs['extra_context'], c);
+    return new HttpResponse(t.render(c));
 }
-
-
 
 //def update_object(request, model=None, object_id=None, slug=None,
 //        slug_field='slug', template_name=None, template_loader=loader,
@@ -431,7 +428,7 @@ function delete_object(request, model, post_delete_redirect){
 }
 
 publish({
-	create_object: create_object,
+    create_object: create_object,
     update_object: update_object,
     get_model_and_form_class: get_model_and_form_class,
     delete_object: delete_object
