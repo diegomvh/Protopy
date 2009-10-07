@@ -496,76 +496,67 @@ Frameworks Web
 
 .. _servidor-frameworks:
 
-Frameworks
-==========
 
-
-Según la la wikipedia [WIK001]_ un framework de software es *una abstracción en
+Según la la Wikipedia [WIK001]_ un framework de software es "una abstracción en
 la cual un código común, que provee una funcionalidad genérica, puede ser
 personalizado por el programador de manera selectiva para brindar una
-funcionalidad específica*.
+funcionalidad específica". Además, agrega que los frameworks son similares a las bibliotecas
+de software (a veces llamadas librerías) dado que proveen abstracciones reusables de código
+a las cuales se accede mediante una API bien definida. 
 
 .. [WIK001] *Software Framework*, Wikipedia, 2009, http://en.wikipedia.com/software_framework, última visita Agosto de 2009.
 
-Además agrega que los frameworks son similares a las bibliotecas de software
-(a veces llamadas librerías) dado que proveen abstracciones reusables de código
-a las cuales se accede mediante una API bien definida. Sin embargo, existen
-ciertas características que diferencian al framework de una librería o
-aplicaciones normales de usuario:
+Sin embargo, existen ciertas características que diferencian a un framework de una librería o
+de una aplicación de usuario:
 
     * Inversión de control
-		
-		Tradicionalmente se escriben las aplicaciones haciendo
-		llamadas a las bibliotecas de manera explicita. El flujo de control
-		es definido por el programador. En el caso de una aplicación escrita 
-		sobre un framework, el flujo es definido por éste.
+
+	Tradicionalmente las aplicaciones se escriben las haciendo
+	llamadas a las bibliotecas de manera explícita y el flujo de control
+	es definido por el programador. En el caso de una aplicación escrita 
+	sobre un framework, el flujo es definido por éste.
 
 
-    * Comportamiento por defecto definido
+    * Comportamiento por defecto
 
-        En cada elemento del framework, existe un comportamiento genérico con alguna
+        En cada elemento del framework existe un comportamiento genérico con alguna
         utilidad.
 
     * Extensibilidad
 
-		El comportamiento predefinido de cada componente es generalmente
-		modificado por el programador con algún fin específico. Los métodos
-		utilizados en los frameworks realizados sobre lenguajes orientados
-		a objetos suelen ser redefinición o especialización.
+	El comportamiento predefinido de cada componente del framework generalmente es
+	modificado por el programador con algún fin específico. Los mecanismos
+	utilizados en los frameworks desarrollados en lenguajes orientados
+	a objetos suelen ser de redefinición o de especialización.
 
     * No modificabilidad del código propio del framework
-		
-		Las extensiones y definiciones propias de una aplicación se realizan sobre 
-		el código proyecto y no sobre el código del framework.
 
-Se utiliza un framework con el objeto de simplificar el desarrollo de
-un proyecto, permitiendo a los programadores desligarse de resolver detalles 
-comunes de bajo nivel.
+	Las extensiones y definiciones propias de una aplicación se realizan sobre 
+	el código del proyecto y no sobre el código del framework.
 
-A modo de ejemplo, un equipo donde se utiliza un framework web para desarrollar un
+.. figure:: ../_svg/esquema_libreria_vs_framework.png
+
+    Framework vs Librería.
+
+Al utilizar un framework para simplificar el desarrollo de
+un proyecto, los programadores no deben preocuparse en resolver detalles comunes de bajo nivel.
+
+Por ejemplo, en un equipo en donde se utiliza un framework web para desarrollar un
 sitio de banca electrónica, los desarrolladores pueden enfocarse en la lógica
 necesaria para realizar las extracciones de dinero, en vez de la mecánica para
 preservar el estado entre las peticiones del navegador.
 
-
-Sin embargo una serie de argumentos comunes existen contra la utilización 
+Sin embargo, existen una serie de argumentos comunes en contra de la utilización 
 de frameworks:
- * La complejidad de sus APIs
- * Incertidumbre ante  la existencia de múltiples alternativas para un mismo tipo de aplicación.
- * El aprendizaje de un framework suele requerir tiempo extra, que debe ser tenido en cuenta. 
 
-
-.. figure:: ../_svg/esquema_libreria_vs_framework.png
-
-    Librería vs Framework.
-
-
-
+    * La complejidad de sus APIs.
+    * La incertidumbre generada por la existencia de múltiples alternativas para un mismo tipo de aplicación.
+    * El tiempo extra que suele requerir el aprendizaje de un framework, que debe ser tenido en cuenta.
 
 .. _servidor-mvc:
 
-El patrón Model View Controler en frameworks web
-================================================
+Patrón Model View Controler en Frameworks Web
+=============================================
 
 Normalmente en el desarrollo de las aplicaciones web, mediante lenguajes
 de etiquetas como PHP o ASP, el diseño de la interfase, la lógica de la
@@ -573,63 +564,66 @@ aplicación y el acceso a datos suelen estar agrupados en un solo módulo.
 Esto conlleva un mantenimiento dificultoso y una baja interacción entre
 los diseñadores (artistas) y los programadores.
 
-El patrón arquitectural MVC, *Modelo Vista Controlador* propone discriminar
-la aplicación en 3 capas. La interfase con el usuario (vista) se desacopla 
-de la lógica (controlador) y ésta a su vez, del acceso a datos (modelo).
+El patrón arquitectural MVC (Modelo Vista Controlador) propone discriminar
+la aplicación en tres capas: la interfase con el usuario (vista) se desacopla 
+de la lógica (controlador) y ésta, a su vez, del acceso a datos (modelo).
 Esta división favorece la reutilización de componentes.
 
 Este patrón fue descrito por primera vez en 1979 por Trygve Reenskaug [Tryg1979]_,
-quien se encontraba entonces trabajando en Smalltalk en laboratorios de investigación de Xerox.
-La implementación original se describe por completo en "Programación de Aplicaciones
+quien se encontraba entonces trabajando en Smalltalk en los laboratorios de investigación de Xerox.
+La implementación original se detalla en "Programación de Aplicaciones
 en Smalltalk-80(TM): Como utilizar Modelo Vista Controlador" [SmallMVC]_.
 
 .. [Tryg1979] Trygve Reenskaug, http://heim.ifi.uio.no/~trygver/themes/mvc/mvc-index.html
 .. [SmallMVC] Steve Burbeck, Ph.D. http://st-www.cs.illinois.edu/users/smarch/st-docs/mvc.html
 
-Descripción del patrón:
+Las capas del patrón son:
 
     * Modelo
-    
-    	Esta capa define los datos, sus relaciones y la manera de acceder a estos.
-    	Se asegura de la integridad de los datos entre otras cosas. Suele permitir
-    	definir nuevas abstracciones de datos.
+
+	Define los datos, sus relaciones y la manera de acceder a éstos.
+	Asegura la integridad de los datos y permite definir nuevas abstracciones de datos.
 
     * Vista
 
-        Esta es la capa de presentación del modelo, seleccionando qué mostrar y 
-        cómo mostrarlo, usualmente la interfaz de usuario.
+        Es la presentación del modelo, seleccionando qué mostrar y cómo mostrarlo, usualmente
+	es la interfaz de usuario.
 
     * Controlador
 
-        Esta capa responde a eventos, usualmente acciones del usuario, e invoca
-        cambios en el modelo y probablemente en la vista.
+        Responde a eventos, usualmente acciones del usuario, e invoca
+        cambios en el modelo y, probablemente, en la vista.
 
-J2EE fue el primer framework que aplicó el concepto de MVC al desarrollo de aplicaciones
-web. Gran cantidad frameworks que surgieron desde entonces han aplicado en
-mayor o menos grado este concepto.
+J2EE fue el primer framework que aplicó el concepto de MVC en el desarrollo de aplicaciones
+web. Gran cantidad de frameworks que surgieron desde entonces han aplicado en
+mayor o menor grado este concepto.
 
-Componentes de un framework web MVC
+Componentes de un Framework Web MVC
 -----------------------------------
 
-Un framework web MVC suele contar con los siguientes componentes [WIKI002]_
+Un framework web MVC suele contar con los siguientes componentes [WIKI002]_:
 	
-	* Acceso a datos
+    * Acceso a datos
 	
-		Los tipos de datos de los lenguajes orientados a objetos difieren de 
-		el modelo ER utilizado para la definición de bases de datos. Un ORM
-		tiene como objetivo acortar esta brecha, permitiendo definir entidades
-		en objetos que luego se transportan a la base de datos, además de la
-		capacidad de CRUD y consultas sobre estos.
+	Los tipos de datos de los lenguajes orientados a objetos difieren del
+	modelo entidad-relacion utilizado para la definición de bases de datos. Un mapeador objeto-relacional
+	tiene como objetivo acortar esta brecha, permitiendo definir entidades
+	en objetos que luego se transportan a la base de datos, además de la
+	capacidad de CRUD [*]_ y consultas sobre éstos.
+
+.. [*] Create, Retrive, Update, Delete
 
     * Seguridad
-    	
-		Existen diversos aspectos de seguridad que deben ser tenidos en cuenta
-		cuando se implementa una aplicación web, como la validación de entrada,
-		protección de Cross Site Scripting, etc.
+
+	Existen diversos aspectos de seguridad que deben ser tenidos en cuenta
+	cuando se implementa una aplicación web, como la validación de entrada,
+	protección de XSS [*]_, etc.
+
+.. [*] Cross Site Scripting
 
     * Mapeo de URLs
     
-    	Cada URL activa algún componente del controlador. La definición de esta
+	Cada URL activa algún componente del controlador. La definición de esta
     	asociación (o mapeo) generalmente está centralizada y bien especificada en
     	un framework.
 
@@ -641,14 +635,14 @@ Un framework web MVC suele contar con los siguientes componentes [WIKI002]_
     	Para definir la plantilla se utiliza un lenguaje básico que se integra
     	con HTML o XML.
     	La utilización de plantillas facilita la modificación de la fachada sin
-    	acceder al modelo o controlador.
+    	acceder al modelo o al controlador.
 
     * Caché
     	
     	La generación de ciertas páginas dentro de la aplicación puede requerir
-    	un tiempo considerable por lo que es normalmente utilizada alguna técnica
+    	un tiempo considerable por lo que es, normalmente, utilizada alguna técnica
     	de caché, que consiste en almacenar la salida durante un tiempo determinado,
-    	de manera de obtener una respuesta *cacheada*, lo que repercute en mayor
+    	de manera de obtener una respuesta previamente almacenada, lo que repercute en mayor
     	velocidad.
     	Algunos frameworks hacen uso de algún mecanismo unificado para realizar caché.
     	
@@ -656,46 +650,48 @@ Un framework web MVC suele contar con los siguientes componentes [WIKI002]_
     * AJAX
     	
     	Hoy en día es común la técnica de incorporar elementos dinámicos que 
-    	modifican el estado de una página de manera asincrónica. Es decir
+    	modifican el estado de una página de manera asincrónica. Es decir,
     	partes de la página pueden realizar nuevas requerimientos al servidor
     	cuya respuesta no fuerza una recarga de la página.
-    	Esta técnica es conocida como AJAX. Algunos frameworks como Ruby On Rails soportan 
+    	Esta técnica es conocida como AJAX. Algunos frameworks, como, Ruby On Rails soportan 
     	AJAX directamente en el sistema de plantillas.
 
     * Configuración mínima y simplificada
     	
-    	Existen ciertos parámetros de las diversas capas que en algunos frameworks se
+    	Existen ciertos parámetros de las diversas capas que, en algunos frameworks, se
     	encuentran especificados en un único archivo XML. Hoy en día se prefieren
-    	los lenguajes más "human readable" como YAML, archivos INI o código.
-    	
+    	los lenguajes más amigables para los programador como YAML, los archivos INI o
+    	código en el lenguaje de implementación.
+
 
 .. [WIKI002] *Web Framework*, Wikipedia, 2009, http://en.wikipedia.org/wiki/Web_application_framework, última visita Agosto de 2009.
 
 
-Mapeador Objeto-Relacional
-==========================
+Mapeador Objeto-Relacional (ORM)
+================================
 
 
 Los lenguajes orientados a objetos utilizan clases, atributos y referencias para
 modelar el dominio de la aplicación, mientras que las bases de datos relacionales 
 lo hacen a través de tablas y relaciones entre ellas. En el paradigma orientado a objetos
 una de las características que se enuncia es la persistencia, sin embargo, 
-las implementaciones actuales de persistencias de objetos no brindan el performance
+las implementaciones actuales de persistencias de objetos no brindan la performance
 ni la facilidad de consultas que ofrecen las bases de datos relacionales (RDBMS).
-El lenguaje utilizado para definir y modificar los datos en los RDBMS, se conoce como SQL,
-el cual difiere radicalmente de la concepción de los lenguajes OO.
+El lenguaje utilizado para definir y modificar los datos en los RDBMS se conoce como SQL,
+el cual difiere radicalmente de la concepción de los lenguajes orientados a objetos (OO).
 
 
-Es deseable utilizar una base de datos relacional para el almacenamiento.
-Un ORM libera la carga de la conversión explícita del lenguaje OO a SQL y 
+Como, generalmente, se utiliza una base de datos relacional para el almacenamiento,
+un ORM libera la carga de la conversión explícita del lenguaje OO a SQL y 
 logra independizar la estructura de almacenamiento del modelo de dominio.
 
-Un ORM realiza en principio tres tipos de conversión del lenguaje OO a SQL:
- * Conversión de definición de entidades.
- * Creaci n, modificación y eliminación de entidades a partir de instancias 
-   de clases de modelo (persistencia).
- * Definición de consultas en lenguaje OO y recuperación de datos en instancias 
-   de clases de modelo.
+Un ORM realiza, en principio, tres tipos de conversión del lenguaje OO a SQL:
+
+    * Conversión de definición de entidades.
+    * Creación, modificación y eliminación de entidades a partir de instancias 
+	de clases del modelo (persistencia).
+    * Definición de consultas en lenguaje OO y recuperación de datos en instancias 
+	de clases de modelo.
   
 ..
 	Las primeras aproximaciones al mapeo relacional de objetos surgen de convertir
@@ -712,90 +708,86 @@ Un ORM realiza en principio tres tipos de conversión del lenguaje OO a SQL:
 	proceso de desarrollo, paleando mucho de los problemas presentados con
 	anterioridad.
 
-A través de una API bien definida un ORM se presenta como un mecanismo de presitencia
+A través de una API bien definida un ORM se presenta como un mecanismo de persistencia
 de objetos.
 
 .. http://es.wikipedia.org/wiki/Mapeo_objeto-relacional
 
 .. _servidor-django:
 
-******
+
 Django
-******
+======
 
-Introducción
-============
-
-
-`Django <http://www.djangoproject.com>`_ es un framework web escrito en Python
-el cual se apoya en el patrón de Modelo Vista Controlador.
-
-En principio surge como un administrador de contenido para varios sitios de
-noticias, luego, los desarrolladores encontraron que su CMS era lo suficientemente
+Django es un framework web escrito en Python que se apoya en el patrón MVC.
+Surge para la administración de páginas de noticias, lo que se pone de manifiesto
+en su diseño proporcionando una serie de características que facilitan el
+desarrollo rápido de páginas orientadas a contenidos (CMS).
+Posteriormente los desarrolladores encontraron que su CMS es lo suficientemente
 genérico como para cubrir un ámbito más amplio de aplicaciones.
 
 .. En honor al músico Django Reinhart
 
-Fue liberado el código base bajo la licencia :term:`BSD` en Julio del 2005 
-como Django Web Framework. El slogan del framework
-fue "Django, Él framework para perfeccionistas con fechas límites" [*]_.
+Su código fuente fue liberado bajo la licencia BSD en julio de 2005 (Django Web Framework). 
+El slogan del framework es "Django, El framework para perfeccionistas con fechas límites" [*]_.
 
 .. [*] Del ingles "The Web framework for perfectionists with deadlines"
 
-En junio del 2008 fue anunciada la creación de la Django Software Fundation,
-la cual se encarga del desarrollo y mantenimiento.
+En junio de 2008 fue anunciada la creación de la Django Software Fundation, que se encarga de su desarrollo y mantenimiento.
 
-Los orígenes de Django en la administración de páginas de noticias se ponen 
-de manifiesto en su diseño, ya que proporciona una serie de características que facilitan el
-desarrollo rápido de páginas orientadas a contenidos. 
-
-Django como framework de desarrollo consiste en un conjunto de utilidades de
+Django, como framework de desarrollo, consiste en un conjunto de utilidades de
 consola (CLI) que permiten crear y manipular proyectos.
-Un proyecto está constituido por una o más aplicaciones. Se clasifican
-las aplicaciones de la siguiente manera:
-	* Aplicaciones de usuario
-		Son aquellas que resuelven algún problema específico (ej: ventas, alquileres, blog, noticias, etc.)
-	* Aplicaciones genéricas
-		Son aquellas que resuelven problemas comunes, como la autenticación, bitácora,
-		sindicación, etc. Algunas aplicaciones genéricas se distribuyen con Django, de
-		las cuales resulta interesante destacar:
-		
-		- *django.contrib.admin* 
-			Provee de manera automática un sitio de administración que permite realizar 
-			operaciones CRUD sobre el modelo (definido a través del ORM), administrar 
-			usuarios y permisos, llevando un registro de todas las acciones realizadas 
-			sobre cada entidad (sistema de logging o bitácora).
+Un proyecto está constituido por una o más aplicaciones, las cuales se clasifican en:
 
-		- *django.contirb.comments*
-			Sistema de comentarios
-			
-		- *django.contrib.syndication*
-			Herramientas para sindicar contenido vía RSS y/o Atom
-		
-		- *django.contrib.gis*		
-			Sistema de información geográfico
-		
-		- *django.contrib.localflavour*		
-			Localización (l10n) e internacionalización (i18n)
+    * Aplicaciones de usuario
+	
+	Son aquellas que resuelven algún problema específico (ej: ventas, alquileres, blog, noticias, etc.).
+    
+    * Aplicaciones genéricas
+	
+	Son aquellas que resuelven problemas comunes, como la autenticación, bitácora,
+	sindicación, etc. Algunas aplicaciones genéricas se distribuyen con Django, de
+	las cuales resulta interesante destacar:
+	
+	- *django.contrib.admin* 
 
-La concepción de MVC de Django difiere ligeramente del enfoque tradicional, 
-se denomina al controlador vista y a la vista, template; resultando el 
-acrónimo MTV.
-El controlador de MVC, se presenta en Django como conjunto de funciones
-y asociaciones de URLs a las mismas.
+	    Provee de manera automática un sitio de administración que permite realizar 
+	    operaciones CRUD sobre el modelo (definido a través del ORM) administrar 
+	    usuarios y permisos, llevando un registro de todas las acciones realizadas 
+	    sobre cada entidad (sistema de logging o bitácora).
+
+	- *django.contirb.comments*
+
+	    Es un sistema de comentarios genérico que permite comentar diversas entidades del modelo.
+
+	- *django.contrib.syndication*
+	
+	    Consiste en herramientas para sindicar contenido vía RSS y/o Atom.
+
+	- *django.contrib.gis*
+	
+	    Es un sistema de información geográfico.
+
+	- *django.contrib.localflavour*	
+	
+	    Provee localización (l10n) e internacionalización (i18n).
+
+La concepción de MVC de Django difiere ligeramente del enfoque tradicional. 
+Se denomina vista al controlador y a la vista, template; resultando en el acrónimo MTV.
+El controlador de MVC se presenta en Django como conjunto de funciones
+y asociaciones de URLs a ellas.
 Cada función de la vista delega la presentación de los datos al sistema
 de plantillas.
 
 Django simplifica el patrón MVC, sin comprometer la separación de las capas. 
-Debido a la creciente popularidad y a la sencillez del framework descripto, 
-se seleccionó el mismo como plataforma para la implementación del desarrollo, 
-puesto que se buscan tales características en el trabajo a realizar.
+Debido a su creciente popularidad y a su sencillez, se seleccionó a Django 
+como plataforma para la implementación del desarrollo de esta tesina, puesto
+que se buscan tales características en el trabajo a realizar.
 
-A continuación se describe de manera detallada la estructura de un proyecto
-realizado en Django.
+.. note:: Correcciones de Marta hasta 06/10/2009
 
-Estructuración de un proyecto en Django
-=======================================
+Estructura de un Proyecto
+-------------------------
 
 Durante la instalación del framework en el sistema del desarrollador, se añade
 al PATH un comando con el nombre django-admin.py. Mediante este comando se crean
