@@ -140,12 +140,11 @@ Los componentes de una URL son:
 		permitiendo al navegador ubicarse visualmente.
 
 .. [*] *Transport Security Layer* es el sucesor de *Secure Socket Layer* (SSL),
-es un protocolo
-criptográfico que provee conexiones seguras a través de una red, típicamente
-Internet [WikiSSL2009]_ .
+       es un protocolo criptográfico que provee conexiones seguras a través de una red, 
+       típicamente Internet [WikiSSL2009]_ .
 
 .. [WikiSSL2009] *Transport Layer Security*, Wikipedia, 2009, último acceso,
-Agosto 2009.
+                 Agosto 2009.
 
 Un navegador generalmente accede a documentos ubicados en la web, a
 los cuales accede mediante el protocolo HTTP, sin embargo es posible 
@@ -272,7 +271,7 @@ ellas:
 	</script> 
 
 .. [StephenChapmanJS2009] *Javascript and XML*, Stephen Chapman, About.com,
-último acceso Agosto 2009, http://javascript.about.com/library/blxhtml.htm
+                          último acceso Agosto 2009, http://javascript.about.com/library/blxhtml.htm
 
 
 .. _cliente-css:
@@ -304,7 +303,7 @@ interacción directa con el usuario.
 Con una sintaxis semejante a la de Java y C, JavaScript dista mucho de ser Java
 y debe su nombre más a cuestiones de marketing que a principios de diseño, de
 hecho se reconocen mayores influencias de lenguajes como Self, Scheme, Perl e
-incluso en versiones modernas, Python <3.
+incluso en versiones modernas, Python.
 
 HASTA ACÁ
 ------------
@@ -313,12 +312,12 @@ Orientado a Objetos
 -------------------
 
 JavaScript es un lenguaje orientado a objetos. Utiliza prototipos
-en vez de clases. Estos se define con una función [*]_, pero
+en vez de clases. Estos se definen con una función [*]_, pero
 para que ésta funcione como prototipo, se utiliza la palabra reservada
 ``new``. En tal caso, dentro del cuerpo de la función, la palabra reservada
 ``this`` apunta a la instancia que está siendo generada. La función
 toma el comportamiento de lo que se conoce en los lenguajes de programación OO
-como *constructor*.
+como *constructor*. Por ejemplo:
 
 .. code-block:: javascript
 
@@ -328,22 +327,31 @@ como *constructor*.
 	
 	var instancia = new prototipo();
 
-JavaScript posee un tipo de dato llamado ``Object``[*]_, también conocido como arreglo asociativo.
-Los arreglos asociativos consisten en asocaciones calve-valor y están presentes en varios lenguajes [*]_.
-Éste tipo de dato responde al operador punto ``.`` de la misma manera que al operador de indexación ``[]``
-y a veces es utilizado para definir objetos de una única instancia:
+.. note:: Hablar de por que
+
+Otra forma de definir una instancia es a través del tipo de dato llamado ``Object``[*]_, 
+también conocido como arreglo asociativo.
+Los arreglos asociativos consisten en asocaciones clave-valor y están presentes en varios lenguajes [*]_.
+
+.. En JavaScript, este tipo de dato responde al operador punto ``.`` de la misma manera que al operador de indexación ``[]``
+   y a veces es utilizado para definir objetos de una única instancia:
 
 .. code-block:: javascript
 
+	// Las llaves son un alias de "new Object()"
 	var mi_instancia = {
 		// Definción de un método
 		mi_metodo: function () {
-			this.dato = 3;
-			this.dato2 = 4;
+			alert(this.atributo);
+
 		},
 		// Definición de un atributo
-		dato3: 3
+		atributo: 3
 	}
+
+	mi_instancia.mi_metodo();
+	
+	
 
 Tampoco está presente el ocultamiento de información, todos los métodos y atributos
 son públicos.

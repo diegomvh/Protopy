@@ -14,7 +14,7 @@
    sodipodi:version="0.32"
    inkscape:version="0.46"
    version="1.0"
-   sodipodi:docname="esquema_deconexion.svg"
+   sodipodi:docname="esquema_desconexion.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <defs
      id="defs4">
@@ -42,7 +42,7 @@
      inkscape:window-width="1432"
      inkscape:window-height="782"
      inkscape:window-x="0"
-     inkscape:window-y="35" />
+     inkscape:window-y="38" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -102,13 +102,13 @@
          style="font-weight:normal;text-align:center;text-anchor:middle"
          y="321.07803"
          x="326.74286"
-         id="tspan2440"
-         sodipodi:role="line">Web</tspan><tspan
+         sodipodi:role="line"
+         id="tspan2442">Navegador</tspan><tspan
          style="font-weight:normal;text-align:center;text-anchor:middle"
          y="340.18961"
          x="326.74286"
          sodipodi:role="line"
-         id="tspan2442">Browser</tspan></text>
+         id="tspan3545">Web</tspan></text>
     <path
        style="opacity:1;fill:#eeaaff;fill-opacity:1;fill-rule:evenodd;stroke:#061c58;stroke-width:0.86996901000000004;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        d="M 394.21875 183.125 C 393.82223 183.125 393.42883 183.28992 393.125 183.59375 L 393.125 196.65625 L 327.59375 196.65625 L 318.8125 196.65625 L 317.03125 196.65625 C 315.31251 196.65625 313.90626 198.03126 313.90625 199.75 L 313.90625 253.53125 L 299.1875 253.53125 C 298.57984 254.13892 298.57985 255.11109 299.1875 255.71875 L 319.53125 276.09375 C 320.13892 276.70142 321.14233 276.70142 321.75 276.09375 L 342.09375 255.71875 C 342.70141 255.11109 342.7014 254.13892 342.09375 253.53125 L 330.6875 253.53125 L 330.6875 213.40625 L 393.125 213.40625 L 393.125 226.5 C 393.73267 227.10766 394.7361 227.10765 395.34375 226.5 L 415.6875 206.125 C 416.29517 205.51733 416.29517 204.54516 415.6875 203.9375 L 395.34375 183.59375 C 395.03992 183.28992 394.61527 183.125 394.21875 183.125 z "
