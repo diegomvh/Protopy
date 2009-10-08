@@ -32,6 +32,7 @@ informe/*
 sphinx-env/*
 build/*
 *.bak
+chiron/*
 
 # Aplicacion de demostracion
 sources/offline_demo/static/devkit/*

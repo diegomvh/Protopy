@@ -832,10 +832,10 @@ Módulo settings
 ---------------
 
 Este módulo configura globalmente el proyecto. Define las aplicaciones instaladas (*INSTALLED_APPS*),
-la base de datos que utilizarán (*DATABASE_**), el módulo de 
-:ref:`urls inicial <_django-proyecto-urls>` (*ROOT_URLCONF*),
+la base de datos que utilizarán (``DATABASE_*``), el módulo de 
+:ref:`urls inicial <_django-proyecto-urls>` (``ROOT_URLCONF``),
 la ruta en la cual se encuentran los medios estáticos y
-la URL donde serán publicados [*]_ (*MEDIA_URL*, *MEDIA_ROOT*). Otras configuraciones son idioma, 
+la URL donde serán publicados [*]_ (``MEDIA_URL``, ``MEDIA_ROOT``). Otras configuraciones son idioma, 
 zona horaria, clases de middleware [*]_ , ruta a los templates, etc. 
 
 El modulo settings es código fuente y es posible realizar configuraciones en tiempo de ejecución, tarea
@@ -853,7 +853,7 @@ Módulo manage
 
 Este módulo a diferencia de settings y urls, es ejecutable. Sirve como interfase
 con el framework. Su invocación recibe como primer argumento un nombre de comando
-como *startapp*, que crea una aplicación en el proyecto, *runserver* que lanza el 
+como ``startapp``, que crea una aplicación en el proyecto, ``runserver`` que lanza el 
 servidor de desarrollo o *syncdb* que mediante el ORM crea el esquema en la base
 de datos a partir de el módulo :ref:`*models*<_django-proyecto-models>` de cada aplicación.
 
@@ -877,7 +877,7 @@ recuperación de grupos nombrados (una subcadena identificada con un nombre). Lo
 definidos en cada asociación son argumentos de la función vista.
 
 
-La asociación url-vistas se define  bajo el nombre :term:`urlpatterns`. 
+La asociación url-vistas se define  bajo el nombre ``urlpatterns``. 
 
     Ej:
         Derivar el tratado de todo lo que comience con la cadena personas a 
@@ -908,13 +908,15 @@ plantilla.
 Django incluye por defecto funciones cargadoras de temaplates [*]_ que realizan la búsqueda
 del template que requiere la vista.
 
-.. [*] Definidas bajo TEMPLATE_LOADERS en el módulo settings
+.. [*] Definidas bajo ``TEMPLATE_LOADERS`` en el módulo settings
 
 Con los datos provistos por la vista, la plantilla escogida es renderizada. Este proceso
 consiste en reemplazar etiquetas y ejecutar alguna lógica básica de iteración y
 bifurcaciones condicionales.
 
-A continuación se presenta una simple plantilla de ejemplo::
+A continuación se presenta una simple plantilla de ejemplo:
+
+.. code-block:: html
 
     <html>
 	    <head><title>{{title}}</title></head>
@@ -928,6 +930,7 @@ A continuación se presenta una simple plantilla de ejemplo::
     </html>
 
 Si este template fuera "base.html", una vista para el mismo podría ser:
+
 .. code-block:: python
 	
 	def mi_vista(request):
@@ -974,8 +977,8 @@ Estructura de una aplicación Django
 ===================================
 
 Una aplicación es un paquete python, que consta de un módulo models y un módulo
-views. Para crear una aplicación se utiliza el comando **startapp** del modulo 
-:ref:`manage <django-proyecto-manage>` de la siguiente manera:
+views. Para crear una aplicación se utiliza el comando ``startapp`` del modulo 
+``manage`` de la siguiente manera:
 
 .. code-block:: bash
 
@@ -999,10 +1002,11 @@ Módulo models
 -------------
 
 Al crear una aplicación es generado un módulos models.py en cual se definen 
-las clases que extienden de *django.db.models.Model*. Estas definiciones
+las clases que extienden de ``django.db.models.Model``. Estas definiciones
 son transformadas por el ORM en tablas relacionales [*]_.
 
 .. ejemplo-orm-simple:
+
 Ej:
 
 .. code-block:: python
@@ -1012,19 +1016,19 @@ Ej:
 	    apellido = models.CharField(max_length = 50)
 
 
-.. [*] Mediante el comando syncdb del módulo manage del proyecto
+.. [*] Mediante el comando ``syncdb`` del módulo ``manage`` del proyecto
 	    
 Módulo views
 ------------
 
-Cada aplicación posee un módulo views, donde se definen las funciones que responden
+Cada aplicación posee un módulo ``views``, donde se definen las funciones que responden
 al cliente y se activan por medio del mapeo definido en el módulo urls del proyecto
 o de la aplicación.
 
 Las funciones que trabajan como vistas deben recibir como primer parámetro el request
 y opcionalmente parámetros obtenidos de los grupos nombrados de la url.
 
-El siguiente ejemplo integra un fragmento de los módulos urls y views.
+El siguiente ejemplo integra un fragmento de los módulos ``urls`` y ``views``.
 
 .. code-block:: python
 
@@ -1047,7 +1051,7 @@ Django no se ocupa de generar contenido estático, sin embargo éste es
 necesario para el desarrollo completo de una aplicación web (imágenes, 
 javascript y hojas de estilo).
 Django delega esta tarea al servidor web [DjangoDoc2009]_, sin embargo 
-para desarrollo se provee un una vista que devuelve contenido estático (*django.views.static.serve*).
+para desarrollo se provee un una vista que devuelve contenido estático (``django.views.static.serve``).
 
 Al momento de la puesta en producción del proyecto desarrollado en Django,
 se deberá realizar la configuración del soporte para ejecución de Python
@@ -1089,17 +1093,17 @@ El ciclo de una petición se completa mediante los siguientes pasos:
  #. Entrada por Middlewares de Request
 	El primer componente en tratar la solicitud es el conjunto de middlewares de request.
 	Se encargan de envolver la petición en una instancia de la clase HttpRequest 
-	(*django.middleware.common.CommonMiddleware*), adicionar la sesión al request
-	(*django.contrib.sessions.middleware.SessionMiddleware*) y la relación entre
+	(``django.middleware.common.CommonMiddleware``), adicionar la sesión al request
+	(``django.contrib.sessions.middleware.SessionMiddleware``) y la relación entre
 	la sesión y el usuario de la aplicación de autenticación
-	(*django.contrib.auth.middleware.AuthenticationMiddleware*).
+	(``django.contrib.auth.middleware.AuthenticationMiddleware``).
 
  #. URLConf y View Middlewares
 	El siguiente paso es la búsqueda de la vista a partir de la url de la
 	solicitud (que se encuentra en el atributo *path*
-	de la instancia de *HttpRequest* generada por el middleware de request) en los
+	de la instancia de ``HttpRequest`` generada por el middleware de request) en los
 	patrones de urls asociados a las vistas.
-	La constante ROOT_URLCONF (del módulo settings del proyecto) determina donde
+	La constante ``ROOT_URLCONF`` (del módulo settings del proyecto) determina donde
 	comienza dicha búsqueda.
 	Una vez obtenida la vista, los middleware de vistas pueden posicionar su 
 	ejecución antes o después de ésta. 
@@ -1111,14 +1115,14 @@ El ciclo de una petición se completa mediante los siguientes pasos:
 	
  #. Salida mediante Middleware de Response
  	Finalmente, cunado la vista a generado una respuesta, ésta es procesada por los
- 	middlewares de respuesta (*Response Middlewares*). Algunas tareas que se 
+ 	middlewares de respuesta (``Response Middlewares``). Algunas tareas que se 
  	pueden realizar con este tipo de middlewares es compresión de la salida, 
  	inclusión de librerías de javascript muy modulares, como YUI, etc.
  	
  #. Middlewares de Excepciones
  	De lanzarse una excepción que no es capturada en la vista, modelos o urls, 
  	el middleware de excepciones la captura y genera una respuesta informando
- 	el error (cuando la bandera DEBUG del modulo settings está activada, se genera
+ 	el error (cuando la bandera ``DEBUG`` del modulo settings está activada, se genera
  	un traceback del error). 
 	
 Las clases de middleware están provistas por Django y son incluidas durante 
@@ -1162,13 +1166,14 @@ unidos por un punto (Ej: ``"personal.Persona"``, ``"auth.User"``, ``"ventas.Prod
 Las tareas del ORM son:
 
 	* Creación de Tablas Relacionales
+	
 		Esta operación realiza mediante el DDL [*]_ de SQL.
 		Se toma como nombre de tabla el nombre completo de entidad reemplazando
 		el punto por un guión bajo. 
 		Si existiesen relaciones que requieran tablas intermedias, son creadas.
 		
-		Esta operación se activa mediante el comando *syncdb* del modulo
-		*manage* del proyecto.
+		Esta operación se activa mediante el comando ``syncdb`` del modulo
+		``manage`` del proyecto.
 		
 		En el :ref:`ejemplo <ejemplo-orm-simple>` el ORM se encarga de
 		generar el siguiente código SQL al momento de la ejecución del comando syncdb.
@@ -1182,6 +1187,7 @@ Las tareas del ORM son:
 		    );
 		 
 	* CRUD
+	
 		- Creación, Modificación y Eliminación
 			La creación de entradas en la base de datos se realiza cuando
 			una instancia de una clase del modelo recibe el mensaje ``save()`` (*INSERT*).
@@ -1200,12 +1206,14 @@ Las tareas del ORM son:
 			que esta posea. 
 			
 	* Sistema de señales
+	
 		El sistema de señales permite registrar funciones para ser ejecutadas
 		antes o después de ciertos eventos, como la creación de instancias del 
 		modelo, la eliminación, o la creación del esquema (*syncdb*). Son equivalentes a
 		triggers en la base de datos.
 	
 	* Inclusión de metadatos
+	
 		Existen ciertos metadatos que no pueden incluirse fácilmente en SQL
 		de manera estándar, como el nombre visible para el usuario de una
 		entidad, en plural y en singular, o la url absoluta del elemento en
@@ -1213,9 +1221,11 @@ Las tareas del ORM son:
 		interna Meta y métodos de instancia.
 	
 	* Herencia de objetos
+	
 		Django permite crear jerarquías de herencia en los modelos. 
 	
 	* Relaciones genéricas
+	
 		Si bien en los RDBMS se requiere especificar el tipo de los campos
 		relacionados (tipado estático fuerte) al momento de definir una relación,
 		mediante el field ``GenericRelation``(provisto por la aplicación genérica ``ConentType``
@@ -1276,7 +1286,7 @@ aplicación ``mi_aplicacion``:
 El ejemplo anterior permite observar los siguientes puntos
 
     1. Para crear un objeto, se importa la clase del modelo apropiada y se crea
-        una instancia asignando valores para cada campo.
+       una instancia asignando valores para cada campo.
 
     2. Para guardar el objeto en la base de datos, se usa el método ``save()``.
 
@@ -1291,7 +1301,7 @@ Managers
 Los managers se encargan de realizar las querys sobre las entidades
 de la base de datos. Presentan una API para realizar las consultas y devuelven
 instancias de objetos ``QuerySet``. Un ``QuerySet`` representa una consulta *lazy*,
-es decir, la consulta que se hace efectiva cuando es necesario acceder a los datos[*]_.
+es decir, la consulta que se hace efectiva cuando es necesario acceder a los datos [*]_.
 
 
 .. [*] Generalmente esto ocurre en la iteración en el template.
@@ -1327,11 +1337,11 @@ Los managers están presentes en:
 				
 		Ej::
 			
-			p = Persona.obects.get(nombre = "nahuel")
+			p = Persona.obects.get( nombre = "nahuel" )
 			Vehiculo.objects.filter( propietario = p )
 			
 			# O lo que es lo mismo
-			Persona.obects.get(nombre = "nahuel").vehiculo_set() # Relación inversa resuelta por django
+			Persona.obects.get( nombre = "nahuel" ).vehiculo_set() # Relación inversa resuelta por django
 			
 
 
@@ -1409,14 +1419,17 @@ El elemento de entrada tradicional de las aplicaciones web son los formularios.
 En un sistema de información, la forma de realizar las operaciones CRUD es a través de estos.
 
 El ciclo de trabajo normal para la entrada de datos generalmente es:
+
 	El usuario:
+	
 		1. Carga una página en la cual existe un formulario
 		2. Completa los campos (pueden existir campos opcionales)
 		3. Envía el formulario, utilizando típicamente un botón, el navegador
 	   el cual se encarga de codificar los datos y enviarlos a la URL indicada en el campo
-	   "action" del :ref:markup del formulario.
+	   ``action`` del *markup* del formulario.
 	   
 	El servidor:
+	
 		Recibe los datos y los valida. Si los datos son correctos, 
 		generalmente se envía una respuesta 300 indicando que la carga ha sido exitosa.
 		Por el contrario si la validación es incorrecta se devuelve al usuario 
@@ -1431,7 +1444,7 @@ tiene la responsabilidad de validar los propios datos. A posteriori el formulari
 realiza una comprobación de la coherecia global, tras la cual se obtiene el resultado
 de la validación. 
 
-Mediante los *widget* de los campos que componen el formulario, este puede 
+Mediante los ``widget`` de los campos que componen el formulario, este puede 
 de renderizarse como HTML.   
 
 .. figure:: ../_svg/esquema_django_forms.png
