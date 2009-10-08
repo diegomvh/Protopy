@@ -1,6 +1,6 @@
 //from math import ceil
 
-var InvalidPage = type('InvalidPage' [ Exception ]);
+var InvalidPage = type('InvalidPage', [ Exception ]);
 
 var PageNotAnInteger = type('PageNotAnInteger', [ InvalidPage ]);
 
@@ -12,10 +12,10 @@ var Paginator = type('Paginator' , [ object ], {
         this.per_page = per_page;
         this.orphans = orphans || 0;
         this.allow_empty_first_page = allow_empty_first_page || true;
-        this._num_pages = self._count = null;
+        this._num_pages = this._count = null;
     },
 
-    function validate_number(number) {
+    validate_number: function(number) {
         //Validates the given 1-based page number.
         var number = Number(number);
         if (isNaN(number))
@@ -28,7 +28,7 @@ var Paginator = type('Paginator' , [ object ], {
         return number;
     },
 
-    function page(number) {
+    page: function(number) {
         //Returns a Page object for the given 1-based page number.
         var number = this.validate_number(number);
         var bottom = (number - 1) * this.per_page;
@@ -40,24 +40,24 @@ var Paginator = type('Paginator' , [ object ], {
 
     get count() {
         //Returns the total number of objects, across all pages.
-        if (isundefined(this._count))
+        if (this._count == null)
             if (callable(this.object_list.count))
                 this._count = this.object_list.count();
             else 
-        	this._count = len(this.object_list);
+                this._count = len(this.object_list);
         return this._count;
     },
 
     get num_pages() {
         //Returns the total number of pages.
-        if (isundefined(this._num_pages))
+        if (this._num_pages == null)
             if (this.count == 0 && !this.allow_empty_first_page) {
                 this._num_pages = 0;
             } else {
                 var hits = Math.max(1, this.count - this.orphans);
                 this._num_pages = Number(Math.ceil(hits / Number(this.per_page)));
-    	    }
-	return this._num_pages;
+            }
+        return this._num_pages;
     },
 
     get page_range() {
@@ -107,7 +107,7 @@ var Page = type('Page', [ object ], {
         return (this.paginator.per_page * (this.number - 1)) + 1;
     },
 
-    end_index: function():
+    end_index: function() { 
         /*
         Returns the 1-based index of the last object on this page,
         relative to total objects found (hits).
@@ -120,6 +120,9 @@ var Page = type('Page', [ object ], {
 });
 
 publish({
+    InvalidPage: InvalidPage,
+    PageNotAnInteger: PageNotAnInteger,
+    EmptyPage: EmptyPage,
     Paginator: Paginator,
     Page: Page
 });
