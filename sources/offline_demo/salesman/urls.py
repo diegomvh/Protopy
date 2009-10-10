@@ -32,6 +32,8 @@ urlpatterns = patterns('',
                                                                                
         }),
         
+        # Plural
+        (r'cliente/$', 'django.views.generic.simple.redirect_to', {'url':'/salesman/clientes/'}),
         
         # Clientes -> Edit
         (r'cliente/(?P<object_id>\d{1,5})/edit/$', 'django.views.generic.create_update.update_object',{
@@ -55,5 +57,29 @@ urlpatterns = patterns('',
                                                                                
         }),
         
+        # Plural
+        (r'producto/$', 'django.views.generic.simple.redirect_to', {'url':'/salesman/productos/'}),
+        
+        # productos -> Edit
+        (r'producto/(?P<object_id>\d{1,5})/edit/$', 'django.views.generic.create_update.update_object',{
+            'model': Producto,
+            'post_save_redirect': '/salesman/productos/',
+            'extra_context': {'title': 'Editar producto', 'submit_text': 'Actualizar',}, 
+        }),
+        
+        # producto -> Listar
+        (r'productos/$', 'django.views.generic.list_detail.object_list',{
+            'queryset': Producto.objects.all()
+            }
+        ),
+        
+        # producto -> Crear
+        (r'productos/add/$', 'django.views.generic.simple.redirect_to', 
+            {'url': '../../producto/add/'}),
+        (r'producto/add/$', 'django.views.generic.create_update.create_object', {
+            'model': Producto,
+            'post_save_redirect': '/salesman/productos/',
+                                                                               
+        }),
         
 )
