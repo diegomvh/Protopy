@@ -4,8 +4,8 @@ from models import *
 
 urlpatterns = patterns('',
         # Ver una ciudad
-        (r'ciudad/(?P<ciudad_id>\d{1,5})/$', view_ciudad),
-        
+        #(r'ciudad/(?P<ciudad_id>\d{1,5})/$', view_ciudad),
+        (r'ciudad/$', 'django.views.generic.simple.redirect_to', {'url':'/salesman/ciudades/'}),
         # Editar una ciudad
         (r'ciudad/(?P<object_id>\d{1,5})/edit/$', 'django.views.generic.create_update.update_object',{
             'model': Ciudad,
@@ -23,6 +23,12 @@ urlpatterns = patterns('',
         (r'ciudad/add/$', 'django.views.generic.create_update.create_object', {
             'model': Ciudad,
             'post_save_redirect': '/salesman/ciudades/',
+                                                                               
+        }),
+        # Ciudades -> Eliminar
+        (r'ciudad/(?P<object_id>\d{1,5})/delete/$', 'django.views.generic.create_update.delete_object', {
+            'model': Ciudad,
+            'post_delete_redirect': '/salesman/ciudades/',
                                                                                
         }),
         

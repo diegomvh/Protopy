@@ -67,19 +67,24 @@
 <a href="add">Crear nuevo</a>
 </div>
 <script>
+	/*
 	(function (){
 		require('event');
 		require('sys');
-		event.connect(sys.window, 'load', function () {
+		var win = sys.window;
+		event.connect(win, 'load', function () {
 			$$('.delete').map(function (link) {
 				event.connect(link, 'click', function (evt){
 					event.stopEvent( evt );
 					var result = confirm("Desea eliminar el elemento?");
+					if (result) {
+						win.location = link.href;
+					}
 				});
 			});
 			
 		})
 	})();
-		
+	*/
 </script>
 {% endblock %} 
