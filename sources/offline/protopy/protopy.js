@@ -347,7 +347,11 @@
         },
         modules: ModuleManager.modules,
         paths: ModuleManager.paths,
-        manager: ModuleManager
+        manager: ModuleManager,
+        // This attribute should be overriden by the adapter
+        window: window,
+        // 
+        transport: XMLHttpRequest
     });
 
     sys.gears = get_gears();
