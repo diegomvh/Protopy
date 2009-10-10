@@ -78,16 +78,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.7"
-     inkscape:cx="389.29348"
-     inkscape:cy="118.05738"
+     inkscape:zoom="1.4"
+     inkscape:cx="595.72205"
+     inkscape:cy="280.20024"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1432"
      inkscape:window-height="782"
      inkscape:window-x="0"
-     inkscape:window-y="35" />
+     inkscape:window-y="38" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -114,13 +114,13 @@
     <text
        xml:space="preserve"
        style="font-size:20px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
-       x="138.69398"
+       x="122.69398"
        y="358.80603"
        id="text3546"><tspan
          sodipodi:role="line"
          id="tspan3548"
-         x="138.69398"
-         y="358.80603">Browser</tspan></text>
+         x="122.69398"
+         y="358.80603">Navegador</tspan></text>
     <rect
        ry="7.2597485"
        y="309.72461"
@@ -137,12 +137,12 @@
        xml:space="preserve"><tspan
          y="348.80603"
          x="718.69397"
-         id="tspan4618"
-         sodipodi:role="line">Web</tspan><tspan
+         sodipodi:role="line"
+         id="tspan4657">Servidor</tspan><tspan
          y="373.80603"
          x="718.69397"
          sodipodi:role="line"
-         id="tspan4657">Server</tspan></text>
+         id="tspan4930">Web</tspan></text>
     <rect
        ry="7.2597485"
        y="109.72461"
@@ -150,9 +150,9 @@
        height="87.693649"
        width="132.69365"
        id="rect6496"
-       style="opacity:1;fill:#afe9af;fill-opacity:1;fill-rule:nonzero;stroke:#38b217;stroke-width:0.82898897;stroke-linecap:round;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+       style="opacity:1;fill:#ffccaa;fill-opacity:1;fill-rule:nonzero;stroke:#803300;stroke-width:0.82898897000000005;stroke-linecap:round;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;color:#000000" />
     <rect
-       style="opacity:1;fill:#afe9af;fill-opacity:1;fill-rule:nonzero;stroke:#38b217;stroke-width:0.82898897;stroke-linecap:round;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       style="opacity:1;fill:#ffccaa;fill-opacity:1;fill-rule:nonzero;stroke:#803300;stroke-width:0.82898897000000005;stroke-linecap:round;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;color:#000000"
        id="rect6494"
        width="132.69365"
        height="87.693649"
@@ -166,7 +166,7 @@
        height="87.693649"
        width="132.69365"
        id="rect4622"
-       style="opacity:1;fill:#afe9af;fill-opacity:1;fill-rule:nonzero;stroke:#38b217;stroke-width:0.82898897;stroke-linecap:round;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+       style="opacity:1;fill:#ffccaa;fill-opacity:1;fill-rule:nonzero;stroke:#803300;stroke-width:0.82898897000000005;stroke-linecap:round;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
     <text
        xml:space="preserve"
        style="font-size:20px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
@@ -259,7 +259,7 @@
          id="tspan6551"
          x="65.578644"
          y="104.63779"
-         style="font-weight:bold">Configuración del WebServer</tspan><tspan
+         style="font-weight:bold">Configuración del Servidor</tspan><tspan
          sodipodi:role="line"
          x="65.578644"
          y="129.63779"

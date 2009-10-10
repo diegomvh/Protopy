@@ -157,34 +157,6 @@
          stdDeviation="1.6780955"
          id="feGaussianBlur12797" />
     </filter>
-    <filter
-       inkscape:collect="always"
-       id="filter12799">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="1.6780955"
-         id="feGaussianBlur12801" />
-    </filter>
-    <filter
-       inkscape:collect="always"
-       id="filter12803">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="1.6780955"
-         id="feGaussianBlur12805" />
-    </filter>
-    <filter
-       inkscape:collect="always"
-       id="filter12807"
-       x="-0.042563787"
-       width="1.0851276"
-       y="-0.15576535"
-       height="1.3115307">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="1.6780955"
-         id="feGaussianBlur12809" />
-    </filter>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -675,11 +647,11 @@
          id="tspan12685"
          x="806.57947"
          y="154.13516"
-         style="text-align:center;text-anchor:middle">Web</tspan><tspan
+         style="text-align:center;text-anchor:middle">Servidor</tspan><tspan
          sodipodi:role="line"
          x="806.57947"
          y="179.13516"
          id="tspan12687"
-         style="text-align:center;text-anchor:middle">Server</tspan></text>
+         style="text-align:center;text-anchor:middle">Web</tspan></text>
   </g>
 </svg>

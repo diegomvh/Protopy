@@ -33,9 +33,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.5"
-     inkscape:cx="450.56944"
-     inkscape:cy="326.38416"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="430.48592"
+     inkscape:cy="174.8057"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -113,16 +113,16 @@
        ry="2.1240258" />
     <text
        xml:space="preserve"
-       style="font-size:14.64027786px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
-       x="523.90009"
+       style="font-size:14.64027786px;font-style:normal;font-weight:normal;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="559.90009"
        y="246.7314"
        id="text2399"><tspan
          sodipodi:role="line"
          id="tspan2401"
-         x="523.90009"
-         y="246.7314">Web Server</tspan><tspan
+         x="559.90009"
+         y="246.7314">Servidor Web</tspan><tspan
          sodipodi:role="line"
-         x="523.90009"
+         x="559.90009"
          y="265.03174"
          id="tspan2403">WSGI Host</tspan></text>
     <rect
