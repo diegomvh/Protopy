@@ -33,6 +33,7 @@ sphinx-env/*
 build/*
 *.bak
 chiron/*
+*.swp
 
 # Aplicacion de demostracion
 sources/offline_demo/static/devkit/*
