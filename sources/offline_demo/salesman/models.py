@@ -17,7 +17,10 @@ abs_url = lambda inst: '/%s' % '/'.join( [mod_name, inst._meta.module_name, str(
 
 class Pais(models.Model):
     nombre = models.CharField(max_length = 45)
-    simbolo_moneda = models.CharField(max_length = 8)
+    simbolo_moneda = models.CharField(max_length = 8, default = '$')
+    
+    def __unicode__(self):
+        return self.nombre
     
     class Meta:
         verbose_name = u"País"
@@ -28,6 +31,9 @@ class Pais(models.Model):
 class Provincia(models.Model):
     pais = models.ForeignKey(Pais)
     nombre = models.CharField(max_length = 140)
+    
+    def __unicode__(self):
+        return self.nombre
     
     get_absolute_url = abs_url
 
@@ -49,6 +55,9 @@ class Vendedor(models.Model):
     nombre = models.CharField(max_length = 50)
     apellido = models.CharField(max_length = 50)
     ciudades_asignadas = models.ManyToManyField(Ciudad)
+    
+    get_absolute_url = abs_url
+    
     class Meta:
         verbose_name_plural = "Vendedores"
     def __unicode__(self):
@@ -61,7 +70,9 @@ class Cliente(models.Model):
     razon_social = models.CharField(max_length = 50)
     ciudad = models.ForeignKey(Ciudad)
     correo = models.EmailField()
-
+    
+    get_absolute_url = abs_url
+    
     def __unicode__(self):
         return u'%s, %s' % (self.razon_social, self.ciudad)
     
@@ -72,6 +83,9 @@ class Proveedor(models.Model):
     razon_social = models.CharField(max_length = 50)
     direccion = models.CharField(max_length = 200)
     correo = models.EmailField()
+    
+    get_absolute_url = abs_url
+    
     class Meta:
         verbose_name_plural = "Proveedores"
         
@@ -83,6 +97,9 @@ class Categoria(models.Model):
     Cada producto tiene una categoria
     '''
     nombre = models.CharField(max_length = 50)
+    
+    get_absolute_url = abs_url
+    
     class Meta:
         verbose_name = "Categoría"
         verbose_name_plural = "Categorías"
@@ -100,7 +117,9 @@ class Producto(models.Model):
     categoria = models.ForeignKey(Categoria, blank = True)
     provisto_por = models.ManyToManyField(Proveedor)
     precio_uniatario = models.DecimalField(default = 0.0, max_digits = 5, decimal_places = 3)
-
+    
+    get_absolute_url = abs_url
+    
     def __unicode__(self):
         return self.nombre
         
@@ -108,6 +127,8 @@ class Pedido(models.Model):
     cliente = models.ForeignKey(Cliente)
     numero = models.PositiveIntegerField()
     fecha = models.DateField()
+
+    get_absolute_url = abs_url
     
     def __unicode__(self):
         return u"%s %s" % (self.numero, self.cliente)
@@ -118,6 +139,8 @@ class ItemPedido(models.Model):
     precio = models.DecimalField(default = 0.0, max_digits = 5, decimal_places = 3)
     pedido = models.ForeignKey(Pedido)
 
+    get_absolute_url = abs_url
+    
     class Meta:
         verbose_name_plural = 'Items de Pedido'
     

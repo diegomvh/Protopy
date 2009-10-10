@@ -1,0 +1,15 @@
+{% extends "listado.html" %}
+
+	{% block table_heading %}
+		<th>Razón Social</th><th>Ciudad</th><th>Correo</th>
+	{% endblock %}
+
+	
+	{% block item_iteration_row %}
+		<td>{{ item.razon_social }}</td> <td>{{ item.ciudad }}</td> <td>{{ item.correo }}</td>
+  	{% endblock %}
+
+
+	
+  	
+ 

@@ -27,4 +27,27 @@ urlpatterns = patterns('',
         }),
         
         
+        # Clientes -> Edit
+        (r'cliente/(?P<object_id>\d{1,5})/edit/$', 'django.views.generic.create_update.update_object',{
+            'model': Cliente,
+            'post_save_redirect': '/salesman/clientes/',
+            'extra_context': {'title': 'Editar cliente', 'submit_text': 'Actualizar',}, 
+        }),
+        
+        # Cliente -> Listar
+        (r'clientes/$', 'django.views.generic.list_detail.object_list',{
+            'queryset': Cliente.objects.all()
+            }
+        ),
+        
+        # Cliente -> Crear
+        (r'clientes/add/$', 'django.views.generic.simple.redirect_to', 
+            {'url': '../../cliente/add/'}),
+        (r'cliente/add/$', 'django.views.generic.create_update.create_object', {
+            'model': Cliente,
+            'post_save_redirect': '/salesman/clientes/',
+                                                                               
+        }),
+        
+        
 )
