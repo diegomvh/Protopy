@@ -49,6 +49,7 @@ Con la popularización de estas librerías, también lo hicieron herramientas de
 depuración sofisticadas como Firebug. Conjunto que permitió realizar aplicaciones
 más complejas y compatibles con la gran mayoría de los navegadores del mercado.
 
+
 .. [Firebug09] *Firebug*, Plugin de depuración integral, último acceso Septiembre 2009, http://getfirebug.com/
 
 Google lanzó en el 2007 un plugin para la mayoría de los navegadores populares
@@ -140,12 +141,11 @@ Los componentes de una URL son:
 		permitiendo al navegador ubicarse visualmente.
 
 .. [*] *Transport Security Layer* es el sucesor de *Secure Socket Layer* (SSL),
-es un protocolo
-criptográfico que provee conexiones seguras a través de una red, típicamente
-Internet [WikiSSL2009]_ .
+       es un protocolo criptográfico que provee conexiones seguras a través de una red, 
+       típicamente Internet [WikiSSL2009]_ .
 
 .. [WikiSSL2009] *Transport Layer Security*, Wikipedia, 2009, último acceso,
-Agosto 2009.
+                 Agosto 2009.
 
 Un navegador generalmente accede a documentos ubicados en la web, a
 los cuales accede mediante el protocolo HTTP, sin embargo es posible 
@@ -272,7 +272,7 @@ ellas:
 	</script> 
 
 .. [StephenChapmanJS2009] *Javascript and XML*, Stephen Chapman, About.com,
-último acceso Agosto 2009, http://javascript.about.com/library/blxhtml.htm
+                          último acceso Agosto 2009, http://javascript.about.com/library/blxhtml.htm
 
 
 .. _cliente-css:
@@ -301,234 +301,149 @@ Brendan Eich para la empresa Netscape con el nombre de Mocha. Surge
 a principios de 1996, como un lenguaje de scripting para la Web y apuntado a la
 interacción directa con el usuario.
 
+
 Con una sintaxis semejante a la de Java y C, JavaScript dista mucho de ser Java
 y debe su nombre más a cuestiones de marketing que a principios de diseño, de
 hecho se reconocen mayores influencias de lenguajes como Self, Scheme, Perl e
-incluso en versiones modernas, Python <3.
+incluso en versiones modernas, Python.
 
-HASTA ACÁ
-------------
 
-Orientado a Objetos
--------------------
+Orientación a Objetos
+---------------------
 
-JavaScript es un lenguaje orientado a objetos. Utiliza prototipos
-en vez de clases. Estos se define con una función [*]_, pero
-para que ésta funcione como prototipo, se utiliza la palabra reservada
-``new``. En tal caso, dentro del cuerpo de la función, la palabra reservada
-``this`` apunta a la instancia que está siendo generada. La función
-toma el comportamiento de lo que se conoce en los lenguajes de programación OO
-como *constructor*.
+JavaScript es un lenguaje orientado a objetos. Sin emabargo carece de clases
+y ocultamiento de información. Existen varias técnicas para lograr encapsulamiento,
+abastracción, herencia y polimorfismo. 
 
-.. code-block:: javascript
+Generalmente se obtienen mediante dos técnicas:
 
-	function prototipo () {
-		this.x = 1;
-	}
+	* Arreglo Asociativo (``Object``)
+		
+		Este tipo de dato, que representa una lista de asociaciones clave-valor, 
+		presenta una particularidad en JavaScript. Las funciones miembro resuelven
+		la palabra resevada ``this`` en el ámbito de la colección. Por lo tanto
+		permite generar un "objeto" de una única instancia. En este tipo de datos,
+		el operador ``.`` responde de la misma manera que el operador de indexación
+		``[]``.
+		
+		
+		Por ejemplo:
+		
+		.. code-block:: javascript
+			
+			>>> var X = {
+				metodo: function ()	{
+					console.log( this.valor );
+				},
+				valor: 3
+			   }
+			   
+			>>> X['metodo']();
+			-> 3
+			
+			>>> X.metodo();
+			-> 3
+
+		
+		Esta técnica se utilza en combinación con las clausuras en las librerías
+		de JavaScript como Prototype [ProtypeOrgSrc09]_.
+		
+	* Prototipos
+		
+		Un prototipo es el equivalente a una clase en los lenguajes como Java o C++.
+		Consiste en la definición de la una función que es llamada anteponiendo la
+		palabra reservada ``new``. Durante la llamada, ``this`` se resuelve en
+		el ámbito de la instancia y esta es devuelta.
+		
+		.. code-block:: javascript
+			
+			>>> var Clase = function () {
+					this.metodo = function () {
+						console.log( this.valor );
+					}
+					this.valor = 3;
+				}
+			>>> var instancia = new Clase();
+			>>> instancia.metodo();
+			-> 3
+		
+		Para acceder a la estructura de la clase, se utiliza el atributo 
+		``prototype``.
+		
+		.. code-block:: javascript
+		
+			>>> var Clase = function () {}
+			>>> Clase.prototype.metodo = function () {
+					console.log( this.valor );
+				}
+
+			>>> Clase.prototype.valor = 3;
+			>>> var instancia = new Clase();
+			>>> instancia.metodo();
+			-> 3
+		
+		Esta técnica permite implementar herencia.
 	
-	var instancia = new prototipo();
-
-JavaScript posee un tipo de dato llamado ``Object``[*]_, también conocido como arreglo asociativo.
-Los arreglos asociativos consisten en asocaciones calve-valor y están presentes en varios lenguajes [*]_.
-Éste tipo de dato responde al operador punto ``.`` de la misma manera que al operador de indexación ``[]``
-y a veces es utilizado para definir objetos de una única instancia:
-
-.. code-block:: javascript
-
-	var mi_instancia = {
-		// Definción de un método
-		mi_metodo: function () {
-			this.dato = 3;
-			this.dato2 = 4;
-		},
-		// Definición de un atributo
-		dato3: 3
-	}
-
-Tampoco está presente el ocultamiento de información, todos los métodos y atributos
-son públicos.
-
-.. [*] En JavaScript una función es una instancia de la clase Function
-.. [*] En JavaScript la sintaxis ``{}`` es equivalente a escribir ``new Object()``.
-.. [*] ``dict`` en Python, ``HashMap`` en Java, ``Dictinary`` en SmallTalk, ``Hash`` en Ruby.
-
-
-Un objeto se puede crear de varias maneras:
-
-.. code-block:: javascript
-
-    var uno = new Object();	// Mediante el constructor
-    uno['a'] = 3;			// Asignacion equivalente
-    uno.b = 4;				// Asignación equivalente
-    
-    var dos = {};			// Mediante la sintaxis abreviada
-    dos['a'] = 3;			// Asignacion equivalente
-    dos.b = 4;				// Asignación equivalente
-
-Las caracteristicas dinámicas de lenguaje posibilitan la modificación de los
-objetos en tiempo de ejecución, esto quiere decir que a un objeto, luego de ser
-creado, se le pueden agregar o eliminar métodos y propiedades:
-
-.. code-block:: javascript
-
-    uno.variable = “hola”;
-    dos.metodo = function () { this.c = 3; }
-
-El resultado de la ejecución del código previo son dos objetos, ``uno`` y ``dos``,
-personalizados uno con un atributo y otro con un "metodo".
-Sin embargo esta forma de definir un objeto sobre la marcha es inadecuada
-para la creación instancias, tarea para la cual son más adecuados
-los prototipos.
-
-Una vez aclaradas las diferencias entre los prototipos, se utilizará el
-término *clase* y *prototipo* de manera indistinta.
-
-En JavaScript se pueden generar funciones anónimas, conocidas en otros lenguajes
-como expresiones *lambda*. Utilizando esta característica, se puede lograr
-una definción de prototipos más cercana a la sintaxis de otros lenguajes OO.
-
-.. code-block:: javascript
-
-    /*clase de ejemplo*/
-
-    Clase = function() {
-        this.propiedad = “hola!”;
-        this.metodo = function(){
-            alert(this.propiedad);
-        }
-    }
-    objeto = new Clase(); // instanciamos ‘Clase’
-
-Esta primera aproximación posee una importante desventaja: cada
-instancia posee una nueva versión de los métodos.
-
-Para lograr una unificación del protipo al cual pertenecen las instancias
-todas las funciones tienen una propiedad llamada *prototype*. 
-Esta propiedad es un Object que será utilizado como ‘modelo’ inicial de todos los objetos que sean
-creados cuando esta función cuando sea utilizada como constructor.
-
-Reescribiendo el ejemplo anterior el código quedaría así:
-
-.. code-block:: javascript
-
-    /* creamos un constructor limpio */
-
-    Clase = new Function();
-    Clase.prototype.propiedad = “hola!”;
-    Clase.prototype.metodo = function(){
-        alert(this.propiedad);
-    }
-    objeto = new Clase(); // instanciamos ‘miClase’
-
-En este ejemplo, todos los objetos creados a partir de ‘Clase’ comparten las
-mismas referencias en todas sus propiedades, esto significa que, todos los
-objetos van a compartir la misma versión de cada ‘metodo’.
-
-Adicionalmente, al utilizar la propiedad prototype, se obtiene otra ventaja y es
-poder usar la palabra reservada instanceof para determinar si un objeto es
-instancia de un constructor:
-
-.. code-block:: javascript
 	
-	var instancia = new Clase();
-	instanceof(instancia, Clase); // -> true
+	* Clausuras
+		
+		Una clausura es la utilización de funciones internas y referencias para
+		lograr encapsulamiento y ocultamiento de información. 
+		
+
+.. [ProtypeOrgSrc09] *Código Fuente de Prototype, versión 1.6.3*, Prototype.org, 
+					  http://www.prototypejs.org/assets/2008/9/29/prototype-1.6.0.3.js
 
 
-.. http://javis.wordpress.com/2006/10/23/javascript-orientado-a-objetos/
+DOM
+===
 
-************************
-Evolución del JavaScript
-************************
-
-A continuación se describen algunas características que se han agregado
-a ECMAScript a lo largo de las versiones.
-
-Herencia
-========
-
-Javascript posee herencia basada en prototipos, pero existen muchas versiones
-de implementarla. Se describen a continuación las técnicas más populares.
-
-
-Object Masquerading
--------------------
-
-Este método saca provecho del comportamiento de la palabra reservada this
-dentro de los constructores.
-El funcionamiento es el siguiente: Un constructor asigna propiedades y métodos
-a un objeto referenciándolo con la palabra clave *this*. Como un constructor
-es una función, esta puede ser invocada desde una "subclase".
-
-Definendo a la clase A como siguie:
-
-.. code-block:: javascript
-    
-    function ClaseA(nombre){
-        this.nombre = nombre;
-        this.identificarse = function(){
-            alert(this.nombre);
-        }
-    }
-
-Recordemos que en un constructor, this hace referencia al nuevo objeto que será
-retornado. Pero en un método, this hace referencia al objeto desde el cual fue
-llamado.
-
-.. code-block:: javascript
-     
-    function ClaseB(nombre){
-        this.superClase = ClaseA;
-        this.superClase(nombre);
-        delete this.superClase;
-    }
-
-En el código anterior, el constructor ‘ClaseA’, es llamado como método del nuevo
-objeto que se esta creando en ‘ClaseB’, por lo tanto, todas las propiedades y
-métodos que se crean en ClaseA se añaden a las instancias de ClaseB.
-
-
-*Object Masquerading* permite, por su forma de invocar a los "superconstructores",
-implementar herencia múltiple, basta con llamar cuantos constructores sean necesarios.
-Al no trabajar con la propiedad *prototype*, *instanceof* no es utilizable y persiste
-el problema de las múltiples versiones de los métodos.
-
-Prototype Chaining
-------------------
-
-Anteriormente se mostró como definir clases utilizando el objeto prototype.
-*Prototype Chaining* se basa en este objeto y es el método recomendado por el
-standard ECMA Script.
-El atributo *prototype* de el objeto Function es pasado a todas las instancias
-cuando la función se invoca como constructor.
-
-La idea trás Prototype Chaining es generar una instancia de la clase base
-como instancia inicial del prototipo de la subclase.
-
-Modificando el ejemplo anterior para utilizar Prototype Chaining obtenemos
-el siguiente código.
-
-.. code-block:: javascript
-
-    function ClassA() {}
-    ClassA.prototype.nombre = “”;
-    ClassA.prototype.identificarse = function() {
-        alert(this.nombre);
-    }
-    function ClassB() {}    
-    ClassB.prototype = new ClassA();
-
-Este método posee la desventaja que no es posible invocar el constructor
-con parámetros, pero habilita la utilización de la función *instanceof*:
-
-.. code-block:: javascript
-
-    var miobjeto = new ClassB();
-    alert(miobjeto instanceof ClassB); // true
-    alert(miobjeto instanceof ClassA); // true
+DOM o Document Objetct Model es una especificación.
 
 
 AJAX
 ====
+
+AJAX es una tecnología que surge tras la necesidad de agilizar las interfases
+de usuario basadas en la web. Es utilizada para lograr RIAs basadas en 
+en las capacidades nativas del navegador (sin plugins de terceras partes).
+
+AJAX debe su nombre a Asynchronous JavaScript And Xml. Consiste en 
+la capacidad de que una página pueda originar peticiones HTTP que no
+
+
+
+Estas peticiones se programan en JavaScript y si bien
+originalmente se pensó en XML como lenguaje de intercambio de datos, es posible
+transferir cualquier tipo de archivo como código HTML, código JavaScript, 
+imágenes, hojas de estilos, JSON, etc.
+
+Esta tecnología permite realizar interfases web más interactivas, debido a que las
+transferencias asincrónicas solo recuperan del servidor los elementos que requieran
+ser actualizados. 
+
+La tecnología utiliza 4 elementos [WIKIAJAX09]_:
+
+    * XHTML (o HTML) y hojas de estilos en cascada (CSS) para el diseño que
+      acompaña a la información.
+      
+    * DOM como método de control de la representación y el navegador por 
+      parte de JavaScript.
+      
+    * El objeto XMLHttpRequest para intercambiar datos de forma asíncrona con el
+      servidor web. En algunos frameworks y en algunas situaciones concretas, se usa
+      un objeto iframe en lugar del XMLHttpRequest para realizar dichos intercambios.
+      
+    * XML es el formato usado generalmente para la transferencia de datos
+      solicitados al servidor, aunque cualquier formato puede funcionar, incluyendo
+      HTML preformateado, texto plano, JSON y hasta EBML.
+
+.. [WIKIAJAX09] *AJAX*, Wikipedia, último acceso Octubre de 2009, http://es.wikipedia.org/wiki/AJAX
+
+Para poder utilizar esta tecnología, el navegador porvee un tipo de dato
+llamado ``XMLHTTPRequest``. 
+
+
 
 
 La expansión y masificación de la Web, llevó a que el ciclo de petición
@@ -553,17 +468,7 @@ necesario que el contenido asíncrono esté formateado en XML.
 En la practica AJAX no constituye una tecnología en sí, sino que es
 un término que engloba a éstas cuatro tecnologías:
 
-    * XHTML (o HTML) y hojas de estilos en cascada (CSS) para el diseño que
-acompaña a la información.
-    * Document Object Model (DOM) accedido con un lenguaje de scripting por
-parte del usuario, especialmente implementaciones ECMAScript como JavaScript y
-JScript, para mostrar e interactuar dinámicamente con la información presentada.
-    * El objeto XMLHttpRequest para intercambiar datos de forma asíncrona con el
-servidor web. En algunos frameworks y en algunas situaciones concretas, se usa
-un objeto iframe en lugar del XMLHttpRequest para realizar dichos intercambios.
-    * XML es el formato usado generalmente para la transferencia de datos
-solicitados al servidor, aunque cualquier formato puede funcionar, incluyendo
-HTML preformateado, texto plano, JSON y hasta EBML.
+
 
 Funcionamiento de AJAX
 ----------------------
@@ -677,26 +582,26 @@ JSON [JSONOrg2009]_ (JavaScript Object Notation) es un estándard de codificaci�
 inspirado en la sintaxis de objetos de JavaScript.
 Sus objetivos son: 
 
-	* Ser legible para los humanos.
+	* Ser legible para los programadores.
 	
-	* Fácil de interpretar para las computadoras.
+	* Fácil de interpretar para las computadoras (en principio debido a la cercanía con JavaScript).
 
 Surge como alternativa a XML para el intercambio de datos en aplicaciones
 web. 
 
 .. [JSONOrg2009] *JSON*, Sitio Oficial del Estándard, último acceso Octubre de 2009, http://json.org/
 
-Debido a que los navegadores carecen de la capacidad de ejecución de 
-códiog JavaScript en forma concurrente, el bucle de despacho de eventos
-debe competir con el resto de las tareas de la página. En una aplicación
-interaciva que utiliza AJAX, una tarea común es el "parsing" de XML (de las
-respuestas del servidor), 
-que demanda un esfuerzo computacional que debe ser tenido en cuenta si se
-debe realizar frecuentemente.
+.. Debido a que los navegadores carecen de la capacidad de ejecución de 
+	códiog JavaScript en forma concurrente, el bucle de despacho de eventos
+	debe competir con el resto de las tareas de la página. En una aplicación
+	interaciva que utiliza AJAX, una tarea común es el "parsing" de XML (de las
+	respuestas del servidor), 
+	que demanda un esfuerzo computacional que debe ser tenido en cuenta si se
+	debe realizar frecuentemente.
 
 Los desarrolladores encontraron que formateando los datos como una cadena
-literal para ser luego interpretada por la sentencia ``eval()`` [JSONOrgJS09]_, lograban desepeños
-superiores a los de XML, además de contar con un formato de datos legibles de suma ayuda
+literal para ser luego interpretada por la sentencia ``eval()`` [JSONOrgJS09]_ 
+les permitía visualizar los datos que eran enviados al cliente ,  con un formato de datos legibles de suma ayuda
 a la hora de realizar depuración.
 
 .. [JSONOrgJS09] *Utilización de JSON en Javascript*, Json.org, ultimo acceso Agosto de 2009, http://json.org/js.html
