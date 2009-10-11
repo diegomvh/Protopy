@@ -164,7 +164,7 @@ def export_remotes(models_and_proxies):
                 #TODO: Implement for more fields
                 processed_fields[f.name] = (field_type, {})
         
-        processed_models[name] = processed_fields
+        processed_models[model] = processed_fields
     #print processed_models
     return processed_models
 

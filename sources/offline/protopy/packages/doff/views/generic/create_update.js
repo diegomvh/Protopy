@@ -1,7 +1,7 @@
 require('doff.template.loader');
 require('doff.forms.models', 'ModelForm');
 var models = require('doff.db.models.base');
-require('doff.utils.http', 'Http404', 'HttpResponseRedirect');
+require('doff.utils.http', 'HttpResponse', 'Http404', 'HttpResponseRedirect');
 require('doff.core.exceptions', 'ObjectDoesNotExist', 'ImproperlyConfigured');
 require('doff.template.context', 'RequestContext');
 
@@ -70,7 +70,7 @@ function lookup_object(model, object_id, slug, slug_field) {
 }
 
 function create_object(request) {
-    var args = new Arguments(arguments, {
+    var arg = new Arguments(arguments, {
         model: null, 
         template_name: null,
         template_loader: loader, 
@@ -80,7 +80,7 @@ function create_object(request) {
         context_processors: null, 
         form_class: null
     });
-    var kwargs = args.kwargs;
+    var kwargs = arg.kwargs;
     var form, new_object, t, c;
 
     if (!kwargs['extra_context'])
@@ -98,10 +98,10 @@ function create_object(request) {
     }
 
     if (!kwargs['template_name']) {
-        kwargs['template_name'] = "%s/%s_form.html".subs(model._meta.app_label, model._meta.object_name.lower());
+        kwargs['template_name'] = "%s/%s_form.html".subs(model._meta.remote_app_label, model._meta.module_name);
     }
 
-    var t = kwargs['template_loader'].get_template(template_name)
+    var t = kwargs['template_loader'].get_template(kwargs['template_name']);
     var c = new RequestContext(request, {
         'form': form,
         'context_procesors': kwargs['context_processors']
@@ -112,7 +112,7 @@ function create_object(request) {
 }
 
 function update_object(request) {
-    var args = new Arguments(arguments,{
+    var arg = new Arguments(arguments, {
         model:null,
         object_id:null,
         slug:null,
@@ -127,7 +127,7 @@ function update_object(request) {
         form_class:null
     });
 
-    var kwargs = args.kwargs;
+    var kwargs = arg.kwargs;
     if (!kwargs['extra_context'])
         kwargs['extra_context'] = {};
 
@@ -142,22 +142,22 @@ function update_object(request) {
     } else {
         var form = new form_class({'instance':obj})
         if (!kwargs['template_name']) {
-            kwargs['template_name'] = "%s/%s_form.html".subs([model._meta.app_label, model._meta.object_name.lower()])
+            kwargs['template_name'] = "%s/%s_form.html".subs(model._meta.remote_app_label, model._meta.module_name);
         }
     }
-    var t = template_loader.get_template(template_name);
+    var t = template_loader.get_template(kwargs['template_name']);
     var c = new RequestContext(request, {
             form: form,
             template_object_name: obj,
             }, context_processors);
-    apply_extra_context(extra_context, c);
+    apply_extra_context(kwargs['extra_context'], c);
     var response = new HttpResponse(t.render(c));
-    populate_xheaders(request, response, model, getattr(obj, obj._meta.pk.attname));
+    //populate_xheaders(request, response, model, getattr(obj, obj._meta.pk.attname));
     return response;
 }
 
 function delete_object(request, model, post_delete_redirect){
-    var args = new Arguments({
+    var arg = new Arguments(arguments, {
         object_id : null,
         slug_field : 'slug',
         template_name : null,
@@ -168,7 +168,7 @@ function delete_object(request, model, post_delete_redirect){
         template_object_name : 'object'
     });
 
-    var kwargs = args.kwargs;
+    var kwargs = arg.kwargs;
     if (!kwargs['extra_context'])
         kwargs['extra_context'] = {};
 
@@ -179,7 +179,7 @@ function delete_object(request, model, post_delete_redirect){
         return new HttpResponseRedirect(post_delete_redirect);
     } else {
         if (!kwargs['template_name']) {
-            kwargs['template_name'] = "%s/%s_confirm_delete.html".subs([model._meta.app_label, model._meta.object_name.lower()]);
+            kwargs['template_name'] = "%s/%s_confirm_delete.html".subs(model._meta.remote_app_label, model._meta.module_name);
         }
         var t = template_loader.get_template(kwargs['template_name']),
             c = new RequestContext(request, {
@@ -187,7 +187,7 @@ function delete_object(request, model, post_delete_redirect){
                         kwargs['context_processors']);
         apply_extra_context(kwargs['extra_context'], c);
         var response = new HttpResponse(t.render(c));
-        populate_xheaders(request, response, model, getattr(obj, obj._meta.pk.attname));
+        //populate_xheaders(request, response, model, getattr(obj, obj._meta.pk.attname));
         return response;
     }
 }

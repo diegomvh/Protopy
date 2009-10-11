@@ -22,7 +22,7 @@ function get_callable(lookup_view, can_fail) {
                 var lookup_view = require(mod_name, func_name);
                 if (!callable(lookup_view))
                     throw new AttributeError("'%s.%s' is not a callable.".subs(mod_name, func_name));
-        } catch (e if isincance(e, [LoadError, AttributeError])) {
+        } catch (e if isinstance(e, [LoadError, AttributeError])) {
             if (!can_fail)
                 throw e;
         }
@@ -30,16 +30,18 @@ function get_callable(lookup_view, can_fail) {
 }
 //TODO: quiza este bueno algo para la memoria :)
 //get_callable = memoize(get_callable, _callable_cache, 1)
-
+var _cached_resolver = null;
 function get_resolver(urlconf) {
+    if (_cached_resolver && !urlconf)
+        return _cached_resolver;
     if (!urlconf) {
         require('doff.core.project', 'get_settings');
         var settings = get_settings();
         urlconf = settings.ROOT_URLCONF;
     }
-    return new RegexURLResolver('^/', urlconf);
+    _cached_resolver = new RegexURLResolver('^/', urlconf);
+    return _cached_resolver;
 }
-//get_resolver = memoize(get_resolver, _resolver_cache, 1)
 
 function get_mod_func(callback) {
     // Converts 'doff.views.news.stories.story_detail' to ['doff.views.news.stories', 'story_detail']
@@ -121,7 +123,7 @@ var RegexURLResolver = type('RegexURLResolver', [ object ], {
                     tried = tried.concat([(pattern.regex.pattern + '   ' + t) for (t in e.args[0]['tried'])]);
                 }
                 if (sub_match) {
-                    return [sub_match[0], sub_match[1], this.default_kwargs];
+                    return [sub_match[0], sub_match[1], extend(this.default_kwargs, sub_match[2])];
                 }
                 tried.push(pattern.regex.pattern);
             }
@@ -213,6 +215,8 @@ function resolve(path, urlconf) {
 }
 
 publish({
+    Resolver404: Resolver404,
     RegexURLPattern: RegexURLPattern,
-    RegexURLResolver: RegexURLResolver 
+    RegexURLResolver: RegexURLResolver,
+    resolve: resolve
 });
