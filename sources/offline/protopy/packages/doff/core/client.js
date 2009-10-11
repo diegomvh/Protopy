@@ -3,14 +3,14 @@ require('dom');
 require('event');
 require('ajax');
 require('sys');
+require('urls');
 require('doff.utils.http');
 //http://www.contentwithstyle.co.uk/content/fixing-the-back-button-and-enabling-bookmarking-for-ajax-apps
 
 var History = type('History', [ object ], {
     __init__: function(initial) {
         this.states = {};
-        this.initial_state = initial || 'index';
-        this._current_state = location.hash.slice(1) || this.initial_state;
+        this._current_state = location.hash.slice(1);
         window.setInterval(getattr(this, '_hash_check'), 50);
     },
 
@@ -25,11 +25,11 @@ var History = type('History', [ object ], {
     onChange: function(object) {},
 
     get current_state() {
-        return (this._current_state === this.initial_state)? '' : this._current_state;
+        return this._current_state;
     },
 
     navigate: function (state, object) {
-        state = state || this.initial_state;
+        state = state;
         this._current_state = state;
         location.hash = state;
         this.states[state] = object;
@@ -63,11 +63,13 @@ var Document = type('Document', [ object ], {
 });
 
 var DOMAdapter = type('DOMAdapter', [ object ], {
-    event_handlers: [],
-
     __init__: function() {
         $$('body')[0].update('');
-        this._location = window.location;
+        this._handlers = [];
+        this._root_url = urls.parse(urls.resolve('/', string(window.location)));
+        //TODO: esta depende de por donde arranque.
+        this._current_url = this._root_url;
+        this._urls = {};
         this.history = new History();
         this.document = new Document();
         event.connect(this.history, 'onChange', this, '_process_from_history');
@@ -80,7 +82,7 @@ var DOMAdapter = type('DOMAdapter', [ object ], {
             this.remove_hooks();
             this.document.update(response.content);
             this.add_hooks();
-        } else if (response.status_code == 302) {
+        } else if (response.status_code == 302 || response.status_code == 301) {
             return this._process_from_string(response['Location']);
         } else if (response.status_code == 404) {
             //Agregar a las url no manjeadas
@@ -92,26 +94,17 @@ var DOMAdapter = type('DOMAdapter', [ object ], {
     add_hooks: function() {
         var self = this;
         this.document.forms.forEach(function(f) {
-            self.event_handlers.push(event.connect(f, 'onsubmit', getattr(self, '_process_from_forms')));
+            self._handlers.push(event.connect(f, 'onsubmit', getattr(self, '_process_from_forms')));
         });
         this.document.links.forEach(function(l) {
-            self.event_handlers.push(event.connect(l, 'onclick', getattr(self, '_process_from_links')));
+            self._handlers.push(event.connect(l, 'onclick', getattr(self, '_process_from_links')));
         });
     },
 
     remove_hooks: function() {
-        this.event_handlers.forEach(function(hler) {
+        this._handlers.forEach(function(hler) {
             event.disconnect(hler);
         });
-    },
-
-    _state_to_path: function(state) {
-        var path = state;
-        if (!path.startswith('/'))
-            path = '/' + path;
-        if (!path.endswith('/'))
-            path = path + '/';
-        return path;
     },
 
     _path_to_state: function(path) {
@@ -120,41 +113,28 @@ var DOMAdapter = type('DOMAdapter', [ object ], {
             state = state.slice(1);
         if (state.endswith('/'))
             state = state.slice(0, -1);
-        return state;
+        return state || 'index';
     },
 
-    _build_url: function(url, target) {
+    _build_url: function(url_string) {
         //urls.relative(location.href, 'http://localhost:8000/trabajo_offline/')
+        //urls.resolve('/', location.href)
+        //"http://localhost:8000/"
         //urls.resolve('/pepe/', location.href)
-        if (http.absolute_http_url_re.test(url))
-            return new http.HttpRequest(url);
-        if (url.startswith('/'))
-            return new http.HttpRequest(url);
-        else {
-            var path = this._state_to_path(this.history.current_state);
-            path = path + url;
-            return new http.HttpRequest(path);
-        }
+        return urls.parse(urls.resolve(url_string, string(this._current_url)));
     },
 
     _build_request: function(url) {
-        if (http.absolute_http_url_re.test(url))
-            return new http.HttpRequest(url);
-        if (url.startswith('/'))
-            return new http.HttpRequest(url);
-        else {
-            var path = this._state_to_path(this.history.current_state);
-            path = path + url;
-            return new http.HttpRequest(path);
-        }
+        return new http.HttpRequest(url);
     },
 
     _process_request: function(request) {
         //Te queres ir?
-        if (!request.is_valid()) return;
-        if (!request.is_same_origin())
-            window.location = request.source;
-        this.history.navigate(this._path_to_state(request.path), request);
+        //if (!request.is_valid()) return;
+        if (!request.is_same_origin(this._root_url))
+            window.location = string(request.URL);
+        this.history.navigate(this._path_to_state(request.path), request.URL);
+        this._current_url = request.URL;
         this.send(request);
     }, 
 
@@ -169,20 +149,22 @@ var DOMAdapter = type('DOMAdapter', [ object ], {
 
     _process_from_links: function(e) {
         event.stopEvent(e);
-        var element = e.target;
-        var request = this._build_request(element.getAttribute('href'));
+        var url = this._build_url(e.target.getAttribute('href'));
+        var request = this._build_request(url);
         request.method = 'get';
         this._process_request(request);
     },
     
     _process_from_string: function(s) {
-        var request = this._build_request(s);
+        var url = this._build_url(s);
+        var request = this._build_request(url);
         request.method = 'get';
         this._process_request(request);
     },
 
-    _process_from_history: function(request) {
-        this.send(request);
+    _process_from_history: function(url) {
+        this._current_url = url;
+        this.send(this._build_request(url));
     },
 
     set location(value) {

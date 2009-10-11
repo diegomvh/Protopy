@@ -5,7 +5,7 @@ require('doff.utils.http', 'Http404', 'HttpResponse');
 require('doff.core.paginator', 'Paginator', 'InvalidPage');
 require('doff.core.exceptions', 'ObjectDoesNotExist');
 
-function object_list(request, queryset) {
+function object_list(request) {
     /*
     Generic list of objects.
 
@@ -46,9 +46,9 @@ function object_list(request, queryset) {
     var kwargs = arg.kwargs;
     if (kwargs['extra_context'] == null)
         kwargs['extra_context'] = {};
-    queryset = queryset._clone();
+    var queryset = kwargs['queryset']._clone();
     if (kwargs['paginate_by']) {
-        var paginator = new Paginator(queryset, paginate_by, allow_empty_first_page=allow_empty);
+        var paginator = new Paginator(queryset, paginate_by, kwargs['allow_empty']);
         if (!kwargs['page'])
             var page = request.GET['page'] || 1;
         var page_number = Number(page);
@@ -79,17 +79,17 @@ function object_list(request, queryset) {
             'hits': paginator.count,
             'page_range': paginator.page_range,
         };
-        data['%s_list'.subs(template_object_name)] = page_obj.object_list;
-        var c = new RequestContext(request, data, context_processors);
+        data['%s_list'.subs(kwargs['template_object_name'])] = page_obj.object_list;
+        var c = new RequestContext(request, data, kwargs['context_processors']);
     } else {
         var data = {
             'paginator': null,
             'page_obj': null,
             'is_paginated': false,
         };
-        data['%s_list'.subs(template_object_name)] = queryset;
-        var c = new RequestContext(request, data, context_processors);
-        if (!allow_empty && len(queryset) == 0)
+        data['%s_list'.subs(kwargs['template_object_name'])] = queryset;
+        var c = new RequestContext(request, data, kwargs['context_processors']);
+        if (!kwargs['allow_empty'] && len(queryset) == 0)
             throw new Http404();
     }
     for each (var [key, value] in items(kwargs['extra_context'])) {
@@ -100,13 +100,13 @@ function object_list(request, queryset) {
     }
     if (!kwargs['template_name']) {
         var model = queryset.model;
-        var template_name = "%s/%s_list.html".subs(model._meta.app_label, model._meta.object_name.lower());
+        var template_name = "%s/%s_list.html".subs(model._meta.remote_app_label, model._meta.module_name);
     }
-    var t = template_loader.get_template(template_name);
-    return new HttpResponse(t.render(c), { mimetype: mimetype });
+    var t = kwargs['template_loader'].get_template(template_name);
+    return new HttpResponse(t.render(c), { mimetype: kwargs['mimetype'] });
 }
 
-function object_detail(request, queryset) {
+function object_detail(request) {
 
     /*
     Generic detail of an object.
@@ -122,6 +122,7 @@ function object_detail(request, queryset) {
     var kwargs = arg.kwargs;
     if (kwargs['extra_context'] == null)
         kwargs['extra_context'] = {};
+    var queryset = kwargs['queryset'];
     var model = queryset.model;
     if (kwargs['object_id']) {
         queryset = queryset.filter({ pk: object_id });
@@ -138,23 +139,23 @@ function object_detail(request, queryset) {
         throw new Http404("No %s found matching the query".subs(model._meta.verbose_name));
     }
     if (!kwargs['template_name'])
-        kwargs['template_name'] = "%s/%s_detail.html".subs(model._meta.app_label, model._meta.object_name.toLowerCase());
+        kwargs['template_name'] = "%s/%s_detail.html".subs(model._meta.remote_app_label, model._meta.module_name);
     if (kwargs['template_name_field']) {
         var template_name_list = [getattr(obj, kwargs['template_name_field']), template_name];
-        var t = template_loader.select_template(template_name_list);
+        var t = kwargs['template_loader'].select_template(template_name_list);
     } else {
-        var t = template_loader.get_template(kwargs['template_name']);
+        var t = kwargs['template_loader'].get_template(kwargs['template_name']);
     }
     var c = new RequestContext(request, {
         template_object_name: obj,
-    }, context_processors);
+    }, kwargs['context_processors']);
     for each (var [key, value] in items(kwargs['extra_context'])) {
         if (callable(value))
             c[key] = value();
         else
             c[key] = value;
     }
-    var response = new HttpResponse(t.render(c), { mimetype: mimetype });
+    var response = new HttpResponse(t.render(c), { mimetype: kwargs['mimetype'] });
     //populate_xheaders(request, response, model, getattr(obj, obj._meta.pk.name))
     return response;
 }

@@ -52,7 +52,7 @@ var strictExpression = new RegExp( /* url */
     "(?:\\?([^#]*))?" + /* query */
     "(?:#(.*))?" /*anchor */
 );
- 
+
 /**** Parser
 returns a URI parser function given
 a regular expression that renders
@@ -65,7 +65,7 @@ var Parser = function (expression) {
             throw new Error("HttpError: URL is undefined");
         if (typeof url != "string") return new Object(url);
 
-        var items = {};
+        var items = new Url();
         var parts = expression.exec(url);
 
         for (var i = 0; i < parts.length; i++) {
@@ -158,7 +158,7 @@ var format = function (object) {
         (object.protocol ? object.protocol + ":" : "") +
         (authority ? "//" + authority : "") +
         (object.root || (authority && path) ? "/" : "") +
-        (path ? path : "") +
+        ((path && path != "/") ? path : "") +
         (object.query ? "?" + object.query : "") +
         (object.anchor ? "#" + object.anchor : "")
     ) || object.url || "";
@@ -289,6 +289,25 @@ var relativeObject = function (target, base) {
 
     return target;
 };
+
+var Url = type('Url', [ object ], {
+    __str__: function() {
+        return this.url;
+    },
+    get host() {
+        var host = this.domains.join('.');
+        if (this.port)
+            host = '%s:%s'.subs(host, this.port);
+        return host;
+    }/*
+    get path() {
+        var dir = this.domains.join('.');
+        if (this.port)
+            host = '%s:%s'.subs(host, this.port);
+        return host;
+    },*/
+});
+
  
 /**** resolve
 returns a URL resovled to a relative URL from a base URL.
@@ -305,6 +324,7 @@ var relative = function (target, base) {
 }
 
 publish({
+    Url: Url,
     parse: parse,
     format: format,
     resolve: resolve,

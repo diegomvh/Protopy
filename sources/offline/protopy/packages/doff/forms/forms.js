@@ -78,7 +78,7 @@ var BaseForm = type('BaseForm', object, {
     },
 
     __iter__: function() {
-        for each ([name, field] in this.fields.items())
+        for each (var [name, field] in this.fields.items())
             yield new BoundField(this, field, name);
     },
 

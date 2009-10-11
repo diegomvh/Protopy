@@ -42,10 +42,12 @@ var HttpRequest = type ('HttpRequest', [ object ], {
         if (isinstance(url_object, String)) {
             url_object = urls.parse(url_object);
         }
-        this.URL = url_object;
+        if (isinstance(url_object, urls.Url))
+            this.URL = url_object;
+        else
+            throw new Exception('No url');
         this.GET = this.URL.queryKey;
         this.POST  = {};
-        this.META = {};
         this.FILES = {};
     },
 
@@ -81,11 +83,15 @@ var HttpRequest = type ('HttpRequest', [ object ], {
         return (this.URL.domain)? this.URL.port : location.port;
     },
 
+    get path() {
+        return this.URL.path;
+    },
+
     build_absolute_uri: function(location) {
         if (!location)
             location = this.get_full_path();
         if (!absolute_http_url_re.test(location)) {
-            var current_uri = '%s://%s%s'.subs(this.protocol, this.get_host(), this.path);
+            var current_uri = '%s://%s%s'.subs(this.protocol, this.host, this.path);
             //TODO: algo para unir urls, quiza tocando un poco module_url
             location = current_uri + location;
         }
@@ -96,18 +102,14 @@ var HttpRequest = type ('HttpRequest', [ object ], {
         return this.protocol == "https";
     },
 
-    is_same_origin: function() {
-        var m = '%s://%s'.subs(this.protocol, this.get_host());
-        return !m || (m == '%(protocol)s//%(domain)s%(port)s'.subs({
-            protocol: location.protocol,
-            domain: location.hostname,
-            port: location.port ? ':' + location.port : ''
-        }));
-    },
-    
-    fix_location: function(oldvalue, newvalue){
-        for each (var attr in ['relative','path','directory','source'])
-            this[attr] = this[attr].replace(oldvalue, newvalue);
+    is_same_origin: function(base_url) {
+        var m = '%s://%s'.subs(this.protocol, this.host);
+        var other = (base_url)? '%s://%s'.subs(base_url.protocol, base_url.host) : '%(protocol)s//%(domain)s%(port)s'.subs({
+                protocol: location.protocol,
+                domain: location.hostname,
+                port: location.port ? ':' + location.port : ''
+                });
+        return !m || (m == other);
     },
 
     is_ajax: function() {
