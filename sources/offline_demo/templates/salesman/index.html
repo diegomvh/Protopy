@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+	<h3>Sistema de Vendedor Viajante (a.k.a <i>Slesman</i>)</h3>
+	<p>Breve descripción del sitema</p>
+	
+	{% block listado %}
+	<h4>Entidades de la aplicación Salesman</h4>
+	<ul>
+		<li><em>Categorías</em>
+			<p>
+				<a class="nuevo" href="categoria/add">Agregar nuevo/a</a>
+				<a class="lista" href="categorias">Ver</a>
+			</p>
+		</li>
+		<li><em>Ciudades</em>
+			<p>
+				<a class="nuevo" href="ciudad/add">Agregar nuevo/a</a>
+				<a class="lista" href="ciudades">Ver</a>
+			</p>
+		</li>
+		<li><em>Clientes</em>
+			<p>
+				<a class="nuevo" href="cliente/add">Agregar nuevo/a</a>
+				<a class="lista" href="clientes">Ver</a>
+			</p>
+		</li>
+		<li><em>Items de Pedido</em>
+			<p>
+				<a class="nuevo" href="items_pedido/add">Agregar nuevo/a</a>
+				<a class="lista" href="items_pedidos">Ver</a>
+			</p>
+		</li>
+		<li><em>Pedidos</em>
+			<p>
+				<a class="nuevo" href="pedido/add">Agregar nuevo/a</a>
+				<a class="lista" href="pedidos">Ver</a>
+			</p>
+		</li>
+		<li><em>Productos</em>
+			<p>
+				<a class="nuevo" href="producto/add">Agregar nuevo/a</a>
+				<a class="lista" href="productos">Ver</a>
+			</p>
+		</li>
+		<li><em>Proveedores</em>
+			<p>
+				<a class="nuevo" href="proveedor/add">Agregar nuevo/a</a>
+				<a class="lista" href="proveedores">Ver</a>
+			</p>
+		</li>
+		<li><em>Vendedores</em>
+			<p>
+				<a class="nuevo" href="vendedor/add">Agregar nuevo/a</a>
+				<a class="lista" href="vendedores">Ver</a>
+			</p>
+		</li>				
+	</ul>
+	
+	
+	{% endblock %}
+
+
+{% endblock %}

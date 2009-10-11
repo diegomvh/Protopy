@@ -3,6 +3,8 @@ from views import *
 from models import *
 
 urlpatterns = patterns('',
+                       
+        (r'^/?$', 'django.views.generic.simple.direct_to_template', {'template': 'salesman/index.html'} ),
         #---------------------------------------------------------------------------------
         # Ciudad
         #---------------------------------------------------------------------------------
@@ -83,6 +85,7 @@ urlpatterns = patterns('',
         # productos -> Edit
         (r'producto/(?P<object_id>\d{1,5})/edit/$', 'django.views.generic.create_update.update_object',{
             'model': Producto,
+            'template_name': 'forms.html',
             'post_save_redirect': '/salesman/productos/',
             'extra_context': {'title': 'Editar producto', 'submit_text': 'Actualizar',}, 
         }),
@@ -98,6 +101,7 @@ urlpatterns = patterns('',
             {'url': '../../producto/add/'}),
         (r'producto/add/$', 'django.views.generic.create_update.create_object', {
             'model': Producto,
+            'template_name': 'forms.html',
             'post_save_redirect': '/salesman/productos/',
                                                                                
         }),
@@ -150,39 +154,75 @@ urlpatterns = patterns('',
         #---------------------------------------------------------------------------------
         # Proveedores
         #---------------------------------------------------------------------------------
-        (r'proveedor/$', 'django.views.generic.simple.redirect_to', {'url':'/salesman/vendedores/'}),
+        (r'proveedor/$', 'django.views.generic.simple.redirect_to', {'url':'/salesman/proveedores/'}),
         
         # vendedors -> Edit
         (r'proveedor/(?P<object_id>\d{1,5})/edit/$', 'django.views.generic.create_update.update_object',{
             'model': Proveedor,
-            'post_save_redirect': '/salesman/vendedores/',
+            'post_save_redirect': '/salesman/proveedores/',
             'template_name': 'forms.html',
             'extra_context': {'title': 'Editar proveedor', 'submit_text': 'Actualizar',}, 
         }),
         
         # proveedor -> Listar
-        (r'vendedores/$', 'django.views.generic.list_detail.object_list',{
+        (r'proveedores/$', 'django.views.generic.list_detail.object_list',{
             'queryset': Proveedor.objects.all()
             }
         ),
         
         # proveedor -> Crear
-        (r'vendedores/add/$', 'django.views.generic.simple.redirect_to', 
+        (r'proveedores/add/$', 'django.views.generic.simple.redirect_to', 
             {'url': '../../proveedor/add/'}),
             
         (r'proveedor/add/$', 'django.views.generic.create_update.create_object', {
             'model': Proveedor,
             'template_name': 'forms.html',
-            'post_save_redirect': '/salesman/vendedores/',
+            'post_save_redirect': '/salesman/proveedores/',
                                                                                
         }),
-        # Vendedor -> Eliminar
+        # proveedor -> Eliminar
         (r'proveedor/(?P<object_id>\d{1,5})/delete/$', 'django.views.generic.create_update.delete_object', {
-            'model': Proveedornca,
+            'model': Proveedor,
             'post_delete_redirect': '/salesman/proveedores/',
             'template_name': 'confirm_delete.html',
                                                                                
         }),
         
+        #---------------------------------------------------------------------------------
+        # Categoria
+        #---------------------------------------------------------------------------------
+        (r'categoria/$', 'django.views.generic.simple.redirect_to', {'url':'/salesman/categorias/'}),
+        
+        # vendedors -> Edit
+        (r'categoria/(?P<object_id>\d{1,5})/edit/$', 'django.views.generic.create_update.update_object',{
+            'model': Categoria,
+            'post_save_redirect': '/salesman/categorias/',
+            'template_name': 'forms.html',
+            'extra_context': {'title': 'Editar categoria', 'submit_text': 'Actualizar',}, 
+        }),
+        
+        # categoria -> Listar
+        (r'categorias/$', 'django.views.generic.list_detail.object_list',{
+            'queryset': Categoria.objects.all()
+            }
+        ),
+        
+        # categoria -> Crear
+        (r'categorias/add/$', 'django.views.generic.simple.redirect_to', 
+            {'url': '../../categoria/add/'}),
+            
+        (r'categoria/add/$', 'django.views.generic.create_update.create_object', {
+            'model': Categoria,
+            'template_name': 'forms.html',
+            'post_save_redirect': '/salesman/categorias/',
+                                                                               
+        }),
+        # categoria -> Eliminar
+        (r'categoria/(?P<object_id>\d{1,5})/delete/$', 'django.views.generic.create_update.delete_object', {
+            'model': Categoria,
+            'post_delete_redirect': '/salesman/categorias/',
+            'template_name': 'confirm_delete.html',
+                                                                               
+        }),
         
 )

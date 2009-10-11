@@ -1,0 +1,13 @@
+{% extends "listado.html" %}
+
+
+
+	{% block table_heading %}
+		<th>Nombre</th>
+	{% endblock %}
+
+	{% block item_iteration_row %}
+		<td>{{ item.nombre }}</td>
+  	{% endblock %}
+  	
+ 
