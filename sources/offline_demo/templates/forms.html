@@ -13,6 +13,7 @@ form input {
 	padding: 2px;
 }
 .buttons input, .buttons button {
+	border: 1px solid #888;
 	padding: 4px;
 }
 
@@ -38,32 +39,27 @@ form input {
 		<button id="cancelar_form">Cancelar</button>
 	</div>
 </form>
+
 <script type="text/javascript"><!--
-window.onload = function () {
-	function cancelEvent(e) {
-	    if (!e) e = window.event;
-	    if (e.preventDefault) {
-	        e.preventDefault();
-	    } else {
-	        e.returnValue = false;
-	    }
-	}
-	function stopEvent(e) {
-	    if (!e) e = window.event;
-	    if (e.stopPropagation) {
-	        e.stopPropagation();
-	    } else {
-	        e.cancelBubble = true;
-	    }
-	}
-	
-	document.getElementsByTagName('input')[0].focus();
-	document.getElementById('cancelar_form').onClick = function(e){
-		cancelEvent(e);
-		stopEvent(e);	
-	};
-	
-}
+	(function (){
+		require('sys');
+		require('event');
+		var initial_data = {};
+		function onload() {
+			var btn = $$('#cancelar_form')[0];
+			event.connect(btn, 'click', function (e) {
+				event.stopEvent(e);
+				// window.location = '..';
+				sys.window.history.back();
+			});
+			
+		}
+		
+		event.connect(sys.window, 'load', onload);
+		
+		
+		
+	})();
 
 --></script>
 {% endblock %}

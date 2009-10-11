@@ -1,0 +1,21 @@
+{% extends "listado.html" %}
+
+
+	cliente = models.ForeignKey(Cliente)
+    numero = models.PositiveIntegerField()
+    fecha = models.DateField()
+	
+	
+	{% block table_heading %}
+		<th>Número</th><th>Fecha</th><th>Cliente</th>
+	{% endblock %}
+
+	
+	{% block item_iteration_row %}
+		<td>{{ item.clinete }}</td><td>{{ item.numero }}</td><td>{{ item.fecha }}</td>
+  	{% endblock %}
+
+
+	
+  	
+ 
