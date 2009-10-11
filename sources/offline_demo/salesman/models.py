@@ -114,7 +114,7 @@ class Producto(models.Model):
     '''
     nombre = models.CharField(max_length = 50)
     descripcion = models.CharField(max_length = 500)
-    categoria = models.ForeignKey(Categoria, blank = True)
+    categoria = models.ForeignKey(Categoria, blank = True, null = True) # Puede no tener categorias
     provisto_por = models.ManyToManyField(Proveedor, blank = True, null = True)
     precio_uniatario = models.DecimalField(default = 0.0, max_digits = 5, decimal_places = 3)
     
@@ -136,7 +136,7 @@ class Pedido(models.Model):
 class ItemPedido(models.Model):
     cantidad = models.PositiveIntegerField()
     producto = models.ForeignKey(Producto)
-    precio = models.DecimalField(default = 0.0, max_digits = 5, decimal_places = 3)
+    #precio = models.DecimalField(default = 0.0, max_digits = 5, decimal_places = 3)
     pedido = models.ForeignKey(Pedido)
 
     get_absolute_url = abs_url

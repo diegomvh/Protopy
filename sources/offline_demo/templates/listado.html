@@ -35,6 +35,18 @@
 		{{ MEDIA_URL }}/icons/highlighter.png
 	}
 	
+	.rounded_link {
+		background-color: #ccc;
+		-moz-border-radius: 25px;
+		-webkit-border-radius: 25px;
+		border: 1px solid #000;
+		padding: 10px;
+		padding-left: 30px;
+		text-decoration: none;
+		color: #000;
+		font-weight: bolder;
+	}
+	
 
 {% endblock %}
 
@@ -64,9 +76,12 @@
   	
 </table>
 <div id="list-controls">
-<a href="add">Crear nuevo</a>
+	<span style="margin-top: 20px; display: block;">
+		<a href="add" class="rounded_link">Crear nuevo</a>
+	</span>
 </div>
 <script>
+	
 	/*
 	(function (){
 		require('event');

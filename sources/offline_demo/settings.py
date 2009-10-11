@@ -89,6 +89,8 @@ INSTALLED_APPS = (
     'offline_demo.salesman',
 )
 
+FIXTURE_DIRS = ('fixtures',)
+
 try:
     import django_extensions
 except ImportError:

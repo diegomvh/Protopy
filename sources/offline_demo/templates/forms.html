@@ -2,11 +2,12 @@
 
 {% block extra_style %}
 
-form label {
+form > p > label {
 	display: block;
 	width: 8em;
 	font-weight: bolder;
 	float: left;
+	/* color: red; */
 }
 form input {
 	border: 1px solid #888;
@@ -26,18 +27,37 @@ form input {
 	<h2>{{ title }}</h2>
 {% endif %}
 <form action="" method="post">
+	{% block form_content %}
+			{% for field in form %}
+				<p>
+				{% if field.errors %} {{ field.errors }} {% endif %}
+				{{ field.label_tag }} {{ field }}
+				</p>
+			{% endfor %}
 	
-	{% for field in form %}
-		<p>
-		{% if field.errors %} {{ field.errors }} {% endif %}
-		{{ field.label_tag }} {{ field }}
-		</p>
-	{% endfor %}
+	{% endblock %}
+	
+	{% if formset %}
+		<table>
+			{% for inline_from in formset.forms %}
+				<tr>
+					{% for field in inline_from %}
+						<td>{{ field.label_tag }} {{ field }}</td>
+					{% endfor %}
+				</tr> 
+				{#{ inline_from.as_table }#}
+			
+			{% endfor %}
+		</table>
+	{% endif %}
+	
+	{% block form_buttons %}
 	<div class="buttons">	
 		<input type="submit" value="{% if submit_text %} {{submit_text}} {%else%} Crear {% endif %}">
-		<input type="reset" value="Reset">
+		<input type="reset" value="Reset" id="reset_form">
 		<button id="cancelar_form">Cancelar</button>
 	</div>
+	{% endblock%}
 </form>
 
 <script type="text/javascript"><!--
@@ -46,18 +66,32 @@ form input {
 		require('event');
 		var initial_data = {};
 		function onload() {
-			var btn = $$('#cancelar_form')[0];
-			event.connect(btn, 'click', function (e) {
+			var btn_cancel = $$('#cancelar_form')[0],
+				btn_reset = $$('#reset_form')[0];
+			event.connect(btn_cancel, 'click', function (e) {
 				event.stopEvent(e);
 				// window.location = '..';
 				sys.window.history.back();
 			});
+			event.connect(btn_reset, 'click', function (e){
+				event.stopEvent(e);
+				alert("Hola");
+			});
 			
+			function get_django_fields() {
+				
+				return $$('form *').filter(function (e){
+					var id = e.getAttribute('id');
+					return  (id && id.search(/^id_/) >= 0);
+				});
+			}
+			var form_fields = get_django_fields();
+			if (form_fields) {
+				form_fields[0].focus();
+			}
+			// console.log(get_django_fields());
 		}
-		
 		event.connect(sys.window, 'load', onload);
-		
-		
 		
 	})();
 

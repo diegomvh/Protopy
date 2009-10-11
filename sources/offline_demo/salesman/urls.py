@@ -247,13 +247,16 @@ urlpatterns = patterns('',
         # pedido -> Crear
         (r'pedidos/add/$', 'django.views.generic.simple.redirect_to', 
             {'url': '../../pedido/add/'}),
-            
-        (r'pedido/add/$', 'django.views.generic.create_update.create_object', {
-            'model': Pedido,
-            'template_name': 'forms.html',
-            'post_save_redirect': '/salesman/pedidos/',
-                                                                               
-        }),
+        
+        # Esta no es una generica por ahora
+#        (r'pedido/add/$', 'django.views.generic.create_update.create_object', {
+#            'model': Pedido,
+#            'template_name': 'forms.html',
+#            'post_save_redirect': '/salesman/pedidos/',
+#                                                                               
+#        }),
+        (r'pedido/add/$', 'offline_demo.salesman.views.pedido_con_items', ),
+
         # pedido -> Eliminar
         (r'pedido/(?P<object_id>\d{1,5})/delete/$', 'django.views.generic.create_update.delete_object', {
             'model': Pedido,
