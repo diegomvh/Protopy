@@ -827,6 +827,36 @@
   }, 
   {
     "pk": 1, 
+    "model": "offline.syncdata", 
+    "fields": {
+      "active": true, 
+      "update_at": "2009-10-13 21:18:52", 
+      "object_id": "1", 
+      "content_type": 15
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "offline.syncdata", 
+    "fields": {
+      "active": true, 
+      "update_at": "2009-10-13 21:19:17", 
+      "object_id": "2", 
+      "content_type": 15
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "offline.syncdata", 
+    "fields": {
+      "active": true, 
+      "update_at": "2009-10-13 21:19:33", 
+      "object_id": "3", 
+      "content_type": 15
+    }
+  }, 
+  {
+    "pk": 1, 
     "model": "salesman.pais", 
     "fields": {
       "nombre": "Argentina", 
@@ -1015,6 +1045,166 @@
     "fields": {
       "pais": 1, 
       "nombre": "Tierra del Fuego"
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "salesman.ciudad", 
+    "fields": {
+      "nombre": "Trelew", 
+      "cp": "9100", 
+      "provincia": 17
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "salesman.ciudad", 
+    "fields": {
+      "nombre": "Rawson", 
+      "cp": "9300", 
+      "provincia": 17
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "salesman.ciudad", 
+    "fields": {
+      "nombre": "Comodoro Rivadavia", 
+      "cp": "9000", 
+      "provincia": 17
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "salesman.cliente", 
+    "fields": {
+      "correo": "mbenitez@hotmail.com", 
+      "razon_social": "Marcelo Benitez", 
+      "ciudad": 1
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "salesman.cliente", 
+    "fields": {
+      "correo": "ejgonzales@entertech.net", 
+      "razon_social": "Evaristo Gonzales", 
+      "ciudad": 3
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "salesman.proveedor", 
+    "fields": {
+      "correo": "mp@pereztech.net", 
+      "razon_social": "Mario Perez", 
+      "direccion": "Bernouli 3212"
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "salesman.proveedor", 
+    "fields": {
+      "correo": "info@overhard.com.ar", 
+      "razon_social": "Overhard", 
+      "direccion": "???"
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "salesman.categoria", 
+    "fields": {
+      "nombre": "CPU"
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "salesman.categoria", 
+    "fields": {
+      "nombre": "Placa de Video"
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "salesman.categoria", 
+    "fields": {
+      "nombre": "Memoria"
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "salesman.categoria", 
+    "fields": {
+      "nombre": "Disco R\u00edgido"
+    }
+  }, 
+  {
+    "pk": 5, 
+    "model": "salesman.categoria", 
+    "fields": {
+      "nombre": "Dispositivos Optico"
+    }
+  }, 
+  {
+    "pk": 6, 
+    "model": "salesman.categoria", 
+    "fields": {
+      "nombre": "Placa Madre"
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "salesman.producto", 
+    "fields": {
+      "descripcion": "Memoria RAM para PC", 
+      "nombre": "Kingston DDR2 1GB", 
+      "provisto_por": [], 
+      "categoria": 3, 
+      "precio_uniatario": "90"
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "salesman.producto", 
+    "fields": {
+      "descripcion": "Memoria RAM para PC", 
+      "nombre": "Kingston DDR2 2GB", 
+      "provisto_por": [], 
+      "categoria": 3, 
+      "precio_uniatario": "170"
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "salesman.producto", 
+    "fields": {
+      "descripcion": "CPU 64 bits", 
+      "nombre": "Athlon X2 3000+", 
+      "provisto_por": [], 
+      "categoria": null, 
+      "precio_uniatario": "250"
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "salesman.producto", 
+    "fields": {
+      "descripcion": "Placa madre relativamente buena", 
+      "nombre": "Motherboard MSI", 
+      "provisto_por": [], 
+      "categoria": null, 
+      "precio_uniatario": "100"
+    }
+  }, 
+  {
+    "pk": 5, 
+    "model": "salesman.producto", 
+    "fields": {
+      "descripcion": "Gabinete con luces", 
+      "nombre": "Gabinete Vitsuba", 
+      "provisto_por": [], 
+      "categoria": null, 
+      "precio_uniatario": "130"
     }
   }
 ]

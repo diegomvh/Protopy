@@ -37,16 +37,26 @@ form input {
 	
 	{% endblock %}
 	
-	{#% comment %#}
+    {% comment %}	
+    {# Esta forma de rederizar el formset no está buena #}
+    <table>	
+	{{ formset }}
+	</table>
+    {% endcomment %}
+
+    {% block formsets %}
+    
 	{% if formset %}
+		<!-- Formsets -->
+		<h4>{% if formsets_title %} {{ formsets_title }} {% else %} Items: {% endif %}</h4>
 		<table>
 			{% for inline_from in formset.forms %}
 				<tr>
 					{% for field in inline_from %}
-					
 						<td>
-							{% if field.errors %} {{ field.errors }} {% endif %}	
-							{{ field.label_tag }} {{ field }}
+							{% if field.errors %} {{ field.errors }} {% endif %}
+                            {% if not field.is_hidden %} {{ field.label_tag }} {% endif %}
+							{{ field }}
 						</td>
 					{% endfor %}
 				</tr> 
@@ -55,15 +65,15 @@ form input {
 			{% endfor %}
 		</table>
 	{% endif %}
-	{#% endcomment %#}
 	
 	{% block form_buttons %}
 	<div class="buttons">	
 		<input type="submit" value="{% if submit_text %} {{submit_text}} {%else%} Crear {% endif %}">
-		<input type="reset" value="Reset" id="reset_form">
+		<!-- <input type="reset" value="Reset" id="reset_form"> -->
 		<button id="cancelar_form">Cancelar</button>
 	</div>
 	{% endblock%}
+    {% endblock %}
 </form>
 
 <script type="text/javascript"><!--
@@ -72,16 +82,11 @@ form input {
 		require('event');
 		var initial_data = {};
 		function onload() {
-			var btn_cancel = $$('#cancelar_form')[0],
-				btn_reset = $$('#reset_form')[0];
+			var btn_cancel = $$('#cancelar_form')[0];
 			event.connect(btn_cancel, 'click', function (e) {
 				event.stopEvent(e);
 				// window.location = '..';
 				sys.window.history.back();
-			});
-			event.connect(btn_reset, 'click', function (e){
-				event.stopEvent(e);
-				alert("Hola");
 			});
 			
 			function get_django_fields() {

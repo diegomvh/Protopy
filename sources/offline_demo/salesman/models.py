@@ -126,7 +126,7 @@ class Producto(models.Model):
 class Pedido(models.Model):
     cliente = models.ForeignKey(Cliente)
     numero = models.PositiveIntegerField()
-    fecha = models.DateField()
+    fecha = models.DateField(auto_now = True)
 
     get_absolute_url = abs_url
     
