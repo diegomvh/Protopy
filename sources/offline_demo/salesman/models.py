@@ -136,7 +136,7 @@ class Pedido(models.Model):
 class ItemPedido(models.Model):
     cantidad = models.PositiveIntegerField()
     producto = models.ForeignKey(Producto)
-    #precio = models.DecimalField(default = 0.0, max_digits = 5, decimal_places = 3)
+    precio = models.DecimalField(default = 0.0, max_digits = 5, decimal_places = 3)
     pedido = models.ForeignKey(Pedido)
 
     get_absolute_url = abs_url
