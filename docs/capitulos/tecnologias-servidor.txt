@@ -1,7 +1,7 @@
 .. _servidor:
 
 ########################
-Tecnologías del servidor
+Tecnologías del Servidor
 ########################
 
 Este capítulo tiene como finalidad introducir los conceptos básicos concernientes

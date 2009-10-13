@@ -1,11 +1,11 @@
 .. _cliente:
 
 #######################
-Tecnologías del cliente
+Tecnologías del Cliente
 #######################
 
 *********************************************
-Web dinámica desde la perspectiva del cliente
+Web Dinámica Desde la Perspectiva del Cliente
 *********************************************
 
 Desde la perspectiva del usuario, la Web consiste en una gran cantidad de
@@ -20,293 +20,283 @@ HTML, que utiliza a su vez dos lenguajes:
 
 .. [*] Cascading Style Sheet
 
+.. note:: Poner como llegamos a decir "dinámica" en el cliente, sino simplemente puede ser web desde la perspectiva del cliente el titulo. 
 
-JavaScript [WikiJavascript09]_ ha tenido durante mucho tiempo la reputación de lenguaje 
-inadecuado para el desarrollo serio. Una de las razones fue que a pesar 
-de los estándares impuestos por la ECMA [ECMAScript09]_,
+JavaScript [WikiJavascript09]_ ha tenido durante mucho tiempo la reputación de ser un lenguaje 
+inadecuado para el desarrollo serio. Una de las razones fue que, a pesar 
+de los estándares impuestos por la European Computer Manufacturers Association (ECMA) [*]_ [ECMAScript09]_,
 los desarrolladores de navegadores realizaron sus propias variantes 
-del lenguaje. como Microsoft en el implementación de  JScript [MSFTJScript09]_ para sus navegadores
-IE. Un problema similar ocurrió con DOM, el mecanismo por el cual se interactúa con el documento y el navegador, 
-estandarizado por la W3C. Sus versiones fueron nombradas como nivel DOM, existiendo nivel 0, 1, 2 y 3.
-No todos los navegadores implementaron por completo los niveles, dando lugar a confusión e incompatibilidades.
-
-Estos problemas relegaron a JavaScript a tareas prescindibles, como validación de formularios
+del lenguaje, como Microsoft en el implementación de JScript [MSFTJScript09]_ para su navegador
+Internet Explorer (IE). Estos problemas relegaron a JavaScript a tareas prescindibles, como validación de formularios
 en el cliente y efectos visuales simples.
 
+Un problema similar ocurrió con Document Object Model (DOM), el mecanismo por el cual se interactúa con el
+documento y el navegador, estandarizado por la World Wide Web Consortium (W3C) [*]_. Sus versiones fueron
+nombradas como nivel DOM, existiendo nivel 0, 1, 2 y 3.
+No todos los navegadores implementaron por completo los niveles, dando lugar a confusión e incompatibilidades.
+
+.. [*]_ Organización fundada en 1961 para estandarizar los sistemas computarizados en Europa.
+
+.. [*]_ Consorcio internacional que produce recomendaciones para la World Wide Web.
 
 .. [MSFTJScript09] *JScript*, Microsoft Developer Network, último acceso Septiembre de 2009, http://msdn.microsoft.com/es-es/library/72bd815a%28VS.80%29.aspx
 
-
-.. [ECMAScript09] *Especificación ECMA", TC39 - ECMAScript (formerly TC39-TG1), último acceso de Agosto 09, http://www.ecma-international.org/memento/TC39.htm
+.. [ECMAScript09] *Especificación ECMA*, TC39 - ECMAScript (formerly TC39-TG1), último acceso de Agosto 09, http://www.ecma-international.org/memento/TC39.htm
 
 .. [WikiJavascript09] *Javascript* http://es.wikipedia.org/wiki/JavaScript
 
-A partir del aparición de la tecnología AJAX, los desarrolladores con intenciones
-de ponerla en práctica diseñaron librerías de JavaScript que presentaran una API uniforme
-que salvaba las incompatibilidades existentes.
+A partir de la aparición de AJAX [*]_, una técnica de desarrollo web para crear
+aplicaciones interactivas, los desarrolladores diseñaron librerías de JavaScript
+que presentaron una API uniforme que salvaba las incompatibilidades existentes.
 
-Con la popularización de estas librerías, también lo hicieron herramientas de
-depuración sofisticadas como Firebug. Conjunto que permitió realizar aplicaciones
+.. [*]_ *Asynchronous JavaScript And XML*, una técnica de desarrollo web para crear aplicaciones interactivas.
+
+Con la popularización de estas librerías, también lo hicieron las herramientas de
+depuración sofisticadas como Firebug [Firebug09]_, lo que permitió realizar aplicaciones
 más complejas y compatibles con la gran mayoría de los navegadores del mercado.
-
 
 .. [Firebug09] *Firebug*, Plugin de depuración integral, último acceso Septiembre 2009, http://getfirebug.com/
 
-Google lanzó en el 2007 un plugin para la mayoría de los navegadores populares
+Google lanzó, en 2007, un plugin para los navegadores populares
 llamado Google Gears que agrega tres componentes:
 
- * Web Server
- 
- 	Un servidor de archivos que se ejecuta en el cliente.
- 	
- * DataBase
- 	
- 	Una base de datos transaccional.
- 
- * Worker Pool
- 
- 	Un mecanismo para la ejecución de javascript como procesos.
+    * Web Server
+
+        Un servidor de archivos que se ejecuta en el cliente.
+
+    * DataBase
+
+        Una base de datos transaccional.
+
+    * Worker Pool
+
+        Un mecanismo para la ejecución de JavaScript como procesos.
 
 **************************
-Estructura de un navegador
+Estructura de un Navegador
 **************************
 
 .. _navegador-web:
 
 Navegador Web
 =============
-	
+
 Es un software que presenta documentos de hipertexto al usuario.
 Los lenguajes de codificación de hipertexto más populares son HTML y XHTML.
 
-Un navegador no solo representa los documentos de hipertexto, sino
-que puede también mostrar otros tipos de contenidos, como imágenes
+Un navegador no sólo interpreta los documentos de hipertexto, sino
+que también puede mostrar otros tipos de contenidos, como imágenes
 (JPEG, GIF, PNG, etc.), sonido (WAV, MP3, OGG), vídeo (MPEG, H264, RM, MOV), 
-así como también elementos interactivos como el caso de Macromedia Flash, 
-applets Java o controles ActiveX en la plataforma Windows.
+así como elementos interactivos (como el caso de Macromedia Flash, 
+applets Java o controles ActiveX en la plataforma Windows).
 Debido a la cantidad de recursos que debe manejar un navegador, 
 el servidor web agrega a cada respuesta al cliente una cabecera donde le indica 
 el tipo de recurso que está entregando. Esta especificación se realiza con el 
 estándar MIME.
 
-
 Un navegador web acepta como entrada del usuario una URL.
-Una vez validada, este descarga el recurso apuntado mediante el protocolo HTTP.
+Una vez validada, éste descarga el recurso apuntado mediante el protocolo HTTP.
 
-Una URL tiene el siguiente esquema, donde podemos diferenciar varios componentes
-
-.. note:: Sacar el turquesa, gisE.
+Una URL tiene el siguiente esquema, donde se pueden diferenciar varios componentes:
 
 .. figure:: ../_svg/esquema_urls.png
     
-    Forma de una URL.
+    Formato de una URL.
 
 Los componentes de una URL son:
 
-	* Esquema
-	
-		Especifica el mecanismo de comunicación. Generalmente HTTP y HTTPS [*]_.
-		
-	* Anfitrión
-	
-		Especifica el nombre de dominio del servidor en Internet, por ejemplo:
-		*google.com*, *nasa.gov*, *wikipedia.com*, etc.
-		Se popularizó la utilización de el subdominio "www" para identificar el
-		anfitrión
-		que ejecuta el servidor web, dando lugar a direcciones del tipo
-		*www.google.com*, *www.nasa.gov*, etc.
-		
-		El *puerto* es un parámetro de conexión TCP, y suele ser omitido debido
-		a que el esquema suele determinarlo, siendo 80 para HTTP y 443 para HTTPS. 
-		 
-	* Recurso
-	
-		Especifica dentro del servidor, la ruta para acceder al recurso.
-		
-	* Query
-	
-		El parámetro query tiene sentido cuando el recurso apuntado por la ruta
-		no se trata de una página estática y sirve para el pasaje de parámetros.
-		El programa que genera el recurso puede recibir como argumentos estos
-		parámetros, por ejemplo, cuando se ingresa la palabra *foo* en el buscador google,
-		la URL que provee el resultado de la búsqueda es la siguiente::
-			
-			http://www.google.com/search?*q=foo*
-		
-	
-	* Enlace
-	
-		Dentro de un documento de hipertexto pueden existir enlaces internos.
-		Gracias a este parámetro se puede enlazar a una sección específica de un documento,
-		permitiendo al navegador ubicarse visualmente.
+    * Esquema
 
-.. [*] *Transport Security Layer* es el sucesor de *Secure Socket Layer* (SSL),
-       es un protocolo criptográfico que provee conexiones seguras a través de una red, 
-       típicamente Internet [WikiSSL2009]_ .
+        Especifica el mecanismo de comunicación. Generalmente HTTP y HTTPS [*]_.
+        
+    * Anfitrión
 
-.. [WikiSSL2009] *Transport Layer Security*, Wikipedia, 2009, último acceso,
-                 Agosto 2009.
+        Especifica el nombre de dominio del servidor en Internet, por ejemplo:
+        *google.com*, *nasa.gov*, *wikipedia.com*, etc.
+        Se popularizó la utilización del subdominio "www" para identificar al
+        anfitrión que ejecuta el servidor web, dando lugar a direcciones del tipo
+        *www.google.com*, *www.nasa.gov*, etc.
+        
+        El *puerto* es un parámetro de conexión TCP, y suele ser omitido debido
+        a que el esquema suele determinarlo, siendo 80 para HTTP y 443 para HTTPS. 
+            
+    * Recurso
 
-Un navegador generalmente accede a documentos ubicados en la web, a
-los cuales accede mediante el protocolo HTTP, sin embargo es posible 
-acceder a documentos locales, donde el esquema suele ser **file** y
-el anfitrión se encuentra ausente::
-	
-	file:///home/nacho/paginas/pepe.html
+        Especifica dentro del servidor, la ruta para acceder al recurso.
+        
+    * Query
+
+        El parámetro query tiene sentido cuando el recurso apuntado por la ruta
+        no se trata de una página estática y sirve para el pasaje de parámetros.
+        El programa que genera el recurso puede recibir como argumentos estos
+        parámetros, por ejemplo, cuando se ingresa la palabra *foo* en el buscador 
+        Google, la URL que provee el resultado de la búsqueda es:
+            
+            http://www.google.com/search?**q=foo**
+
+    * Enlace
+
+        Dentro de un documento de hipertexto pueden existir enlaces internos.
+        Gracias a este parámetro se puede enlazar a una sección específica de un documento,
+        permitiendo al navegador ubicarse visualmente.
+
+.. [*] *Hypertext Transfer Protocol Secure* es la versión segura de HTTP.
+
+Un navegador generalmente accede a documentos ubicados en la web mediante el
+protocolo HTTP. Sin embargo, es posible acceder a documentos locales, donde el
+esquema suele ser ``file`` y el anfitrión se encuentra ausente, por ejemplo:
+    
+    file:///home/nacho/paginas/pepe.html
 
 HTTP
 ====
 
-Brevemente se describe el protocolo de transferencia de hipertexto.
-Para acceder al recurso *archivos/curso_javascript.html* en
-el servidor *students.unp.edu.ar*, de la url
-http://students.unp.edu.ar/archivos/curso_javascript.html, el
-navegador conforma la siguiente consulta::
+HTTP es el protocolo de transferencia de hipertexto.
 
-	GET /archivos/curso_javascript.html HTTP/1.1
-	Host: students.unp.edu.ar
-	User-Agent: Mozilla/5.0
-	Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-	Accept-Language: es-ar,en-us;q=0.7,en;q=0.3
-	Accept-Encoding: gzip,deflate
-	Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
-	Cookie: user_id=G7NVG5YY51I9DZAIJDEDQIXYQSRF0CTL
+Para acceder al recurso *archivos/curso_javascript.html* en el servidor
+*students.unp.edu.ar*, de la url http://students.unp.edu.ar/archivos/curso_javascript.html,
+el navegador conforma la siguiente consulta::
+
+    GET /archivos/curso_javascript.html HTTP/1.1
+    Host: students.unp.edu.ar
+    User-Agent: Mozilla/5.0
+    Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+    Accept-Language: es-ar,en-us;q=0.7,en;q=0.3
+    Accept-Encoding: gzip,deflate
+    Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
+    Cookie: user_id=G7NVG5YY51I9DZAIJDEDQIXYQSRF0CTL
 
 .. _http_request:
 
-Esto conforma lo que se conoce como una consulta HTTP o *HTTP Request*. En la
-primera linea se conforma de: el método HTTP y el nombre del recurso, finalizando con la
-versión
-del protocolo que soporta el navegador (o cliente)::
-	
-	GET /archivos/curso_javascript.html HTTP/1.1
-	
-La segunda linea es el host al cual se accede. Un mismo servidor web puede estar
-publicado en varios dominios, mediante esta linea se puede discriminar a cual se
+Esto se conoce como una consulta HTTP o **HTTP Request**.
+
+En la primer línea se especifica el método HTTP y el nombre del recurso, junto con la
+versión del protocolo que soporta el navegador (o cliente)::
+
+    GET /archivos/curso_javascript.html HTTP/1.1
+
+La segunda línea especifica el host al cual se accede. Un mismo servidor web puede estar
+publicado en varios dominios, mediante esta línea se puede discriminar a cuál se
 intenta acceder al recurso::
 
-	Host: students.unp.edu.ar
-	
-El siguiente componente del *request* es la linea que identifica al cliente, en
-este caso el navegador informa que se trata de Mozilla, versión 5::
+    Host: students.unp.edu.ar
+    
+El siguiente componente del **request** es la línea que identifica al cliente, en
+este caso el navegador informa que se trata de Mozilla versión 5::
 
-	User-Agent: Mozilla/5.0
+    User-Agent: Mozilla/5.0
 
+Una vez que el servidor web ha localizado y accedido al recurso, procede a enviar
+la respuesta, que generalmente es una página codificada en HTML.
 
-Una vez que el servidor web a localizado y accedido al recurso, procede a enviar
-la respuesta generalmente es una página codificada en HTML.
-	
 .. _cliente-html:
 
 HTML
 ====
+
 HTML es un lenguaje de marcado que tiene como objetivo describir un documento
 de hipertexto.
-Un documento HTML se conforma por una serie de *tags* o etiquetas.
+Un documento HTML se conforma por una serie de **tags** o etiquetas, las que tienen el siguiente formato.
 
 .. figure:: ../_svg/etiqueta_html.png
     
-    Una etiqueta HTML.
+    Formato de una etiqueta HTML.
  
-Un documento HTML está delimitado por los *tags* *<html>* y contiene una
-cabecera delimitada por *<head>* y un cuerpo, delimitado por *<body>*.
+Un documento HTML está delimitado por las etiqueteas ``html`` y contiene una
+cabecera delimitada por ``head`` y un cuerpo, delimitado por ``body``. Por ejemplo:
 
 .. code-block:: html
-	
-	<html>
-		<head>
-			<title>Mi pagina</title>
-		</head>
-		<body>
-			<h1>Título principal</h1> <!-- comentario -->
-			<p>Párrafo</p>
-		</body>
-	</html>
 
-Un documento HTML suele contener enlaces a recursos entendibles para el navegador,
-como a las hojas de estilos o código javascript.
+    <html>
+        <head>
+            <title>Mi pagina</title>
+        </head>
+        <body>
+            <h1>Título principal</h1> <!-- comentario -->
+            <p>Párrafo</p>
+        </body>
+    </html>
 
-La inclusión de una hoja de estilo se realiza mediante el tag *link*, de la
+Tambien suele contener enlaces a recursos entendibles para el navegador,
+como a las hojas de estilos o código JavaScript.
+
+La inclusión de una hoja de estilo se realiza mediante la etiqueta ``link``, de la
 siguiente manera:
 
 .. code-block:: html
 
-	<link type="text/css" rel="stylesheet" href="hoja_de_estilos.css">
+    <link type="text/css" rel="stylesheet" href="hoja_de_estilos.css">
 
-Se puede además embeber en la página el estilo CSS, de la siguiente manera
+Se puede, además, embeber en la página el estilo CSS, como en:
 
 .. code-block:: html
 
-	<style type="text/css">
-	
-		BODY {
-			font-family: "Verdana";
-			font-size: 12pt;
-			padding: 2px 2px 3px 2px;
-		}
-	</style>
-	
-Al incrustarse el estilo en una página en particular, este solo tiene
+    <style type="text/css">
+
+        BODY {
+            font-family: "Verdana";
+            font-size: 12pt;
+            padding: 2px 2px 3px 2px;
+        }
+    </style>
+
+Al incrustarse el estilo en una página en particular, éste sólo tiene
 validez para ese recurso.
 
-Mediante el tag *<script>* se incluye generalmente JavaScript, aunque es
-posible utilizar otros lenguajes como VBScript en IE.
+Mediante la etiqueta ``script`` se incluye código JavaScript, aunque es
+posible utilizar otros lenguajes, como VBScript en IE. Por ejemplo:
 
 .. code-block:: html
 
-	<script type="text/javscript" src="/medios/js/mi_codigo.js"></script>
-	
-De manera similar a lo que ocurre con el estilo, el código javascript se
-puede embeber en el código html de varias maneras [StephenChapmanJS2009]_, entre
+    <script type="text/javscript" src="/medios/js/mi_codigo.js"></script>
+
+De manera similar a lo que ocurre con el estilo, el código JavaScript se
+puede embeber en el código HTML de varias formas [StephenChapmanJS2009]_, entre
 ellas:
 
 .. code-block:: html
 
-	<script type="text/javascript">
-	<!-- // Javascript en un comentario, para pasar validadores XHTML y ocultar
-		 // de navegadores
-		 // que no soporten Javascript
-		var x = 2;
-		var y = 4;
-	// -->
-	</script> 
+    <script type="text/javascript">
+        var x = 2;
+        var y = 4;
+    </script> 
 
 .. [StephenChapmanJS2009] *Javascript and XML*, Stephen Chapman, About.com,
                           último acceso Agosto 2009, http://javascript.about.com/library/blxhtml.htm
-
 
 .. _cliente-css:
 
 CSS
 ===
 
-Una hoja de estilo (*stylesheet*) en cascada determina como se va a mostrar un documento 
-en pantalla, como se va a imprimir o inclusive como se realiza la pronunciación a través de un
+CSS es un lenguaje utilizado para definir el estilo de las páginas.
+Una hoja de estilo en cascada o **StyleSheet** determina cómo se va a mostrar un documento 
+en pantalla, cómo se va a imprimir o, inclusive, cómo se realiza la pronunciación a través de un
 dispositivo de lectura [W3cCSS2009]_.
 
 El objetivo de CSS es separar el contenido de la presentación de un documento
-HTML o XML. Una *stylesheet* puede ser enlazada desde varias paginas, permitiendo 
+HTML o XML. Una hoja de estilos puede ser enlazada desde varias páginas, permitiendo 
 mantener coherencia y consistencia en todo el sitio. 
 
 .. [W3cCSS2009] *Guia breve de CSS*, W3C, español, último acceso Agosto 2009,
-http://www.w3c.es/divulgacion/guiasbreves/HojasEstilo
+    http://www.w3c.es/divulgacion/guiasbreves/HojasEstilo
 
 .. _cliente-javascript:
 
 JavaScript
 ==========
 
-Javascript es un lenguaje de programación interpretado creado originalmente por
-Brendan Eich para la empresa Netscape con el nombre de Mocha. Surge
-a principios de 1996, como un lenguaje de scripting para la Web y apuntado a la
+JavaScript es un lenguaje de programación interpretado creado originalmente por
+Brendan Eich, para la empresa Netscape, con el nombre de Mocha. Surgió
+a principios de 1996, como un lenguaje de scripting para la web y enfocado en la
 interacción directa con el usuario.
 
+Tiene una sintaxis semejante a la de Java y C, pero JavaScript dista mucho de
+ser Java y debe su nombre más a cuestiones de marketing que a principios de diseño. 
+De hecho, fue influenciado por lenguajes como Self, Scheme, Perl, e incluso en
+versiones modernas, por Python.
 
-Con una sintaxis semejante a la de Java y C, JavaScript dista mucho de ser Java
-y debe su nombre más a cuestiones de marketing que a principios de diseño, de
-hecho se reconocen mayores influencias de lenguajes como Self, Scheme, Perl e
-incluso en versiones modernas, Python.
-
+.. note:: 13/10/2009 Marta's corrections.
 
 Orientación a Objetos
 ---------------------
@@ -317,17 +307,17 @@ abastracción, herencia y polimorfismo.
 
 Generalmente se obtienen mediante dos técnicas:
 
-	* Arreglo Asociativo (``Object``)
-		
-		Este tipo de dato, que representa una lista de asociaciones clave-valor, 
-		presenta una particularidad en JavaScript. Las funciones miembro resuelven
-		la palabra resevada ``this`` en el ámbito de la colección. Por lo tanto
-		permite generar un "objeto" de una única instancia. En este tipo de datos,
-		el operador ``.`` responde de la misma manera que el operador de indexación
-		``[]``.
-		
-		
-		Por ejemplo:
+    * Arreglo Asociativo (``Object``)
+        
+        Este tipo de dato, que representa una lista de asociaciones clave-valor, 
+        presenta una particularidad en JavaScript. Las funciones miembro resuelven
+        la palabra resevada ``this`` en el ámbito de la colección. Por lo tanto
+        permite generar un "objeto" de una única instancia. En este tipo de datos,
+        el operador ``.`` responde de la misma manera que el operador de indexación
+        ``[]``.
+        
+        
+        Por ejemplo:
 también conocido como arreglo asociativo.
 Los arreglos asociativos consisten en asocaciones clave-valor y están presentes en varios lenguajes [*]_.
 
