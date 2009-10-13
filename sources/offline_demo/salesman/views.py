@@ -20,6 +20,8 @@ def view_ciudad(request, ciudad_id):
 
 
 def pedido_con_items(request, object_id = None, **kwargs):
+    if request.method == "POST":
+        pass
     form = PedidoForm()
     formset = PedidoConItemsForm()
     #from ipdb import set_trace; set_trace()

@@ -116,7 +116,7 @@ class Producto(models.Model):
     descripcion = models.CharField(max_length = 500)
     categoria = models.ForeignKey(Categoria, blank = True, null = True) # Puede no tener categorias
     provisto_por = models.ManyToManyField(Proveedor, blank = True, null = True)
-    precio_uniatario = models.DecimalField(default = 0.0, max_digits = 5, decimal_places = 3)
+    precio_uniatario = models.DecimalField(default = 0.0, max_digits = 10, decimal_places = 3)
     
     get_absolute_url = abs_url
     

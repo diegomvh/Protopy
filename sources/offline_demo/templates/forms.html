@@ -37,12 +37,17 @@ form input {
 	
 	{% endblock %}
 	
+	{#% comment %#}
 	{% if formset %}
 		<table>
 			{% for inline_from in formset.forms %}
 				<tr>
 					{% for field in inline_from %}
-						<td>{{ field.label_tag }} {{ field }}</td>
+					
+						<td>
+							{% if field.errors %} {{ field.errors }} {% endif %}	
+							{{ field.label_tag }} {{ field }}
+						</td>
 					{% endfor %}
 				</tr> 
 				{#{ inline_from.as_table }#}
@@ -50,6 +55,7 @@ form input {
 			{% endfor %}
 		</table>
 	{% endif %}
+	{#% endcomment %#}
 	
 	{% block form_buttons %}
 	<div class="buttons">	
