@@ -1497,11 +1497,11 @@
             this.names = names.length == 1 && !names[0] ? [] : names;
             this._defaults = def;
             for (var i = 0, length = this.names.length; i < length; i++)
-            this[this.names[i]] = this[i] = this.collect[i];
+                this[this.names[i]] = this[i] = this.collect[i];
             this.populated = false;
         },
 
-        __iter__ : function(){
+        __iter__ : function() {
             for each (var arg in this.collect)
                 yield arg;
         },

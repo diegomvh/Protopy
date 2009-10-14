@@ -5,13 +5,13 @@ require('doff.forms.util', 'ValidationError', 'ErrorList');
 require('doff.forms.forms', 'BaseForm', 'get_declared_fields');
 require('doff.forms.fields', 'Field', 'ChoiceField', 'IntegerField', 'EMPTY_VALUES');
 require('doff.forms.widgets', 'Select', 'SelectMultiple', 'HiddenInput', 'MultipleHiddenInput', 'media_property');
+require('doff.forms.formsets', 'BaseFormSet', 'formset_factory', 'DELETION_FIELD_NAME');
 
 /*
 from django.utils.encoding import smart_unicode, force_unicode
 
 from django.utils.text import get_text_list, capfirst
 
-from formsets import BaseFormSet, formset_factory, DELETION_FIELD_NAME
 */
 /*
  * Saves bound Form ``form``'s cleaned_data into model instance ``instance``.
@@ -306,19 +306,37 @@ var ModelForm = type('ModelForm', BaseModelForm, {
         return new_class;
     }
 }, {});
-/*
-function modelform_factory(model, form=ModelForm, fields=None, exclude=None,
-                       formfield_callback=lambda f: f.formfield()):
-    // HACK: we should be able to construct a ModelForm without creating
-    // and passing in a temporary inner class
-    class Meta:
-        pass
-    setattr(Meta, 'model', model)
-    setattr(Meta, 'fields', fields)
-    setattr(Meta, 'exclude', exclude)
-    class_name = model.__name__ + 'Form'
-    return ModelFormMetaclass(class_name, (form,), {'Meta': Meta,
-                              'formfield_callback': formfield_callback})
+
+function modelform_factory(model) {
+    // Create the inner Meta class. FIXME: ideally, we should be able to
+    // construct a ModelForm without creating and passing in a temporary
+    // inner class.
+
+    var arg = new Argumentes(arguments, {form: ModelForm, fields: null, exclude: null,
+            formfield_callback: function(f) { return f.formfield(); }});
+    var kwargs = arg.kwargs;
+    // Build up a list of attributes that the Meta object will have.
+    var attrs = {'model': model};
+    if (kwargs['fields'] != null)
+        attrs['fields'] = kwargs['fields'];
+    if (kwargs['exclude'] != null)
+        attrs['exclude'] = kwargs['exclude'];
+
+    // If parent form class already has an inner Meta, the Meta we're
+    // creating needs to inherit from the parent's inner meta.
+    var Meta = form.Meta || {};
+
+    // Give this new form class a reasonable name.
+    var class_name = model.__name__ + 'Form';
+
+    // Class attributes for the new form class.
+    var form_class_attrs = {
+        'Meta': Meta,
+        'formfield_callback': formfield_callback
+    }
+
+    return type(class_name, [ form ], form_class_attrs);
+}
 
 /*
 // ModelFormSets ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
