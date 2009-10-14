@@ -5,7 +5,8 @@ require('agentes.views', '*');
 require('agentes.ventas.models', 'Ciudad');
 
 var urlpatterns = patterns('',
-    ['^$', index],
+    ['^$', 'doff.views.generic.simple.direct_to_template', {'template': 'index.html'} ],
+    ['^salesman/?$', 'doff.views.generic.simple.direct_to_template', {'template': 'salesman/index.html'} ],
     // Editar una ciudad
     ['^salesman/ciudad/(\d{1,5})/edit/$', 'doff.views.generic.create_update.update_object', {
             'model': Ciudad,

@@ -1,6 +1,7 @@
 /* 'doff.template' */
 require('doff.template.context', 'Context', 'ContextPopException');
 require('doff.core.project', 'get_settings');
+require('functional', 'curry');
 
 var settings = get_settings();
 
@@ -43,6 +44,7 @@ var InvalidTemplateLibrary = type('InvalidTemplateLibrary', [ Exception ]);
 var Node = type('Node', [ object ], {
     must_be_first: false,
     render: function(context) { },
+
     __iter__: function() { 
         yield this; 
     },
@@ -78,27 +80,27 @@ var NodeList = type('NodeList', [ object ], {
     },
 
     render: function(context) {
-      var bits = [];
-      for each (var node in this.nodes) {
-          if (isinstance(node, Node))
-              bits.push(this.render_node(node, context))
-          else
-              bits.push(node);
-      }
-      return bits.join('');
-  },
+        var bits = [];
+        for each (var node in this.nodes) {
+            if (isinstance(node, Node))
+                bits.push(this.render_node(node, context));
+            else
+                bits.push(node);
+        }
+        return bits.join('');
+    },
 
-  render_node: function(node, context) {
-      return node.render(context);
-  },
+    render_node: function(node, context) {
+        return node.render(context);
+    },
 
-  get_nodes_by_type: function(nodetype) {
-      var nodes = [];
-      for each (var node in this.nodes) {
-          nodes = nodes.concat(node.get_nodes_by_type(nodetype));
-      }
-      return nodes;
-  }
+    get_nodes_by_type: function(nodetype) {
+        var nodes = [];
+        for each (var node in this.nodes) {
+            nodes = nodes.concat(node.get_nodes_by_type(nodetype));
+        }
+        return nodes;
+    }
 });
 
 var TextNode = type('TextNode', [ Node ], {
@@ -446,6 +448,15 @@ var Variable = type('Variable', [ object ], {
     }
 });
 
+function generic_tag_compiler(params, name, node_class, parser, token) {
+    /*Returns a template.Node subclass.*/
+    var bits = token.split_contents().slice(1);
+    var bmax = len(params);
+    if(len(bits) > bmax)
+        throw new TemplateSyntaxError("%s takes %s arguments".subs(name, bmax));
+    return new node_class(bits);
+}
+
 var Library = type('Library', [ object ], {
     __init__: function() {
         this.filters = {};
@@ -474,6 +485,25 @@ var Library = type('Library', [ object ], {
         } else {
             throw new InvalidTemplateLibrary("Unsupported arguments to Library.filter: (%s, %s)".subs(name, filter_func));
         }
+    },
+
+    simple_tag: function(func) {
+        var params = func.toString().match(/^[\s\(]*function[^(]*\(([^\)]*)\)/)[1].replace(/\s+/g, '').split(',');
+        params = params.length == 1 && !params[0] ? [] : params;
+       
+        var SimpleNode = type('SimpleNode', [ Node ], {
+            __init__: function(vars_to_resolve) {
+                this.vars_to_resolve = vars_to_resolve.map(function(v) { return new Variable(v); });
+            },
+
+            render: function(context) {
+                var resolved_vars = [v.resolve(context) for each (v in this.vars_to_resolve)];
+                return func.apply(this, resolved_vars);
+            }
+        });
+        var compile_func = curry(generic_tag_compiler, params, func.name, SimpleNode);
+        this.tag(func.name, compile_func);
+        return func;
     }
 });
 
