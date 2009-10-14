@@ -231,11 +231,8 @@ urlpatterns = patterns('',
         (r'pedido/$', 'django.views.generic.simple.redirect_to', {'url':'/salesman/pedidos/'}),
         
         # vendedors -> Edit
-        (r'pedido/(?P<object_id>\d{1,5})/edit/$', 'django.views.generic.create_update.update_object',{
-            'model': Pedido,
-            'post_save_redirect': '/salesman/pedidos/',
-            'template_name': 'forms.html',
-            'extra_context': {'title': 'Editar pedido', 'submit_text': 'Actualizar',}, 
+        (r'pedido/(?P<object_id>\d{1,5})/edit/$', 'salesman.views.edit_pedido',{
+             
         }),
         
         # pedido -> Listar
@@ -255,7 +252,7 @@ urlpatterns = patterns('',
 #            'post_save_redirect': '/salesman/pedidos/',
 #                                                                               
 #        }),
-        (r'pedido/add/$', 'offline_demo.salesman.views.pedido_con_items', ),
+        (r'pedido/add/$', 'offline_demo.salesman.views.create_pedido', ),
 
         # pedido -> Eliminar
         (r'pedido/(?P<object_id>\d{1,5})/delete/$', 'django.views.generic.create_update.delete_object', {
