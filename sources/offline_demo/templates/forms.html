@@ -17,7 +17,20 @@ form input {
 	border: 1px solid #888;
 	padding: 4px;
 }
+form table.formset {
+	maring: 0px;
+	padding: 2px;
+}
 
+form table.formset  tr {
+	
+	background-color: red;
+
+}
+
+form table.formset td {
+	padding: 2px;
+}
 
 {% endblock %}
 
@@ -48,8 +61,12 @@ form input {
     
 	{% if formset %}
 		<!-- Formsets -->
+		{% for f in formset.management_form %}
+			<!-- Management -->
+    		{{ f }}
+		{% endfor %}
 		<h4>{% if formsets_title %} {{ formsets_title }} {% else %} Items: {% endif %}</h4>
-		<table>
+		<table class="formset" cellpadding="0" cellspacing="0">
 			{% for inline_from in formset.forms %}
 				<tr>
 					{% for field in inline_from %}
@@ -67,12 +84,15 @@ form input {
 	{% endif %}
 	
 	{% block form_buttons %}
-	<div class="buttons">	
-		<input type="submit" value="{% if submit_text %} {{submit_text}} {%else%} Crear {% endif %}">
-		<!-- <input type="reset" value="Reset" id="reset_form"> -->
-		<button id="cancelar_form">Cancelar</button>
-	</div>
+		<div class="buttons">
+			{% block button_inputs %}	
+				<input type="submit" value="{% if submit_text %} {{submit_text}} {%else%} Crear {% endif %}">
+				<!-- <input type="reset" value="Reset" id="reset_form"> -->
+				<button id="cancelar_form">Cancelar</button>
+			{% endblock %}
+		</div>
 	{% endblock%}
+	
     {% endblock %}
 </form>
 

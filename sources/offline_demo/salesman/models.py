@@ -6,9 +6,6 @@ from django.db import models
 from django.db.models import signals
 
 
-
-
-
 # Some useful things
    
 mod_name = __name__.split('.')[-2]
@@ -124,25 +121,33 @@ class Producto(models.Model):
         return self.nombre
         
 class Pedido(models.Model):
+    '''
+    El número de pedido se toma de la primary key
+    '''
     cliente = models.ForeignKey(Cliente)
-    numero = models.PositiveIntegerField()
     fecha = models.DateField(auto_now = True)
 
     get_absolute_url = abs_url
     
     def __unicode__(self):
-        return u"%s %s" % (self.numero, self.cliente)
+        return u"%s %s" % (self.pk, self.cliente)
         
 class ItemPedido(models.Model):
-    cantidad = models.PositiveIntegerField()
     producto = models.ForeignKey(Producto)
-    precio = models.DecimalField(default = 0.0, max_digits = 5, decimal_places = 3)
+    cantidad = models.PositiveIntegerField()
+    precio = models.DecimalField(default = "0.0", max_digits = 10, decimal_places = 3, editable = False)
     pedido = models.ForeignKey(Pedido)
 
     get_absolute_url = abs_url
     
+    def save(self, *largs, **kwargs):
+        self.precio = self.producto.precio_uniatario
+        return  super(ItemPedido, self).save(*largs, **kwargs)
+        
+    
     class Meta:
         verbose_name_plural = 'Items de Pedido'
+    
     
         
 

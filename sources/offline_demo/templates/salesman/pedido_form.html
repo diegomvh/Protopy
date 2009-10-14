@@ -1,7 +1,8 @@
 {% extends "forms.html" %}
 
-{#% block form_content %#}
-
-
-
-{#% endblock %#}
+{% block button_inputs %}	
+	<input type="submit" name="continue" value="{% if submit_text %} {{submit_text}} {%else%} Guardar y continuar editando {% endif %}">
+	<input type="submit" name="save" value="{% if submit_text %} {{submit_text}} {%else%} Guardar {% endif %}">
+	<!-- <input type="reset" value="Reset" id="reset_form"> -->
+	<button id="cancelar_form">Cancelar</button>
+{% endblock %}

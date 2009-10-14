@@ -1,18 +1,18 @@
 {% extends "listado.html" %}
 
-
+	{% comment %}
 	cliente = models.ForeignKey(Cliente)
     numero = models.PositiveIntegerField()
     fecha = models.DateField()
-	
+	{% endcomment %}
 	
 	{% block table_heading %}
-		<th>Número</th><th>Fecha</th><th>Cliente</th>
+		<th>Número</th><th>Fecha</th><th>Cliente</th><th>Cant. Ítems</th>
 	{% endblock %}
 
 	
 	{% block item_iteration_row %}
-		<td>{{ item.clinete }}</td><td>{{ item.numero }}</td><td>{{ item.fecha }}</td>
+		<td>{{ item.pk }}</td><td>{{ item.fecha }}</td><td>{{ item.cliente }}</td><td>{{ item.itempedido_set.count }}</td>
   	{% endblock %}
 
 
