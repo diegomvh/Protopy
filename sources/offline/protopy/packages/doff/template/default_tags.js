@@ -505,12 +505,12 @@ function load(parser, token) {
     for each (var taglib in bits.slice(1)) {
         // add the library to the parser
         var lib = null;
-        try {
-            for each (var app in settings.INSTALLED_APPS) {
+        for each (var app in settings.INSTALLED_APPS) {
+            try {
                 lib = get_library(app + '.templatetags.%s'.subs(taglib));
                 parser.add_library(lib);
-            } 
-        } catch (e if isinstance(e, InvalidTemplateLibrary)) {}
+            } catch (e if isinstance(e, InvalidTemplateLibrary)) {}
+        }
         if (lib === null)
             throw new TemplateSyntaxError("'%s' is not a valid tag library".subs(taglib));
     }
