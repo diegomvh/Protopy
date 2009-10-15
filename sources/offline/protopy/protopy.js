@@ -1780,7 +1780,8 @@
                 throw new TypeError(elements + ' object is not array');
             this.elements = unique(elements);
         },
-        __contains__: function(element){
+        __contains__: function(element) {
+            //TODO: ver como hacer si el elemento es un arreglo :)
             return include(this.elements, element);
         },
         __nonzero__: function(){
