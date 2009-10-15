@@ -35,9 +35,9 @@ documento y el navegador, estandarizado por la World Wide Web Consortium (W3C) [
 nombradas como nivel DOM, existiendo nivel 0, 1, 2 y 3.
 No todos los navegadores implementaron por completo los niveles, dando lugar a confusión e incompatibilidades.
 
-.. [*]_ Organización fundada en 1961 para estandarizar los sistemas computarizados en Europa.
+.. [*] Organización fundada en 1961 para estandarizar los sistemas computarizados en Europa.
 
-.. [*]_ Consorcio internacional que produce recomendaciones para la World Wide Web.
+.. [*] Consorcio internacional que produce recomendaciones para la World Wide Web.
 
 .. [MSFTJScript09] *JScript*, Microsoft Developer Network, último acceso Septiembre de 2009, http://msdn.microsoft.com/es-es/library/72bd815a%28VS.80%29.aspx
 
@@ -49,7 +49,7 @@ A partir de la aparición de AJAX [*]_, una técnica de desarrollo web para crea
 aplicaciones interactivas, los desarrolladores diseñaron librerías de JavaScript
 que presentaron una API uniforme que salvaba las incompatibilidades existentes.
 
-.. [*]_ *Asynchronous JavaScript And XML*, una técnica de desarrollo web para crear aplicaciones interactivas.
+.. [*] *Asynchronous JavaScript And XML*, una técnica de desarrollo web para crear aplicaciones interactivas.
 
 Con la popularización de estas librerías, también lo hicieron las herramientas de
 depuración sofisticadas como Firebug [Firebug09]_, lo que permitió realizar aplicaciones
@@ -202,7 +202,7 @@ Un documento HTML se conforma por una serie de **tags** o etiquetas, las que tie
     
     Formato de una etiqueta HTML.
  
-Un documento HTML está delimitado por las etiqueteas ``html`` y contiene una
+Un documento HTML está delimitado por las etiquetas ``html`` y contiene una
 cabecera delimitada por ``head`` y un cuerpo, delimitado por ``body``. Por ejemplo:
 
 .. code-block:: html
@@ -217,7 +217,7 @@ cabecera delimitada por ``head`` y un cuerpo, delimitado por ``body``. Por ejemp
         </body>
     </html>
 
-Tambien suele contener enlaces a recursos entendibles para el navegador,
+También suele contener enlaces a recursos entendibles para el navegador,
 como a las hojas de estilos o código JavaScript.
 
 La inclusión de una hoja de estilo se realiza mediante la etiqueta ``link``, de la
@@ -278,7 +278,7 @@ El objetivo de CSS es separar el contenido de la presentación de un documento
 HTML o XML. Una hoja de estilos puede ser enlazada desde varias páginas, permitiendo 
 mantener coherencia y consistencia en todo el sitio. 
 
-.. [W3cCSS2009] *Guia breve de CSS*, W3C, español, último acceso Agosto 2009,
+.. [W3cCSS2009] *Guía breve de CSS*, W3C, español, último acceso Agosto 2009,
     http://www.w3c.es/divulgacion/guiasbreves/HojasEstilo
 
 .. _cliente-javascript:
@@ -301,114 +301,256 @@ versiones modernas, por Python.
 Orientación a Objetos
 ---------------------
 
-JavaScript es un lenguaje orientado a objetos. Sin emabargo carece de clases
+JavaScript es un lenguaje orientado a objetos. Sin embargo carece de clases
 y ocultamiento de información. Existen varias técnicas para lograr encapsulamiento,
-abastracción, herencia y polimorfismo. 
+abstracción, herencia y polimorfismo. Entre las más utilizadas se encuentran el
+arreglo asociativo como instancia, el uso de prototipos y las clausuras.
 
-Generalmente se obtienen mediante dos técnicas:
 
-    * Arreglo Asociativo (``Object``)
+Arreglo Asociativo (``Object``)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         
-        Este tipo de dato, que representa una lista de asociaciones clave-valor, 
-        presenta una particularidad en JavaScript. Las funciones miembro resuelven
-        la palabra resevada ``this`` en el ámbito de la colección. Por lo tanto
-        permite generar un "objeto" de una única instancia. En este tipo de datos,
-        el operador ``.`` responde de la misma manera que el operador de indexación
-        ``[]``.
-        
-        
-        Por ejemplo:
-también conocido como arreglo asociativo.
-Los arreglos asociativos consisten en asocaciones clave-valor y están presentes en varios lenguajes [*]_.
+Este tipo de dato, representa una lista de asociaciones clave-valor, donde
+la clave y el valor, pueden ser cualquier tipo arbitrario.
+Además el operador de indexación en el arreglo ``[]`` responde de la misma 
+manera que el operador ``.``. Por ejemplo:
 
-.. En JavaScript, este tipo de dato responde al operador punto ``.`` de la misma manera que al operador de indexación ``[]``
+.. code-block:: javascript
+	
+	>>> var x = {nombre: "Eduardo", apellido: "Expósito", edad: 47, factor: 2.5}
+	>>> x['nombre']
+	"Eduardo"
+	>>> x.nombre
+	"Eduardo"
+	
+Este tipo de dato presenta la particularidad de que en la invocación
+de la funciones miembro (es decir, contenidas como *valor* de alguna asociación),
+la palabra ``this`` apunta a la instancia de arreglo. De esta manera se obtiene
+un comportamiento similar a el tipo ``struct`` de C++. 
+
+.. code-block:: javascript
+	
+	>>> var obj = {
+		   metodo: function () {
+		      print(this.x);
+		  }
+          x: 3
+	    }
+	>>> obj.metodo();
+	3
+
+
+Esta técnica se utiliza en combinación con las clausuras en las librerías
+de JavaScript como Prototype [ProtypeOrgSrc09]_.
 		
-		.. code-block:: javascript
-			
-			>>> var X = {
-				metodo: function ()	{
-					console.log( this.valor );
-				},
-				valor: 3
-			   }
+Prototipos
+~~~~~~~~~~
+		
+Un prototipo es el equivalente a una clase en los lenguajes como Java o C++.
+Consiste en la definición de la una función que es llamada anteponiendo la
+palabra reservada ``new``. Durante la llamada, ``this`` apunta a la instancia
+que está siendo creada. El código de la función se comporta como un constructor
+de instancias.
 
-	mi_instancia.mi_metodo();
+.. code-block:: javascript
+	
+	>>> var Clase = function () {
+			this.metodo = function () {
+				console.log( this.valor );
+			}
+			this.valor = 3;
+		}
+	>>> var instancia = new Clase();
+	>>> instancia.metodo();
+	-> 3
+
+Sin embargo, la definición de métodos utilizando la sintaxis ``this.metodo = ...``
+realiza una nueva copia del método por cada instancia.
+
+Para acceder a la estructura de la clase, se utiliza el atributo 
+``prototype``. Este atributo almacena la estructura de la clase y consiste
+en un arreglo asociativo.
+
+.. code-block:: javascript
+
+	>>> var Clase = function () {}
+	>>> Clase.prototype.metodo = function () {
+			console.log( this.valor );
+		}
+
+	>>> Clase.prototype.valor = 3;
+	>>> var instancia = new Clase();
+	>>> instancia.metodo();
+	-> 3
+
+Esta técnica permite implementar herencia.
 	
 	
-			   
-			>>> X['metodo']();
-			-> 3
-			
-			>>> X.metodo();
-			-> 3
+Clausuras
+~~~~~~~~~
+		
+Una clausura es la utilización de funciones internas con referencias locales
+que permanecen enlazadas aún cuando el contexto contenedor ha desaparecido [StuartLangridgeClosures09]_.
+Mediante esta técnica se suele lograr encapsulamiento y ocultamiento de información.
+Por ejemplo:
 
-		
-		Esta técnica se utilza en combinación con las clausuras en las librerías
-		de JavaScript como Prototype [ProtypeOrgSrc09]_.
-		
-	* Prototipos
-		
-		Un prototipo es el equivalente a una clase en los lenguajes como Java o C++.
-		Consiste en la definición de la una función que es llamada anteponiendo la
-		palabra reservada ``new``. Durante la llamada, ``this`` se resuelve en
-		el ámbito de la instancia y esta es devuelta.
-		
-		.. code-block:: javascript
-			
-			>>> var Clase = function () {
-					this.metodo = function () {
-						console.log( this.valor );
-					}
-					this.valor = 3;
-				}
-			>>> var instancia = new Clase();
-			>>> instancia.metodo();
-			-> 3
-		
-		Para acceder a la estructura de la clase, se utiliza el atributo 
-		``prototype``.
-		
-		.. code-block:: javascript
-		
-			>>> var Clase = function () {}
-			>>> Clase.prototype.metodo = function () {
-					console.log( this.valor );
-				}
+.. code-block:: javascript
 
-			>>> Clase.prototype.valor = 3;
-			>>> var instancia = new Clase();
-			>>> instancia.metodo();
-			-> 3
-		
-		Esta técnica permite implementar herencia.
-	
-	
-	* Clausuras
-		
-		Una clausura es la utilización de funciones internas y referencias para
-		lograr encapsulamiento y ocultamiento de información. 
-		
+	>>> function mostrar_saludo(nombre) {
+		    var saludo = "Hola";
+		    function saludar(){
+			    print(saludo);
+		    }
+		    return saludar;
+        }
+
+Son muy utilizadas para funciones relacionadas con timers, manejadores de eventos
+y respuestas asincrónicas (AJAX).
+
 
 .. [ProtypeOrgSrc09] *Código Fuente de Prototype, versión 1.6.3*, Prototype.org, 
 					  http://www.prototypejs.org/assets/2008/9/29/prototype-1.6.0.3.js
 
+.. [StuartLangridgeClosures09] Stuart Langridge, *Secrets of JavaScript Closures*,
+                               último acceso Octubre 2009,
+                               http://www.kryogenix.org/code/browser/secrets-of-javascript-closures/
+                               
 
 DOM
 ===
 
-DOM o Document Objetct Model es una especificación.
+
+Document Object Model [*]_ es una API para documentos XML y HTML. Provee una representación en objetos de 
+la estructura del documento, que permite modificar tanto el contenido como la representación visual. 
+Su función esencial es conectar el navegador con un lenguaje de programación [MDCDOM09]_.
+
+.. [MDCDOM09] Mozilla Developer Center, *DOM*, último acceso Agosto de 2009,
+              https://developer.mozilla.org/en/DOM
+
+Cada fabricante de navegador web [WIKIDOM09]_ realizó en principio su implementación de DOM,
+razón por la cual la W3C emitió una especificación denominada **DOM.Nivel 1** 
+(en octubre de 1998) en la cual se consideraron las características y manipulación 
+de todos los elementos existentes en los archivos HTML y XML [W3CDomLevels09]_.
+
+.. [W3CDOM09] World Wide Web Consortium, *Document Object Model*, último acceso octubre 2009,
+                http://www.w3.org/DOM/
+
+.. [W3CDomLevels09]  World Wide Web Consortium, *Niveles de Document Object Model*, último acceso octubre 2009,
+                        http://www.w3.org/DOM/DOMTR
+
+En noviembre del año 2000 se emitió la especificación del **DOM.Nivel 2**. En esta
+especificación se incluyó la manipulación de eventos en el navegador, 
+la capacidad de interacción con CSS, y la manipulación de partes del texto en las páginas 
+web.
+
+**DOM.Nivel 3** se emitió en abril de 2004; utiliza DTD (Definición del tipo de documento) 
+y la validación de documentos.
+
+.. figure:: ../_svg/esquema_dom.png
+
+    Modelo de objetos de DOM
+
+DOM define una estructura jerárquica de objetos, donde ``window`` representa
+la ventana o pestaña del navegador. ``window.history`` hace referencia
+al historial de navegación. Por ejemplo, el siguiente código, retrocede una página 
+en el historial:
+
+.. code-block:: javascript
+
+    window.history.back();
+    
+    // Pero como window es el ámbito global, se puede abreviar a 
+    
+    history.back();
 
 
+El elemento ``document`` referencia al documento (X)HTML. Posee los atributos ``body``
+y ``head``, una serie de métodos para recuperación de elementos 
+(``document.getElementByID()``, ``document.getElementsByTagName()``), atajos
+a los formularios y otros elementos (``document.forms``, ``document.anchors``, 
+``document.applets``, etc.). También posee la capacidad de crear elementos.
+
+
+Todos los elementos que se desprenden ``document``, ``HTMLElement``, poseen una
+API que permite encadenamiento::
+
+    children // Lista de solo lectura de nodos hijos    
+    appendChild(el) // Agrega un elemento
+    parentNode  // Apunta a al elemento padre
+    
+
+Mediante esta API se pueden realizar tareas como atender eventos y modificación 
+de DOM, como se ve en el siguiente ejemplo:
+
+.. code-block:: html
+    
+    <html>
+        <head>
+            <title>Pruebas de eventos</title>
+            <script>
+                window.onload = function () {
+                    var link = window.document.getElementById('un_link'),
+                        div = document.getElementById('cosa');
+                    link.onclick = function (event) {
+                        // Crear un elemento párrafo
+                        var un_p = document.createElement('p'),
+                            txt = prompt('Ingrese un texto');
+                        un_p.innerHTML = txt;
+                        div.appendChild(un_p);
+                    }
+                }
+            </script>
+        </head>
+        
+        <body>
+            <a id="un_link">Pulsar aquí</a>
+            <div id="cosa">
+            
+            </div>
+        </body>
+    </html>
+    
+
+El código JavaScript de un documento se evalúa en el contexto del elemento ``window``
+como espacio de nombres global. Es decir, que cualquier variable global pertenece a ``window``.
+
+.. code-block:: javascript
+    
+    >>> window.x = 3;
+    >>> x
+    3
+
+
+
+.. [*]  A veces traducida como Modelo en Objetos para la representación
+        de Documentos o también Modelo de Objetos del Documento ) 
+
+.. [WIKIDOM09] Wikipedia, *DOM*, último acceso Octubre 2009,
+                http://es.wikipedia.org/wiki/Document_Object_Model
 AJAX
 ====
 
 AJAX es una tecnología que surge tras la necesidad de agilizar las interfases
 de usuario basadas en la web. Es utilizada para lograr RIAs basadas en 
-en las capacidades nativas del navegador (sin plugins de terceras partes).
+en las capacidades nativas del navegador (sin plugins de terceras partes [*]_).
+
+.. [*] Flash, Sliverlight, Applets Java, JavaFx, etc.
+
+
+.. note:: Ver si esto va
 
 AJAX debe su nombre a Asynchronous JavaScript And Xml. Consiste en 
-la capacidad de que una página pueda originar peticiones HTTP que no
+la capacidad del navegador de originar peticiones HTTP que no
+inicien una carga del documento (segundo plano). Permite realizar interfases web más interactivas,
+debido a que las transferencias asincrónicas solo recuperan del servidor 
+los elementos que requieran ser actualizados.
 
+AJAX es una tecnología asincrónica, en el sentido de que los datos adicionales se
+requieren al servidor y se cargan en segundo plano sin interferir con la
+visualización ni el comportamiento de la página. JavaScript es el lenguaje en el
+que normalmente se efectúan las funciones de llamada de AJAX mientras que el
+acceso a los datos se realiza mediante XMLHttpRequest. En cualquier caso, no es
+necesario que el contenido asíncrono esté formateado en XML.
 
 
 Estas peticiones se programan en JavaScript y si bien
@@ -416,9 +558,6 @@ originalmente se pensó en XML como lenguaje de intercambio de datos, es posible
 transferir cualquier tipo de archivo como código HTML, código JavaScript, 
 imágenes, hojas de estilos, JSON, etc.
 
-Esta tecnología permite realizar interfases web más interactivas, debido a que las
-transferencias asincrónicas solo recuperan del servidor los elementos que requieran
-ser actualizados. 
 
 La tecnología utiliza 4 elementos [WIKIAJAX09]_:
 
@@ -428,155 +567,67 @@ La tecnología utiliza 4 elementos [WIKIAJAX09]_:
     * DOM como método de control de la representación y el navegador por 
       parte de JavaScript.
       
-    * El objeto XMLHttpRequest para intercambiar datos de forma asíncrona con el
+    * El objeto ``XMLHttpRequest`` para intercambiar datos de forma asíncrona con el
       servidor web. En algunos frameworks y en algunas situaciones concretas, se usa
       un objeto iframe en lugar del XMLHttpRequest para realizar dichos intercambios.
       
     * XML es el formato usado generalmente para la transferencia de datos
       solicitados al servidor, aunque cualquier formato puede funcionar, incluyendo
-      HTML preformateado, texto plano, JSON y hasta EBML.
+      HTML pre-formateado, texto plano, JSON y hasta EBML.
 
 .. [WIKIAJAX09] *AJAX*, Wikipedia, último acceso Octubre de 2009, http://es.wikipedia.org/wiki/AJAX
-
-Para poder utilizar esta tecnología, el navegador porvee un tipo de dato
-llamado ``XMLHTTPRequest``. 
-
-
-
-
-La expansión y masificación de la Web, llevó a que el ciclo de petición
-respuesta en el navegador resultara insuficiente para proveer al usuario de
-aplicaciones interactivas o :term:´RIA´, por este motivo se comenzo a trabajar
-sobre nuevas técnica de desarrollo que culminaron el en nacimiento de AJAX,
-acrónimo de Asynchronous JavaScript And XML (JavaScript asíncrono y XML).
-
-Una aplicacion Web que trabaje con AJAX se ejecutan en el cliente o navegador y
-mantiene una comunicación asíncrona con el servidor en segundo plano. De esta
-forma le es posible realizar cambios sobre las páginas sin necesidad de
-recargarla, lo que significa un aumento de la interactividad, velocidad y
-usabilidad en las aplicaciones.
-
-AJAX es una tecnología asíncrona, en el sentido de que los datos adicionales se
-requieren al servidor y se cargan en segundo plano sin interferir con la
-visualización ni el comportamiento de la página. JavaScript es el lenguaje en el
-que normalmente se efectúan las funciones de llamada de AJAX mientras que el
-acceso a los datos se realiza mediante XMLHttpRequest. En cualquier caso, no es
-necesario que el contenido asíncrono esté formateado en XML.
-
-En la practica AJAX no constituye una tecnología en sí, sino que es
-un término que engloba a éstas cuatro tecnologías:
-
 
 
 Funcionamiento de AJAX
 ----------------------
 
-	# Se crea y configura un objeto XMLHttpRequest.
-	# El objeto XMLHttpRequest realiza una llamada al servidor.
-	# La petición se procesa en el servidor.
-	# El servidor retorna un documento XML que contienen el resultado.
-	# El objeto XMLHttpRequest llama a la función callback() y procesa el resultado.
-	# Se actualiza el DOM (Document Object Model)de la página asociado con la
-	petición con el resultado devuelto
-
-Las ventajas de AJAX
---------------------
-
-	* Mayor interactividad
-	* Recuperación asíncrona de datos, reduciendo el tiempo de espera del usuario
-	* Facilidad de manejo del usuario
-	* El usuario tiene un mayor conocimiento de las aplicaciones de escritorio
-	* Se reduce el tamaño de la información intercambiada
-	* Portabilidad entre plataformas
-	* No requieren instalación de complementos, applets de Java, ni ningún otro
-	elemento
-	* Código público
-
-Las desventajas de AJAX
------------------------
-
-	* Usabilidad: Comportamiento del usuario ante la navegación
-	* Botón de volver atrás del navegador
-	* Empleo de iframes ocultos para almacenar el historial
-	* Empleo de fragmento identificador del URL (‘#’) y recuperación mediante
-	JavaScript
-	* Problema al agregar marcadores/favoritos en un momento determinado de la
-	aplicación
-	* Problemas al imprimir páginas renderizadas dinámicamente
-	* Tiempos de respuesta entre la petición del usuario y la respuesta del
-	servidor
-	* Empleo de feedback visual para indicar el estado de la petición al usuario
-	* Requiere que los usuarios tengan el JavaScript activado en el navegador
-	* En el caso de Internet Explorer 6 y anteriores, que necesita tener
-	activado el ActiveX
-
-.. note:: 
-
-    terminar este tema
-
-    A pesar de que el término «AJAX» fuese creado en 2005, la historia de las
-    tecnologías que permiten AJAX se remonta a una década antes con la iniciativa de
-    Microsoft en el desarrollo de Scripting Remoto. Sin embargo, las técnicas para
-    la carga asíncrona de contenidos en una página existente sin requerir recarga
-    completa remontan al tiempo del elemento iframe (introducido en Internet
-    Explorer 3 en 1996) y el tipo de elemento layer (introducido en Netscape 4 en
-    1997, abandonado durante las primeras etapas de desarrollo de Mozilla). Ambos
-    tipos de elemento tenían el atributo src que podía tomar cualquier dirección URL
-    externa, y cargando una página que contenga javascript que manipule la página
-    paterna, pueden lograrse efectos parecidos al AJAX.
+    #. Se crea y configura un objeto XMLHttpRequest.
     
-    El Microsoft's Remote Scripting (o MSRS, introducido en 1998) resultó un
-    sustituto más elegante para estas técnicas, con envío de datos a través de un
-    applet Java el cual se puede comunicar con el cliente usando JavaScript. Esta
-    técnica funcionó en ambos navegadores, Internet Explorer versión 4 y Netscape
-    Navigator versión 4. Microsoft la utilizó en el Outlook Web Access provisto con
-    la versión 2000 de Microsoft Exchange Server.
+        .. code-block:: javascript
+        
+            var req = new XmlHTTPRequest();
+            req.open('GET', 'http://host.com/uri');
+            // Configuración del callback del evento
+            req.onreadystatechange = function () {
+                // Al igual que como se vio en el comportamiento
+                // de un arreglo asociativo, this se refiere a la
+                // petición.
+                if (this.readyState == 4) {
+                    if (this.status == 200) {
+                        alert("Se a completado la descarga asincrónica");
+                    }
+                }
+            }
+        
     
-    La comunidad de desarrolladores web, primero colaborando por medio del grupo de
-    noticias microsoft.public.scripting.remote y después usando blogs, desarrollaron
-    una gama de técnicas de scripting remoto para conseguir los mismos resultados en
-    diferentes navegadores. Los primeros ejemplos incluyen la librería JSRS en el
-    año 2000, la introducción a la técnica imagen/cookie[1] en el mismo año y la
-    técnica JavaScript bajo demanda (JavaScript on Demand)[2] en 2002. En ese año,
-    se realizó una modificación por parte de la comunidad de usuarios[3] al
-    Microsoft's Remote Scripting para reemplazar el applet Java por XMLHttpRequest.
+    #. El objeto ``XMLHttpRequest`` realiza una llamada al servidor.
     
-    Frameworks de Scripting Remoto como el ARSCIF[4] aparecieron en 2003 poco antes
-    de que Microsoft introdujera Callbacks en ASP. NET.[5]
+        .. code-block:: javascript
     
-    Desde que XMLHttpRequest está implementado en la mayoría de los navegadores,
-    raramente se usan técnicas alternativas. Sin embargo, todavía se utilizan donde
-    se requiere una mayor compatibilidad, una reducida implementación, o acceso
-    cruzado entre sitios web. Una alternativa, el Terminal SVG[6] (basado en SVG),
-    emplea una conexión persistente para el intercambio continuo entre el navegador
-    y el servidor.
-
-JavaScript 1.7
-==============
-
-JavaScript en su versión 1.7, al contrario que su predecesores incorpra una serie de mejoras al
-lenguaje como los generadores, los iteradores [MDCNew17JS09]_. 
-
-.. [MDCNew17JS09] *New in JavaScript 1.7*, características nuevas de JavaScript 1.7, https://developer.mozilla.org/En/New_in_JavaScript_1.7
+            req.send();
+    
+    #. La petición se procesa en el servidor.
+    
+    #. El servidor retorna un documento XML (o algún otro tipo) que contienen el resultado.
+    
+    #. El objeto XMLHttpRequest llama a la función ``onreadystatechange`` y procesa el resultado.
+    
+    #. Se actualiza la página mediante DOM.
 
 
-Iteradores
-----------
-
-Un generador es una
-
-Generadores
------------
-
-Un generador es una función 
-
+AJAX presenta ciertas ventajas para realizar aplicaciones interactivas como mayor
+interactividad, reducción de latencia de las aplicaciones, uniformidad  entre las
+plataformas. Sin embargo presenta algunos detalles a tener en cuenta debido a que
+al no realizarse recargas del documento la URL permanece estática: Complicaciones
+en la manipulación del botón *Volver hacia Atrás* del navegador (que requiere a veces
+``iframes``), problemas para agregar favoritos, problemas para la impresión.
 
 
 
 JSON
 ====
 
-JSON [JSONOrg2009]_ (JavaScript Object Notation) es un estándard de codificación de datos, 
+JSON [JSONOrg2009]_ (JavaScript Object Notation) es un estándar de codificación de datos, 
 inspirado en la sintaxis de objetos de JavaScript.
 Sus objetivos son: 
 
@@ -587,12 +638,12 @@ Sus objetivos son:
 Surge como alternativa a XML para el intercambio de datos en aplicaciones
 web. 
 
-.. [JSONOrg2009] *JSON*, Sitio Oficial del Estándard, último acceso Octubre de 2009, http://json.org/
+.. [JSONOrg2009] *JSON*, Sitio Oficial del Estándar, último acceso Octubre de 2009, http://json.org/
 
 .. Debido a que los navegadores carecen de la capacidad de ejecución de 
-	códiog JavaScript en forma concurrente, el bucle de despacho de eventos
+	codigo JavaScript en forma concurrente, el bucle de despacho de eventos
 	debe competir con el resto de las tareas de la página. En una aplicación
-	interaciva que utiliza AJAX, una tarea común es el "parsing" de XML (de las
+	interactiva que utiliza AJAX, una tarea común es el "parsing" de XML (de las
 	respuestas del servidor), 
 	que demanda un esfuerzo computacional que debe ser tenido en cuenta si se
 	debe realizar frecuentemente.
@@ -602,33 +653,82 @@ literal para ser luego interpretada por la sentencia ``eval()`` [JSONOrgJS09]_
 les permitía visualizar los datos que eran enviados al cliente ,  con un formato de datos legibles de suma ayuda
 a la hora de realizar depuración.
 
+
+
 .. [JSONOrgJS09] *Utilización de JSON en Javascript*, Json.org, ultimo acceso Agosto de 2009, http://json.org/js.html
 
-La sentecia ``eval()`` es considerada peligrosa 
+La sentencia ``eval()`` es considerada peligrosa 
 [SimonWillson24Ways09]_, 
-debido a que abre la posiblidad de 
+debido a que abre la posibilidad de 
 inyección de código directa sobre el navegador, razón por la cual las librerías
-de JavaScript comenzaron a brindar parsers serugros para JSON.
+de JavaScript comenzaron a brindar parser seguros para JSON.
 
 .. [SimonWillson24Ways09] http://24ways.org/2005/dont-be-eval
 
-Actualmente algunos navegadores incorporan un parser nativo de JSON
+Actualmente algunos navegadores incorporan un intérprete nativo de JSON
 [MozillaMDCJSONNativo09]_ [IEBlogNativeJSON09]_
 , que 
-incorpora checkeos de seguridad y un tiempo de respuesta corto. Algunas librerías
+incorpora chequeos de seguridad y un tiempo de respuesta corto. Algunas librerías
 de JavaScript sacan provecho de este intérprete nativo [DaveWardEncosia2009]_.
 
 .. [MozillaMDCNativeJSON09] https://developer.mozilla.org/en/Using_JSON_in_Firefox
 .. [IEBlogNativeJSON09] http://blogs.msdn.com/ie/archive/2008/09/10/native-json-in-ie8.aspx
-
-
 .. [DaveWardEncosia2009] Dave Ward, Improving jQuery’s JSON performance and security, Julio de 2009, http://encosia.com/2009/07/07/improving-jquery-json-performance-and-security/
 
+JSON es ampliamente utilizado como formato de intercambio de datos en AJAX.
+
+.. code-block:: javascript
+
+    var http_request = new XMLHttpRequest();
+    var url = "http://example.net/jsondata.php"; // Esta URL debería devolver datos JSON
+     
+    // Descarga los datos JSON del servidor.
+    http_request.onreadystatechange = handle_json;
+    http_request.open("GET", url, true);
+    http_request.send(null);
+     
+    function handle_json() {
+      if (http_request.readyState == 4) {
+        if (http_request.status == 200) {
+          var json_data = http_request.responseText; 
+          var the_object = eval("(" + json_data + ")");
+        } else {
+          alert("Ha habido un problema con la URL.");
+        }
+        http_request = null;
+      }
+    }
+
+Donde el servidor envía una respuesta de la siguiente manera:
+
+.. code-block:: javascript
+
+     {"menu": {
+       "id": "file",
+       "value": "File",
+       "popup": {
+         "menuitem": [
+           {"value": "New", "onclick": "CreateNewDoc()"},
+           {"value": "Open", "onclick": "OpenDoc()"},
+           {"value": "Close", "onclick": "CloseDoc()"}
+         ]
+       }
+     }}
+
+El equivalente en XML:
+
+.. code-block:: xml
+
+    <menu id="file" value="File">
+      <popup>
+        <menuitem value="New" onclick="CreateNewDoc()" />
+        <menuitem value="Open" onclick="OpenDoc()" />
+        <menuitem value="Close" onclick="CloseDoc()" />
+      </popup>
+    </menu>
+    
 
 
-.. Note:: 
-
-    Iteradores
 
 ************
 Google Gears
@@ -637,40 +737,42 @@ Google Gears
 Introducción
 ============
 
-Google Gears es un software de código abierto distribuido por Google que añade
-una nueva capa de aplicación a los navegadores.
+Google Gears [GGGears09]_ es un plugin de código abierto distribuido por Google que añade
+tres componentes a al navegador.
 
-.. http://gears.google.com/ Sitio de google gears
 
-Una vez instaldo como una extensión en el navegador, el producto agrega una API
+.. [GGGears09] Sitio oficial para desarrolladores Google Gears, Google, ultimo 
+                acceso Agosto 2009, http://gears.google.com/
+
+Una vez instalado como una extensión en el navegador, el producto agrega una API
 que permite programar en JavaScript interacciones con los componentes que
-contiene.
+contiene. Esta API se añade al DOM.
 
-Los tres componentes principales que incorpora gears son:
+Los tres componentes principales que incorpora Gears son:
 
     * Local Server
 
-        Permite almacenar localmente datos correspondientes a las páginas webs.
+        Permite almacenar localmente datos correspondientes a las páginas web.
         Tanto HTML, JavaScript e imágenes entre otros, pueden ser almacenados
         localmente por el cliente e interponerse entre el requerimiento del
-        navegador al servidor en conslutas posteriores, evitando asi la
-        solicitud HTTP y optimizando el tiempo de respuesta de la aplicacion.
+        navegador al servidor en consultas posteriores, evitando así la
+        solicitud HTTP y optimizando el tiempo de respuesta de la aplicación.
         
         Pese a que su funcionamiento es muy similar al de la cache del navegador
-        la diferencia fundamental esta en que la actualizacion de los recursos
+        la diferencia fundamental esta en que la actualización de los recursos
         que almacena es mantenida y realizada por el desarrollador.
     
-    * Database
+    * DataBase
 
         Permite almacenar localmente datos que no correspondan a una página web
-        pero son parte de la logica de la aplicacion y requieren de un
-        almacenamiento presistente.
+        pero son parte de la lógica de la aplicación y requieren de un
+        almacenamiento persistente.
         
         El motor de base de datos utilizado es SQLite con algunos agregados y
-        restricciones para brindar seguridad y formas de busqueda.
+        restricciones para brindar seguridad y formas de búsqueda.
  
-        Luego de que el usuario de la aplicacion web otroge el permiso explicito
-        de creacion de la base, el desarrollador, disponer de un almacenamiento
+        Luego de que el usuario de la aplicación web otorgue el permiso explicito
+        de creación de la base, el desarrollador, disponer de un almacenamiento
         del tipo relacional en la máquina huésped. 
     
     * Worker Pool
@@ -682,37 +784,35 @@ Los tres componentes principales que incorpora gears son:
         Hay que destacar que el manejador no corre en forma paralela a la
         ejecución del navegador, sino que se ejecuta cuando la página web se
         mantiene activa, por lo cual el refresco de página o la salida de la
-        misma provoca que este se detenga o no se ejecute directemente.
+        misma provoca que este se detenga o no se ejecute directamente.
 
-Basicamente Gears y sus principales componentes estan enfocados en permitir al
+Básicamente Gears y sus principales componentes están enfocados en permitir al
 programador ejecutar sus aplicaciones cuando el navegador no está conectado
-al servidor. El lider del grupo de desarrollo Bret Taylor dijo que buscaba ser
+al servidor. El líder del grupo de desarrollo Bret Taylor dijo que buscaba ser
 capaz de acceder al Google Reader mientras usaba la conexión de la compañía, la
-cual frecuentemente tenia un acceso defectuoso a Internet.
+cual frecuentemente tenia un acceso defectuoso a Internet [BretTaylor09]_.
 
-.. http://bret.appspot.com/ Blog de Bret Taylor
+.. [BretTaylor09] Blog de Bret Taylor, último acceso Agosto de 2009,
+                    http://bret.appspot.com/ 
 
-Gears esta incluido en el nuevo navegador de Google (Google Chrome) y posee
-extensiones para instalarse en Internet Explorer 6.0+, Mozilla Firefox, Safari y
-Opera Mini, y funciona en los sistemas operativos Windows 2000, XP y Vista,
+Gears esta incluido en el nuevo navegador de Google (Google Chrome) y
+está disponible para Internet Explorer 6.0+, Mozilla Firefox, Safari y
+Opera Mini. Actualmente funciona en los sistemas operativos Windows 2000, XP y Vista,
 Windows Mobile 5 y 6, MacOS y Linux de 32 bits.
 
-Con susecivos lanzamientos el producto sea visto mejorado y favorecido en varios
-aspectos a partir de la versión 0.4 del Gears se puede hablar ya de:
+A partir de la versión 0.4 se añadieron nuevas características como:
 
     * API para GIS, que permite acceder a la posición geográfica del usuario.
 
     * El API Blob, que permite gestionar bloques de datos binarios.
 
-    * Accede a archivos en el equipo cliente a través del API de Google Desktop.
+    * Accede a archivos en el equipo cliente a través del API de Desktop.
 
     * Permite enviar y recibir Blobs con el API HttpRequest.
 
-    * Localización de los cuadros de diálogo de Gears en varios idiomas.
+    * Localización de los cuadros de diálogo de Gears en varios idiomas (i18n).
 
-    * API para canvas, que permite manipular imagenes desde JavaScript.
+    * API para Canvas, que permite manipular imagenes desde JavaScript.
 
-En todos los casos que se requiera tener instalada una aplicacion soportada por
-Gears vale la pena aclarar que el cliente debe haber accedido al menos una vez
-al servidor de la aplicacion web y otorgado los permisos de instalacion
-correspondiente. 
+Gears permite desarrollar aplicaciones en JavaScript que funcionen de manera 
+offline. Para esto es necesaria la instalación del plugin y de la aplicación. 
