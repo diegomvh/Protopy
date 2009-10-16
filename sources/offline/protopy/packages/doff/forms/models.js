@@ -268,7 +268,7 @@ var BaseModelForm = type('BaseModelForm', BaseForm, {
      * database. Returns ``instance``.
      */
     save: function(commit) {
-        commit = commit || true;
+        commit = isundefined(commit)? true : commit;
         var fail_message = (!this.instance.pk)? 'created' :'changed';
         return save_instance(this, this.instance, {'fields': this._meta.fields, 'fail_message': fail_message, 'commit': commit});
     }
@@ -338,237 +338,473 @@ function modelform_factory(model) {
     return type(class_name, [ form ], form_class_attrs);
 }
 
-/*
-// ModelFormSets ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-class BaseModelFormSet(BaseFormSet):
-    """
+// ModelFormSets ##############################################################
+
+var BaseModelFormSet = type('BaseModelFormSet' , [ BaseFormSet ], {
+    /*
     A ``FormSet`` for editing a queryset and/or adding new objects to it.
-    """
-    model = None
+    */
+    model: null,
 
-    def __init__(self, data=None, files=None, auto_id='id_%s', prefix=None,
-                 queryset=None, **kwargs):
-        self.queryset = queryset
-        defaults = {'data': data, 'files': files, 'auto_id': auto_id, 'prefix': prefix}
-        defaults['initial'] = [model_to_dict(obj) for obj in self.get_queryset()]
-        defaults.update(kwargs)
-        super(BaseModelFormSet, self).__init__(**defaults)
+    __init__: function() {
+        var arg = new Arguments(arguments, {'data':null, 'files':null, 'auto_id':'id_%s', 'prefix':null,
+                        'queryset':null});
+        var kwargs = arg.kwargs;
+        this.queryset = queryset;
+        var defaults = {'data': kwargs['data'], 'files': kwargs['files'], 'auto_id': kwargs['auto_id'], 'prefix': kwargs['prefix']};
+        extend(defaults, kwargs);
+        super(BaseFormSet, this).__init__(defaults);
+    },
 
-    def _construct_form(self, i, **kwargs):
-        if i < self._initial_form_count:
-            kwargs['instance'] = self.get_queryset()[i]
-        return super(BaseModelFormSet, self)._construct_form(i, **kwargs)
+    initial_form_count: function() {
+        /*Returns the number of forms that are required in this FormSet.*/
+        if (!(bool(this.data) || bool(this.files)))
+            return len(this.get_queryset());
+        return super(BaseFormSet, this).initial_form_count();
+    },
 
-    def get_queryset(self):
-        if not hasattr(self, '_queryset'):
-            if self.queryset is not None:
-                qs = self.queryset
-            else:
-                qs = self.model._default_manager.get_query_set()
-            if self.max_num > 0:
-                self._queryset = qs[:self.max_num]
-            else:
-                self._queryset = qs
-        return self._queryset
+    _existing_object: function(pk) {
+        if (!hasattr(this, '_object_dict'))
+            this._object_dict = new Dict([[o.pk, o] for (o in this.get_queryset())]);
+        return this._object_dict.get(pk);
+    },
 
-    def save_new(self, form, commit=True):
-        """Saves and returns a new model instance for the given form."""
-        return save_instance(form, self.model(), exclude=[self._pk_field.name], commit=commit)
+    _construct_form: function(i) {
+        var arg = new Arguments(arguments);
+        var kwargs = arg.kwargs;
+        if (this.is_bound && i < this.initial_form_count()) {
+            var pk_key = "%s-%s".subs(this.add_prefix(i), this.model._meta.pk.name);
+            var pk = this.data[pk_key];
+            var pk_field = this.model._meta.pk;
+            pk = pk_field.get_db_prep_lookup('exact', pk);
+            if (isinstance(pk, Array))
+                pk = pk[0];
+            kwargs['instance'] = this._existing_object(pk);
+        }
+        if (i < this.initial_form_count() && !kwargs['instance'])
+            kwargs['instance'] = this.get_queryset().get(i);
+        return super(BaseFormSet, this)._construct_form.apply(this, [ i ].concat(kwargs));
+    },
 
-    def save_existing(self, form, instance, commit=True):
-        """Saves and returns an existing model instance for the given form."""
-        return save_instance(form, instance, exclude=[self._pk_field.name], commit=commit)
+    get_queryset: function() {
+        if (!hasattr(this, '_queryset')) {
+            if (this.queryset != null)
+                var qs = this.queryset;
+            else
+                var qs = this.model._default_manager.get_query_set();
 
-    def save(self, commit=True):
-        """Saves model instances for every form, adding and changing instances
+            // If the queryset isn't already ordered we need to add an
+            // artificial ordering here to make sure that all formsets
+            // constructed from this queryset have the same form order.
+            if (!qs.ordered)
+                qs = qs.order_by(this.model._meta.pk.name);
+
+            if (this.max_num > 0)
+                this._queryset = qs.slice(0, this.max_num);
+            else
+                this._queryset = qs;
+        }
+        return this._queryset;
+    },
+
+    save_new: function(form, commit) {
+        /*Saves and returns a new model instance for the given form.*/
+        commit = isundefined(commit)? true : commit;
+        return form.save(commit);
+    },
+
+    save_existing: function(form, instance, commit) {
+        /*Saves and returns an existing model instance for the given form.*/
+        commit = isundefined(commit)? true : commit;
+        return form.save(commit);
+    },
+
+    save: function(commit) {
+        /*Saves model instances for every form, adding and changing instances
         as necessary, and returns the list of instances.
-        """
-        if not commit:
-            self.saved_forms = []
-            def save_m2m():
-                for form in self.saved_forms:
-                    form.save_m2m()
-            self.save_m2m = save_m2m
-        return self.save_existing_objects(commit) + self.save_new_objects(commit)
+        */
+        commit = isundefined(commit)? true : commit;
+        if (!commit) {
+            this.saved_forms = [];
+            function save_m2m() {
+                for each (var form in this.saved_forms)
+                    form.save_m2m();
+            }
+            this.save_m2m = save_m2m;
+        }
+        return this.save_existing_objects(commit).concat(this.save_new_objects(commit));
+    },
 
-    def save_existing_objects(self, commit=True):
-        self.changed_objects = []
-        self.deleted_objects = []
-        if not self.get_queryset():
-            return []
+    clean: function() {
+        this.validate_unique();
+    },
 
-        // Put the objects from self.get_queryset into a dict so they are easy to lookup by pk
-        existing_objects = {}
-        for obj in self.get_queryset():
-            existing_objects[obj.pk] = obj
-        saved_instances = []
-        for form in self.initial_forms:
-            obj = existing_objects[form.cleaned_data[self._pk_field.name]]
-            if self.can_delete and form.cleaned_data[DELETION_FIELD_NAME]:
-                self.deleted_objects.append(obj)
-                obj.delete()
-            else:
-                if form.changed_data:
-                    self.changed_objects.append((obj, form.changed_data))
-                    saved_instances.append(self.save_existing(form, obj, commit=commit))
-                    if not commit:
-                        self.saved_forms.append(form)
-        return saved_instances
+    validate_unique: function() {
+        // Iterate over the forms so that we can find one with potentially valid
+        // data from which to extract the error checks
+        if (!bool(this.forms)) return;
+        var form = null;
+        for each (form in this.forms)
+            if (hasattr(form, 'cleaned_data'))
+                break;
+        var [ unique_checks, date_checks ] = form._get_unique_checks(); //TODO: el form for model
+        var errors = [];
+        // Do each of the unique checks (unique and unique_together)
+        for each (var unique_check in unique_checks) {
+            var seen_data = new Set();
+            for each (form in this.forms) {
+                // if the form doesn't have cleaned_data then we ignore it,
+                // it's already invalid
+                if (!hasattr(form, "cleaned_data"))
+                    continue;
+                // get each of the fields for which we have data on this form
+                if (bool([f for each (f in unique_check) if (f in form.cleaned_data && form.cleaned_data[f] != null)])) {
+                    // get the data itself
+                    var row_data = [form.cleaned_data[field] for each (field in unique_check)];
+                    // if we've aready seen it then we have a uniqueness failure
+                    if (include(seen_data, row_data)) {
+                        // poke error messages into the right places and mark the form as invalid
+                        errors.push(this.get_unique_error_message(unique_check));
+                        form._errors[NON_FIELD_ERRORS] = this.get_form_error();
+                        delete form.cleaned_data;
+                        break;
+                    }
+                    // mark the data as seen
+                    seen_data.add(row_data);
+                }
+            }
+        }
+        // iterate over each of the date checks now
+        for each (var date_check in date_checks) {
+            var seen_data = new Set();
+            var [lookup, field, unique_for] = date_check;
+            for each (var form in this.forms) {
+                // if the form doesn't have cleaned_data then we ignore it,
+                // it's already invalid
+                if (!hasattr(this, 'cleaned_data'))
+                    continue;
+                // see if we have data for both fields
+                if (form.cleaned_data && form.cleaned_data[field] != null &&
+                    form.cleaned_data[unique_for] != null) {
+                    // if it's a date lookup we need to get the data for all the fields
+                    if (lookup == 'date') {
+                        var date = form.cleaned_data[unique_for];
+                        var date_data = [ date.year, date.month, date.day ];
+                    // otherwise it's just the attribute on the date/datetime
+                    // object
+                    } else {
+                        date_data = [getattr(form.cleaned_data[unique_for], lookup), ];
+                    }
+                    var data = [ form.cleaned_data[field], ].concat(date_data);
+                    // if we've aready seen it then we have a uniqueness failure
+                    if (include(seen_data, data)) {
+                        // poke error messages into the right places and mark the form as invalid
+                        errors.push(this.get_date_error_message(date_check));
+                        form._errors[NON_FIELD_ERRORS] = this.get_form_error();
+                        delete form.cleaned_data;
+                        break;
+                    }
+                    seen_data.add(data);
+                }
+            }
+        }
+        if (bool(errors))
+            throw new ValidationError(errors);
+    },
 
-    def save_new_objects(self, commit=True):
-        self.new_objects = []
-        for form in self.extra_forms:
-            if not form.has_changed():
-                continue
-            // If someone has marked an add form for deletion, don't save the
-            // object.
-            if self.can_delete and form.cleaned_data[DELETION_FIELD_NAME]:
-                continue
-            self.new_objects.append(self.save_new(form, commit=commit))
-            if not commit:
-                self.saved_forms.append(form)
-        return self.new_objects
+    get_unique_error_message: function(unique_check) {
+        if (len(unique_check) == 1) {
+            return "Please correct the duplicate data for %(field)s.".subs({"field": unique_check[0]});
+        } else {
+            return "Please correct the duplicate data for %(field)s, which must be unique.".subs({ "field": unique_check.join(" and ") });
+        }
+    },
 
-    def add_fields(self, form, index):
-        """Add a hidden field for the object's primary key."""
-        from django.db.models import AutoField
-        self._pk_field = pk = self.model._meta.pk
-        if pk.auto_created or isinstance(pk, AutoField):
-            form.fields[self._pk_field.name] = IntegerField(required=False, widget=HiddenInput)
-        super(BaseModelFormSet, self).add_fields(form, index)
+    get_date_error_message: function(date_check) {
+        return "Please correct the duplicate data for %(field_name)s " +
+            "which must be unique for the %(lookup)s in %(date_field)s.".subs({
+            'field_name': date_check[1],
+            'date_field': date_check[2],
+            'lookup': date_check[0],});
+    },
 
-def modelformset_factory(model, form=ModelForm, formfield_callback=lambda f: f.formfield(),
-                         formset=BaseModelFormSet,
-                         extra=1, can_delete=False, can_order=False,
-                         max_num=0, fields=None, exclude=None):
-    """
+    get_form_error: function() {
+        return "Please correct the duplicate values below.";
+    },
+
+    save_existing_objects: function(commit) {
+        commit = isundefined(commit)? true : commit;
+        this.changed_objects = [];
+        this.deleted_objects = [];
+        if (!bool(this.get_queryset()))
+            return [];
+
+        var saved_instances = [];
+        for each (var form in this.initial_forms) {
+            var pk_name = this._pk_field.name;
+            var raw_pk_value = this._raw_value(pk_name);
+
+            // clean() for different types of PK fields can sometimes return
+            // the model instance, and sometimes the PK. Handle either.
+            var pk_value = form.fields[pk_name].clean(raw_pk_value);
+            pk_value = getattr(pk_value, 'pk', pk_value);
+
+            var obj = this._existing_object(pk_value);
+            if (this.can_delete) {
+                var raw_delete_value = form._raw_value(DELETION_FIELD_NAME);
+                var should_delete = form.fields[DELETION_FIELD_NAME].clean(raw_delete_value);
+                if (should_delete) {
+                    this.deleted_objects.push(obj);
+                    obj.delete();
+                    continue;
+                }
+            }
+            if (form.has_changed()) {
+                this.changed_objects.push([ obj, form.changed_data ]);
+                saved_instances.push(this.save_existing(form, obj, commit));
+                if (!commit)
+                    this.saved_forms.push(form);
+            }
+        }
+        return saved_instances;
+    },
+
+    save_new_objects: function(commit) {
+        commit = isundefined(commit)? true : commit;
+        this.new_objects = [];
+        for each (var form in this.extra_forms) {
+            if (!form.has_changed())
+                continue;
+            // If someone has marked an add form for deletion, don't save the object.
+            if (this.can_delete) {
+                var raw_delete_value = form._raw_value(DELETION_FIELD_NAME);
+                var should_delete = form.fields[DELETION_FIELD_NAME].clean(raw_delete_value);
+                if (should_delete)
+                    continue;
+            }
+            this.new_objects.push(this.save_new(form, commit));
+            if (!commit)
+                this.saved_forms.push(form);
+        }
+        return this.new_objects;
+    },
+
+    add_fields: function(form, index) {
+        /*Add a hidden field for the object's primary key.*/
+        require('doff.db.models.base', 'AutoField', 'OneToOneField', 'ForeignKey');
+        this._pk_field = pk = this.model._meta.pk;
+        // If a pk isn't editable, then it won't be on the form, so we need to
+        // add it here so we can tell which object is which when we get the
+        // data back. Generally, pk.editable should be false, but for some
+        // reason, auto_created pk fields and AutoField's editable attribute is
+        // True, so check for that as well.
+        function pk_is_not_editable(pk) {
+            return ((!pk.editable) || (pk.auto_created || isinstance(pk, AutoField))
+                || (pk.rel && pk.rel.parent_link && pk_is_not_editable(pk.rel.to._meta.pk)));
+        }
+        if (pk_is_not_editable(pk) || !(pk.name in form.fields.keys())) {
+            if (form.is_bound) {
+                var pk_value = form.instance.pk;
+            } else {
+                try {
+                    var pk_value = this.get_queryset().get(index).pk;
+                } catch(e) {
+                    var pk_value = null;
+                }
+            }
+            if (isinstance(pk, OneToOneField) || isinstance(pk, ForeignKey))
+                var qs = pk.rel.to._default_manager.get_query_set();
+            else
+                var qs = this.model._default_manager.get_query_set();
+            form.fields[this._pk_field.name] = new ModelChoiceField({ queryset: qs, initial: pk_value, required:false, widget:HiddenInput});
+        }
+        super(BaseFormSet, this).add_fields(form, index);
+    }
+});
+
+function modelformset_factory(model) {
+    /*
     Returns a FormSet class for the given Django model class.
-    """
-    form = modelform_factory(model, form=form, fields=fields, exclude=exclude,
-                             formfield_callback=formfield_callback)
-    FormSet = formset_factory(form, formset, extra=extra, max_num=max_num,
-                              can_order=can_order, can_delete=can_delete)
-    FormSet.model = model
-    return FormSet
+    */
+    var arg = new Argumentes(arguments, {form: ModelForm, fields: null, exclude: null,
+            formfield_callback: function(f) { return f.formfield(); }, max_num: 0,
+            formset: BaseModelFormSet, extra: 1, can_delete: false, can_order: false,});
 
+    var form = modelform_factory(model, arg.kwargs);
+    var FormSet = formset_factory(form, arg.kwargs);
+    FormSet.model = model;
+    return FormSet;
+}
 
 // InlineFormSets //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class BaseInlineFormSet(BaseModelFormSet):
-    """A formset for child objects related to a parent."""
-    def __init__(self, data=None, files=None, instance=None,
-                 save_as_new=False, prefix=None):
-        from django.db.models.fields.related import RelatedObject
-        if instance is None:
-            self.instance = self.model()
-        else:
-            self.instance = instance
-        self.save_as_new = save_as_new
+var BaseInlineFormSet = type('BaseInlineFormSet', [ BaseModelFormSet ], {
+    get_default_prefix: function() {
+        //FIXME: tiene pinta de que no puede ser de clase porque no estan esos atributos en la clase
+        require('doff.db.models.fields.related', 'RelatedObject');
+        return new RelatedObject(this.fk.rel.to, this.model, this.fk).get_accessor_name();
+    }
+},{
+    /*A formset for child objects related to a parent.*/
+    __init__: function() {
+        var arg = new Arguments(arguments, {
+                data:null, files:null, 
+                instance:null, prefix:null,
+                save_as_new:false });
+        var kwargs = arg.kwargs;
+        require('doff.db.models.fields.related', 'RelatedObject');
+        if (kwargs['instance'] == null)
+            this.instance = this.model();
+        else
+            this.instance = kwargs['instance'];
+        this.save_as_new = kwargs['save_as_new'];
         // is there a better way to get the object descriptor?
-        self.rel_name = RelatedObject(self.fk.rel.to, self.model, self.fk).get_accessor_name()
-        qs = self.model._default_manager.filter(**{self.fk.name: self.instance})
-        super(BaseInlineFormSet, self).__init__(data, files, prefix=prefix or self.rel_name,
-                                                queryset=qs)
+        this.rel_name = new RelatedObject(this.fk.rel.to, this.model, this.fk).get_accessor_name();
+        if (this.fk.rel.field_name == this.fk.rel.to._meta.pk.name)
+            var backlink_value = this.instance;
+        else
+            var backlink_value = getattr(this.instance, this.fk.rel.field_name);
+        var f = {};
+        f[this.fk.name] = backlink_value;
+        kwargs['queryset'] = this.model._default_manager.filter(f);
+        super(BaseModelFormSet, this).__init__(kwargs);
+    },
 
-    def _construct_forms(self):
-        if self.save_as_new:
-            self._total_form_count = self._initial_form_count
-            self._initial_form_count = 0
-        super(BaseInlineFormSet, self)._construct_forms()
+    initial_form_count: function() {
+        if (this.save_as_new)
+            return 0;
+        return super(BaseModelFormSet, this).initial_form_count();
+    },
 
-    def _construct_form(self, i, **kwargs):
-        form = super(BaseInlineFormSet, self)._construct_form(i, **kwargs)
-        if self.save_as_new:
+    total_form_count: function() {
+        if (this.save_as_new)
+            return super(BaseModelFormSet, this).initial_form_count();
+        return super(BaseModelFormSet, this).total_form_count();
+    },
+
+    _construct_form: function(i) {
+        var arg = new Arguments(arguments);
+        var kwargs = arg.kwargs;
+        var form = super(BaseModelFormSet, this)._construct_form(i, kwargs);
+        if (this.save_as_new) {
             // Remove the primary key from the form's data, we are only
             // creating new instances
-            form.data[form.add_prefix(self._pk_field.name)] = None
-        return form
-    
-    def save_new(self, form, commit=True):
-        kwargs = {self.fk.get_attname(): self.instance.pk}
-        new_obj = self.model(**kwargs)
-        return save_instance(form, new_obj, exclude=[self._pk_field.name], commit=commit)
+            form.data[form.add_prefix(this._pk_field.name)] = null;
 
-    def add_fields(self, form, index):
-        super(BaseInlineFormSet, self).add_fields(form, index)
-        if self._pk_field == self.fk:
-            form.fields[self._pk_field.name] = InlineForeignKeyField(self.instance, pk_field=True)
-        else:
-            form.fields[self.fk.name] = InlineForeignKeyField(self.instance, label=form.fields[self.fk.name].label)
+            // Remove the foreign key from the form's data
+            form.data[form.add_prefix(this.fk.name)] = null;
+        }
+        return form;
+    },
 
-def _get_foreign_key(parent_model, model, fk_name=None):
-    """
-    Finds and returns the ForeignKey from model to parent if there is one.
-    If fk_name is provided, assume it is the name of the ForeignKey field.
-    """
+    save_new: function(form, commit) {
+        // Use commit=False so we can assign the parent key afterwards, then
+        // save the object.
+        commit = isundefined(commit)? true : commit;
+        var obj = form.save(false);
+        var pk_value = getattr(this.instance, this.fk.rel.field_name);
+        setattr(obj, this.fk.get_attname(), getattr(pk_value, 'pk', pk_value));
+        if (commit)
+            obj.save();
+        // form.save_m2m() can be called via the formset later on if commit=False
+        if (commit && hasattr(form, 'save_m2m'))
+            form.save_m2m();
+        return obj;
+    },
+
+    add_fields: function(form, index) {
+        super(BaseModelFormSet, this).add_fields(form, index);
+        if (this._pk_field == this.fk) {
+            form.fields[this._pk_field.name] = new InlineForeignKeyField(this.instance, { pk_field: true });
+        } else {
+            // The foreign key field might not be on the form, so we poke at the
+            // Model field to get the label, since we need that for error messages.
+            var kwargs = { 'label': getattr(form.fields.get(this.fk.name), 'label', this.fk.verbose_name)};
+            if (this.fk.rel.field_name != this.fk.rel.to._meta.pk.name)
+                kwargs['to_field'] = this.fk.rel.field_name;
+            form.fields[this.fk.name] = new InlineForeignKeyField(this.instance, kwargs);
+        }
+    },
+
+    get_unique_error_message: function(unique_check) {
+        unique_check = [field for each (field in unique_check) if (field != this.fk.name)];
+        return super(BaseModelFormSet, this).get_unique_error_message(unique_check);
+    }
+});
+
+function _get_foreign_key(parent_model, model, fk_name, can_fail) {
+    /*
+    Finds and returns the ForeignKey from model to parent if there is one
+    (returns None if can_fail is True and no such field exists). If fk_name is
+    provided, assume it is the name of the ForeignKey field. Unles can_fail is
+    True, an exception is raised if there is no ForeignKey from model to
+    parent_model.
+    */
     // avoid circular import
-    from django.db.models import ForeignKey
-    opts = model._meta
-    if fk_name:
-        fks_to_parent = [f for f in opts.fields if f.name == fk_name]
-        if len(fks_to_parent) == 1:
-            fk = fks_to_parent[0]
-            if not isinstance(fk, ForeignKey) or \
-                    (fk.rel.to != parent_model and
-                     fk.rel.to not in parent_model._meta.get_parent_list()):
-                raise Exception("fk_name '%s' is not a ForeignKey to %s" % (fk_name, parent_model))
-        elif len(fks_to_parent) == 0:
-            raise Exception("%s has no field named '%s'" % (model, fk_name))
-    else:
+    require('doff.db.models.base', 'ForeignKey');
+    fk_name = fk_name || null;
+    can_fail = can_fail || false;
+    var opts = model._meta;
+    if (fk_name) {
+        var fks_to_parent = [f for each (f in opts.fields) if (f.name == fk_name)];
+        if (len(fks_to_parent) == 1) {
+            var fk = fks_to_parent[0];
+            if (!isinstance(fk, ForeignKey) || (fk.rel.to != parent_model &&
+                     !include(parent_model._meta.get_parent_list(), fk.rel.to)))
+                throw new Exception("fk_name '%s' is not a ForeignKey to %s".subs(fk_name, parent_model));
+        } else if (len(fks_to_parent) == 0)
+            throw new Exception("%s has no field named '%s'".subs(model, fk_name));
+    } else {
         // Try to discover what the ForeignKey from model to parent_model is
-        fks_to_parent = [
-            f for f in opts.fields
-            if isinstance(f, ForeignKey)
-            and (f.rel.to == parent_model
-                or f.rel.to in parent_model._meta.get_parent_list())
+        var fks_to_parent = [
+            f for each (f in opts.fields)
+            if (isinstance(f, ForeignKey)
+            && (f.rel.to == parent_model || include(parent_model._meta.get_parent_list(), fk.rel.to)))
         ]
-        if len(fks_to_parent) == 1:
-            fk = fks_to_parent[0]
-        elif len(fks_to_parent) == 0:
-            raise Exception("%s has no ForeignKey to %s" % (model, parent_model))
-        else:
-            raise Exception("%s has more than 1 ForeignKey to %s" % (model, parent_model))
-    return fk
+        if (len(fks_to_parent) == 1) {
+            var fk = fks_to_parent[0];
+        } else if (len(fks_to_parent) == 0) {
+            if (can_fail)
+                return;
+            throw new Exception("%s has no ForeignKey to %s".subs(model, parent_model));
+        } else {
+            throw new Exception("%s has more than 1 ForeignKey to %s".subs(model, parent_model));
+        }
+    }
+    return fk;
+}
 
-
-def inlineformset_factory(parent_model, model, form=ModelForm,
-                          formset=BaseInlineFormSet, fk_name=None,
-                          fields=None, exclude=None,
-                          extra=3, can_order=False, can_delete=True, max_num=0,
-                          formfield_callback=lambda f: f.formfield()):
-    """
+function inlineformset_factory(parent_model, model) {
+    /*
     Returns an ``InlineFormSet`` for the given kwargs.
 
     You must provide ``fk_name`` if ``model`` has more than one ``ForeignKey``
     to ``parent_model``.
-    """
-    fk = _get_foreign_key(parent_model, model, fk_name=fk_name)
+    */
+    var arg = new Argumentes(arguments, {form: ModelForm, fields: null, exclude: null, fk_name: null,
+            formfield_callback: function(f) { return f.formfield(); }, max_num: 0,
+            formset: BaseInlineFormSet, extra: 3, can_delete: true, can_order: false,});
+    var kwargs = arg.kwargs;
+    var fk = _get_foreign_key(parent_model, model, fk_name=fk_name)
     // enforce a max_num=1 when the foreign key to the parent model is unique.
-    if fk.unique:
-        max_num = 1
-    if fields is not None:
-        fields = list(fields)
-        fields.append(fk.name)
-    else:
-        // get all the fields for this model that will be generated.
-        fields = fields_for_model(model, fields, exclude, formfield_callback).keys()
-        fields.append(fk.name)
-    kwargs = {
-        'form': form,
-        'formfield_callback': formfield_callback,
-        'formset': formset,
-        'extra': extra,
-        'can_delete': can_delete,
-        'can_order': can_order,
-        'fields': fields,
-        'exclude': exclude,
-        'max_num': max_num,
+    if (fk.unique)
+        max_num = 1;
+    var kwargs = {
+        'form': kwargs['form'],
+        'formfield_callback': kwargs['formfield_callback'],
+        'formset': kwargs['formset'],
+        'extra': kwargs['extra'],
+        'can_delete': kwargs['can_delete'],
+        'can_order': kwargs['can_order'],
+        'fields': kwargs['fields'],
+        'exclude': kwargs['exclude'],
+        'max_num': kwargs['max_num'],
     }
-    FormSet = modelformset_factory(model, **kwargs)
-    FormSet.fk = fk
-    return FormSet
+    var FormSet = modelformset_factory(model, kwargs);
+    FormSet.fk = fk;
+    return FormSet;
+}
 
-*/
 // Fields //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 var InlineForeignKeyHiddenInput = type('InlineForeignKeyHiddenInput', HiddenInput, {
     _has_changed: function(initial, data) {
@@ -590,9 +826,9 @@ var InlineForeignKeyField = type('InlineForeignKeyField', Field, {
         this.pk_field = arg.kwargs['pk_field'] || false;
         delete arg.kwargs['pk_field'];
         if (this.parent_instance)
-            arg.kwargs["initial"] = this.parent_instance.pk;
-        arg.kwargs["required"] = false;
-        arg.kwargs["widget"] = InlineForeignKeyHiddenInput;
+            arg.kwargs['initial'] = this.parent_instance.pk;
+        arg.kwargs['required'] = false;
+        arg.kwargs['widget'] = InlineForeignKeyHiddenInput;
         super(Field, this).__init__(arg);
     },
 
@@ -602,7 +838,7 @@ var InlineForeignKeyField = type('InlineForeignKeyField', Field, {
                 return null;
             // if there is no value act as we did before.
             return this.parent_instance;
-	}
+        }
         // ensure the we compare the values as equal types.
         if (value != this.parent_instance.pk)
             throw new ValidationError(this.error_messages['invalid_choice']);
@@ -726,7 +962,7 @@ var ModelMultipleChoiceField = type('ModelMultipleChoiceField', ModelChoiceField
     },
 
     __init__: function() {
-        var arg = new Arguments(arguments, {	'queryset': null, 'cache_choices': false, 'required': true, 'widget': null, 'label': null, 'initial': null, 'help_text': null });
+        var arg = new Arguments(arguments, {'queryset': null, 'cache_choices': false, 'required': true, 'widget': null, 'label': null, 'initial': null, 'help_text': null });
         var kwargs = arg.kwargs;
         assert(kwargs['queryset'] != null, 'Falta queryset');
         super(ModelChoiceField, this).__init__(arg);

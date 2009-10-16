@@ -1,5 +1,5 @@
 var models = require('doff.db.models.base');
-require('doff.contrib.synchronization.proxy');
+require('doff.contrib.offline.proxy');
 
 var SyncLog = type('SyncLog', [ models.Model ], {
     SYNC_STATUS: [["s", "Synced"], ["c", "Created"], ["m", "Modified"], ["d", "Deleted"], ["b", "Bogus"]]

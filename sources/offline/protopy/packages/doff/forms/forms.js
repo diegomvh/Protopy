@@ -268,7 +268,7 @@ var BaseForm = type('BaseForm', object, {
             // initial data, store it in a hidden field, and compare a hash of the
             // submitted data, but we'd need a way to easily get the string value
             // for a given field. Right now, that logic is embedded in the render method of each widget.
-            for each ([name, field] in this.fields.items()) {
+            for each (var [name, field] in this.fields.items()) {
                 var prefixed_name = this.add_prefix(name);
                 var data_value = field.widget.value_from_datadict(this.data, this.files, prefixed_name);
                 if (!field.show_hidden_initial) {

@@ -1780,7 +1780,8 @@
                 throw new TypeError(elements + ' object is not array');
             this.elements = unique(elements);
         },
-        __contains__: function(element){
+        __contains__: function(element) {
+            //TODO: ver como hacer si el elemento es un arreglo :)
             return include(this.elements, element);
         },
         __nonzero__: function(){
@@ -2306,38 +2307,38 @@
             if (Element.isElement(content)) return this.update().insert(content);
             content = html(content);
             this.innerHTML = content.stripscripts();
-            timer.defer(getattr(content, 'evalscripts'), 1);
+            content.evalscripts();
             return this;
         },
-    insert: function(insertions) {
-        if (isinstance(insertions, String) ||
-            isinstance(insertions, Number) ||
-            Element.isElement(insertions) ||
-            (insertions && (insertions.toElement || insertions.__html__))
-            )
-            insertions = {bottom:insertions};
-        var content, insert, tagName, childNodes, self = this;
-        for (var position in insertions) {
-            content  = insertions[position];
-            position = position.toLowerCase();
-            insert = Element._insertion_translations[position];
+        insert: function(insertions) {
+            if (isinstance(insertions, String) ||
+                isinstance(insertions, Number) ||
+                Element.isElement(insertions) ||
+                (insertions && (insertions.toElement || insertions.__html__))
+                )
+                insertions = {bottom:insertions};
+            var content, insert, tagName, childNodes, self = this;
+            for (var position in insertions) {
+                content  = insertions[position];
+                position = position.toLowerCase();
+                insert = Element._insertion_translations[position];
 
-            if (content && content.toElement) content = content.toElement();
-            if (Element.isElement(content)) {
-                insert(this, content);
-                continue;
+                if (content && content.toElement) content = content.toElement();
+                if (Element.isElement(content)) {
+                    insert(this, content);
+                    continue;
+                }
+
+                content = html(content)
+                tagName = ((position == 'before' || position == 'after') ? this.parentNode : this).tagName.toUpperCase();
+                childNodes = Element._get_content_from_anonymous_element(tagName, content.stripscripts());
+
+                if (position == 'top' || position == 'after') 
+                    childNodes.reverse();
+                childNodes.forEach(function (e) { insert(self, e); });
+                getattr(content, 'evalscripts')();
             }
-
-            content = html(content)
-            tagName = ((position == 'before' || position == 'after') ? this.parentNode : this).tagName.toUpperCase();
-            childNodes = Element._get_content_from_anonymous_element(tagName, content.stripscripts());
-
-            if (position == 'top' || position == 'after') 
-                childNodes.reverse();
-            childNodes.forEach(function (e) { insert(self, e); });
-            getattr(content, 'evalscripts')();
-        }
-        return this;
+            return this;
         },
         select: function(selector) {
             return $$(selector, this);

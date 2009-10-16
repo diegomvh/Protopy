@@ -195,11 +195,13 @@ class RemoteSite(RemoteBaseSite):
     #===========================================================================
     @expose(r'^$')
     def index(self, request):
+        
+        """<script type="text/javascript;version=1.7" src="{{ site.lib_url }}/packages/doff/forms/models.js"></script>
+        """        
         content = '''
             <html>
             <head>
                 <script type="text/javascript;version=1.7" src="{{ site.lib_url }}/protopy.js"></script>
-                <script type="text/javascript;version=1.7" src="{{ site.lib_url }}/packages/doff/views/generic/create_update.js"></script>
                 <script type="text/javascript;version=1.7">
                     require('doff.core.project', 'new_project');
                     var {{ site.name }} = new_project('{{ site.name }}', '{{ site.url }}');
