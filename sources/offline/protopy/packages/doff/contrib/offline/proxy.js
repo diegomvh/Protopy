@@ -9,7 +9,7 @@ var JavaScriptDeserializer = require('doff.core.serializers.javascript', 'Deseri
 var url_base = get_project().offline_support + '/data';
 
 function ensure_default_proxy(cls) {
-    require('doff.contrib.synchronization.models', 'SyncModel');
+    require('doff.contrib.offline.models', 'SyncModel');
     if (!cls._meta['abstract'] && issubclass(cls, SyncModel)) {
         try {
             var f = cls._meta.get_field('remotes');

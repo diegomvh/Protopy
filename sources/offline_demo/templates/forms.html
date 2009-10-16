@@ -96,35 +96,32 @@ form table.formset td {
     {% endblock %}
 </form>
 
-<script type="text/javascript"><!--
-	(function (){
-		require('sys');
-		require('event');
-		var initial_data = {};
-		function onload() {
-			var btn_cancel = $$('#cancelar_form')[0];
-			event.connect(btn_cancel, 'click', function (e) {
-				event.stopEvent(e);
-				// window.location = '..';
-				sys.window.history.back();
-			});
-			
-			function get_django_fields() {
-				
-				return $$('form *').filter(function (e){
-					var id = e.getAttribute('id');
-					return  (id && id.search(/^id_/) >= 0);
-				});
-			}
-			var form_fields = get_django_fields();
-			if (form_fields) {
-				form_fields[0].focus();
-			}
-			// console.log(get_django_fields());
-		}
-		event.connect(sys.window, 'load', onload);
-		
-	})();
-
---></script>
+<script type="text/javascript">
+    (function (){
+        require('sys');
+        require('event');
+        var initial_data = {};
+        function onload() {
+            var btn_cancel = $$('#cancelar_form')[0];
+            event.connect(btn_cancel, 'click', function (e) {
+                event.stopEvent(e);
+                sys.window.history.back();
+            });
+            
+            function get_django_fields() {
+                
+                return $$('form *').filter(function (e){
+                    var id = e.getAttribute('id');
+                    return  (id && id.search(/^id_/) >= 0);
+                });
+            }
+            var form_fields = get_django_fields();
+            if (form_fields) {
+                form_fields[0].focus();
+            }
+            // console.log(get_django_fields());
+        }
+        event.connect(sys.window, 'load', onload);
+    })();
+</script>
 {% endblock %}

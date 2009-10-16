@@ -9,15 +9,17 @@ var Project = type('Project', object, {
     do_net_checking: true,
 
     onLoad: function() {
+        // Creo el adaptador para el DOM y hago que tome el control de sys.window
         require('doff.core.client', 'DOMAdapter');
-        // Creo el objeto html
-        this.adapter = new DOMAdapter();
+        sys.window = new DOMAdapter();
+
         // Inicio del handler para las url
         require('doff.core.handler', 'LocalHandler');
         var handler = new LocalHandler(this.settings.ROOT_URLCONF);
 
-        event.connect(this.adapter, 'send', handler, 'receive');
-        event.connect(handler, 'send', this.adapter, 'receive');
+        // Conecto el adaptador al manejador
+        event.connect(sys.window, 'send', handler, 'receive');
+        event.connect(handler, 'send', sys.window, 'receive');
 
         // Inicio el logging, si no hay hay archivo de configuracion no pasa nada
         require('logging.config', 'file_config');
@@ -25,7 +27,7 @@ var Project = type('Project', object, {
             file_config(sys.module_url(this.package, 'logging.js'));
         } catch (except) {}
 
-        this._create_toolbar();
+        //this._create_toolbar();
         // this.network_check();
         // this.start_network_thread();
         // this.go_offline();

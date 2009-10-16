@@ -15,9 +15,8 @@
 'ROOT_URLCONF': 'agentes.urls',
 
 'INSTALLED_APPS': [
-    'doff.contrib.synchronization',
     'doff.contrib.offline',
-    'ventas'
+    'agentes.ventas'
     ],
 
 'TEMPLATE_URLS': [ 

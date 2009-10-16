@@ -228,7 +228,7 @@ var BaseFormSet = type('BaseFormSet', [ object ], {
         if (this._errors == null)
             this.full_clean();
         return this._errors;
-    }
+    },
 
     is_valid: function() {
         /*

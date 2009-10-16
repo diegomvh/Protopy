@@ -3,35 +3,33 @@
 // dictionaries with semicolon.
 
 {
-'DEBUG': true,
-'TEMPLATE_DEBUG': this.DEBUG,
+    'DEBUG': true,
+    'TEMPLATE_DEBUG': this.DEBUG,
 
-//Database
-'DATABASE_ENGINE': 'gears',
-'DATABASE_NAME': '{{ remote_name }}_sqlite.db',
-'DATABASE_OPTIONS': {},
-
-
-{# Aca tenemos que meter la URL de los medios #}
-'MEDIA_URL': '{{ settings.MEDIA_URL }}',
-
-'ROOT_URLCONF': '{{ remote_name}}.urls',
+    //Database
+    'DATABASE_ENGINE': 'gears',
+    'DATABASE_NAME': '{{ remote_name }}_sqlite.db',
+    'DATABASE_OPTIONS': {},
 
 
-'INSTALLED_APPS': [ 
+    {# Aca tenemos que meter la URL de los medios #}
+    'MEDIA_URL': '{{ settings.MEDIA_URL }}',
+
+    'ROOT_URLCONF': '{{ remote_name}}.urls',
+
+
+    'INSTALLED_APPS': [ 
+        'doff.contrib.offline'
+    ],
+
+
+    'TEMPLATE_URLS': [ 
+        '{{ settings.OFFLINE_BASE }}/templates/' 
+    ],
                     
-                    {# 'blog.apps.post' #} 
-                    
-                    ],
 
-
-'TEMPLATE_URLS': [ 
-                   '{{ settings.OFFLINE_BASE }}/templates/' 
-                   ],
-                   
-
-'TEMPLATE_LOADERS': [
-            'doff.template.loaders.url.load_template_source'
-        ]
+    'TEMPLATE_LOADERS': [
+        'doff.template.loaders.url.load_template_source'
+    ]
 }
 

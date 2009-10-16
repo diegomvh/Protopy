@@ -25,7 +25,8 @@ var urlpatterns = patterns('',
     ],
     ['salesman/ciudad/add/$', 'doff.views.generic.create_update.create_object', {
         'model': Ciudad,
-        'post_save_redirect': '/ciudades/'                               
+        'post_save_redirect': '/salesman/ciudades/',
+        'template_name': 'forms.html'                       
         }
     ]
 )
