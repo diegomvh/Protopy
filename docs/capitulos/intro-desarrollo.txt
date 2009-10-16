@@ -2,44 +2,92 @@
 Introducción al desarrollo
 ##########################
 
-.. note:: Un mejor titulo no vendría mal
+En este capítulo se reliza una breve descripción del análisis de las tecnologías
+evaluadas para llevar a cabo la desconexión de una aplicación web.
 
-Soporte de lenguajes de programación en el browser
---------------------------------------------------
+Tras la elección de Django como framework, se adoptó como estrategia inicial
+intentar ejecutar un intérprete de Python en el navegador web para una posterior
+ejecución de Django. Esto requirere que la versión del intérprete posea al menos
+los paquetes de la  librería estandard ``re``, ``sys``, ``time``, 
+``urllib``, ``datetime``, ``mimetypes``, entre otros, que son utilizados
+por el framework.
 
-Tras la elección de Django como framework web, se emprendió el análisis de las posibilidades de 
-ejecución de una aplicación web desarrollada en Django en el browser.
-Surgen puntos de interés como:
- 
-	* ¿Es posible ejecutar el esquema de servidor web en un cliente?
-	* ¿Es posible ejecutar Python y mod_wsgi en el cliente?
-	* ¿Que posibilidades hay de brindar seguridad sobre los datos que se transfieran al cliente?
-	* Una vez lograda la transferencia de una aplicación web al cliente, ¿Que posibilidad existe de sincronizar los datos con la aplicación "madre"?
-	
-entre otras que se analizaran más adelante en el texto. 
+Además de la posiblidad de ejecución del intérprete en el browser, se requiere
+un sistema de almacenamiento persitente en el cliente tanto para el código
+de la aplicación (framework + aplicación) como para los datos (típicamente un
+RDBMS).
 
-El enfoque inicial fue realizar un "espejo" de la aplicación que se ejecuta en el servidor 
-en el cliente.
+Otro aspecto importante a tener en cuenta, además del intérprete, el almacenamiento
+local y la base de datos, es que los frmeworks web están diseñados para ser 
+ejecutados en un entorno cliente-servidor. La interacción con una aplicación
+web se realiza generalmente mediante links, formularios y AJAX, todas estas 
+técnicas se traducen en alguna primitiva HTTP. En ausencia del servidor se debe
+realizar una adaptación de su funcionamiento.
 
-.. figure:: ../_svg/esquema_tranfer_app_inicial.png
-	
-	Elementos a transferir desde la aplicación online
+Existen también otro tipo de consideraciones como la seguridad. Transferir 
+los datos de una aplicación online a una que se transporta en un browser puede
+tener implicancias en la integridad de la información, ya que no es posible 
+lograr un grado de aseguramiento al de un serviodr web para una máquina potencialmente 
+desconocida. 
+
+También es importante tener en cuenta que el acceso a los datos en
+una aplicación web está restringido por la propia aplicación. No existe otro
+mecanismo de acceso a los datos, el usuario no tiene acceso a la base de datos,
+sino a la visión que la aplicación le da sobre esta. Se puede decir que cada
+usuario o grupo tiene asociada una *perspectiva* de los datos.
+
+Si se plantea que la transferencia de una aplicación web del servidor al cliente,
+implica la copia de su base de datos, un usuario con suficientes conocimientos 
+podría tener acceso a información que de otra manera no tendría 
+(cuentas de usuario, registros de actividad, información económica o fincanciaera,
+datos sensibles).
+Por esto es importante analizar *que datos puede ver cada usuario, grupo o rol
+en el sistema*. La aplicación desconectada debería o bien poseer una técnica 
+de encriptamiento sobre los datos (lo que podría repercutir en el desempeño) 
+o trabajar con una base de datos reducida a los datos que el competen al usuario.
+
+De lo anterior se puede inferir que no todas las aplicaciones desconectadas
+son idénticas, sino que en función del usuario tendrán más o menos funcionalidad
+y datos asociados. Además, en una aplicación desconectada no se requiere login,
+o al menos, no de la misma manera que en la aplicación online, donde
+se encuentra suele encontrarse securitizada mediante SSL. 
+
+..
+    Generalmente en una aplicación web, un usuario posee asociado a sus cuenta
+    un rol, al cual se le permite realizar un conjunto de operaciones que determinan
+    a que datos tiene acceso y que opreaciones sobre estos. Una aplicación desconectada
+    debería permitir respetar este esquema.
+
+Otro aspecto a tener en cuenta es la posibilidad de sincronizar las instancias
+de aplicaciones desconectadas con la aplicacion web original.
+
+..
+    Elementos de una aplicación web
+    -------------------------------
+    
+    Una aplicación web que se ejecuta en un servidor web posee 3 componentes 
+    arquitecturales
+    
+    .. figure:: ../_svg/esquema_tranfer_app_inicial.png
+    	
+    	Elementos a transferir desde la aplicación online
+
+Python en el Navegador
+----------------------
+
+..
+    Django está escrito en Python y si bien la ejecución de Python es posible
+    en un browser, la solución es engorrosa y no es cross-browser. En la plataforma Mozilla, la
+    integración se puede realizar mediante PyXPCOM [*]_ , PyShell [*]_ y también existe una 
+    extensión para XUL [*]_
+
+    .. [*] *PyXPCOM*, conexión del modelo de objetos multiplataforma de Mozilla con Python, https://developer.mozilla.org/en/PyXPCOM 
+    .. [*] *PyShell*, consola interactiva 
+    .. [*] *Luxor, Python for XUL* http://mail.python.org/pipermail/python-announce-list/2003-March/002084.html
 
 
-Django está escrito en Python y si bien la ejecución de Python es posible
-en un browser, la solución es engorrosa y no es cross-browser. En la plataforma Mozilla, la
-integración se puede realizar mediante PyXPCOM [*]_ , PyShell [*]_ y también existe una 
-extensión para XUL [*]_
-
-.. [*] *PyXPCOM*, conexión del modelo de objetos multiplataforma de Mozilla con Python, https://developer.mozilla.org/en/PyXPCOM 
-.. [*] *PyShell*, consola interactiva 
-.. [*] *Luxor, Python for XUL* http://mail.python.org/pipermail/python-announce-list/2003-March/002084.html
-
-Soluciones existentes
----------------------
-
-Sobre la plataforma Windows, existen dos formas de ejecutar Python en el navegador, 
-la primera consiste en la ejecución 
+Sobre la plataforma Windows, existen dos formas de ejecutar Python en el navegador:
+La primera consiste en la ejecución 
 de un control ActiveX sobre el browser que cuente con el intérprete
 de Python embebido. Un control ActiveX es un componente ejecutable empotrable, 
 que puede ser dibujado en una página web. 
@@ -56,43 +104,58 @@ necesarias para el desarrollo de aplicaciones para la web.
 Es posible considerar esta solución "cross-browser" gracias a proyectos como
 un *host para ActiveX sobre la plataforma mozilla* [*]_ pero no es multiplataforma. 
 
+.. figure:: ../_svg/esquema_net_silverlight.png
+    
+    Esquema de desarrollo de Silverlight
+
 .. [*] *ActiveX para Mozilla* http://www.iol.ie/~locka/mozilla/plugin.htm
 
-La segunda alternativa es utilizar el framework Silverlight de Microsoft, que 
-permite generar aplicaciones para browsers basados en la plataforma :term:`.Net`.
-Silverlight es un runtime similar al popular Adobe Flash Player, pero las 
-aplicaciones pueden ser creadas en cualquier lenguaje de la plataforma .Net, 
-incluyendo Python y Ruby [*]_ [*]_ a partir de la versión 4, bajo sus implementaciones
-sobre CLR.
+La segunda alternativa es utilizar la tecnología Silverlight de Microsoft, que 
+permite generar aplicaciones para browsers, mediante la plataforma :term:`.Net`.
+Silverlight es un plugin similar al popular Adobe Flash Player, pero las 
+aplicaciones pueden ser creadas en cualquier lenguaje de la plataforma .NET, 
+incluyendo Python [PythonMailistMay07]_ y Ruby  [IronRubyNet09]_.
+En .NET todos los lenguajes complilan a un bytecode llamado Common 
+Language Runtime, para el cual existe un solo intérprete, la propia plataforma
+.NET.
 
-.. note:: 
-	Preguntar en el IRC de *pyar* desde cuando tiene la API standard IronPython
-	si no volar el párrafo
-	
-Esta tecnología exige que el navegador cuente con un plugin para la plataforma, siendo
-el más completo el desarrollado por Microsoft, propulsor de la plataforma .Net.
-IronPython es una implementación de Python sobre .Net que no cuenta con la API standard [*]_
-de la versión CPython, por lo que no se puede ejecutar django de manera nativa. 
-  
+IronPython [MichaelFroodIP09]_ es una implementación de Python sobre .NET que en un principio no 
+contaba con la API standard [PythonDocAPI09]_, sino que permitía utilizar solo
+la propia de .NET, por lo que Django no podía ser ejecutado. En la versión 2.0
+de IronPython se implementó la API standard lograndose ejecutar Django sobre
+IronPython [InforQDjangoIP09]_.
+ 
+.. [IronRubyNet09] IronRuby,
+                    implementación de Ruby sobre .NET,
+                    ultimo acceso Septiembre 2009,
+                    http://www.ironruby.net/
+ 
+.. [InforQDjangoIP09] InfoQ, *Django On IronPython*, último acceso Octubre 2009,
+                         http://www.infoq.com/news/2008/03/django-and-ironpython 
 
-.. [*] *Silverlight, a new way for Python?* http://mail.python.org/pipermail/python-list/2007-May/610021.html
-.. [*] *Sitio de Michael Frood, donde explica como ejecutar IronPython sobre .Net* http://www.voidspace.org.uk/ironpython/silverlight/index.shtml#id2
-.. [*] *Listado de Módulos de la API standard* http://docs.python.org/modindex.html 
+.. [PythonMailistMay07] Lista Oficial sobre el lenguaje Python,
+                        *Silverlight, a new way for Python?*,
+                        ultimo acceso Septiembre de 2009,
+                        http://mail.python.org/pipermail/python-list/2007-May/610021.html
+                        
+.. [MichaelFroodIP09] Michael Frood,
+                      Blog Oficial de Michael Frood, 
+                      *explicación de como ejecutar IronPython sobre .Net*,
+                      http://www.voidspace.org.uk/ironpython/silverlight/index.shtml#id2
 
-Aunque en un principio no era posible ejecutar Django sobre la IronPython, gracias
-a la popularidad del framework, con la versión 2.0 se superó esta dificultad [*]_.
+.. [PythonDocAPI09] Python.org, 
+                    *Listado de Módulos de la API standard*,
+                    ultimo acceso Octubre 2009,
+                    http://docs.python.org/modindex.html 
 
-
-.. [*] *Django On IronPython* http://www.infoq.com/news/2008/03/django-and-ironpython 
-
-En
 
 Gracias a la posibilidad de acceso a DOM por medio de una aplicación construida con
-Silverlight [*]_ y al  almacenamiento local en el cliente introducido en 
+Silverlight [MSDNSilverlightDOM09]_ y al  almacenamiento local en el cliente introducido en 
 en Silverlight 2.0, se hace posible ejecutar Django en el cliente con acceso a 
 una base de datos local, sin embargo, la arquitectura de software necesaria para
-desplegar este tipo de aplicaciones se hace compleja, que en cierta forma apunta
-contra los ideales de Python y Django: 
+desplegar este tipo de aplicaciones es considerablemente compleja, que va en
+contraposición a los ideales de Python y Django.
+ 
  * Plugin necesario
  	Es necesario un plugin en el browser que no se encuentra disponible para todas las
  	plataformas *no cross-browser*.
@@ -104,54 +167,60 @@ contra los ideales de Python y Django:
  * No existe soporte para IronPython en la IDE de facto, VisualStudio.
  * La implementación de Python no es la estándar, y por ahora poco soportada [IronPythonFAQ2009]_ .
  
+.. [MSDNSilverlightDOM09] Microsoft Developer Network, 
+   Silverlight Programming Models, XAML, and the HTML DOM,
+   último acceso Octubre 2009
+   http://msdn.microsoft.com/en-us/library/cc838215%28VS.95%29.aspx
  
-.. [IronPythonFAQ2009] *Diferencias entre IronPython y CPython* http://ironpython.codeplex.com/Wiki/View.aspx?title=IPy2.0.xCPyDifferences&referringTitle=Home
+.. [IronPythonFAQ2009] Sitio oficial de IronPython,
+                        *Diferencias entre IronPython y CPython*,
+                        último acceso Septiembre 2009,
+                         http://ironpython.codeplex.com/Wiki/View.aspx?title=IPy2.0.xCPyDifferences&referringTitle=Home
  
 Tras el análisis de Silverlight como tecnología de soporte, se decide analizar las posibilidades
 nativas de los navegadores web. En particular se focalizó el análisis sobre las implementaciones de Javascript 
 como lenguaje de soporte para la programación del lado del cliente.
-
-Un lenguaje adecuado para ejecución de la aplicación en el cliente
-------------------------------------------------------------------
-
-En principio, Javascript y Python parecen lenguajes bastante diferentes en su sintaxis, sin
-embargo, comparten ciertas características como ser orientados a objetos basados en prototipos y
-permitir la definición de clausuras [AtulVarma2009]_ .
-
-
-
-
-.. [AtulVarma2009] *Python For Javascript Programmers*, Atul Varma http://hg.toolness.com/python-for-js-programmers/raw-file/tip/PythonForJsProgrammers.html
- 
-
-Más allá de la ejecución de Python, el servidor necesita un medio para almacenar los datos, 
-típicamente una base de datos y un mecanismo para servir estáticamente los archivos de medios.
-Transportar la aplicación a un cliente web requiere un mecanismo de almacenamiento que brinde 
-estos dos elementos en conjunto.
-
-Google desarrolló un plugin multiplataforma y cross-browser llamado *Google Gears* que tiene 
-como objetivo facilitar el sporte offline de aplicaciones web. 
-Gears se compone de 3 componentes básicos:
-
-	* LocalServer
-		Un servidor de archivos estáticos en el clinete
-	* DataBase
-		Una base de datos relacional
-	* WorkerPool 
-		Un sistema de procesos, para realizar tareas concurrentes de manera aislada y 
-		no provocar retrasos en el dibujado de la pantalla. 
-
-
-
-
-
-
 
 .. [*] *Silverlight Tutorial - Interaction With The DOM* http://www.switchonthecode.com/tutorials/silverlight-tutorial-interaction-with-the-dom
 .. [*] *Isolated Storage in Silverlight 2.0* http://www.ddj.com/windows/208300036
 .. [*] *Silverlight out-of-browser apps: Local Data Store* http://nerddawg.blogspot.com/2009/04/silverlight-out-of-browser-apps-local.html
 
 
+Lenguaje de Aplicación en el Cliente
+------------------------------------------------------------------
+
+Como ya se introdujo en los apartados teóricos, JavaScript es el lenguaje de
+programación presente en todas las implementaciones de los navegadores
+web más populares.
+
+Javascript y Python parecen lenguajes bastante diferentes en su sintaxis, sin
+embargo, comparten ciertas características como ser orientados a objetos basados 
+en prototipos, permitir la definición de clausuras[AtulVarma2009]_ y a partir
+de la versión 1.7 del lenguaje, incluye generadores e iteradores, dos piezas 
+muy comunes del lenguaje.
+
+.. [AtulVarma2009] *Python For Javascript Programmers*, Atul Varma http://hg.toolness.com/python-for-js-programmers/raw-file/tip/PythonForJsProgrammers.html
+
+Una aplicación escrita en JavaScript no requiere plugins externos para funcionar,
+su intérprete y su librería estándar está incorporada en el navegador. 
+
+Una aplicación escrita en JavaScript consiste en archivos de texto a los cuales
+se accede mediante una URL, como cualquier otro recuro. Google Gears mediante su
+LocalServer permite almacenar estos recursos. Este componente permite también
+capturar todos los recursos estáticos que utilice el sitio mediante varias
+técnicas. Gears además brinda una base de datos para el browser. 
+
+Geras al contrario que Silverligh o Flash, está en la misma etapa de desarrollo
+en todas las plataformas soportadas y su código es OpenSource, al igual que el
+lenguaje Python y el framework Django.
+
+La combinación de JavaScript y Gears en el cliente se presenta como una alternativa
+viable para la transferencia de las aplicaciones escritas en Django.
+
+Tras el análisis de un proyecto [GearsOnRails09]_ que persigue objetivos similares a la presente
+tesis, pero basado en el framework Ruby On Rails, se realiza el anállis de que
+componentes del frameowrk Django son necesarios migrar a JavaScript.
+ 
 
 Generar este espejo conlleva poseer un equivalente al framework Django que 
 pueda ser ejecutado en un browser, brindando los componentes básicos de Django:
