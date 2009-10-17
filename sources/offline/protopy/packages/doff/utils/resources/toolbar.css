@@ -11,6 +11,8 @@ div#toolbar {
     border-top: 1px solid #CCCCCC;
     border-left: 1px solid #CCCCCC;
     border-right: 1px solid #CCCCCC;
+    font-size: 14px;
+    background-color: #CCC;
 }
 
 div#toolbar div.panel {
@@ -23,6 +25,7 @@ div#toolbar div.panel {
     position: fixed;
     bottom: 20px;
     margin-left: 5%;
+    padding-top: 16px;
 }
 
 div#toolbar div.panel h1.header {
@@ -40,6 +43,7 @@ div#toolbar div.panel h1.header img {
     float: right;
     margin-right: 4px;
     margin-top: -19px;
+    margin-bottom: 2px;
 }
 
 div#toolbar div.panel div.content {
@@ -57,9 +61,11 @@ div#toolbar ul {
     margin: 0px;
     padding: 4px;
     height: 29px;
+    background-color: #CCC;
 }
 
 div#toolbar ul li {
+	border: 0px;
     border-right: 1px solid #888888;
     padding-left: 6px;
     padding-right: 6px;

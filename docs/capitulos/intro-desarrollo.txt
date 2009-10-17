@@ -272,6 +272,7 @@ más promisora para la implementación de aplicaciones desconectadas escritas en
 Tras el análisis de un proyecto [GearsOnRails09]_ que persigue objetivos similares a la presente
 tesis, pero basado en el framework Ruby On Rails, se realiza el anállis de que
 componentes del frameowrk Django son necesarios migrar a JavaScript.
+
  
 
 Generar este espejo conlleva poseer un equivalente al framework Django que 
@@ -286,7 +287,7 @@ sobre el framework Rails.
 
 
 
-.. [*] *Gears On Rails*
+.. [GearsOnRails09] *Gears On Rails*
 
 
 

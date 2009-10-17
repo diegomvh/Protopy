@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="900"
+   height="600"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.46"
+   version="1.0"
+   sodipodi:docname="esquema_utilizacion_offline.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+  <defs
+     id="defs4">
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend"
+       style="overflow:visible">
+      <path
+         id="path3213"
+         d="M 0,0 L 5,-5 L -12.5,0 L 5,5 L 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)" />
+    </marker>
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       id="perspective10" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.70710678"
+     inkscape:cx="455.80218"
+     inkscape:cy="311.57931"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     showguides="false"
+     inkscape:window-width="1432"
+     inkscape:window-height="789"
+     inkscape:window-x="0"
+     inkscape:window-y="35" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Capa 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="opacity:1;fill:#ccffaa;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.23199999;stroke-linecap:round;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect2383"
+       width="242.66667"
+       height="94.354713"
+       x="84.955803"
+       y="63.850899"
+       rx="16.529146"
+       ry="16.529146" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:bold;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans;-inkscape-font-specification:Sans Bold"
+       x="134.3503"
+       y="135.34003"
+       id="text2385"><tspan
+         sodipodi:role="line"
+         id="tspan2387"
+         x="134.3503"
+         y="135.34003" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:13.13705254px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans"
+       x="101.57225"
+       y="88.92588"
+       id="text2397"
+       transform="scale(1.0001354,0.9998646)"><tspan
+         sodipodi:role="line"
+         id="tspan2399"
+         x="101.57225"
+         y="88.92588">Crear proyecto</tspan><tspan
+         sodipodi:role="line"
+         x="101.57225"
+         y="105.3472"
+         id="tspan2401">Django:</tspan><tspan
+         sodipodi:role="line"
+         x="101.57225"
+         y="121.76851"
+         id="tspan4047"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#5f5f5f;fill-opacity:1;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono">django-admin.py \</tspan><tspan
+         sodipodi:role="line"
+         x="101.57225"
+         y="138.18983"
+         id="tspan4049"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#5f5f5f;fill-opacity:1;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono">    startproject my_project</tspan></text>
+    <text
+       id="text2403"
+       y="122.69028"
+       x="60.60915"
+       style="font-size:18px;font-style:normal;font-weight:normal;fill:#5f5f5f;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans"
+       xml:space="preserve"><tspan
+         y="145.19028"
+         x="60.60915"
+         sodipodi:role="line"
+         id="tspan2411"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#5f5f5f;fill-opacity:1;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono" /></text>
+    <rect
+       ry="16.529146"
+       rx="16.529146"
+       y="70.485207"
+       x="390.49847"
+       height="123.54421"
+       width="242.66667"
+       id="rect3183"
+       style="opacity:1;fill:#ccffaa;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.23199999;stroke-linecap:round;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+    <text
+       id="text3185"
+       y="95.561081"
+       x="407.07361"
+       style="font-size:13.13705254px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans"
+       xml:space="preserve"
+       transform="scale(1.0001354,0.9998646)"><tspan
+         id="tspan3189"
+         y="95.561081"
+         x="407.07361"
+         sodipodi:role="line">Crear proyecto aplicación dentro</tspan><tspan
+         y="111.9824"
+         x="407.07361"
+         sodipodi:role="line"
+         id="tspan3199">del proyecto</tspan><tspan
+         y="128.40372"
+         x="407.07361"
+         sodipodi:role="line"
+         id="tspan4039"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#5a5a55;fill-opacity:1;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono">manage.py \</tspan><tspan
+         y="144.82503"
+         x="407.07361"
+         sodipodi:role="line"
+         id="tspan4041"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#5a5a55;fill-opacity:1;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono">    startapp my_app</tspan><tspan
+         y="161.24634"
+         x="407.07361"
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans"
+         id="tspan4065">e implementar los modelos, </tspan><tspan
+         y="177.66766"
+         x="407.07361"
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans"
+         id="tspan4067">vistas y templates</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:18px;font-style:normal;font-weight:normal;fill:#5f5f5f;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans"
+       x="479.198"
+       y="131.78165"
+       id="text3191"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#5f5f5f;fill-opacity:1;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono"
+         id="tspan3195"
+         sodipodi:role="line"
+         x="479.198"
+         y="154.28165" /></text>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#Arrow1Lend);stroke-opacity:1;display:inline"
+       d="M 326.62669,111.44939 L 387.4239,111.88"
+       id="path3985"
+       inkscape:connector-type="polyline"
+       sodipodi:nodetypes="cc" />
+    <rect
+       ry="16.529146"
+       rx="16.529146"
+       y="224.39316"
+       x="84.955803"
+       height="61.18314"
+       width="242.66667"
+       id="rect3987"
+       style="opacity:1;fill:#ffeeaa;fill-opacity:1;fill-rule:evenodd;stroke:#806600;stroke-width:1.23199999;stroke-linecap:round;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+    <text
+       id="text3989"
+       y="249.4899"
+       x="101.57225"
+       style="font-size:13.13705254px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans"
+       xml:space="preserve"
+       transform="scale(1.0001354,0.9998646)"><tspan
+         id="tspan3993"
+         y="249.4899"
+         x="101.57225"
+         sodipodi:role="line">Añadir la aplicación <tspan
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#5a5a5a;fill-opacity:1;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono"
+   id="tspan4005">&quot;offline&quot;</tspan> a</tspan><tspan
+         y="265.91122"
+         x="101.57225"
+         sodipodi:role="line"
+         id="tspan4003"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#5a5a5a;fill-opacity:1;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono">INSTALLED_APPS</tspan></text>
+    <path
+       sodipodi:nodetypes="cc"
+       inkscape:connector-type="polyline"
+       id="path4021"
+       d="M 391.51312,152.13689 L 212.67294,223.92251"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#Arrow1Lend);stroke-opacity:1;display:inline" />
+    <rect
+       ry="16.529146"
+       rx="16.529146"
+       y="207.3121"
+       x="391.52853"
+       height="94.354713"
+       width="242.66667"
+       id="rect4023"
+       style="opacity:1;fill:#ffeeaa;fill-opacity:1;fill-rule:evenodd;stroke:#806600;stroke-width:1.23199999;stroke-linecap:round;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+    <path
+       sodipodi:nodetypes="cc"
+       inkscape:connector-type="polyline"
+       id="path4043"
+       d="M 327.16362,244.33406 L 392.33032,260.86813"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#Arrow1Lend);stroke-opacity:1;display:inline" />
+    <text
+       id="text4051"
+       y="232.40656"
+       x="408.10355"
+       style="font-size:13.13705254px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans"
+       xml:space="preserve"
+       transform="scale(1.0001354,0.9998646)"><tspan
+         id="tspan4055"
+         y="232.40656"
+         x="408.10355"
+         sodipodi:role="line">Ejecutar el comando:</tspan><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#5f5f5f;fill-opacity:1;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono"
+         id="tspan4057"
+         y="248.82787"
+         x="408.10355"
+         sodipodi:role="line">django-admin.py \</tspan><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#5f5f5f;fill-opacity:1;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono"
+         id="tspan4059"
+         y="265.24918"
+         x="408.10355"
+         sodipodi:role="line">  start_remotesite \</tspan><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#5f5f5f;fill-opacity:1;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono"
+         y="281.6705"
+         x="408.10355"
+         sodipodi:role="line"
+         id="tspan4063">  my_remote</tspan></text>
+    <path
+       style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.23199964;stroke-linecap:round;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:url(#Arrow1Lend);stroke-miterlimit:4;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="M 623.04902,70.16782 C 620.069,59.042523 626.67663,47.593923 637.79819,44.612908 C 648.91974,41.631893 660.36449,48.241744 663.34451,59.367039 C 666.32452,70.49233 659.71689,81.94093 648.59534,84.92195 C 643.71761,86.22937 639.15214,84.3767 634.55602,83.75838"
+       id="path4069"
+       sodipodi:nodetypes="csssc" />
+    <rect
+       style="opacity:1;fill:#ffeeaa;fill-opacity:1;fill-rule:evenodd;stroke:#806600;stroke-width:1.23199999;stroke-linecap:round;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect4587"
+       width="242.66667"
+       height="58.91032"
+       x="84.955803"
+       y="311.96167"
+       rx="16.529146"
+       ry="16.529146" />
+    <text
+       xml:space="preserve"
+       style="font-size:13.13705254px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans"
+       x="101.57227"
+       y="337.07025"
+       id="text4589"
+       transform="scale(1.0001354,0.9998646)"><tspan
+         sodipodi:role="line"
+         x="101.57227"
+         y="337.07025"
+         id="tspan4591">Agregar los modelos a publicar</tspan><tspan
+         id="tspan4597"
+         sodipodi:role="line"
+         x="101.57227"
+         y="353.49158"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#5f5f5f;fill-opacity:1;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono"><tspan
+   id="tspan4607"
+   style="fill:#000000;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans">al RemoteSite </tspan>my_remote</tspan><tspan
+         sodipodi:role="line"
+         x="101.57227"
+         y="369.91287"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans"
+         id="tspan4599" /></text>
+    <path
+       sodipodi:nodetypes="cc"
+       inkscape:connector-type="polyline"
+       id="path4609"
+       d="M 391.49741,282.88618 L 325.9123,325.03121"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#Arrow1Lend);stroke-opacity:1;display:inline" />
+    <rect
+       style="opacity:1;fill:#ffeeaa;fill-opacity:1;fill-rule:evenodd;stroke:#806600;stroke-width:1.23199999;stroke-linecap:round;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect4623"
+       width="242.66667"
+       height="94.354713"
+       x="391.52853"
+       y="332.39432"
+       rx="16.529146"
+       ry="16.529146" />
+    <text
+       xml:space="preserve"
+       style="font-size:13.13705254px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans"
+       x="408.10355"
+       y="350.20731"
+       id="text4625"
+       transform="scale(1.0001354,0.9998646)"><tspan
+         sodipodi:role="line"
+         x="408.10355"
+         y="350.20731"
+         id="tspan4627">Migrar una aplicación al </tspan><tspan
+         sodipodi:role="line"
+         x="408.10355"
+         y="366.62863"
+         id="tspan4637">RemoteSite:</tspan><tspan
+         sodipodi:role="line"
+         x="408.10355"
+         y="383.04993"
+         id="tspan4629"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#5f5f5f;fill-opacity:1;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono">manage.py \</tspan><tspan
+         id="tspan4633"
+         sodipodi:role="line"
+         x="408.10355"
+         y="399.47125"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#5f5f5f;fill-opacity:1;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono">  migrate_app my_remote \</tspan><tspan
+         sodipodi:role="line"
+         x="408.10355"
+         y="415.89258"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#5f5f5f;fill-opacity:1;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono"
+         id="tspan4657">  my_app</tspan></text>
+    <path
+       sodipodi:nodetypes="cc"
+       inkscape:connector-type="polyline"
+       id="path4659"
+       d="M 327.37217,347.90296 L 392.53885,364.43703"
+       style="opacity:1;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:url(#Arrow1Lend);stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+    <path
+       style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.23199964;stroke-linecap:round;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:url(#Arrow1Lend);stroke-miterlimit:4;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="M 622.48192,332.1184 C 619.5019,320.99311 626.10953,309.54451 637.23109,306.56349 C 648.35264,303.58248 659.79739,310.19233 662.77741,321.31762 C 665.75742,332.44291 659.14979,343.89151 648.02824,346.87253 C 643.15051,348.17995 638.58504,346.32728 633.98892,345.70896"
+       id="path4661"
+       sodipodi:nodetypes="csssc" />
+    <rect
+       ry="16.529146"
+       rx="16.529146"
+       y="392.39432"
+       x="91.528526"
+       height="65.908005"
+       width="242.66667"
+       id="rect4663"
+       style="opacity:1;fill:#ffeeaa;fill-opacity:1;fill-rule:evenodd;stroke:#806600;stroke-width:1.23199999;stroke-linecap:round;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+    <text
+       xml:space="preserve"
+       style="font-size:13.13705254px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans"
+       x="103.90742"
+       y="414.26193"
+       id="text4665"
+       transform="scale(1.0001354,0.9998646)"><tspan
+         sodipodi:role="line"
+         x="103.90742"
+         y="414.26193"
+         id="tspan4669">Escribir las vistas en JavaScript</tspan><tspan
+         sodipodi:role="line"
+         x="103.90742"
+         y="430.68326"
+         id="tspan4679">utilizando <tspan
+   style="font-weight:bold"
+   id="tspan4692">Doff</tspan> como si fuera</tspan><tspan
+         sodipodi:role="line"
+         x="103.90742"
+         y="447.10455"
+         id="tspan4690">Django</tspan><tspan
+         sodipodi:role="line"
+         x="103.90742"
+         y="463.52588"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#5f5f5f;fill-opacity:1;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono"
+         id="tspan4675" /></text>
+    <path
+       sodipodi:nodetypes="cc"
+       inkscape:connector-type="polyline"
+       id="path4686"
+       d="M 394.98954,397.92698 L 329.82286,414.46105"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#Arrow1Lend);stroke-opacity:1;display:inline" />
+    <path
+       style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.23199952;stroke-linecap:round;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:url(#Arrow1Lend);stroke-miterlimit:4;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="M 100.28483,393.22279 C 102.69349,384.22363 97.35274,374.96294 88.36351,372.55162 C 79.37429,370.1403 70.12383,375.48696 67.71517,384.48612 C 65.30651,393.48529 70.64727,402.74597 79.63649,405.1573 C 83.57901,406.21486 87.26915,404.71625 90.98406,404.21609"
+       id="path4688"
+       sodipodi:nodetypes="csssc" />
+    <rect
+       style="opacity:1;fill:#ccffaa;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.23199987;stroke-linecap:round;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect4694"
+       width="242.66667"
+       height="54.756729"
+       x="387.66666"
+       y="471.8226"
+       rx="16.529146"
+       ry="16.529144" />
+    <text
+       xml:space="preserve"
+       style="font-size:13.13705254px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans"
+       x="404.24213"
+       y="496.953"
+       id="text4696"
+       transform="scale(1.0001354,0.9998646)"><tspan
+         sodipodi:role="line"
+         x="404.24213"
+         y="496.953"
+         id="tspan4700">Modificar los templates para </tspan><tspan
+         sodipodi:role="line"
+         x="404.24213"
+         y="513.37433"
+         id="tspan4704"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans">bootstrap de la aplicación offline</tspan></text>
+    <path
+       sodipodi:nodetypes="cc"
+       inkscape:connector-type="polyline"
+       id="path4726"
+       d="M 330.77261,451.60567 L 390.98954,478.74634"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#Arrow1Lend);stroke-opacity:1;display:inline" />
+    <path
+       style="font-size:164.23693848px;font-style:normal;font-weight:bold;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans;-inkscape-font-specification:Sans"
+       d="M 677.84577,189.31763 L 677.84577,200.09764 L 681.62008,200.09764 C 691.72555,200.09762 698.50306,198.25105 701.95266,194.55792 C 705.36176,190.86476 707.06628,183.50341 707.06625,172.47387 L 707.06625,154.58204 C 707.06628,147.04605 708.16205,141.83073 710.35355,138.93606 C 712.54512,136.04147 716.52234,134.59415 722.28525,134.59411 L 725.99868,134.59411 L 725.99868,123.88896 L 722.28525,123.88896 C 716.48176,123.88901 712.50453,122.46665 710.35355,119.62187 C 708.16205,116.7273 707.06628,111.56188 707.06625,104.12561 L 707.06625,86.158923 C 707.06628,75.129475 705.36176,67.793086 701.95266,64.149735 C 698.50306,60.456697 691.72555,58.610124 681.62008,58.610007 L 677.84577,58.610007 L 677.84577,69.315156 L 681.98534,69.315156 C 687.70773,69.315262 691.44146,70.413225 693.18652,72.609049 C 694.93168,74.805077 695.80424,79.421512 695.80419,86.458368 L 695.80419,105.02395 C 695.80424,112.85947 696.73767,118.54892 698.60448,122.0923 C 700.4308,125.63577 703.57606,128.03133 708.04027,129.27896 C 703.53548,130.62651 700.36993,133.07197 698.54361,136.61536 C 696.71738,140.15883 695.80424,145.82332 695.80419,153.60885 L 695.80419,172.17442 C 695.80424,179.21137 694.93168,183.82781 693.18652,186.02375 C 691.44146,188.21966 687.70773,189.31762 681.98534,189.31763 L 677.84577,189.31763"
+       id="text4732" />
+    <path
+       id="path4737"
+       d="M 677.84577,432.15718 L 677.84577,450.26416 L 683.17196,450.26416 C 697.43249,450.26413 706.99671,447.16248 711.86467,440.9592 C 716.67548,434.75586 719.08085,422.39114 719.08081,403.86503 L 719.08081,373.81245 C 719.08085,361.15439 720.62717,352.39431 723.71975,347.53219 C 726.81242,342.6702 732.42496,340.23916 740.55739,340.2391 L 745.79767,340.2391 L 745.79767,322.25785 L 740.55739,322.25785 C 732.36769,322.25794 726.75514,319.86883 723.71975,315.0905 C 720.62717,310.22855 719.08085,301.55229 719.08081,289.06172 L 719.08081,258.8834 C 719.08085,240.35744 716.67548,228.03466 711.86467,221.91498 C 706.99671,215.71186 697.43249,212.61019 683.17196,212.61001 L 677.84577,212.61001 L 677.84577,230.59125 L 683.6874,230.59125 C 691.76267,230.59142 697.03159,232.43566 699.49416,236.12394 C 701.95688,239.81257 703.1882,247.5667 703.18814,259.38638 L 703.18814,290.57065 C 703.1882,303.73182 704.50543,313.28829 707.13982,319.24004 C 709.71707,325.19194 714.15557,329.21572 720.45531,331.31134 C 714.09829,333.57479 709.63117,337.68239 707.05392,343.63415 C 704.4768,349.58605 703.1882,359.10059 703.18814,372.1778 L 703.18814,403.36205 C 703.1882,415.18188 701.95688,422.93603 699.49416,426.62451 C 697.03159,430.31294 691.76267,432.15716 683.6874,432.15718 L 677.84577,432.15718"
+       style="font-size:164.23693848px;font-style:normal;font-weight:bold;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans;-inkscape-font-specification:Sans" />
+    <text
+       xml:space="preserve"
+       style="font-size:18px;font-style:normal;font-weight:bold;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans;-inkscape-font-specification:Sans"
+       x="736.32715"
+       y="135.07404"
+       id="text4741"><tspan
+         sodipodi:role="line"
+         id="tspan4743"
+         x="736.32715"
+         y="135.07404">Django</tspan></text>
+    <text
+       id="text4745"
+       y="337.07404"
+       x="760.32715"
+       style="font-size:18px;font-style:normal;font-weight:bold;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans;-inkscape-font-specification:Sans"
+       xml:space="preserve"><tspan
+         y="337.07404"
+         x="760.32715"
+         id="tspan4747"
+         sodipodi:role="line">Offline</tspan></text>
+  </g>
+</svg>

@@ -31,7 +31,7 @@ var Project = type('Project', object, {
         // this.network_check();
         // this.start_network_thread();
         // this.go_offline();
-        //this.adapter.location = '/';
+        sys.window.location = '/';
     },
 
     onNetwork: function(type) {

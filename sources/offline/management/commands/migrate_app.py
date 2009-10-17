@@ -11,10 +11,6 @@
 # * crear {{ OFFLINE_ROOT}}/{{APP_NAME}}/urls.js
 
 
-class DeprecationError(Exception):
-    pass
-
-raise DeprecationError
 
 from os.path import dirname, abspath, exists, join
 from django.db.models.loading import get_app

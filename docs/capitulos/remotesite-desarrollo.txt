@@ -90,3 +90,9 @@ El sitio remoto tiene la responsabilidad de servir el código del framework
 doff y el proyecto offline (vistas, modelos, urls, templates).
 
 
+Ciclo de Trabajo
+----------------
+
+.. figure:: ../_svg/esquema_utilizacion_offline.png
+
+	Esquema de trabajo con la aplicación offline
