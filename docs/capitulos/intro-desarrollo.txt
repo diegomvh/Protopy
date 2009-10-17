@@ -2,24 +2,24 @@
 Introducción al desarrollo
 ##########################
 
-En este capítulo se reliza una breve descripción del análisis de las tecnologías
+En este capítulo se realiza una breve descripción del análisis de las tecnologías
 evaluadas para llevar a cabo la desconexión de una aplicación web.
 
 Tras la elección de Django como framework, se adoptó como estrategia inicial
 intentar ejecutar un intérprete de Python en el navegador web para una posterior
-ejecución de Django. Esto requirere que la versión del intérprete posea al menos
-los paquetes de la  librería estandard ``re``, ``sys``, ``time``, 
+ejecución de Django. Esto requiriere que la versión del intérprete posea al menos
+los paquetes de la  librería estándar ``re``, ``sys``, ``time``, 
 ``urllib``, ``datetime``, ``mimetypes``, entre otros, que son utilizados
 por el framework.
 
 
-Además de la posiblidad de ejecución del intérprete en el browser, se requiere
-un sistema de almacenamiento persitente en el cliente tanto para el código
+Además de la posibilidad de ejecución del intérprete en el browser, se requiere
+un sistema de almacenamiento persistente en el cliente tanto para el código
 de la aplicación (framework + aplicación) como para los datos (típicamente un
 RDBMS).
 
 Otro aspecto importante a tener en cuenta, además del intérprete,  el almacenamiento
-local y la base de datos, es que los frmeworks web están diseñados para ser 
+local y la base de datos, es que los frameworks web están diseñados para ser 
 ejecutados en un entorno cliente-servidor. La interacción con una aplicación
 web se realiza generalmente mediante links, formularios y AJAX, todas estas 
 técnicas se traducen en alguna primitiva HTTP. En ausencia del servidor se debe
@@ -28,7 +28,7 @@ realizar una adaptación de su funcionamiento.
 Existen también otro tipo de consideraciones como la seguridad. Transferir 
 los datos de una aplicación online a una que se transporta en un browser puede
 tener implicancias en la integridad de la información, ya que no es posible 
-lograr un grado de aseguramiento al de un serviodr web para una máquina potencialmente 
+lograr un grado de aseguramiento al de un servidor web para una máquina potencialmente 
 desconocida. 
 
 También es importante tener en cuenta que el acceso a los datos en
@@ -40,11 +40,11 @@ usuario o grupo tiene asociada una *perspectiva* de los datos.
 Si se plantea que la transferencia de una aplicación web del servidor al cliente,
 implica la copia de su base de datos, un usuario con suficientes conocimientos 
 podría tener acceso a información que de otra manera no tendría 
-(cuentas de usuario, registros de actividad, información económica o fincanciaera,
+(cuentas de usuario, registros de actividad, información económica o financiera,
 etc).
 Por esto es importante analizar *que datos puede ver cada usuario, grupo o rol
 en el sistema*. La aplicación desconectada debería o bien poseer una técnica 
-de encriptamiento sobre los datos (lo que podría repercutir en el desempeño) 
+de encartamiento sobre los datos (lo que podría repercutir en el desempeño) 
 o trabajar con una base de datos reducida.
 
 De lo anterior se puede inferir que no todas las aplicaciones desconectadas
@@ -55,7 +55,7 @@ la autenticación suele encontrarse asegurada mediante SSL.
 
 
 Otro aspecto a tener en cuenta es la posibilidad de sincronizar las instancias
-de aplicaciones desconectadas con la aplicacion web original.
+de aplicaciones desconectadas con la aplicación web original.
 
 ..
     Elementos de una aplicación web
@@ -72,7 +72,7 @@ Python en el Navegador
 ----------------------
 
 Sobre la plataforma Windows, existen dos formas de ejecutar Python en el navegador:
-La primera consiste en la ejecución del intérprete emebebido en un control ActiveX.
+La primera consiste en la ejecución del intérprete embebido en un control ActiveX.
 Un control ActiveX es un componente ejecutable empotrable, 
 que puede ser dibujado en una página web. 
 Los controles ActiveX son peligrosos en el ámbito de la web debido 
@@ -99,14 +99,14 @@ permite generar aplicaciones para browsers, mediante la plataforma .NET.
 Silverlight es un plugin similar al popular Adobe Flash, pero las 
 aplicaciones pueden ser creadas en cualquier lenguaje de la plataforma .NET, 
 incluyendo Python [PythonMailistMay07]_ y Ruby  [IronRubyNet09]_.
-En .NET todos los lenguajes complilan a un bytecode llamado Common 
+En .NET todos los lenguajes compilan a un bytecode llamado Common 
 Language Runtime, para el cual existe un solo intérprete, la propia plataforma
 .NET.
 
 IronPython [MichaelFroodIP09]_ es una implementación de Python sobre .NET que en un principio no 
-contaba con la API standard [PythonDocAPI09]_, sino que permitía utilizar solo
+contaba con la API estándar [PythonDocAPI09]_, sino que permitía utilizar solo
 la propia de .NET, por lo que Django no podía ser ejecutado. En la versión 2.0
-de IronPython se implementó la API standard lográndose ejecutar Django sobre
+de IronPython se implementó la API estándar lográndose ejecutar Django sobre
 IronPython [InforQDjangoIP09]_.
  
 .. [IronRubyNet09] IronRuby,
@@ -135,7 +135,7 @@ IronPython [InforQDjangoIP09]_.
 
 Gracias a la posibilidad de acceso a DOM por medio de una aplicación construida con
 Silverlight [MSDNSilverlightDOM09]_ [SwOnCodeSlvlgth09]_ y al  almacenamiento local en el cliente introducido en 
-en Silverlight 2.0 [DinoEspositoSlvlght09]_, esta tecnología brina las herramientas para
+en Silverlight 2.0 [DinoEspositoSlvlght09]_, esta tecnología brinda las herramientas para
 ejecutar Django en el cliente sin conexión [AshishShettySlvlght09]_,
 sin embargo, la arquitectura de software necesaria para
 desplegar este tipo de aplicaciones es considerablemente compleja, que va en
@@ -188,14 +188,14 @@ Debido a estas limitaciones se descartó Silverlight como tecnología de soporte
 
 En la plataforma Mozilla, la integración con Python se puede realizar mediante PyXPCOM [*]_ , 
 PyShell [*]_ y también existe una extensión para XUL [*]_, pero al igual que con 
-Silverlight, es una solución enogrrosa.
+Silverlight, es una solución engorrosa.
 
 .. [*] *PyXPCOM*, conexión del modelo de objetos multiplataforma de Mozilla con Python, https://developer.mozilla.org/en/PyXPCOM 
 .. [*] *PyShell*, consola interactiva 
 .. [*] *Luxor, Python for XUL* http://mail.python.org/pipermail/python-announce-list/2003-March/002084.html
 
-Luego de analizar las alternativas acutales de ejecución local de Python,
-se decidió analizar la posiblidad de realizar la aplicación del cliente utilizando
+Luego de analizar las alternativas actuales de ejecución local de Python,
+se decidió analizar la posibilidad de realizar la aplicación del cliente utilizando
 las tecnologías propias del navegador.
 
 Lenguaje de Aplicación en el Cliente
@@ -234,26 +234,26 @@ con llaves [*]_" [GuyonMoreePythonBraces09]_.
        ``SyntaxError: not a chance`` (*Not a chance* se traduce coloquialmente
        *imposible*, *olvídalo!*).
          
-JavaScript no posee mencanismos de almacenamiento local. Si bien un navegador
+JavaScript no posee mecanismos de almacenamiento local. Si bien un navegador
 almacena muchos recursos de este tipo en su caché, lo hace con el objetivo de
-mejorar la performance y su permanencia no el equipo del clinete no está garantizada.
-Para lograr que una aplicación escrita en JavaScript pueda ejecutarse onffline
+mejorar la performance y su permanencia no el equipo del cliente no está garantizada.
+Para lograr que una aplicación escrita en JavaScript pueda ejecutarse offline
 es necesario almacenar los recursos que componen la aplicación en el cliente 
 mediante alguna técnica que no sea la caché.
 
-Uno de los objetivos de GoogleGears es el almacenamiento local y lo implementa 
-mediante el módulo LocalServer.
-El programador a tavez de su API genera repositorios de almacenamiento
+Uno de los objetivos de Google Gears es el almacenamiento local y lo implementa 
+mediante el módulo Local Server.
+El programador a trav s de su API genera repositorios de almacenamiento
 de recursos online (URLs) para proveerlos a través de un servidor web interno 
 cuando el navegador no cuente con conexión.
 
-Ademas de almacenamiento local, Gears, provee una base de datos, satisfaciendo
+Además de almacenamiento local, Gears, provee una base de datos, satisfaciendo
 las necesidades para la creación de aplicaciones offline que se plantearon
 anteriormente. Gears al contrario que Silverlight es Open Source y en la 
 especificación HTML 5 (actualmente en desarrollo) [W3CHTML5OffWebApp09]_ 
-se incluyen varios de los componetes que este provee [ScottLoganbillHTML5Gears09]_. 
-Es decir, varios de los compoenentes de Gears serán incuidos nativamente en
-los navegadores que adopten este estándard.
+se incluyen varios de los componentes que este provee [ScottLoganbillHTML5Gears09]_. 
+Es decir, varios de los componentes de Gears serán incluidos nativamente en
+los navegadores que adopten este estándar.
 
 .. [ScottLoganbillHTML5Gears09] Scott Loganbill,
     *How HTML 5 Is Already Changing the Web*,
@@ -267,13 +267,58 @@ los navegadores que adopten este estándard.
     
 
 Por lo tanto, la combinación de JavaScript y Gears constituye la alternativa
-más promisora para la implementación de aplicaciones desconectadas escritas en Django.
+más promisoria para la implementación de aplicaciones desconectadas escritas en Django.
 
 Tras el análisis de un proyecto [GearsOnRails09]_ que persigue objetivos similares a la presente
-tesis, pero basado en el framework Ruby On Rails, se realiza el anállis de que
-componentes del frameowrk Django son necesarios migrar a JavaScript.
+tesis, pero basado en el framework Ruby On Rails, se descubiró un proyecto
+denominado Django Offline [DjangoOffline09]_, que divide Django en componentes,
+analizando cuales son necesarios implementar offline.
 
+    * API de modelos: no
+        
+        Los modelos se definen únicamente en el servidor, se utiliza la definición
+        para el cliente. Los modelos, en su estructura, deben estar sincronizados.    
+        
+    * Soporte para base de datos: si
+    
+        Solo se requiere soporte para SQLite.
+        
+    * Mangaers de Modelos: si
+    
+    * Despacho de URLs: si
+    
+    * Middlewares: no
+    
+    * Formularios: no [*]_
  
+Basados en los componentes anteriores, también realiza un análisis de las
+partes transportables de manera automatizada al cliente:
+
+    * Modelos: Si
+    
+    * URLs: Si
+    
+    * Vistas: No
+
+
+.. note:: Poner citas sobre los modelos
+
+El enfoque del proyecto Django Offline no contempla que se deben tener 
+recaudos de seguridad al momento de transferir la base de datos al cliente. 
+
+.. note::
+    Hasta acá 
+
+
+Existen varios ORMs para JavaScript como Jazz 
+
+Just wanted to mention our newish library JazzRecord (http://www.jazzrecord.org) in case anyone was interested in a JavaScript ActiveRecord clone in specific.
+
+I find the syntax to be more concise than Morphine or JStORM, though JStORM seems somewhat similar in terms of usage.
+
+Jazz is built on MooTools, and requires the inclusion of the base library to  
+
+
 
 Generar este espejo conlleva poseer un equivalente al framework Django que 
 pueda ser ejecutado en un browser, brindando los componentes básicos de Django:
@@ -282,14 +327,22 @@ pueda ser ejecutado en un browser, brindando los componentes básicos de Django:
  * Renderización de templates
  * Asociación de expresiones regulares a funciones.
  
-Esta idea surge en parte gracias al proyecto "Gars On Rails" [*]_ , un equivalente al objetivo de la presente tesis 
-sobre el framework Rails.
 
 
 
-.. [GearsOnRails09] *Gears On Rails*
 
+.. [GearsOnRails09] *Gears On Rails*,
+        GoogleCode,
+        ultimo acceso Septiembre 2009,
+        http://code.google.com/p/gearsonrails/
 
+.. [DjangoOffline09] *Django Offline*,
+                    Google Code,
+                    ultimo acceso Septiembre 2009,
+                    http://code.google.com/p/django-offline/wiki/Goals
+                    
+                    
+                     
 
 
 El desarrollo consistió en el siguiente diagrama:
