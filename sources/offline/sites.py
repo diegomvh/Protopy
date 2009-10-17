@@ -108,6 +108,7 @@ class RemoteBaseSite(object):
 
         raise Http404(u"No url for «%s»" % (url, ))
 
+# This module variable holds remote site instances, so that
 REMOTE_SITES = {}
 class RemoteSite(RemoteBaseSite):
     '''
@@ -575,7 +576,7 @@ class RemoteDataServer(object):
         if method in methods:
             return getattr(self, method)(*params)
         else:
-            raise 'bad method'
+            raise Exception('bad method')
 
     def all(self):
         return serializers.serialize(self._format, self._manager.all())
