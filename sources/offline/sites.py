@@ -294,33 +294,34 @@ class RemoteSite(RemoteBaseSite):
     def data(self, request, app_label, model_name):
         response = HttpResponse()
         models = self._registry.get(app_label, None)
-        model = get_model(app_label, model_name)
-        print model in models 
-        if len(request.POST) and models != None and model != None and model in models:
-            proxy = models[model]
-            response.write(proxy.remotes._marshaled_dispatch(request.raw_post_data))
-        elif models != None and model != None and model in models:
-            proxy = models[model]
+        if models == None:
             response.write("<b>This is an JSON-RPC Service.</b><br>")
             response.write("You need to invoke it using an JSON-RPC Client!<br>")
-            response.write("The following methods are available:<ul>")
-            methods = proxy.remotes.system_listMethods()
-
-            for method in methods:
-                # right now, my version of SimpleXMLRPCDispatcher always
-                # returns "signatures not supported"... :(
-                # but, in an ideal world it will tell users what args are expected
-                sig = proxy.remotes.system_methodSignature(method)
-
-                # this just reads your docblock, so fill it in!
-                help =  proxy.remotes.system_methodHelp(method)
-
-                response.write("<li><b>%s</b>: [%s] %s" % (method, sig, help))
-
-            response.write("</ul>")
         else:
-            response.write("<b>This is an JSON-RPC Service.</b><br>")
-            response.write("You need to invoke it using an JSON-RPC Client!<br>")
+            #TODO: Validar que tenga un model solo
+            model = filter(lambda m: m._meta.module_name == model_name, models.keys())[0]
+            if request.method == 'POST':
+                proxy = models[model]
+                response.write(proxy.remotes._marshaled_dispatch(request.raw_post_data))
+            else:
+                proxy = models[model]
+                response.write("<b>This is an JSON-RPC Service.</b><br>")
+                response.write("You need to invoke it using an JSON-RPC Client!<br>")
+                response.write("The following methods are available:<ul>")
+                methods = proxy.remotes.system_listMethods()
+
+                for method in methods:
+                    # right now, my version of SimpleXMLRPCDispatcher always
+                    # returns "signatures not supported"... :(
+                    # but, in an ideal world it will tell users what args are expected
+                    sig = proxy.remotes.system_methodSignature(method)
+
+                    # this just reads your docblock, so fill it in!
+                    help =  proxy.remotes.system_methodHelp(method)
+
+                    response.write("<li><b>%s</b>: [%s] %s" % (method, sig, help))
+
+                response.write("</ul>")
         response['Content-length'] = str(len(response.content))
         return response
 

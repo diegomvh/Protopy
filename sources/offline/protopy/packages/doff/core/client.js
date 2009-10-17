@@ -127,7 +127,6 @@ var DOMAdapter = type('DOMAdapter', [ object ], {
         //urls.resolve('/', location.href)
         //"http://localhost:8000/"
         //urls.resolve('/pepe/', location.href)
-        debugger;
         return urls.parse(urls.resolve(url_string, string(this._current_url)));
     },
 
@@ -147,16 +146,17 @@ var DOMAdapter = type('DOMAdapter', [ object ], {
 
     _process_from_forms: function(e) {
         event.stopEvent(e);
-        var element = e.target;
-        var request = this._build_request(element.getAttribute('action'));
-        request.method = element.method;
-        request[element.method] = element.serialize();
+        var form = e.currentTarget;
+        var url = this._build_url(form.getAttribute('action'));
+        var request = this._build_request(url);
+        request.method = form.method;
+        request[form.method] = form.serialize();
         this._process_request(request);
     },
 
     _process_from_links: function(e) {
         event.stopEvent(e);
-        var url = this._build_url(e.target.getAttribute('href'));
+        var url = this._build_url(e.currentTarget.getAttribute('href'));
         var request = this._build_request(url);
         request.method = 'get';
         this._process_request(request);
