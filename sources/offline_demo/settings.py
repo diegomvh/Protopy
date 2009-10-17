@@ -87,6 +87,7 @@ INSTALLED_APPS = (
     'offline',
     # User apps
     'offline_demo.salesman',
+    'django.contrib.databrowse',
 )
 
 FIXTURE_DIRS = ('fixtures',)

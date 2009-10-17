@@ -1,9 +1,15 @@
 from django.conf.urls.defaults import *
 from offline_demo.salesman.admin import site
+from django.db.models.loading import get_app, get_models
+from django.contrib import databrowse
+
+map(databrowse.site.register, get_models(get_app('salesman')))
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
 # admin.autodiscover()
 from offline_demo.trabajo_offline.remote_agentes import agentes_site
+
+
 
 urlpatterns = patterns('',
     # Example:
@@ -19,4 +25,5 @@ urlpatterns = patterns('',
     ('^admin/(.*)', site.root, ),
     ('^salesman', include('offline_demo.salesman.urls')),
     (r'^%s/(.*)' % agentes_site.urlregex, agentes_site.root ),
+    (r'^databrowse/(.*)', databrowse.site.root),
 )
