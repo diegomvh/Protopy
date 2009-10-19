@@ -67,7 +67,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
 )
 
-ROOT_URLCONF = 'offline_demo.urls'
+ROOT_URLCONF = 'salesman.urls'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
@@ -86,7 +86,8 @@ INSTALLED_APPS = (
     # Soporte Offline
     'offline',
     # User apps
-    'offline_demo.salesman',
+    'salesman.apps.core'
+    'salesman.apps.ventas',
     'django.contrib.databrowse',
 )
 
@@ -100,5 +101,4 @@ else:
     INSTALLED_APPS = INSTALLED_APPS + ('django_extensions', )
 
 
-OFFLINE_BASE = 'trabajo_offline'
-  
+OFFLINE_BASE = 'offline'
