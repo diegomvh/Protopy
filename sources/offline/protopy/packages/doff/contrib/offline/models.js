@@ -9,17 +9,6 @@ var SyncLog = type('SyncLog', [ models.Model ], {
 });
 
 var SyncModel = type('SyncModel', [ models.Model ], {
-    __new__: function(name, bases, attrs) {
-        if (name == 'SyncModel')
-            return super(SyncModel, this).__new__(name, bases, attrs);
-        
-        var options = {};
-        options['remote_app_label'] = attrs.Meta['remote_app_label'];
-        var sync_model = super(SyncModel, this).__new__(name, bases, attrs);
-        extend(sync_model._meta, options);
-        return sync_model;
-    }
-}, {
     _sync_log: new models.ForeignKey(SyncLog, {"db_index": true, "null": true, "blank": true, "editable": false, "serialize": false}),
     _active: new models.BooleanField( {"default": true, "blank": true, "editable": false, "serialize": false}),
     _status: new models.CharField( {"max_length": 1, "choices": SyncLog.SYNC_STATUS, "editable": false, "default": "c", "serialize": false}),

@@ -299,8 +299,7 @@ class RemoteSite(RemoteBaseSite):
             response.write("<b>This is an JSON-RPC Service.</b><br>")
             response.write("You need to invoke it using an JSON-RPC Client!<br>")
         else:
-            #TODO: Validar que tenga un model solo
-            model = filter(lambda m: m._meta.module_name == model_name, models.keys())[0]
+            model = get_model(app_label, model_name)
             if request.method == 'POST':
                 proxy = models[model]
                 response.write(proxy.remotes._marshaled_dispatch(request.raw_post_data))
@@ -430,7 +429,7 @@ class RemoteSite(RemoteBaseSite):
     #===========================================================================
     # Model handling
     #===========================================================================
-    def register(self, app_name, model, remote_proxy = None):
+    def register(self, model, remote_proxy = None):
         '''
         Register a proxy for a model
         '''
@@ -447,7 +446,7 @@ class RemoteSite(RemoteBaseSite):
                                 (RemoteModelProxy, ), 
                                 {'Meta': RemoteOptions(basic_meta)} )
 
-        app = self._registry.setdefault(app_name, {})
+        app = self._registry.setdefault(model._meta.app_label, {})
         app[model] = remote_proxy
 
         signals.post_save.connect(self.model_saved, model)
