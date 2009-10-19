@@ -25,20 +25,24 @@ Introducción
     del desarrollo es que muchas de las partes surguieron en paralelo y de la mano
     de aplicaciones de prueba.
 
-Si bien la intención primaria es la de brindar un prodcuto que permita ejecutar
-"aplicaciones desconectadas" en los navegadores, existen aspectos complejos en
-el ambiente de un navegador que dificultan el desarrollo y que requieren de una
-capa soporte. Entre estas podemos mencionar:
+El presente capítulo profundiza sobre el desarrollo de la librería de JavaScript
+sobre la cual se implenta una versión desconectada de Django.
+
+Los objetivos de esta librería son:
 
 * Organizar y obtener código.
 
     Un framework con funciones minimas, como una API de base de datos y un motor
-    de plantillas, requiere de varias lineas de código para su implementación.
-    Es por esto que resulta deseable que existan formas de organizar y obtener
-    código en el cliente; liberando así al desarrollador de estas tareas
-    tediosas y permitiendole enfocarse en la funcionalidad.
+    de plantillas, requiere una cantidad considreable de código. Django por ejemplo
+    consta de cerca de 43000 líneas de código, sin contar las aplicaciones 
+    contribuidas (administración, GIS, data, sesiones, autenticación, bitácora) [*]_.
+    En particular, para migrar un framework implementado sobre python, el sistema
+    de módulos es muy importante.
+    
 
-* Reuso y extensión.
+* Orietnación a Objetos "Pythonica"
+
+    Para migrar un framework.
 
     No es una buena practica modificar un framework y su utilizacion debe estar 
     basa en la extención y la configuración. JavaScript es el lenguaje para el
@@ -57,6 +61,8 @@ capa soporte. Entre estas podemos mencionar:
 
 * Interacción entre cliente servidor.
 
+.. [*] Métrica obtenida de el comando 
+    ``wc -l $(find django -iname "*.py" | grep -v contrib | grep -v backends)``
     
 * La cara visible o vista debe ser fasilmente manipulable por la aplicacion de
 usuario.
