@@ -30,28 +30,78 @@ sobre la cual se implenta una versión desconectada de Django. Si bien JavaScrip
 1.7 y 1.8 incorporan muchos elementos que acercan su sintaxis a la de Python, es 
 necesario implementar una capa intermedia entre JavaScript y Django "desconectado".
 
+Historia
+--------
+
+Si bien el desarrollo de la biblioteca se mantuvo en paralelo a la del
+Framework (ORM, templates, etc), existen aspectos básicos a los que esta brinda soporte y permiten
+presentarla en un apartado separado como "Una Biblioteca en JavaScript", esta
+constituye la base para posteriores construcciones y auna herramientas que
+simplifican el desarrollo client-side.
+
+    | **proto** type + **py** thon = **protopy**
+
+"La creación nace del caos", la libreria "Protopy" no escapa a esta
+afirmacion e inicialmente nace de la integracion de Prototype con
+las primeras funciones para lograr la modularizacion; con el correr de las
+lineas de codigo [*]_ el desarrollo del framework torna el enfoque inicial poco
+sustentable, requiriendo este de funciones más Python-compatibles se desecha la
+libreria base y se continua con un enfoque "pythonico", persiguiendo de esta
+forma acercar la semántica de JavaScript 1.7 a la del lenguaje de programacion
+Python.
+
+Objetivos de la Librería
+------------------------
+
 Todos estos elementos confrman la biblioteca que se bautizó como Protopy:
 
-* Organizar y obtener código.
+* Modularización y ámbito de nombres.
 
     Un framework con funciones minimas, como una API de base de datos y un motor
     de plantillas, requiere una cantidad considreable de código. Django por ejemplo
-    consta de cerca de 43000 líneas de código, sin contar las aplicaciones 
+    consta de cerca de 43000 líneas, sin contar las aplicaciones 
     contribuidas (administración, GIS, data, sesiones, autenticación, bitácora) [*]_.
     En particular, para migrar un framework implementado sobre python, el sistema
-    de módulos es muy importante.
+    de módulos es muy importante. En Python los módulos definien ámbitos de nombres
+    de los cuales se pueden importar selectivamente sólo los símbolos usados, sin
+    contaminar el ámbito local.
     
 
 * Orietnación a Objetos "Pythonica"
 
+    En JavaScript, cada prtotipo almacena la estrctura estática de la "clase"
+    y en el constructor se inicializa la instancia. En Python, la creación 
+    de la clase la realiza el método ``__new__`` y la inicialización, el 
+    método ``__init__``. Django permite herencia múltiple y la definición
+    dinámica de tipos a través de metaclases o mediante el builtin ``type`` 
+    (que sirve como factory de clases). Es necesario para adaptar el código
+    Python a JavaScript, definir los tipos object y type.
     
-    Para migrar un framework.
+    Además Python cuenta con una serie de métodos con cierto significado, 
+    como ``__call__``, ``__getattr__``, etc. JavaScript permite implementar
+    algunos de estos elementos.
 
-    No es una buena practica modificar un framework y su utilizacion debe estar 
-    basa en la extención y la configuración. JavaScript es el lenguaje para el
-    framework y si se quiere promover el reuso y la extensión es conveniente
-    proveer al lenguaje de objetos extensibles o contrucciones que fasilmente
-    sean asimiladas por el desarrollador.
+* Selección de elementos mediante CSS
+
+    DOM permite realizar búsqueda de elementos dentro de un documento de 
+    tres maneras: mediante un identificados, mediante un nombre de tag, o
+    el acceso gerárquico tipo árbol.
+    
+    Los selectores CSS alivan la tarea de seleccionar de manera simple
+    un conjunto de elementos que cumple con una característica. Por ejemplo
+    con la API de DOM seleccionar todos los elementos del tipo link, que
+    posean un atributo ``href`` se realiza de la siguiente manera:
+    
+    .. code-block:: javascrtipt
+        
+        var links = document.getElementsByTagName('a').
+            filter( function (e) { return e.getAttribute('href'); });
+    
+    Mientras que con selección CSS, esto se reduce a:
+    
+    .. code-block:: javascrtipt
+    
+        var links = $$('a[href]');
 
 * Guerra de los navegadores.
 
@@ -67,17 +117,6 @@ Todos estos elementos confrman la biblioteca que se bautizó como Protopy:
 .. [*] Métrica obtenida de el comando 
     ``wc -l $(find django -iname "*.py" | grep -v contrib | grep -v backends)``
     
-* La cara visible o vista debe ser fasilmente manipulable por la aplicacion de
-usuario.
-* Como los datos generados en el cliente son informados al servidor.
-* El framework debe brindar soporte a la aplicacion de usuario de una forma
-natural y transparente.
-* Como se ponen en marcha los mecanimos o acciones que la aplicacion de usuario
-define.
-
-En este capitulo se introducen las ideas principales que motivaron la
-creacion de una biblioteca en JavaScript, que brinde el soporte necesario al
-framework y a buena parte de los items expuestos.
 
 Biblioteca
 ----------
@@ -89,25 +128,7 @@ orientación a objetos, manejo de AJAX, DOM y eventos.
 Para una referencia completa de la API de Protopy remitase al apandice
 :ref:`Protopy <apendices-protopy>`
 
-Historia
---------
 
-Si bien el desarrollo de la biblioteca se mantuvo en paralelo a la del
-Framework, existen aspectos basicos a los que esta brinda soporte y permiten
-presentarla en un apartado separado como "Una Biblioteca en JavaScript", esta
-constituye la base para posteriores construcciones y auna herramientas que
-simplifican el desarrollo client-side.
-
-    | **proto** type + **py** thon = **protopy**
-
-"La creación nace del caos", la libreria "Protopy" no escapa a esta
-afirmacion e inicialmente nace de la integracion de Prototype con
-las primeras funciones para lograr la modularizacion; con el correr de las
-lineas de codigo [*]_ el desarrollo del framework torna el enfoque inicial poco
-sustentable, requiriendo este de funciones más Python-compatibles se desecha la
-libreria base y se continua con un enfoque "pythonico", persiguiendo de esta
-forma acercar la semántica de JavaScript 1.7 a la del lenguaje de programacion
-Python.
 
 .. [*] Forma en que los informaticos miden el paso del tiempo.
 
