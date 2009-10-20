@@ -3,36 +3,31 @@
 '''
 Remote model proxy for remote models in gears client.
 '''
+import os, re
+import random, string
+from datetime import datetime
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound,\
     HttpResponseServerError
 from django.http import Http404
 from django.core.urlresolvers import Resolver404, RegexURLPattern
 from django.utils.encoding import smart_str
-from offline.models import SyncLog, GearsManifest, SyncData
 from django.template import TemplateDoesNotExist, Template, Context
-from django.utils.safestring import SafeString
 from offline.debug import html_output
 from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 from django.db import models
 from django.contrib.admin.sites import AlreadyRegistered
 from django.shortcuts import render_to_response
-from django.db.models.fields import AutoField
 from offline.util import get_project_root
-import os, re
-import random, string
-from pprint import pformat
-from django.db.models.loading import get_app
-import copy
 from offline.util.jsonrpc import SimpleJSONRPCDispatcher
-from datetime import datetime
-from django.db.models.loading import get_app, get_models, get_model
+from django.db.models.loading import get_app, get_model
 from offline.util import full_template_list, abswalk_with_simlinks
+from offline.models import SyncLog, GearsManifest, SyncData
 from django.db.models import signals
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import exceptions
 from django.core import serializers
-
+from offline.export_models import export_remotes, get_model_order
 
 __all__ = ('RemoteSite',
            'expose',
@@ -408,18 +403,15 @@ class RemoteSite(RemoteBaseSite):
     #===========================================================================
     # Models
     #===========================================================================
-    def export_models(self, app_name):
-        from django.db.models.loading import get_app, get_models
-        from offline.export_models import export_remotes, get_model_order
-
+    def export_models(self, app_label):
         try:
-            models = export_remotes(self._registry[app_name])
+            models = export_remotes(self._registry, app_label)
             models = models.items()
             models = map(lambda t: (t[0]._meta.object_name, t[0]._meta.app_label, t[1]), models)
             return render_to_response(
                             #'djangoffline/models_example.js',
                             'djangoffline/models.js',
-                           {'models': models, 'app': app_name, 'site': self},
+                           {'models': models, 'app': app_label, 'site': self},
                            mimetype = 'text/javascript')
 
         except ImproperlyConfigured, e:
@@ -431,10 +423,18 @@ class RemoteSite(RemoteBaseSite):
     def register(self, model, remote_proxy = None):
         '''
         Register a proxy for a model
+        {
+            app_label: [
+                            remote_proxy,
+                            remote_proxy,
+                        ],    
+        }
         '''
         assert issubclass(model, models.Model), "%s is not a Models subclass" % model
         
-        if model in self._registry:
+        app_registry = self._registry.setdefault(model._meta.app_label, {})
+        
+        if model in app_registry:
             raise AlreadyRegistered("%s is already registered" % model)
         
         if not remote_proxy:
@@ -444,9 +444,8 @@ class RemoteSite(RemoteBaseSite):
             remote_proxy = type('%sRemote' % name, 
                                 (RemoteModelProxy, ), 
                                 {'Meta': RemoteOptions(basic_meta)} )
-
-        app = self._registry.setdefault(model._meta.app_label, {})
-        app[model] = remote_proxy
+        
+        app_registry[model] = remote_proxy
 
         signals.post_save.connect(self.model_saved, model)
         signals.post_delete.connect(self.model_deleted, model)
