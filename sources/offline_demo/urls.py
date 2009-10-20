@@ -8,6 +8,8 @@ map(databrowse.site.register, get_models(get_app('salesman')))
 # from django.contrib import admin
 # admin.autodiscover()
 from offline_demo.trabajo_offline.remote_agentes import agentes_site
+from offline_demo.trabajo_offline.remote_contadores import contadores_site
+
 
 
 
@@ -24,6 +26,7 @@ urlpatterns = patterns('',
     ('^$', 'django.views.generic.simple.direct_to_template', {'template': 'index.html'}),
     ('^admin/(.*)', site.root, ),
     ('^salesman', include('offline_demo.salesman.urls')),
+    (r'^%s/(.*)' % agentes_site.urlregex, agentes_site.root ),
     (r'^%s/(.*)' % agentes_site.urlregex, agentes_site.root ),
     (r'^databrowse/(.*)', databrowse.site.root),
 )

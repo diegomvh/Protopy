@@ -16,29 +16,21 @@ from os.path import dirname, abspath, exists, join
 from django.db.models.loading import get_app
 from django.template import Template
 from django.template.context import Context
-from offline.management.commands import get_template_colision
+from offline.management.commands import OfflineBaseCommand
 from django.core.exceptions import ImproperlyConfigured
-import os, glob
+import os, glob, shutil
 from os.path import basename
 import sys
 from django.core.management.base import BaseCommand, make_option, CommandError
+from django.db import models
 
-class Command(BaseCommand):
+import offline
+class Command(OfflineBaseCommand):
     help = """
         Creates the skeleton for an a offline app in the remote site.
     """
     
-    option_list = (
-                    make_option('-f', '--force', action='store_true', default = False),
-                    
-    ) + BaseCommand.option_list
-    
-    requires_model_validation = True
-    can_import_settings = True
-    
-    
-    def handle(self, *remote_and_apps, **largs):
-        from django.db import models
+    def handle(self, *remote_and_apps, **options):
         from django.conf import settings
         # Remotesite
         mod = __import__(settings.ROOT_URLCONF)
@@ -67,55 +59,25 @@ class Command(BaseCommand):
         except (ImproperlyConfigured, ImportError), e:
             raise CommandError("%s. Are you sure your INSTALLED_APPS setting is correct?" % e)
         
+        template_base = join(dirname(offline.__file__), 'conf')
+        
         for app in app_list:
-            pass
-        
-        
-        print remote_site_name, app_labels
-    
-    
-    def handle_app(self, app, **options):
-        from django.conf import settings
-        from django.db.models.loading import get_model, get_models, get_apps
-        from djangoffline.management.commands import fill_templates, get_template_colision
-        
-        app_root = dirname(app.__file__)
-        app_name = app_root.split( os.sep )[-1]
-        
-        djangogffilne_path = dirname(abspath(get_app('djangoffline').__file__))
-        project_template = join(djangogffilne_path, 'conf', 'remote_project_template')
-        app_template = join(djangogffilne_path, 'conf', 'app_template')
-        remote_app_template = join(djangogffilne_path, 'conf', 'remote_app_template')
-        
-        assert exists(project_template), _("Error with templates")
-        
-        project_name = os.environ.get('DJANGO_SETTINGS_MODULE').replace('.settings', '')
-        
-        app_path = os.path.join(settings.OFFLINE_ROOT, app_name)
-        
-        try:
-            os.mkdir( app_path )
-        except:
-            pass
-        
-        models = get_models(get_app(app_name))
-        models = dict ( map (lambda m: (m._meta.object_name, m), models ))
-        
-        remote_app_templates = glob.glob( '%s%s*'  % (remote_app_template, os.sep))
-        app_templates = glob.glob( '%s%s*' % (app_template, os.sep) )
-        
-        # Detect colisions
-        colisions = filter( lambda x: x, [ get_template_colision( remote_app_templates, app_path ),
-                    get_template_colision( app_templates, app_root ) ])
-        
-        if any(colisions):
-            if options.get('force'):
-                sys.stderr.write('Overwritting files\n')
-            else:
-                sys.stderr.write("File colisions %s" % colisions.pop())
-                sys.exit(-1)
-                        
-        fill_templates( remote_app_templates, app_path, locals() )
-        
-        fill_templates(app_templates, app_root, locals() )
-        
+            #from ipdb import set_trace; set_trace()
+            mod_name = app.mod_name
+            project_root = remote_site.project_root
+            remote_app_dir = join(project_root, mod_name)
+            if os.path.exists(remote_app_dir):
+                
+                if options.get('force', False):
+                    shutil.rmtree(remote_app_dir)
+                else:
+                    raise CommandError(
+                        "The app '%s' is installed in the remote site '%s'\n" % 
+                        (mod_name, remote_site_name, ))
+                
+            os.mkdir(remote_app_dir)
+            
+            
+            self.fill_templates(join(template_base, "remote_app_template", "*.*"),
+                                remote_app_dir, {}, **options )
+

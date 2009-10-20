@@ -26,9 +26,11 @@ Introducción
     de aplicaciones de prueba.
 
 El presente capítulo profundiza sobre el desarrollo de la librería de JavaScript
-sobre la cual se implenta una versión desconectada de Django.
+sobre la cual se implenta una versión desconectada de Django. Si bien JavaScript
+1.7 y 1.8 incorporan muchos elementos que acercan su sintaxis a la de Python, es 
+necesario implementar una capa intermedia entre JavaScript y Django "desconectado".
 
-Los objetivos de esta librería son:
+Todos estos elementos confrman la biblioteca que se bautizó como Protopy:
 
 * Organizar y obtener código.
 
@@ -42,6 +44,7 @@ Los objetivos de esta librería son:
 
 * Orietnación a Objetos "Pythonica"
 
+    
     Para migrar un framework.
 
     No es una buena practica modificar un framework y su utilizacion debe estar 
