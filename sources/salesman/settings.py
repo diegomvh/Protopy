@@ -86,7 +86,7 @@ INSTALLED_APPS = (
     # Soporte Offline
     'offline',
     # User apps
-    'salesman.apps.core'
+    'salesman.apps.core',
     'salesman.apps.ventas',
     'django.contrib.databrowse',
 )
@@ -101,4 +101,4 @@ else:
     INSTALLED_APPS = INSTALLED_APPS + ('django_extensions', )
 
 
-OFFLINE_BASE = 'offline'
+OFFLINE_BASE = 'off'

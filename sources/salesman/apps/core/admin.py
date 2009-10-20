@@ -1,19 +1,14 @@
-from django.contrib.admin import AdminSite
-from salesman.models import *
+from django.contrib import admin
+from salesman.apps.core.models import *
 
-class AdminSalesman(AdminSite):
-    pass
+admin.site.register(Pais)
+admin.site.register(Provincia)
+admin.site.register(Ciudad)
+admin.site.register(Vendedor)
+admin.site.register(Cliente)
+admin.site.register(Proveedor)
+admin.site.register(Producto)
+admin.site.register(Categoria)
 
-site = AdminSalesman()
-
-site.register(Ciudad)
-site.register(Vendedor)
-site.register(Cliente)
-site.register(Proveedor)
-site.register(Producto)
-site.register(Categoria)
-
-site.register(Pedido)
-site.register(ItemPedido)
 
 
