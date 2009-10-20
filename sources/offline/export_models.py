@@ -23,9 +23,10 @@ Lastest Approach:
 '''
 
 from django.utils.datastructures import SortedDict
+from pprint import pformat
 import sys
 from django.conf import settings
-from django.db.models.fields import AutoField
+from django.db.models import AutoField, ForeignKey, ManyToManyField
 from inspect import isclass, ismodule
 
 python_version = map(int, sys.version.split(' ')[0].split('.'))
@@ -134,18 +135,44 @@ def get_model_class_fields():
 # Cache
 model_class_fields = get_model_class_fields()
 
-def export_remotes(models_and_proxies):
-    models = get_model_order(models_and_proxies.keys())    
+def is_readonly_fk(f, registry):
+    related_model = f.rel.to
+    return related_model not in registry[related_model._meta.app_label]
+
+
+def export_remotes(registry, app_label):
+    '''
+    @param models_and_proxies: Registry
+                                { app_label:
+                                            {
+                                                Model: RemoteProxy,
+                                                Model: RemoteProxy
+                                            }
+                                ... }
+                                                
+    @return: Diccionario ordenado con remote -> {nombre_camo: valor_inicializacion_constructor} 
+    
+    '''
+    app_registry = registry[app_label] 
+    app_models = app_registry.keys()
+    sorted_models = get_model_order(app_models)    
     processed_models = SortedDict()
-    for model in models:
-        remote = models_and_proxies[model]
-        name = model._meta.object_name
+    
+    for model in sorted_models:
+        remote = app_registry[model]
         fields = model._meta.fields + model._meta.many_to_many + remote._meta.fields
         
         processed_fields = SortedDict()
         for f in fields:
-            if isinstance(f, AutoField): continue;
+            if isinstance(f, AutoField): continue
             field_type = f.__class__.__name__
+            
+            if isinstance(f, (ForeignKey, ManyToManyField)) and is_readonly_fk(f, registry):
+                processed_fields[f.name] = (field_type, {})
+                
+                pass
+                
+            
             try:
                 bases = get_class_bases(f)
                 args = SortedDict()
@@ -165,88 +192,8 @@ def export_remotes(models_and_proxies):
                 processed_fields[f.name] = (field_type, {})
         
         processed_models[model] = processed_fields
-    #print processed_models
+    print pformat(processed_models)
     return processed_models
-
-#===============================================================================
-# Broken Code, 
-#===============================================================================
-SYSTEM_MODULES = ['os', 'sys', 'type', ]
-
-def module_explore(mod, filter_callback = None):
-    assert ismodule(mod), "No es un modulo"
-    for name, element in mod.__dict__.iteritems():
-        if name.startswith('__'):
-            print "Skip", name
-            continue
-        
-        if ismodule(element) and not element.__name__ not in SYSTEM_MODULES:
-            try:
-                for el in module_explore(element, filter_callback):
-                    yield el
-            except RuntimeError:
-                #print element.__name__
-                print "Runtime error in %s" % mod
-                
-            continue
-        
-        if callable(filter_callback):
-            if filter_callback(element):
-                yield element
-        else:
-            yield element
-app_models = map(lambda s: "%s.models" % s, settings.INSTALLED_APPS)
- 
-def modules_explore(modules = app_models, 
-                    filter_callback = filter_field ):
-    '''
-    Returns the elemements contained in modules filtered by
-    the callback funcion.
-    @param moduules: List of modules or module names
-    @param filter_callback:
-    '''
-    # Check which modules have already been visited
-    modules_explored = set()
-    for mod in modules:
-        #print mod
-        if not ismodule(mod):
-            try:
-                mod = __import__(mod, {}, {}, ['*', ] )
-            except ImportError, err:
-                print "No existe %s" % err 
-        if mod in modules_explored:
-            continue
-        
-        for element in module_explore(mod, filter_callback):
-            yield element
-        modules_explored.add(mod)
-
-def analize_mod(mod, filter_callback = None, analized = None):
-    assert ismodule(mod), "Must receive a module, got %s instead" % type(mod)
-    if not analized:
-        analized = []
-    
-    findings = []
-    #print mod
-    for name, el in mod.__dict__.iteritems():
-        if name.startswith('_'):
-            continue
-        elif filter_callback(el):
-            findings.append(el)
-    return findings
-        
-def get_fields_from_apps(filter_callback = filter_field):
-    '''
-    Loads Django ORM's fields
-    '''
-    from django.db.models.loading import get_apps
-    fields = set()
-    
-    for app in get_apps():
-        fields.update( analize_mod(app, filter_callback))
-    #print fields
-    
-#from django.db.models.loading import get_app, get_models
 
 related_class = lambda relation: relation.rel.to
  
@@ -275,3 +222,4 @@ def model_order_for_app(app_label):
     from django.db.models.loading import get_app, get_models
     models = get_models(get_app(app_label))
     return get_model_order(models)
+
