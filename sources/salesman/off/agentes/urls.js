@@ -2,33 +2,11 @@
 
 require('doff.conf.urls', '*');
 require('agentes.views', '*');
-require('agentes.ventas.models', 'Ciudad');
+require('agentes.core.models', 'Ciudad');
 
 var urlpatterns = patterns('',
-    ['^$', 'doff.views.generic.simple.direct_to_template', {'template': 'index.html'} ],
-    ['^salesman/?$', 'doff.views.generic.simple.direct_to_template', {'template': 'salesman/index.html'} ],
-    // Editar una ciudad
-    ['^salesman/ciudad/(\d{1,5})/edit/$', 'doff.views.generic.create_update.update_object', {
-            'model': Ciudad,
-            'post_save_redirect': '/ciudades/',
-            'extra_context': {'title': 'Editar ciudad', 'submit_text': 'Actualizar',},
-            }
-    ],
-    // Listado de ciudades
-    ['salesman/ciudades/$', 'doff.views.generic.list_detail.object_list', {
-        'queryset': Ciudad.objects.all()
-        }
-    ],
-    // Crear una ciudad
-    ['salesman/ciudades/add/$', 'doff.views.generic.simple.redirect_to', 
-        {'url': '../../ciudad/add/'}
-    ],
-    ['salesman/ciudad/add/$', 'doff.views.generic.create_update.create_object', {
-        'model': Ciudad,
-        'post_save_redirect': '/salesman/ciudades/',
-        'template_name': 'forms.html'                       
-        }
-    ]
+    ['^/?$', 'doff.views.generic.simple.direct_to_template', {'template': 'index.html'} ],
+    ['^ventas', include('agentes.apps.core.urls')]
 )
 
 // Don't touch this line

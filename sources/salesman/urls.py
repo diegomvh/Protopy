@@ -7,8 +7,6 @@ from salesman.off.remote_agentes import agentes_site
 # Map de modelos para el databrowse
 map(databrowse.site.register, get_models(get_app('core')))
 map(databrowse.site.register, get_models(get_app('ventas')))
-from offline_demo.trabajo_offline.remote_contadores import contadores_site
-
 
 # Autodiscover para la admin
 admin.autodiscover()

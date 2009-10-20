@@ -16,11 +16,11 @@
 
 'INSTALLED_APPS': [
     'doff.contrib.offline',
-    'agentes.ventas'
+    'agentes.core'
     ],
 
 'TEMPLATE_URLS': [ 
-                   'trabajo_offline/templates/' 
+                   'off/templates/' 
                    ],
                    
 'TEMPLATE_LOADERS': [

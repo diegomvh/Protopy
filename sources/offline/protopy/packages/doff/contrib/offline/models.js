@@ -20,7 +20,6 @@ var SyncModel = type('SyncModel', [ models.Model ], {
 
 });
 
-
 var ReadOnlyModel = type('ReadOnlyModel', [ models.Model ],
     /**
         * Modelo read only, cuando se le registra un modelo a un remote site sin sus

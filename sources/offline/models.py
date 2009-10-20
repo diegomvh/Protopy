@@ -55,9 +55,7 @@ class GearsManifest(models.Model):
         return "<%s for site %s>" % (type(self).__name__, self.remotesite_name or "?")
     
     __repr__ = __unicode__
-    
 
-    
 class GearsManifestEntry(models.Model):
     '''
     

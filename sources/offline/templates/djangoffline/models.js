@@ -6,11 +6,7 @@ require('doff.contrib.offline.models', 'SyncModel');
 {% for name, app, fields in models %}//Create Object
 var mixed{{ name }} = extend(mixin.{{ name }} || {}, {
 {% for field_name, arguments in fields.iteritems %}    {{ field_name }}: new models.{{ arguments|first }}({% get_model_definition arguments %}),
-{% endfor %}
-    Meta: { 
-        remote_app_label: '{{ app }}'
-    }
-});
+{% endfor %}});
 
 //Create Model
 var {{ name }} = type("{{ name }}", SyncModel, mixed{{name}});

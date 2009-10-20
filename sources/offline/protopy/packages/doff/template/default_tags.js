@@ -490,6 +490,7 @@ function do_if(parser, token) {
 }
 register.tag("if", do_if);
 
+var load_cache = []
 function load(parser, token) {
 /*
     Loads a custom template tag set.
@@ -503,6 +504,7 @@ function load(parser, token) {
     var settings = get_settings();
     var bits = token.split_contents();
     for each (var taglib in bits.slice(1)) {
+        if (include(load_cache, taglib)) continue;
         // add the library to the parser
         var lib = null;
         for each (var app in settings.INSTALLED_APPS) {
@@ -513,6 +515,9 @@ function load(parser, token) {
         }
         if (lib === null)
             throw new TemplateSyntaxError("'%s' is not a valid tag library".subs(taglib));
+        else {
+            load_cache.push(taglib);
+        }
     }
     return new LoadNode();
 }
