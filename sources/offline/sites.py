@@ -407,7 +407,7 @@ class RemoteSite(RemoteBaseSite):
         try:
             models = export_remotes(self._registry, app_label)
             models = models.items()
-            models = map(lambda t: (t[0]._meta.object_name, t[0]._meta.app_label, t[1]), models)
+            models = map(lambda m: (m[0]._meta.object_name, m[1]), models)
             return render_to_response(
                             #'djangoffline/models_example.js',
                             'djangoffline/models.js',
