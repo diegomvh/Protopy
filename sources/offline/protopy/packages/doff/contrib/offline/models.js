@@ -20,24 +20,22 @@ var SyncModel = type('SyncModel', [ models.Model ], {
 
 });
 
-var ReadOnlyModel = type('ReadOnlyModel', [ models.Model ],
+var ReadOnlyModel = type('ReadOnlyModel', [ models.Model ], {
     /**
         * Modelo read only, cuando se le registra un modelo a un remote site sin sus
         * haber registrado los modelos a los cuales hace referencia, se crea una 
         * instancia de ReadOnlyModel en el clinete, que solo permite hacer referencia
         * pero no crear, modificar o borrar. 
         */
-    {
-        pk: new models.CharField({'max_length': 255 }),
-        value: new models.CharField({'max_legth': 255}),
-        __str__: function () {
-            /**
-                * Por defecto se devuelve el __str__ del server
-                */
-            return this.value;
-        }
+    id: new models.CharField({'max_length': 255, primary_key: true }),
+    value: new models.CharField({'max_length': 255}),
+    __str__: function () {
+        /**
+         * Por defecto se devuelve el __str__ del server
+         */
+        return this.value;
     }
-);
+});
 
 publish({
     SyncLog: SyncLog,

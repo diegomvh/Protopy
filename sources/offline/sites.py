@@ -414,6 +414,7 @@ class RemoteSite(RemoteBaseSite):
 
         try:
             models = export_remotes(self._registry[app_name])
+            print models
             models = models.items()
             models = map(lambda m: (m[0]._meta.object_name, m[1]), models)
             return render_to_response(
