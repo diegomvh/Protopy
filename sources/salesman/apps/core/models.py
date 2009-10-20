@@ -3,14 +3,11 @@
 Modelo de prueba
 '''
 from django.db import models
-from django.db.models import signals
-
 
 # Some useful things
    
 mod_name = __name__.split('.')[-2]
 abs_url = lambda inst: '/%s' % '/'.join( [mod_name, inst._meta.module_name, str(inst.id)])
-
 
 class Pais(models.Model):
     nombre = models.CharField(max_length = 45)
@@ -47,7 +44,6 @@ class Ciudad(models.Model):
     
     get_absolute_url = abs_url
 
-        
 class Vendedor(models.Model):
     nombre = models.CharField(max_length = 50)
     apellido = models.CharField(max_length = 50)
@@ -104,7 +100,6 @@ class Categoria(models.Model):
     def __unicode__(self):
         return self.nombre
     
-    
 class Producto(models.Model):
     '''
     Un producto es provisto por un proveedor o mas de un proveedor
@@ -119,37 +114,3 @@ class Producto(models.Model):
     
     def __unicode__(self):
         return self.nombre
-        
-class Pedido(models.Model):
-    '''
-    El número de pedido se toma de la primary key
-    '''
-    cliente = models.ForeignKey(Cliente)
-    fecha = models.DateField(auto_now = True)
-
-    get_absolute_url = abs_url
-    
-    def __unicode__(self):
-        return u"%s %s" % (self.pk, self.cliente)
-        
-class ItemPedido(models.Model):
-    producto = models.ForeignKey(Producto)
-    cantidad = models.PositiveIntegerField()
-    precio = models.DecimalField(default = "0.0", max_digits = 10, decimal_places = 3, editable = False)
-    pedido = models.ForeignKey(Pedido)
-
-    get_absolute_url = abs_url
-    
-    def save(self, *largs, **kwargs):
-        self.precio = self.producto.precio_uniatario
-        return  super(ItemPedido, self).save(*largs, **kwargs)
-        
-    
-    class Meta:
-        verbose_name_plural = 'Items de Pedido'
-    
-    
-        
-
-
-#signals.post_syncdb.connect(receiver, sender, weak, dispatch_uid)

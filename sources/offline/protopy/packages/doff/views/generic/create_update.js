@@ -98,7 +98,7 @@ function create_object(request) {
     }
 
     if (!kwargs['template_name']) {
-        kwargs['template_name'] = "%s/%s_form.html".subs(model._meta.remote_app_label, model._meta.module_name);
+        kwargs['template_name'] = "%s/%s_form.html".subs(model._meta.app_label, model._meta.module_name);
     }
 
     var t = kwargs['template_loader'].get_template(kwargs['template_name']);
@@ -142,7 +142,7 @@ function update_object(request) {
     } else {
         var form = new form_class({'instance':obj})
         if (!kwargs['template_name']) {
-            kwargs['template_name'] = "%s/%s_form.html".subs(model._meta.remote_app_label, model._meta.module_name);
+            kwargs['template_name'] = "%s/%s_form.html".subs(model._meta.app_label, model._meta.module_name);
         }
     }
     var t = template_loader.get_template(kwargs['template_name']);
@@ -179,7 +179,7 @@ function delete_object(request, model, post_delete_redirect){
         return new HttpResponseRedirect(post_delete_redirect);
     } else {
         if (!kwargs['template_name']) {
-            kwargs['template_name'] = "%s/%s_confirm_delete.html".subs(model._meta.remote_app_label, model._meta.module_name);
+            kwargs['template_name'] = "%s/%s_confirm_delete.html".subs(model._meta.app_label, model._meta.module_name);
         }
         var t = template_loader.get_template(kwargs['template_name']),
             c = new RequestContext(request, {

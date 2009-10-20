@@ -1,23 +1,6 @@
-'''
-Created on 21/09/2009
-
-@author: defo
-'''
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
-from models import *
-from forms import *
-from django.core.paginator import Paginator
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render_to_response
-from django.shortcuts import render_to_response
-from offline_demo.salesman.forms import PedidoConItemsForm
-#----------------------------------------------------------
-# CRUD Ciudad
-#----------------------------------------------------------
-
-def view_ciudad(request, ciudad_id):
-    ciudad = get_object_or_404(Ciudad, id =  ciudad_id)
-    return render_to_response('salesman/ver_ciudad.html', locals())
-
+from salesman.apps.ventas.forms import PedidoConItemsForm, PedidoForm
 
 def create_pedido(request, object_id = None, **kwargs):
     if request.method == "POST":
@@ -37,7 +20,7 @@ def create_pedido(request, object_id = None, **kwargs):
         form = PedidoForm()
         formset = PedidoConItemsForm()
     
-    return render_to_response('salesman/pedido_form.html', locals())
+    return render_to_response('ventas/pedido_form.html', locals())
 
 def edit_pedido(request, object_id):
     pedido = get_object_or_404(Pedido, id = object_id)

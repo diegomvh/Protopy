@@ -100,7 +100,7 @@ function object_list(request) {
     }
     if (!kwargs['template_name']) {
         var model = queryset.model;
-        var template_name = "%s/%s_list.html".subs(model._meta.remote_app_label, model._meta.module_name);
+        var template_name = "%s/%s_list.html".subs(model._meta.app_label, model._meta.module_name);
     }
     var t = kwargs['template_loader'].get_template(template_name);
     return new HttpResponse(t.render(c), { mimetype: kwargs['mimetype'] });
@@ -139,7 +139,7 @@ function object_detail(request) {
         throw new Http404("No %s found matching the query".subs(model._meta.verbose_name));
     }
     if (!kwargs['template_name'])
-        kwargs['template_name'] = "%s/%s_detail.html".subs(model._meta.remote_app_label, model._meta.module_name);
+        kwargs['template_name'] = "%s/%s_detail.html".subs(model._meta.app_label, model._meta.module_name);
     if (kwargs['template_name_field']) {
         var template_name_list = [getattr(obj, kwargs['template_name_field']), template_name];
         var t = kwargs['template_loader'].select_template(template_name_list);
