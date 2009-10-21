@@ -1,4 +1,4 @@
-from django.core.management.base import BaseCommand, LabelCommand
+from django.core.management.base import BaseCommand, LabelCommand, CommandError
 from optparse import make_option
 import sys
 from glob import glob
@@ -52,12 +52,20 @@ class OfflineBaseCommand(BaseCommand):
     requires_model_validation = True
     can_import_settings = True
     
+    
+    def __init__(self, *largs, **kwargs):
+        super(OfflineBaseCommand, self).__init__(*largs, **kwargs)
+        from django.conf import settings
+        try:
+            __import__(settings.ROOT_URLCONF)
+        except Exception, e:
+            raise CommandError("Error loading ROOT_URLCONF")
+    
     def fill_templates(self, path_from, path_to, template_context, **options):
         '''
         Renders templates and puts them into appropiate folder
         '''
         verbose = options.get('verbosity', 0)
-        print "Verbose", verbose
         
         if type(path_from) == str:
             files_from = glob( path_from )

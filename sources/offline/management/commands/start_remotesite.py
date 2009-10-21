@@ -10,7 +10,12 @@ from glob import glob
 import offline
 
 class Command(OfflineLabelCommand):
-    help = "Creates a remote site"
+    
+    help = """
+        Creates a remote site
+        
+    """
+    
     def handle_label(self, remote_name, **options):
         from django.conf import settings
         offline_base = getattr(settings, "OFFLINE_BASE", None)

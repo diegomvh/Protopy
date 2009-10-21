@@ -130,8 +130,8 @@ class RemoteSite(RemoteBaseSite):
             raise Exception("You can't define two RemoteSites with the same name")
         else:
             self.name = name
-            REMOTE_SITES[self.name] = self
-
+            REMOTE_SITES[ self.name ] = self
+            
         if not protopy_root:
             from os.path import abspath, dirname, join
             protopy_root = getattr(get_app('offline'), '__file__')
@@ -184,8 +184,10 @@ class RemoteSite(RemoteBaseSite):
     
     def _get_media_root(self):
         from django.conf import settings
+        if not settings.MEDIA_ROOT:
+            raise Exception("MEDIA_ROOT not definded!")
         return os.path.abspath(settings.MEDIA_ROOT)
-    media_root = property(_get_media_root, doc = "Medai root")
+    media_root = property(_get_media_root, doc = "Media root")
     
     
     #===========================================================================
@@ -487,7 +489,11 @@ class RemoteSite(RemoteBaseSite):
         sd.save()
         
     def app_names(self):
-        return set(map( lambda m: m._meta.app_label, self._registry))
+        '''
+        Returns the  app_labels handled by a RemoteSite.
+        '''
+        #return set(map( lambda m: m._meta.app_label, self._registry))
+        return self._registry.keys()
     
 class RemoteOptions(object):
     def __init__(self, options=None):

@@ -24,6 +24,5 @@ urlpatterns = patterns('',
     (r'^/?$', 'django.views.generic.simple.direct_to_template', {'template': 'index.html'} ),
     ('^ventas', include('salesman.apps.ventas.urls')),
     (r'^%s/(.*)' % agentes_site.urlregex, agentes_site.root ),
-    (r'^%s/(.*)' % agentes_site.urlregex, agentes_site.root ),
     (r'^databrowse/(.*)', databrowse.site.root),
 )
