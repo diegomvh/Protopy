@@ -51,9 +51,7 @@ class Command(LabelCommand):
         for regex in self.site.TEMPLATE_RE_EXCLUDE:
             if regex.search(path):
                 return True
-        
-    
-    
+
     def output(self, no_newline = False, *largs):
         if self.verbose: 
             sys.stderr.write(u" ".join(map(unicode, largs)))
@@ -98,7 +96,13 @@ class Command(LabelCommand):
         
         # Application Code
         file_list = []
-        
+
+        # TODO: Uniformar las cosas en site para no tener que estar apendeando "/"
+        print "Adding/updating root..."
+        file_list.append(objdict({'name': '/', 
+                                  'url': '/'.join([ self.site.url ]) + '/',
+                       })
+        )
         print "Adding/updating templates..."
         for t in full_template_list():
             if self.invalid_file(t):
@@ -130,9 +134,6 @@ class Command(LabelCommand):
         
         print "Adding/updating models..."
         for app in self.site.app_names():
-            #relpath = relativepath(js, self.site.project_root)
-            #mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(js)))
-            #fsize = os.path.getsize(js)
             name = '/'.join([app, 'models.js'])
             #TODO: Check if the file exists
             file_list.append(objdict({'name': name, 
@@ -155,14 +156,7 @@ class Command(LabelCommand):
                                       })
             )
         
-        print "Adding/updating media..."
-        #media_root = os.path.abspath(settings.MEDIA_ROOT)
-        
-        #if settings.MEDIA_URL[-1] == '/':
-        #    self.media_url = settings.MEDIA_URL[:-1]
-        #else:
-        #    self.media_url = settings.MEDIA_URL
-        
+        print "Adding/updating media from %s..." % self.site.media_root
         for media in abswalk_with_simlinks(self.site.media_root):
             if self.invalid_file(js):
                 continue

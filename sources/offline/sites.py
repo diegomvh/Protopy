@@ -176,17 +176,18 @@ class RemoteSite(RemoteBaseSite):
     templates_url = property(_get_templates_url, doc = "Base url for templates")
     
     def _get_media_url(self):
-        if settings.MEDIA_URL[-1] == '/':
+        if settings.MEDIA_URL and settings.MEDIA_URL[-1] == '/':
             return settings.MEDIA_URL[:-1]
         return settings.MEDIA_URL
     media_url = property(_get_media_url, doc = "Media url")
     
-    
     def _get_media_root(self):
         from django.conf import settings
-        return os.path.abspath(settings.MEDIA_ROOT)
-    media_root = property(_get_media_root, doc = "Medai root")
-    
+        if settings.MEDIA_ROOT: 
+            return os.path.abspath(settings.MEDIA_ROOT)
+        else:
+            return ''
+    media_root = property(_get_media_root, doc = "Media root")
     
     #===========================================================================
     # View methods
@@ -389,14 +390,6 @@ class RemoteSite(RemoteBaseSite):
             manifest = GearsManifest.objects.get(remotesite_name = self.name)
         except ObjectDoesNotExist:
             return HttpResponseServerError("No manifest for '%s'. Please run manage.py manifest_update." % self.name)
-        try:
-            refered = request.GET['refered']
-            if refered != '/':
-                for path in [ '/', '/index.html', 'index.htm', '/index' ]:
-                    manifest.add_fake_entry( url = path, redirect = refered )
-                manifest.add_fake_entry(url = refered)
-        except KeyError:
-            pass
         js_output = manifest.json_dumps()
         #from ipdb import set_trace; set_trace()
         if request.GET.has_key('human'):
@@ -487,7 +480,7 @@ class RemoteSite(RemoteBaseSite):
         sd.save()
         
     def app_names(self):
-        return set(map( lambda m: m._meta.app_label, self._registry))
+        return set(self._registry.keys())
     
 class RemoteOptions(object):
     def __init__(self, options=None):
