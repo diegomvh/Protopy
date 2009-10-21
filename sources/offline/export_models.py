@@ -28,7 +28,6 @@ import sys
 from django.conf import settings
 from django.db.models import AutoField, ForeignKey, ManyToManyField
 from inspect import isclass, ismodule
-from offline.models import ReadOnlyModel
 
 python_version = map(int, sys.version.split(' ')[0].split('.'))
 
@@ -101,13 +100,6 @@ def get_class_bases(cls, results = None):
         results = [ cls, ]
         
     results += list(cls.__bases__)
-    #print results
-    # Got to roots?
-#    if len(cls.__bases__) == 1 and type(cls.__bases__[0]) in [object, type]:
-#        print "Coratando por llegar a type, estamos en %s" % cls
-#        
-#        return results
-    # Try this code
     for parent_cls in cls.__bases__:
         if parent_cls in (type, object):
             continue
@@ -136,63 +128,32 @@ def get_model_class_fields():
 # Cache
 model_class_fields = get_model_class_fields()
 
-def is_readonly_fk(f, registry):
-    related_model = f.rel.to
-    return related_model not in registry[related_model._meta.app_label]
-
-
-#def registry_iter_models(registry):
-#    for _, model_proxy in registry.iteritems():
-#        for model, proxy in model_proxy.iteritems():
-#            yield model
-#            
-#
-#def fill_missing_models(registry):
-#    
-#    model_list = list(registry_iter_models(registry))
-#    for model in model_list:
-#        related = get_related_fields(model)
-#        absent_models = filter(lambda m: m not in model_list)
-#        
-#    get_related_models()
-#    if isinstance(f, (ForeignKey, ManyToManyField)) and is_readonly_fk(f, registry):
-#                new_f = f.__class__(ReadOnlyModel)
-#                new_f.name = f.name
-#                f = new_f 
-
-def export_remotes(registry, app_label):
+def export_remotes(models_and_proxies):
     '''
-    @param models_and_proxies: Registry
-                                { app_label:
-                                            {
-                                                Model: RemoteProxy,
-                                                Model: RemoteProxy
-                                            }
-                                ... }
-                                                
+    @param models_and_proxies: {
+                                    Model: RemoteProxy,
+                                    Model: RemoteProxy
+                                }
+                    ... }
+                                        
     @return: Diccionario ordenado con remote -> {nombre_camo: valor_inicializacion_constructor} 
     
     '''
-    app_registry = registry[app_label] 
-    app_models = app_registry.keys()
-    sorted_models = get_model_order(app_models)
+    models = models_and_proxies.keys()
+    sorted_models = get_model_order(models)
     
     processed_models = SortedDict()
     
     for model in sorted_models:
-        print sorted_models
-        print app_registry, model
-        remote = app_registry[model]
-        #fields = model._meta.fields + model._meta.many_to_many + remote._meta.fields
-        fields = remote._meta.fields
-        
+        remote = models_and_proxies[model]
+        fields = remote.base_fields
         processed_fields = SortedDict()
-        for f in fields:
-            if isinstance(f, AutoField): continue
+        for name, field in fields.iteritems():
+            if isinstance(field, AutoField): continue
             
-            field_type = f.__class__.__name__
+            field_type = field.__class__.__name__
             try:
-                bases = get_class_bases(f)
+                bases = get_class_bases(field)
                 args = SortedDict()
                 for base in bases:
                     try:
@@ -200,17 +161,16 @@ def export_remotes(registry, app_label):
                     except:
                         pass
                     else:
-                        args.update( f_introspect.get_init_args(f) )
+                        args.update( f_introspect.get_init_args(field) )
                 
-                processed_fields[f.name] = (field_type, args )
+                processed_fields[name] = (field_type, args )
                 #f_introspect = model_class_fields[f.__class__]
                 #processed_fields[f.name] = (field_type, f_introspect.get_init_args(f))
             except KeyError, e:
                 #TODO: Implement for more fields
-                processed_fields[f.name] = (field_type, {})
+                processed_fields[name] = (field_type, {})
         
         processed_models[model] = processed_fields
-    print pformat(processed_models)
     return processed_models
 
 related_class = lambda relation: relation.rel.to
@@ -221,20 +181,17 @@ def get_model_order(model_lists):
     for model in model_lists:
         model_adj[ model ]  = get_related_models(model)
     
-    order = filter(lambda m: not model_adj[m], model_adj.keys())
-    order = map(lambda m: model_adj.pop(m), order)
-
-    # TODO: Detect encadenamiento y resoverlo
-    #while len(order) < len(model_adj):
+    order = filter(lambda m: not bool(model_adj[m]), model_adj.keys())
+    map(lambda m: model_adj.pop(m), order) 
+    # TODO: Detect encadenamiento y resolverlo
     while model_adj:
         for model in model_adj:
             deps = model_adj[model]
-            
+
             if all(map(lambda d: d not in model_adj, deps)):
                 order.append(model)
                 model_adj.pop(model)
-    # TODO: Fix This!!!
-    return filter( bool, order)
+    return order
     
 def model_order_for_app(app_label):
     from django.db.models.loading import get_app, get_models
@@ -246,3 +203,10 @@ def get_related_models(model):
     fks = map(related_class, fks)
         
     return fks + map(related_class, model._meta.many_to_many)
+
+def get_related_apps(models):
+    apps = []
+    for m in models:
+        ms = get_related_models(m)
+        apps += map(lambda m: m._meta.app_label, ms)
+    return set(apps)

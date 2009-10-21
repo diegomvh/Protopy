@@ -123,7 +123,3 @@ class SyncLog(models.Model):
     '''
     synced_at = models.DateTimeField()
     sync_id = models.CharField(max_length = 512)
-   
-class ReadOnlyModel(models.Model):
-    id = models.CharField(max_length = 255, primary_key = True)
-    value = models.CharField(max_length = 255)

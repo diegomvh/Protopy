@@ -16,6 +16,7 @@
 
 'INSTALLED_APPS': [
     'doff.contrib.offline',
+    'agentes.ventas',
     'agentes.core'
     ],
 

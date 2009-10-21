@@ -1,7 +1,8 @@
 {% load export_models %}
-require('{{site.name}}.{{app}}.mixin');
 var models = require('doff.db.models.base');
-require('doff.contrib.offline.models', 'SyncModel', 'ReadOnlyModel');
+require('doff.contrib.offline.models', 'SyncModel');
+{% for name in apps %}require('{{site.name}}.{{name}}.models', '*');
+{% endfor %}require('{{site.name}}.{{app}}.mixin');
 
 {% for name, fields in models %}//Create Object
 var mixed{{ name }} = extend(mixin.{{ name }} || {}, {
