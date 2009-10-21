@@ -26,34 +26,22 @@ Introducción
     de aplicaciones de prueba.
 
 El presente capítulo profundiza sobre el desarrollo de la librería de JavaScript
-sobre la cual se implenta una versión desconectada de Django. Si bien JavaScript
-1.7 y 1.8 incorporan muchos elementos que acercan su sintaxis a la de Python, es 
+sobre la cual se implenta una versión desconectada de Django. Como se mencionó
+en el capítulo anterior, si bien JavaScript en sus versiones 1.7 y 1.8 incorpora
+muchos elementos que acercan su sintaxis a la de Python, es 
 necesario implementar una capa intermedia entre JavaScript y Django "desconectado".
+Una de las razones mas relevantes es emular la API estándard de Python.
 
-Historia
---------
-
-Si bien el desarrollo de la biblioteca se mantuvo en paralelo a la del
-Framework (ORM, templates, etc), existen aspectos básicos a los que esta brinda soporte y permiten
-presentarla en un apartado separado como "Una Biblioteca en JavaScript", esta
-constituye la base para posteriores construcciones y auna herramientas que
-simplifican el desarrollo client-side.
+La biblioteca se basó en el código fuente de Prototype, sobre la cual se fue agregando
+y sustituyendo código. El resultado de esta modificación se bautizó en honor a 
+sus dos "padres", por un lado *Portotype JavaScript Library* y el lenguaje de programación
+*Python*:
 
     | **proto** type + **py** thon = **protopy**
 
-"La creación nace del caos", la libreria "Protopy" no escapa a esta
-afirmacion e inicialmente nace de la integracion de Prototype con
-las primeras funciones para lograr la modularizacion; con el correr de las
-lineas de codigo [*]_ el desarrollo del framework torna el enfoque inicial poco
-sustentable, requiriendo este de funciones más Python-compatibles se desecha la
-libreria base y se continua con un enfoque "pythonico", persiguiendo de esta
-forma acercar la semántica de JavaScript 1.7 a la del lenguaje de programacion
-Python.
 
 Objetivos de la Librería
 ------------------------
-
-Todos estos elementos confrman la biblioteca que se bautizó como Protopy:
 
 * Modularización y ámbito de nombres.
 
@@ -61,8 +49,8 @@ Todos estos elementos confrman la biblioteca que se bautizó como Protopy:
     de plantillas, requiere una cantidad considreable de código. Django por ejemplo
     consta de cerca de 43000 líneas, sin contar las aplicaciones 
     contribuidas (administración, GIS, data, sesiones, autenticación, bitácora) [*]_.
-    En particular, para migrar un framework implementado sobre python, el sistema
-    de módulos es muy importante. En Python los módulos definien ámbitos de nombres
+    En particular, para migrar un framework implementado sobre Python, el sistema
+    de paquetes es muy importante. En Python los módulos definien ámbitos de nombres
     de los cuales se pueden importar selectivamente sólo los símbolos usados, sin
     contaminar el ámbito local.
     
@@ -72,83 +60,96 @@ Todos estos elementos confrman la biblioteca que se bautizó como Protopy:
     En JavaScript, cada prtotipo almacena la estrctura estática de la "clase"
     y en el constructor se inicializa la instancia. En Python, la creación 
     de la clase la realiza el método ``__new__`` y la inicialización, el 
-    método ``__init__``. Django permite herencia múltiple y la definición
+    método ``__init__``. Python permite herencia múltiple y la definición
     dinámica de tipos a través de metaclases o mediante el builtin ``type`` 
-    (que sirve como factory de clases). Es necesario para adaptar el código
-    Python a JavaScript, definir los tipos object y type.
+    (que sirve como factory). Es necesario para adaptar el código
+    Python a JavaScript, definir los tipos base ``object`` y ``type`` debido
+    a que piezas claves de Django como el ORM y el sistema de formularios
+    basan su funcionamiento en estos builtins.
     
-    Además Python cuenta con una serie de métodos con cierto significado, 
-    como ``__call__``, ``__getattr__``, etc. JavaScript permite implementar
-    algunos de estos elementos.
-
+    En Python también se pueden definir métodos especiales en las clases, que permiten
+    sobrecarga de operadores (``+`` mediante ``__add__``,
+    ``==`` mediante ``__eq__``,
+    ``&`` y ``^`` medinate ``__and__`` y ``__or__``,
+    los paréntesis de invocación ``()`` mediante ``__call__``, etc). Algunos de
+    estos se pueden emular en JavaScript y Protopy brinda facilidades para esto.
+    
+* Tipos de datos y ``builtins``
+    
+    Existen ciertos tipos que no existen en JavaScript con la misma funcionalidad
+    que en Python. Un caso puntual son los ``Object`` o arreglos asociativos 
+    comparados con el tipo de datos ``dict``.
+    
+    En Python el conjunto de funciones, tipos disponibles en el ámbito de nombres global
+    se conoce como ``builtins``. Forman parte de este conjunto,
+    ``int``, ``bool``, ``str``, ``list``, ``tuple``, ``map``, ``filter``, 
+    ``abs``, ``all``, etc. La mayoría de estos símbolos fueron portados a Protopy 
+    y también publicados en el ámbito global.
+    
+    
 * Selección de elementos mediante CSS
 
     DOM permite realizar búsqueda de elementos dentro de un documento de 
     tres maneras: mediante un identificados, mediante un nombre de tag, o
-    el acceso gerárquico tipo árbol.
+    el acceso gerárquico tipo árbol (estas técnicas se pueden combinar).
     
-    Los selectores CSS alivan la tarea de seleccionar de manera simple
-    un conjunto de elementos que cumple con una característica. Por ejemplo
+    Los selectores CSS simplifcan la tarea de seleccionar un conjunto de 
+    elementos que cumple con cierta condición. Utilizan la sintaxis de
+    las hojas de estilo en cascada para determinar los elementos que
+    están siendo seleccionados.
+    Por ejemplo
     con la API de DOM seleccionar todos los elementos del tipo link, que
     posean un atributo ``href`` se realiza de la siguiente manera:
     
-    .. code-block:: javascrtipt
+    .. code-block:: javascript
         
         var links = document.getElementsByTagName('a').
             filter( function (e) { return e.getAttribute('href'); });
     
     Mientras que con selección CSS, esto se reduce a:
     
-    .. code-block:: javascrtipt
+    .. code-block:: javascript
     
         var links = $$('a[href]');
+       
+    Las librerías YUI, Protype, jQuery, Dojo, Ext JS entre otras poseen este
+    tipo de selector. Su utilización libra al desarrollador de incompatiblidades 
+    o implementaciones pobres de DOM, a la hora de interacturar con los elementos
+    del documento. 
 
-* Guerra de los navegadores.
-
-    Si bien se han logrado muchos avanzes con la estandarizacion de APIs, en
-    general existen muchas diferencias entre navegadores para trabajar con el
-    DOM o con los objetos de JavaScript.
-    Una capa uniforme de acceso al DOM, funciones y objetos que trabajen sobre
-    APIs heterogeneas, entre otras cosas, resultan buenas herramientas para el
-    desarrollo client-side.
-
-* Interacción entre cliente servidor.
 
 .. [*] Métrica obtenida de el comando 
     ``wc -l $(find django -iname "*.py" | grep -v contrib | grep -v backends)``
     
 
-Biblioteca
-----------
+Compatibilidad de Protopy
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Protopy es una biblioteca JavaScript para el desarrollo de aplicaciones
-web dinamicas. Aporta un enfoque modular para la inclusión de código,
-orientación a objetos, manejo de AJAX, DOM y eventos.
-
-Para una referencia completa de la API de Protopy remitase al apandice
-:ref:`Protopy <apendices-protopy>`
-
-
-
-.. [*] Forma en que los informaticos miden el paso del tiempo.
-
-No es arbitrario que el navegador sobre el cual corre Protopy sea Firefox y
-mas particularmente sobre la version 1.7 de JavaScript. El proyecto mozilla
-esta acercando, con cada nueva versiones del lenguaje, la semantica de
-JavaScript a la de Python, incluyendo en esta version generadores e iteradores
-los cuales son muy bien explotados por Protopy y el Framework.
+JavaScript 1.7 solo se encuentra implementado sobre la plataforma Mozilla
+(Firefox 3.0+). Dado que existe una sola plataforma compatible  se quitaron 
+gran parte de los arreglos de compatibilidad presentes originalmente en Prototype
+y se portó a nueva sintaxis muchas partes del código original. 
 
 .. _protopy-modulos:
 
 Organizando el codigo
 =====================
 
-Como ya se vio en la sección dedicada a :ref:`JavaScript <cliente-javascript>`,
-una de las formas tradicionales y recomendada de incluir funcionalidad en un
-documento HTML es mediante el tag `script`, haciendo una referencia en el
-atributo `src` a la url del archivo que contiene el codigo; en una instancia 
-posterior, cuando el cliente accede al recurso, carga el archivo con las
-sentencias JavaScript y las interpreta en el contexto del documento.
+Como se mencionó en el apartado teórico dedicado a JavaScript, la inclusión
+de código en un documento HTML se realiza mediante el tag ``script`` definiendo
+en el atributo ``src`` la URL del recurso. Cuando el navegador encuentra estos
+tags durante el análisis del documento (o *parsing*), descarga el recurso y lo
+evalúa en el contexto del documento (elemento DOM ``window``).
+ 
+Este tipo de enfoque resulta práctico para proyectos pequeños (donde se uitiliza
+JavaScript para validación, enriquecimeinto de formularios, accesibilidad) pero
+resulta limitado y poco mantenible.
+
+En Protopy se buscó la forma de solucionar este problema de la modularidad (
+separación de código) con el del ámbito de nombres (que cáda módulo se evalue 
+en un ámbito aislado, para lograr bajo acoplamiento). 
+
+Se tomó la idea de la carga asincrónica de Kris Kowal y el equipo de YUI.
 
 El enfoque tradicional resulta sustentable para pequeños proyectos, donde el
 lenguaje brinda mayormente soporte a la interacción con el usuario (validacion,
