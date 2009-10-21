@@ -2,29 +2,29 @@
 // Please note that Javascript is not Python. You must not end your lists nor
 // dictionaries with semicolon.
 {
-'DEBUG': true,
-'TEMPLATE_DEBUG': this.DEBUG,
+    'DEBUG': true,
+    'TEMPLATE_DEBUG': this.DEBUG,
 
-//Database
-'DATABASE_ENGINE': 'gears',
-'DATABASE_NAME': 'agentes_sqlite.db',
-'DATABASE_OPTIONS': {},
+    //Database
+    'DATABASE_ENGINE': 'gears',
+    'DATABASE_NAME': 'agentes_sqlite.db',
+    'DATABASE_OPTIONS': {},
 
-'MEDIA_URL': '',
+    'MEDIA_URL': '',
 
-'ROOT_URLCONF': 'agentes.urls',
+    'ROOT_URLCONF': 'agentes.urls',
 
-'INSTALLED_APPS': [
-    'doff.contrib.offline',
-    'agentes.ventas',
-    'agentes.core'
+    'INSTALLED_APPS': [
+        'doff.contrib.offline',
+        'agentes.ventas',
+        'agentes.core'
     ],
 
-'TEMPLATE_URLS': [ 
-                   'off/templates/' 
-                   ],
-                   
-'TEMPLATE_LOADERS': [
-            'doff.template.loaders.url.load_template_source'
-        ]
+    'TEMPLATE_URLS': [ 
+        'off/templates/' 
+    ],
+
+    'TEMPLATE_LOADERS': [
+                'doff.template.loaders.url.load_template_source'
+            ]
 }

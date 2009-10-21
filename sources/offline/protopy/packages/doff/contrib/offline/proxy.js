@@ -6,7 +6,7 @@ require('doff.core.project', 'get_project');
 var JavaScriptDeserializer = require('doff.core.serializers.javascript', 'Deserializer');
 
 //TODO: no me gusta mucho esto de tomar el rpc asi por la fuerza
-var url_base = get_project().offline_support + '/data';
+var url_base = get_project().offline_support + '/rpc/data';
 
 function ensure_default_proxy(cls) {
     require('doff.contrib.offline.models', 'SyncModel');
@@ -15,18 +15,18 @@ function ensure_default_proxy(cls) {
             var f = cls._meta.get_field('remotes');
             throw new ValueError("Model %s must specify a custom Manager, because it has a field named 'objects'".subs(cls.name));
         } catch (e if isinstance(e, FieldDoesNotExist)) {}
-        var jsonrpc = new DataProxy(url_base + '/' + string(cls._meta).replace('.', '/') + '/', {asynchronous: false});
-        cls.add_to_class('remotes', jsonrpc);
+        var rm = new RemoteManager(url_base + '/' + string(cls._meta).replace('.', '/') + '/', {asynchronous: false});
+        cls.add_to_class('remotes', rm);
     }
 };
 
 var hcp = event.subscribe('class_prepared', ensure_default_proxy);
 
-var DataProxy = type('DataProxy', [ rpc.ServiceProxy ], {
+var RemoteManager = type('RemoteManager', [ rpc.ServiceProxy ], {
 
     contribute_to_class: function(model, name) {
         this.model = model;
-        var pd = new ProxyDescriptor(this);
+        var pd = new RemoteManagerDescriptor(this);
         model.__defineGetter__(name, function(){ return pd.__get__(this, this.constructor); });
     },
 
@@ -42,7 +42,7 @@ var DataProxy = type('DataProxy', [ rpc.ServiceProxy ], {
     }
 });
 
-var ProxyDescriptor = type('ProxyDescriptor', [ object ], {
+var RemoteManagerDescriptor = type('RemoteManagerDescriptor', [ object ], {
     __init__: function(proxy){
         this.proxy = proxy;
     },
@@ -55,6 +55,6 @@ var ProxyDescriptor = type('ProxyDescriptor', [ object ], {
 });
 
 publish({
-    DataProxy: DataProxy,
-    ProxyDescriptor: ProxyDescriptor,
+    RemoteManager: RemoteManager,
+    RemoteManagerDescriptor: RemoteManagerDescriptor,
 });

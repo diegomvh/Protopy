@@ -254,7 +254,7 @@ class RemoteSite(RemoteBaseSite):
     def network_check(self, request):
         return HttpResponse()
 
-    @expose(r'^jsonrpc/?$')
+    @expose(r'^rpc/?$')
     def jsonrpc_handler(self, request):
         """
         the actual handler:
@@ -290,7 +290,7 @@ class RemoteSite(RemoteBaseSite):
         response['Content-length'] = str(len(response.content))
         return response
 
-    @expose(r'^data/(?P<app_label>\w+)/(?P<model_name>\w+)/$')
+    @expose(r'^rpc/data/(?P<app_label>\w+)/(?P<model_name>\w+)/$')
     def data(self, request, app_label, model_name):
         response = HttpResponse()
         models = self._registry.get(app_label, None)
@@ -326,34 +326,34 @@ class RemoteSite(RemoteBaseSite):
 
     def __str__(self):
         return "<RemoteSite '%s'>" % self.name
-    
+
     __repr__ = __str__
-    
+
     def _listMethods(self):
         # this method must be present for system.listMethods to work
         return self._jsonrpc or []
-    
+
     def _methodHelp(self, method):
         # this method must be present for system.methodHelp to work
         methods = self._jsonrpc or []
         if method in methods:
             return getattr(self, method).__doc__
         return ""
-        
+
     def _dispatch(self, method, params):
         methods = self._jsonrpc or []
         if method in methods:
             return getattr(self, method)(*params)
         else:
             raise 'bad method'
-    
+
     @jsonrpc
     def echo(self, value):
         '''
         echo(value) => value
         '''
         return value
-   
+
     @jsonrpc
     def start_sync(self, sync_request):
         '''
@@ -361,9 +361,9 @@ class RemoteSite(RemoteBaseSite):
             sreq = new SyncRequest()
             sreq.first = True
             sync_resp = send_sync_request(sreq); // Le pega a una url y un mￃﾩtodo de json-rpc
-    
+
         2) El server le envía SyncResponse sr1:
-            
+
             - model_order lista de dependencias de modelos
             - current_time
             - sync_id Identificación de sincronización (transacción) (el cliente lo envía con cada SyncRequest)
@@ -427,12 +427,12 @@ class RemoteSite(RemoteBaseSite):
         }
         '''
         assert issubclass(model, models.Model), "%s is not a Models subclass" % model
-        
+
         app_registry = self._registry.setdefault(model._meta.app_label, {})
-        
+
         #if model in app_registry:
         #    raise AlreadyRegistered("%s is already registered" % model)
-        
+
         if not remote_proxy:
             # If no class is given, create a basic one based on the model
             name = model._meta.object_name
@@ -440,10 +440,10 @@ class RemoteSite(RemoteBaseSite):
             remote_proxy = type('%sRemote' % name, 
                                 (RemoteModelProxy, ), 
                                 {'Meta': RemoteOptions(basic_meta)} )
-        
+
         app_registry[model] = remote_proxy
         related_models = get_related_models(model)
-        
+
         for related_model in related_models:
             app_registry = self._registry.setdefault(related_model._meta.app_label, {})
             if app_registry.has_key(related_model):
@@ -454,16 +454,16 @@ class RemoteSite(RemoteBaseSite):
             basic_meta = type('%sMeta' % name, (object,), {'model': related_model,
                                                            'fields': fields,
                                                            })
-            remote_proxy = type('%sRemote' % name, 
-                                (RemoteModelProxy, ), 
+            remote_proxy = type('%sRemote' % name,
+                                (RemoteModelProxy, ),
                                 {'Meta': RemoteOptions(basic_meta),
                                  'value': models.CharField(max_length = 250)} )
-            
+
             app_registry[related_model] = remote_proxy
-            
+
         signals.post_save.connect(self.model_saved, model)
         signals.post_delete.connect(self.model_deleted, model)
-        
+
     def model_saved(self, **kwargs):
         model_type = ContentType.objects.get_for_model(kwargs['sender'])
         try:
@@ -472,16 +472,16 @@ class RemoteSite(RemoteBaseSite):
             sd = SyncData(content_object = kwargs['instance'])
         sd.active = True
         sd.save()
-    
+
     def model_deleted(self, **kwargs):
         model_type = ContentType.objects.get_for_model(kwargs['sender'])
         sd = SyncData.objects.get(content_type__pk = model_type.id, object_id=kwargs['instance'].pk)
         sd.active = False
         sd.save()
-        
+
     def app_names(self):
         return set(self._registry.keys())
-    
+
 class RemoteOptions(object):
     def __init__(self, options=None):
         self.model = getattr(options, 'model', None)
@@ -498,19 +498,19 @@ class RemoteModelMetaclass(type):
         except NameError:
             # We are defining ModelForm itself.
             parents = None
-        
+
         declared_fields = dict(filter(lambda tupla: isinstance(tupla[1], Field), attrs.iteritems()))
         new_class = super(RemoteModelMetaclass, cls).__new__(cls, name, bases, attrs)
         if not parents:
             return new_class
         opts = new_class._meta = RemoteOptions(getattr(new_class, 'Meta', None))
-        
+
         fields = fields_for_model(opts.model, opts.fields, opts.exclude)
         fields.update(declared_fields)
-        
+
         new_class.declared_fields = declared_fields
         new_class.base_fields = fields
-        
+
         try:
             mgr = getattr(opts, 'manager')
         except AttributeError, e:

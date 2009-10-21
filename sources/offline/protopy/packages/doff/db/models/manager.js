@@ -29,7 +29,7 @@ var Manager = type('Manager', [ object ], {
         this.model = model;
         var md = new ManagerDescriptor(this);
         model.__defineGetter__(name, function(){ return md.__get__(this, this.constructor); });
-            if (!model['_default_manager'] || this.creation_counter < model._default_manager.creation_counter)
+        if (!model['_default_manager'] || this.creation_counter < model._default_manager.creation_counter)
             model._default_manager = this;
         if (model._meta['abstract'] || this._inherited)
             model._meta.abstract_managers.push([this.creation_counter, name, this]);
@@ -101,7 +101,7 @@ var Manager = type('Manager', [ object ], {
         return qs.get_or_create.apply(qs, arg.argskwargs);
     },
 
-    create: function(){
+    create: function() {
         var arg = new Arguments(arguments);
         var qs = this.get_query_set();
         return qs.create.apply(qs, arg.argskwargs);
@@ -113,49 +113,49 @@ var Manager = type('Manager', [ object ], {
         return qs.filter.apply(qs, arg.argskwargs);
     },
 
-    complex_filter: function(){
+    complex_filter: function() {
         var arg = new Arguments(arguments);
         var qs = this.get_query_set();
         return qs.complex_filter.apply(qs, arg.argskwargs);
     },
 
-    exclude: function(){
+    exclude: function() {
         var arg = new Arguments(arguments);
         var qs = this.get_query_set();
         return qs.exclude.apply(qs, arg.argskwargs);
     },
 
-    in_bulk: function(){
+    in_bulk: function() {
         var arg = new Arguments(arguments);
         var qs = this.get_query_set();
         return qs.in_bulk.apply(qs, arg.argskwargs);
     },
 
-    iterator: function(){
+    iterator: function() {
         var arg = new Arguments(arguments);
         var qs = this.get_query_set();
         return qs.iterator.apply(qs, arg.argskwargs);
     },
 
-    latest: function(){
+    latest: function() {
         var arg = new Arguments(arguments);
         var qs = this.get_query_set();
         return qs.latest.apply(qs, arg.argskwargs);
     },
 
-    order_by: function(){
+    order_by: function() {
         var arg = new Arguments(arguments);
         var qs = this.get_query_set();
         return qs.order_by.apply(qs, arg.argskwargs);
     },
 
-    select_related: function(){
+    select_related: function() {
         var arg = new Arguments(arguments);
         var qs = this.get_query_set();
         return qs.select_related.apply(qs, arg.argskwargs);
     },
 
-    values: function(){
+    values: function() {
         var arg = new Arguments(arguments);
         var qs = this.get_query_set();
         return qs.values.apply(qs, arg.argskwargs);
@@ -166,14 +166,14 @@ var Manager = type('Manager', [ object ], {
         var qs = this.get_query_set();
         return qs.values_list.apply(qs, arg.argskwargs);
     },
-    
+
     update: function() {
         var arg = new Arguments(arguments);
         var qs = this.get_query_set();
         return qs.update.apply(qs, arg.argskwargs);
     },
 
-    reverse: function(){
+    reverse: function() {
         var arg = new Arguments(arguments);
         var qs = this.get_query_set();
         return qs.reverse.apply(qs, arg.argskwargs);
@@ -184,7 +184,7 @@ var Manager = type('Manager', [ object ], {
         return insert_query(this.model, values, arg.kwargs['return_id'], arg.kwargs['raw_values']);
     },
 
-    _update: function(values){
+    _update: function(values) {
         var arg = new Arguments(arguments);
         args.push(kwargs);
         var qs = this.get_query_set();
@@ -193,10 +193,10 @@ var Manager = type('Manager', [ object ], {
 });
 
 var ManagerDescriptor = type('ManagerDescriptor', [ object ], {
-    __init__: function(manager){
+    __init__: function(manager) {
         this.manager = manager;
     },
-    
+
     __get__: function(instance, type) {
         if (!isinstance(instance, type))
             throw new AttributeError("Manager isn't accessible via %s instances".subs(type.__name__));
@@ -210,7 +210,7 @@ var EmptyManager = type('EmptyManager', [ Manager ], {
     }
 });
 
-publish({    
+publish({
     Manager: Manager,
     ManagerDescriptor: ManagerDescriptor,
     EmptyManager: EmptyManager  
