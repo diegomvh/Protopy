@@ -57,7 +57,7 @@ class OfflineBaseCommand(BaseCommand):
         super(OfflineBaseCommand, self).__init__(*largs, **kwargs)
         from django.conf import settings
         try:
-            __import__(settings.ROOT_URLCONF)
+            self._root_urlconf_mod = __import__(settings.ROOT_URLCONF)
         except Exception, e:
             raise CommandError("Error loading ROOT_URLCONF")
     
