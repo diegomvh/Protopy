@@ -3,6 +3,8 @@
 '''
 Remote model proxy for remote models in gears client.
 '''
+from django.db.models.fields import AutoField, CharField
+from django.utils.datastructures import SortedDict
 import os, re
 import random, string
 from datetime import datetime
@@ -27,7 +29,8 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import exceptions
 from django.core import serializers
-from offline.export_models import export_remotes, get_model_order
+from offline.export_models import export_remotes, get_model_order,\
+    get_related_models, filter_field
 
 __all__ = ('RemoteSite',
            'expose',
@@ -405,6 +408,7 @@ class RemoteSite(RemoteBaseSite):
     #===========================================================================
     def export_models(self, app_label):
         try:
+            print self._registry
             models = export_remotes(self._registry, app_label)
             print models
             models = models.items()
@@ -447,7 +451,23 @@ class RemoteSite(RemoteBaseSite):
                                 {'Meta': RemoteOptions(basic_meta)} )
         
         app_registry[model] = remote_proxy
-
+        related_models = get_related_models(model)
+        
+        for related_model in related_models:
+            app_registry = self._registry.setdefault(related_model._meta.app_label, {})
+            if app_registry.has_key(related_model):
+                continue
+            name = related_model._meta.object_name
+            basic_meta = type('%sMeta' % name, (object,), {'model': related_model,
+                                                           'fields': ['pk', ],
+                                                           })
+            remote_proxy = type('%sRemote' % name, 
+                                (RemoteModelProxy, ), 
+                                {'Meta': RemoteOptions(basic_meta),
+                                 'value': models.CharField(max_length = 250)} )
+            
+            app_registry[related_model] = remote_proxy
+            
         signals.post_save.connect(self.model_saved, model)
         signals.post_delete.connect(self.model_deleted, model)
         
@@ -469,90 +489,88 @@ class RemoteSite(RemoteBaseSite):
     def app_names(self):
         return set(map( lambda m: m._meta.app_label, self._registry))
     
+class RemoteOptions(object):
+    def __init__(self, options=None):
+        self.model = getattr(options, 'model', None)
+        self.fields = getattr(options, 'fields', None)
+        self.exclude = getattr(options, 'exclude', None)
+    
 class RemoteModelMetaclass(type):
     def __new__(cls, name, bases, attrs):
         '''
         Generate the class 
         '''
-        meta = attrs.pop('Meta', None)
-        if not meta:
-            if name is not "RemoteModelProxy":
-                raise ImproperlyConfigured("%s has no Meta" % name)
-            return super(RemoteModelMetaclass, cls).__new__(cls, name, bases, attrs)
-        else:
-            opts = RemoteOptions(meta)
-
-            attrs['_meta'] = opts
-            #print attrs
-            class_fields = {}
-
-            field_check = lambda field: isinstance(field, models.Field)
-
-            opts.fields = []
-
-            for base in bases:
-                for f_name, field in base.__dict__.iteritems():
-                    if field_check(field):
-                        if field.name != f_name:
-                            field.name = f_name
-                        opts.fields.append(field)
-
-            for f_name, field in attrs.iteritems():
-                if isinstance(field, models.Field):
-                    if field.name != f_name:
-                        field.name = f_name
-                    opts.fields.append(field)
-                    #print "Agregando field interno", f_name
-
+        try:
+            parents = [b for b in bases if issubclass(b, RemoteModelProxy)]
+        except NameError:
+            # We are defining ModelForm itself.
+            parents = None
+        
+        declared_fields = filter(filter_field, attrs)
+        declared_fields = dict([ (f.name, f) for f in declared_fields ])
         new_class = super(RemoteModelMetaclass, cls).__new__(cls, name, bases, attrs)
-
+        if not parents:
+            return new_class
+        opts = new_class._meta = RemoteOptions(getattr(new_class, 'Meta', None))
+        
+        # If a model is defined, extract form fields from it.
+        fields = fields_for_model(opts.model, opts.fields,
+                                  opts.exclude)
+        # Override default model fields with any custom declared ones
+        # (plus, include all the other declared fields).
+        fields.update(declared_fields)
+        
+        new_class.declared_fields = declared_fields
+        new_class.base_fields = fields
+        
         try:
             mgr = getattr(opts, 'manager')
         except AttributeError, e:
+            
             mgr = getattr(opts.model, '_default_manager')
 
         new_class.remotes = SimpleJSONRPCDispatcher(allow_none=False, encoding=None)
         new_class.remotes.register_introspection_functions() #Un poco de azucar
-        new_class.remotes.register_instance(RemoteDataServer(mgr))
+        new_class.remotes.register_instance(RemoteManager(mgr))
         return new_class
 
 
 class RemoteModelProxy(object):
     __metaclass__ = RemoteModelMetaclass
 
-    def dump(self):
-        '''
-        '''
-        pass
 
-    def sync(self):
-        pass
+#===============================================================================
+# Options
+#===============================================================================
 
-class RemoteOptions(object):
-    def __init__(self, class_meta, **options):
-        self.model = getattr(class_meta, 'model')
 
-        #TODO: __module__ ???
+def fields_for_model(model, fields=None, exclude=None):
+    """
+    Returns a ``SortedDict`` containing form fields for the given model.
 
-        if not self.model or not issubclass(self.model, models.Model):
-            raise ImproperlyConfigured("Invalid model %s" % self.model)
+    ``fields`` is an optional list of field names. If provided, only the named
+    fields will be included in the returned fields.
 
-        if hasattr(class_meta, 'exclude'):
-            exclude_fields = getattr(class_meta, 'exclude')
-            # model_field_names is for checking purposes only
-            model_field_names = map(lambda f: f.name, self.model._meta.fields +
-                                                        self.model._meta.many_to_many
-                                                    )
-            for name in exclude_fields:
-                if name not in model_field_names:
-                    raise ImproperlyConfigured("%s has no %s field" % (self.model, name)) 
+    ``exclude`` is an optional list of field names. If provided, the named
+    fields will be excluded from the returned fields, even if they are listed
+    in the ``fields`` argument.
+    """
+    field_list = []
+    opts = model._meta
+    for f in opts.fields + opts.many_to_many:
+        if fields and not f.name in fields:
+            continue
+        if exclude and f.name in exclude:
+            continue
+        
+    field_dict = SortedDict(field_list)
+    if fields:
+        field_dict = SortedDict([(f, field_dict.get(f)) for f in fields if (not exclude) or (exclude and f not in exclude)])
+    return field_dict
 
-    app_label = property(lambda s: s.model._meta.app_label, doc="Points to model app_label")
 
-    def __str__(self):
-        return unicode("<RemoteOptions for %s>" % self.model._meta.object_name)
 
-class RemoteDataServer(object):
+class RemoteManager(object):
     def __init__(self, manager):
         self._manager = manager
         self._format = 'python'
