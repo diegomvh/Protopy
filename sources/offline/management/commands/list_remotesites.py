@@ -1,8 +1,7 @@
 '''
 Lists the registered remotes on the project
 '''
-import sys
-from glob import glob
+
 from os.path import exists, abspath, dirname, join, isdir
 from os import listdir
 from offline.management.commands import OfflineBaseCommand
@@ -17,13 +16,7 @@ class Command(OfflineBaseCommand):
         for name, site in REMOTE_SITES.iteritems():
             print " * '%s' published in url '/%s'" % (name, site.urlregex)
         
-        prj_path = abspath(dirname(self._root_urlconf_mod.__file__))
-        if not exists(join(prj_path, settings.OFFLINE_BASE)):
-            return
-        
-        remote_dir = join(prj_path, settings.OFFLINE_BASE)
-        name_fullpath = [ (name, join(remote_dir, name)) for name in listdir(remote_dir) ]
-        name_fullpath = dict(name_fullpath)
+        name_fullpath = self.offline_root_contents()
         
         for name, full_path in name_fullpath.iteritems():
             if not isdir(full_path):
@@ -33,5 +26,5 @@ class Command(OfflineBaseCommand):
             if name in REMOTE_SITES:
                 continue
             print " !", name, "not published."
-        
+    
     

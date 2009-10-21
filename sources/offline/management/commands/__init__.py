@@ -4,7 +4,8 @@ import sys
 from glob import glob
 from os.path import join, exists, basename
 from django.template import Template, Context
-
+from os.path import abspath, dirname
+from os import listdir
 # Some common code 
 
 def offline_setup_checks():
@@ -92,8 +93,29 @@ class OfflineBaseCommand(BaseCommand):
             
             if verbose:
                 sys.stdout.write("%s written\n" % dst)
-    
+                
+    def offline_root_contents(self):
+        '''
+        @returns: Contents of the offline root directory where remote sites are held, dictionary
+                    made of file_name_or_directory as key and full path as value.
+            
+        '''
+        from django.conf import settings
+        prj_path = abspath(dirname(self._root_urlconf_mod.__file__))
+        if not exists(join(prj_path, settings.OFFLINE_BASE)):
+            raise CommandError("""
+            Offline base/root directory could not be found. You'll get rid of this
+            error when you've created your first remote site. Read on
+            manage.py help start_remotesite
+            """)
+        
+        remote_dir = join(prj_path, settings.OFFLINE_BASE)
+        name_fullpath = [ (name, join(remote_dir, name)) for name in listdir(remote_dir) ]
+        return dict(name_fullpath)
+        
 class OfflineLabelCommand(LabelCommand, OfflineBaseCommand):
-    pass
+    def __init__(self, *largs, **kwargs):
+        OfflineBaseCommand.__init__(self, *largs, **kwargs)
+        
     
     
