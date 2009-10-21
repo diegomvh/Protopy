@@ -266,12 +266,22 @@ class Command(OfflineLabelCommand):
                 new_template = GearsManifestEntry(manifest = self.manifest, **file_info)
                 new_template.save()
                 created += 1
-        #from ipdb import set_trace; set_trace()
-        for deleted_template in entry_qs.exclude(url__in = map(lambda f: f.url, file_list)):
-            print "DELETED: %s" % deleted_template
-            deleted_template.delete()
-            deleted += 1
+                
+        exclude_urls = map(lambda f: f.url, file_list)
         
+        # When too many templates are passed to exclude DB-API fails :(
+        #for deleted_template in entry_qs.exclude(url__in = exclude_urls):
+        #    print "DELETED: %s" % deleted_template
+        #    deleted_template.delete()
+        #    deleted += 1
+        
+        
+        db_entries = entry_qs.values('id', 'url') # --> [{id: ..., url: ....}]
+        for entry in db_entries:
+            if entry['url'] not in exclude_urls:
+                entry_qs.get(id = entry['id']).delete()
+                deleted += 1
+                
         return modified, created, deleted
      
         
