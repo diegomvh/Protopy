@@ -149,7 +149,12 @@ En Protopy se buscó la forma de solucionar este problema de la modularidad (
 separación de código) con el del ámbito de nombres (que cáda módulo se evalue 
 en un ámbito aislado, para lograr bajo acoplamiento). 
 
-Se tomó la idea de la carga asincrónica de Kris Kowal y el equipo de YUI.
+Se tomó la idea de la carga asincrónica de Kris Kowal [KrisKowal]_ y en cierta forma también
+el equipo de YUI de cargar los módulos de manera asincrónica.
+
+.. [KrisKowal] Kris Kowal,
+                Proyecto module.js,
+                útlimo acceso Septiembre 2009
 
 El enfoque tradicional resulta sustentable para pequeños proyectos, donde el
 lenguaje brinda mayormente soporte a la interacción con el usuario (validacion,
