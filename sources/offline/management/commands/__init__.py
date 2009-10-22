@@ -1,10 +1,11 @@
-from django.core.management.base import BaseCommand, LabelCommand
+from django.core.management.base import BaseCommand, LabelCommand, CommandError
 from optparse import make_option
 import sys
 from glob import glob
 from os.path import join, exists, basename
 from django.template import Template, Context
-
+from os.path import abspath, dirname
+from os import listdir
 # Some common code 
 
 def offline_setup_checks():
@@ -52,12 +53,20 @@ class OfflineBaseCommand(BaseCommand):
     requires_model_validation = True
     can_import_settings = True
     
+    
+    def __init__(self, *largs, **kwargs):
+        super(OfflineBaseCommand, self).__init__(*largs, **kwargs)
+        from django.conf import settings
+        try:
+            self._root_urlconf_mod = __import__(settings.ROOT_URLCONF)
+        except Exception, e:
+            raise CommandError("Error loading ROOT_URLCONF")
+    
     def fill_templates(self, path_from, path_to, template_context, **options):
         '''
         Renders templates and puts them into appropiate folder
         '''
         verbose = options.get('verbosity', 0)
-        print "Verbose", verbose
         
         if type(path_from) == str:
             files_from = glob( path_from )
@@ -84,8 +93,29 @@ class OfflineBaseCommand(BaseCommand):
             
             if verbose:
                 sys.stdout.write("%s written\n" % dst)
-    
+                
+    def offline_root_contents(self):
+        '''
+        @returns: Contents of the offline root directory where remote sites are held, dictionary
+                    made of file_name_or_directory as key and full path as value.
+            
+        '''
+        from django.conf import settings
+        prj_path = abspath(dirname(self._root_urlconf_mod.__file__))
+        if not exists(join(prj_path, settings.OFFLINE_BASE)):
+            raise CommandError("""
+            Offline base/root directory could not be found. You'll get rid of this
+            error when you've created your first remote site. Read on
+            manage.py help start_remotesite
+            """)
+        
+        remote_dir = join(prj_path, settings.OFFLINE_BASE)
+        name_fullpath = [ (name, join(remote_dir, name)) for name in listdir(remote_dir) ]
+        return dict(name_fullpath)
+        
 class OfflineLabelCommand(LabelCommand, OfflineBaseCommand):
-    pass
+    def __init__(self, *largs, **kwargs):
+        OfflineBaseCommand.__init__(self, *largs, **kwargs)
+        
     
     

@@ -11,6 +11,7 @@ from offline.util import random_string, get_site, get_site_root, \
     get_project_root, objdict
 from django.template.loader import find_template_source
 from django.template import TemplateDoesNotExist
+from offline.management.commands import OfflineLabelCommand
 import os
 import sys
 import time
@@ -22,9 +23,8 @@ try:
 except ImportError, e:
     from offline.util import relpath as relativepath
 
-from django.db.models import exceptions
 #TODO: Update if changed based on file modification date
-class Command(LabelCommand):
+class Command(OfflineLabelCommand):
     help = \
     """
         This command updates manifest files for remote site sincronization.
@@ -37,8 +37,6 @@ class Command(LabelCommand):
                     help="Clears application manifests"),
         make_option('-r', '--manifest-version', action='store', dest='manifest_ver', 
                     help = "Version", default = None),
-        make_option('-s', '--no-output', action='store_true', dest='no_output',
-                    default = False),                  
         )
     
     
@@ -56,16 +54,16 @@ class Command(LabelCommand):
             sys.stderr.write(u" ".join(map(unicode, largs)))
     
     def handle_label(self, remotesite_name, **options):
-        self.verbose = not options.get('no_output')
         from django.conf import settings
-        self.site = get_site(remotesite_name)
+        from offline.sites import REMOTE_SITES
+        self.site = REMOTE_SITES.get(remotesite_name, False)
         if not self.site:
-            print "Can't find any site by the name '%s'" % remotesite_name
-            
-            # Won't exit if it fails since more than one site maight have been
-            # passed to the command
-            #sys.exit(3)
-            return
+            site_names = ','.join(REMOTE_SITES.keys())
+            raise CommandError("""
+                Remote site '%(remotesite_name)s' is not registered. Available sites: %(site_names)s
+                If your remote site already exists, check if it's installed in you settings.ROOT_URLCONF
+            """ % locals())
+        
         try:
             self.manifest = GearsManifest.objects.get(remotesite_name = remotesite_name)
         except models.exceptions.ObjectDoesNotExist:
@@ -159,9 +157,11 @@ class Command(LabelCommand):
         for media in abswalk_with_simlinks(self.site.media_root):
             if self.invalid_file(js):
                 continue
+            
             relpath = relativepath(media, self.site.media_root)
             mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(media)))
             fsize = os.path.getsize(media)
+            #from ipdb import set_trace; set_trace()
             file_list.append(objdict({'name': relpath, 
                                       'url': '/'.join([self.site.media_url, relpath]),
                                       'file_mtime': mtime, 
@@ -259,12 +259,22 @@ class Command(LabelCommand):
                 new_template = GearsManifestEntry(manifest = self.manifest, **file_info)
                 new_template.save()
                 created += 1
-        #from ipdb import set_trace; set_trace()
-        for deleted_template in entry_qs.exclude(url__in = map(lambda f: f.url, file_list)):
-            print "DELETED: %s" % deleted_template
-            deleted_template.delete()
-            deleted += 1
+                
+        exclude_urls = map(lambda f: f.url, file_list)
         
+        # When too many templates are passed to exclude DB-API fails :(
+        #for deleted_template in entry_qs.exclude(url__in = exclude_urls):
+        #    print "DELETED: %s" % deleted_template
+        #    deleted_template.delete()
+        #    deleted += 1
+        
+        
+        db_entries = entry_qs.values('id', 'url') # --> [{id: ..., url: ....}]
+        for entry in db_entries:
+            if entry['url'] not in exclude_urls:
+                entry_qs.get(id = entry['id']).delete()
+                deleted += 1
+                
         return modified, created, deleted
      
         
