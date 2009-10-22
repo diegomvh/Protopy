@@ -53,7 +53,6 @@ var Project = type('Project', object, {
 
         if (sys.gears.installed && sys.gears.hasPermission)
             this._create_stores();
-        this._create_jsonrpc();
     },
 
     _create_toolbar: function(){
@@ -78,11 +77,6 @@ var Project = type('Project', object, {
         this.managed_store = localserver.createManagedStore(this.package + '_manifest');
         this.managed_store.manifestUrl = this.offline_support + '/manifest.json';
         //this.managed_store.manifestUrl = this.offline_support + '/manifest.json?refered=' + this.start_url;
-    },
-
-    _create_jsonrpc: function() {
-        require('rpc');
-        this.jsonrpc = new rpc.ServiceProxy(this.offline_support + '/jsonrpc', {asynchronous: false});
     },
 
     bootstrap: function(){

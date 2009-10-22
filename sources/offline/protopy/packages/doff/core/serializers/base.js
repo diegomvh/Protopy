@@ -23,7 +23,7 @@ var Serializer = type('Serializer', [ object ], {
         this.selected_fields = this.options["fields"];
 
         this.start_serialization();
-        for (var obj in queryset) {
+        for each (var obj in queryset) {
             this.start_object(obj);
             for each (var field in obj._meta.local_fields) {
                 if (field.serialize) {

@@ -6,7 +6,6 @@ Remote model proxy for remote models in gears client.
 from django.db.models.fields import Field, AutoField, CharField
 from django.utils.datastructures import SortedDict
 import os, re
-import random, string
 from datetime import datetime
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound,\
     HttpResponseServerError
@@ -19,11 +18,10 @@ from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 from django.db import models
 from django.contrib.admin.sites import AlreadyRegistered
 from django.shortcuts import render_to_response
-from offline.util import get_project_root
 from offline.util.jsonrpc import SimpleJSONRPCDispatcher
 from django.db.models.loading import get_app, get_model
-from offline.util import full_template_list, abswalk_with_simlinks
-from offline.models import SyncLog, GearsManifest, SyncData
+from offline.util import random_string, get_project_root, full_template_list, abswalk_with_simlinks
+from offline.models import GearsManifest, SyncData
 from django.db.models import signals
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
@@ -36,7 +34,7 @@ __all__ = ('RemoteSite',
            'expose',
            'RemoteModelProxy',
            )
- 
+
 def expose(url, *args, **kwargs):
     def decorator(func):
         def new_function(*args, **kwargs):
@@ -73,9 +71,6 @@ class RemoteSiteBase(type):
         if jsonrpc:
             new_class._jsonrpc = jsonrpc
         return new_class
-        
-
-random_string = lambda length: ''.join( [ random.choice(string.letters) for _ in range(length) ] )
 
 class RemoteBaseSite(object):
     '''
@@ -355,12 +350,13 @@ class RemoteSite(RemoteBaseSite):
         return value
 
     @jsonrpc
-    def start_sync(self, sync_request):
+    def begin_synchronization(self, last_sync_log = None):
         '''
         1) El cliente envía SyncRequest
             sreq = new SyncRequest()
             sreq.first = True
-            sync_resp = send_sync_request(sreq); // Le pega a una url y un mￃﾩtodo de json-rpc
+    
+        sync_resp = send_sync_request(sreq); // Le pega a una url y un mￃﾩtodo de json-rpc
 
         2) El server le envía SyncResponse sr1:
 
@@ -368,13 +364,24 @@ class RemoteSite(RemoteBaseSite):
             - current_time
             - sync_id Identificación de sincronización (transacción) (el cliente lo envía con cada SyncRequest)
         '''
-        now = datetime.now()
-        date = now.strftime("%Y-%m-%dT%H:%M:%S")
+        synced_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        models = []
+        for app in self._registry.values():
+            models += app.keys()
+        models = get_model_order(models)
+        sync_id = random_string(32)
+        if last_sync_log == None:
+            # Es el primero tengo que mandar todos los datos
+            pass
+        else:
+            # Mando solo quellos modelos y datos que tengan cosas nuevas en base a sync_log.synced_at
+            pass
+        apps_models = map(lambda m: str(m._meta), models)
         return {
-                'model_order': [1, 2, 4, ],
-                'current_time': date,
-                'sync_id': None
-                }
+                'models': apps_models,
+                'synced_at': synced_at,
+                'sync_id': sync_id
+            }
 
     #===========================================================================
     # Manifests
@@ -561,6 +568,9 @@ class RemoteManager(object):
     def _dispatch(self, method, params):
         methods = self._methods() or []
         if method in methods:
+            if params and isinstance(params[0], dict) and \
+                params[0].has_key('model') and params[0]['model'] == 'offline.synclog':
+                self.sync_log = params.pop(0)
             return getattr(self, method)(*params)
         else:
             raise Exception('bad method')

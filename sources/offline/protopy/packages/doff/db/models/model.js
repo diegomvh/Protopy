@@ -493,7 +493,6 @@ var Model = type('Model', [ object ], {
         }
         return this[cachename];
     }
-
 });
 
 Model.prototype.save.alters_data = true;

@@ -83,8 +83,8 @@ var rpc = {
 
 rpc.ServiceProxy = type('ServiceProxy', [ object ], {
     __init__: function(serviceURL, options) {
-	   this.__serviceURL = serviceURL;
-	
+        this.__serviceURL = serviceURL;
+
         //Determine if accessing the server would violate the same origin policy
         this.__isCrossSite = false;
         var urlParts = this.__serviceURL.match(/^(\w+:)\/\/([^\/]+?)(?::(\d+))?(?:$|\/)/);
@@ -197,8 +197,8 @@ rpc.ServiceProxy = type('ServiceProxy', [ object ], {
     },
 
     __callMethod: function(methodName, params, successHandler, exceptionHandler, completeHandler){
-	   rpc.requestCount++;
-	
+        rpc.requestCount++;
+
         //Verify that successHandler, exceptionHandler, and completeHandler are functions
         if(this.__isAsynchronous){
             if(successHandler && typeof successHandler != 'function')

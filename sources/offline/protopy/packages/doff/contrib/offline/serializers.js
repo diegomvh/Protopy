@@ -15,7 +15,7 @@ var Serializer = type('Serializer', [ sbase.Serializer ], {
         this.objects = [];
     },
 
-    end_serialization: function(){},
+    end_serialization: function() {},
 
     start_object: function(obj) {
         this._current = {};
@@ -73,7 +73,6 @@ function Deserializer(object_list) {
         if (Model == null)
             throw new sbase.DeserializationError("Invalid model identifier: '%s'".subs(model_identifier));
         var data = {};
-        data[Model._meta.pk.attname] = Model._meta.pk.to_javascript(d["pk"]);
         var m2m_data = {};
 
         // Handle each field
@@ -97,6 +96,7 @@ function Deserializer(object_list) {
                 data[field.name] = field.to_javascript(field_value);
             }
         }
+        data['server_pk'] = Model._meta.pk.to_javascript(d["pk"]);
         yield new sbase.DeserializedObject(new Model(data), m2m_data);
     }
 }

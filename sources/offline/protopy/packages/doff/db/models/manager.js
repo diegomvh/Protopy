@@ -19,7 +19,7 @@ var hcp = event.subscribe('class_prepared', ensure_default_manager);
 var Manager = type('Manager', [ object ], {
     creation_counter: 0
 },{
-    __init__: function(){
+    __init__: function() {
         this._set_creation_counter();
         this.model = null;
         this._inherited = false;
@@ -35,7 +35,7 @@ var Manager = type('Manager', [ object ], {
             model._meta.abstract_managers.push([this.creation_counter, name, this]);
     },
 
-    _set_creation_counter: function(){
+    _set_creation_counter: function() {
         this.creation_counter = Manager.creation_counter;
         Manager.creation_counter += 1;
     },
@@ -137,10 +137,9 @@ var Manager = type('Manager', [ object ], {
         return qs.iterator.apply(qs, arg.argskwargs);
     },
 
-    latest: function() {
-        var arg = new Arguments(arguments);
+    latest: function(field_name) {
         var qs = this.get_query_set();
-        return qs.latest.apply(qs, arg.argskwargs);
+        return qs.latest.apply(qs, arguments);
     },
 
     order_by: function() {

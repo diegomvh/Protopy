@@ -1,6 +1,6 @@
 {% load export_models %}
 var models = require('doff.db.models.base');
-require('doff.contrib.offline.models', 'SyncModel');
+require('doff.contrib.offline.models', 'RemoteModel');
 {% for name in apps %}require('{{site.name}}.{{name}}.models', '*');
 {% endfor %}require('{{site.name}}.{{app}}.mixin');
 
@@ -10,7 +10,7 @@ var mixed{{ name }} = extend(mixin.{{ name }} || {}, {
 {% endfor %}});
 
 //Create Model
-var {{ name }} = type("{{ name }}", SyncModel, mixed{{name}});
+var {{ name }} = type("{{ name }}", RemoteModel, mixed{{name}});
 
 {% endfor %}publish({
 {% for name, _ in models %}    {{ name }}: {{ name }}{% if not forloop.last %},{% endif %}

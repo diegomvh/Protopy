@@ -9,8 +9,8 @@ var settings = get_settings();
  * A cache that stores installed applications and their models. Used to
  * provide reverse-relations and for app introspection (e.g. admin).
  */
-var AppCache = type('AppCache', object, {
-    '__init__': function __init__() {
+var AppCache = type('AppCache', [ object ], {
+    __init__: function() {
         this.app_store = new SortedDict();
 
         // Mapping of app_labels to a dictionary of model names to model code.
@@ -31,8 +31,7 @@ var AppCache = type('AppCache', object, {
         * sense that every caller will see the same state upon return, and if the
         * cache is already initialised, it does no work.
         */
-    '_populate': function _populate() {
-
+    _populate: function() {
         if (this.loaded)
             return
         for each (var app_name in settings.INSTALLED_APPS) {
@@ -50,7 +49,7 @@ var AppCache = type('AppCache', object, {
     /*
         * Loads the app with the provided fully qualified name, and returns the model module.
         */
-    'load_app': function load_app(app_name, can_postpone) {
+    load_app: function(app_name, can_postpone) {
         this.handled[app_name] = null;
         this.nesting_level = this.nesting_level + 1;
         var mod = require(app_name + '.models');
@@ -73,14 +72,14 @@ var AppCache = type('AppCache', object, {
         * Useful for code that wants to cache the results of get_models() for
         * themselves once it is safe to do so.
         */
-    'app_cache_ready': function app_cache_ready() {
+    app_cache_ready: function() {
         return this.loaded;
     },
 
     /*
         * Returns a list of all installed modules that contain models.
         */
-    'get_apps': function get_apps() {
+    get_apps: function() {
         this._populate();
 
         // Ensure the returned list is always in the same order (with new apps
@@ -95,7 +94,7 @@ var AppCache = type('AppCache', object, {
         * Returns the module containing the models for the given app_label. If
         * the app has no models in it and 'emptyOK' is True, returns None.
         */
-    'get_app': function get_app(app_label) {
+    get_app: function(app_label) {
         this._populate()
         for each (var app_name in settings.INSTALLED_APPS) {
             mod = this.load_app(app_name, False)
@@ -108,7 +107,7 @@ var AppCache = type('AppCache', object, {
         /*
         * Returns the map of known problems with the INSTALLED_APPS.
         */
-    'get_app_errors': function get_app_errors() {
+    get_app_errors: function() {
         this._populate();
         return this.app_errors;
     },
@@ -117,7 +116,7 @@ var AppCache = type('AppCache', object, {
         * Given a module containing models, returns a list of the models.
         * Otherwise returns a list of all installed models.
         */
-    'get_models': function get_models(app_mod) {
+    get_models: function(app_mod) {
         this._populate();
         if (app_mod) {
             return this.app_models.get(app_mod.__name__.split('.').slice(-2)[0], new SortedDict()).values()
@@ -133,8 +132,7 @@ var AppCache = type('AppCache', object, {
         * Returns the model matching the given app_label and case-insensitive model_name.
         * Returns None if no model is found.
         */
-    'get_model': function get_model(app_label, model_name, seed_cache) {
-    
+    get_model: function(app_label, model_name, seed_cache) {
         if (seed_cache)
             this._populate();
         return this.app_models.get(app_label, new SortedDict()).get(model_name.toLowerCase());
@@ -143,7 +141,7 @@ var AppCache = type('AppCache', object, {
     /*
         * Register a set of models as belonging to an app.
         */
-    'register_models': function register_models(app_label, models) {
+    register_models: function(app_label, models) {
         var models = (type(models) == Array)? models : [models];
         for each (var model in models) {
             // Store as 'name: model' pair in a dictionary
@@ -159,6 +157,13 @@ var AppCache = type('AppCache', object, {
 
 var cache = new AppCache();
 
+//Helper to look up a model from an "app_label.module_name" string.
+function get_model_by_identifier(model_identifier) {
+    var [app_label, model_name] = model_identifier.split(".");
+    var Model = cache.get_model(app_label, model_name);
+    return Model;
+}
+
 publish({    
     get_apps: getattr(cache, 'get_apps'),
     get_app: getattr(cache, 'get_app'),
@@ -167,5 +172,6 @@ publish({
     get_model: getattr(cache, 'get_model'),
     register_models: getattr(cache, 'register_models'),
     load_app: getattr(cache, 'load_app'),
-    app_cache_ready: getattr(cache, 'app_cache_ready') 
+    app_cache_ready: getattr(cache, 'app_cache_ready'),
+    get_model_by_identifier: get_model_by_identifier
 });

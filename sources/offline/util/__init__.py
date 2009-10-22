@@ -1,16 +1,10 @@
+import random, string
 from types import *
 from files import *
 from models import *
 import glob
 
-#===============================================================================
-# Magic, don't touch
-#===============================================================================
-OFFLINE_ROOT_DIR = 'offline'
-
-# These function rule how protopy will handle offline paths in the local
-# development eveiroment.
-# 
+random_string = lambda length: ''.join( [ random.choice(string.letters) for _ in range(length) ] )
 
 def get_project_name():
     from django.conf import settings
@@ -21,7 +15,8 @@ def get_project_root():
     return os.path.dirname(os.path.abspath(project_mod.__file__))
 
 def get_offline_root():
-    return os.path.join(get_project_root(), OFFLINE_ROOT_DIR)
+    from django.conf import settings
+    return os.path.join(get_project_root(), settings.OFFLINE_BASE)
 
 def get_site_root(site_name):
     if not get_site(site_name):

@@ -1,6 +1,6 @@
 require('doff.core.exceptions', 'ObjectDoesNotExist', 'ImproperlyConfigured');
 require('doff.db.base', 'connection');
-require('doff.db.models.loading', 'get_apps', 'get_app', 'get_models', 'get_model', 'register_models');
+require('doff.db.models.loading', 'get_apps', 'get_app', 'get_models', 'get_model', 'get_model_by_identifier', 'register_models');
 require('doff.db.models.query', 'Q');
 require('doff.db.models.manager', 'Manager');
 require('doff.db.models.model', 'Model');

@@ -1,15 +1,10 @@
 
 function get_user(request) {
     require('doff.contrib.auth.models', 'AnonymousUser');
-    //TODO: Ontener la cookie con el usuario :)
-    try:
-        user_id = request.session[SESSION_KEY]
-        backend_path = request.session[BACKEND_SESSION_KEY]
-        backend = load_backend(backend_path)
-        user = backend.get_user(user_id) or AnonymousUser()
-    except KeyError:
-        user = AnonymousUser()
-    return user
+    user_name = request.get_cookie('user_name');
+    if (user_name == null)    
+        return new AnonymousUser();
+    return {'name': user_name};
 }
 
 var _cached_user = null;
