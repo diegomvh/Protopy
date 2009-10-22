@@ -138,122 +138,114 @@ Organizando el codigo
 Como se mencionó en el apartado teórico dedicado a JavaScript, la inclusión
 de código en un documento HTML se realiza mediante el tag ``script`` definiendo
 en el atributo ``src`` la URL del recurso. Cuando el navegador encuentra estos
-tags durante el análisis del documento (o *parsing*), descarga el recurso y lo
-evalúa en el contexto del documento (elemento DOM ``window``).
+tags en el análisis del documento (o *parsing*), descarga el recurso y lo
+evalúa en el contexto de elemento``window`` (es decir, si en el código se define
+una variable ``a`` fuera del bloque de una función, esta pasa a ser miembro
+del objeto ``window``).
  
-Este tipo de enfoque resulta práctico para proyectos pequeños (donde se uitiliza
-JavaScript para validación, enriquecimeinto de formularios, accesibilidad) pero
-resulta limitado y poco mantenible.
+La cárga de JavaScript mediante tags de inclusión es práctico para proyectos pequeños
+(donde se uitiliza JavaScript para validación, enriquecimeinto de formularios, accesibilidad) 
+pero resulta limitado y poco mantenible cuando la cantidad de JavaScript crece.
 
-En Protopy se buscó la forma de solucionar este problema de la modularidad (
-separación de código) con el del ámbito de nombres (que cáda módulo se evalue 
-en un ámbito aislado, para lograr bajo acoplamiento). 
+En Protopy se buscó la forma de solucionar este problema analizando la forma
+en la que se resuelve en el lenguaje Python, donde la modularidad y 
+la creación de ámbitos de nombres están intimamente relacionados.
 
-Se tomó la idea de la carga asincrónica de Kris Kowal [KrisKowal]_ y en cierta forma también
-el equipo de YUI de cargar los módulos de manera asincrónica.
+En vez de cargar los recursos mediante la inclusión de tags, ee tomó la idea 
+de la carga asincrónica de código de Kris Kowal [KrisKowal09]_, también
+presente en YUI [YahooYUILoader09]_, donde se utiliza una función de inclusión
+que genera peticiones XmlHTTPRequest a los recursos y los evalua cuando se
+completan.
 
-.. [KrisKowal] Kris Kowal,
+
+.. [KrisKowal09] Kris Kowal,
                 Proyecto module.js,
-                útlimo acceso Septiembre 2009
+                útlimo acceso Septiembre 2009,
+                http://modulesjs.com/
+                
+.. [YahooYUILoader09] YUI Team,
+                Documentación del módulo YUI Loader,
+                último acceso Septiembre 2009,
+                http://developer.yahoo.com/yui/yuiloader/
 
-El enfoque tradicional resulta sustentable para pequeños proyectos, donde el
-lenguaje brinda mayormente soporte a la interacción con el usuario (validacion,
-accesibilidad, etc) y los fragmentos de código que se pasan al cliente son
-bien conocidos por el desarrollador, pero en proyectos que implican mayor
-cantidad
-de funcionalidad JavaScript, con grandes cantidades de código, este enfoque
-resulta complejo de mantener y evolucionar en el tiempo. Es por esto que para
-Protopy se busco como primera medida una forma de organizar y obtener el código
-del servidor que resulte sustentable y escalable.
+Se agregó al ámbito global la función ``require( "nombre_modulo" )`` que recibe
+como cadena el nombre del módulo que se desea cargar y lo descarga asincronicamente
+para luego evaluarlo un contexto aislado.
 
-Similar al concepto de :ref:`modulos en Python <servidor-lenguajes-python>`, el
-desarrollo de Protopy se oriento en pequeñas unidades funcionales llamadas
-**modulos**.
+.. http://www.gulic.org/almacen/diveintopython-5.4-es/html_processing/locals_and_globals.html
 
-Además de la sanidad mental que implica organizar el código en distintos
-archivos, los módulos representan un cambio muy importante en la obtención de
-funcionalidad; ya no es el documento HTML el que dice al cliente que archivo
-cargar del servidor, sino que el mismo código interpretado obtiene la
-funcionalidad a medida que la requiere.
+En Protopy un módulo es un recurso JavaScript que publica explicitamente una interfase. 
+De esta manera la funcionalidad se encuentra encapsulada. Para publicar un elmento
+del módulo se utiliza la función ``publish({nombre: objeto, nombre: objeto})``.
+ 
+Además de cargar el módulo, ``require()`` se encarga publicación en
+el ámbito local a la invocación de los símbolos que sean publicados mediante ``publish()``.
+Durante la evaluación se encuentra disponible la variable ``__name__`` que 
+tiene como valor el nombre del módulo que se está evaluando.
 
-    "Namespaces are one honking great idea -- let's do more of those!"
+Los módulos se pueden organizar geraquicamente en carpetas, a las cual se
+denomina paquetes. El comando ``require("a.b")`` carga el elemento ``b`` del
+paquete ``a``.
 
-    -- import this
+Carga de un Módulo
+------------------
 
-http://www.gulic.org/almacen/diveintopython-5.4-es/html_processing/locals_and_globals.html
+Cuando se utiliza la función ``require`` la búsqueda de los módulos se realiza
+en la *ruta base*. Esta se estableció como el subdirectorio ``packages``
+a partir de la ruta desde la cual se cargó la librería Protopy.
+Por ejemplo, si protopy.js se encuentra en ``http://dominio.com/media/js/protopy.js`` 
+la invocación ``require("dom")`` cargará el archivo ``dom.js`` desde  
+``http://dominio.com/media/js/packages/dom.js``.
 
-El enfoque modular no es nuevo en programación y basicamente, la implementación
-de Protopy, implica llevar el concepto de "divide y vencerás" ó "análisis
-descendente (Top-Down)" al hambito de JavaScript.
+Cuando se utilizan paquetes, a diferencia de Python, en el paquete no incluye funcionalidad
+per se (Protopy carece de un equivalente al módulo de inicialización de
+paquetes, ``__init__`` de Python); la única función de estos es la de establecer 
+estructura.
 
-Un módulo resuelve un problema especifico y define una interfaz de comunicación
-para accesar y utilizar la funcionalidad que contiene. Por más simple que
-resulte de leer, esto implica que existe una manera de **obtener** un modulo y
-una manera de **publicar** la funcionalidad de un modulo, logrando de esta forma
-que interactuen entre ellos.
+La búsqueda de módulos se puede ampliar más allá de la ruta base. En el módulo
+``sys`` existe la variable ``paths``, que consiste en una lista de rutas en
+las cuales se realiza la búsqueda cuando el módulo no se encuentra en la ruta 
+base. El programador puede añadir entradas a ``sys.path``.
 
-En su forma mas pedestre un módulo es un archivo que contiene definiciones y
-sentencias de JavaScript. El nombre del archivo es el nombre del módulo con el
-sufijo .js pegado y dentro de un módulo, el nombre del módulo está disponible
-como el valor de la variable `__name__`.
+La función ``require`` se puede usar para:
 
-Obtener un módulo
------------------
+    * Obtener un modulo puede ser obtenido como un objeto,
+        
+        .. code-block:: javascript
+            
+            var mod = require('events');
+        
+        .. code-block:: javascript
+            
+            require('events');  // Events queda en el espacio global
+         
 
-La función `require` es la encargada de obtener un módulo del servidor e
-incorporarlo al :ref:`espacio de nombres <servidor-lenguajes-python>` del
-llamador. Por ejemplo, cuando un módulo llamado spam es requerido, Protopy busca
-un archivo
-llamado spam.js en la url base [*]_, de no encontrar el archivo el error
-``LoadError`` es lanzado a la función que requirio el módulo.
-
-.. [*] Ruta base desde la cual la biblioteca Protopy carga los módulos, por
-    defecto esta es la url base del archivo protopy.js más el sufijo `packages`.
-
-Otra forma de obtener módulos es usando nombres de **paquetes**. A diferencia de
-Python un paquete no incluye funcionalidad en si mismo y su funcionalidad
-principal es la de establecer las bases en la cual buscar modulos.
-De forma similar a la anterior cuando un módulo llamado foo.spam es importado,
-Protopy busca en el objeto sys.paths si existe una url asociada al paquete foo,
-de encontrar la url base para foo el archivo spam.js es buscado en esa
-ubicación, por otra parte si sys.paths no contiene una url asociada a foo el
-archivo foo/spam.js es buscado en la url base. 
-
-El uso del objeto sys.paths permite a los modulos de JavaScript que saben lo
-que están haciendo modificar o reemplazar el camino de búsqueda para los
-módulos.
-Nótese que es importante que el script no tenga el mismo nombre que un
-:ref:`módulo estandar <apendices-protopy-modulos>`.
-
-Las formas en que el modulo obtenido es presentado al llamador difiere en
-funcion de los parametros pasados a `require`. Estas formas son:
-
-    * Un modulo puede ser obtenido como un objeto,
-
-    * Se puede obtener solo determinada funcion de un modulo,
+    * Obtener un símbolo de un modulo
+        
+        .. code-block:: javascript
+            
+            require('events', 'Event');    
+        
 
     * O se pueden importar todas las definiciones del módulo en el espacio de
-    nombres del llamador.
+      nombres del llamador.
+      
+      .. code-block:: javascript
+            
+            require('events', '*');
 
-Para ver más :ref:`Apendice Protopy <apendices-protopy>`.
+Una descrpición detallada se encuentra en el apendice dedicado a Protopy.
 
 Publicar un módulo
 ------------------
 
-La acción de publicar un modulo implica exponer la funcionalidad que este
-define.
-En Python no es necesario explicitar que funcionalidad del módulo se expone a
-los llamadores, ya que todo lo definido en él es público; pero los módulos en
+En Python no es necesario declarar de manera expícita que símbolos se exponen,
+ya que todas las definiciones son públicas. En cambio los módulos en
 Protopy se evaluan dentro de una clausura y los llamadores no podran acceder
 a sus funciones si no son publicadas. 
 
 La funcion `publish` es la encargada de relizar la tarea de publicar el
-contenido del modulo en Protopy.
-
-Un modulo puede contener sentencias ejecutables y definición de funciones,
-generalmente las sentencias son para inicializar el módulo ya que estas se
-evaluan solo la primera vez que el módulo es requerido a alguna parte y las
-definiciones son las que efectivamente seran publicadas como funcionalidad.
+contenido del modulo.
 
 A continuación se presenta un fragmento de código que ejemplifica el uso de las 
 dos funciones presentadas.
@@ -261,8 +253,8 @@ dos funciones presentadas.
 .. code-block:: javascript
     :linenos:
 
-     /* Obtengo la funcion copy y deepcopy del modulo copy
-        estas funciones son para copia de objetos
+     /* Se obtiene la funcion copy y deepcopy del modulo copy.
+        Estas funciones son para copia de objetos
         superficiales y en profundidad respectivamente. */
     require('copy', 'copy', 'deepcopy');
 
@@ -298,30 +290,41 @@ dos funciones presentadas.
         get_cache: get_cache
     });
 
-Asumiendo que el código presentado está en un archivo llamado `caches.js` en
-la url base, éste representa un módulo en sí mismo y el acceso se obtiene
-mediante la invocación de 'require('caches')'.
-
-.. note:: Poner algo de espacio de nombres antes de entrar de lleno con escribir modulos y leer modulos
-
 Modulos nativos
 ---------------
 
 .. note:: describir de forma rápida los módulos principales
 
     * builtin
+        
+        Este módulo cuenta con los tipos y funciones disponibles en 
+        el ámbito global.
 
     * dom
+    
+        Funciones de envoltura de DOM.
 
     * sys
+        
+        Equivalente al módulo Python del mismo nombre. Maneja las rutas
+        de cargas de módulos.
 
     * event
+    
+        Manejo de evnetos, implementación de Listeners y Publisher/Subscriber.
 
     * ajax
+    
+        Envoltura de ``XMLHttpRequest``, facilidades de interpretación de tipos
+        de respuesta.
 
     * exceptions
+        
+        Conjunto de excepciones.
 
     * timer
+    
+        Envoltura de ``window.setTimer()`` y ``window.setInterval()``. 
 
 .. _protopy-tipos:
 
