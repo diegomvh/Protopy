@@ -62,7 +62,7 @@ class GearsManifestEntry(models.Model):
     '''
     # Thse files should be serialized
     manifest = models.ForeignKey(GearsManifest)
-    name = models.FilePathField()
+    name = models.CharField(max_length = 250)
     # JSONizables
     url = models.URLField()
     redirect = models.URLField(default = '')
