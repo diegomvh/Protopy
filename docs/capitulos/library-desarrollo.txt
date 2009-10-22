@@ -132,6 +132,33 @@ y se portó a nueva sintaxis muchas partes del código original.
 
 .. _protopy-modulos:
 
+Utilización de la biblioteca
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+La librería Protopy consiste en un único recurso JavaScript llamado
+``protopy.js``. Su inclusión debe realizarse en la cabcecera del documento.
+
+.. code-block:: javascript
+    
+    <script type="text/javascript;version=1.7" src="/ruta/a/protopy/protopy.js">
+    </script>
+    
+Dentro del atributo ``src`` se define lo que se denomina *ruta base* y consiste
+en la gerarquía de directorios */ruta/a/protopy/* en el ejemplo expuesto.
+
+Argumentos de inicialización
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Dentro del atributo ``src`` de la etiqueta script de inclusión de Portopy se pueden
+enviar argumentos codificados en la URL. Por ejemplo::
+    
+    src="/ruta/a/protopy/protopy.js?argumento=valor&argumento=valor"
+    
+Existen algunos argumentos utilizados por el framework desconectado que se 
+analizaran en el capítulo siguiente.
+    
+
+
 Organizando el codigo
 =====================
 
@@ -197,10 +224,13 @@ Por ejemplo, si protopy.js se encuentra en ``http://dominio.com/media/js/protopy
 la invocación ``require("dom")`` cargará el archivo ``dom.js`` desde  
 ``http://dominio.com/media/js/packages/dom.js``.
 
-Cuando se utilizan paquetes, a diferencia de Python, en el paquete no incluye funcionalidad
-per se (Protopy carece de un equivalente al módulo de inicialización de
-paquetes, ``__init__`` de Python); la única función de estos es la de establecer 
-estructura.
+Cuando se utilizan paquetes, a diferencia de Python, estos no incluye funcionalidad
+per se [*]_ la única función de estos es la de establecer estructura.
+
+.. [*] En Python, un paquete es un direcotrio que tiene un módulo llamado
+    ``__init__.py``, donde se puede definir funcionalidad que es evaluada
+    si se realiza la importación del paquete tal si fuese un módulo (Ej:
+    ``import paquete``)
 
 La búsqueda de módulos se puede ampliar más allá de la ruta base. En el módulo
 ``sys`` existe la variable ``paths``, que consiste en una lista de rutas en
