@@ -4,7 +4,6 @@
 Remote model proxy for remote models in gears client.
 '''
 from django.db.models.fields import Field, AutoField, CharField
-from django.utils.datastructures import SortedDict
 import os, re
 from datetime import datetime
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound,\
@@ -14,8 +13,8 @@ from django.core.urlresolvers import Resolver404, RegexURLPattern
 from django.utils.encoding import smart_str
 from django.template import TemplateDoesNotExist, Template, Context
 from offline.debug import html_output
-from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 from django.db import models
+from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 from django.contrib.admin.sites import AlreadyRegistered
 from django.shortcuts import render_to_response
 from offline.util.jsonrpc import SimpleJSONRPCDispatcher
@@ -26,9 +25,9 @@ from django.db.models import signals
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import exceptions
-from django.core import serializers
 from offline.export_models import export_remotes, get_model_order,\
     get_related_models, get_related_apps, filter_field
+from offline.remotes import RemoteModelProxy, RemoteReadOnlyModelProxy, RemoteOptions, RemoteManager, RemoteReadOnlyManager
 
 __all__ = ('RemoteSite',
            'expose',
@@ -139,9 +138,7 @@ class RemoteSite(RemoteBaseSite):
         self.rpc_dispatcher.register_introspection_functions() #Un poco de azucar
         self.rpc_dispatcher.register_instance(self)
         self._registry = {}
-        
-        
-    
+            
     def _get_project_root(self):
         return os.sep.join([get_project_root(), self.OFFLINE_ROOT, self.name])
     project_root = property(_get_project_root, doc = "File system offline location")
@@ -222,16 +219,12 @@ class RemoteSite(RemoteBaseSite):
 
     @expose(r'^template_list/?$')
     def template_list(self, request):
-        '''
-        Debug
-        ''' 
         return HttpResponse( html_output(full_template_list(), indent = 2))
 
     @expose('^%s/(.*)$' % LIB_PREFIX)
     def system_static_serve(self, request, path):
         from django.views.static import serve
         return serve(request, path, self.protopy_root, show_indexes = True)
-
 
     @expose('^%s/(.*)$' % JS_PREFIX)
     def project_static_serve(self, request, path):
@@ -258,7 +251,6 @@ class RemoteSite(RemoteBaseSite):
         If post data is defined, it assumes it's XML-RPC and tries to process as such
         Empty post assumes you're viewing from a browser and tells you about the service.
         """
-
         response = HttpResponse()
         if len(request.POST):
             response.write(self.rpc_dispatcher._marshaled_dispatch(request.raw_post_data))
@@ -296,6 +288,7 @@ class RemoteSite(RemoteBaseSite):
             model = get_model(app_label, model_name)
             if request.method == 'POST':
                 proxy = models[model]
+                print proxy.remotes
                 response.write(proxy.remotes._marshaled_dispatch(request.raw_post_data))
             else:
                 proxy = models[model]
@@ -344,26 +337,10 @@ class RemoteSite(RemoteBaseSite):
 
     @jsonrpc
     def echo(self, value):
-        '''
-        echo(value) => value
-        '''
         return value
 
     @jsonrpc
-    def begin_synchronization(self, last_sync_log = None):
-        '''
-        1) El cliente envía SyncRequest
-            sreq = new SyncRequest()
-            sreq.first = True
-    
-        sync_resp = send_sync_request(sreq); // Le pega a una url y un mￃﾩtodo de json-rpc
-
-        2) El server le envía SyncResponse sr1:
-
-            - model_order lista de dependencias de modelos
-            - current_time
-            - sync_id Identificación de sincronización (transacción) (el cliente lo envía con cada SyncRequest)
-        '''
+    def begin_synchronization(self, request, last_sync_log = None):
         synced_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         models = []
         for app in self._registry.values():
@@ -409,7 +386,9 @@ class RemoteSite(RemoteBaseSite):
     def export_models(self, app_label):
         try:
             models = export_remotes(self._registry[app_label])
-            models = map(lambda m: (m[0]._meta.object_name, m[1]), models.items())
+            models = map(lambda m: (m[0]._meta.object_name, \
+                            issubclass(self._registry[app_label][m[0]], RemoteModelProxy) and 'RemoteModel' or 'RemoteReadOnlyModel', \
+                            m[1]), models.items())
             related_apps = get_related_apps(self._registry[app_label].keys())
             related_apps.discard(app_label)
             return render_to_response(
@@ -424,21 +403,12 @@ class RemoteSite(RemoteBaseSite):
     # Model handling
     #===========================================================================
     def register(self, model, remote_proxy = None):
-        '''
-        Register a proxy for a model
-        {
-            app_label: [
-                            remote_proxy,
-                            remote_proxy,
-                        ],    
-        }
-        '''
         assert issubclass(model, models.Model), "%s is not a Models subclass" % model
 
         app_registry = self._registry.setdefault(model._meta.app_label, {})
 
-        #if model in app_registry:
-        #    raise AlreadyRegistered("%s is already registered" % model)
+        if model in app_registry and not isinstance(app_registry[model], RemoteReadOnlyModelProxy):
+            raise AlreadyRegistered("%s is already registered" % model)
 
         if not remote_proxy:
             # If no class is given, create a basic one based on the model
@@ -449,25 +419,24 @@ class RemoteSite(RemoteBaseSite):
                                 {'Meta': RemoteOptions(basic_meta)} )
 
         app_registry[model] = remote_proxy
+        rm = RemoteManager()
+        rm._contribute_to_class(remote_proxy, 'remotes')
+        
         related_models = get_related_models(model)
-
         for related_model in related_models:
             app_registry = self._registry.setdefault(related_model._meta.app_label, {})
             if app_registry.has_key(related_model):
                 continue
             name = related_model._meta.object_name
-            fields = []
-            fields.append(not isinstance(related_model._meta.pk, AutoField) and related_model._meta.pk.name or 'id')
-            basic_meta = type('%sMeta' % name, (object,), {'model': related_model,
-                                                           'fields': fields,
-                                                           })
+            basic_meta = type('%sMeta' % name, (object,), {'model': related_model })
             remote_proxy = type('%sRemote' % name,
-                                (RemoteModelProxy, ),
-                                {'Meta': RemoteOptions(basic_meta),
-                                 'value': models.CharField(max_length = 250)} )
+                                (RemoteReadOnlyModelProxy, ),
+                                {'Meta': RemoteOptions(basic_meta)} )
 
             app_registry[related_model] = remote_proxy
-
+            rm = RemoteReadOnlyManager()
+            rm._contribute_to_class(remote_proxy, 'remotes')
+        
         signals.post_save.connect(self.model_saved, model)
         signals.post_delete.connect(self.model_deleted, model)
 
@@ -492,99 +461,3 @@ class RemoteSite(RemoteBaseSite):
         '''
         #return set(map( lambda m: m._meta.app_label, self._registry))
         return self._registry.keys()
-
-class RemoteOptions(object):
-    def __init__(self, options=None):
-        self.model = getattr(options, 'model', None)
-        self.fields = getattr(options, 'fields', None)
-        self.exclude = getattr(options, 'exclude', None)
-    
-class RemoteModelMetaclass(type):
-    def __new__(cls, name, bases, attrs):
-        '''
-        Generate the class 
-        '''
-        try:
-            parents = [b for b in bases if issubclass(b, RemoteModelProxy)]
-        except NameError:
-            # We are defining ModelForm itself.
-            parents = None
-
-        declared_fields = dict(filter(lambda tupla: isinstance(tupla[1], Field), attrs.iteritems()))
-        new_class = super(RemoteModelMetaclass, cls).__new__(cls, name, bases, attrs)
-        if not parents:
-            return new_class
-        opts = new_class._meta = RemoteOptions(getattr(new_class, 'Meta', None))
-
-        fields = fields_for_model(opts.model, opts.fields, opts.exclude)
-        fields.update(declared_fields)
-
-        new_class.declared_fields = declared_fields
-        new_class.base_fields = fields
-
-        try:
-            mgr = getattr(opts, 'manager')
-        except AttributeError, e:
-            mgr = getattr(opts.model, '_default_manager')
-
-        new_class.remotes = SimpleJSONRPCDispatcher(allow_none=False, encoding=None)
-        new_class.remotes.register_introspection_functions() #Un poco de azucar
-        new_class.remotes.register_instance(RemoteManager(mgr))
-        return new_class
-
-class RemoteModelProxy(object):
-    __metaclass__ = RemoteModelMetaclass
-
-#===============================================================================
-# Options
-#===============================================================================
-def fields_for_model(model, fields=None, exclude=None):
-    field_list = []
-    opts = model._meta
-    for f in opts.fields + opts.many_to_many:
-        if fields and not f.name in fields:
-            continue
-        if exclude and f.name in exclude:
-            continue
-        field_list.append((f.name, f))
-    field_dict = SortedDict(field_list)
-    if fields:
-        field_dict = SortedDict([(f, field_dict.get(f)) for f in fields if (not exclude) or (exclude and f not in exclude)])
-    return field_dict
-
-class RemoteManager(object):
-    def __init__(self, manager):
-        self._manager = manager
-        self._format = 'python'
-
-    def _methods(self):
-        return filter(lambda m: not m.startswith('_'), dir(self))
-
-    def _listMethods(self):
-        return self._methods() or []
-
-    def _methodHelp(self, method):
-        methods = self._methods() or []
-        if method in methods:
-            return getattr(self, method).__doc__
-        return ""
-
-    def _dispatch(self, method, params):
-        methods = self._methods() or []
-        if method in methods:
-            if params and isinstance(params[0], dict) and \
-                params[0].has_key('model') and params[0]['model'] == 'offline.synclog':
-                self.sync_log = params.pop(0)
-            return getattr(self, method)(*params)
-        else:
-            raise Exception('bad method')
-
-    def all(self):
-        return serializers.serialize(self._format, self._manager.all())
-
-    def filter(self, kwargs):
-        kwargs = dict([(str(v[0]), str(v[1])) for v in kwargs.iteritems()])
-        return serializers.serialize(self._format, self._manager.filter(**kwargs))
-
-    def count(self):
-        return self._manager.count()

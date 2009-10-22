@@ -10,8 +10,8 @@ var serializer = new Serializer();
 var url_base = get_project().offline_support + '/rpc/data';
 
 function ensure_default_proxy(cls) {
-    require('doff.contrib.offline.models', 'RemoteModel');
-    if (!cls._meta['abstract'] && issubclass(cls, RemoteModel)) {
+    require('doff.contrib.offline.models', 'RemoteModel', 'RemoteReadOnlyModel');
+    if (!cls._meta['abstract'] && issubclass(cls, (RemoteModel, RemoteReadOnlyModel))) {
         try {
             var f = cls._meta.get_field('remotes');
             throw new ValueError("Model %s must specify a custom Manager, because it has a field named 'objects'".subs(cls.name));
@@ -38,9 +38,9 @@ var RemoteManager = type('RemoteManager', [ rpc.ServiceProxy ], {
 
     __callMethod: function(methodName, params, successHandler, exceptionHandler, completeHandler) {
         if (this.in_sync)
-            params.unshift(this.sync_log);
+            params.push(this.sync_log)
         var ret = super(rpc.ServiceProxy, this).__callMethod(methodName, params, successHandler, exceptionHandler, completeHandler);
-        if (isinstance(ret, Array) && !isundefined(ret[0]['model'])) {
+        if (isinstance(ret, Array) && bool(ret) && !isundefined(ret[0]['model']) && ret[0]['model'] === string(this.model._meta)) {
             var new_ret = [];
             for each (var obj in Deserializer(ret))
                 new_ret.push(obj);

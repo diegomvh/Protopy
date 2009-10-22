@@ -16,6 +16,22 @@ var SyncLog = type('SyncLog', [ models.Model ], {
     }
 });
 
+var RemoteReadOnlyModel = type('RemoteReadOnlyModel', [ models.Model ], {
+    _sync_log: new models.ForeignKey(SyncLog, {"db_index": true, "null": true, "blank": true, "editable": false, "serialize": false}),
+    server_pk: new models.PositiveIntegerField( {"null": true, "blank": true, "editable": false, "serialize": false}),
+    
+    Meta: {
+        abstract: true
+    },
+
+    save: function() {
+        //Solo se pueden guardar aquellos que tengan _sync_log y server_pk osea que vengan del servidor
+        if (this._sync_log == null || this.server_pk == null)
+            throw new Exception('Read only model');
+        super(models.Model, this).save();
+    }
+});
+
 var RemoteModel = type('RemoteModel', [ models.Model ], {
     _sync_log: new models.ForeignKey(SyncLog, {"db_index": true, "null": true, "blank": true, "editable": false, "serialize": false}),
     _active: new models.BooleanField( {"default": true, "blank": true, "editable": false, "serialize": false}),
@@ -94,5 +110,6 @@ var RemoteModel = type('RemoteModel', [ models.Model ], {
 
 publish({
     SyncLog: SyncLog,
+    RemoteReadOnlyModel: RemoteReadOnlyModel,
     RemoteModel: RemoteModel
 });
