@@ -617,7 +617,11 @@ Funcionamiento
     
     #. Se actualiza la página mediante DOM.
 
-.. note:: Hacer una figura
+.. figure:: ../_svg/esquema_ajax.png
+	
+	Compraración entre una aplicación tradicional y una asincrónica. La línea
+	gruesa indica el ciclo de vida de la página en el cliente y las peticiones
+	en el servidor.
 
 AJAX presenta ciertas ventajas para realizar aplicaciones interactivas, como mayor
 interactividad, reducción de latencia de las aplicaciones y uniformidad  entre las
