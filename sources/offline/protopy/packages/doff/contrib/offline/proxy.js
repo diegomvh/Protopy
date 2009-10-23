@@ -3,7 +3,7 @@ require('event');
 require('rpc');
 require('doff.db.models.fields.base', 'FieldDoesNotExist');
 require('doff.core.project', 'get_project');
-require('doff.core.serializers.javascript', 'Deserializer');
+require('doff.contrib.offline.serializers', 'Deserializer');
 
 //TODO: no me gusta mucho esto de tomar el rpc asi por la fuerza
 var url_base = get_project().offline_support + '/rpc/data';

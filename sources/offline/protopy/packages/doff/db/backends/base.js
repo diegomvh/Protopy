@@ -18,12 +18,25 @@ var BaseDatabaseWrapper = type('BaseDatabaseWrapper', [ object ], {
         if (this.connection)
             return this.connection.rollback();
     },
-    close: function() {
-        if (this.connection){
-            this.connection.close();
-            this.connection = null;
+
+    open: function() {
+        if (this.connection == null) {
+            this._cursor(this.settings);
         }
     },
+
+    close: function() {
+        if (this.connection) {
+            this.connection.close();
+        }
+    },
+
+    remove: function(){
+        this.close();
+        this.connection.remove();
+        this.connection = null;
+    },
+
     cursor: function() {
         return this._cursor(this.settings);
     }

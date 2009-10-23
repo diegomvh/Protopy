@@ -10,11 +10,37 @@ database.Connection = type('Connection', [ object ], {
         this.database = options['database'];
         this.detect_types = options['detect_types'];
         this.factory = options['factory'] || database.Cursor;
+        this.connection = null;
+        this.open();
+    },
+
+    open: function() {
+        if (this.connection == null) {
+            try {
+                this.connection = database;
+                this.connection.open(this.database);
+            } catch(ex) {
+                throw new Exception("couldn`t open database: " + name + " exception: " + ex.message || ex.description || String(ex));
+            }
+        }
+    },
+
+    close: function() {
+        if (this.connection != null) {
+            try {
+                this.connection.close();
+            } catch(e) {
+                throw new database.DatabaseError(e.message);
+            }
+        }
+    },
+
+    remove: function(){
         try {
-            this.connection = database;
-            this.connection.open(this.database);
-        } catch(ex) {
-            throw new Exception("couldn`t open database: " + name + " exception: " + ex.message || ex.description || String(ex));
+            this.connection.remove();
+            this.connection = null;
+        } catch(e) {
+            throw new database.DatabaseError(e.message);
         }
     },
 
@@ -45,24 +71,6 @@ database.Cursor = type('Cursor', [ object ], {
 
     get rowsAffected(){
         return this.connection.rowsAffected;
-    },
-
-    close: function(){
-        try {
-            this.connection.close();
-        }
-        catch(e) {
-            throw new Exception(e.message);
-        }
-    },
-
-    remove: function(){
-        try {
-            this.connection.remove();
-        }
-        catch(e) {
-            throw new Exception(e.message);
-        }
     },
 
     execute: function(query, params){

@@ -7,8 +7,8 @@ var DataBaseQuery = type('DataBaseQuery', Panel, {
         super(Panel, this).__init__('dbquery', 'Query Tool', 'Consultas sobre la base de datos');
         this.current_command_index = 0;
         this.command_history = [];
-	//Black magic, the first time init the db
-	this.execute_sql = this.init_db;
+        //Black magic, the first time init the db
+        this.execute_sql = this.init_db;
     },
 
     get_template: function() {
@@ -16,17 +16,17 @@ var DataBaseQuery = type('DataBaseQuery', Panel, {
         var template = '';
         new ajax.Request(file, {
             method: 'GET',
-	    asynchronous : false,
-	    onSuccess: function(transport) {
-		template = transport.responseText;
-	    },
-	    onException: function(obj, exception) {
-		throw exception;
-	    },
-	    onFailure: function(transport) {
-		throw new Exception("No template for dbquery");
-	    }
-	});
+            asynchronous : false,
+            onSuccess: function(transport) {
+            template = transport.responseText;
+            },
+            onException: function(obj, exception) {
+            throw exception;
+            },
+            onFailure: function(transport) {
+            throw new Exception("No template for dbquery");
+            }
+        });
         return template;
     },
 
@@ -47,18 +47,18 @@ var DataBaseQuery = type('DataBaseQuery', Panel, {
                 }
             }
         });
-	this.text_sql.value = 'select * from sqlite_master';
+	   this.text_sql.value = 'select * from sqlite_master';
 
         this.bt_execute = $('dbquery-execute');
         event.connect(this.bt_execute, 'click', this, 'execute');
 
-	this.bt_clear = $('dbquery-clear');
-	event.connect(this.bt_clear, 'click', function(event) {
-	    self.output.update('');
-	    self.text_sql.value = '';
-	    self.text_sql.focus();
-	});
-	this.output = $('dbquery-output');
+        this.bt_clear = $('dbquery-clear');
+        event.connect(this.bt_clear, 'click', function(event) {
+            self.output.update('');
+            self.text_sql.value = '';
+            self.text_sql.focus();
+        });
+        this.output = $('dbquery-output');
     },
 
     is_cursor_on_first_line: function() {
@@ -136,51 +136,52 @@ var DataBaseQuery = type('DataBaseQuery', Panel, {
     },
 
     init_db: function(val) {
-	require('doff.db.base', 'connection');
-	this.db = connection.connection;
-	this.execute_sql = this.execute_and_print;
-	return this.execute_sql(val);
+        require('doff.db.base', 'connection');
+        connection.open();
+        this.db = connection.connection.connection;
+        this.execute_sql = this.execute_and_print;
+        return this.execute_sql(val);
     },
-    
+
     execute_and_print: function(sql) {
-	var rs, error = false, errorMessage;
-	try {
-	    rs = this.db.execute(sql);
-	} catch (ex) {
-	    error = true;
-	    errorMessage = ex.message || ex.description || String(ex);
-	}
+        var rs, error = false, errorMessage;
+        try {
+            rs = this.db.execute(sql);
+        } catch (ex) {
+            error = true;
+            errorMessage = ex.message || ex.description || String(ex);
+        }
 
-	var sb = [];
-	sb.push('<h3>', sql.escapeHTML(), '</h3>');
-	sb.push('<table cellspacing=0><thead><tr>');
-	if (!rs || error) {
-	    sb.push('<th>Error</th><thead><tbody><tr><td>', errorMessage || 'Unknown error', '</td></tr>');
+        var sb = [];
+        sb.push('<h3>', sql.escapeHTML(), '</h3>');
+        sb.push('<table cellspacing=0><thead><tr>');
+        if (!rs || error) {
+            sb.push('<th>Error</th><thead><tbody><tr><td>', errorMessage || 'Unknown error', '</td></tr>');
 
-	// If we did an update, insert, delete etc. we would not have a valid row
-	} else if (rs.isValidRow()) {
+        // If we did an update, insert, delete etc. we would not have a valid row
+        } else if (rs.isValidRow()) {
 
-	    // headers
-	    cols = rs.fieldCount()
-	    for (i = 0; i < cols; i++) {
-		sb.push('<th>', string(rs.fieldName(i)).escapeHTML(), '</th>');
-	    }
-	    sb.push('</tr></thead><tbody>');
+            // headers
+            cols = rs.fieldCount()
+            for (i = 0; i < cols; i++) {
+            sb.push('<th>', string(rs.fieldName(i)).escapeHTML(), '</th>');
+            }
+            sb.push('</tr></thead><tbody>');
 
-	    var odd = true;
-	    while (rs.isValidRow()) {
-	    sb.push('<tr ' + (odd ? 'class="odd"' : '') + '>');
-		for (i = 0; i < cols; i++) {
-		sb.push('<td>', string(rs.field(i)).escapeHTML(), '</td>');
-	    }
-	    odd = !odd;
-	    sb.push('</tr>');
-	    rs.next();
-	    }
-	    rs.close();
-	}
-	sb.push('</tbody></table>');
-	this.output.update(sb.join(''));
+            var odd = true;
+            while (rs.isValidRow()) {
+            sb.push('<tr ' + (odd ? 'class="odd"' : '') + '>');
+            for (i = 0; i < cols; i++) {
+            sb.push('<td>', string(rs.field(i)).escapeHTML(), '</td>');
+            }
+            odd = !odd;
+            sb.push('</tr>');
+            rs.next();
+            }
+            rs.close();
+        }
+        sb.push('</tbody></table>');
+        this.output.update(sb.join(''));
     }
 });
 

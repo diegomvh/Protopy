@@ -121,9 +121,8 @@ function syncdb() {
 
 function removedb() {
     require('doff.db.base', 'connection');
-    var cursor = connection.cursor();
-    if (callable(cursor.remove))
-        cursor.remove();
+    connection.open();
+    connection.remove();
 }
 
 publish({ 

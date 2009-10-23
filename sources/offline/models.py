@@ -98,7 +98,7 @@ class SyncData(models.Model):
     Saves some data taken from 
     http://trimpath.googlecode.com/svn/trunk/junction_docs/files/junction_doc_sync-txt.html
     '''
-    content_type = models.ForeignKey(ContentType, blank=True, null=True)
+    content_type = models.ForeignKey(ContentType, blank=True, null=True, serialize=False)
     object_id = models.TextField(blank=True, null=True)
     content_object = generic.GenericForeignKey('content_type', 'object_id')
 

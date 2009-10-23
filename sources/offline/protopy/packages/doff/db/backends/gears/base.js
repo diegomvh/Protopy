@@ -70,6 +70,7 @@ var DatabaseWrapper = type('DatabaseWrapper', BaseDatabaseWrapper, {
         this.introspection = new DatabaseIntrospection(this);
         this.validation = new BaseDatabaseValidation();
     },
+
     _cursor: function(settings) {
         if (this.connection == null) {
             if (!bool(settings.DATABASE_NAME)) {

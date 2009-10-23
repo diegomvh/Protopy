@@ -16,30 +16,35 @@ var SyncLog = type('SyncLog', [ models.Model ], {
     }
 });
 
-var RemoteReadOnlyModel = type('RemoteReadOnlyModel', [ models.Model ], {
-    _sync_log: new models.ForeignKey(SyncLog, {"db_index": true, "null": true, "blank": true, "editable": false, "serialize": false}),
-    server_pk: new models.PositiveIntegerField( {"null": true, "blank": true, "editable": false, "serialize": false}),
-    
+var RemoteModel = type('RemoteModel', [ models.Model ], {
+    sync_log: new models.ForeignKey(SyncLog, {"db_index": true, "null": true, "blank": true, "editable": false, "serialize": false}),
+    active: new models.BooleanField( {"default": true, "blank": true, "editable": false, "serialize": false}),
+    status: new models.CharField( {"max_length": 1, "choices": SyncLog.SYNC_STATUS, "editable": false, "default": "c", "serialize": false}),
+    server_pk: new models.PositiveIntegerField( {"unique": true, "null": true, "blank": true, "editable": false, "serialize": false}),
+
     Meta: {
         abstract: true
     },
 
     save: function() {
-        //Solo se pueden guardar aquellos que tengan _sync_log y server_pk osea que vengan del servidor
-        if (this._sync_log == null || this.server_pk == null)
-            throw new Exception('Read only model');
+        var pk_set = this._get_pk_val() != null;
+        if (pk_set && this.status == 's' && this.status != 'd') {
+            // Es un update de algo que esta en el server
+            this.status = 'm';
+        } else if (this.status != 'd') {
+            this.status = 'c';
+        }
         super(models.Model, this).save();
-    }
-});
+    },
 
-var RemoteModel = type('RemoteModel', [ models.Model ], {
-    _sync_log: new models.ForeignKey(SyncLog, {"db_index": true, "null": true, "blank": true, "editable": false, "serialize": false}),
-    _active: new models.BooleanField( {"default": true, "blank": true, "editable": false, "serialize": false}),
-    _status: new models.CharField( {"max_length": 1, "choices": SyncLog.SYNC_STATUS, "editable": false, "default": "c", "serialize": false}),
-    server_pk: new models.PositiveIntegerField( {"null": true, "blank": true, "editable": false, "serialize": false}),
-
-    Meta: {
-        abstract: true
+    delete: function() {
+        if (this.status != 'c') {
+            // Esta en el server hay que informar primero
+            this.status = 'd';
+            this.save();
+        } else {
+            super(models.Model, this).delete();
+        }
     },
 
     remote_save: function() {
@@ -49,7 +54,7 @@ var RemoteModel = type('RemoteModel', [ models.Model ], {
     remote_save_base: function(cls) {
         cls = cls || this.__class__;
         var meta = cls._meta;
-        
+
         for each (var [parent, field] in meta.parents.items()) {
             if (!this[parent._meta.pk.attname] && this[field.attname])
                 this[parent._meta.pk.attname] = this[field.attname];
@@ -57,7 +62,7 @@ var RemoteModel = type('RemoteModel', [ models.Model ], {
             this.remote_save_base(parent);
             this[field.attname] = this._get_pk_val(parent._meta);
         }
-        
+
         var non_pks = [f for each (f in meta.local_fields) if (!f.primary_key)];
 
         // First, try an UPDATE. If that doesn't update anything, do an INSERT.
@@ -105,6 +110,19 @@ var RemoteModel = type('RemoteModel', [ models.Model ], {
                 this[meta.pk.attname] = result;
             }
         }
+    }
+});
+
+var RemoteReadOnlyModel = type('RemoteReadOnlyModel', [ RemoteModel ], {
+    Meta: {
+        abstract: true
+    },
+
+    save: function() {
+        //Solo se pueden guardar aquellos que tengan _sync_log y server_pk osea que vengan del servidor
+        if (this._sync_log == null || this.server_pk == null)
+            throw new Exception('Read only model');
+        super(RemoteModel, this).save();
     }
 });
 

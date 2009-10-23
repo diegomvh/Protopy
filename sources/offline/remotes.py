@@ -5,7 +5,7 @@ from django.db.models.query import QuerySet
 from offline.util.jsonrpc import SimpleJSONRPCDispatcher
 from django.core.serializers.python import Serializer as PythonSerializer
 from django.core.serializers import base
-from django.utils.encoding import smart_unicode, is_protected_type
+from django.utils.encoding import smart_unicode
 from django.db import models
 from django.contrib.sessions.models import Session
 from django.contrib.contenttypes.models import ContentType
@@ -35,9 +35,10 @@ class RemoteOptions(object):
         self.exclude = getattr(options, 'exclude', None)
 
 class RemoteManagerBase(object):
+    SYNC_STATUS = (("s", "Synced"), ("c", "Created"), ("m", "Modified"), ("d", "Deleted"), ("b", "Bogus"))
     def __init__(self):
-        self.serializer = None
-        self.deserializer = None
+        self._serializer = None
+        self._deserializer = None
 
     def _contribute_to_class(self, remote, name):
         try:
@@ -64,23 +65,37 @@ class RemoteManagerBase(object):
 
     def _dispatch(self, method, params):
         methods = self._methods() or []
-        self._sync_log = None
+        params = self._extract_sync_log(params)
         if method in methods:
-            if params and params[-1].has_key('model') and params[-1]['model'] == 'offline.synclog': 
-                self._set_sync_log(params.pop())
             ret = getattr(self, method)(*params)
             if isinstance(ret, QuerySet):
-                ret = self.serializer.serialize(ret)
+                ret = self._serializer.serialize(self._build_object(ret))
             return ret
         else:
             raise Exception('bad method')
 
-    def _set_sync_log(self, obj):
-        # Todo tirar un erro si no esta
-        print(obj['sync_id'])
-        s = Session.objects.get(pk=obj['sync_id'])
-        self._sync_log = s.get_decoded()
-    
+    def _build_object(self, query_set):
+        is_sync_data = issubclass(query_set.model, SyncData)
+        for sd_instance in query_set:
+            #ipdb.set_trace()
+            if is_sync_data and sd_instance.active:
+                real_instance = sd_instance.content_object
+                real_instance.active = sd_instance.active
+            else:
+                real_instance = sd_instance
+            real_instance.status = 's'
+            yield real_instance
+        raise StopIteration()
+
+    def _extract_sync_log(self, params):
+        self._sync_log = None
+        if params and params[-1].has_key('model') and params[-1]['model'] == 'offline.synclog': 
+            obj = params.pop()
+            # Todo tirar un erro si no esta
+            s = Session.objects.get(pk=obj['sync_id'])
+            self._sync_log = s.get_decoded()
+        return params
+
     def _get_query_set(self):
         if self._sync_log != None:
             model_type = ContentType.objects.get_for_model(self._manager.model)
@@ -124,40 +139,24 @@ class RemoteModelProxy(object):
 
 #TODO: MEjorar esto
 class RemoteSerializer(PythonSerializer):
-    
+
     def start_object(self, obj):
         self._current = {
-            "server_pk"     : smart_unicode(obj.content_object._get_pk_val(), strings_only=True),
-            "_active"       : smart_unicode(obj.active, strings_only=True),
-            "_status"       : smart_unicode('s', strings_only=True)
+            "server_pk"     : smart_unicode(obj._get_pk_val(), strings_only=True),
+            "active"       : smart_unicode(obj.active, strings_only=True),
+            "status"       : smart_unicode(obj.status, strings_only=True)
         }
 
     def end_object(self, obj):
         self.objects.append({
-            "model"  : smart_unicode(obj.content_object._meta),
+            "model"  : smart_unicode(obj._meta),
             "fields" : self._current
         })
         self._current = None
 
-    def handle_field(self, obj, field):
-        super(PythonSerializer, self).handle_field(obj.content_object, field)
-        
-    def handle_fk_field(self, obj, field):
-        related = getattr(obj, field.name)
-        if related is not None:
-            if field.rel.field_name == related._meta.pk.name:
-                # Related to remote object via primary key
-                related = related._get_pk_val()
-            else:
-                # Related to remote object via other field
-                related = getattr(related, field.rel.field_name)
-        self._current[field.name] = smart_unicode(related, strings_only=True)
-
-    def handle_m2m_field(self, obj, field):
-
 class RemoteManager(RemoteManagerBase):
     def __init__(self):
-        self.serializer = RemoteSerializer()
+        self._serializer = RemoteSerializer()
         #self.deserializer = PythonDeserializer
 
     def all(self):
@@ -197,7 +196,7 @@ class RemoteReadOnlyModelProxy(object):
     __metaclass__ = RemoteReadOnlyModelMetaclass
 
 class RemoteReadOnlySerializer(PythonSerializer):
-    
+
     def start_object(self, obj):
         self._current = {
             "server_pk"     : smart_unicode(obj._get_pk_val(), strings_only=True),
@@ -213,7 +212,7 @@ class RemoteReadOnlySerializer(PythonSerializer):
 
     def handle_field(self, obj, field):
         pass
-        
+
     def handle_fk_field(self, obj, field):
         pass
 
@@ -222,7 +221,7 @@ class RemoteReadOnlySerializer(PythonSerializer):
 
 class RemoteReadOnlyManager(RemoteManagerBase):
     def __init__(self):
-        self.serializer = RemoteReadOnlySerializer()
+        self._serializer = RemoteReadOnlySerializer()
         #self.deserializer = PythonDeserializer
 
     def all(self):

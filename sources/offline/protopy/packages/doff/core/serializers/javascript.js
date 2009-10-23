@@ -9,7 +9,7 @@ var models = require('doff.db.models.base');
 //Serializes a QuerySet to basic Python objects.
 var Serializer = type('Serializer', [ sbase.Serializer ], {
     internal_use_only: true,
-    
+
     start_serialization: function() {
         this._current = null;
         this.objects = [];
@@ -20,7 +20,7 @@ var Serializer = type('Serializer', [ sbase.Serializer ], {
     start_object: function(obj) {
         this._current = {};
     },
-    
+
     end_object: function(obj) {
         this.objects.push({
             "model"  : string(obj._meta),
@@ -65,17 +65,15 @@ var Serializer = type('Serializer', [ sbase.Serializer ], {
  * It's expected that you pass the Python objects themselves (instead of a
  * stream or a string) to the constructor
  */
-function Deserializer(object_list, sync_log) {
+function Deserializer(object_list) {
     models.get_apps();
     for each (var d in object_list) {
         // Look up the model and starting build a dict of data for it.
-        var Model = models.get_model_by_identifier(d["model"]);
+        var Model = model.get_model_by_identifier(d["model"]);
         if (Model == null)
             throw new sbase.DeserializationError("Invalid model identifier: '%s'".subs(model_identifier));
         var data = {};
-        data[Model._meta.pk.attname] = Model._meta.pk.to_javascript(d["pk"]);
-        if (!isundefined(sync_log))
-            data['_sync_log'] = sync_log
+        data['pk'] = Model._meta.pk.to_javascript(d["pk"]);
         var m2m_data = {};
 
         // Handle each field
