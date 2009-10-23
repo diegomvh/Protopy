@@ -32,6 +32,9 @@ muchos elementos que acercan su sintaxis a la de Python, es
 necesario implementar una capa intermedia entre JavaScript y Django "desconectado".
 Una de las razones mas relevantes es emular la API estándard de Python.
 
+.. note::
+    No quedaron más que ideas de prototype en protopy :P
+
 La biblioteca se basó en el código fuente de Prototype, sobre la cual se fue agregando
 y sustituyendo código. El resultado de esta modificación se bautizó en honor a 
 sus dos "padres", por un lado *Portotype JavaScript Library* y el lenguaje de programación
@@ -53,7 +56,6 @@ Objetivos de la Librería
     de paquetes es muy importante. En Python los módulos definien ámbitos de nombres
     de los cuales se pueden importar selectivamente sólo los símbolos usados, sin
     contaminar el ámbito local.
-    
 
 * Orietnación a Objetos "Pythonica"
 
@@ -66,33 +68,32 @@ Objetivos de la Librería
     Python a JavaScript, definir los tipos base ``object`` y ``type`` debido
     a que piezas claves de Django como el ORM y el sistema de formularios
     basan su funcionamiento en estos builtins.
-    
+
     En Python también se pueden definir métodos especiales en las clases, que permiten
     sobrecarga de operadores (``+`` mediante ``__add__``,
     ``==`` mediante ``__eq__``,
     ``&`` y ``^`` medinate ``__and__`` y ``__or__``,
     los paréntesis de invocación ``()`` mediante ``__call__``, etc). Algunos de
     estos se pueden emular en JavaScript y Protopy brinda facilidades para esto.
-    
+
 * Tipos de datos y ``builtins``
-    
+
     Existen ciertos tipos que no existen en JavaScript con la misma funcionalidad
     que en Python. Un caso puntual son los ``Object`` o arreglos asociativos 
     comparados con el tipo de datos ``dict``.
-    
+
     En Python el conjunto de funciones, tipos disponibles en el ámbito de nombres global
     se conoce como ``builtins``. Forman parte de este conjunto,
     ``int``, ``bool``, ``str``, ``list``, ``tuple``, ``map``, ``filter``, 
     ``abs``, ``all``, etc. La mayoría de estos símbolos fueron portados a Protopy 
     y también publicados en el ámbito global.
-    
-    
+
 * Selección de elementos mediante CSS
 
     DOM permite realizar búsqueda de elementos dentro de un documento de 
     tres maneras: mediante un identificados, mediante un nombre de tag, o
     el acceso gerárquico tipo árbol (estas técnicas se pueden combinar).
-    
+
     Los selectores CSS simplifcan la tarea de seleccionar un conjunto de 
     elementos que cumple con cierta condición. Utilizan la sintaxis de
     las hojas de estilo en cascada para determinar los elementos que
@@ -100,12 +101,12 @@ Objetivos de la Librería
     Por ejemplo
     con la API de DOM seleccionar todos los elementos del tipo link, que
     posean un atributo ``href`` se realiza de la siguiente manera:
-    
+
     .. code-block:: javascript
-        
+
         var links = document.getElementsByTagName('a').
             filter( function (e) { return e.getAttribute('href'); });
-    
+
     Mientras que con selección CSS, esto se reduce a:
     
     .. code-block:: javascript
@@ -139,10 +140,10 @@ La librería Protopy consiste en un único recurso JavaScript llamado
 ``protopy.js``. Su inclusión debe realizarse en la cabcecera del documento.
 
 .. code-block:: javascript
-    
+
     <script type="text/javascript;version=1.7" src="/ruta/a/protopy/protopy.js">
     </script>
-    
+
 Dentro del atributo ``src`` se define lo que se denomina *ruta base* y consiste
 en la gerarquía de directorios */ruta/a/protopy/* en el ejemplo expuesto.
 
@@ -178,7 +179,10 @@ En Protopy se buscó la forma de solucionar este problema analizando la forma
 en la que se resuelve en el lenguaje Python, donde la modularidad y 
 la creación de ámbitos de nombres están intimamente relacionados.
 
-En vez de cargar los recursos mediante la inclusión de tags, ee tomó la idea 
+.. note::
+    No, no la inclusion de js asincronica viene de la mano de dojo
+
+En vez de cargar los recursos mediante la inclusión de tags, se tomó la idea 
 de la carga asincrónica de código de Kris Kowal [KrisKowal09]_, también
 presente en YUI [YahooYUILoader09]_, donde se utiliza una función de inclusión
 que genera peticiones XmlHTTPRequest a los recursos y los evalua cuando se
@@ -189,7 +193,7 @@ completan.
                 Proyecto module.js,
                 útlimo acceso Septiembre 2009,
                 http://modulesjs.com/
-                
+
 .. [YahooYUILoader09] YUI Team,
                 Documentación del módulo YUI Loader,
                 último acceso Septiembre 2009,
@@ -239,29 +243,28 @@ base. El programador puede añadir entradas a ``sys.path``.
 
 La función ``require`` se puede usar para:
 
-    * Obtener un modulo puede ser obtenido como un objeto,
-        
+    * Obtener un modulo como un objeto,
+
         .. code-block:: javascript
-            
+
             var mod = require('events');
-        
+
         .. code-block:: javascript
-            
+
             require('events');  // Events queda en el espacio global
-         
+
 
     * Obtener un símbolo de un modulo
-        
+
         .. code-block:: javascript
-            
+
             require('events', 'Event');    
-        
 
     * O se pueden importar todas las definiciones del módulo en el espacio de
       nombres del llamador.
-      
+
       .. code-block:: javascript
-            
+
             require('events', '*');
 
 Una descrpición detallada se encuentra en el apendice dedicado a Protopy.
@@ -274,7 +277,7 @@ ya que todas las definiciones son públicas. En cambio los módulos en
 Protopy se evaluan dentro de una clausura y los llamadores no podran acceder
 a sus funciones si no son publicadas. 
 
-La funcion `publish` es la encargada de relizar la tarea de publicar el
+La funcion ``publish`` es la encargada de relizar la tarea de publicar el
 contenido del modulo.
 
 A continuación se presenta un fragmento de código que ejemplifica el uso de las 
@@ -323,37 +326,38 @@ dos funciones presentadas.
 Modulos nativos
 ---------------
 
-.. note:: describir de forma rápida los módulos principales
+.. note:: 
+    Describir de forma rápida los módulos principales
 
     * builtin
-        
+
         Este módulo cuenta con los tipos y funciones disponibles en 
         el ámbito global.
 
     * dom
-    
+
         Funciones de envoltura de DOM.
 
     * sys
-        
+
         Equivalente al módulo Python del mismo nombre. Maneja las rutas
         de cargas de módulos.
 
     * event
-    
-        Manejo de evnetos, implementación de Listeners y Publisher/Subscriber.
+
+        Manejo de eventos, implementación de Listeners y Publisher/Subscriber.
 
     * ajax
-    
+
         Envoltura de ``XMLHttpRequest``, facilidades de interpretación de tipos
         de respuesta.
 
     * exceptions
-        
+
         Conjunto de excepciones.
 
     * timer
-    
+
         Envoltura de ``window.setTimer()`` y ``window.setInterval()``. 
 
 .. _protopy-tipos:
@@ -442,14 +446,14 @@ comporten en función de sus respectivas definiciones.
 
 Como se observa, para instanciar un nuevo tipo se utiliza el operador `new` de
 JavaScript, este operador crea el nuevo objeto e invoca a la función `__init__`.
-    
+
 En los métodos la palabra reservada `this` tiene el comportamiento esperado,
 presentado en la parte teorica, el cual es hacer referencia al objeto
-instanciado con `new`.
+instanciado con ``new``.
 
-Internamente `type` utiliza el objeto `prototype` para la construcción, con lo
-cual el operador `instanceof` presenta un comportamiento coherente, pese a esto
-se recomienda usar la funcion `isinstance` que trae Protopy, ya que esta permite
+Internamente ``type`` utiliza el objeto ``prototype`` para la construcción, con lo
+cual el operador ``instanceof`` presenta un comportamiento coherente, pese a esto
+se recomienda usar la funcion ``isinstance`` que trae Protopy, ya que esta permite
 navegar por la cadena de herencia.
 
 .. code-block:: javascript
@@ -465,13 +469,13 @@ Inicialización
 --------------
 
 En el ejemplo se muestra la inicialización del tipo SorteDict usando una funcion
-llamada `__init__`. Este método es llamado por el operador `new` inmediatamente
+llamada ``__init__``. Este método es llamado por el operador ``new`` inmediatamente
 despues de crear una instancia. Sería tentador decir que es el “constructor”
 de la clase. Si bien se parece un constructor de Java, actúa como si lo fuese ya
 que el objeto ya esta instanciado cuando se llama a esta función.
 
-Los métodos `__init__` son opcionales, pero cuando se define uno, se debe recordar
-llamar explícitamente al método `__init__` del ancestro.
+Los métodos ``__init__`` son opcionales, pero cuando se define uno, se debe recordar
+llamar explícitamente al método ``__init__`` del ancestro.
 
 Otros métodos
 -------------
@@ -481,14 +485,14 @@ los objetos, estos en lugar de ser llamarlos directamente, se invocan por la
 biblioteca en circunstancias particulares o cuando se use una sintaxis
 específica. 
 
-    * `__str__`
+    * ``__str__``
 
         Este metodo se llama cuando es necesario proveer de una reprecentacion
         en texto del objeto, JavaScript provee para este objetivo el metodo
         toString, pero por cuestiones de nombres se prefirio usar este metodo en
         su lugar y hacer internamente una relacion entre las funciones.
 
-    * `__iter__`
+    * ``__iter__``
 
         Protopy se vale de versiones modernas de JavaScript y brinda soporte a
         iteradores, este es el método que el desarrollador debe definir si
@@ -496,19 +500,19 @@ específica.
         implemente el metodo next (un iterador o un generado), los bucles
         for hacen esto automáticamente, pero también se puede hacer manualmente.
 
-    * `__cmp__`
-    
+    * ``__cmp__``
+
         Llamado al comparar dos instancias de tipo con las funciones `equal` o
         `nequal`.
 
-    * `__len__`
+    * ``__len__``
 
         Se invoca con la llamada a la funcion `len`. La función incorporada len
         devuelve la longitud de un objeto. Funciona sobre cualquier objeto del
         que se pueda pensar razonablemente que tiene longitud.
 
-    * `__copy__` y `__deepcopy__`
-    * `__json__` y `__html__`
+    * ``__copy__`` y ``__deepcopy__``
+    * ``__json__`` y ``__html__``
 
 Protopy tiene otros métodos especiales, general todos estos apuntan a emular
 algun comportambiento de Python en JavaScript. 
@@ -521,35 +525,35 @@ utilizacion esta respaldada en algun mecanimos de extención, redefiniendo o
 especializando componentes. Es en este punto donde proveer de una forma de
 herencia al constructor de tipos resulta un paso en la dirección correcta,
 eventualmente el desarrollador que requiera componentes especificos podra
-heredar de los tipos correspondientes e implementar solo lo que haga falta. 
+heredar de los tipos correspondientes e implementar solo lo que haga falta.
 
 Protopy utiliza la herencia del tipo **Prototype chaining**, aunque lo hace de
 una forma un poco "rebuscada" con el objeto de dar soporte a una herencia
-multiple. 
+multiple.
 
 Para implementar la herencia y en particular la herencia multiple, el contructor
 de tipos recibe una lista de los tipos base e internamente crea un
 objeto que agrega de derecha a izquierda todos los metodos de las bases,
 posteriormente crea el tipo requerido tomando como base el objeto generado. Es
-en este punto donde se pierde el poder del operador `instanceof` y es por eso
+en este punto donde se pierde el poder del operador ``instanceof`` y es por eso
 que Protopy provee una funcion para determinar la correspondencia entre
-instancias y tipos llamada `isinstance`.
+instancias y tipos llamada ``isinstance``.
 
-Otra funcion interesante importada de Python es `issubclass`, bajo determinadas
+Otra funcion interesante importada de Python es ``issubclass``, bajo algunas
 condiciones resulta util determinar si un tipo es una sub-clase de otro y para
 ello esta funcion inspecciona la cadena de herencia hacia adelante entre los
 "hijos" de un tipo.
 
 Bien, ya se tiene un mecanismo de herencia casi completo, solo falta ver como se
 accede a las funciones de tipos base cuando se esta redefiniendo un método, para
-esto existe la funcion `super`, nuevamente y similar a Python esta función
+esto existe la funcion ``super``, nuevamente y similar a Python esta función
 asocia un tipo con una instancia, con lo cual logra el objetivo de llamar a un
 método que se encuentre en un tipo base. Este comportamiento, es el equivalente,
-en JavaScript, al de llamar al metodo del tipo base con la funcion `apply` o `call`.
+en JavaScript, al de llamar al metodo del tipo base con la funcion ``apply`` o ``call``.
 
 Para terminar con herencia se debe destacar que de no especificar por lo menos
 un tipo base, Protopy establce por defecto como base al tipo `object`. Object
-como provee de los principales metodos (`__init__`, `__str__`) a todos los
+como provee de los principales metodos (``__init__``, ``__str__``) a todos los
 nuevos tipos.
 
 Metodos y atributos de tipo
@@ -583,7 +587,7 @@ opcional que se pasa a la función constructora antes del objeto de instancia.
 El ejemplo presentado define el tipo "Planeta", este tipo internamente lleva un
 contador que las instancias utilizan para numerarse en la construccion y una
 funcion de reset para reiniciar el contador. Dentro de las funciones de tipo la
-palabra reservada `this`, como es de esperar, hace referencia al tipo.
+palabra reservada ``this``, como es de esperar, hace referencia al tipo.
 A continuacion se ve como usar el tipo.
 
 .. code-block:: javascript
@@ -601,7 +605,7 @@ A continuacion se ve como usar el tipo.
     window.Planeta name=Tierra count=3 __name__=Planeta
 
 Existe una funcion muy importante que se puede definir para el tipo, buscando la
-emulacion de Python se adopto el metodo `__new__`. Este metodo permite al
+emulacion de Python se adopto el metodo ``__new__``. Este metodo permite al
 desarrollador tomar parte en la constuccion del tipo, los parametros son de una
 forma similar a Python, el nombre del nuevo tipo, el arreglo con los tipos base
 y el objeto con atributos y metodos de instancia. 
@@ -619,7 +623,7 @@ Algunos objetos que se encuentran el la biblioteca son:
         lugar de solo cadenas.
 
     * Set
-        
+
         Los sets o conjuntos tomados de las matematicas, permiten crear bolasa
         de objetos únicos y trabajar con las operaciones propias, union,
         intersección, diferencia, etc.
@@ -650,7 +654,8 @@ Los eventos estan uniforamdos bajo un modulo de manejo de eventos, que permite
 conectar eventos del :term:`DOM` con funciones en JavaScript, así tambien como
 funciones entre si.
 
-.. note:: Poner los nombres de las funciones para destacar el laburo
+.. note:: 
+    Poner los nombres de las funciones para destacar el laburo
 
 Envolviendo a gears
 ===================
