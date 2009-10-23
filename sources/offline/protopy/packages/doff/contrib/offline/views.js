@@ -11,17 +11,23 @@ function synchronize() {
     try {
         last_sync_log = SyncLog.objects.latest();
     } catch (e if isinstance(e, SyncLog.DoesNotExist)) {}
+    var last_sync_log = null;
+    
     // Inicio la sincronizacion informando al site las intenciones
     var new_sync_data = rpc.begin_synchronization(last_sync_log);
     var models = [ get_model_by_identifier(i) for each (i in new_sync_data.models)];
-    // Creo la nueva instancia de sync_log
-    var new_sync_log = new SyncLog(new_sync_data);
-    new_sync_log.save();
-    //TODO: Ver que pasa si en lugar de hacer una mega bolsa de cosas para guardar voy comprometiendo los datos a medidad que los obtengo
-    var all_objects = [];
-    for each (var model in models) {
-        model.remotes.sync_log = new_sync_log;
-        print(model.remotes.all());
+    if (bool(models)) {
+        // Si tengo cosas nuevas
+        // Creo la nueva instancia de sync_log
+        var new_sync_log = new SyncLog(new_sync_data);
+        new_sync_log.save();
+        //TODO: Ver que pasa si en lugar de hacer una mega bolsa de cosas para guardar voy comprometiendo los datos a medidad que los obtengo
+        var all_objects = [];
+        for each (var model in models) {
+            print(model)
+            model.remotes.sync_log = new_sync_log;
+            print(model.remotes.all());
+        }
     }
 }
 

@@ -65,15 +65,17 @@ var Serializer = type('Serializer', [ sbase.Serializer ], {
  * It's expected that you pass the Python objects themselves (instead of a
  * stream or a string) to the constructor
  */
-function Deserializer(object_list) {
+function Deserializer(object_list, sync_log) {
     models.get_apps();
     for each (var d in object_list) {
         // Look up the model and starting build a dict of data for it.
-        var Model = model.get_model_by_identifier(d["model"]);
+        var Model = models.get_model_by_identifier(d["model"]);
         if (Model == null)
             throw new sbase.DeserializationError("Invalid model identifier: '%s'".subs(model_identifier));
         var data = {};
         data[Model._meta.pk.attname] = Model._meta.pk.to_javascript(d["pk"]);
+        if (!isundefined(sync_log))
+            data['_sync_log'] = sync_log
         var m2m_data = {};
 
         // Handle each field

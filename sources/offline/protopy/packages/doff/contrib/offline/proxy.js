@@ -3,15 +3,14 @@ require('event');
 require('rpc');
 require('doff.db.models.fields.base', 'FieldDoesNotExist');
 require('doff.core.project', 'get_project');
-require('doff.contrib.offline.serializers', 'Serializer', 'Deserializer');
+require('doff.core.serializers.javascript', 'Deserializer');
 
-var serializer = new Serializer();
 //TODO: no me gusta mucho esto de tomar el rpc asi por la fuerza
 var url_base = get_project().offline_support + '/rpc/data';
 
 function ensure_default_proxy(cls) {
     require('doff.contrib.offline.models', 'RemoteModel', 'RemoteReadOnlyModel');
-    if (!cls._meta['abstract'] && issubclass(cls, (RemoteModel, RemoteReadOnlyModel))) {
+    if (!cls._meta['abstract'] && issubclass(cls, [ RemoteModel, RemoteReadOnlyModel ])) {
         try {
             var f = cls._meta.get_field('remotes');
             throw new ValueError("Model %s must specify a custom Manager, because it has a field named 'objects'".subs(cls.name));
@@ -38,12 +37,14 @@ var RemoteManager = type('RemoteManager', [ rpc.ServiceProxy ], {
 
     __callMethod: function(methodName, params, successHandler, exceptionHandler, completeHandler) {
         if (this.in_sync)
-            params.push(this.sync_log)
+            params.push(this.sync_log);
         var ret = super(rpc.ServiceProxy, this).__callMethod(methodName, params, successHandler, exceptionHandler, completeHandler);
-        if (isinstance(ret, Array) && bool(ret) && !isundefined(ret[0]['model']) && ret[0]['model'] === string(this.model._meta)) {
+        
+        if (this.in_sync && isinstance(ret, Array) && bool(ret) && !isundefined(ret[0]['model']) && ret[0]['model'] === string(this.model._meta)) {
             var new_ret = [];
-            for each (var obj in Deserializer(ret))
+            for each (var obj in Deserializer(ret, this.sync_log)) {
                 new_ret.push(obj);
+            }
             ret = new_ret;
         }
         return ret;

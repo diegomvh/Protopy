@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
-#coding: utf-8
-'''
-Remote model proxy for remote models in gears client.
-'''
+
+# From python
+import datetime
+import time
+import os, re, md5
+
+# From Django        
 from django.db.models.fields import Field, AutoField, CharField
-import os, re
-from datetime import datetime
+
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound,\
     HttpResponseServerError
 from django.http import Http404
@@ -28,6 +30,7 @@ from django.db.models import exceptions
 from offline.export_models import export_remotes, get_model_order,\
     get_related_models, get_related_apps, filter_field
 from offline.remotes import RemoteModelProxy, RemoteReadOnlyModelProxy, RemoteOptions, RemoteManager, RemoteReadOnlyManager
+from django.contrib.sessions.backends.db import SessionStore
 
 __all__ = ('RemoteSite',
            'expose',
@@ -288,7 +291,6 @@ class RemoteSite(RemoteBaseSite):
             model = get_model(app_label, model_name)
             if request.method == 'POST':
                 proxy = models[model]
-                print proxy.remotes
                 response.write(proxy.remotes._marshaled_dispatch(request.raw_post_data))
             else:
                 proxy = models[model]
@@ -340,25 +342,41 @@ class RemoteSite(RemoteBaseSite):
         return value
 
     @jsonrpc
-    def begin_synchronization(self, request, last_sync_log = None):
-        synced_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    def begin_synchronization(self, last_sync_log = None):
+        retorno = {}
+        # Last sync
+        if last_sync_log != None:
+            last_sync = datetime.datetime(*time.strptime(last_sync_log['synced_at'], '%Y-%m-%d %H:%M:%S')[:6])
+        
+        # new sync
+        synced_at = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        
+        # Veamos los modelos
         models = []
         for app in self._registry.values():
-            models += app.keys()
-        models = get_model_order(models)
-        sync_id = random_string(32)
-        if last_sync_log == None:
-            # Es el primero tengo que mandar todos los datos
-            pass
-        else:
-            # Mando solo quellos modelos y datos que tengan cosas nuevas en base a sync_log.synced_at
-            pass
-        apps_models = map(lambda m: str(m._meta), models)
-        return {
-                'models': apps_models,
-                'synced_at': synced_at,
-                'sync_id': sync_id
-            }
+            for model in app.keys():
+                # Si tengo last sync levanto solo los modelos interesantes
+                if last_sync_log != None:
+                    model_type = ContentType.objects.get_for_model(model)
+                    sd = SyncData.objects.filter(content_type__pk = model_type.id, update_at__range=(last_sync, synced_at))
+                    if bool(sd):
+                        models.append(model)
+                else:
+                    models.append(model)
+        
+        if bool(models):
+            # Ok esto da para largo, ordenamos, mapeamos y creamos una session
+            models = get_model_order(models)
+            models = map(lambda m: str(m._meta), models)
+            s = SessionStore()
+            if last_sync_log != None:
+                s['last_sync'] = last_sync
+            retorno['synced_at'] = s['synced_at'] = synced_at
+            s.save()
+            retorno['sync_id'] = sync_id = s.session_key
+
+        retorno['models'] = models
+        return retorno
 
     #===========================================================================
     # Manifests
@@ -409,6 +427,9 @@ class RemoteSite(RemoteBaseSite):
 
         if model in app_registry and not isinstance(app_registry[model], RemoteReadOnlyModelProxy):
             raise AlreadyRegistered("%s is already registered" % model)
+        elif model not in app_registry:
+            signals.post_save.connect(self.model_saved, model)
+            signals.post_delete.connect(self.model_deleted, model)
 
         if not remote_proxy:
             # If no class is given, create a basic one based on the model
@@ -425,8 +446,11 @@ class RemoteSite(RemoteBaseSite):
         related_models = get_related_models(model)
         for related_model in related_models:
             app_registry = self._registry.setdefault(related_model._meta.app_label, {})
-            if app_registry.has_key(related_model):
+            if related_model in app_registry:
                 continue
+            signals.post_save.connect(self.model_saved, related_model)
+            signals.post_delete.connect(self.model_deleted, related_model)
+
             name = related_model._meta.object_name
             basic_meta = type('%sMeta' % name, (object,), {'model': related_model })
             remote_proxy = type('%sRemote' % name,
@@ -436,9 +460,6 @@ class RemoteSite(RemoteBaseSite):
             app_registry[related_model] = remote_proxy
             rm = RemoteReadOnlyManager()
             rm._contribute_to_class(remote_proxy, 'remotes')
-        
-        signals.post_save.connect(self.model_saved, model)
-        signals.post_delete.connect(self.model_deleted, model)
 
     def model_saved(self, **kwargs):
         model_type = ContentType.objects.get_for_model(kwargs['sender'])

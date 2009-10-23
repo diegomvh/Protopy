@@ -196,7 +196,7 @@ var Model = type('Model', [ object ], {
                 this[field.attname] = field.to_javascript(val);
                 delete kwargs[field.name];
                 // Maintain compatibility with existing calls.
-                if (field.rel instanceof ManyToOneRel)
+                if (isinstance(field.rel, ManyToOneRel))
                     delete kwargs[field.attname];
             }
         }
@@ -204,7 +204,7 @@ var Model = type('Model', [ object ], {
         for each (var field in this._meta.fields) {
             var rel_obj = null, val = null;
             if (bool(keys(kwargs))) {
-                if (field.rel instanceof ManyToOneRel) {
+                if (isinstance(field.rel, ManyToOneRel)) {
                     rel_obj = kwargs[field.name] || null;
                     delete kwargs[field.name];
                     if (!rel_obj) {
@@ -243,7 +243,7 @@ var Model = type('Model', [ object ], {
     },
 
     __eq__: function(other) {
-        return (other instanceof this.constructor) && this._get_pk_val() == other._get_pk_val()
+        return isinstance(other, this.__class__) && this._get_pk_val() == other._get_pk_val()
     },
 
     __ne__: function(other) {
@@ -363,7 +363,7 @@ var Model = type('Model', [ object ], {
             if (!pk_set) {
                 if (force_update)
                     throw new ValueError('Cannot force an update in save() with no primary key.');
-                var values = [[f, f.get_db_prep_save(raw && this[f.attname] || f.pre_save(this, true))] for each (f in meta.local_fields) if (!(f instanceof AutoField))];
+                var values = [[f, f.get_db_prep_save(raw && this[f.attname] || f.pre_save(this, true))] for each (f in meta.local_fields) if (!isinstance(f, AutoField))];
             } else {
                 var values = [[f, f.get_db_prep_save(raw && this[f.attname] || f.pre_save(this, true))] for each (f in meta.local_fields)];
             }
@@ -411,7 +411,7 @@ var Model = type('Model', [ object ], {
             if (isinstance(related.field.rel, OneToOneRel)) {
                 try {
                     var sub_obj = this[rel_opts_name];
-                } catch (e if e instanceof ObjectDoesNotExist) {}
+                } catch (e if isinstance(e, ObjectDoesNotExist)) {}
                 sub_obj._collect_sub_objects(seen_objs, this.__class__, related.field.None);
             } else {
                 for each (sub_obj in this[rel_opts_name].all())
@@ -469,7 +469,7 @@ var Model = type('Model', [ object ], {
         var qs = this.__class__._default_manager.filter(arg.kwargs).filter(q).order_by('%s%s'.subs(order, field.name), '%spk'.subs(order));
         try {
             return qs.get(0);
-        } catch (e if e instanceof IndexError) {
+        } catch (e if isinstance(e, IndexError)) {
             throw new this.DoesNotExist('%s matching query does not exist.'.subs(this.constructor._meta.object_name));
         }
     },

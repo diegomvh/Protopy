@@ -442,11 +442,11 @@ var datetime = {
         ***/
         return {
             'year': d.getFullYear(), 
-            'month': d.getMonth()+1,  // JavaScript reports January as year 0
-            'day': d.getDate(), 
-            'hour': d.getHours(), 
-            'minute': d.getMinutes(), 
-            'second': d.getSeconds(), 
+            'month': d.getUTCMonth()+1,  // JavaScript reports January as year 0
+            'day': d.getUTCDate(), 
+            'hour': d.getUTCHours(), 
+            'minute': d.getUTCMinutes(), 
+            'second': d.getUTCSeconds(), 
             'microsecond': d.getMilliseconds()*1000,
             'tz_hour': d.getTimezoneOffset()/60,
             'tz_minute': d.getTimezoneOffset()%60
