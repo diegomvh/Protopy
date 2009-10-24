@@ -1,4 +1,3 @@
-import md5
 from django.utils.datastructures import SortedDict
 from django.db.models.fields import Field
 from django.db.models.query import QuerySet

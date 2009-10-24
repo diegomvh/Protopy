@@ -3,7 +3,7 @@
 # From python
 import datetime
 import time
-import os, re, md5
+import os, re
 
 # From Django        
 from django.db.models.fields import Field, AutoField, CharField

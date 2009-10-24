@@ -31,7 +31,7 @@ var BaseDatabaseCreation = type('BaseDatabaseCreation', object, {
 
             var col_type = f.db_type();
             if (!col_type)
-                return;
+                continue;
             field_output = [qn(f.column), col_type];
             field_output.push('%sNULL'.subs((!f.none)?'NOT ':''));
             if (f.primary_key)

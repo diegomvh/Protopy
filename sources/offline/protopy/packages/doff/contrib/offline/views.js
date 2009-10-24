@@ -11,7 +11,7 @@ function synchronize() {
     try {
         last_sync_log = SyncLog.objects.latest();
     } catch (e if isinstance(e, SyncLog.DoesNotExist)) {}
-    var last_sync_log = null;
+    //var last_sync_log = null;
     
     // Inicio la sincronizacion informando al site las intenciones
     var new_sync_data = rpc.begin_synchronization(last_sync_log);
@@ -24,9 +24,8 @@ function synchronize() {
         //TODO: Ver que pasa si en lugar de hacer una mega bolsa de cosas para guardar voy comprometiendo los datos a medidad que los obtengo
         var all_objects = [];
         for each (var model in models) {
-            print(model)
             model.remotes.sync_log = new_sync_log;
-            print(model.remotes.all());
+            print(model, model.remotes.all());
         }
     }
 }

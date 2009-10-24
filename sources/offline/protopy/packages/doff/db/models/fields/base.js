@@ -136,7 +136,7 @@ var Field = type('Field', [ object ], {
     },
 
     get_internal_type: function() {
-        return this.constructor.__name__;
+        return this.__class__.__name__;
     },
 
     /*
@@ -199,24 +199,24 @@ var Field = type('Field', [ object ], {
     },
 
     /*
-	* Returns a boolean of whether this field has a default value.
-	*/
+     * Returns a boolean of whether this field has a default value.
+     */
     has_default: function() {
         return this.default_value != NOT_PROVIDED;
     },
 
     /*
-	* Returns the default value for this field
-	*/
+     * Returns the default value for this field
+     */
     get_default: function() {
-	if (this.has_default()) {
-	    if (callable(this.default_value))
-		return this.default_value();
-	    return this.default_value;
-	}
-	if (!this.empty_strings_allowed || (this.none && !connection.features.interprets_empty_strings_as_nulls))
-	    return null;
-	return "";
+        if (this.has_default()) {
+            if (callable(this.default_value))
+            return this.default_value();
+            return this.default_value;
+        }
+        if (!this.empty_strings_allowed || (this.none && !connection.features.interprets_empty_strings_as_nulls))
+            return null;
+        return "";
     },
 
     get_validator_unique_lookup_type: function() {
@@ -224,8 +224,8 @@ var Field = type('Field', [ object ], {
     },
 
     /*
-	* Returns choices with a default blank choices included, for use as SelectField choices for this field.
-	*/
+     * Returns choices with a default blank choices included, for use as SelectField choices for this field.
+     */
     get_choices: function(include_blank, blank_choice) {
         include_blank = include_blank || true;
         blank_choice = blank_choice || BLANK_CHOICE_DASH;
@@ -417,10 +417,14 @@ var BooleanField = type('BooleanField', [ Field ], {
 });
 
 var CharField = type('CharField', [ Field ], {
-	__init__: function() {
+    __init__: function() {
         var arg = new Arguments(arguments);
         arg.kwargs['max_length'] = arg.kwargs['max_length'] || 100;
         super(Field, this).__init__(arg);
+    },
+
+    get_internal_type: function() {
+        return 'CharField';
     },
 
     to_javascript: function(value) {
@@ -435,10 +439,10 @@ var CharField = type('CharField', [ Field ], {
     },
 
     formfield: function() {
-	var arg = new Arguments(arguments);
-	var defaults = {'max_length': this.max_length};
-	extend(defaults, arg.kwargs);
-	return super(Field, this).formfield(defaults);
+        var arg = new Arguments(arguments);
+        var defaults = {'max_length': this.max_length};
+        extend(defaults, arg.kwargs);
+        return super(Field, this).formfield(defaults);
     }
 });
 
@@ -460,30 +464,30 @@ var DateField = type('DateField', [ Field ], {
     },
 
     to_javascript: function(value) {
-	if (value == null)
-	    return value;
-	if (value instanceof Date)
-	    return value;
+        if (value == null)
+            return value;
+        if (isinstance(value, Date))
+            return value;
 
-	if (ansi_date_re.search(value) != 0)
-	    throw new ValidationError('Enter a valid date in YYYY-MM-DD format.');
-	// Now that we have the date string in YYYY-MM-DD format, check to make
-	// sure it's a valid date.
-	// We could use time.strptime here and catch errors, but datetime.date
-	// produces much friendlier error messages.
-	map(function(simbol) { return this[simbol]; }, mod);
-	var [year, month, day] = value.split('-').map(function(simbol) {return Number(simbol)});
+        if (ansi_date_re.search(value) != 0)
+            throw new ValidationError('Enter a valid date in YYYY-MM-DD format.');
+        // Now that we have the date string in YYYY-MM-DD format, check to make
+        // sure it's a valid date.
+        // We could use time.strptime here and catch errors, but datetime.date
+        // produces much friendlier error messages.
+        map(function(simbol) { return this[simbol]; }, mod);
+        var [year, month, day] = value.split('-').map(function(simbol) {return Number(simbol)});
 
-	return new Date(year, month, day);
+        return new Date(year, month, day);
     },
 
     pre_save: function(model_instance, add) {
-	if (this.auto_now || (this.auto_now_add && add)) {
-	    value = new Date();
-	    model_instance[this.attname] = value;
-	    return value;
-	} else
-	    return super(Field, this).pre_save(model_instance, add);
+        if (this.auto_now || (this.auto_now_add && add)) {
+            value = new Date();
+            model_instance[this.attname] = value;
+            return value;
+        } else
+            return super(Field, this).pre_save(model_instance, add);
     },
 
     contribute_to_class: function(cls, name) {
@@ -533,7 +537,7 @@ var DateTimeField = type('DateTimeField', [ DateField ], {
     to_javascript: function(value) {
         if (!value)
             return value;
-        if (value instanceof Date)
+        if (isinstance(value, Date))
             return value;
         return new Date(number(value));
     },
@@ -610,7 +614,7 @@ var DecimalField = type('DecimalField', [ Field ], {
     }
 });
 
-var EmailField = type('EmailField', CharField, {
+var EmailField = type('EmailField', [ CharField ], {
     __init__: function __init__() {
         var arg = new Arguments(arguments);
         arg.kwargs['max_length'] = arg.kwargs['max_length'] || 75;
@@ -813,7 +817,7 @@ var TimeField = type('TimeField', [ Field ], {
     to_javascript: function(value) {
         if (!value)
             return null
-        if (value instanceof Date)
+        if (isinstance(value, Date))
             return value;
 
             /* TODO validar la fecha

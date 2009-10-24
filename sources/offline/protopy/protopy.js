@@ -126,7 +126,11 @@
             var code = null,
             request = new XMLHttpRequest();
             request.open('GET', file, false); 
-            request.send(null);
+            try {
+                request.send(null);
+            } catch (e) {
+                throw new LoadError(file);
+            }
             if(request.status != 200)
                 throw new LoadError(file);
             //Tego el codigo, creo el modulo

@@ -6,7 +6,7 @@ from django.core.management.base import *
 from offline.models import GearsManifest, GearsManifestEntry
 from django.db import models 
 
-from offline.util import random_string, get_site, get_site_root, \ 
+from offline.util import random_string, get_site, get_site_root, \
     excluding_abswalk_with_simlinks, full_template_list, abswalk_with_simlinks, \
     get_project_root, objdict
 from django.template.loader import find_template_source

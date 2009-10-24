@@ -52,7 +52,7 @@ var Project = type('Project', object, {
         this.templates_url = this.offline_support + '/templates/';
 
         if (sys.gears.installed && sys.gears.hasPermission)
-            this._create_stores();
+            this._create_store();
     },
 
     _create_toolbar: function(){
@@ -72,11 +72,18 @@ var Project = type('Project', object, {
         this.toolbar.show();
     },
 
-    _create_stores: function() {
+    _create_store: function() {
         var localserver = sys.gears.create('beta.localserver');
         this.managed_store = localserver.createManagedStore(this.package + '_manifest');
         this.managed_store.manifestUrl = this.offline_support + '/manifest.json';
+        this.managed_store.checkForUpdate();
         //this.managed_store.manifestUrl = this.offline_support + '/manifest.json?refered=' + this.start_url;
+    },
+
+    _remove_store: function() {
+        var localserver = sys.gears.create('beta.localserver');
+        localserver.removeManagedStore(this.package + '_manifest');
+        this.managed_store = null;
     },
 
     bootstrap: function(){
@@ -138,11 +145,8 @@ var Project = type('Project', object, {
     install: function() {
         if (!sys.gears.installed) sys.gears.install();
         if (!this.get_permission()) return;
-        if (isundefined(this.managed_stores))
-            this._create_stores();
-
-        for each (var store in this.managed_stores)
-            store.check_for_update();
+        if (isundefined(this.managed_store))
+            this._create_store();
 
         require('doff.db.utils','syncdb');
         syncdb();
@@ -152,8 +156,7 @@ var Project = type('Project', object, {
         require('doff.db.utils','removedb');
         removedb();
 
-        for each (var store in this.managed_stores)
-            store.delete();
+        this._remove_store();
     },
 
     /***************************************************************************
