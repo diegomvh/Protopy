@@ -683,92 +683,101 @@ realizar una adaptación de sintaxis.
         uniforman los argumentos pasados a una funcion y permiten establecer
         entre otras cosas valores por defecto. 
 
-Extendiendo DOM y JavaScript
-----------------------------
+Manejo de DOM y Agregados a JavaScript 
+--------------------------------------
 
-Si bien el :term:`DOM` ofrece ya una :term:`API` muy completa para acceder,
-añadir y cambiar dinámicamente el contenido del documento HTML, existen
-funciones muy utiles y comunes en los desarrollos que los programadores
-incorporan al HTML y se intentaron englobar y mantener dentro del nucleo de
-Protopy. Funciones para modificar e incorporar elementos al documento son muy
-comunes y estan disponibles en Protopy, en conjunto con otras para el manejo de
-formularios, como serializacion, obtencion de valores, etc.
+Dentro del módulo DOM de Protopy se provee un selector CSS que permite
+seleccionar elementos basados en selectores de nivel 3 de CSS [W3CCSelCSS309].
 
-Otra extension interesante de mencionar es la de los tipos de datos en
-JavaScript, en manejo de cadenas incorpora nuevas funciones que simplifican
-tareas comunes, los numeros y fechas tambien tiene su aporte.
+.. [W3CCSelCSS309] W3C,
+    Documentación de Selectores CSS de nivel 3,
+    úlitmo acceso Septiembre 2009,
+    http://www.w3.org/TR/css3-selectors/
 
-Los eventos estan uniforamdos bajo un modulo de manejo de eventos, que permite
-conectar eventos del :term:`DOM` con funciones en JavaScript, así tambien como
-funciones entre si.
+Además, basados en la idea de extender el ``protopye`` de los ``HTMLElement`` de
+la biblioteca de JavaScript Protoype, se agregaron funciones como modificar e
+incorporar elementos al documento, serialización (o *marshalling*) de formularios 
+y obtencion de valores, etc.
+
+También se extendieron los tipos de datos propios de JavaScript, como el caso
+de las cadenas (``str`` en Python) agregando métodos de sustitución de patrones,
+conversión de números, manejos de fecha, etc. 
+
+Los eventos estan uniforamdos bajo un modulo de manejo de eventos (``events``),
+que permite conectar eventos DOM con funciones en JavaScript, así tambien como
+crear eventos de usuario.
 
 .. note:: 
     Poner los nombres de las funciones para destacar el laburo
 
-Envolviendo a gears
--------------------
+Envoltura de Google Gears
+-------------------------
 
-La biblioteca puede funcionar independiente de la instalación de Google Gears,
-debido a que su principal funcionalidad como ya se menciono es la de extención
-de
-JavaScript y posterior soporte al framework, pese a esto Protopy provee
-mecanismos para uniformar el acceso y extender los objetos de Gears cuando éste
-se encuentra instalado en el navegador.
+Protopy provee una interface "pythonica" para la migración del framework,
+la construcción de aplicaciones y para el código referente a la interfase
+de usuario. 
 
-El acceso al `Factory` de Gears esta centralizado y controlado en el objeto
-`gears` dentro del modulo `sys`, mediante este objeto es posible conocer el
-estado de Gears y sus permisos. El objeto informa al desarrollador si Gears esta
-instalado, la versión, si los permisos son corrector e incluso simplifica
-el proceso de instalación de la extensión de no estar presente en el navegador
-entre otras cosas.
+Como se mencionó en el capítulo anterior, para la migración del framework
+a un framework desconectado, son necesarios los componentes ``DataBase`` y
+``Local Server``. Gears provee una API que se integra al DOM. Esta fue 
+envuelta en con una API más cercana a la fliosofía Pythonica de Protopy, de
+manera de birndar mayor uniformidad y consistencia en las APIs presentadas
+al programador de aplicaciones desconectables.
 
-El metodo `create` del objeto `sys.gears` es el encargado de crear y retornar
-los objetos Gears. Esta función se ayuda de módulos presentes en el paquete
-`gears` para asistir la creación de los objetos. El objeto que se retorne
-dependera de la precencia del módulo con el mismo nombre en dicho paquete; de no
-encontrar un modulo que asista la cración de un objeto Gears el objeto en sus
-estado "puro" es retornado al llamador.
+Cabe destacar que Protopy no depende de Gears para su funcionamiento. Durante
+la inicialización de la librería se detecta si el navegador tiene disponible
+la API de Gears.
 
-Si bien no es necesario que los módulos obtengan el acceso a Gears a traves de
-Protopy, es recomendable que asi se haga; ya que la biblioteca provee los
-mecanimos de extención para los objetos en `create`. Esto no fue así desde el
-comienzo de del desarrollo y fue una idea que se maduro luego de observar que
-resultaba complejo y costoso requerir los módulos que involucraban a Gears
-desde distintos lugares.
+Dentro del módulo ``sys``, se publica el objeto  ``gears`` que
+almacena información como la disponiblidad de gears, que permisos
+le ha otorgado el usuario, que versión del plugin está disponible, el factory de 
+Gears e incluso provee un mecanismo para facilitar la instalación de Gears si 
+no se encuentra instalado.
+ 
+El metodo ``create`` del objeto ``sys.gears`` es el encargado de crear y retornar
+las instancias de los diversos módulos de Gears. Esta función es un recubrimiento 
+del factory original de gears.
+Esta función, tras la creación de la instancia del tipo solicitado,
+analiza si se encuentra alguna funcionaliad extra de recubrimiento y la aplica
+de estar disponible devolviendo una instancia con funcionalidad aumentada. 
 
-El desarrollo del framework implico extender algunos objetos Gears,
-concretamente
-al paquete `gears` se incorporaron los siguientes módulos:
+Si bien no es necesario que el código de aplicación realizado por el programador
+acedan a Gears a traves de ``sys.gears``, su utilización es recomendada, ya que
+simplifica y uniforma la interfase entre Gears y la aplicación.
 
-    * desktop
+El desarrollo del framework implico extender algunos componentes de Gears:
 
-        El objeto `desktop` de Gears permite interactuar con el escritorio del
-        cliente. Aquí se extendio la creacción de accesos directos para
+    * ``desktop``
+
+        El componente ``desktop`` de Gears permite interactuar con el escritorio del
+        cliente. Se extendio la creacción de accesos directos para
         simplificar la generación de los mismos y agregar la posibilidad de
-        manejar `Icon` y algunos `IconTheme`.
+        manejar recusos del tipo ``Icon`` e ``IconTheme``.
 
-    * database
+    * ``database``
 
-        Sobre el objeto `database` se agrego funcionalidad uniformar el acceso a
-        la base de datos por los módulos de Protopy y encapsular los `ResulSet`
+        Sobre el objeto ``DataBase`` se agrego funcionalidad uniformar el acceso a
+        la base de datos por los módulos de Protopy y encapsular los ``ResulSet``
         en cursores a los que se incorporo iteradores, registro de funciones
         para tipos de datos, etc.
 
-Auditando el codigo
--------------------
+Auditado de Código
+------------------
 
-Una queja recurrente de los desarrolladores que trabajan con JavaScript es lo
-complejo que resulta el lenguaje para depurar errores. Encontrar errores en
-el código resulta molesto y mas todavía si la salida de los mismos no esta en un
-formato adecuado y encausada en un lugar especifico.
+Un obstáculo muy común con el cual se encuentran los desarrolladores a la 
+hora de la codificación de JavaScript es la dificultad de depuración en 
+el navegador.
 
-Tradicionalmente lo que se hace para detectar errores es valerse de funciones
-`alert` diseminadas por el código con textos del estilo "Paso por aquí", pero
-luego de cerrar unas diez o quince ventanas de este estilo, generalmente se
-pierde referencia de donde esta ocurriendo el error y se cae en la tentación de
-comenzar a comentar alerts a mansalva esperando dar con el indicado. Este es un
-claro ejemplo de que tanto la salida como el sistema de detección de errores es
-molesto e infructifero.
+Se suele recurrir a la función ``alert()``, que genera una ventana emergente
+y modal, que detiene la ejecución de JavaScript hasta que sea pulsado el botón de
+aceptación. Se utiliza como punto de ruptura (*breakpoint*) en
+el código, pero resulta engorroso debido a que el programador
+debe interacturar activamente en la depuración, cerrando las ventanas tras 
+la llegada a una sentencia ``alert`` y editando el código con cada ciclo de
+depuración, descomentando el camino por el cual desea realizar la depuración.
+
+El pugin Firebug para los navegadores basados en Mozilla, integra una consola
+de JavaScript, visulizador y analizador de DOM, CSS, peticiones de red 
 
 Una clara ventaja sobre el sistema tradicional y poderosa herramienta de
 desarrollo es el plug-in Firebug, que integra entre otras cosas una consola
