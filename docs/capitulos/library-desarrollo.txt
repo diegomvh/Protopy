@@ -4,8 +4,6 @@
 Protopy
 #######
 
-Introducción
-============
 
 .. note:: 
 
@@ -28,7 +26,7 @@ Introducción
 El presente capítulo profundiza sobre el desarrollo de la librería de JavaScript
 sobre la cual se implenta una versión desconectada de Django. Como se mencionó
 en el capítulo anterior, si bien JavaScript en sus versiones 1.7 y 1.8 incorpora
-muchos elementos que acercan su sintaxis a la de Python, es 
+muchos elementos que acercan su sintaxis a la de Python, fue 
 necesario implementar una capa intermedia entre JavaScript y Django "desconectado".
 Una de las razones mas relevantes es emular la API estándard de Python.
 
@@ -126,8 +124,8 @@ Objetivos de la Librería
 Compatibilidad de Protopy
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-JavaScript 1.7 solo se encuentra implementado sobre la plataforma Mozilla
-(Firefox 3.0+). Dado que existe una sola plataforma compatible  se quitaron 
+JavaScript 1.7 solo se encuentra disponible sobre la plataforma Mozilla
+(Firefox 3.0+), de modo que se quitaron  
 gran parte de los arreglos de compatibilidad presentes originalmente en Prototype
 y se portó a nueva sintaxis muchas partes del código original. 
 
@@ -150,8 +148,8 @@ en la gerarquía de directorios */ruta/a/protopy/* en el ejemplo expuesto.
 Argumentos de inicialización
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Dentro del atributo ``src`` de la etiqueta script de inclusión de Portopy se pueden
-enviar argumentos codificados en la URL. Por ejemplo::
+Dentro del atributo ``src`` de la etiqueta script de inclusión de Portopy, se pueden
+pasar argumentos en la URL. Por ejemplo::
     
     src="/ruta/a/protopy/protopy.js?argumento=valor&argumento=valor"
     
@@ -165,8 +163,9 @@ Organizando el codigo
 
 Como se mencionó en el apartado teórico dedicado a JavaScript, la inclusión
 de código en un documento HTML se realiza mediante el tag ``script`` definiendo
-en el atributo ``src`` la URL del recurso. Cuando el navegador encuentra estos
-tags en el análisis del documento (o *parsing*), descarga el recurso y lo
+en el atributo ``src`` la URL del recurso. 
+Cuando el navegador encuentra estas
+etiquetas en el análisis del documento (o *parsing*), descarga el recurso y lo
 evalúa en el contexto de elemento``window`` (es decir, si en el código se define
 una variable ``a`` fuera del bloque de una función, esta pasa a ser miembro
 del objeto ``window``).
@@ -363,7 +362,7 @@ Modulos nativos
 .. _protopy-tipos:
 
 Creando tipos de objeto
-=======================
+-----------------------
 
 En el apartado teórico se toco el tema de construcción de objetos en base a
 "clases" y de la emulación de herencia en JavaScript. Aunque muchos autores
@@ -636,7 +635,7 @@ Algunos objetos que se encuentran el la biblioteca son:
         entre otras cosas valores por defecto. 
 
 Extendiendo DOM y JavaScript
-============================
+----------------------------
 
 Si bien el :term:`DOM` ofrece ya una :term:`API` muy completa para acceder,
 añadir y cambiar dinámicamente el contenido del documento HTML, existen
@@ -658,7 +657,7 @@ funciones entre si.
     Poner los nombres de las funciones para destacar el laburo
 
 Envolviendo a gears
-===================
+-------------------
 
 La biblioteca puede funcionar independiente de la instalación de Google Gears,
 debido a que su principal funcionalidad como ya se menciono es la de extención
@@ -707,7 +706,7 @@ al paquete `gears` se incorporaron los siguientes módulos:
         para tipos de datos, etc.
 
 Auditando el codigo
-===================
+-------------------
 
 Una queja recurrente de los desarrolladores que trabajan con JavaScript es lo
 complejo que resulta el lenguaje para depurar errores. Encontrar errores en
@@ -800,7 +799,7 @@ código en la consola de firebug y en una url con distintos formatos.
 .. note:: Poner referencia a firebug
 
 Interactuando con el servidor
-=============================
+-----------------------------
 
 Protopy permite al desarrollador trabajar con AJAX de forma simple y segura,
 encapuslando en objetos la lógica de petición y los valores de retorno del
@@ -855,7 +854,7 @@ peticion, estos pueden ser pasados como un objeto "hasheable" o como una cadena
 clave-valor.
 
 Soporte para json
-=================
+-----------------
 
 La idea detras del soporte para JSON en Protopy es la transimisión de datos
 generados offline por el cliente, en el momento de recuperar la conexion con el
@@ -894,9 +893,12 @@ Para el leector interesado agregar el sporte para XML en Protopy consta de
 escribir un modulo que realize esa tarea y agregarlo al paquete base.
 
 Ejecutando código remoto
-========================
+------------------------
+
+
 .. JSON-RPC http://json-rpc.org/ 
 .. XML-RPC http://www.xmlrpc.com/
+
 El RPC (del inglés Remote Procedure Call, Llamada a Procedimiento Remoto) es un
 protocolo que permite a un programa de ordenador ejecutar código en otra máquina
 remota sin tener que preocuparse por las comunicaciones entre ambos. El
