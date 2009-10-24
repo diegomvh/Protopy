@@ -5,6 +5,25 @@ Doff
 Introducción
 ============
 
+.. note:: 
+
+    Ver donde poner estos dos parrafos, que estan buenos pero creo que no van aca :)
+    Creo que esto va en el apartado de *DOFF*
+
+    En apartados teóricos se menciono, entre otras cosas, que la creación de un
+    framework generalmente surge de la identificación de objetos reusables en
+    el desarrollo de software. Posteriormente los objetos identificadas decantan en
+    componentes que forman parte de la arquitectura del framework y a los cuales se
+    accede mediante la extención y la configuración.
+    Esta forma de obtener un producto que permita arquitecturar proyectos de
+    caracteristicas similares a los que lé dieron origen, implica pasar por varias
+    etapas de maduración en el desarrollo, pero requieren de un punto de partida
+    primordial y es justamente un proyecto que oriente la identificacion de las
+    partes reusables. Nuestro caso se complica en este punto, ya que la intención
+    panteada desde el principio es la de "desarrollar un framework" y la realidad
+    del desarrollo es que muchas de las partes surguieron en paralelo y de la mano
+    de aplicaciones de prueba.
+
 
 ---------------------- OJO CON ESTO QUE TIENE PONIES ---------------------------
 

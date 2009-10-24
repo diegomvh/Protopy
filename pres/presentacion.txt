@@ -3,7 +3,7 @@ Aplicaciones Web Desconectadas
 ==============================
 
 	:autores: Defossé, Nahuel - van Haaster, Diego Marcos
-	:tutor:	 Sanez Lopez, Marta
+	:tutor:	 Sáenz Lopez, Marta
 	:fecha: Noviembre 2009
 	:url: https://hg.protopy.com.ar/protopy
 

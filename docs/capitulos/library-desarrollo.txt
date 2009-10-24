@@ -5,23 +5,7 @@ Protopy
 #######
 
 
-.. note:: 
 
-    Ver donde poner estos dos parrafos, que estan buenos pero creo que no van aca :)
-
-    En apartados teóricos se menciono, entre otras cosas, que la creación de un
-    framework generalmente surge de la identificación de objetos reusables en
-    el desarrollo de software. Posteriormente los objetos identificadas decantan en
-    componentes que forman parte de la arquitectura del framework y a los cuales se
-    accede mediante la extención y la configuración.
-    Esta forma de obtener un producto que permita arquitecturar proyectos de
-    caracteristicas similares a los que lé dieron origen, implica pasar por varias
-    etapas de maduración en el desarrollo, pero requieren de un punto de partida
-    primordial y es justamente un proyecto que oriente la identificacion de las
-    partes reusables. Nuestro caso se complica en este punto, ya que la intención
-    panteada desde el principio es la de "desarrollar un framework" y la realidad
-    del desarrollo es que muchas de las partes surguieron en paralelo y de la mano
-    de aplicaciones de prueba.
 
 El presente capítulo profundiza sobre el desarrollo de la librería de JavaScript
 sobre la cual se implenta una versión desconectada de Django. Como se mencionó
@@ -776,73 +760,85 @@ debe interacturar activamente en la depuración, cerrando las ventanas tras
 la llegada a una sentencia ``alert`` y editando el código con cada ciclo de
 depuración, descomentando el camino por el cual desea realizar la depuración.
 
-El pugin Firebug para los navegadores basados en Mozilla, integra una consola
-de JavaScript, visulizador y analizador de DOM, CSS, peticiones de red 
+El plugin Firebug integra una consola de JavaScript, visulizador y analizador 
+de DOM, CSS, peticiones de red y un depurador de JavaScript avanzado (breakpoints,
+watch sobre variables, ruptura ante codinción, etc).
 
-Una clara ventaja sobre el sistema tradicional y poderosa herramienta de
-desarrollo es el plug-in Firebug, que integra entre otras cosas una consola
-JavaScript y un debuger al ambinete del navegador, permitiendo a los
-desarrolladores depurar el código mediante puntos de corte, inspección de
-variables, etc. En firebug la consola pasa a ser por defecto la principal salida
-de errores, gracias a la funcion `console.log` los desarrolladores pueden
-redirigir todos los "Paso por aquí" a una salida uniforme e incluso inspeccionar
-el valor de las variables.
+Cuando firebug se encuentra instalado y la consola activada, el desarrollador
+puede utilziar ``console.log``, ``consoel.info`` y ``console.warn`` para depurar
+la aplicación imprimiendo cadenas y valores de variables,
+sin necesidad de utilizar alerts.
 
-Protopy lleva la depuración y auditoria del código un paso más lejos, integrando
-un sistema de logging propio altamente configurable y con posibilidades de
-escribir en diferentes salidas y con diferentes formatos.
+Protopy agrega un sistema de *logging* sobre las funciones antes mencionadas, 
+permitiendo configuración sobre las salidas, el formateo y la prioridad, de 
+manera similar a *log4j*. El desarrollador no necesita suprimir las sentencias
+de depuración del producto final, simplementa anula la salida en la configuración.
 
-Similar a log4j el logger de Protopy trabaja con niveles de prioridad para los
-mensajes, distintos manejadores o `Handlers` y salidas en varios formatos. Todo
-esto configurable por el desarrollador.
+Los loggers se agrupan gerarquicamente y toman los nombres de los módulos
+en los cuales se ejecutan. La configuración respeta esta geraquía. Un logger
+de un submódulo adopta la configuración de su padre a menos que se defina algo
+particular para él.
 
 Una vez configurado el sistema de logging, los módulos que requieran auditar el
-codigo solo deben requerir un logger en su sespacio de nombre e invocar a sus
+código solo deben requerir un *logger* en su espacio de nombre e invocar a sus
 funciones.
 
 .. code-block:: javascript
-
+    
+    // Requerir el modulo 'logging.base'
     var logging = require('logging.base');
+    // Crear un logger con el nombre del módulo actual, que se almacena
+    // en __name__
     var logger = logging.get_logger(__name__);
-
-    ...
-
+    
+    var query = ... // carga con inforamción de depuración
+    var params = ... // carga con inforamción de depuración
+    // Envío de un mensaje al sistema de logging
     logger.debug('La query: %s\n Los parametros: %s', query, params, {});
 
-En este ejemplo se requiere el módulo `logging` y posteriormente un logger para
-el módulo con el nombre __name__, de no encontrar configuración para este módulo
-se adopta la configuracion del modulo inmediato superior y asi consecutivamente
-hasta tomar la configuración del root logger.
+En este ejemplo se requiere el módulo ``logging`` y posteriormente un logger para
+el módulo con el nombre ``__name__``. 
 
-Suponiendo que el módulo del ejemplo se llama doff.db.models.sql el siguiente
-archivo de configuracion perapraria este logger en modo DEBUG para auditar el
+Suponiendo que el módulo del ejemplo se llama ``doff.db.models.sql`` el siguiente
+archivo de configuracion prepara el logger en modo ``DEBUG`` para auditar el
 código en la consola de firebug y en una url con distintos formatos.
 
 .. code-block:: javascript
 
     {
         'loggers': {
+            // Logger básico
             'root': {
-                'level': 'DEBUG',
-                'handlers': 'firebug'
+                'level': 'DEBUG',   // Los mensajes con prioridad DEBUG
+                                    // o mayor se imprimiran
+                'handlers': 'firebug' // La salida será por el manejador
+                                    // firebug, definido más abajo
             },
             'doff.db.models.sql': {
-                'level': 'DEBUG',
-                'handlers': [ 'firebug', 'remote'],
-                'propagate': true
+                'level': 'DEBUG',   // El módulo tiene prioridad DEBUG
+                'handlers': [ 'firebug', 'remote'], // La salida se realizará
+                                                // tanto por firebug como 
+                                                // de manera remota
+                'propagate': true // Los mensajes se propagan al padre
             },
         },
         'handlers': {
             'firebug': {
-                'class': 'FirebugHandler',
-                'level': 'DEBUG',
+                'class': 'FirebugHandler', // Salida por el plugin FireBug
+                'level': 'DEBUG',   // Nivel (configuración de firebug)
+                // Formato de la salida
                 'formatter': '%(time)s %(name)s(%(levelname)s):\n%(message)s',
+                // Argumentos extras
                 'args': []
             },
             'remote': {
+                // Otro handler, para auditoría remota
                 'class': 'RemoteHandler',
+                // Nivel
                 'level': 'DEBUG',
+                // Formato
                 'formatter': '%(levelname)s:\n%(message)s',
+                // Argumento extra, URL donde se envían los mensajes
                 'args': ['/loggers/audit']
             },
             'alert': {
@@ -854,148 +850,108 @@ código en la consola de firebug y en una url con distintos formatos.
         }
     }
 
-.. note:: Poner referencia a firebug
 
 Interactuando con el servidor
 -----------------------------
 
-Protopy permite al desarrollador trabajar con AJAX de forma simple y segura,
-encapuslando en objetos la lógica de petición y los valores de retorno del
-servidor.
 
-Todo lo relacionado con AJAX se encuentra en el modulo `ajax`. El objeto de
-transporte para ajax es `XMLHttpRequest` e internamente se salvan las
-diferencias que existen entre los distintos navegadores. La forma de realizar
-una peticion es creando una instancia del objeto ajax.Request.
+Protopy provee una interfase de recubrimiento sobre las peticiones asincrónicas
+(AJAX) con el objeto de simplificar la utilización de ``XMLHttpRequest``, trabajar
+con varias codificaciones de dato de manera segura (JSON), etc.
+
+Esta funcionalidad se encuentra en el modulo ``ajax``. El objeto de
+transporte para ajax es `XMLHttpRequest` por defecto. La forma de realizar
+una peticion es creando una instancia del objeto ``ajax.Request``.
 
 .. code-block:: javascript
-
+    
+    require('ajax');
     new ajax.Request('una/url', {method: 'get'});
 
-La primera opcion es la url de la solicitud, y el segundo parametro es el hash
-de opciones, en este caso el metodo a utilizar es GET, si no se especifica, el
-metodo por defecto es POST.
+El primer argumento de Request es la URL a la cual se realizará la solicitud, 
+el segundo parámetro es un arreglo asociativo con parámetros opcionales, como
+en este caso el método HTTP. En caso de no especificarse, el método es POST.
 
-Por defecto la respuesta del servidor es asincrona, para este caso se debe
-explicitar en el hash de opciones las funciones que manejaran los eventos
-disparados.   
+Por defecto ``Request`` se comporta de manera asincrónica, y se debe agregar
+al arreglo asociativo de opciones la función que se invocará cuando la petición
+se halla completado, como en el siguiente ejemplo:
 
 .. code-block:: javascript
 
     new ajax.Request('una/url', { 
         method:'get',
+        // Función que se invoca en el caso de que la petción sea exitosa
         onSuccess: function(transport){ 
             var response = transport.responseText || "sin texto";
-            alert("Success! \n\n" + response); }, 
+            alert("Success! \n\n" + response); },
+        // Función que se invoca en el caso de que la petción no sea exitosa 
         onFailure: function(){ 
             alert('Algo esta mal...'); } 
     }); 
 
-En el ejemplo se presentan dos funciones, onSuccess y onFailure, para manejar
-los eventos correspondientes. A cada manejador se le pasa un objeto que
-representa la respuesta obtenida y que esta en relación con el evento
-capturando.
+A cada manejador se le pasa un objeto que representa la respuesta obtenida 
+y que esta en relación con el evento capturando.
 
 Otros manejadores que se pueden definir son:
     
-    * onUninitialized
-    * onLoading
-    * onLoaded
-    * onInteractive
-    * onComplete
-    * onException 
+    * ``onUninitialized``
+    * ``onLoading``
+    * ``onLoaded``
+    * ``onInteractive``
+    * ``onComplete``
+    * ``onException`` 
 
 Todos estos dependen de un estado del objeto `XMLHttpRequest`.
 
-De igual manera que el resto de las opciones es posible agregar parametros a la
-peticion, estos pueden ser pasados como un objeto "hasheable" o como una cadena
-clave-valor.
+De igual manera que el resto de las opciones, es posible agregar parametros a la
+peticion, estos pueden ser pasados como un objeto arreglo asociativo o 
+como una cadena clave-valor. Estos parámetros pasan a ser parte de la petición 
+HTTP.
 
-Soporte para json
+Soporte para JSON
 -----------------
 
-La idea detras del soporte para JSON en Protopy es la transimisión de datos
-generados offline por el cliente, en el momento de recuperar la conexion con el
-servidor el cliente debe serializar los datos y enviarlos al servidor; otro uso
-para es el intercambio de mensajes de control.
+JSON fue el formato elegido para la transimisión de datos entre el framework
+desconectado en el navegador y su contraparte en el servidor. Estos datos 
+comprenden imformación sobre medios estáticos para los alacenamientos de
+recursos locales, datos de modelos y llamadas a procedimiento remoto.
 
-La transferencia de datos involucra varios temas, uno de ellos y que compete
-a este apartado, es el formato de los datos que se deben pasar por
-la conexcion; este formato debe ser "comprendido" tanto por el cliente como
-por el servidor. Desde un primer momento se penso en JSON como el formato
-de datos a utilizar, es por esto que Protopy incluye un modulo para trabajar
-con el mismo.
+El manejo de JSON en Protopy se realizó en el módulo ``json``. Este módulo
+posee la capacidad de serializar los objetos nativos de JavaScript así como 
+también las instancias de clases que implementen el método ``__json__``.
 
-El soporte para JSON se encuentra en el modulo "json" entre los módulos
-estandar de Protopy. Este brinda soporte al pasaje de estructuras de datos
-JavaScript a JSON y viceversa.
+No se implementó sobre Porotpy soporte para serialización XML debido a su 
+complejidad y a que no bridaba ventajas significativas ante JSON para 
+los objetivos de la presente tesina. Sin embargo se puede implementar esta
+característica en futuras vesriones.
 
-Los tipos base del lenguje JavaScript estan soportados y tienen su
-reprecentacion correspondiente, object, array, number, string, etc. pero este
-modulo interpreta ademas de una forma particular a aquellos objetos que
-implementen el metodo __json__, dejando de este modo en manos del
-desarrollador la reprecentacion en JSON de determinado objetos.
-
-Con el soporte de datos ya establecidos en la libreria, el framework solo
-debe limitarse a hacer uso de él y asegurar la correcta sincronizacion de datos
-entre el cliente y el servidor web, este tema se retomara en el capitulo de
-sincronizacion.
-
-XML
----
-
-No existe una razon concreta por la cual se deja de lado el soporte en Protopy
-para XML como formato de datos; aunque se puede mencionar la simplicidad de
-implementacion de un parser JSON contra la implementacion de uno en XML.
-Para el leector interesado agregar el sporte para XML en Protopy consta de
-escribir un modulo que realize esa tarea y agregarlo al paquete base.
-
-Ejecutando código remoto
-------------------------
+RPC (Remote Procedure Call)
+---------------------------
 
 
 .. JSON-RPC http://json-rpc.org/ 
 .. XML-RPC http://www.xmlrpc.com/
 
-El RPC (del inglés Remote Procedure Call, Llamada a Procedimiento Remoto) es un
-protocolo que permite a un programa de ordenador ejecutar código en otra máquina
-remota sin tener que preocuparse por las comunicaciones entre ambos. El
-protocolo
-es un gran avance sobre los sockets usados hasta el momento. De esta manera el
-programador no tenía que estar pendiente de las comunicaciones, estando éstas
-encapsuladas dentro de las RPC.
+RPC consiste en la ejecución de una función de manera remota. El cliente envía
+el nombre y los argumentos de la función que solicita. El servidor ejecuta la
+función requerida y devuelve los resultados al cliente. Tanto los parámetros
+como los resultados requieren de una codificación preestablecida para ámbas partes.
 
-Las RPC son muy utilizadas dentro del paradigma cliente-servidor. Siendo el
-cliente el que inicia el proceso solicitando al servidor que ejecute cierto
-procedimiento o función y enviando éste de vuelta el resultado de dicha
-operación
-al cliente.
+RPC brinda un nivel de abstracción sobre mecanismos más primitivos de comunicación
+como sockets, en bajo nivel, o peticiones HTTP.
 
-Hay distintos tipos de RPC, muchos de ellos estandarizados como pueden ser el
-RPC
-de Sun denominado ONC RPC (RFC 1057), el RPC de OSF denominado DCE/RPC y el
-Modelo de Objetos de Componentes Distribuidos de Microsoft DCOM, aunque ninguno
-de estos es compatible entre sí. La mayoría de ellos utilizan un lenguaje de
-descripción de interfaz (IDL) que define los métodos exportados por el servidor.
+Existen diversos estánadres de RPC como ONC RPC de Sun (RFC 1057), 
+RPC de OSF denominado DCE/RPC y Modelo de Objetos de Componentes Distribuidos 
+de Microsoft DCOM, cada uno de los cuales define una codificación y un protcolo
+específico. La mayoría de ellos utilizan un lenguaje de
+descripción de interfaz (IDL) que define los métodos o funciones que publica 
+el servidor, así como tambien los tipos de datos que transporta.
 
-Hoy en día se está utilizando el XML como lenguaje para definir el IDL y el HTTP
-como protocolo de red, dando lugar a lo que se conoce como servicios web.
-Ejemplos de éstos pueden ser SOAP o XML-RPC. XML-RPC es un protocolo de llamada
-a
-procedimiento remoto que usa XML para codificar los datos y HTTP como protocolo
-de transmisión de mensajes.[1]
+XML-RPC es un estándard que utilzia XML como lenguaje de comunicación y HTTP 
+como protocolo de transporte. Es considerado el más simple de los mecanismos 
+para publicación de servicios web y fue incorporado a la librería Protopy como
+mecanismo para comunicación entre el framework desconectado y la aplicación
+en linea.
 
-Es un protocolo muy simple ya que sólo define unos cuantos tipos de datos y
-comandos útiles, además de una descripción completa de corta extensión. La
-simplicidad del XML-RPC está en contraste con la mayoría de protocolos RPC que
-tiene una documentación extensa y requiere considerable soporte de software para
-su uso.
 
-Fue creado por Dave Winer de la empresa UserLand Software en asociación con
-Microsoft en el año 1998. Al considerar Microsoft que era muy simple decidió
-añadirle funcionalidades, tras las cuales, después de varias etapas de
-desarrollo, el estándar dejó de ser sencillo y se convirtió en lo que es
-actualmente conocido como SOAP. Una diferencia fundamental es que en los
-procedimientos en SOAP los parámetros tienen nombre y no interesan su orden, no
-siendo así en XML-RPC.[2
 
