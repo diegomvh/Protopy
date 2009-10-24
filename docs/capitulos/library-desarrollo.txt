@@ -127,11 +127,11 @@ Compatibilidad de Protopy
 JavaScript 1.7 solo se encuentra disponible sobre la plataforma Mozilla
 (Firefox 3.0+), de modo que se quitaron  
 gran parte de los arreglos de compatibilidad presentes originalmente en Prototype
-y se portó a nueva sintaxis muchas partes del código original. 
+y se portó a la nueva sintaxis muchas partes del código original. 
 
 .. _protopy-modulos:
 
-Utilización de la biblioteca
+Utilización de la Biblioteca
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 La librería Protopy consiste en un único recurso JavaScript llamado
@@ -145,7 +145,7 @@ La librería Protopy consiste en un único recurso JavaScript llamado
 Dentro del atributo ``src`` se define lo que se denomina *ruta base* y consiste
 en la gerarquía de directorios */ruta/a/protopy/* en el ejemplo expuesto.
 
-Argumentos de inicialización
+Argumentos de Inicialización
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Dentro del atributo ``src`` de la etiqueta script de inclusión de Portopy, se pueden
@@ -158,8 +158,8 @@ analizaran en el capítulo siguiente.
     
 
 
-Organizando el codigo
-=====================
+Organización del Código
+=======================
 
 Como se mencionó en el apartado teórico dedicado a JavaScript, la inclusión
 de código en un documento HTML se realiza mediante el tag ``script`` definiendo
@@ -204,28 +204,18 @@ para luego evaluarlo un contexto aislado.
 
 .. http://www.gulic.org/almacen/diveintopython-5.4-es/html_processing/locals_and_globals.html
 
-En Protopy un módulo es un recurso JavaScript que publica explicitamente una interfase. 
+En Protopy, un módulo es un recurso JavaScript que publica explicitamente una interfase. 
 De esta manera la funcionalidad se encuentra encapsulada. Para publicar un elmento
 del módulo se utiliza la función ``publish({nombre: objeto, nombre: objeto})``.
  
-Además de cargar el módulo, ``require()`` se encarga publicación en
+Además de cargar el módulo, la función ``require()`` se encarga publicación en
 el ámbito local a la invocación de los símbolos que sean publicados mediante ``publish()``.
 Durante la evaluación se encuentra disponible la variable ``__name__`` que 
 tiene como valor el nombre del módulo que se está evaluando.
 
-Los módulos se pueden organizar geraquicamente en carpetas, a las cual se
+Los módulos se pueden organizar geraquicamente en directorios, a las cual se
 denomina paquetes. El comando ``require("a.b")`` carga el elemento ``b`` del
-paquete ``a``.
-
-Carga de un Módulo
-------------------
-
-Cuando se utiliza la función ``require`` la búsqueda de los módulos se realiza
-en la *ruta base*. Esta se estableció como el subdirectorio ``packages``
-a partir de la ruta desde la cual se cargó la librería Protopy.
-Por ejemplo, si protopy.js se encuentra en ``http://dominio.com/media/js/protopy.js`` 
-la invocación ``require("dom")`` cargará el archivo ``dom.js`` desde  
-``http://dominio.com/media/js/packages/dom.js``.
+paquete ``a``, siendo ``a`` un directorio con un archivo ``b.js`` en el servidor.
 
 Cuando se utilizan paquetes, a diferencia de Python, estos no incluye funcionalidad
 per se [*]_ la única función de estos es la de establecer estructura.
@@ -234,6 +224,16 @@ per se [*]_ la única función de estos es la de establecer estructura.
     ``__init__.py``, donde se puede definir funcionalidad que es evaluada
     si se realiza la importación del paquete tal si fuese un módulo (Ej:
     ``import paquete``)
+
+Carga de Módulos
+----------------
+
+Cuando se utiliza la función ``require`` la búsqueda de los módulos se realiza
+en la *ruta base*. Esta se estableció como el subdirectorio ``packages``
+a partir de la ruta desde la cual se cargó la librería Protopy.
+Por ejemplo, si ``protopy.js`` se encuentra en ``http://dominio.com/media/js/protopy.js`` 
+la invocación ``require("dom")`` cargará el archivo ``dom.js`` desde  
+``http://dominio.com/media/js/packages/dom.js``.
 
 La búsqueda de módulos se puede ampliar más allá de la ruta base. En el módulo
 ``sys`` existe la variable ``paths``, que consiste en una lista de rutas en
@@ -268,70 +268,72 @@ La función ``require`` se puede usar para:
 
 Una descrpición detallada se encuentra en el apendice dedicado a Protopy.
 
-Publicar un módulo
-------------------
+Publicación de Módulos
+----------------------
 
-En Python no es necesario declarar de manera expícita que símbolos se exponen,
-ya que todas las definiciones son públicas. En cambio los módulos en
-Protopy se evaluan dentro de una clausura y los llamadores no podran acceder
-a sus funciones si no son publicadas. 
+En Python no es necesario declarar de manera expícita que símbolos se exponen
+en un módulo, ya que todas las definiciones son públicas. Por ejemplo, si
+se define un módulo ``utils.py`` con el siguiente código:
+
+.. code-block:: javascript
+
+    def promedio(lista_de_enteros):
+        return sum(lita_de_enteros) / float(len(lista_de_enteros))
+    
+    def cantidad_palabras(linea):
+        return len(linea.split())
+
+el programador puede usar las sentencias ``from utils import promedio`` que
+incorpora la función promedio al ámbito de nombres local, 
+``from utils import *`` que incorpora todas las funciones de ``utils`` al ámbito
+de nombres o simplemente ``import utils``, que incorpora el módulo, el cual
+tiene como miembros en este caso a ``promedio`` y a ``cantidad_palabras``.
+
+En cambio los módulos en Protopy se evaluan dentro de una clausura y los 
+llamadores no podran acceder a sus funciones si no son publicadas. 
 
 La funcion ``publish`` es la encargada de relizar la tarea de publicar el
 contenido del modulo.
 
 A continuación se presenta un fragmento de código que ejemplifica el uso de las 
-dos funciones presentadas.
+dos funciones presentadas sobre un código simimlar al de listado en Python:
 
 .. code-block:: javascript
     :linenos:
 
-     /* Se obtiene la funcion copy y deepcopy del modulo copy.
-        Estas funciones son para copia de objetos
-        superficiales y en profundidad respectivamente. */
-    require('copy', 'copy', 'deepcopy');
-
-    /* Representa la cantidad maxima de caches */
-    var MAX = 1000;
-
-    /* Objeto para guardar las cache */
-    var cache = {};
-
-    ...
-
-    /* Estructura de datos que representa a una cache */
-    var Cache = type('Cache', [ Dict ], {
-        ...
-    });
-
-    /* Funcion que retorna una cache */
-    function get_cache(name) {
-        if (len(cache) > 1000)
-            throw new Exception('%s caches creadas'.subs(MAX));
-        var c = cache[name];
-        if (!isundefined(c)) {
-            c = new Cache();
-            cache[name] = c;
+    function promedio(lista_de_enteros) {
+        var suma = 0;
+        for (int i = 0; i < lista_de_enteros.length; i++){
+            suma += lista_de_enteros[i]
         }
-        return d;
+        return suma / lista_de_enteros.length;
     }
-
-    /* Publico la cantidad maxima de caches
-       la funcion para obtener caches. */
+    
+    function contar_palabras(linea) {
+        return linea.split(' ').length
+    }
+    
     publish({
-        MAX: MAX,
-        get_cache: get_cache
+        promedio: promedio,
+        contar_palabras: contar_palabras
     });
 
-Modulos nativos
+Modulos Nativos
 ---------------
 
+Como se introdujo al principio del capítulo anterior, es necesario que la 
+implementación de Python que se utilize en el navegador como soporte para
+Django, posea algunos módulos de la API standard de Python.
+  
 .. note:: 
     Describir de forma rápida los módulos principales
 
     * builtin
 
         Este módulo cuenta con los tipos y funciones disponibles en 
-        el ámbito global.
+        el ámbito global ni bien se inicia el intérprete de Python.
+        Está constuida por los tipos básicos, las funciones
+        como ``filter``, ``sum``, ``map``, etc.
 
     * dom
 
@@ -359,40 +361,49 @@ Modulos nativos
 
         Envoltura de ``window.setTimer()`` y ``window.setInterval()``. 
 
+
+
 .. _protopy-tipos:
 
-Creando tipos de objeto
------------------------
+Orientación a Objetos Basado en Clases
+--------------------------------------
 
-En el apartado teórico se toco el tema de construcción de objetos en base a
-"clases" y de la emulación de herencia en JavaScript. Aunque muchos autores
-cuestionan estas practicas alegando, con justa razon, que no tiene sentido
-emular un paradigma dentro de otro; en la practica tener una implementación de
-objetos tipados en JavaScript ayuda al reuso de código y en gran medida a que
-los programadores se acerquen al lenguaje.
+En el capítulo dedicado a las tecnologías del cliente se introdujo en
+el enfoque OO que posee JavaScript. Para lograr migrar muchos componentes
+de Django a JavaScript, se requiere un sistema de objetos basado en clases.
+Muchos autores cuestionan intentar imponer un sistema de clases sobre
+un lenguaje que ya posee su técnica para crear objetos, argumentando que no 
+tiene sentido emular un paradigma dentro de otro. Se llegó a la conclusión
+que tanto para la presente tesina como para acercar a los programadores
+que utilizan Django al lenguaje JavaScript/Protopy era neceario proveer 
+un sistema de tipos similar al de Python. Prototype  hace lo propio con el 
+lenguaje Ruby.
 
 La forma de crear nuevos "tipos de objetos" en Protopy es a traves de la función
-`type`. Esta funcion no fue parte de la biblioteca hasta que no se observo la
-necesidad de otrogar mayor "poder" al constructor de clases que brindaba
-Prototype, y su aparcición posibilito nuevas formas de construir tipos, 
-similares a las construcciones de tipos que brinda la funcion homónima en
-Python, a la cual debe su nombre.
+``type``. Esta funcion no fue parte de la biblioteca hasta que no se observó la
+necesidad de otrogar mayor poder al constructor de clases que brindaba
+Prototype. Su aparición posibilito nuevas formas de construir clases, 
+similares a las  que brinda la funcion homónima en Python, a la cual debe su nombre.
 
 A continuación se presenta un fragmento de código que ejemplifica la creación de
-tipos en Protopy.
+una clase en Protopy.
 
 .. code-block:: javascript
     :linenos:
 
+    // Creación de un diccionario, que hereda del tipo object
     var Dict = type('Dict', object, {
         ...
     });
-
+    // Creación de una clase que hereda de Dict, observar que es una lista ya
+    // se permite herencia múltiple.
     var SortedDict = type('SortedDict', [ Dict ], {
         __init__: function(object) {
-            this.keyOrder = (object && isinstance(object, SortedDict))? copy(object.keyOrder) : [];
+            this.keyOrder = (object && isinstance(object, SortedDict))? \
+                copy(object.keyOrder) : [];
             super(Dict, this).__init__(object);
         },
+        // Iterador, retorna pares clave, valor
         __iter__: function() {
             for each (var key in this.keyOrder) {
                 var value = this.get(key);
@@ -402,6 +413,7 @@ tipos en Protopy.
                 yield pair;
             }
         },
+        // Método utilizado para la copia profunda
         __deepcopy__: function() {
             var obj = new SortedDict();
             for (var hash in this._key) {
@@ -411,10 +423,13 @@ tipos en Protopy.
             obj.keyOrder = deepcopy(this.keyOrder); 
             return obj;
         },
+        // Alias del método toString, sirve para representar en una cadena
+        // a la instancia
         __str__: function() {
             var n = len(this.keyOrder);
             return "%s".times(n, ', ').subs(this.keyOrder);
         },
+        // Setter
         set: function(key, value) {
             this.keyOrder.push(key);
             return super(Dict, this).set(key, value);
@@ -425,13 +440,13 @@ tipos en Protopy.
         }
     });
 
-Rapidamente, este ejemplo presenta la definición del tipo SortedDict, el cual es
-una especialización del tipo base Dict. Como se observa la función constructora 
-recibe, como primer argumento el nombre para el nuevo tipo, seguidamente un
-arreglo con los tipo base y para terminar un objeto con los atributos y metodos
-para los objetos de ese tipo.
+Este ejemplo presenta la definición del tipo ``SortedDict`` o diccionario
+ordenado, el cual es una especialización del tipo base ``Dict``.
+Como se observa, la función constructora recibe como primer argumento el nombre
+para el nuevo tipo, seguidamente un arreglo con los tipo base y por último 
+un arreglo asociativo con los atributos y metodos para los objetos de ese tipo.
 
-Con los constructores así definidos es posible crear "objetos tipados" que se
+Con los constructores así definidos es posible instancias que se
 comporten en función de sus respectivas definiciones.
 
 .. code-block:: javascript
@@ -452,8 +467,8 @@ instanciado con ``new``.
 
 Internamente ``type`` utiliza el objeto ``prototype`` para la construcción, con lo
 cual el operador ``instanceof`` presenta un comportamiento coherente, pese a esto
-se recomienda usar la funcion ``isinstance`` que trae Protopy, ya que esta permite
-navegar por la cadena de herencia.
+se recomienda usar la funcion ``isinstance`` disponible como builtin en Protopy,
+ya que esta permite navegar por la cadena de herencia.
 
 .. code-block:: javascript
 
@@ -467,68 +482,90 @@ navegar por la cadena de herencia.
 Inicialización
 --------------
 
-En el ejemplo se muestra la inicialización del tipo SorteDict usando una funcion
-llamada ``__init__``. Este método es llamado por el operador ``new`` inmediatamente
-despues de crear una instancia. Sería tentador decir que es el “constructor”
-de la clase. Si bien se parece un constructor de Java, actúa como si lo fuese ya
-que el objeto ya esta instanciado cuando se llama a esta función.
+En el ejemplo se muestra la inicialización del tipo ``SorteDict`` usando una funcion
+``__init__``. Este método es llamado por el operador ``new`` inmediatamente
+despues de crear una instancia. Actua de una fomra simliar a un constructor del
+lenguaje Java, pero Python y Protopy permiten también la personalización de la 
+instanciación implementando el método ``__new__``. El constructor es el conjunto
+``__new__`` e ``__init__``.
 
-Los métodos ``__init__`` son opcionales, pero cuando se define uno, se debe recordar
-llamar explícitamente al método ``__init__`` del ancestro.
+Los métodos ``__init__`` deben llamar explícitamente al método ``__init__`` de 
+la(s) clase(s) padre(s) de ser necesario.
 
-Otros métodos
--------------
+Métodos Especiales
+------------------
 
-Además de los métodos normales, Protopy prevee algunos métodos especiales para
-los objetos, estos en lugar de ser llamarlos directamente, se invocan por la
-biblioteca en circunstancias particulares o cuando se use una sintaxis
-específica. 
+Protopy prevee algunos métodos especiales para los objetos, estos en lugar de 
+ser llamarlos directamente, se invocan por la biblioteca en circunstancias 
+particulares o cuando se use una sintaxis específica.
 
     * ``__str__``
 
         Este metodo se llama cuando es necesario proveer de una reprecentacion
         en texto del objeto, JavaScript provee para este objetivo el metodo
-        toString, pero por cuestiones de nombres se prefirio usar este metodo en
-        su lugar y hacer internamente una relacion entre las funciones.
+        ``toString``, pero por compatiblidad con Python y consistencia con 
+        la filosofía de Portopy de apegarse a la estrcutra de Python se recomeinda
+        utilziar el nombre ``__str__``.
 
     * ``__iter__``
 
-        Protopy se vale de versiones modernas de JavaScript y brinda soporte a
-        iteradores, este es el método que el desarrollador debe definir si
-        quiere objetos iterable, la funcion debe retornar un objeto que
-        implemente el metodo next (un iterador o un generado), los bucles
-        for hacen esto automáticamente, pero también se puede hacer manualmente.
-
+        Protopy se vale de versiones modernas de JavaScript para brindar 
+        este método, la funcion debe retornar un objeto que implemente el metodo 
+        ``next``, los bucles ``for`` hacen esto automáticamente, por ejemplo::
+        
+            for (var elem in objeto_iterable) {
+                print (elem)
+            }
+        
+        
     * ``__cmp__``
 
-        Llamado al comparar dos instancias de tipo con las funciones `equal` o
-        `nequal`.
+        Llamado al comparar dos instancias de tipo con las funciones ``equal`` o
+        ``nequal``.
 
     * ``__len__``
 
         Se invoca con la llamada a la funcion `len`. La función incorporada len
-        devuelve la longitud de un objeto. Funciona sobre cualquier objeto del
-        que se pueda pensar razonablemente que tiene longitud.
+        devuelve la longitud de un objeto. Funciona sobre cualquier objeto posea
+        longitud (listas, diccionarios, etc.)::
+            
+            >>> len([1, 2, 4])
+            3
 
     * ``__copy__`` y ``__deepcopy__``
+    
+        Se utiliza para copiar un objeto de manera superficial o profunda
+        respectivamente.
+        
     * ``__json__`` y ``__html__``
+    
+        Métodos para serialización (o *marshalling*) del objeto en HTML o 
+        JSON respectivamente.
 
-Protopy tiene otros métodos especiales, general todos estos apuntan a emular
+Protopy tiene otros métodos especiales, general todos estos orientados a emular
 algun comportambiento de Python en JavaScript. 
 
 Herencia
 --------
 
-Como ya se menciono, el codigo de un Framework no debe ser modificado y su
-utilizacion esta respaldada en algun mecanimos de extención, redefiniendo o 
-especializando componentes. Es en este punto donde proveer de una forma de
-herencia al constructor de tipos resulta un paso en la dirección correcta,
-eventualmente el desarrollador que requiera componentes especificos podra
-heredar de los tipos correspondientes e implementar solo lo que haga falta.
+Como ya se mencionó, el codigo de un framework no debe ser modificado.
+El mecanismo de extensión en lenguajes OO es la especialización de componentes
+mediante herencia. Por esta razón se consideró fundamental dotar el 
+constructor de tipos ``type`` de la capacidad de herncia similar a la de Python,
+ya lo que se intenta migrar es un framework OO escrito en Python.
+
+Cuando el desrrollador implemente funcionalidad basada en las características
+del framework desconectado, lo hará extendiendo alguna clase.
+
+.. 
+    herencia al constructor de tipos resulta un paso en la dirección correcta,
+    eventualmente el desarrollador que requiera componentes especificos podra
+    heredar de los tipos correspondientes e implementar solo lo que haga falta.
 
 Protopy utiliza la herencia del tipo **Prototype chaining**, aunque lo hace de
-una forma un poco "rebuscada" con el objeto de dar soporte a una herencia
-multiple.
+una forma un poco más compleja con el objeto de soportar herencia múltiple.
+
+.. note:: Hasta acá
 
 Para implementar la herencia y en particular la herencia multiple, el contructor
 de tipos recibe una lista de los tipos base e internamente crea un
@@ -538,38 +575,38 @@ en este punto donde se pierde el poder del operador ``instanceof`` y es por eso
 que Protopy provee una funcion para determinar la correspondencia entre
 instancias y tipos llamada ``isinstance``.
 
-Otra funcion interesante importada de Python es ``issubclass``, bajo algunas
+Otra funcion importada de Python es ``issubclass``, bajo algunas
 condiciones resulta util determinar si un tipo es una sub-clase de otro y para
-ello esta funcion inspecciona la cadena de herencia hacia adelante entre los
-"hijos" de un tipo.
+ello esta funcion inspecciona la cadena de herencia.
+.. 
+    Bien, ya se tiene un mecanismo de herencia casi completo, solo falta ver como se
+    accede a las funciones de tipos base cuando se esta redefiniendo un método, para
+    esto existe la funcion ``super``, nuevamente y similar a Python esta función
+    asocia un tipo con una instancia, con lo cual logra el objetivo de llamar a un
+    método que se encuentre en un tipo base. Este comportamiento, es el equivalente,
+    en JavaScript, al de llamar al metodo del tipo base con la funcion ``apply`` o ``call``.
 
-Bien, ya se tiene un mecanismo de herencia casi completo, solo falta ver como se
-accede a las funciones de tipos base cuando se esta redefiniendo un método, para
-esto existe la funcion ``super``, nuevamente y similar a Python esta función
-asocia un tipo con una instancia, con lo cual logra el objetivo de llamar a un
-método que se encuentre en un tipo base. Este comportamiento, es el equivalente,
-en JavaScript, al de llamar al metodo del tipo base con la funcion ``apply`` o ``call``.
+Para acceder a las funciones de tipos base cuando se esta redefiniendo un método
+ existe la funcion ``super``. De manera similar a Python, esta función
+determina el tipo de la instancia, y mediante este accede al método buscado.
+Este comportamiento es el equivalente en JavaScript al de llamar al metodo 
+del tipo base con la funcion ``Function.apply`` o ``Function.call``.
 
-Para terminar con herencia se debe destacar que de no especificar por lo menos
-un tipo base, Protopy establce por defecto como base al tipo `object`. Object
-como provee de los principales metodos (``__init__``, ``__str__``) a todos los
-nuevos tipos.
+Se debe destacar que de no especificar por lo menos un tipo base, 
+Protopy establce por defecto a `object`, ecargado de
+proveer los principales métodos (``__init__``, ``__str__``).
 
-Metodos y atributos de tipo
----------------------------
+Metodos y Atributos de Clase
+----------------------------
 
-Hasta aqui se vio como crear nuevos tipos de objetos y la posterior construccion
-de instancias de un determinado tipo, Protopy tambien prevee una forma de
-definir metodos y atributos de tipo, estos pertenecen al tipo en si, y no a las
-instancias.
-
-La forma de agregar atributos y metodos de tipo es a traves de un objeto
-opcional que se pasa a la función constructora antes del objeto de instancia.
+Protopy contempla la definción de métodos y atributos de clase. Esta tarea serealiza
+agregando el conjunto de atributos y metodos de calse como un arreglo asociativo
+opcional que se antepone al que define la estrcutra de los de instancia.
 
 .. code-block:: javascript
 
     var Planeta = new type('Planeta', [ object ], {
-        // Atributos y metodos de tipo
+        // Atributos y metodos de clase
         count: 0,
         reset: function() {
             this.count = 0;
@@ -585,47 +622,59 @@ opcional que se pasa a la función constructora antes del objeto de instancia.
 
 El ejemplo presentado define el tipo "Planeta", este tipo internamente lleva un
 contador que las instancias utilizan para numerarse en la construccion y una
-funcion de reset para reiniciar el contador. Dentro de las funciones de tipo la
-palabra reservada ``this``, como es de esperar, hace referencia al tipo.
-A continuacion se ve como usar el tipo.
+función de ``reset`` para reiniciar el contador. Dentro de los métodos de clase la
+palabra reservada ``this``, hace referencia a la clase.
+
+A continuacion se ve como usar el clase.
 
 .. code-block:: javascript
 
+    // Creamos una instancia
     >>> p = new Planeta('Tierra')
     window.Planeta name=Tierra count=0 __name__=Planeta
+    // Volvemos a cero al conteador mediante el método de clase reset()
     >>> Planeta.reset()
+    // Creamos la estrella Sol
     >>> sol = new Planeta('Sol')
     window.Planeta name=Sol count=0 __name__=Planeta __module__=window
+    // Creamos el planeta Mercurio
     >>> mercurio = new Planeta('Mercurio')
     window.Planeta name=Mercurio count=1 __name__=Planeta
+    // Creamos el planeta Venus
     >>> venus = new Planeta('Venus')
     window.Planeta name=Venus count=2 __name__=Planeta
+    // Creamos el planeta Tierra
     >>> tierra = new Planeta('Tierra')
     window.Planeta name=Tierra count=3 __name__=Planeta
 
-Existe una funcion muy importante que se puede definir para el tipo, buscando la
-emulacion de Python se adopto el metodo ``__new__``. Este metodo permite al
-desarrollador tomar parte en la constuccion del tipo, los parametros son de una
-forma similar a Python, el nombre del nuevo tipo, el arreglo con los tipos base
-y el objeto con atributos y metodos de instancia. 
 
-Objetos nativos
+
+.. Existe una funcion muy importante que se puede definir para el tipo, buscando la
+   emulacion de Python se adopto el metodo ``__new__``. Este metodo permite al
+   desarrollador tomar parte en la constuccion del tipo, los parametros son de una
+   forma similar a Python, el nombre del nuevo tipo, el arreglo con los tipos base
+   y el objeto con atributos y metodos de instancia. 
+
+Objetos Nativos
 ---------------
 
-Algunos objetos que se encuentran el la biblioteca son:
+Los objetos nativos tienen como objetivo emular un tipo de datos de Python o
+realizar una adaptación de sintaxis.  
 
     * Dict
 
-        Si bien la estructura "hasheable" nativa de JavaScript en un objeto,
+        Si bien un arreglo asociativo nativo de JavaScript se comporta
+        de manera similar a un diccionario de Python (``dict``),
         los diccionarios de Protopy permiten mejores formas de trabajar con la
         dupla clave-valor, posibilitando ademas el uso de objetos como claves en
         lugar de solo cadenas.
 
     * Set
 
-        Los sets o conjuntos tomados de las matematicas, permiten crear bolasa
-        de objetos únicos y trabajar con las operaciones propias, union,
-        intersección, diferencia, etc.
+        Los Sets son listas de objetos de los cuales existe una única instancia
+        de cada elemento como máximo. Permiten realizar operaciones de 
+        conjuntos como union, intersección, diferencia, etc.
+        Este tipo es una adaptación del tipo ``set`` de Python.
 
     * Arguments
 
