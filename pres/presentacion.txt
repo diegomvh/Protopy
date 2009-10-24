@@ -1,0 +1,134 @@
+
+Aplicaciones Web Desconectadas
+==============================
+
+	:autores: Defossé, Nahuel - van Haaster, Diego Marcos
+	:tutor:	 Sanez Lopez, Marta
+	:fecha: Noviembre 2009
+	:url: https://hg.protopy.com.ar/protopy
+
+Objetivos
+---------
+
+* Open Source
+	Coste de licenciemiento nulo y libertad
+	
+* Multiplataforma
+	Windows, Linux, Mac y móviles.
+	
+* Adaptación minima de aplicaciones existentes
+	Integración con Frameworks Web.
+	
+* Fácil utilización
+	Consistencia y reutilzación de componentes
+	de Framework Web consitente
+
+Soluciones Existentes (1)
+-------------------------
+
+* **AIR** (Adobe Corp.)
+	Basado en la tecnología Flash (Open Source), 
+	lengauje de *scripting* ActionScript 2/3.
+
+* **Silverlight** (.NET Framework, Microsoft)
+	Solución muy interesante, pero **cerrada**.
+	*Promesa* de no cautividad.
+
+
+Soluciones Existentes (2)
+-------------------------
+
+* **JavaFX** (Sun Microsystems)
+	Applets + Flash = JavaFX, crean lenguaje de *scripting*
+	fuertemente tipado.
+
+* **XUL** (Mozilla Foundation)
+	GUI en XML, código en JavaScript. Buena API para aplicaciones
+	híbridas. Probado [*]_
+
+.. [*] Songbird, Miro, etc.
+
+Soluciones Existentes (3)
+-------------------------
+
+* **Google Gears**
+	Añade al navegador 3 coponentes
+		* Local Server
+			Un servidor de archivos locales
+		* DataBase
+			Una base de datos transaccional
+		* Worker Pool
+			Sistema de Hilos con pasaje de mensajes
+			
+	Se está incorporando a HTML 5.
+
+Desarrllo App. Web
+------------------
+
+ 1. *CGI* (1993): Programas que reciben cadenas (HTTP) y devuelven cadenas (HTML)
+ 2. *HTML aumentado* (1995-1998): Reune código HTML y SQL (PHP, ASP, JSP, etc.)
+ 	
+Desarrllo App. Web (2)
+----------------------
+ 3. Servidor de aplicaciones - Primeros Frameowkrs MVC (1998): **J2EE**
+ 	Modelo (Base de Datos), Vista (HTML), Controlador(URL que activan funciones o 
+ 	métodos)
+ 4. Frameowkrs filosofía Rails (2004): Simplificación de MVC, lenguajes de scripting, metaprogramación.
+ 
+Desarrllo App. Web Cliente
+--------------------------
+
+ 1. JavaScript y DOM.
+ 	Mecanismos tradicionales, ante falta de acuerdo en las implemetnacinoes, la W3C especificó estándares.
+ 2. AJAX
+ 	Peticiones asincrónicas que no recargan la página.
+
+Desarrllo App. Web Cliente (2)
+------------------------------
+ 3. Librerías de JavaScript
+ 	Mercado de navegadores muy grande, implementaciones defectuosas y bugs: API de abstracción (a.k.a librerías).
+ 	Ej: jQuery, Prototype, Dojo, YUI, MooTools, MochiKit
+ 	
+ 4. HTML 5
+	Aplicaciones Offline soportadas nativamente. Aún en borrador.
+
+
+
+Django
+------
+
+Framework MVC:
+	* El *modelo* se define en el lenguaje Python
+	* Las *vistas* son funciones y se asocian con URLs mediante expresiones regulares (*controlador*)
+	* Las vistas delegan en los templates la genración de HTML
+
+Por que JavaScript
+------------------
+
+
+Componentes conceptuales
+------------------------
+
+Aplicaccion Final
+-----------------
+
+Demo
+----
+
+Trabajo Invertido
+-----------------
+
+Estas son algunas métricas del trabajo realizado:
+
+ * 2700 líneas de código Python en la extensión ``offline``
+ 
+ * 26400 lineas de código JavaScript
+ 
+ * 700 revisiones en HG
+ 
+ * Inumerables búsquedas en ``Google`` ;)
+ 
+THE END
+-------
+	
+	**¡¡¡Muchas Gracias!!!**
