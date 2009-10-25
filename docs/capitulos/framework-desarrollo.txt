@@ -2,68 +2,34 @@
 Doff
 ####
 
-Introducción
-============
-
-.. note:: 
-
-    Ver donde poner estos dos parrafos, que estan buenos pero creo que no van aca :)
-    Creo que esto va en el apartado de *DOFF*
-
-    En apartados teóricos se menciono, entre otras cosas, que la creación de un
-    framework generalmente surge de la identificación de objetos reusables en
-    el desarrollo de software. Posteriormente los objetos identificadas decantan en
-    componentes que forman parte de la arquitectura del framework y a los cuales se
-    accede mediante la extención y la configuración.
-    Esta forma de obtener un producto que permita arquitecturar proyectos de
-    caracteristicas similares a los que lé dieron origen, implica pasar por varias
-    etapas de maduración en el desarrollo, pero requieren de un punto de partida
-    primordial y es justamente un proyecto que oriente la identificacion de las
-    partes reusables. Nuestro caso se complica en este punto, ya que la intención
-    panteada desde el principio es la de "desarrollar un framework" y la realidad
-    del desarrollo es que muchas de las partes surguieron en paralelo y de la mano
-    de aplicaciones de prueba.
+En apartados teóricos se menciono, entre otras cosas, que la creación de un
+framework generalmente surge de la identificación de objetos reusables en
+el desarrollo de software. Posteriormente los objetos identificadas decantan en
+componentes que forman parte de la arquitectura y a los cuales se accede
+mediante una API especifica y se añade o modifica funcionlaidad mediante 
+configuración o extensión.
 
 
----------------------- OJO CON ESTO QUE TIENE PONIES ---------------------------
+En el desarrollo del framework desconectado, si bien se contaba con Django
+como base, muchos aspectos no estabn claramente definidos y algunos componentes
+de Django carecían de sentido en el contexto del navegador. Por esta razón
+se realizaron dos proyectos que sirvieron para identificar las piezas necesarias
+de Django y mejorando el enfoque de Protopy, además de permitir crear
+nuevos componentes reusables necesarios para un desarrollo simplificado.
 
-
-Este libro es sobre Django, un framework de desarrollo Web que ahorra tiempo y
-hace que el desarrollo Web sea divertido. Utilizando Django puedes crear y
-mantener aplicaciones Web de alta calidad con un mínimo esfuerzo.
-
-En el mejor de los casos, el desarrollo web es un acto entretenido y creativo;
-en el peor, puede ser una molestia repetitiva y frustrante. Django te permite
-enfocarte en la parte divertida -- el quid de tus aplicaciones Web -- al mismo
-tiempo que mitiga el esfuerzo de las partes repetitivas. De esta forma, provee
-un alto nivel de abstracción de patrones comunes en el desarrollo Web, atajos
-para tareas frecuentes de programación y convenciones claras sobre cómo
-solucionar problemas. Al mismo tiempo, Django intenta no entrometerse, dejándote
-trabajar fuera del ámbito del framework según sea necesario.
-
-El objetivo de este libro es convertirte en un experto de Django. El enfoque es
-doble. Primero, explicamos en profundidad lo que hace Django, y cómo crear
-aplicaciones Web con él. Segundo, discutiremos conceptos de alto nivel cuando
-se considere apropiado, contestando la pregunta "¿Cómo puedo aplicar estas
-herramientas de forma efectiva en mis propios proyectos?" Al leer este libro,
-aprenderás las habilidades necesarias para desarrollar sitios Web poderosos de
-forma rápida, con código limpio y de fácil mantenimiento.
-
-En este capítulo ofrecemos una visión general de Django.
-
-Framework
----------
-
-Doff en un Framework Web escrito en JavaScript que provee un marco de desarrollo
-para las aplicaciones Web cliente-side.
-
-Para una referencia completa de la API de Doff remitase al apandice
-:ref:`Doff <apendices-doff-dbapi>`
-
-Historia
---------
+El framework desconectado, de manera similar a Protopy, se apodó en base
+a su padre y a la tarea que este cumple. Se bautizó como **Doff**, tomando
+la *d* de Django y *off* de offline (desconectado), su nombre significa por
+lo tanto, Django Desconectado:
 
     | **d** jango + **off** line = **doff**
+    
+
+Arquitectura del Framework Desconectado
+---------------------------------------
+
+Doff hace uso del sistema de módulos de Protopy, de hecho, ``doff`` es un
+paquete de Protopy.
 
 Mientras que un cliente se encuentre sin conexion con el servidor web, es capaz
 de generar y almacenar datos usando su base de datos local. Al reestablecer
