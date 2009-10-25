@@ -5,15 +5,15 @@ Doff
 En apartados teóricos se menciono, entre otras cosas, que la creación de un
 framework generalmente surge de la identificación de objetos reusables en
 el desarrollo de software. Posteriormente los objetos identificadas decantan en
-componentes que forman parte de la arquitectura y a los cuales se accede
-mediante una API especifica y se añade o modifica funcionlaidad mediante 
+componentes que forman parte de una arquitectura. A estos se accede
+mediante una API especifica y se añade o modifica su funcionlaidad mediante 
 configuración o extensión.
 
 
 En el desarrollo del framework desconectado, si bien se contaba con Django
 como base, muchos aspectos no estabn claramente definidos y algunos componentes
 de Django carecían de sentido en el contexto del navegador. Por esta razón
-se realizaron dos proyectos que sirvieron para identificar las piezas necesarias
+se realizaron dos proyectos [*]_ que sirvieron para identificar las piezas necesarias
 de Django y mejorando el enfoque de Protopy, además de permitir crear
 nuevos componentes reusables necesarios para un desarrollo simplificado.
 
@@ -24,12 +24,87 @@ lo tanto, Django Desconectado:
 
     | **d** jango + **off** line = **doff**
     
-
+.. [*] Inicialmente se creó un Blog, debido a la popularidad de este tipo de
+        aplicaciones, y luego una aplicación denominada "salesman" (o
+        agente de ventas viajate) que intenta explotar las posiblidades de contar
+        con una aplicación web desconectada.
+    
+    
 Arquitectura del Framework Desconectado
 ---------------------------------------
 
+
+Doff se inció como un conjunto de modulos para Protopy. Estos módulos implementaban
+diferentes componentes de Django sobre el cliente. Debido a que los módulos de 
+JavaScript son recursos estáticos, se sirvieron mediante un servidor de archivos
+muy simple llamado Aspen, que no requería intervensión de Django [AspenWebServer09]_.
+
+.. [AspenWebServer09] Lawrence Akka, Christopher Baus, Chris Beaven, Steven Brown,
+    Chad Whitacre,
+    *Servidor Web Aspen*,
+    ultimo acceso Diciembre 2008,
+    http://www.zetadev.com/software/aspen/
+
+
+
+El primer componente migrado fue el ORM, el cual se encuentra en Django
+en el pauqete ``django.db.models``. La tarea de migración ayudó a perfeccionar
+el sistema de tipos (clases) y el de módulos. El paquete resultante fue
+``doff.db.models`` y gracias a implementar progresivamente la misma API que 
+Django, fue posible realizar el mismo manejo de datos en el cliente y en el 
+servidor.
+
+
+Pass de Django en una URL específica (Ej: ``http://midominio.com/offline/packages/``).
+La librería de JavaScript Dojo provee un sistema de renderizado de planitllas
+basado en la sintaxis de Django [DojoLibDjangoTmpl09]_. Esta funcionalidad
+fue migrada a Protopy y se situó en el módulo ``doff.templates``. 
+
+Los componentes mencionados se realizaban
+
+
+.. [DojoLibDjangoTmpl09] The Dojo Foundation,
+    Documetnación sobre los templates de Django portados a Dojo,
+    ultimo acceso Septiembre de 2009,
+    http://www.dojotoolkit.org/book/dojo-book-0-9/part-5-dojox/dojox-dtl/ 
+
 Doff hace uso del sistema de módulos de Protopy, de hecho, ``doff`` es un
-paquete de Protopy.
+paquete de Protopy. Se constituye la migración de muchos módulos de Django
+al lenguaje JavaScript/Protopy.
+
+A continuación se realiza una breve descripción de los módulos que se 
+migraron y las adaptaciones que fueron necesarias realizar debido al
+contexto del navegador:
+
+.. note::
+    
+    Plantear el tema de:
+        * django.db.models -> doff.db.models
+        
+        * django.http -> django.http
+        
+        * Migración de un proyecto
+        
+        * Adaptación del proyecto a JavaScript utilizando las APIs
+        
+        * Introspección de los modelos de Python
+        
+        * Presistencia en el navegador:
+            
+            * Instalación en el navegador del framework
+            
+            * Instalación en el navegador del proyecto
+        
+        
+        * Sincronización
+        
+        
+ 
+
+
+Para lograr que el paquete ``doff`` se almacene en el cliente, se utiliza la
+funcionalidad provista por ``gears``. 
+
 
 Mientras que un cliente se encuentre sin conexion con el servidor web, es capaz
 de generar y almacenar datos usando su base de datos local. Al reestablecer
@@ -40,60 +115,6 @@ clinetes.
 El framework fue construido con el objeto de ser compatible con los modelos y
 las plantillas de django, intentando acercar así al desarrollador que tenga
 experiencia en este framework.
-
-Django nació naturalmente de aplicaciones de la vida real escritas por un equipo
-de desarrolladores Web en Lawrence, Kansas. Nació en el otoño boreal de 2003, cuando
-los programadores Web del diario *Lawrence Journal-World*, Adrian Holovaty y
-Simon Willison, comenzaron a usar Python para crear sus aplicaciones. El equipo
-de The World Online, responsable de la producción y mantenimiento de varios sitios
-locales de noticias, prosperaban en un entorno de desarrollo dictado por las
-fechas límite del periodismo. Para los sitios -- incluidos LJWorld.com,
-Lawrence.com y KUsports.com -- los periodistas (y los directivos) exigían que se
-agregaran nuevas características y que aplicaciones enteras se crearan a una
-velocidad vertiginosa, a menudo con sólo días u horas de preaviso. Es así que
-Adrian y Simon desarrollaron por necesidad un framework de desarrollo Web que
-les ahorrara tiempo -- era la única forma en que podían crear aplicaciones
-mantenibles en tan poco tiempo -- .
-
-En el verano boreal de 2005, luego de haber desarrollado este framework hasta
-el punto en que estaba haciendo funcionar la mayoría de los sitios World Online,
-el equipo de World Online, que ahora incluía a Jacob Kaplan-Moss, decidió
-liberar el framework como software de código abierto. Lo liberaron en julio de
-2005 y lo llamaron Django, por el guitarrista de jazz Django Reinhardt.
-
-A pesar de que Django ahora es un proyecto de código abierto con colaboradores
-por todo el mundo, los desarrolladores originales de World Online todavía
-aportan una guía centralizada para el crecimiento del framework, y World Online
-colabora con otros aspectos importantes tales como tiempo de trabajo, materiales
-de marketing, y hosting/ancho de banda para el Web site del framework
-(http://www.djangoproject.com/).
-
-Esta historia es relevante porque ayuda a explicar dos cuestiones clave. La
-primera es el "punto dulce" de Django. Debido a que Django nació en un entorno
-de noticias, ofrece varias características (en particular la interfaz admin,
-tratada en el `Capítulo 6`_) que son particularmente apropiadas para sitios de
-"contenido" -- sitios como eBay, craigslist.org y washingtonpost.com que ofrecen
-información basada en bases de datos --. (De todas formas, no dejes que eso te
-quite las ganas -- a pesar de que Django es particularmente bueno para
-desarrollar esa clase de sitios, eso no significa que no sea una herramienta
-efectiva para crear cualquier tipo de sitio Web dinámico --. Existe una
-diferencia entre ser *particularmente efectivo* para algo y *no ser efectivo*
-para otras cosas).
-
-La segunda cuestión a resaltar es cómo los orígenes de Django le han dado forma
-a la cultura de su comunidad de código abierto. Debido a que Django fue extraído
-de código de la vida real, en lugar de ser un ejercicio académico o un producto
-comercial, está especialmente enfocado en resolver problemas de desarrollo Web
-con los que los desarrolladores de Django se han encontrado -- y con los que
-continúan encontrándose --. Como resultado de eso, Django es activamente mejorado
-casi diariamente. Los desarrolladores del framework tienen un alto grado de
-interés en asegurarse de que Django les ahorre tiempo a los desarrolladores,
-produzca aplicaciones que son fáciles de mantener y rindan bajo mucha
-carga. Aunque existan otras razones, los desarrolladores están motivados por
-sus propios deseos egoístas de ahorrarse tiempo a ellos mismos y disfrutar de
-sus trabajos. (Para decirlo sin vueltas, se comen su propia comida para perros).
-
-----------------------------------------------------------------------------------
 
 
 Modelos
