@@ -1,5 +1,6 @@
+require('doff.db.models.fields.base', 'FieldDoesNotExist');
 var models = require('doff.db.models.base');
-require('doff.contrib.offline.proxy');
+require('doff.contrib.offline.manager', 'RemoteManagerDescriptor');
 require('json');
 
 var SyncLog = type('SyncLog', [ models.Model ], {
@@ -125,6 +126,20 @@ var RemoteReadOnlyModel = type('RemoteReadOnlyModel', [ RemoteModel ], {
         super(RemoteModel, this).save();
     }
 });
+
+function ensure_default_remote_manager(cls) {
+    if (!cls._meta['abstract'] && issubclass(cls, [ RemoteModel, RemoteReadOnlyModel ])) {
+        try {
+            var f = cls._meta.get_field('remotes');
+            throw new ValueError("Model %s must specify a custom Manager, because it has a field named 'objects'".subs(cls.name));
+        } catch (e if isinstance(e, FieldDoesNotExist)) {}
+        var remote_descriptor = new RemoteManagerDescriptor(cls);
+        cls.__defineGetter__('remotes', function() { return remote_descriptor.__get__(); });
+        cls.__defineSetter__('remotes', function(value) { return remote_descriptor.__set__(value); });
+    }
+};
+
+var hcp = event.subscribe('class_prepared', ensure_default_remote_manager);
 
 publish({
     SyncLog: SyncLog,

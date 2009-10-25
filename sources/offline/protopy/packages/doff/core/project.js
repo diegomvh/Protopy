@@ -143,10 +143,10 @@ var Project = type('Project', object, {
     },
 
     install: function() {
-        if (!sys.gears.installed) sys.gears.install();
+        /*if (!sys.gears.installed) sys.gears.install();
         if (!this.get_permission()) return;
         if (isundefined(this.managed_store))
-            this._create_store();
+            this._create_store();*/
 
         require('doff.db.utils','syncdb');
         syncdb();
@@ -156,7 +156,7 @@ var Project = type('Project', object, {
         require('doff.db.utils','removedb');
         removedb();
 
-        this._remove_store();
+        //this._remove_store();
     },
 
     /***************************************************************************
