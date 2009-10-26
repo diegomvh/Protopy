@@ -2,19 +2,19 @@
 Doff
 ####
 
-En apartados teóricos se menciono, entre otras cosas, que la creación de un
+En apartados teóricos se mencionó, entre otras cosas, que la creación de un
 framework generalmente surge de la identificación de objetos reusables en
-el desarrollo de software. Posteriormente los objetos identificadas decantan en
-componentes que forman parte de una arquitectura. A estos se accede
+el desarrollo de software. Posteriormente los objetos identificados constituyen
+luego componentes que forman parte de una arquitectura. A estos se accede
 mediante una API especifica y se añade o modifica su funcionlaidad mediante 
 configuración o extensión.
 
 
 En el desarrollo del framework desconectado, si bien se contaba con Django
 como base, muchos aspectos no estabn claramente definidos y algunos componentes
-de Django carecían de sentido en el contexto del navegador. Por esta razón
+carecían de sentido en el contexto del navegador. Por esta razón
 se realizaron dos proyectos [*]_ que sirvieron para identificar las piezas necesarias
-de Django y mejorando el enfoque de Protopy, además de permitir crear
+del framework y mejorar el enfoque de Protopy, además de permitir crear
 nuevos componentes reusables necesarios para un desarrollo simplificado.
 
 El framework desconectado, de manera similar a Protopy, se apodó en base
@@ -24,20 +24,24 @@ lo tanto, Django Desconectado:
 
     | **d** jango + **off** line = **doff**
     
-.. [*] Inicialmente se creó un Blog, debido a la popularidad de este tipo de
-        aplicaciones, y luego una aplicación denominada "salesman" (o
-        agente de ventas viajate) que intenta explotar las posiblidades de contar
-        con una aplicación web desconectada.
+.. [*] Inicialmente se creó una aplicación de *blog*, debido a la popularidad de este tipo de
+        aplicaciones, y luego "salesman" (o agente de ventas viajate) 
+        que intenta explotar las posiblidades de contar con una aplicación web desconectada.
     
     
 Arquitectura del Framework Desconectado
 ---------------------------------------
 
 
-Doff se inció como un conjunto de modulos para Protopy. Estos módulos implementaban
+Doff se inició como un conjunto de modulos para Protopy. Estos módulos implementaban
 diferentes componentes de Django sobre el cliente. Debido a que los módulos de 
 JavaScript son recursos estáticos, se sirvieron mediante un servidor de archivos
 muy simple llamado Aspen, que no requería intervensión de Django [AspenWebServer09]_.
+
+Como se mencionó en el capítulo introductorio, los compoentes que
+requerían una migración directa a JavaScript eran el ORM (``django.db.models``) y 
+el sistema de templates (``django.templates``). Las vistas y el sistema de URLs
+deberían ser adaptadas para el contexto del navegador.
 
 .. [AspenWebServer09] Lawrence Akka, Christopher Baus, Chris Beaven, Steven Brown,
     Chad Whitacre,
@@ -46,75 +50,46 @@ muy simple llamado Aspen, que no requería intervensión de Django [AspenWebServ
     http://www.zetadev.com/software/aspen/
 
 
-
-El primer componente migrado fue el ORM, el cual se encuentra en Django
-en el pauqete ``django.db.models``. La tarea de migración ayudó a perfeccionar
-el sistema de tipos (clases) y el de módulos. El paquete resultante fue
-``doff.db.models`` y gracias a implementar progresivamente la misma API que 
-Django, fue posible realizar el mismo manejo de datos en el cliente y en el 
+El primer componente de Django migrado fue ``django.db.models``, el cual se realizó
+simplificando algunos aspectos como el soporte para múltiples bases de datos, ya
+que Gears solo provee SQLite.
+La tarea de migración ayudó a perfeccionar el sistema de tipos (clases) y el de módulos. 
+El paquete resultante fue ``doff.db.models`` y gracias a implementar progresivamente 
+la misma API que Django, fue posible realizar el mismo manejo de datos en el cliente y en el 
 servidor.
 
 
-Pass de Django en una URL específica (Ej: ``http://midominio.com/offline/packages/``).
-La librería de JavaScript Dojo provee un sistema de renderizado de planitllas
-basado en la sintaxis de Django [DojoLibDjangoTmpl09]_. Esta funcionalidad
-fue migrada a Protopy y se situó en el módulo ``doff.templates``. 
+Las pruebas y depuración del proyecto se realizaron sobre Firebug, cargando
+protopy en un archivo estático y realizando los ``require()``s correspondientes
+en la consola.
 
-Los componentes mencionados se realizaban
+Mientras que un cliente se encuentre sin conexion con el servidor web, es capaz
+de generar y almacenar datos usando su base de datos local. Al reestablecer
+la conexion con el servidor web, estos datos deben ser transimitos a la base de
+datos central para su actulizacion y posterior sincronizacion del resto de los
+clientes. Para plantear la tarea de sincronización es necesario contar con
+el framework funcionando desconecatdo, por lo que se postergó su analisis en esta
+etapa.
+ 
+El siguiente componente en ser analizado y migrado fue el sistema de plantillas
+(``django.templates``).
+La librería de JavaScript Dojo provee un sistema de renderizado de planitllas
+basado en la sintaxis de Django [DojoLibDjangoTmpl09]_. Sin embargo se optó 
+por portar la propia de Django ya que la implementación de Dojo no está basada
+en el sistema de módulos de Protopy. Esta funcionalidad se situó en el módulo 
+``doff.templates``.
 
 
 .. [DojoLibDjangoTmpl09] The Dojo Foundation,
     Documetnación sobre los templates de Django portados a Dojo,
     ultimo acceso Septiembre de 2009,
     http://www.dojotoolkit.org/book/dojo-book-0-9/part-5-dojox/dojox-dtl/ 
-
-Doff hace uso del sistema de módulos de Protopy, de hecho, ``doff`` es un
-paquete de Protopy. Se constituye la migración de muchos módulos de Django
-al lenguaje JavaScript/Protopy.
-
-A continuación se realiza una breve descripción de los módulos que se 
-migraron y las adaptaciones que fueron necesarias realizar debido al
-contexto del navegador:
-
-.. note::
-    
-    Plantear el tema de:
-        * django.db.models -> doff.db.models
         
-        * django.http -> django.http
-        
-        * Migración de un proyecto
-        
-        * Adaptación del proyecto a JavaScript utilizando las APIs
-        
-        * Introspección de los modelos de Python
-        
-        * Presistencia en el navegador:
-            
-            * Instalación en el navegador del framework
-            
-            * Instalación en el navegador del proyecto
-        
-        
-        * Sincronización
-        
-        
- 
-
-
+Una vez que se contó con         
 Para lograr que el paquete ``doff`` se almacene en el cliente, se utiliza la
-funcionalidad provista por ``gears``. 
+funcionalidad provista por ``gears``, encasulada en ``doff.gears``.
 
 
-Mientras que un cliente se encuentre sin conexion con el servidor web, es capaz
-de generar y almacenar datos usando su base de datos local. Al reestablecer
-la conexion con el servidor web, estos datos deben ser transimitos a la base de
-datos central para su actulizacion y posterior sincronizacion del resto de los
-clinetes.
-
-El framework fue construido con el objeto de ser compatible con los modelos y
-las plantillas de django, intentando acercar así al desarrollador que tenga
-experiencia en este framework.
 
 
 Modelos
