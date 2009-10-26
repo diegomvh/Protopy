@@ -26,11 +26,16 @@ function from_server() {
         for each (var model in models) {
             // Black Magic
             model.remotes = new_sync_log;
-            print(model, model.remotes.all());
+            for each (var obj in model.remotes.all()) {
+                //OKs Tengo el objeto y ahora que hacemos
+                //Si el objeto ya esta 
+                obj.save();
+            }
+            model.remotes = null;
         }
     }
 }
 
 publish({
-    synchronize: synchronize
+    from_server: from_server
 });

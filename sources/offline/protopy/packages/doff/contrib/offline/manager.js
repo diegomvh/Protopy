@@ -10,28 +10,29 @@ var url_base = get_project().offline_support + '/rpc/data';
 
 var RemoteManager = type('RemoteManager', [ ServiceProxy ], {
 
-    __init__: function(model) {
-        this.model = model;
-        super(ServiceProxy, this).__init__(url_base + '/' + string(this.model._meta).replace('.', '/') + '/', {asynchronous: false});
+    __init__: function(url, sync_log) {
+        this.url = url;
+        this.sync_log = sync_log;
+        super(ServiceProxy, this).__init__(url, {asynchronous: false});
     },
 
     __callMethod: function(methodName, params, successHandler, exceptionHandler, completeHandler) {
-        if (this.in_sync)
+        //Meto el sync_log en la consulta
+        if (!methodName.startswith('system.'))
             params.push(this.sync_log);
-        var ret = super(rpc.ServiceProxy, this).__callMethod(methodName, params, successHandler, exceptionHandler, completeHandler);
         
-        if (this.in_sync && isinstance(ret, Array) && bool(ret) && !isundefined(ret[0]['model']) && ret[0]['model'] === string(this.model._meta)) {
-            var new_ret = [];
-            for each (var obj in Deserializer(ret, this.sync_log)) {
-                new_ret.push(obj);
+        var ret = super(ServiceProxy, this).__callMethod(methodName, params, successHandler, exceptionHandler, completeHandler);
+        
+        if (!methodName.startswith('system.')) {
+            if (isinstance(ret, Array) && bool(ret)) {
+                var new_ret = [];
+                for each (var obj in Deserializer(ret, this.sync_log)) {
+                    new_ret.push(obj);
+                }
+                ret = new_ret;
             }
-            ret = new_ret;
         }
         return ret;
-    },
-    
-    get in_sync() {
-        return this.sync_log != null;
     }
 });
 
@@ -41,19 +42,21 @@ var RemoteManagerDescriptor = type('RemoteManagerDescriptor', [ object ], {
         this.sync_log = null;
     },
 
-    __get__: function(instance, type) {
-        if (this.sync_log != null)
-            print('retorno un manager copado');
-        else
-            print('retorno un manager no tan copado');
-        return new ServiceProxy(url_base + '/' + string(this.model._meta).replace('.', '/') + '/', {asynchronous: false});;
+    __get__: function() {
+        var url = url_base + '/' + string(this.model._meta).replace('.', '/') + '/';
+        if (this.sync_log != null) {
+            //Si tengo sync_log retorno un objeto RemoteManager
+            return new RemoteManager(url, this.sync_log);
+        } else {
+            //Si no tengo sync_log es simplemente un ServiceProxy
+            return new ServiceProxy(url, {asynchronous: false});
+        }
     },
 
-    __set__: function(value, instance, type) {
+    __set__: function(value) {
         if (value != null && !isinstance(value, SyncLog))
             throw new AttributeError("SyncLog is needed");
         this.sync_log = value;
-        return this.manager;
     }
 });
 

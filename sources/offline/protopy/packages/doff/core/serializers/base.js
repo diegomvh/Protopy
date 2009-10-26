@@ -137,7 +137,7 @@ var DeserializedObject = type('DeserializedObject', [ object ], {
         //model-defined save. The save is also forced to be raw.
         //This ensures that the data that is deserialized is literally
         //what came from the file, not post-processed by pre_save/save methods.
-        models.Model.prototype.save_base.apply(this.object,[ true ]);
+        models.Model.prototype.save_base.apply(this.object, [ true ]);
         if (this.m2m_data && save_m2m)
             for each (var [ accessor_name, object_list ] in items(this.m2m_data))
                 setattr(this.object, accessor_name, object_list);

@@ -518,8 +518,8 @@ var DateField = type('DateField', [ Field ], {
         if (bool(val)) {
             var data = '';
         } else {
-            //TODO: pasar la fecha a cadena
-            var data = datetime_safe.new_date(val).strftime("%Y-%m-%d")
+            d = datetime.datetime(val);
+            var data = datetime.format(d, "%Y-%m-%d");
         }
         return data;
     },
@@ -539,7 +539,7 @@ var DateTimeField = type('DateTimeField', [ DateField ], {
             return value;
         if (isinstance(value, Date))
             return value;
-        return new Date(number(value));
+        return new Date(value);
     },
 
     get_db_prep_value: function(value) {
@@ -552,9 +552,8 @@ var DateTimeField = type('DateTimeField', [ DateField ], {
         if (!val) {
             data = '';
         } else {
-            //TODO: pasar hora a cadena o string :P
-            d = datetime_safe.new_datetime(val)
-            data = d.strftime('%Y-%m-%d %H:%M:%S')
+            d = datetime.datetime(val);
+            data = datetime.toISOTimestamp(d);
         }
         return data;
     },
@@ -591,8 +590,8 @@ var DecimalField = type('DecimalField', [ Field ], {
     },
 
     /*
-	* Formats a number into a string with the requisite number of digits and decimal places.
-	*/
+     * Formats a number into a string with the requisite number of digits and decimal places.
+     */
     format_number: function(value) {
         var util = require('doff.db.backends.util');
         return util.format_number(value, this.max_digits, this.decimal_places);
