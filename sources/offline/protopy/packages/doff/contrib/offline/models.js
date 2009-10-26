@@ -18,9 +18,9 @@ var SyncLog = type('SyncLog', [ models.Model ], {
 
 var RemoteModel = type('RemoteModel', [ models.Model ], {
     sync_log: new models.ForeignKey(SyncLog, {"db_index": true, "null": true, "blank": true, "editable": false, "serialize": false}),
-    active: new models.BooleanField( {"default": true, "blank": true, "editable": false, "serialize": false}),
+    active: new models.BooleanField( {"default": true, "editable": false, "serialize": false}),
     status: new models.CharField( {"max_length": 1, "choices": SyncLog.SYNC_STATUS, "editable": false, "default": "c", "serialize": false}),
-    server_pk: new models.PositiveIntegerField( {"unique": true, "null": true, "blank": true, "editable": false, "serialize": false}),
+    server_pk: new models.CharField( {"max_length": 255, "unique": true, "null": true, "blank": true, "editable": false, "serialize": false}),
 
     Meta: {
         abstract: true

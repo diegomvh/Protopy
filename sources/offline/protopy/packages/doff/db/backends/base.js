@@ -10,10 +10,12 @@ var BaseDatabaseWrapper = type('BaseDatabaseWrapper', [ object ], {
         this.queries = [];
         this.settings = settings;
     },
+
     _commit: function() {
         if (this.connection)
             return this.connection.commit();
     },
+
     _rollback: function() {
         if (this.connection)
             return this.connection.rollback();

@@ -82,14 +82,16 @@ class RemoteManagerBase(object):
     def _build_object(self, query_set):
         is_sync_data = issubclass(query_set.model, SyncData)
         for sd_instance in query_set:
-            if is_sync_data and sd_instance.active:
-                real_instance = sd_instance.content_object
+            if is_sync_data:
+                if sd_instance.content_object:
+                    real_instance = sd_instance.content_object
+                else:
+                    real_instance = sd_instance.content_type.model_class()()
+                    real_instance.id = sd_instance.object_id
                 real_instance.active = sd_instance.active
             else:
                 real_instance = sd_instance
-                if not is_sync_data:
-                    real_instance.active = True
-            real_instance.status = 's'
+                real_instance.active = True
             yield real_instance
         raise StopIteration()
 
@@ -110,8 +112,7 @@ class RemoteManagerBase(object):
             # Si tengo una fecha base y me fijo si tengo en ese rango de fechas?
             if self._sync_log.get('last_sync', False):
                 sync_data = sync_data.filter(update_at__range=(self._sync_log['last_sync'], self._sync_log['synced_at']))
-            #Oks, si estoy aca y no tengo sync data es porque no hay nada nuevo o porque no tengo datos traqueados
-            if (bool(sync_data)):
+                #Oks, si estoy aca y no tengo sync data es porque no hay nada nuevo o porque no tengo datos traqueados
                 return sync_data
         return self._manager
 
@@ -150,16 +151,14 @@ class RemoteModelProxy(object):
 class RemoteSerializer(PythonSerializer):
 
     def start_object(self, obj):
-        self._current = {
-            "server_pk"    : smart_unicode(obj._get_pk_val(), strings_only=True),
-            "active"       : smart_unicode(obj.active, strings_only=True),
-            "status"       : smart_unicode(obj.status, strings_only=True)
-        }
+        self._current = {}
 
     def end_object(self, obj):
         self.objects.append({
             "model"         : smart_unicode(obj._meta),
-            "fields"        : self._current
+            "server_pk"     : smart_unicode(obj._get_pk_val(), strings_only=True),
+            "active"        : smart_unicode(obj.active, strings_only=True),
+            "fields"        : obj.active and self._current or {}
         })
         self._current = None
 
