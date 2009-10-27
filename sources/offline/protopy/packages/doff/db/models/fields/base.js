@@ -359,7 +359,7 @@ var AutoField = type('AutoField', [ Field ], {
     },
 
     get_db_prep_value: function(value) {
-        if (!value)
+        if (value == null)
             return null;
         return Number(value) || null;
     },
@@ -403,7 +403,7 @@ var BooleanField = type('BooleanField', [ Field ], {
     },
 
     get_db_prep_value: function(value) {
-        if (!value)
+        if (value == null)
             return null;
         return bool(value);
     },
@@ -814,8 +814,8 @@ var TimeField = type('TimeField', [ Field ], {
     },
 
     to_javascript: function(value) {
-        if (!value)
-            return null
+        if (value == null)
+            return null;
         if (isinstance(value, Date))
             return value;
 

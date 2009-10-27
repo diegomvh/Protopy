@@ -1,24 +1,24 @@
 require('doff.utils.tree', 'Node');
 require('copy', 'copy', 'deepcopy');
 
-var QueryWrapper = type('QueryWrapper', object, {
-    '__init__': function __init__(sql, params){
+var QueryWrapper = type('QueryWrapper', [ object ], {
+    __init__: function(sql, params){
         this.data = [sql, params];
     }
 });
 
-var Q = type('Q', Node, {
+var Q = type('Q', [ Node ], {
     AND: 'AND',
     OR: 'OR',
     default_connector: 'AND',
 
-    '__init__': function __init__() {
-        arguments = new Arguments(arguments);
-        var args = (arguments.args && arguments.args[0] && type(arguments.args[0]) == Array)? arguments.args[0] : arguments.args;
-        super(Node, this).__init__(args.concat(zip(keys(arguments.kwargs), values(arguments.kwargs))));
+    __init__: function() {
+        var arg = new Arguments(arguments);
+        var args = (arg.args && arg.args[0] && isinstance(arg.args[0], Array))? arg.args[0] : arg.args;
+        super(Node, this).__init__(args.concat(zip(keys(arg.kwargs), values(arg.kwargs))));
     },
 
-    '_combine': function _combine(other, conn){
+    _combine: function(other, conn){
         if (!isinstance(other, Q))
             throw new TypeError(other);
         var obj = deepcopy(this);
@@ -27,17 +27,17 @@ var Q = type('Q', Node, {
     },
 
     //I whish __or__ , but
-    'or': function or(other){
+    or: function(other){
         return this._combine(other, this.OR);
     },
     
     //I whish __and__ , but
-    'and': function and(other){
+    and: function(other){
         return this._combine(other, this.AND);
     },
     
     //I whish __invert__ , but
-    'invert': function invert(){
+    invert: function(){
         var obj = deepcopy(this);
         obj.negate();
         return obj;

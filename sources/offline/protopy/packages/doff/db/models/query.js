@@ -76,7 +76,7 @@ var CollectedObjects = type('CollectedObjects', [ object ], {
     },
 
     items: function() {
-        return this.iteritems();
+        return array(this.iteritems());
     },
 
     keys: function() {

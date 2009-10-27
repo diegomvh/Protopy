@@ -41,10 +41,8 @@ function Deserializer(object_list, sync_log) {
         try {
             // Search if exist instance
             var client_object = Model.objects.get({'server_pk': data["server_pk"]});
-
             // Si estoy aca es porque la instancia existe, levanto el pk y lo marco
             data[Model._meta.pk.attname] = client_object[Model._meta.pk.attname];
-            client_object.active = data['active'];
         } catch (e if isinstance(e, Model.DoesNotExist)) {}
         var m2m_data = {};
 
@@ -75,10 +73,15 @@ function Deserializer(object_list, sync_log) {
             }
         }
         //TODO: Que pasa cuando no esta activo y no tengo instancia... eso es un error
-        if (data['active'])
+        if (data['active']) {
+            // Puede ser un objeto nuevo o un update
             yield new DeserializedObject(new Model(data), m2m_data);
-        else
-            yield client_object;
+        } else {
+            // Es un inactive del objeto que ya existe
+            client_object.active = data['active'];
+            client_object.status = data['status'];
+            yield new DeserializedObject(client_object, m2m_data);
+        }
     }
 }
 

@@ -1304,7 +1304,7 @@ var Query = type('Query', object, {
         joining process will be processed. This parameter is set to False
         during the processing of extra filters to avoid infinite recursion.
         */
-    'add_filter': function add_filter(filter_expr, connector, negate, trim, can_reuse, process_extras) {
+    add_filter: function(filter_expr, connector, negate, trim, can_reuse, process_extras) {
 
         connector = connector || AND;
         negate = negate || false;
@@ -1317,14 +1317,14 @@ var Query = type('Query', object, {
             throw new FieldError("Cannot parse keyword query %r".subs(arg));
 
         // Work out the lookup type and remove it from 'parts', if necessary.
-	if (len(parts) == 1 || !(parts[parts.length - 1] in this.query_terms))
+        if (len(parts) == 1 || !(parts[parts.length - 1] in this.query_terms))
             var lookup_type = 'exact';
         else
             var lookup_type = parts.pop();
 
         // Interpret '__exact=None' as the sql 'is NULL'; otherwise, reject all
         // uses of None as a query value.
-        if (!value) {
+        if (value == null) {
             if (lookup_type != 'exact')
                 throw new ValueError("Cannot use None as a query value");
             lookup_type = 'isnull';
@@ -1973,8 +1973,7 @@ var Query = type('Query', object, {
         * InsertQuery).
         */
     execute_sql: function(result_type) {
-
-        result_type = (typeof(result_type) === 'undefined')?MULTI:result_type;
+        result_type = (typeof(result_type) === 'undefined')? MULTI : result_type;
         var sql = null, params = null;
         try {
             [sql, params] = this.as_sql();
