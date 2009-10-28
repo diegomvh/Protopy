@@ -187,7 +187,7 @@ Modelos
 Doff implementa la misma API que Django, realizando las adaptaciones
 a la sintaxis de JavaScript y la librería Protopy. Por lo que es posible
 migrar los modelos de manera manual utilizando las mismas clases con las
-que se define en el módulo ``models`` de la aplicación en linea.
+que se define en el módulo ``models`` de la aplicación en línea.
 
 A continuación se ejemplifica la implementación  en el cliente del módulo 
 ``models.js`` de una aplicación que consta con las entidades Libro, Autor y Editor:
@@ -254,22 +254,21 @@ muchos a muchos. En el ejemplo, ``Book`` tiene un ``ManyToManyField`` llamado
 de la base de datos ``Book``  no tiene una columna ``authors``. En su lugar, se
 crea una tabla adicional que maneja la correlación entre libros y autores.
 
-Para una lista completa de tipos de campo y opciones de sintaxis de modelos,
-ver el Apéndice B.
 
 Finalmente, no se define explícitamente una clave primaria en ninguno de estos
 modelos. A no ser que se le indique lo contrario, Doff dará automáticamente a
-cada modelo un campo de clave primaria entera llamado ``id``.
+cada modelo un campo de clave primaria entera autoincremental llamado ``id``.
 
 Para activar los modelos en el proyecto, la aplicación que los contine debe
-estar incluida en la lista de aplicaciones instaladas de Doff. Esto es, edita
-el archivo ``settings.js``, y examina la variable de configuración ``INSTALLED_APPS``.
-Suponiendo que este archivo se encuentre en bookstore/models.js, el nombre de 
-la aplicación sería bookstore y settings.js tendría la siguiente forma:
+estar incluida en la lista de aplicaciones instaladas de Doff. En consonancia
+con Django, esta configuración se realiza en el módulo ``settings.js`` en
+la variable de configuración ``INSTALLED_APPS``.
+Suponiendo que este archivo se encuentre en ``bookstore/models.js``, el nombre de 
+la aplicación sería ``bookstore``.
 
 
 
-Posteriormente, cuando el usuario instala la aplicación en su navegador, el
+Cuando el usuario instala el proyecto para operación desconectada en su navegador, el
 sistema recorre las aplicaciones en ``INSTALLED_APPS`` y genera el SQL para
 cada modelo, creando las tablas en la base de datos. 
 
@@ -282,29 +281,35 @@ Creación y Recuperación de Datos
 --------------------------------
 
 Una vez que se creo el modelo, Doff provee automáticamente una API JavaScript
-de alto nivel para trabajar con estos modelos:
+de alto nivel para trabajar con estos modelos muy similar a la de Django:
 
     >>> require('books.models', 'Publisher');
     >>> p1 = new Publisher({ name: 'Addison-Wesley', address: '75 Arlington Street',
     ...     city: 'Boston', state_province: 'MA', country: 'U.S.A.',
     ...     website: 'http://www.apress.com/'});
+    // Guardado de la instancia
     >>> p1.save();
+    // Recuperación mediante le Manager
     >>> publisher_list = Publisher.objects.all();
+    // Mostrar el resultado de la consulta
     >>> print(array(publisher_list));
     [<Publisher: Publisher object>]
+    
+    
+En la última linea del ejemplo anterior, se ve que en el listado no
+aparece una representación adecuada de la instacia de Editor. Esto
+responde a que en la definción del modelo no se incluyó un método de 
+pasaje a cadena, o ``__str__``. Se puede implementar este método para 
+mejorar la depuración.
 
-Se puede hacer mucho con la API de base de datos de Doff y para mejorar la
-interactividad se recomienda implementar __str__ de Protopy. Con este
-método los objetos tendran su representación en "string", es imporante que eso
-sea así ya que el framework utiliza esta representacion en muchos lugares, como
-templates y salidas por consola.
 
 Inserción y Actualización de Datos
 ----------------------------------
 
-En el ejemplo presentado anteriormente se ve cómo se hace para insertar una fila
-en la base de datos, primero se crea una instancia del modelo pasando argumentos
-nombrados y luego se llama al método ``save()`` del objeto:
+En el ejemplo presentado anteriormente se mostró la forma de realizar una
+inseción de una fila en la base de datos. Primero se crea una instancia del 
+modelo pasando argumentos nombrados y 
+luego se llama al método ``save()`` de la intancia.
 
 En el caso de ``Publisher`` se usa una clave primaria autoincremental ``id``,
 por lo tanto la llamada inicial a ``save()`` hace una cosa más: calcula el valor
@@ -318,9 +323,11 @@ lugar de un ``INSERT``).
 ``Managers`` y ``QuerySet``s en el Cliente 
 ------------------------------------------
 
-La forma de seleccionar y tamizar los datos se consige a traves de los
-administradores de consultas, en el ejmplo la linea ``Publisher.objects.all()``
-pide al administrador objects de Publisher que obtenga todos los registros,
+La forma de seleccionar y filtrar los datos es la utilización de ``Managers``
+o administradores de consultas.
+
+En el ejmplo la linea ``Publisher.objects.all()`` del ejemplo anterior, se solicita
+al administrador ``objects`` de Publisher que obtenga todos los registros,
 internamente esto genera una consulta SQL::
 
     SELECT
@@ -328,191 +335,129 @@ internamente esto genera una consulta SQL::
     FROM book_publisher;
 
 Todos los modelos automáticamente obtienen un administrador ``objects`` que debe
-ser usado cada vez que se quiera consultar sobre una instancia del modelo. El
-metodo ``all()`` es un método del administrador ``objects`` que retorna todas
-las filas de la base de datos. Aunque este objeto se *parece* a una lista, es
-actualmente un *QuerySet* -- un objeto que representa algún conjunto de filas de
-la base de datos. El Apéndice C describe QuerySets en detalle.
+ser usado cada vez que se quiera consultar sobre una instancia del modelo.
+El metodo ``all()`` es un método del administrador ``objects`` que retorna todas
+las filas de la base de datos. Al igual que en Django, el valor retornado
+es un ``QuerySet``.
 
-Cualquier búsqueda en base de datos va a seguir esta pauta general.
+En el caso de requerir una fila o conjunto en particular, se utilzia el método
+``filter``. Por ejemplo:
 
-Aunque obtener todos los objetos es algo que ciertamente tiene su utilidad, la
-mayoría de las veces lo que vamos a necesitar es manejarnos sólo con un
-subconjunto de los datos. Para ello usaremos el método ``filter()``::
+.. code-block:: javascript
 
-    >>> Publisher.objects.filter(name="Apress Publishing")
+    >>> Publisher.objects.filter({name : "Apress Publishing"})
     [<Publisher: Apress Publishing>]
 
-``filter()`` toma argumentos de palabra clave que son traducidos en las
-cláusulas SQL ``WHERE`` apropiadas. El ejemplo anterior sería traducido en algo
-como::
+``filter()`` toma argumentos del tipo arreglo asociativo que son traducidos en las
+cláusulas SQL ``WHERE`` apropiadas, concatenando con el operador ``AND`` en el 
+caso de tener más de un parámetro. El ejemplo anterior sería traducido en la
+siguiente consulta:
+
+.. code-block:: sql
 
     SELECT
         id, name, address, city, state_province, country, website
     FROM book_publisher
     WHERE name = 'Apress Publishing';
 
-Puedes pasarle a ``filter()`` múltiples argumentos para reducir las cosas aún
-más::
+En las claves de los parámetros del arreglo asociativo de ``filter`` pueden
+contener subargumentos separados por dobles guiones bajos, por ejemplo:
 
-    >>> Publisher.objects.filter(country="U.S.A.", state_province="CA")
+.. code-block:: javascript 
+
+    >>> Publisher.objects.filter({name__contains : "press"})
     [<Publisher: Apress Publishing>]
 
-Esos múltiples argumentos son traducidos a cláusulas SQL ``AND``. Por lo tanto
-el ejemplo en el fragmento de código se traduce a lo siguiente::
+Busca los Editores en los cuales su nombre contenga la palabra "press".
 
-    SELECT
-        id, name, address, city, state_province, country, website
-    FROM book_publisher
-    WHERE country = 'U.S.A.' AND state_province = 'CA';
+Esto se traduce en la secuencia SQL:
 
-Notar que por omisión la búsqueda usa el operador SQL ``=`` para realizar
-búsquedas exactas. Existen también otros tipos de búsquedas::
-
-    >>> Publisher.objects.filter(name__contains="press")
-    [<Publisher: Apress Publishing>]
-
-Notar el doble guión bajo entre ``name`` y ``contains``. Del mismo modo que
-Python, Django usa el doble guión bajo para indicar que algo "mágico" está
-sucediendo -- aquí la parte ``__contains`` es traducida por Django en una
-sentencia SQL ``LIKE``::
+.. code-block:: sql
 
     SELECT
         id, name, address, city, state_province, country, website
     FROM book_publisher
     WHERE name LIKE '%press%';
 
-Hay disponibles varios otos tipos de búsqueda, incluyendo ``icontains`` (``LIKE`` no
-sensible a diferencias de mayúsculas/minúsculas), ``startswith`` y ``endswith``,
-y ``range`` (consultas SQL ``BETWEEN``). El Apéndice C describe en detalle todos
-esos tipos de búsqueda.
+Hay disponibles varios otos tipos de subargumentos de búsqueda, 
+incluyendo ``icontains`` (``LIKE`` no sensible a diferencias de mayúsculas/minúsculas), 
+``startswith`` y ``endswith``, y ``range`` (consultas SQL ``BETWEEN``). 
+El Apéndice C describe en detalle todos esos tipos de búsqueda.
 
+Cuando se requiere obtener un único objeto dada una condición, los
+administradores de consutlas brindan el método ``get()``:
 
-En ocasiones desearás obtener un único objeto. Para esto existe el método
-``get()``::
+.. code-block:: javascript
 
-    >>> Publisher.objects.get(name="Apress Publishing")
+    >>> Publisher.objects.get({name : "Apress Publishing"})
     <Publisher: Apress Publishing>
 
-En lugar de una lista (o más bien, un QuerySet), este método retorna un objeto
+En lugar de un ``QuerySet``, este método retorna un objeto
 individual. Debido a eso, una consulta cuyo resultado sean múltiples objetos
-causará una excepción::
+causará una excepción así mismo como una consulta que no retorne objeto alguno.
 
-    >>> Publisher.objects.get(country="U.S.A.")
-    Traceback (most recent call last):
-        ...
-    AssertionError: get() returned more than one Publisher -- it returned 2!
-
-Una consulta que no retorne objeto alguno también causará una excepción::
-
-    >>> Publisher.objects.get(name="Penguin")
-    Traceback (most recent call last):
-        ...
-    DoesNotExist: Publisher matching query does not exist.
-
-A medida que juegas con los ejemplos anteriores, podrías descubrir que los
-objetos so devueltos en lo que parece ser un orden aleatorio. No estás
-imaginándote cosas, hasta ahora no le hemos indicado a la base de datos cómo
-ordenar sus resultados, de manera que simplemente estamos recibiendo datos con
-algún orden arbitrario seleccionado por la base de datos.
-
-Eso es, obviamente, un poco ***silly*** (tonto), no querríamos que una página Web que
-muestra una lista de editores estuviera ordenada aleatoriamente. Así que, en la
-práctica, probablemente querremos usar ``order_by()`` para reordenar nuestros
-datos en listas más útiles::
+Generalmente se requiere que los resultados de los ``QuerySet`` posean un
+orden determinaodo por algun campo, para esto está disponible el método 
+``order_by()``. Por ejemplo, para un listado de Editores, ordenados por el
+campo nombre:
 
     >>> Publisher.objects.order_by("name")
     [<Publisher: Apress Publishing>, <Publisher: Addison-Wesley>, <Publisher: O'Reilly>]
 
-Esto no se ve muy diferente del ejemplo de ``all()`` anterior, pero el SQL
-incluye ahora un ordenamiento específico::
+El ejemplo anterior es similar a la invocación de ``all()``, pero la consulta SQL
+incluye un parámetro extra: 
+
+.. code-bloc:: sql
 
     SELECT
         id, name, address, city, state_province, country, website
     FROM book_publisher
     ORDER BY name;
 
-Podemos ordenar por cualquier campo que deseemos::
+El ordenamiento puede realizarse por cualquier campo ordenable (cadenas, enteros, 
+fechat, esc.) y además por múltiples campos. Si se antepone al nombre del campo
+un guión, el ordenamiento es inverso. Por ejemplo:
 
-    >>> Publisher.objects.order_by("address")
-    [<Publisher: O'Reilly>, <Publisher: Apress Publishing>, <Publisher: Addison-Wesley>]
-
-    >>> Publisher.objects.order_by("state_province")
-    [<Publisher: Apress Publishing>, <Publisher: Addison-Wesley>, <Publisher: O'Reilly>]
-
-y por múltiples campos::
-
-    >>> Publisher.objects.order_by("state_provice", "address")
-     [<Publisher: Apress Publishing>, <Publisher: O'Reilly>, <Publisher: Addison-Wesley>]
-
-También podemos especificar un ordenamiento inverso antecediendo al nombre del
-campo un prefijo ``-`` (el símbolo menos)::
+.. code-block:: javascript
 
     >>> Publisher.objects.order_by("-name")
     [<Publisher: O'Reilly>, <Publisher: Apress Publishing>, <Publisher: Addison-Wesley>]
 
-Aunque esta flexibilidad es útil, usar ``order_by()`` todo el tiempo puede ser
-demasiado repetitivo. La mayor parte del tiempo tendrás un campo particular por
-el que usualmente desearás ordenar. Es esos casos Django te permite anexar al
-modelo un ordenamiento por omisión para el mismo:
 
-.. literal-evaluado::
+Cuando el ordenamiento es frecuente, puede incluirse por defecto en la
+definción del modelo mediante la clase interna ``Meta``:
 
-    class Publisher(models.Model):
-        name = models.CharField(maxlength=30)
-        address = models.CharField(maxlength=50)
-        city = models.CharField(maxlength=60)
-        state_province = models.CharField(maxlength=30)
-        country = models.CharField(maxlength=50)
-        website = models.URLField()
+.. code-block:: javascript
 
-        def __str__(self):
-            return self.name
+    var Publisher = type('Publisher', [ models.Model ], {
+        name: new models.CharField({ maxlength: 30 }),
+        //...
+        
+        // Clase interna 
+        Meta: {'ordering': ['name']}
+    });
+    
 
-        **class Meta:**
-            **ordering = ["name"]**
+Las búsquedas y ordenamientos, por ser métodos que devuelven QuerySet se pueden
+encadenar, por lo que serán frecuentes consultas como las siguientes:
 
-Este fragmento ``ordering = ["name"]`` le indica a Django que a menos que se
-proporcione un ordenamiento mediante ``order_by()``, todos los editores deberán
-ser ordenados por su nombre.
-
-.. exhortacion:: ¿Qué es este asunto de Meta?
-
-    Django usa esta ``class Meta`` interna como un lugar en el cual se pueden
-    especificar metadatos  adicionales acerca de un modelo. Es completamente
-    opcional, pero puede realizar algunas cosas muy útiles. Examina el Apéndice
-    B para conocer las opciones que puede poner bajo ``Meta``.
-
-
-Has visto cómo puedes filtrar datos y has visto cómo ordenarlos. En ocasiones,
-por supuesto, vas a desear realizar ambas cosas. En esos casos simplemente
-"encadenas" las búsquedas entre sí::
+.. code-block:: javascript
 
     >>> Publisher.objects.filter(country="U.S.A.").order_by("-name")
     [<Publisher: O'Reilly>, <Publisher: Apress Publishing>, <Publisher: Addison-Wesley>]
 
-Como podrías esperar, esto se traduce a una consulta SQL conteniendo tanto un
-``WHERE`` como un ``ORDER BY``::
 
-    SELECT
-        id, name, address, city, state_province, country, website
-    FROM book_publisher
-    WHERE country = 'U.S.A'
-    ORDER BY name DESC;
+Cuando se requiere acceder a un registro en particular, se puede usar la sintaxis
+de arreglo sobre un ``QuerySet``, por ejemplo:
 
-Puedes encadenar consultas en forma consecutiva tantas veces como desees. No
-existe un límite para esto.
+.. code-block:: javascript
 
-
-Otra necesidad común es buscar sólo un número fijo de filas. Imagina que tienes
-miles de editores en tu base de datos, pero quieres mostrar sólo el primero.
-Puedes hacer eso usando la sintaxis estándar de Python para el rebanado de
-listas::
-
-    >>> Publisher.objects.all()[0]
+    >>> Publisher.objects.all()[0] // Acceder al primer elemento
     <Publisher: Addison-Wesley>
 
-Esto se traduce, someramente, a::
+Esto se traduce al siguiente listado SQL:
+
+.. code-block:: sql
 
     SELECT
         id, name, address, city, state_province, country, website
@@ -520,35 +465,31 @@ Esto se traduce, someramente, a::
     ORDER BY name
     LIMIT 1;
 
-.. exhortacion::  Y más...
-
-    Hemos sólo arañado la superficie del manejo de modelos, pero deberías ya
-    conocer lo suficiente para entender todos los ejemplos del resto del libro.
-    Cuando estés listo para aprender los detalles completos detrás de las
-    búsquedas de objetos, échale una mirada al Apéndice C.
 
 Eliminación de Datos
 --------------------
 
-Para eliminar objetos, simplemente se debe llamar al método ``delete()`` del objeto:
+Para eliminar objetos, simplemente se debe llamar al método ``delete()`` 
+sobre una instancia:
+
+.. code-block:: javascript
 
     >>> p = Publisher.objects.get({ name: "Addison-Wesley" });
     >>> p.delete();
     >>> array(Publisher.objects.all());
     []
 
-Se pueden borrar objetos al por mayor llamando a ``delete()`` en el resultado de
-una búsqueda::
+Los QuerySet pueden recibir también le método ``delete()`` y se traduce
+en la eliminiación de todas las filas afectadas por el ``QuerySet``. Por 
+ejemplo:
+
+.. code-block:: javascript
 
     >>> publishers = Publisher.objects.all();
     >>> publishers.delete();
     >>> array(Publisher.objects.all());
     []
 
-.. note:: 
-
-    Mixin en RemoteSite, los modelos se registran en RemoteSite o se pueden hacer a mano.
-    Hacer la referencia correspondiente al anexo de modelos
 
 Plantillas
 ==========
