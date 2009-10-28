@@ -537,15 +537,16 @@ En todos los casos el sistema lanza una excepción ``TemplateSyntaxError``.
 Renderizar una plantilla
 ------------------------
 
-Una vez que se tiene el objeto ``Template``, se esta en condiciones de obtener
-una salida procesada en un determinado *contexto*. Un contexto es simplemente un
-conjunto de variables y sus valores asociados. Una plantilla usa las variables
-para poblar la plantilla evaluando las etiquetas de bloque.
+Para obtener la salida procesada de una instancia de ``Template``, 
+es necesario proveer un *contexto*. Un contexto es simplemente un
+conjunto de variables y sus valores asociados, en Doff, un arreglo asociativo.
+Una plantilla usa las variables para rellenar la plantilla evaluando las 
+etiquetas.
 
 El contexto esta representado en el tipo ``Context``, el cual se encuentra en el
 módulo ``doff.template.base``. La construccion del objeto toma un argumento
-opcional: un hash mapeando nombres de variables con valores. La llamada al
-método ``render()`` del objeto ``Template`` con el contexto "rellena" la
+opcional  un arreglo asociativo. La llamada al método ``render()`` del la 
+instacia de ``Template`` con el contexto como argumento "rellena" la
 plantilla::
 
     >>> requiere('doff.template.base', 'Context', 'Template');
@@ -559,19 +560,19 @@ así salidas diferentes para la misma plantilla. Por cuestiones de eficiencia es
 conveniente crear un objeto ``Template`` y luego llamar a ``render()``
 sobre este muchas veces::
 
-    # Mal chico
+    # Código ineficiente
     for each (var name in ['John', 'Julie', 'Pat']) {
         var t = new Template('Hello, {{ name }}');
         print(t.render(new Context({'name': name})));
     }
 
-    # Buen chico
+    # Código eficiente
     t = new Template('Hello, {{ name }}');
     for each (var name in ['John', 'Julie', 'Pat'])
         print(t.render(new Context({'name': name})));
 
 Al igual que en Django el objeto contexto puede contener variables mas complejas
-y la forma de inspeccionar dentro de estas es con el operador `.`. Usando el
+y la forma de inspeccionar dentro de estas es con el operador `.` (punto). Usando el
 punto se puede acceder a objetos, atributos, índices, o métodos de un objeto.
 
 Cuando un sistema de plantillas encuentra un punto en una variable el orden de
@@ -582,17 +583,22 @@ busqueda es el siguiente:
     * Llamada de método (por ej. ``foo.bar()``)
     * Índice de lista (por ej. ``foo[bar]``)
 
-El sistema utiliza el primer tipo de búsqueda que funcione. Es la lógica de
-cortocircuito.
+El sistema utiliza el primer tipo de búsqueda que funcione.
 
-Para terminar con este objeto, si una variable no existe en el contexto, el
-sistema de plantillas renderiza este como un string vacío, fallando
-silenciosamente. Es posible cambiar este comportamiento modificando el valor de
-la variable de configuración `TEMPLATE_STRING_IF_INVALID` en el módulo
-`settings`.
+Finalmente, si una variable no existe en el contexto, el
+sistema de plantillas renderiza este como una cadena vacía. 
+Es posible cambiar este comportamiento modificando el valor de
+la variable de configuración ``TEMPLATE_STRING_IF_INVALID`` en el módulo
+``settings.js``.
 
-Cargador de plantillas
+Cargador de Plantillas
 ----------------------
+
+Si bien en los ejemplos anteriores se mostró la API de plantillas con
+cadenas como argumentos, las plantillas suelen estar almacenadas en 
+archivos. Para Doff estos son recuros estáticos y existe un sistema
+para la carga similar al de Django. Para tal fin en el módulo ``settings.js`` se esablece
+el valor ``TEMPLATE_DIRS``.
 
 Se ve a continuación un ejemplo de una vista que retorna HTML generado por una
 plantilla::
@@ -608,35 +614,21 @@ plantilla::
     }
 
 En esta vista se utiliza la API para cargar plantillas, a la cual se accede 
-mediante la funcion `get_template`, antes de poder utilizar esta funcion es
-necesario indicarle al framework donde están las plantillas. El lugar para hacer
-esto es en el *archivo de configuración*.
+mediante la funcion `get_template()`.
 
 Existen varios cargadores de plantillas que se pueden habilitar en el archivo de 
-configuración, este se vera en profundidad en el Apéndice E, por ahora se vera
-el cargador realacionado con la variable de configuración ``TEMPLATE_URL``. Esta
+configuración. Esta
 variable le indica al mecanismo de carga de plantillas dónde buscar las
 plantillas. Por omisión, ésta es una cadena vacia. El valor para esta varible es
 la url del servidor en donde se sirven los templates que se renderizan
 localmente, por defecto si no se especifica la variable los archivos se buscan
 en la base del soporte off-line /templates/.
 
-.. note:: 
 
-    Terminar esto. con el tema de la base del soporte off-line
-    Introducir el concepto al inicio de doff
-    Hacer la referencia correspondiente al anexo de plantillas
 
 Formularios
 ===========
 
---------------------------------  TIENE PONIES ----------------------------------
-
-.. ========================================
-.. Capítulo 7: Procesamiento de formularios
-.. ========================================
-
-**Autor invitado: Simon Willison**
 
 Si has estado siguiendo el capítulo anterior, ya deberías tener un
 sitio completamente funcional, aunque un poco simple. En este capítulo
