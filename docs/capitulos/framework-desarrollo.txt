@@ -104,38 +104,34 @@ fue servir estáticamente el código JavaScript de Protopy y Doff.
 El siguiente paso fue definir un proyecto Django desconectado, es decir, un
 proyecto Doff. Se buscó el mayor grado de similitud posible con Django, donde
 un proyecto es un paquete Python (con los módulos ``settings.py``, ``manage.py``
-y ``urls.py``) y cada aplicación un paquete dentro de la aplicación o localizable
+y ``urls.py``) y cada aplicación un paquete dentro de la proyecto o localizable
 en el ``PYTHONPATH`` (una aplicación cuenta con los módulos ``models.py`` y
 ``views.py``).
 
 En Doff, un proyecto se definió como un paquete Protopy con un módulo ``settings.js``
 con la configuración del proyecto. El módulo de proyecto Django ``manage.py`` carece de 
 sentido en el navegador, ya que no se cuenta con una interfase de comandos en 
-JavaScript, por lo que se implementaron los comandos como fucniones en el módulo
-``doff.core.project``. El módulo ``urls.js`` se reservó para análisis posterior. 
+JavaScript, por lo que se implementó la clase ``doff.core.project.Project``.
+Esta clase define una serie de métodos para interactuar con el proyecto que 
+cumplen algunas de las funciones de el módulo ``manange.py`` y realizar tareas
+necesarias en el ambiente desconectado.
+El módulo ``urls.js`` se reservó para análisis posterior. 
 
-Las aplicaciones de un proyecto Doff se definieron paquetes de Protopy que se encuentran
-dentro del proyecto. Constan del módulo ``views.js`` y ``models.js``. 
-
-A diferencia de un proyecto Django, en el contexto del browser, es necesario
-generar una instancia de la entidad proyecto y darle el control a ésta, para
-tal fin, se implementaron los siguientes métodos en el ``doff.core.project``: 
-``bootstrap``, ``syncdb`` e ``install``, ``is_installed``:
+La clase proyecto posee los siguientes métodos:
 
  * ``bootstrap`` debe ser llamado cada vez que se quiera ceder el control
-    de la navegación a el framework desconectado. Recibe como argumento
-    el nombre del poryecto. Mediante este parámetro localiza los recursos
-    en el almacenamiento local provisto por gears. Si la aplicación no
-    ha sido in
+    de la navegación a el framework desconectado. Debe ser asociado al evento
+    de catga de la página.
     
- * El método ``install`` se ecarga de
-de realizar la istalación, que consiste en la copia del código del framework
-Doff, del proyecto con sus aplicaciones, incluyendo plantillas en el almacenamiento
-local.
-
-El proyecto desconectado es una entidad de 
-JavaScript que recibe como el nombre del proyecto y utiliza este parámetro
-para localizar la base de datos y los recursos almacenados del proyecto. 
+ * ``install`` se encarga de persistir el framework y proyecto en
+   el almacenamiento local del cliente. También crea la base de datos equivalente
+   a ``manage.py syncdb``.
+   
+ * ``uninstall`` remueve la base de datos, el proyecto y el código del framework
+   del clinete.
+   
+Las aplicaciones de un proyecto Doff se definieron como paquetes de Protopy que se encuentran
+dentro del proyecto. Constan del módulo ``views.js`` y ``models.js``. 
 
 Para facilitar la instalación de proyectos se creo una etiqueta de plantilla 
 (``template tag``) que incluye de manera automática Protopy, Doff y crea
@@ -629,7 +625,7 @@ Vistas y Asociaciones de URLs
 Las vistas son las funciones que contienen la lógica de la aplicación. Están
 asociadas a URLs en el archivo ``urls.js`` (siempre que no se halla modifcado
 el ``ROOT_URLCONF``) del proyecto desconectado. Al igual
-que django, la variable que almacena estas asociaciones es ``urlpatterns``.
+que Django, la variable que almacena estas asociaciones es ``urlpatterns``.
 En el mapeo se pueden hacer inclusiones de módulos de URLs definidos en las 
 aplicaciones.
 
