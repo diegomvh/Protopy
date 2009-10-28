@@ -1,6 +1,34 @@
+require('doff.contrib.offline.serializers', 'RemoteSerializer');
 require('doff.db.models.fields.base', 'FieldDoesNotExist');
+require('doff.db.models.query', 'CollectedObjects');
 var models = require('doff.db.models.base');
 require('json');
+
+var serializer = new RemoteSerializer();
+
+function mark_or_delete_objects(seen_objs) {
+    try {
+        var ordered_classes = seen_objs.keys();
+    } catch (e if isinstance(e, CyclicDependency)) {
+        ordered_classes = seen_objs.unordered_keys();
+    }
+
+    for each (var cls in ordered_classes) {
+        var itms = items(seen_objs.get(cls));
+        itms.sort();
+
+        var instance_list = [instance for each ([pk, instance] in itms)];
+        for each (var instance in instance_list) {
+            if (!instance.active || instance.status == 'c') {
+                // Si esta inactivo o se creo en el cliente y no se informo al servidor lo borro
+                super(models.Model, instance).delete();
+            } else {
+                instance.status = 'd';
+                instance.save();
+            }
+        }
+    }
+}
 
 var SyncLog = type('SyncLog', [ models.Model ], {
     SYNC_STATUS: [["s", "Synced"], ["c", "Created"], ["m", "Modified"], ["d", "Deleted"], ["b", "Bogus"]]
@@ -38,53 +66,38 @@ var RemoteModel = type('RemoteModel', [ models.Model ], {
     },
 
     delete: function() {
-        if (this.status != 'c') {
-            // Esta en el server hay que informar primero
-            this.status = 'd';
-            this.save();
-        } else {
-            super(models.Model, this).delete();
-        }
+        assert (this._get_pk_val(), "%s object can't be deleted because its %s attribute is set to None.".subs(this._meta.object_name, this._meta.pk.attname));
+
+        // Find all the objects than need to be deleted.
+        var seen_objs = new CollectedObjects();
+        this._collect_sub_objects(seen_objs);
+
+        // Actually delete the objects.
+        mark_or_delete_objects(seen_objs);
     },
 
-    remote_save: function() {
-        this.remote_save_base(null);
-    },
-
-    remote_save_base: function(cls) {
-        cls = cls || this.__class__;
-        var meta = cls._meta;
-
-        for each (var [parent, field] in meta.parents.items()) {
-            if (!this[parent._meta.pk.attname] && this[field.attname])
-                this[parent._meta.pk.attname] = this[field.attname];
-
-            this.remote_save_base(parent);
-            this[field.attname] = this._get_pk_val(parent._meta);
-        }
-
-        var non_pks = [f for each (f in meta.local_fields) if (!f.primary_key)];
+    push: function() {
 
         // First, try an UPDATE. If that doesn't update anything, do an INSERT.
-        var pk_val = this._get_pk_val(meta);
-        var pk_set = pk_val != null;
+        var server_pk_val = this.server_pk;
+        var server_pk_set = server_pk_val != null;
         var record_exists = true;
-        var manager = cls.remotes;
-        if (pk_set) {
+        var remotes = this.__class__.remotes;
+        debugger;
+        if (server_pk_set) {
             // Determine whether a record with the primary key already exists.
-            if (bool(manager.filter({'pk':pk_val}).extra({'a': 1}).values('a').order_by())) {
+            var obj = remotes.filter({'pk': server_pk_val});
+            if (bool(obj)) {
                 // It does already exist, so do an UPDATE.
-                if (non_pks) {
-                    var values = [[f, null, f.get_db_prep_save(this[f.attname] || f.pre_save(this, false))] for each (f in non_pks)];
-                    var rows = manager.filter({'pk':pk_val})._update(values);
-                    if (!rows)
-                        throw new DatabaseError('Forced update did not affect any rows.');
-                }
-            } else { 
-                record_exists = false; 
+                values = serializer.serialize([ this ])[0];
+                var rows = remotes.update(values);
+                if (!rows)
+                    throw new DatabaseError('Forced update did not affect any rows.');
+            } else {
+                record_exists = false;
             }
         }
-        if (!pk_set || !record_exists) {
+        if (!server_pk_set || !record_exists) {
             if (!pk_set) {
                 var values = [[f, f.get_db_prep_save(this[f.attname] || f.pre_save(this, true))] for each (f in meta.local_fields) if (!(f instanceof models.AutoField))];
             } else {
@@ -119,15 +132,12 @@ var RemoteReadOnlyModel = type('RemoteReadOnlyModel', [ RemoteModel ], {
     },
 
     save: function() {
-        //Solo se pueden guardar aquellos que tengan _sync_log y server_pk osea que vengan del servidor
-        if (this._sync_log == null || this.server_pk == null)
-            throw new Exception('Read only model');
-        super(RemoteModel, this).save();
+        throw new Exception('Read only model');
     }
 });
 
 function ensure_default_remote_manager(cls) {
-    if (!cls._meta['abstract'] && issubclass(cls, [ RemoteModel, RemoteReadOnlyModel ])) {
+    if (!cls._meta['abstract'] && issubclass(cls, RemoteModel)) {
         require('doff.contrib.offline.manager', 'RemoteManagerDescriptor');
         try {
             var f = cls._meta.get_field('remotes');

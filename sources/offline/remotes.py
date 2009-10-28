@@ -3,6 +3,7 @@ from django.db.models.fields import Field
 from django.db.models.query import QuerySet
 from offline.util.jsonrpc import SimpleJSONRPCDispatcher
 from django.core.serializers.python import Serializer as PythonSerializer
+from django.core.serializers.python import Deserializer as PythonDeserializer
 from django.core.serializers import base
 from django.utils.encoding import smart_unicode
 from django.db import models
@@ -50,7 +51,7 @@ class RemoteManagerBase(object):
         rpc.register_introspection_functions()
         rpc.register_instance(self)
         setattr(remote, name, rpc)
-        
+
     def _methods(self):
         return filter(lambda m: not m.startswith('_'), dir(self))
 
@@ -67,7 +68,7 @@ class RemoteManagerBase(object):
         methods = self._methods() or []
         #Busco si tiene sync_log osea estoy en una transacion
         params = self._extract_sync_log(params)
-        
+
         if method in methods:
             ret = getattr(self, method)(*params)
 
@@ -97,7 +98,7 @@ class RemoteManagerBase(object):
 
     def _extract_sync_log(self, params):
         self._sync_log = None
-        if params and params[-1].has_key('model') and params[-1]['model'] == 'offline.synclog': 
+        if params and type(params[-1]) == dict and params[-1].has_key('model') and params[-1]['model'] == 'offline.synclog': 
             obj = params.pop()
             # Todo tirar un erro si no esta
             s = Session.objects.get(pk=obj['sync_id'])
@@ -106,15 +107,29 @@ class RemoteManagerBase(object):
 
     def _get_query_set(self):
         if self._sync_log != None:
-            #Primero busco si tengo datos traceados
-            model_type = ContentType.objects.get_for_model(self._manager.model)
-            sync_data = SyncData.objects.filter(content_type__pk = model_type.id)
-            # Si tengo una fecha base y me fijo si tengo en ese rango de fechas?
-            if self._sync_log.get('last_sync', False):
-                sync_data = sync_data.filter(update_at__range=(self._sync_log['last_sync'], self._sync_log['synced_at']))
-                #Oks, si estoy aca y no tengo sync data es porque no hay nada nuevo o porque no tengo datos traqueados
+            first = not self._sync_log.has_key('last_sync')
+            if not first:
+                model_type = ContentType.objects.get_for_model(self._manager.model)
+                sync_data = SyncData.objects.filter(content_type__pk = model_type.id, update_at__range=(self._sync_log['last_sync'], self._sync_log['new_sync']))
                 return sync_data
         return self._manager
+
+    def delete(self, pk):
+        obj = self._manager.get(pk = pk)
+        obj.delete()
+        return 'OK'
+
+    def insert(self, values):
+        #TODO: Validar que se corresponda con el modelo y otas yerbas
+        obj = self._deserializer([ values ]).next()
+        obj.save()
+        return obj.pk
+
+    def update(self, values):
+        #TODO: Validar que se corresponda con el modelo y otas yerbas
+        obj = self._deserializer([ values ]).next()
+        obj.save()
+        return 'OK'
 
 #===============================================================================
 # RemoteModel
@@ -165,7 +180,7 @@ class RemoteSerializer(PythonSerializer):
 class RemoteManager(RemoteManagerBase):
     def __init__(self):
         self._serializer = RemoteSerializer()
-        #self.deserializer = PythonDeserializer
+        self._deserializer = PythonDeserializer
 
     def all(self):
         return self._get_query_set().all()
@@ -195,7 +210,7 @@ class RemoteReadOnlyModelMetaclass(type):
 
         fields = { opts.model._meta.pk.name: opts.model._meta.pk }
         fields['value'] = models.CharField(max_length = 250)
-        
+
         new_class.base_fields = fields
 
         return new_class

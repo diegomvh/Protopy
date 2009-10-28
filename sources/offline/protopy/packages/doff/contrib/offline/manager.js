@@ -2,7 +2,7 @@
 require('event');
 require('rpc', 'ServiceProxy');
 require('doff.core.project', 'get_project');
-require('doff.contrib.offline.serializers', 'Deserializer');
+require('doff.contrib.offline.serializers', 'RemoteDeserializer');
 require('doff.contrib.offline.models', 'SyncLog');
 
 //TODO: no me gusta mucho esto de tomar el rpc asi por la fuerza
@@ -26,7 +26,7 @@ var RemoteManager = type('RemoteManager', [ ServiceProxy ], {
         if (!methodName.startswith('system.')) {
             if (isinstance(ret, Array) && bool(ret)) {
                 var new_ret = [];
-                for each (var obj in Deserializer(ret, this.sync_log)) {
+                for each (var obj in RemoteDeserializer(ret, this.sync_log)) {
                     new_ret.push(obj);
                 }
                 ret = new_ret;
