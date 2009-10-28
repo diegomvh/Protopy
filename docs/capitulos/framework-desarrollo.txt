@@ -130,60 +130,41 @@ La clase proyecto posee los siguientes métodos:
  * ``uninstall`` remueve la base de datos, el proyecto y el código del framework
    del clinete.
    
+Un proyecto se crea de la siguiente manera:
+
+.. code-block:: javascript
+
+    <script type="text/javascript;version=1.7">
+        require('doff.core.project', 'new_project');
+        
+        var agentes = new_project('agentes', '/off/agentes');
+        agentes.bootstrap();
+    </script>
+    
+El primer argumento es el nombre del proyecto y el segundo es la URL que se 
+agrega al ``sys.path`` de Protopy, deifiniendo de esta manera un nuevo 
+paquete en Protopy en ámbito de nombres global. 
+
 Las aplicaciones de un proyecto Doff se definieron como paquetes de Protopy que se encuentran
 dentro del proyecto. Constan del módulo ``views.js`` y ``models.js``. 
 
 Para facilitar la instalación de proyectos se creo una etiqueta de plantilla 
 (``template tag``) que incluye de manera automática Protopy, Doff y crea
 un proyecto con el nombre que se pasa como parámetro. La creación de un proyecto
-consitió en esta etapa en almacenar el código del Doff y el proyecto en el clinete
-mediante gears.
+consitió en esta etapa en almacenar el código del Doff y el proyecto en el cliente
+mediante gears. La página donde se instancia la clase ``Project`` se persiste 
+como la URL incial y punto de entrada a la apilicación desconectada, garantizando
+que cada vez que el cliente acceda a esta URL sin conexión el proyecto se vuelva
+a instanciar.
 
-Estos comandos tienen como finalidad la instalación del proyecto desconectado 
-en el navegador del cliente.
-
-
-
-Esta aplicación se bautizó ``offline`` e inicialmente contó con tres vistas. La primera 
-fue un servidor estático de archivos, que permitía cargar Protopy en el 
-navegador dentro del proyecto. Basados en esta vista y utilizando 
-el almacenamiento del ``LocalServer`` provisto en Protopy en ``sys.gears``, 
-se obtuvo una página desconectada que contaba con el framework Doff.
-
-
-
-Las otras dos vistas estaban relacionadas entre si, una realizaba una búsqueda
-exahustiva de plantillas en el proyecto [*]_ y la otra servía las plantillas
-estáticamente. 
-Con estos tres componentes se realizaron las perimers pruebas de aplicación 
-desconectada.
-
-.. [*] Utilizando la constate ``TEMPLATE_DIRS`` definida en el 
-        módulo ``settings`` del proyecto.
-         
-A partir de estos componentes se comenzó a implementar el proyecto desconectado 
-como un conjunto de aplicaciones que se definían en el módulo ``settings`` de
-el proyecto Django en linea.
-Las aplicaciones desconectadas consistían en paquetes de Protopy con los módulos
-``views.js`` y ``models.js``. Las vistas se ejecutaban de manera manual ya que 
-el sistema de URLs no se pudo traducir de manera automática debido a que no 
-se cuenta con una implementación de expresiones regulares con recuperación de 
-grupos nombrados y los elementos ``HTTPRequest`` requerían una implementación
-adecuada a la ausencia de transporte HTTP.
-
-El proyecto desconectado debía pasar por una etapa de instalación, en la cual
-se descargaba el framework y el proyecto en el almacencamiento local y se creaban
-las tablas de la base de datos.
-
-Los siguientes apartados tratan sobre las implementaciones de la API del ORM
+Los siguientes apartados tratan sobre las implementaciones de la API del ORM,
+templates, vistas y formularios.
 
 Modelos
 =======
 
 Doff implementa la misma API que Django, realizando las adaptaciones
-a la sintaxis de JavaScript y la librería Protopy. Por lo que es posible
-migrar los modelos de manera manual utilizando las mismas clases con las
-que se define en el módulo ``models`` de la aplicación en línea.
+a la sintaxis de JavaScript y la librería Protopy.
 
 A continuación se ejemplifica la implementación  en el cliente del módulo 
 ``models.js`` de una aplicación que consta con las entidades Libro, Autor y Editor:
@@ -616,7 +597,7 @@ Existen varios cargadores de plantillas que se pueden habilitar en el archivo de
 configuración. En el presente trabajo se utilzará solo el de carga de templates
 a través de URLs. Por omisión, ``TEMPLATE_URLS`` es es una cadena vacia, en cuyo
 caso la búsqueda de template se realizará en ``templates/`` a partir de donde
-se descargó Doff.
+se instanció el proyecto.
 
 
 Vistas y Asociaciones de URLs
