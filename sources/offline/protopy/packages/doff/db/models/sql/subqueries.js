@@ -7,12 +7,12 @@ require('copy', 'copy');
  * Delete queries are done through this class, since they are more constrained
  * than general queries.
  */
-var DeleteQuery = type('DeleteQuery', Query, {
+var DeleteQuery = type('DeleteQuery', [ Query ], {
     /*
      * Creates the SQL for this query. Returns the SQL string and list of
      * parameters.
      */
-    'as_sql': function as_sql(){
+    as_sql: function(){
         assert (this.tables.length == 1, "Can only delete from one table at a time.");
         var result = ['DELETE FROM %s'.subs(this.quote_name_unless_alias(this.tables[0]))];
         var [where, params] = this.where.as_sql();
@@ -20,7 +20,7 @@ var DeleteQuery = type('DeleteQuery', Query, {
         return [result.join(' '), array(params)];
     },
 
-    'do_query': function do_query(table, where) {
+    do_query: function(table, where) {
         this.tables = [table];
         this.where = where;
         this.execute_sql(null);
@@ -33,11 +33,11 @@ var DeleteQuery = type('DeleteQuery', Query, {
      * More than one physical query may be executed if there are a
      * lot of values in pk_list.
      */
-    'delete_batch_related': function delete_batch_related(pk_list) {
+    delete_batch_related: function(pk_list) {
         var cls = this.model;
         for each (var related in cls._meta.get_all_related_many_to_many_objects()) {
             for each (var offset in range(0, pk_list.length)) {
-		var where = new this.where_class();
+                var where = new this.where_class();
                 where.add([null, related.field.m2m_reverse_name(), related.field, 'in', pk_list.slice(offset, offset + GET_ITERATOR_CHUNK_SIZE)], AND);
                 this.do_query(related.field.m2m_db_table(), where);
             }
@@ -55,12 +55,12 @@ var DeleteQuery = type('DeleteQuery', Query, {
     },
 
     /*
-        * Set up and execute delete queries for all the objects in pk_list. This
-        * should be called after delete_batch_related(), if necessary.
-        * More than one physical query may be executed if there are a
-        * lot of values in pk_list.
-        */
-    'delete_batch': function delete_batch(pk_list) {
+     * Set up and execute delete queries for all the objects in pk_list. This
+     * should be called after delete_batch_related(), if necessary.
+     * More than one physical query may be executed if there are a
+     * lot of values in pk_list.
+     */
+    delete_batch: function(pk_list) {
 
         for each (var offset in range(0, pk_list.length)) {
             var where = new this.where_class();
@@ -69,22 +69,22 @@ var DeleteQuery = type('DeleteQuery', Query, {
             this.do_query(this.model._meta.db_table, where);
         }
     }
-    });
+});
 
-var InsertQuery = type('InsertQuery', Query, {
-    '__init__': function __init__(model, connection){
-	super(Query, this).__init__(model, connection);
-	this.columns = [];
-	this.values = [];
-	this.params = [];
+var InsertQuery = type('InsertQuery', [ Query ], {
+    __init__: function(model, connection){
+        super(Query, this).__init__(model, connection);
+        this.columns = [];
+        this.values = [];
+        this.params = [];
     },
 
-    'clone': function clone(klass) {
-        arguments = new Arguments(arguments, {'columns': copy(this.columns), 'values': copy(this.values), 'params': this.params});
-        return super(Query, this)(klass, arguments);
+    clone: function(klass) {
+        var arg = new Arguments(arguments, {'columns': copy(this.columns), 'values': copy(this.values), 'params': this.params});
+        return super(Query, this)(klass, arg);
     },
-	
-    'as_sql': function as_sql() {
+
+    as_sql: function() {
         // We don't need quote_name_unless_alias() here, since these are all
         // going to be column names (so we can avoid the extra overhead).
         var qn = this.connection.ops.quote_name;
@@ -94,7 +94,7 @@ var InsertQuery = type('InsertQuery', Query, {
         return [result.join(' '), this.params];
     },
 
-    'execute_sql': function execute_sql(return_id) {
+    execute_sql: function(return_id) {
         var cursor = super(Query, this).execute_sql(null);
         if (return_id)
             return this.connection.ops.last_insert_id(cursor, this.model._meta.db_table, this.model._meta.pk.column);
@@ -109,7 +109,7 @@ var InsertQuery = type('InsertQuery', Query, {
         parameters. This provides a way to insert NULL and DEFAULT keywords
         into the query, for example.
         */
-    'insert_values': function insert_values(insert_values, raw_values) {
+    insert_values: function(insert_values, raw_values) {
         var placeholders = [], values = [];
         for each (var [field, val] in insert_values) {
             if (callable(field['get_placeholder']))
@@ -135,23 +135,23 @@ var InsertQuery = type('InsertQuery', Query, {
     * multiple distinct columns and turn it into SQL that can be used on a
     * variety of backends (it requires a select in the FROM clause).
     */
-var CountQuery = type('CountQuery', Query, {
-    'get_from_clause': function get_from_clause() {
+var CountQuery = type('CountQuery', [ Query ], {
+    get_from_clause: function() {
         var [result, params] = this._query.as_sql();
         return [['(%s) A1'.subs(result)], params];
     },
     
-    'get_ordering': function get_ordering() {
+    get_ordering: function() {
         return [];
     }
-    });
+});
 
 
 /*
     * Represents an "update" SQL query.
     */
-var UpdateQuery = type('UpdateQuery', Query, {
-    '__init__': function __init__(model, connection) {
+var UpdateQuery = type('UpdateQuery', [ Query ], {
+    __init__: function(model, connection) {
         super(Query, this).__init__(model, connection);
         this._setup_query();
     },
@@ -161,16 +161,16 @@ var UpdateQuery = type('UpdateQuery', Query, {
         * normally be set in __init__ should go in here, instead, so that they
         * are also set up after a clone() call.
         */
-    '_setup_query': function _setup_query() {
+    _setup_query: function() {
         this.values = [];
         this.related_ids = null;
         if (!this['related_updates']);
             this.related_updates = {};
     },
 
-    'clone': function clone(klass) {
-        arguments = new Arguments(arguments);
-        arguments.kwargs['related_updates'] = copy(this.related_updates);
+    clone: function(klass) {
+        var arg = new Arguments(arguments);
+        arg.kwargs['related_updates'] = copy(this.related_updates);
         return super(Query, this).clone(klass, arguments);
     },
 
@@ -179,7 +179,7 @@ var UpdateQuery = type('UpdateQuery', Query, {
         the primary update query (there could be other updates on related
         tables, but their rowcounts are not returned).
         */
-    'execute_sql': function execute_sql(result_type) {
+    execute_sql: function(result_type) {
         var cursor = super(Query, this).execute_sql(result_type);
         var rows = cursor.rowcount;
         delete cursor;
@@ -192,9 +192,9 @@ var UpdateQuery = type('UpdateQuery', Query, {
         * Creates the SQL for this query. Returns the SQL string and list of
         * parameters.
         */
-    'as_sql': function as_sql() {
+    as_sql: function() {
         this.pre_sql_setup()
-        if (!this.values)
+        if (!bool(this.values))
             return ['', []];
         var table = this.tables[0];
         var qn = getattr(this, 'quote_name_unless_alias');
@@ -203,7 +203,11 @@ var UpdateQuery = type('UpdateQuery', Query, {
         var values = [], update_params = [];
         for each (var element in this.values) {
             var [name, val, placeholder] = element;
-            if (bool(val)) {
+            if (callable(val, 'as_sql')) {
+                var [sql, params] = val.as_sql(qn);
+                values.push('%s = %s'.subs(qn(name), sql));
+                update_params = update_params.concat(params);
+            } else if (val != null) {
                 values.push('%s = %s'.subs(qn(name), placeholder));
                 update_params.push(val);
             } else {
@@ -226,7 +230,7 @@ var UpdateQuery = type('UpdateQuery', Query, {
         the id values to update at this point so that they don't change as a
         result of the progressive updates.
         */
-    'pre_sql_setup': function pre_sql_setup() {
+    pre_sql_setup: function() {
         this.select_related = false;
         this.clear_ordering(true);
         super(Query, this).pre_sql_setup();
@@ -283,7 +287,7 @@ var UpdateQuery = type('UpdateQuery', Query, {
 
         This is used by the QuerySet.delete_objects() method.
         */
-    'clear_related': function clear_related(related_field, pk_list) {
+    clear_related: function(related_field, pk_list) {
         for each (var offset in range(0, pk_list.length)) {
             this.where = new this.where_class();
             var f = this.model._meta.pk;
@@ -294,11 +298,10 @@ var UpdateQuery = type('UpdateQuery', Query, {
     },
 
     /*
-        * Convert a dictionary of field name to value mappings into an update
-        query. This is the entry point for the public update() method on
-        querysets.
-        */
-    'add_update_values': function add_update_values(values) {
+     * Convert a dictionary of field name to value mappings into an update
+     * query. This is the entry point for the public update() method on querysets.
+     */
+    add_update_values: function(values) {
         var values_seq = [];
         for ([name, val] in values.iteritems()) {
             var [field, model, direct, m2m] = this.model._meta.get_field_by_name(name);
@@ -314,8 +317,8 @@ var UpdateQuery = type('UpdateQuery', Query, {
         Used by add_update_values() as well as the "fast" update path when
         saving models.
         */
-    'add_update_fields': function add_update_fields(values_seq) {
-        var Model = require('doff.db.models.base', ['Model']);
+    add_update_fields: function(values_seq) {
+        var Model = require('doff.db.models.base', 'Model');
         for each (var element in values_seq) {
             var [field, model, val] = element;
             if (field.rel && isinstance(val, Model))
@@ -338,7 +341,7 @@ var UpdateQuery = type('UpdateQuery', Query, {
         * Adds (name, value) to an update query for an ancestor model.
         * Updates are coalesced so that we only run one update query per ancestor.
         */
-    'add_related_update': function add_related_update(model, column, value, placeholder) {
+    add_related_update: function(model, column, value, placeholder) {
         try {
             this.related_updates[model].push([column, value, placeholder]);
         }
@@ -353,7 +356,7 @@ var UpdateQuery = type('UpdateQuery', Query, {
         ancestor model. Each query will have the same filtering conditions as
         the current query but will only update a single table.
         */
-    'get_related_updates': function get_related_updates() {
+    get_related_updates: function() {
         if (!bool(this.related_updates))
             return [];
         var result = [];
@@ -373,11 +376,11 @@ var UpdateQuery = type('UpdateQuery', Query, {
     * date field. This requires some special handling when converting the results
     *  back to Python objects, so we put it in a separate class.
     */
-var DateQuery = type('DateQuery', Query, {
+var DateQuery = type('DateQuery', [ Query ], {
         /*
         * Returns an iterator over the results from executing this query.
         */
-    'results_iter': function results_iter() {
+    results_iter: function() {
         var resolve_columns = bool(this['resolve_columns']);
         if (resolve_columns) {
             var DateTimeField = require('doff.db.models.fields.base', 'DateTimeField');
@@ -403,7 +406,7 @@ var DateQuery = type('DateQuery', Query, {
     /*
         * Converts the query into a date extraction query.
         */
-    'add_date_select': function add_date_select(field, lookup_type, order) {
+    add_date_select: function(field, lookup_type, order) {
         var order = order || 'ASC';
         var result = this.setup_joins([field.name], this.get_meta(), this.get_initial_alias(), false);
         var alias = result[3][result[3].length -1];

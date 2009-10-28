@@ -91,7 +91,7 @@ var decode_dates = function(obj) {
             if(matches[3]) obj.setUTCDate(parseInt(matches[3]));
             if(matches[4]) obj.setUTCHours(parseInt(matches[4]));
             if(matches[5]) obj.setUTCMinutes(parseInt(matches[5]));
-            if(matches[6]) obj.setUTCMilliseconds(parseInt(matches[6]));
+            if(matches[6]) obj.setUTCSeconds(parseInt(matches[6]));
         }
         //@timestamp@ / @ticks@
         else if(matches = obj.match(/^@(\d+)@$/)){

@@ -6,14 +6,14 @@ var FullResultSet = type('FullResultSet', Exception);
     * multi-valued join was attempted (if the caller wants to treat that
     * exceptionally).
     */
-var MultiJoin = type('MultiJoin', Exception, {
-    '__init__': function __init__(level) {
+var MultiJoin = type('MultiJoin', [ Exception ], {
+    __init__: function(level) {
         this.level = level;
     }
 });
 
-var RawValue = type('RawValue', object, {
-    '__init__': function __init__(value) {
+var RawValue = type('RawValue', [ object ], {
+    __init__: function(value) {
         this.value = value;
     }
 });
@@ -21,12 +21,12 @@ var RawValue = type('RawValue', object, {
 /*
     * Base class for all aggregate-related classes (min, max, avg, count, sum).
     */
-var Aggregate = type('Aggregate', object, {
+var Aggregate = type('Aggregate', [ object ], {
     /*
         * Relabel the column alias, if necessary. Must be implemented by
         * subclasses.
         */
-    'relabel_aliases': function relabel_aliases(change_map) {
+    relabel_aliases: function(change_map) {
         throw new NotImplementedError();
     },
 
@@ -36,7 +36,7 @@ var Aggregate = type('Aggregate', object, {
         * None, it defaults to doing nothing.
         * Must be implemented by subclasses.
         */
-    'as_sql': function as_sql(quote_func) {
+    as_sql: function(quote_func) {
         throw new NotImplementedError();
     }
 });
@@ -44,24 +44,24 @@ var Aggregate = type('Aggregate', object, {
 /*
     * Perform a count on the given column.
     */
-var Count = type('Count', Aggregate, {
+var Count = type('Count', [ Aggregate ], {
 
     /*
         * Set the column to count on (defaults to '*') and set whether the count
         * should be distinct or not.
         */
-    '__init__': function __init__(col, distinct){
+    __init__: function(col, distinct){
         this.col = col || '*';
         this.distinct = distinct || false;
     },
     
-    'relabel_aliases': function relabel_aliases(change_map){
+    relabel_aliases: function(change_map){
         var c = this.col;
         if (type(c) == Array)
             this.col = [change_map.get(c[0], c[0]), c[1]];
     },
 
-    'as_sql': function as_sql(quote_func) {
+    as_sql: function(quote_func) {
         if (!quote_func)
             quote_func = function (x) {return x};
         if (type(this.col) == Array)
@@ -78,23 +78,23 @@ var Count = type('Count', Aggregate, {
 });
 
 /*
-    * Add a date selection column.
-    */
-var Date = type('Date', object, {
+ * Add a date selection column.
+ */
+var Date = type('Date', [ object ], {
 
-    '__init__': function __init__(col, lookup_type, date_sql_func){
+    __init__: function(col, lookup_type, date_sql_func){
         this.col = col;
         this.lookup_type = lookup_type;
         this.date_sql_func = date_sql_func;
     },
 
-    'relabel_aliases': function relabel_aliases(change_map){
+    relabel_aliases: function(change_map){
         var c = this.col;
         if (type(c) == Array)
             this.col = [change_map.get(c[0], c[0]), c[1]];
     },
 
-    'as_sql': function as_sql(quote_func) {
+    as_sql: function(quote_func) {
         if (!quote_func)
             quote_func = function (x) {return x};
         if (type(this.col) == Array)

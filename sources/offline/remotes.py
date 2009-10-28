@@ -38,6 +38,7 @@ class RemoteManagerBase(object):
     def __init__(self):
         self._serializer = None
         self._deserializer = None
+        self._manager = None
 
     def _contribute_to_class(self, remote, name):
         try:
@@ -64,11 +65,16 @@ class RemoteManagerBase(object):
 
     def _dispatch(self, method, params):
         methods = self._methods() or []
+        #Busco si tiene sync_log osea estoy en una transacion
         params = self._extract_sync_log(params)
+        
         if method in methods:
             ret = getattr(self, method)(*params)
-            if isinstance(ret, QuerySet):
+
+            if isinstance(ret, QuerySet) and self._sync_log != None:
                 ret = self._serializer.serialize(self._build_object(ret))
+            elif isinstance(ret, QuerySet):
+                ret = list(ret.values())
             return ret
         else:
             raise Exception('bad method')
@@ -76,13 +82,16 @@ class RemoteManagerBase(object):
     def _build_object(self, query_set):
         is_sync_data = issubclass(query_set.model, SyncData)
         for sd_instance in query_set:
-            #ipdb.set_trace()
-            if is_sync_data and sd_instance.active:
-                real_instance = sd_instance.content_object
+            if is_sync_data:
+                if sd_instance.content_object:
+                    real_instance = sd_instance.content_object
+                else:
+                    real_instance = sd_instance.content_type.model_class()()
+                    real_instance.id = sd_instance.object_id
                 real_instance.active = sd_instance.active
             else:
                 real_instance = sd_instance
-            real_instance.status = 's'
+                real_instance.active = True
             yield real_instance
         raise StopIteration()
 
@@ -97,13 +106,15 @@ class RemoteManagerBase(object):
 
     def _get_query_set(self):
         if self._sync_log != None:
+            #Primero busco si tengo datos traceados
             model_type = ContentType.objects.get_for_model(self._manager.model)
+            sync_data = SyncData.objects.filter(content_type__pk = model_type.id)
+            # Si tengo una fecha base y me fijo si tengo en ese rango de fechas?
             if self._sync_log.get('last_sync', False):
-                return SyncData.objects.filter(content_type__pk = model_type.id, update_at__range=(self._sync_log['last_sync'], self._sync_log['synced_at']))
-            else:
-                return SyncData.objects.filter(content_type__pk = model_type.id)
-        else:
-            self._manager
+                sync_data = sync_data.filter(update_at__range=(self._sync_log['last_sync'], self._sync_log['synced_at']))
+                #Oks, si estoy aca y no tengo sync data es porque no hay nada nuevo o porque no tengo datos traqueados
+                return sync_data
+        return self._manager
 
 #===============================================================================
 # RemoteModel
@@ -140,16 +151,14 @@ class RemoteModelProxy(object):
 class RemoteSerializer(PythonSerializer):
 
     def start_object(self, obj):
-        self._current = {
-            "server_pk"     : smart_unicode(obj._get_pk_val(), strings_only=True),
-            "active"       : smart_unicode(obj.active, strings_only=True),
-            "status"       : smart_unicode(obj.status, strings_only=True)
-        }
+        self._current = {}
 
     def end_object(self, obj):
         self.objects.append({
-            "model"  : smart_unicode(obj._meta),
-            "fields" : self._current
+            "model"         : smart_unicode(obj._meta),
+            "server_pk"     : smart_unicode(obj._get_pk_val(), strings_only=True),
+            "active"        : smart_unicode(obj.active, strings_only=True),
+            "fields"        : obj.active and self._current or {}
         })
         self._current = None
 

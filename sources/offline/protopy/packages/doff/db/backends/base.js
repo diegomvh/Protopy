@@ -10,10 +10,12 @@ var BaseDatabaseWrapper = type('BaseDatabaseWrapper', [ object ], {
         this.queries = [];
         this.settings = settings;
     },
+
     _commit: function() {
         if (this.connection)
             return this.connection.commit();
     },
+
     _rollback: function() {
         if (this.connection)
             return this.connection.rollback();
@@ -97,17 +99,17 @@ var BaseDatabaseOperations = type('BaseDatabaseOperations', [ object ], {
     value_to_db_date: function(value) {
         if (!value)
             return null;
-        return '%s-%s-%s'.subs(value.getFullYear(), value.getMonth() + 1, value.getDate());
+        return '%s-%s-%s'.subs(value.getUTCFullYear(), value.getUTCMonth() + 1, value.getUTCDate());
     },
     value_to_db_datetime: function(value) {
         if (!value)
             return null;
-        return value.getTime();
+        return string(value);
     },
     value_to_db_time: function(value) {
         if (!value)
             return null;
-        return '%s:%s:%s.%s'.subs(value.getHours(), value.getMinutes(), value.getSeconds(), value.getMilliseconds());
+        return '%s:%s:%s.%s'.subs(value.getUTCHours(), value.getUTCMinutes(), value.getUTCSeconds(), value.getUTCMilliseconds());
     },
     value_to_db_decimal: function(value, max_digits, decimal_places) {
         if (!value)

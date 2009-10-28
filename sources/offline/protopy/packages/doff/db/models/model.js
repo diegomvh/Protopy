@@ -517,6 +517,6 @@ var method_get_order = function(ordered_obj) {
     return [r[pk_name] for each (r in ordered_obj.objects.filter({'order_name': rel_val}).values(pk_name))];
 };
 
-publish({ 
+publish({
     Model: Model 
 });
