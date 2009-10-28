@@ -322,13 +322,20 @@ ul.auto-toc {
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">autores:</th><td class="field-body">Defossé, Nahuel - van Haaster, Diego Marcos</td>
+<tr class="field"><th class="field-name">autores:</th><td class="field-body"><ul class="first simple">
+<li>Defossé, Nahuel</li>
+<li>van Haaster, Diego Marcos</li>
+</ul>
+</td>
 </tr>
-<tr class="field"><th class="field-name">tutor:</th><td class="field-body">Sáenz Lopez, Marta</td>
+<tr class="field"><th class="field-name">tutor:</th><td class="field-body"><p class="first">Sáenz Lopez, Marta</p>
+</td>
 </tr>
-<tr class="field"><th class="field-name">fecha:</th><td class="field-body">Noviembre 2009</td>
+<tr class="field"><th class="field-name">fecha:</th><td class="field-body"><p class="first">Noviembre 2009</p>
+</td>
 </tr>
-<tr class="field"><th class="field-name">url:</th><td class="field-body"><a class="reference external" href="https://hg.protopy.com.ar/protopy">https://hg.protopy.com.ar/protopy</a></td>
+<tr class="field"><th class="field-name">url:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://hg.protopy.com.ar/protopy">https://hg.protopy.com.ar/protopy</a></p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -365,8 +372,8 @@ de Framework Web consitente</p>
 </li>
 </ul>
 </div>
-<div class="slide" id="soluciones-existentes-1">
-<h1>Soluciones Existentes (1)</h1>
+<div class="slide" id="tecnolog-as-existentes-1">
+<h1>Tecnologías Existentes (1)</h1>
 <ul>
 <li><dl class="first docutils">
 <dt><strong>AIR</strong> (Adobe Corp.)</dt>
@@ -384,8 +391,8 @@ lengauje de <em>scripting</em> ActionScript 2/3.</p>
 </li>
 </ul>
 </div>
-<div class="slide" id="soluciones-existentes-2">
-<h1>Soluciones Existentes (2)</h1>
+<div class="slide" id="tecnolog-as-existentes-2">
+<h1>Tecnologías Existentes (2)</h1>
 <ul>
 <li><dl class="first docutils">
 <dt><strong>JavaFX</strong> (Sun Microsystems)</dt>
@@ -409,8 +416,8 @@ híbridas. Probado <a class="footnote-reference" href="#id2" id="id1">[*]</a></p
 </tbody>
 </table>
 </div>
-<div class="slide" id="soluciones-existentes-3">
-<h1>Soluciones Existentes (3)</h1>
+<div class="slide" id="tecnolog-as-existentes-3">
+<h1>Tecnologías Existentes (3)</h1>
 <ul>
 <li><dl class="first docutils">
 <dt><strong>Google Gears</strong></dt>
@@ -516,6 +523,60 @@ Ej: jQuery, Prototype, Dojo, YUI, MooTools, MochiKit</p>
 <li>El <em>modelo</em> se define en el lenguaje Python</li>
 <li>Las <em>vistas</em> son funciones y se asocian con URLs mediante expresiones regulares (<em>controlador</em>)</li>
 <li>Las vistas delegan en los templates la genración de HTML</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="slide" id="django-workflow">
+<h1>Django Workflow</h1>
+</div>
+<div class="slide" id="django-proyecto">
+<h1>Django Proyecto</h1>
+<dl class="docutils">
+<dt>Un proyecto django consta de 3 archivos (módulos en Python):</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">settings.py</span></tt></dt>
+<dd><p class="first last">Configuración global: Base de Datos, Directorio de Plantillas, Aplicaciones Instaladas</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">manage.py</span></tt></dt>
+<dd><p class="first last">Recibe como argumentos comandos para manejo del proyecto.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">urls.py</span></tt></dt>
+<dd><p class="first last">Mapeo inicial de URLs en vistas (funciones planas).</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="slide" id="django-aplicaci-n">
+<h1>Django Aplicación</h1>
+<dl class="docutils">
+<dt>Una aplicación en Django es un paquete que consta de 3 módulos</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">views.py</span></tt></dt>
+<dd><p class="first last">Definición de las funciones que manejan las URLs, las funciones
+reciben un <tt class="docutils literal"><span class="pre">HTTPRequest</span></tt> y datos de la URL y devuelven <tt class="docutils literal"><span class="pre">HTTPResponse</span></tt></p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">models.py</span></tt></dt>
+<dd><p class="first last">Definción de las entidades de la base de datos mediante una API de ORM.</p>
+</dd>
+</dl>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">urls.py</span></tt></p>
+</li>
 </ul>
 </dd>
 </dl>

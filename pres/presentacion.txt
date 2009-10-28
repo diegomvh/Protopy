@@ -2,7 +2,8 @@
 Aplicaciones Web Desconectadas
 ==============================
 
-	:autores: Defossé, Nahuel - van Haaster, Diego Marcos
+	:autores: * Defossé, Nahuel 
+			  * van Haaster, Diego Marcos
 	:tutor:	 Sáenz Lopez, Marta
 	:fecha: Noviembre 2009
 	:url: https://hg.protopy.com.ar/protopy
@@ -23,8 +24,8 @@ Objetivos
 	Consistencia y reutilzación de componentes
 	de Framework Web consitente
 
-Soluciones Existentes (1)
--------------------------
+Tecnologías Existentes (1)
+---------------------------
 
 * **AIR** (Adobe Corp.)
 	Basado en la tecnología Flash (Open Source), 
@@ -35,8 +36,8 @@ Soluciones Existentes (1)
 	*Promesa* de no cautividad.
 
 
-Soluciones Existentes (2)
--------------------------
+Tecnologías Existentes (2)
+--------------------------
 
 * **JavaFX** (Sun Microsystems)
 	Applets + Flash = JavaFX, crean lenguaje de *scripting*
@@ -48,8 +49,8 @@ Soluciones Existentes (2)
 
 .. [*] Songbird, Miro, etc.
 
-Soluciones Existentes (3)
--------------------------
+Tecnologías Existentes (3)
+--------------------------
 
 * **Google Gears**
 	Añade al navegador 3 coponentes
@@ -93,7 +94,6 @@ Desarrllo App. Web Cliente (2)
 	Aplicaciones Offline soportadas nativamente. Aún en borrador.
 
 
-
 Django
 ------
 
@@ -101,6 +101,31 @@ Framework MVC:
 	* El *modelo* se define en el lenguaje Python
 	* Las *vistas* son funciones y se asocian con URLs mediante expresiones regulares (*controlador*)
 	* Las vistas delegan en los templates la genración de HTML
+	
+Django Workflow
+---------------
+	* El requiere una URL: ``/``, ``/ventas``, ``/personal/agente/1/``, etc.
+	* La U
+
+Django Proyecto
+---------------
+Un proyecto django consta de 3 archivos (módulos en Python):
+	* ``settings.py``
+		Configuración global: Base de Datos, Directorio de Plantillas, Aplicaciones Instaladas
+	* ``manage.py``
+		Recibe como argumentos comandos para manejo del proyecto.
+	* ``urls.py``
+		Mapeo inicial de URLs en vistas (funciones planas).
+	
+Django Aplicación
+-----------------
+Una aplicación en Django es un paquete que consta de 3 módulos
+	* ``views.py``
+		Definición de las funciones que manejan las URLs, las funciones
+		reciben un ``HTTPRequest`` y datos de la URL y devuelven ``HTTPResponse``
+	* ``models.py``
+		Definción de las entidades de la base de datos mediante una API de ORM.
+	* ``urls.py``
 
 Por que JavaScript
 ------------------

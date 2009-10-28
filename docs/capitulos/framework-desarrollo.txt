@@ -15,7 +15,7 @@ como base, muchos aspectos no estabn claramente definidos y algunos componentes
 carecían de sentido en el contexto del navegador. Por esta razón
 se realizaron dos proyectos [*]_ que sirvieron para identificar las piezas necesarias
 del framework y mejorar el enfoque de Protopy, además de permitir crear
-nuevos componentes reusables necesarios para un desarrollo simplificado.
+nuevos componentes reusables que no estaban presentes en Django.
 
 El framework desconectado, de manera similar a Protopy, se apodó en base
 a su padre y a la tarea que este cumple. Se bautizó como **Doff**, tomando
@@ -29,8 +29,8 @@ lo tanto, Django Desconectado:
         que intenta explotar las posiblidades de contar con una aplicación web desconectada.
     
     
-Arquitectura del Framework Desconectado
----------------------------------------
+Migración de Componetes Básicos
+-------------------------------
 
 
 Doff se inició como un conjunto de modulos para Protopy. Estos módulos implementaban
@@ -61,15 +61,22 @@ servidor.
 
 Las pruebas y depuración del proyecto se realizaron sobre Firebug, cargando
 protopy en un archivo estático y realizando los ``require()``s correspondientes
-en la consola.
+en la consola. Por ejemplo:
 
-Mientras que un cliente se encuentre sin conexion con el servidor web, es capaz
-de generar y almacenar datos usando su base de datos local. Al reestablecer
-la conexion con el servidor web, estos datos deben ser transimitos a la base de
-datos central para su actulizacion y posterior sincronizacion del resto de los
-clientes. Para plantear la tarea de sincronización es necesario contar con
-el framework funcionando desconecatdo, por lo que se postergó su analisis en esta
-etapa.
+.. code-block:: javascript
+
+    // En la consola de firebug
+    >>> require('doff.db.models.base');
+    
+
+
+.. Mientras que un cliente se encuentre sin conexion con el servidor web, es capaz
+    de generar y almacenar datos usando su base de datos local. Al reestablecer
+    la conexion con el servidor web, estos datos deben ser transimitos a la base de
+    datos central para su actulizacion y posterior sincronizacion del resto de los
+    clientes. Para plantear la tarea de sincronización es necesario contar con
+    el framework funcionando desconecatdo, por lo que se postergó su analisis en esta
+    etapa.
  
 El siguiente componente en ser analizado y migrado fue el sistema de plantillas
 (``django.templates``).
@@ -84,26 +91,114 @@ en el sistema de módulos de Protopy. Esta funcionalidad se situó en el módulo
     Documetnación sobre los templates de Django portados a Dojo,
     ultimo acceso Septiembre de 2009,
     http://www.dojotoolkit.org/book/dojo-book-0-9/part-5-dojox/dojox-dtl/ 
-        
-Una vez que se contó con         
-Para lograr que el paquete ``doff`` se almacene en el cliente, se utiliza la
-funcionalidad provista por ``gears``, encasulada en ``doff.gears``.
+
+Definción de Proyecto y Aplicaciones Desconectadas
+--------------------------------------------------
+
+Luego de haber alcanzado un nivel de funcionalidad básico en ``doff.db.models`` y 
+``doff.templates`` se definió la interacción básica con Django, mediante
+la cual un proyecto en linea sería capaz de transferirse al cliente. Para
+este fin se creó una aplicación Django llamada ``offline`` cuyo objetivo incial 
+fue servir estáticamente el código JavaScript de Protopy y Doff.
+
+El siguiente paso fue definir un proyecto Django desconectado, es decir, un
+proyecto Doff. Se buscó el mayor grado de similitud posible con Django, donde
+un proyecto es un paquete Python (con los módulos ``settings.py``, ``manage.py``
+y ``urls.py``) y cada aplicación un paquete dentro de la aplicación o localizable
+en el ``PYTHONPATH`` (una aplicación cuenta con los módulos ``models.py`` y
+``views.py``).
+
+En Doff, un proyecto se definió como un paquete Protopy con un módulo ``settings.js``
+con la configuración del proyecto. El módulo de proyecto Django ``manage.py`` carece de 
+sentido en el navegador, ya que no se cuenta con una interfase de comandos en 
+JavaScript, por lo que se implementaron los comandos como fucniones en el módulo
+``doff.core.project``. El módulo ``urls.js`` se reservó para análisis posterior. 
+
+Las aplicaciones de un proyecto Doff se definieron paquetes de Protopy que se encuentran
+dentro del proyecto. Constan del módulo ``views.js`` y ``models.js``. 
+
+A diferencia de un proyecto Django, en el contexto del browser, es necesario
+generar una instancia de la entidad proyecto y darle el control a ésta, para
+tal fin, se implementaron los siguientes métodos en el ``doff.core.project``: 
+``bootstrap``, ``syncdb`` e ``install``, ``is_installed``:
+
+ * ``bootstrap`` debe ser llamado cada vez que se quiera ceder el control
+    de la navegación a el framework desconectado. Recibe como argumento
+    el nombre del poryecto. Mediante este parámetro localiza los recursos
+    en el almacenamiento local provisto por gears. Si la aplicación no
+    ha sido in
+    
+ * El método ``install`` se ecarga de
+de realizar la istalación, que consiste en la copia del código del framework
+Doff, del proyecto con sus aplicaciones, incluyendo plantillas en el almacenamiento
+local.
+
+El proyecto desconectado es una entidad de 
+JavaScript que recibe como el nombre del proyecto y utiliza este parámetro
+para localizar la base de datos y los recursos almacenados del proyecto. 
+
+Para facilitar la instalación de proyectos se creo una etiqueta de plantilla 
+(``template tag``) que incluye de manera automática Protopy, Doff y crea
+un proyecto con el nombre que se pasa como parámetro. La creación de un proyecto
+consitió en esta etapa en almacenar el código del Doff y el proyecto en el clinete
+mediante gears.
+
+Estos comandos tienen como finalidad la instalación del proyecto desconectado 
+en el navegador del cliente.
 
 
 
+Esta aplicación se bautizó ``offline`` e inicialmente contó con tres vistas. La primera 
+fue un servidor estático de archivos, que permitía cargar Protopy en el 
+navegador dentro del proyecto. Basados en esta vista y utilizando 
+el almacenamiento del ``LocalServer`` provisto en Protopy en ``sys.gears``, 
+se obtuvo una página desconectada que contaba con el framework Doff.
+
+
+
+Las otras dos vistas estaban relacionadas entre si, una realizaba una búsqueda
+exahustiva de plantillas en el proyecto [*]_ y la otra servía las plantillas
+estáticamente. 
+Con estos tres componentes se realizaron las perimers pruebas de aplicación 
+desconectada.
+
+.. [*] Utilizando la constate ``TEMPLATE_DIRS`` definida en el 
+        módulo ``settings`` del proyecto.
+         
+A partir de estos componentes se comenzó a implementar el proyecto desconectado 
+como un conjunto de aplicaciones que se definían en el módulo ``settings`` de
+el proyecto Django en linea.
+Las aplicaciones desconectadas consistían en paquetes de Protopy con los módulos
+``views.js`` y ``models.js``. Las vistas se ejecutaban de manera manual ya que 
+el sistema de URLs no se pudo traducir de manera automática debido a que no 
+se cuenta con una implementación de expresiones regulares con recuperación de 
+grupos nombrados y los elementos ``HTTPRequest`` requerían una implementación
+adecuada a la ausencia de transporte HTTP.
+
+El proyecto desconectado debía pasar por una etapa de instalación, en la cual
+se descargaba el framework y el proyecto en el almacencamiento local y se creaban
+las tablas de la base de datos.
+
+Los siguientes apartados tratan sobre las implementaciones de la API del ORM
 
 Modelos
 =======
 
-La forma de interactuar con la base de datos es a traves de los modelos, siendo 
-consistente con Django, Doff abstrae la logica de negocios dentro de los modelos.
+Doff implementa la misma API que Django, realizando las adaptaciones
+a la sintaxis de JavaScript y la librería Protopy. Por lo que es posible
+migrar los modelos de manera manual utilizando las mismas clases con las
+que se define en el módulo ``models`` de la aplicación en linea.
 
-Continuando con la linea de ejemplos se presenta a continuación una
-configuración de datos básica sobre libro/autor/editor, esta estructura debe
-estar contenida en un archivo models.js dentro de una aplicacion:
+A continuación se ejemplifica la implementación  en el cliente del módulo 
+``models.js`` de una aplicación que consta con las entidades Libro, Autor y Editor:
 
+.. code-block:: javascript
+
+    // Cargar el módulo del ORM
     var models = require('doff.db.models.base');
-
+    
+    // La clase editor (Publisher) extiende de models.Model y por lo tanto
+    // se crea como tabla en la base de datos
     var Publisher = type('Publisher', [ models.Model ], {
         name: new models.CharField({ maxlength: 30 }),
         address: new models.CharField({ maxlength: 50 }),
@@ -112,7 +207,9 @@ estar contenida en un archivo models.js dentro de una aplicacion:
         country: new models.CharField({ maxlength: 50 }),
         website: new models.URLField()
     });
-
+    
+    // La clase autor (Author) extiende de models.Model y por lo tanto
+    // se crea como tabla en la base de datos
     var Author = type('Author', [ models.Model ], {
         salutation: new models.CharField({ maxlength: 10 }),
         first_name: new models.CharField({ maxlength: 30 }),
@@ -120,7 +217,9 @@ estar contenida en un archivo models.js dentro de una aplicacion:
         email: new models.EmailField(),
         headshot: new models.ImageField({ upload_to: '/tmp' })
     });
-
+    
+    // La clase libro (Book) extiende de models.Model y por lo tanto
+    // se crea como tabla en la base de datos
     var Book = type('Book', [ models.Model ], {
         title: new models.CharField({ maxlength: 100 }),
         authors: new models.ManyToManyField(Author),
@@ -128,16 +227,16 @@ estar contenida en un archivo models.js dentro de una aplicacion:
         publication_date: new models.DateField()
     });
 
-Cada modelo es representado por un tipo de Protopy que es un subtipo de
-``doff.db.models.model.Model``. El tipo ``Model`` contiene toda la maquinaria
-necesaria para hacer que los nuevos tipos sean capaces de interactuar con la
-base de datos.
+Cada modelo es representado por un clase de Protopy que extiende a
+``doff.db.models.model.Model``. 
 
 Cada modelo se corresponde con una tabla única de la base de datos, y cada
 atributo de un modelo con una columna en esa tabla. El nombre de atributo
 corresponde al nombre de columna, y el tipo de campo corresponde al tipo de
 columna de la base de datos. Por ejemplo, el modelo ``Publisher`` es equivalente
 a la siguiente tabla:
+
+.. code-block:: sql
 
     CREATE TABLE "books_publisher" (
         "id" serial NOT NULL PRIMARY KEY,
@@ -149,8 +248,8 @@ a la siguiente tabla:
         "website" varchar(200) NOT NULL
     );
 
-La excepción a la regla una-clase-por-tabla es el caso de las relaciones
-muchos-a-muchos. En el ejemplo, ``Book`` tiene un ``ManyToManyField`` llamado
+La excepción a la regla de una clase por tabla es el caso de las relaciones
+muchos a muchos. En el ejemplo, ``Book`` tiene un ``ManyToManyField`` llamado
 ``authors``. Esto significa que un libro tiene uno o más autores, pero la tabla
 de la base de datos ``Book``  no tiene una columna ``authors``. En su lugar, se
 crea una tabla adicional que maneja la correlación entre libros y autores.
@@ -164,17 +263,23 @@ cada modelo un campo de clave primaria entera llamado ``id``.
 
 Para activar los modelos en el proyecto, la aplicación que los contine debe
 estar incluida en la lista de aplicaciones instaladas de Doff. Esto es, edita
-el archivo ``settings.js``, y examina la variable de configuración ``INSTALLED_APPS``
+el archivo ``settings.js``, y examina la variable de configuración ``INSTALLED_APPS``.
+Suponiendo que este archivo se encuentre en bookstore/models.js, el nombre de 
+la aplicación sería bookstore y settings.js tendría la siguiente forma:
+
+
 
 Posteriormente, cuando el usuario instala la aplicación en su navegador, el
 sistema recorre las aplicaciones en ``INSTALLED_APPS`` y genera el SQL para
 cada modelo, creando las tablas en la base de datos. 
 
-Doff provee entre las herramientas del desarrollador, un interprete de SQL sobre
-la base de datos del cliente para conslutas.
+Además de implementar la API de consultas, el desarrollador puede realizar
+``queries`` en SQL sobre la base de datos del cliente mediante las herramientas
+de desarrollador provistas por Doff.
 
-Acceso básico a datos
----------------------
+
+Creación y Recuperación de Datos
+--------------------------------
 
 Una vez que se creo el modelo, Doff provee automáticamente una API JavaScript
 de alto nivel para trabajar con estos modelos:
@@ -194,8 +299,8 @@ método los objetos tendran su representación en "string", es imporante que eso
 sea así ya que el framework utiliza esta representacion en muchos lugares, como
 templates y salidas por consola.
 
-Insertando y actualizando datos
--------------------------------
+Inserción y Actualización de Datos
+----------------------------------
 
 En el ejemplo presentado anteriormente se ve cómo se hace para insertar una fila
 en la base de datos, primero se crea una instancia del modelo pasando argumentos
@@ -210,8 +315,8 @@ Las subsecuentes llamadas a ``save()`` guardarán el registro en su lugar, sin
 crear un nuevo registro (es decir, ejecutarán una sentencia SQL ``UPDATE`` en
 lugar de un ``INSERT``).
 
-Seleccionar objetos
--------------------
+``Managers`` y ``QuerySet``s en el Cliente 
+------------------------------------------
 
 La forma de seleccionar y tamizar los datos se consige a traves de los
 administradores de consultas, en el ejmplo la linea ``Publisher.objects.all()``
@@ -230,9 +335,6 @@ actualmente un *QuerySet* -- un objeto que representa algún conjunto de filas d
 la base de datos. El Apéndice C describe QuerySets en detalle.
 
 Cualquier búsqueda en base de datos va a seguir esta pauta general.
-
-Filtrar datos
--------------
 
 Aunque obtener todos los objetos es algo que ciertamente tiene su utilidad, la
 mayoría de las veces lo que vamos a necesitar es manejarnos sólo con un
@@ -285,8 +387,6 @@ sensible a diferencias de mayúsculas/minúsculas), ``startswith`` y ``endswith`
 y ``range`` (consultas SQL ``BETWEEN``). El Apéndice C describe en detalle todos
 esos tipos de búsqueda.
 
-Obteniendo objetos individuales
--------------------------------
 
 En ocasiones desearás obtener un único objeto. Para esto existe el método
 ``get()``::
@@ -309,9 +409,6 @@ Una consulta que no retorne objeto alguno también causará una excepción::
     Traceback (most recent call last):
         ...
     DoesNotExist: Publisher matching query does not exist.
-
-Ordenando datos
----------------
 
 A medida que juegas con los ejemplos anteriores, podrías descubrir que los
 objetos so devueltos en lo que parece ser un orden aleatorio. No estás
@@ -386,8 +483,6 @@ ser ordenados por su nombre.
     opcional, pero puede realizar algunas cosas muy útiles. Examina el Apéndice
     B para conocer las opciones que puede poner bajo ``Meta``.
 
-Encadenando búsquedas
----------------------
 
 Has visto cómo puedes filtrar datos y has visto cómo ordenarlos. En ocasiones,
 por supuesto, vas a desear realizar ambas cosas. En esos casos simplemente
@@ -408,8 +503,6 @@ Como podrías esperar, esto se traduce a una consulta SQL conteniendo tanto un
 Puedes encadenar consultas en forma consecutiva tantas veces como desees. No
 existe un límite para esto.
 
-Rebanando datos
----------------
 
 Otra necesidad común es buscar sólo un número fijo de filas. Imagina que tienes
 miles de editores en tu base de datos, pero quieres mostrar sólo el primero.
@@ -434,8 +527,8 @@ Esto se traduce, someramente, a::
     Cuando estés listo para aprender los detalles completos detrás de las
     búsquedas de objetos, échale una mirada al Apéndice C.
 
-Eliminando objetos
-------------------
+Eliminación de Datos
+--------------------
 
 Para eliminar objetos, simplemente se debe llamar al método ``delete()`` del objeto:
 
