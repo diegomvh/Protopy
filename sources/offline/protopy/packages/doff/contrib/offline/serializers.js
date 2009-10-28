@@ -3,7 +3,7 @@
  * and from basic JavaScript data types (lists, dicts, strings, etc.). Useful as a basis for other serializers.
  */
 
-require('doff.core.serializers.javascript', 'Serializer', 'Deserializer');
+require('doff.core.serializers.javascript', 'Serializer');
 require('doff.core.serializers.base', 'DeserializedObject', 'DeserializationError');
 var models = require('doff.db.models.base');
 
@@ -16,17 +16,38 @@ var RemoteSerializer = type('RemoteSerializer', [ Serializer ], {
     end_object: function(obj) {
         this.objects.push({
             "model"  : string(obj._meta),
-            "pk"     : string(obj._get_pk_val()),
+            "pk"     : string(obj.server_pk),
             "fields" : this._current
         });
         this._current = null;
+    },
+
+    handle_fk_field: function(obj, field) {
+        var related = getattr(obj, field.name);
+        if (related != null) {
+            if (field.rel.field_name == related._meta.pk.name) {
+                // Related to remote object via primary key
+                related = related.server_pk;
+            } else {
+                // Related to remote object via other field
+                related = getattr(related, field.rel.field_name);
+            }
+        }
+        this._current[field.name] = related;
+    },
+
+    handle_m2m_field: function(obj, field) {
+        if (field.creates_table) {
+            this._current[field.name] = [string(related.server_pk)
+                for each (related in getattr(obj, field.name).iterator())];
+        }
     }
 });
 
 /* Quiza un nombre mejor para esto, porque no solo deserializa sino que tambien 
  * transforma los objetos del servidor en objetos del cliente
  */
-function Deserializer(object_list, sync_log) {
+function RemoteDeserializer(object_list, sync_log) {
     /* Para pasar los datos a objetos de modelo asume que ya estan ordenados al obtener las referencias */
     models.get_apps();
     for each (var d in object_list) {
@@ -86,6 +107,6 @@ function Deserializer(object_list, sync_log) {
 }
 
 publish({
-    Serializer: Serializer,
-    Deserializer: Deserializer,
+    RemoteSerializer: RemoteSerializer,
+    RemoteDeserializer: RemoteDeserializer,
 });

@@ -869,7 +869,7 @@ function get_cached_row(klass, row, index_start, max_depth, cur_depth, requested
 function delete_objects(seen_objs) {
     try {
         var ordered_classes = seen_objs.keys();
-    } catch (e if e instanceof CyclicDependency) {
+    } catch (e if isinstance(e, CyclicDependency)) {
         // If there is a cyclic dependency, we cannot in general delete the
         // objects.  However, if an appropriate transaction is set up, or if the
         // database is lax enough, it will succeed. So for now, we go ahead and

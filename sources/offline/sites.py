@@ -342,40 +342,46 @@ class RemoteSite(RemoteBaseSite):
         return value
 
     @jsonrpc
-    def begin_synchronization(self, last_sync_log = None):
+    def begin_synchronization(self, sync_log = None):
         retorno = {}
-        # Last sync
-        if last_sync_log != None:
-            last_sync = datetime.datetime(*time.strptime(last_sync_log['synced_at'], '%Y-%m-%d %H:%M:%S')[:6])
-        
-        # new sync
-        synced_at = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        
+        first = sync_log == None
+
+        if not first:
+            last_sync = datetime.datetime(*time.strptime(sync_log['synced_at'], '%Y-%m-%d %H:%M:%S')[:6])
+
+        new_sync = datetime.datetime.now()
+
         # Veamos los modelos
         models = []
         for app in self._registry.values():
             for model in app.keys():
-                # Si tengo last sync levanto solo los modelos interesantes
-                if last_sync_log != None:
+                # Si no es el primero filtro solo los modelos interesantes
+                if not first:
                     model_type = ContentType.objects.get_for_model(model)
-                    sd = SyncData.objects.filter(content_type__pk = model_type.id, update_at__range=(last_sync, synced_at))
+                    sd = SyncData.objects.filter(content_type__pk = model_type.id, update_at__range=(last_sync, new_sync))
                     if bool(sd):
                         models.append(model)
                 else:
                     models.append(model)
-        
+
         if bool(models):
             # Ok esto da para largo, ordenamos, mapeamos y creamos una session
             models = get_model_order(models)
             models = map(lambda m: str(m._meta), models)
             s = SessionStore()
-            if last_sync_log != None:
+            if not first:
                 s['last_sync'] = last_sync
-            retorno['synced_at'] = s['synced_at'] = synced_at
+            s['new_sync'] = new_sync
             s.save()
-            retorno['sync_id'] = sync_id = s.session_key
+            retorno['synced_at'] = new_sync.strftime("%Y-%m-%d %H:%M:%S")
+            retorno['sync_id'] = s.session_key
 
         retorno['models'] = models
+        return retorno
+
+    @jsonrpc
+    def end_synchronization(self, sync_log = None):
+        retorno = {}
         return retorno
 
     #===========================================================================
@@ -472,7 +478,10 @@ class RemoteSite(RemoteBaseSite):
 
     def model_deleted(self, **kwargs):
         model_type = ContentType.objects.get_for_model(kwargs['sender'])
-        sd = SyncData.objects.get(content_type__pk = model_type.id, object_id=kwargs['instance'].pk)
+        try:
+            sd = SyncData.objects.get(content_type__pk = model_type.id, object_id=kwargs['instance'].pk)
+        except exceptions.ObjectDoesNotExist:
+            sd = SyncData(content_object = kwargs['instance'])
         sd.active = False
         sd.save()
 
