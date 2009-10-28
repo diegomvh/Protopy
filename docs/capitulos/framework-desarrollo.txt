@@ -438,7 +438,7 @@ definción del modelo mediante la clase interna ``Meta``:
     });
     
 
-Las búsquedas y ordenamientos, por ser métodos que devuelven QuerySet se pueden
+Las búsquedas y ordenamientos, por ser métodos que devuelven ``QuerySet``, se pueden
 encadenar, por lo que serán frecuentes consultas como las siguientes:
 
 .. code-block:: javascript
@@ -494,47 +494,35 @@ ejemplo:
 Plantillas
 ==========
 
-Doff brinda soporte al sistema de plantillas de Django. La idea detras de esto
-es que las plantillas escritas para una apilcacion on-line en Django pueda ser
-utilizada en la aplicación off-line de una forma consistente.
+Doff brinda soporte al sistema de plantillas de Django. Las plantillas escritas 
+para una apilcacion en línea son reutilzables sin modificaciones en la aplicación
+desconectada.
 
-.. note::
+Existen sin emabargo algunos factores a tener en cuenta a la hora de
+realizar plantillas para aplicaciones offline. Cuando una aplicación se
+ejecuta de manera desconectada, el navegador solo realiza una carga de documento
+y la navegación se basa manipulaciones de DOM. 
+Cada vez que se carga una página, en realidad se suprime la anterior y se anexa
+la nueva en un elemento llamado ``fake-body`` y ``fake-header``. Este trabajo
+es realizado por Doff y con ayuda del paquete ``dom`` de Protopy.
 
-	Existen sin emabargo algunos factores a tener en cuenta a la hora de
-	realizar plantillas para aplicaciones offline. Cuando una aplicación se
-	ejecuta de manera desconectada, el browser solo realiza una carga de documento
-	y la navegación se basa en la inserción y supresión de nodos sobre el elemento
-	document. Esto implica que el estado de la aplicación
-
-Retomando el ejemplo presentado en la seccion de plantillas en Django,
-continuamos desde aquí describiendo como es el trabajo con esta plantilla en
-Doff.
-
-Rapidamente, la forma de obtener un producto de la plantilla es:
-
-    # Crea un objeto ``Template`` brindando el código crudo de la plantilla
-       como una cadena.
-
-    # Llama al método ``render()`` del objeto ``Template`` con un conjunto de
-       variables (o sea, el contexto). Este retorna una plantilla totalmente
-       renderizada como una cadena de caracteres, con todas las variables y
-       etiquetas de bloques evaluadas de acuerdo al contexto.
+A continuación se realizará un breve anális de la API de plantillas y 
+su utilización en Doff.
 
 Creación de objetos Template
 ----------------------------
 
-Doff provee su versión del objeto ``Template`` para crear plantillas, y esté
-puede ser importado del módulo ``doff.template.base``, el argumento para la
-construccion del objeto es el texto en crudo de la plantilla. 
+Doff implementa la calse ``Template`` para crear plantillas, y esté
+se encuentra en el módulo ``doff.template.base``. El argumento para la
+instanciación del objeto es el texto en crudo de la plantilla. 
 
     >>> require('doff.template.base', 'Template');
     >>> t = new Template("Mi nombre es {{ name }}.");
     >>> print(t);
 
-En este ejemplo `t` es un objeto template listo para ser renderizado. Si se
-obtubo el objeto es porque la plantilla esta correctamente analizada y no se
-econtraron errores en la misma, algunos errores por los que puede fallar la
-construccion son:
+En este ejemplo ``t`` es un objeto template listo para ser renderizado. En
+caso de encontrar errores en el análisis de la plantilla, la instanciación
+de ``Template`` falla. Los errores contemplados son:
 
     * Bloques de etiquetas inválidos
     * Argumentos inválidos de una etiqueta válida
