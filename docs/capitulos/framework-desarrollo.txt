@@ -906,150 +906,77 @@ formulario desvinculado no tiene datos asociados y simplemente tiene la
 utilidad de representarse en HTML.
 
 
-Procesamiento de los datos suministrados
-========================================
+Validación de Datos
+===================
 
-Una vez que el usuario ha llenado el formulario al punto de que pasa
-nuestras reglas de validación, necesitamos hacer algo útil con los
-datos. En este caso, deseamos construir un correo electrónico que
-contenga los comentarios del usuario, y enviarlo. Para esto, usaremos
-el paquete de correo electrónico de Django.
-
-Pero antes, necesitamos saber si los datos son en verdad válidos, y si
-lo son, necesitamos una forma de accederlos. El *framework* de
-formularios hace más que validar los datos, también los convierte a
-tipos de datos de Python. Nuestro formulario para comentarios sólo
-trata con texto, pero si estamos usando campos como ``IntegerField`` o
-``DateTimeField``, el *framework* de formularios se encarga de que se
-devuelvan como un valor entero de Python, o como un objeto
-``datetime``, respectivamente.
+Un formulario vinculado, tiene la responsabilidad de validar los datos
+con los cuales ha sido instanciado. 
 
 Para saber si un formulario está vinculado (*bound*) a datos válidos,
-llamamos al método ``is_valid()``::
+se llama al método ``is_valid()``::
 
-    form = ContactForm(request.POST)
-    if form.is_valid():
-        # Process form data
+.. code-block:: javascript
 
-Ahora necesitamos acceder a los datos. Podríamos sacarlos directamente
-del ``request.POST``, pero si lo hiciéramos, no nos estaríamos
-beneficiando de la conversión de tipos que realiza el *framework* de
-formularios. En cambio, usamos ``form.clean_data``::
+    form = new ContactForm({ data: request.POST })
+    if (form.is_valid()):
+        # Hace algo con los datos del formulario
 
-    if form.is_valid():
-        topic = form.clean_data['topic']
-        message = form.clean_data['message']
-        sender = form.clean_data.get('sender', 'noreply@example.com')
-        # ...
+Para acceder a los datos se puede acceder directamente al ``request.POST``, 
+pero de esta manera no se saca provecho de la conversión que realiza Doff,
+por ejemplo, para el caso de las fechas. Se debe utilizar en cambio
+``form.clean_data``:
 
-Observa que dado que ``sender`` no es obligatorio, proveemos un valor
-por defecto por si no fue proporcionado. Finalmente, necesitamos
-registrar los comentarios del usuario. La manera más fácil de hacerlo
-es enviando un correo electrónico al administrador del sitio. Podemos
-hacerlo empleando la función::
+.. code-block:: javascript
 
-    from django.core.mail import send_mail
+    if (form.is_valid()) {
+        var name = form.clean_data['first_name'],
+            year = form.clean_data['email'];
+            //...
+        
+    }
 
-    # ...
+La validación se lleva a cabo llamado al método ``clean`` de cada campo del
+formulario. La salida de cada una de esas llamadas completa el arreglo asociativo
+``cleaned_data``. Finalmente se ejecuta la validación integral del fromulario
+llamando al método ``clean()`` del formulario si existe.
 
-    send_mail(
-        'Feedback from your site, topic: %s' % topic,
-        message, sender,
-        ['administrator@example.com']
-    )
+Se puede generar validación personalizada creando una sublcase del campo en
+el cual se requirea validación extra, pero existe un mecanismo abreviado que
+consiste en implementar un método ``clean_nombre_campo`` directamente sobre el 
+formulario. Por ejemplo:
 
-La función ``send_mail`` tiene cuatro argumentos obligatorios: el
-asunto y el cuerpo del mensaje, la dirección del emisor, y una lista
-de direcciones destino. ``send_mail`` es un código conveniente que
-envuelve a la clase ``EmailMessage`` de Django. Esta clase provee
-características avanzadas como adjuntos, mensajes multiparte, y un
-control completo sobre los encabezados del mensaje.
 
-Una vez enviado el mensaje con los comentarios, redirigiremos a
-nuestro usuario a una página estática de confirmación. La función de
-la vista finalizada se ve así::
+.. code-block:: javascript
 
-    from django.http import HttpResponseRedirect
-    from django.shortcuts import render_to_response
-    from django.core.mail import send_mail
-    from forms import ContactForm
+    var AuthorForm = type('Author', [ forms.Form ], {
+        salutation: new forms.CharField({ maxlength: 10 }),
+        first_name: new forms.CharField({ maxlength: 30 }),
+        last_name: new forms.CharField({ maxlength: 40 }),
+        email: new forms.EmailField(),
+        headshot: new forms.ImageField({ upload_to: '/tmp' }),
+        // Validación personalizada
+        clean_salutation: function () {
+            var salutation = self.data['salutation'];
+            if (!salutation in ['mr', 'ms', 'mrs', 'miss']) {
+                throw new ValidationError("%s no es un saludo válido".subs(
+                    salutation);
+            }
+            return salutation;
+        }
+        
+    });
+    
+Finalmente el orden de validación es el siguiente:
 
-    def contact(request):
-        if request.method == 'POST':
-            form = ContactForm(request.POST)
-            if form.is_valid():
-                topic = form.clean_data['topic']
-                message = form.clean_data['message']
-                sender = form.clean_data.get('sender', 'noreply@example.com')
-                send_mail(
-                    'Feedback from your site, topic: %s' % topic,
-                    message, sender,
-                    ['administrator@example.com']
-                )
-                return HttpResponseRedirect('/contact/thanks/')
-        else:
-            form = ContactForm()
-        return render_to_response('contact.html', {'form': form})
+    #. ``celan()`` de cada campo del formulario (``CharField.clean()``, ``EmailField.clean()``, etc).
+    
+        * ``clean_<nombre_campo>`` sobre el formulario, si existiese
+    
+    #. ``clean()`` del fomrulario
 
-.. exhortacion:: Redirigir luego del POST
-
-    Si un usuario selecciona actualizar sobre una página que muestra una
-    consulta POST, la consulta se repetirá. Esto probablemente lleve a
-    un comportamiento no deseado, por ejemplo, que el registro se
-    agregue dos veces a la base de datos. Redirigir luego del POST es
-    un patrón útil que puede ayudar a prevenir este escenario. Así que
-    luego de que se haya procesado el POST con éxito, redirige al
-    usuario a otra página en lugar de retornar HTML directamente.
-
-Nuestras propias reglas de validación
-=====================================
-
-Imagina que hemos lanzado al público a nuestro formulario de
-comentarios, y los correos electrónicos han empezado a llegar. Nos
-encontramos con un problema: algunos mensajes vienen con sólo una o
-dos palabras, es poco probable que tengan algo interesante. Decidimos
-adoptar una nueva póliza de validación: cuatro palabras o más, por
-favor.
-
-Hay varias formas de insertar nuestras propias validaciones en un
-formulario de Django. Si vamos a usar nuestra regla una y otra vez,
-podemos crear un nuevo tipo de campo. Sin embargo, la mayoría de las
-validaciones que agreguemos serán de un solo uso, y pueden agregarse
-directamente a la clase del formulario.
-
-En este caso, necesitamos validación adicional sobre el campo
-``message``, así que debemos agregar un método ``clean_message`` a
-nuestro formulario::
-
-    class ContactForm(forms.Form):
-        topic = forms.ChoiceField(choices=TOPIC_CHOICES)
-        message = forms.CharField(widget=forms.Textarea())
-        sender = forms.EmailField(required=False)
-
-        def clean_message(self):
-            message = self.clean_data.get('message', '')
-            num_words = len(message.split())
-            if num_words < 4:
-                raise forms.ValidationError("Not enough words!")
-            return message
-
-Este nuevo método será llamado después del validador que tiene el
-campo por defecto (en este caso, el validador de un ``CharField``
-obligatorio). Dado que los datos del campo ya han sido procesados
-parcialmente, necesitamos obtenerlos desde el diccionario
-``clean_data`` del formulario.
-
-Usamos una combinación de ``len()`` y ``split()`` para contar la
-cantidad de palabras. Si el usuario ha ingresado muy pocas palabras,
-lanzamos un error ``ValidationError``. El texto que lleva esta
-excepción se mostrará al usuario como un elemento de la lista de
-errores.
-
-Es importante que retornemos explícitamente el valor del campo al
-final del método. Esto nos permite modificar el valor (o convertirlo a
-otro tipo de Python) dentro de nuestro método de validación. Si nos
-olvidamos de retornarlo, se retornará ``None`` y el valor original
-será perdido.
+Si en este ciclo no se captura ninguna excepción los datos son válidos, caso
+contraio el formulario almacena el mensaje de error y lo presenta adecuadamente
+cuando se realiza su representación. 
 
 
 Creando formularios a partir de Modelos
