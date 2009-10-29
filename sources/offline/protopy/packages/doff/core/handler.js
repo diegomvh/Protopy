@@ -61,9 +61,6 @@ var LocalHandler = type('LocalHandler', [ object ], {
     send: function(responses) {},
 
     receive: function(request) {
-        require('doff.core.project', 'get_settings');
-        var settings = get_settings();
-
         var response = this.get_response(request);
 
         // Apply response middleware

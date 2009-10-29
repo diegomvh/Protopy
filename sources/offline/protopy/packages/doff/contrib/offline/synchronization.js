@@ -11,7 +11,6 @@ function purge(models) {
         if (issubclass(model, RemoteModel)) {
             inactivos = model.objects.filter({'active': false});
             for (var obj in inactivos) {
-                debugger;
                 var seen_objs = new CollectedObjects();
                 obj._collect_sub_objects(seen_objs);
                 var items = seen_objs.items()
