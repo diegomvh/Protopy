@@ -79,10 +79,9 @@ en la consola. Por ejemplo:
     etapa.
  
 El siguiente componente en ser analizado y migrado fue el sistema de plantillas
-(``django.templates``).
-La librería de JavaScript Dojo provee un sistema de renderizado de planitllas
-basado en la sintaxis de Django [DojoLibDjangoTmpl09]_. Sin embargo se optó 
-por portar la propia de Django ya que la implementación de Dojo no está basada
+(``django.templates``). Si bien la librería de JavaScript Dojo provee un 
+sistema de renderizado de planitllas basado en la sintaxis de Django [DojoLibDjangoTmpl09]_, 
+se optó por portar directamente la implementación de Django ya que Dojo no está basado
 en el sistema de módulos de Protopy. Esta funcionalidad se situó en el módulo 
 ``doff.templates``.
 
@@ -158,7 +157,8 @@ que cada vez que el cliente acceda a esta URL sin conexión el proyecto se vuelv
 a instanciar.
 
 Los siguientes apartados tratan sobre las implementaciones de la API del ORM,
-templates, vistas y formularios.
+templates, vistas y formularios. Además se hace un anális de una tarea 
+fundamental del ``Project`` que consite en emular HTTP.
 
 Modelos
 =======
@@ -982,58 +982,54 @@ cuando se realiza su representación.
 Creando formularios a partir de Modelos
 =======================================
 
-Construyamos algo un poquito más interesante: un formulario que
-suministre los datos de un nuevo publicista a nuestra aplicación de
-libros del `Capítulo 5`_.
+La mayoría de las veces los formularios son utilizados para ingreso
+de datos a modelos, por lo que la tarea de escribir un formulario
+para cada modelo es muy común. Doff implementa el módulo ``doff.forms.models``
+un tipo especial de formulario que inspecciona la definción del modelo y 
+genera automáticamente los capos del fomrulario. De esta manera, 
+cualquier cambio en los campos el modelo se refleja automáticamente 
+en los campos el formulario. Además añade un método ``save()``
+que genera de manera automatizada una intsancia en la base de datos del 
+modelo asociado. Para utilizar este tipo de formularios se debe extender
+de ``doff.forms.models.ModelForm`` y suministrar en el arreglo asociativo
+``Meta`` el modelo al cual se asocia. Por ejemplo:
 
-Una regla de oro que es importante en el desarrollo de software, a la
-que Django intenta adherirse, es: no te repitas (del inglés *Don't
-Repeat Yourself*, abreviado DRY). Andy Hunt y Dave Thomas la definen
-como sigue, en *The Pragmatic Programmer*:
+.. code-block:: javascript
 
-    Cada pieza de conocimiento debe tener una representación única, no
-    ambigua, y de autoridad, dentro de un sistema.
+    var AuthorForm = new type('AuthorForm', [ ModelForm ], {
+        Meta: {model: Author}
+    }); 
+    
+Adaptando la vista del ejemplo del apartado anterior:
 
-Nuestro modelo de la clase ``Publisher`` dice que un publicista tiene
-un nombre, un domicilio, una ciudad, un estado o provincia, un país, y
-un sitio web. Si duplicamos esta información en la definición del
-formulario, estaríamos quebrando la regla anterior. En cambio, podemos
-usar este útil atajo: ``form_for_model()``::
+.. code-block:: javascript
 
-    from models import Publisher
-    from django.newforms import form_for_model
-
-    PublisherForm = form_for_model(Publisher)
-
-``PublisherForm`` es una subclase de ``Form``, tal como la clase
-``ContactForm`` que creamos manualmente con anterioridad. Podemos
-usarla de la misma forma::
-
-    from forms import PublisherForm
-
-    def add_publisher(request):
-        if request.method == 'POST':
-            form = PublisherForm(request.POST)
-            if form.is_valid():
-                form.save()
-                return HttpResponseRedirect('/add_publisher/thanks/')
-        else:
-            form = PublisherForm()
-        return render_to_response('books/add_publisher.html', {'form': form})
-
-El archivo ``add_publisher.html`` es casi idéntico a nuestra plantilla
-``contact.html`` original, así que la omitimos. Recuerda además
-agregar un nuevo patrón al URLconf: ``(r'^add_publisher/$',
-'mysite.books.views.add_publisher')``.
-
-Ahí se muestra un atajo más. Dado que los formularios derivados de
-modelos se emplean a menudo para guardar nuevas instancias del modelo
-en la base de datos, la clase del formulario creada por
-``form_for_model`` incluye un conveniente método ``save()``. Este
-método trata con el uso común; pero puedes ignorarlo si deseas hacer
-algo más que tenga que ver con los datos suministrados.
-
-``form_for_instance()`` es un método que está relacionado con el
-anterior, y puede crear formularios preinicializados a partir de la
-instancia de un modelo. Esto es útil al crear formularios "editar".
+       function crear_autor(request) {
+        // El formulario es para validacion
+        if (request.method == "POST") { 
+            var form = new AuthorForm({ data: request.POST });
+            // Los datos ingresados son validos?
+            if (form.is_valid()) {
+                // Creamos el autor a partir del formulario
+                var autor = form.save();
+                // Redireccionamos a una pagina sobre el autor
+                return redirect('/autores/%d'.subs(autor.id));
+            }
+            // Si el formulario no es valido, cuando se muestre
+            // en el template, se marcaran los errores de validación
+        } else {
+            // Creamos el form vacio
+            var form = new AuthorForm();
+        }
+        
+        return render_to_response("mi_formulario", {
+            form: form
+        });
+    
+    }
+        
+Se ha realizado hasta aquí un anális de los elementos migrados y las modificaciones
+que se definieron para ejecutar un proyecto en un ambiente desconectado, sin
+embargo se definió como meta la interacción con un proyecto existente. En el 
+capítulo siguiente se realiza un anális del trabajo realizado para tal fin.  
 
