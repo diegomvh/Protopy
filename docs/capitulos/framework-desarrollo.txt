@@ -600,17 +600,60 @@ caso la búsqueda de template se realizará en ``templates/`` a partir de donde
 se instanció el proyecto.
 
 
-Vistas y Asociaciones de URLs
-=============================
+Vistas y Emulación de HTTP
+==========================
 
-Las vistas son las funciones que contienen la lógica de la aplicación. Están
+Las vistas son en Doff funciones que contienen la lógica de la aplicación. Están
 asociadas a URLs en el archivo ``urls.js`` (siempre que no se halla modifcado
 el ``ROOT_URLCONF``) del proyecto desconectado. Al igual
 que Django, la variable que almacena estas asociaciones es ``urlpatterns``.
 En el mapeo se pueden hacer inclusiones de módulos de URLs definidos en las 
 aplicaciones.
 
- 
+En una aplicación en línea, con cada click sobre un enlace, envío de formulario
+o solicitud asincrónica (AJAX) se realiza un requerimiento al servidor, es decir
+se traduce en una solicitud HTTP.
+
+Cuando la aplicación se encuentra desconectada, es decir, se ha instanciado
+el proyecto, Doff utiliza dos clases para emular HTTP y el comportamiento
+predefinido del navegador. Estas clases son ``DOMAdapter`` y ``URLHandler``.
+
+``DOMAdapter`` se encarga de crear un documento falso en el DOM, un historial
+y administrar la interacción con el usuario, generando instancias de ``Request``
+con los eventos de los enlaces y formularios, que son enviadas al ``LocalHandler``
+como ``Request`` que emulan las peticiones HTTP. 
+
+En Django, cuando se recibe una petición, es procesada por una instancia de
+la clase ``Handler``. El equivalente en el proyecto desconectado es ``LocalHandler``.
+Se encarga de procesar las peticiones que envía el ``DOMAdapter``,
+realizando la ejecución del clico normal de proceso  los ``Middlewares`` que conllevan
+la resolución de la URL y ejecución de la vista.
+
+La salida de la vista se envuelve en un objeto ``Response``, equivalente a
+la respuesta HTTP, que es devuelto al ``DOMAdapter``.
+
+Cuando el ``DOMAdapter`` recibe la respuesta, reliza las tareas de acutalización
+de la fachada del navegador, estas comprenden: actualizar el documento falso, 
+genera una entrada en el historial y registrarse los eventos de los links y formularios
+con los nuevos contenidos del documento.
+
+
+
+
+Con cada entrada en el historial se modifica la *query* de la URL. La instancia
+de ``History`` captura durante la instanciación del proyecto desconectado la URL raíz.
+La navegación en el proyecto desconectado se realiza en base a la url raíz. 
+Por ejemplo, si la URL en la que se instancia el proyecto es::
+
+    http://mi_dominio.com/base_offline/base
+    
+y se accede en la aplicación en línea a la URL::
+
+    http://mi_dominio.com/base_offline/base/ventas
+
+El objeto ``History`` generará la URL
+
+    http://mi_dominio.com/base_offline/base/#ventas
 
 
 
