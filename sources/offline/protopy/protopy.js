@@ -214,13 +214,13 @@
             if (name === null) return Object;
             return name.constructor;
         }
-        if (isinstance(args[0], Array) && args[0].length > 0)
+        if (args[0] && isinstance(args[0], Array) && args[0].length > 0)
             var bases = args.shift();
-        else if (!isinstance(args[0], Array) && isinstance(args[0], Function))
+        else if (args[0] && !isinstance(args[0], Array) && isinstance(args[0], Function))
             var bases = [args.shift()];
         else
             throw new TypeError('Invalid arguments: %s'.subs(arguments));
-        if (isinstance(args[0], Object) && args.length == 2) {
+        if (args[0] && isinstance(args[0], Object) && args.length == 2) {
             var classAttrs = args.shift();
             var instanceAttrs = args.shift();
         } else if (args.length == 1) {
@@ -1464,18 +1464,20 @@
         return typeof(value) === "undefined";
     }
 
-    function isinstance(object, _type) {
-        if (isundefined(object) || isundefined(_type) || _type === null)
-            return false;
-        if (type(_type) != Array) 
-            _type = [_type];
+    function isinstance(obj, types) {
+        if (isundefined(obj) || isundefined(types) || types == null)
+            throw new TypeError('isinstance() arg 2 must be a class, type, or array of classes and types');
+        if (type(types) != Array) 
+            types = [types];
         var others = [];
-        for each (var t in _type) {
-            if (isundefined(t)) continue;
-            if (type(object) === t) return true;
+        for each (var t in types) {
+            if (type(obj) == t) 
+                return true;
+            if (isundefined(t.__subclasses__))
+                return false;
             others = others.concat(t.__subclasses__);
         }
-        return (others.length !== 0)? isinstance(object, others) : false;
+        return (others.length != 0)? isinstance(obj, others) : false;
     }
 
     function issubclass(type2, _type) {
@@ -2090,7 +2092,7 @@
             var args = flatten(array(arguments));
             //%% escaped
             var str = this.replace(/%%/g, function(str, p){ return '<ESC%%>'; });
-            if (args[0] && (type(args[0]) == Object || isinstance(args[0], object)))
+            if (args[0] && type(args[0]) == Object)
                     str = new Template(str, args[1]).evaluate(args[0]);
             else
                     str = str.replace(/%(-?\d*|\d*\.\d*)([s,n])/g, function(str, f, t) {
