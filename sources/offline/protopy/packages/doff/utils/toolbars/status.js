@@ -18,21 +18,21 @@ var uninstalled_template =
             right: 8px;
             top: 7px;
         }
-        div#status_store_bar {
-	    background:white none repeat scroll 0 0;
-            border: 1px solid #949DAD;
-            height: 0.5em;
-            margin: 5px;
-            overflow: hidden;
-            padding: 1px;
-            width: 300px;
+
+        div.doff-progress-container {
+            border: 1px solid #ccc; 
+            width: 100px; 
+            margin: 2px 5px 2px 0; 
+            padding: 1px; 
+            float: left; 
+            background: white;
         }
-        div#status_store_bar div#status_store_progress {
-            background: #D4E4FF none repeat scroll 0 0;
-            font-size: 0;
-            height: 100%;
-            width: 0;
+
+        div.doff-progress-container > div {
+            background-color: #ACE97C; 
+            height: 12px
         }
+
     </style>
     <div id="status-content">
     <h2>%(PROJECT_NAME)s</h2><br>
@@ -90,9 +90,9 @@ var Status = type('Status', [ Panel ], {
             return;
         if (isundefined(this.project.system))
             this.project._create_stores();
-        
+
         e.target.remove();
-        $('status-content').insert('<div id="status_store_bar"><div id="status_store_progress"/></div>');
+        $('status-content').insert('<div class="doff-progress-container"><div id="doff-status-store-progress"/></div>');
         var c = len(this.project.managed_stores);
         for (var i = 0; i < c; i++)
             event.connect(this.project.managed_stores[i], 'onSyncProgress', function(event) {
@@ -100,7 +100,7 @@ var Status = type('Status', [ Panel ], {
                 var indice = i;
                 var valor = ((100 / cantidad) * indice) + Math.ceil((event.filesComplete / event.filesTotal) * ( 100 / cantidad ));
                 print(valor);
-                $('status_store_progress').style.width = valor + "%";
+                $('doff-status-store-progress').style.width = valor + "%";
             });
         this.project.install();
     },

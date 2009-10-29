@@ -1,8 +1,8 @@
-div#toolbar {
+div#doff-toolbar {
     font-family: "Trebuchet MS" Verdana, Arial, sans-serif;
     font-size: 1em;
     width: 90%;
-    height: 20px;
+    height: 25px;
     position: fixed;
     bottom: 0px;
     margin-left: 5%;
@@ -13,7 +13,7 @@ div#toolbar {
     border-right: 1px solid #CCCCCC;
 }
 
-div#toolbar div.panel {
+div#doff-toolbar div.doff-panel {
     background: #EEEEEE;
     border-top: 1px solid #CCCCCC;
     border-left: 1px solid #CCCCCC;
@@ -21,11 +21,11 @@ div#toolbar div.panel {
     font-weight: bold;
     text-indent: 15px;
     position: fixed;
-    bottom: 20px;
+    bottom: 24px;
     margin-left: 5%;
 }
 
-div#toolbar div.panel h1.header {
+div#doff-toolbar div.doff-panel h1.doff-panel-header {
     background-color: #3A4856;
     color: #FFFFFF;
     font-size: 12pt;
@@ -36,13 +36,13 @@ div#toolbar div.panel h1.header {
     vertical-align: middle;
 }
 
-div#toolbar div.panel h1.header img {
+div#doff-toolbar div.doff-panel h1.doff-panel-header img {
     float: right;
     margin-right: 4px;
     margin-top: -19px;
 }
 
-div#toolbar div.panel div.content {
+div#doff-toolbar div.doff-panel div.doff-panel-content {
     text-indent: 0;
     margin: 4px;
     position: relative;
@@ -50,7 +50,8 @@ div#toolbar div.panel div.content {
 }
 
 
-div#toolbar ul {
+div#doff-toolbar ul.doff-toolbar-bar {
+    background: #EEEEEE;
     border-top: 1px solid #CCCCCC;
     border-left: 1px solid #CCCCCC;
     border-right: 1px solid #CCCCCC;
@@ -59,17 +60,18 @@ div#toolbar ul {
     height: 29px;
 }
 
-div#toolbar ul li {
+div#doff-toolbar ul.doff-toolbar-bar li.doff-toolbar-item {
+    border-style: none;
     border-right: 1px solid #888888;
     padding-left: 6px;
     padding-right: 6px;
-    font-size: 70%;
+    //font-size: 70%;
     display: inline;
     color: #112ABB;
     text-decoration: underline;
     cursor:pointer;
 }
 
-div#toolbar ul li:last-child {
+div#doff-toolbar ul.doff-toolbar-bar li.doff-toolbar-item:last-child {
     border-right: none;
 }

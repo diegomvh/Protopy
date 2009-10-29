@@ -120,7 +120,7 @@ var RegexURLResolver = type('RegexURLResolver', [ object ], {
                 try {
                     var sub_match = pattern.resolve(new_path);
                 } catch (e if isinstance(e, Resolver404)) {
-                    tried = tried.concat([(pattern.regex.pattern + '   ' + t) for (t in e.args[0]['tried'])]);
+                    tried = tried.concat([(pattern.regex.pattern + '   ' + t) for (t in e.kwargs['tried'])]);
                 }
                 if (sub_match) {
                     return [sub_match[0], sub_match[1], extend(this.default_kwargs, sub_match[2])];
@@ -182,7 +182,6 @@ var RegexURLResolver = type('RegexURLResolver', [ object ], {
         return self._reverse_dict
     },
 
-    
     def reverse(self, lookup_view, *args, **kwargs):
         if args and kwargs:
             raise ValueError("Don't mix *args and **kwargs in call to reverse()!")

@@ -262,11 +262,11 @@
     /* Retorna el objeto gears, de no existir lo crea en window.google.gears */
     function get_gears(){
         var factory;
-        
+
         if (window.google && window.google.gears) { 
                 return window.google.gears; 
             } // already defined elsewhere
-        
+
         if(typeof GearsFactory != "undefined"){ // Firefox
             factory = new GearsFactory();
         } else {
@@ -354,8 +354,12 @@
         manager: ModuleManager,
         // This attribute should be overriden by the adapter
         window: window,
-        // 
-        transport: XMLHttpRequest
+        // Transporte
+        transport: XMLHttpRequest,
+        // Documento
+        document: document,
+        // Historial
+        history: history
     });
 
     sys.gears = get_gears();
@@ -364,14 +368,15 @@
     /* Modulo: exception, clases o tipos de excepciones que preovee protopy */ 
     var Exception = type('Exception', [ object ], {
         __init__: function(message) {
-            //TODO: Ver como tomar mas informacion de quien larga la exception
-            //this.caller = arguments.callee.caller;
+            var arg = new Arguments(arguments);
+            this.args = arg.args;
+            this.kwargs = arg.kwargs;
             this.name = this.__name__;
-            //this.message = (message && type(message) == String)? message : '';
+            this.message = message || '';
         },
         __str__: function() { return this.__name__ + ': ' + this.message; }
     });
-    
+
     var exception = ModuleManager.create('exceptions', 'built-in', {
         Exception: Exception,
         AssertionError: type('AssertionError', Exception),
@@ -626,6 +631,7 @@
             this.transport = new XMLHttpRequest();
             this.request(url);
         },
+
         request: function(url) {
             this.url = url;
             this.method = this.options.method;
@@ -657,7 +663,7 @@
 
                 /* Force Firefox to handle ready state 4 for synchronous requests */
                 if (!this.options.asynchronous && this.transport.overrideMimeType)
-                    this.onStateChange();   
+                    this.onStateChange();
             }
             catch (e) {
                 this.dispatchException(e);
@@ -865,12 +871,12 @@
 
     /******************** dom **************************/
     //Based on peppy
-    var doc = document;
+    var doc = sys.document;
     var cache = {};
     var cacheOn = !sys.browser.IE && !sys.browser.WebKit;
     var persistCache = {};
     var _uid = 0;
-        
+
     var reg = {
         trim : /^\s+|\s+$/g,
         quickTest : /^[^:\[>+~ ,]+$/,
@@ -934,8 +940,8 @@
             cache[ cacheKey ] = result.slice(0);
             return result;
 
-        } else if( doc.getElementsByClassName ) {
-            result = array( doc.getElementsByClassName( selector ) ); 
+        } else if( sys.document.getElementsByClassName ) {
+            result = array( sys.document.getElementsByClassName( selector ) ); 
             
             if( tag != "*" ) 
                 result = filter( result, tag );
@@ -966,7 +972,7 @@
         if( root.getElementById )
             rs = root.getElementById( selector );
         else
-            rs = doc.getElementById( selector );
+            rs = sys.document.getElementById( selector );
         
         if( rs && get_attribute( rs, "id" ) === selector ) {                    
             result[ result.length ] = rs;
@@ -1058,34 +1064,34 @@
                 .replace( /['"]/g, "") // remove all quotations
                 .replace( /\(\s*even\s*\)/gi, "(2n)") // replace (even) with (2n) - pseudo arg (for caching)
                 .replace( /\(\s*odd\s*\)/gi, "(2n+1)"); // replace (odd) with (2n+1) - pseudo arg (for caching)
-        }                       
-            
-        if( typeof root === "string" ) {
-            root = (root = get_context_from_sequence_selector( root, doc )).length > 0 ? root : undefined;
         }
 
-        root = root || doc;
+        if( typeof root === "string" ) {
+            root = (root = get_context_from_sequence_selector( root, sys.document )).length > 0 ? root : undefined;
+        }
+
+        root = root || sys.document;
         root.uid = root.uid || _uid++;
-            
+
         var cacheKey = selectorGroups + root.uid;
         if( cacheOn && cache[ cacheKey ] ) 
             return cache[ cacheKey ];
-            
+
         reg.quickTest.lastIndex = 0;
         if( reg.quickTest.test( selectorGroups ) ) {
             elements = get_context_from_sequence_selector( selectorGroups, root, includeRoot, flat );
             return (cache[ cacheKey ] = elements.slice(0));
         }
-            
+
         var groupsWorker, 
             groups, 
             selector, 
             parts = [], 
             part;
-                
+
         groupsWorker = selectorGroups.split( /\s*,\s*/g );
         groups = groupsWorker.length > 1 ? [""] : groupsWorker;
-        
+
         // validate groups
         for( var gwi = 0, tc = 0, gi = 0, g; groupsWorker.length > 1 && (g = groupsWorker[ gwi++ ]) !== undefined;) {
             tc += (((l = g.match( /\(/g )) ? l.length : 0) - ((r = g.match( /\)/g )) ? r.length : 0));
@@ -1094,8 +1100,8 @@
             if( tc === 0 ) 
                 gi++;
         }
-        
-        var gCount = 0;                         
+
+        var gCount = 0;
         while( (selector = groups[gCount++]) !== undefined ) {
             reg.quickTest.lastIndex = 0;
             if( reg.quickTest.test( selector ) ) {
@@ -1112,18 +1118,18 @@
                     cLength, 
                     cCount = 0, 
                     result;
-                        
+
                 parts = selector.split( reg.combinator );
                 pLength = parts.length;
-                
+
                 combinators = selector.match( reg.combinator ) || [""];                                 
                 cLength = combinators.length;
-                
+
                 while( pCount < pLength ) {
                     var c, 
                         part1, 
                         part2;
-                            
+
                     c = combinators[ cCount++ ].replace( reg.trim, "");
                     part1 = result || query( parts[pCount++], root, includeRoot, true, flat );
                     part2 = query( parts[ pCount++ ], 
@@ -1131,17 +1137,17 @@
                                                             c == "" || c == ">", 
                                                             true,
                                                             flat );
-                                                            
+
                     result = query_combinator( part1, part2, c );
                 }
-                
+
                 elements = groups.length > 1 ? elements.concat( result ) : result;                                                         
                 result = undefined;
             } else {
                 result = query_selector( selector, root, includeRoot, flat );
                 elements = groups.length > 1 ? elements.concat( result ) : result;
             }
-        }       
+        }
             
         if( groups.length > 1 ) 
             elements = filter(elements);
@@ -1313,7 +1319,7 @@
             "!" : function( e, a, v ) { return get_attribute(e,a) !== v; }
         },
         pseudos: {
-            ":root" : function( e ) { return e === doc.getElementsByTagName( "html" )[0] ? true : false; },
+            ":root" : function( e ) { return e === sys.document.getElementsByTagName( "html" )[0] ? true : false; },
             ":nth-child" : function( e, n, a, b, t ) {  
                 if( !e.nodeIndex ) {
                     var node = e.parentNode.firstChild, count = 0, last;
@@ -1409,7 +1415,7 @@
             }
         }
     }
-    
+
     var dom = ModuleManager.create('dom', 'built-in', {
         query: query,
         cache: function(value) {
