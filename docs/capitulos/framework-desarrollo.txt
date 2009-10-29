@@ -305,7 +305,9 @@ o administradores de consultas.
 
 En el ejemplo la linea ``Publisher.objects.all()`` del ejemplo anterior, se solicita
 al administrador ``objects`` de Publisher que obtenga todos los registros,
-internamente esto genera una consulta SQL::
+internamente esto genera una consulta SQL:
+
+.. code-block:: sql
 
     SELECT
         id, name, address, city, state_province, country, website
@@ -524,7 +526,9 @@ El contexto esta representado en el tipo ``Context``, el cual se encuentra en el
 módulo ``doff.template.base``. La construcción del objeto toma un argumento
 opcional  un arreglo asociativo. La llamada al método ``render()`` del la 
 instancia de ``Template`` con el contexto como argumento "rellena" la
-plantilla::
+plantilla:
+
+.. code-block:: javascript
 
     >>> requiere('doff.template.base', 'Context', 'Template');
     >>> t = new Template("Mi nombre es {{ name }}.")
@@ -535,7 +539,9 @@ plantilla::
 El objeto ``Template`` puede ser procesado con múltiples contextos, obteniendo
 así salidas diferentes para la misma plantilla. Por cuestiones de eficiencia es
 conveniente crear un objeto ``Template`` y luego llamar a ``render()``
-sobre este muchas veces::
+sobre este muchas veces:
+
+.. code-block:: javascript
 
     # Código ineficiente
     for each (var name in ['John', 'Julie', 'Pat']) {
@@ -578,7 +584,9 @@ para la carga similar al de Django. Para tal fin en el módulo ``settings.js`` s
 el valor ``TEMPLATE_URL``.
 
 Se ve a continuación un ejemplo de una vista que retorna HTML generado por una
-plantilla::
+plantilla:
+
+.. code-block:: javascript
 
     require('doff.template.base', 'Template', 'Context');
     require('doff.utils.http', 'HttpResponse');
@@ -913,7 +921,7 @@ Un formulario vinculado, tiene la responsabilidad de validar los datos
 con los cuales ha sido instanciado. 
 
 Para saber si un formulario está vinculado (*bound*) a datos válidos,
-se llama al método ``is_valid()``::
+se llama al método ``is_valid()``:
 
 .. code-block:: javascript
 
