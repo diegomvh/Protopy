@@ -324,7 +324,7 @@ function modelform_factory(model) {
 
     // If parent form class already has an inner Meta, the Meta we're
     // creating needs to inherit from the parent's inner meta.
-    var Meta = kwargs['form'].Meta || {};
+    var Meta = extend(kwargs['form'].Meta || {}, attrs);
 
     // Give this new form class a reasonable name.
     var class_name = model.__name__ + 'Form';

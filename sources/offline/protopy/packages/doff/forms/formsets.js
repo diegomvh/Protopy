@@ -55,7 +55,6 @@ var BaseFormSet = type('BaseFormSet', [ object ], {
 
     get management_form() {
         /*Returns the ManagementForm instance for this FormSet.*/
-        debugger;
         if (bool(this.data) || bool(this.files)) {
             var form = new ManagementForm({data: this.data, auto_id: this.auto_id, prefix: this.prefix});
             if (!form.is_valid())
@@ -121,7 +120,7 @@ var BaseFormSet = type('BaseFormSet', [ object ], {
         if (i >= this.initial_form_count())
             defaults['empty_permitted'] = true;
         extend(defaults, kwargs);
-        var form = new Form(defaults);
+        var form = new this.form(defaults);
         this.add_fields(form, i);
         return form;
     },
@@ -327,7 +326,6 @@ var BaseFormSet = type('BaseFormSet', [ object ], {
         // XXX: there is no semantic division between forms here, there
         // probably should be. It might make sense to render each form as a
         // table row with each field as a td.
-        debugger;
         var forms = [form.as_table() for each (form in this.forms)].join(' ');
         return [string(this.management_form), forms].join('\n');
     }
