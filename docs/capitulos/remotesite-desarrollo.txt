@@ -26,35 +26,74 @@ no pueden ser traducidas a JavaScript sin la intervensión del programador.
 
 En el capítulo sobre Doff se introdujo vagamente una aplicación Django llamada
 ``offline`` que tenía como objetivo servir estáticamente al cliente con
-el código de Doff y Protopy. En el presente capítulo se crea dentro de 
-dicha aplicación una entidad especial, el RemoteSite con el objetivo de
-crear el proyecto en el browser de una manera automatizada, brindar seguridad
-sobre los datos y proveer mecanismos extensibles para sincronización.
+el código de Doff y Protopy. En el presente capítulo se centra sobre la 
+utilidad de dicha aplicación.
+
+Se introduce la entidad ``RemoteSite`` que tiene como objetivo ser el punto
+vínculo con la aplicación desconectada y brindar mecanismos para seguridad
+y sincronización de datos. Esta entidad se encuentra implementada en el 
+la aplicación ``offline``.
+
+Como se introdujo en el capítulo teórico sobre las tecnologías del servidor,
+el mecanismo de comunicación con Django es la lína de comandos (CLI) y
+brinda una API para la generación de comandos presonalizados que se aprovechó
+para automatizar varios pasos de la migración de un proyecto.
 
 RemoteSite
 ----------
 
-Se creó la entidad RemoteSite como definición del proyecto desconectado
-dentro de la aplicación en línea que le da origen. 
-Un proyecto puede tener uno o más RemoteSites. Cada sitio remoto está 
-publicado en una URL.
+La calse ``RemoteSite`` define un proyecto desconectado. Tiene varias 
+responsabilidades, entre ellas, servir el código del framework Doff,
+el del proyecto, administrar la forma en que el cliente accede a los
+datos y permitir la sincornización. Esta clase se impleentó en 
+``offline.sites.RemoteSite``.
 
-Para esta tarea se tomó el equema propuesto por ``django.contrib.admin`` de 
-generar clases encargadas de trabajar con los modelos. 
+Su interfase está basada en buena medida en la que presenta la adminstración
+que provee Django (``django.contrib.admin``), donde un 
+sitio de administración se encarga de las operaciones de CRUD sobre 
+los modelos que le son registrados. Pueden existir múltiples sitios de
+administración en un proyecto. Cada sitio se publica en una 
+URLs dentro del proyecto [DjangoNewFormsAdminBranch09]_.
 
-Cada ``RemoteSite``, como proyecto desconectado, cuenta con los módulos
-``settings.js``, ``urls.js`` y las aplicaciones con módulos ``views.js``, 
-``models.js``. Todos estos módulos son recursos estáticos que son servidos
-por el ``RemoteSite`` y son almacenados en un subdirectorio del proyecto
-desconectado. Este directorio se define en la variable de configuración
-``OFFLINE_BASE`` en el módulo ``settings.py``.
+.. [DjangoNewFormsAdminBranch09] Brian Rosner, Django Trac,
+   *The newforms-admin branch*,
+   último acceso Octubre 2009,
+   http://code.djangoproject.com/wiki/NewformsAdminBranch,
+   http://code.djangoproject.com/changeset/7967
 
-Las instancias de RemoteSite poseen un nombre único en el proyecto, que
-conjugado con la variable ``OFFLINE_BASE`` definen la URL de publicación del sitio.
+Un ``RemoteSite`` representa *una* migración del proyecto. Es decir,
+para un mismo proyecto en línea, pueden existir una o más migraciones.
+Cada sitio remoto se encuentra publicado en alguna URL en el proyecto.
+Cada sitio remoto posee una serie de modelos registrados, sobre los cuales
+se puede definir cuales son de solo lectura y cuales de lectura-escritura
+(en la sincronización).
+Mediante el mecanismo de autenticación y autorización de Django 
+(``django.contrib.auth``) se puede restringir que usuario o rol
+accede a cada sitio remoto. 
 
-El sitio remoto sirve además del proyecto, el código del framework y de 
-Doff. La instancia de ``doff.core.project.Project`` conoce las URLs donde
-el ``RemoteSite`` publica estos recursos.
+Existe una directorio (que también es un módulo Python) donde se almacenan
+los módulos que definen los sitios remotos. Cada sitio remoto posee un 
+nombre único. El nombre de este directorio se define en el módulo ``settings.py``
+del proyecto como ``OFFLINE_BASE``.
+
+Por cada sitio remoto existe un subdirectorio donde se almacena el código
+JavaScript del proyecto y sus aplicaciones: ``OFFLINE_BASE/<nombre_sitio_remoto>``. 
+
+En su nivel base se cuenta con los módulos ``settings.js``, ``urls.js``.
+Cada aplicación es un subdirectorio y cuenta con módulos ``views.js``, 
+``mixins.js``, ``tests.js`` y ``urls.js``.
+
+Existe una estrecha interacción entre Doff y los sitios remotos:
+El sitio remoto publica una serie de URLs de donde Doff descarga los modulos y
+recursos que componen a la aplicación, para almacenarlos localmente y poder
+ejecutar el proyecto cuando el cliente se encuentre sin conexión. Esta tarea
+se realiza mediante un manifesto publicado en la URL ``manifest.json``.
+
+El componente ``ManagedLocalStore`` de Gears se encarga de persistir en el
+cliente todas las URLs que publique el manifesto.
+
+
+A continuación se realiza una descripción del método de migración de proyectos.
 
 Migración de una Proyecto
 -------------------------
@@ -77,8 +116,8 @@ de los siguientes pasos:
 
 El primer paso para la migración consiste en la instalación de la
 aplicación de soporte ``offline`` al proyecto. Para esto
-se la descarga y al ``PYTHONPATH`` y luego se la incluye en ``INSTALLED_APPS`` 
-del proyecto en linea. 
+se la descarga y añade al ``PYTHONPATH``. Posteriormente se debe agregar a
+``INSTALLED_APPS`` del proyecto en linea. 
 
 Una vez realizado este paso se habilitan varios comandos para la administración 
 de proyectos desconectados al 
@@ -93,14 +132,25 @@ antes mencionados. Los comandos implementados son los siguientes:
     en el cual define la instancia de ``RemoteSite`` con el nombre dado. Utiliza
     también el nombre para crear un subdirectorio en el ``OFFLINE_BASE`` donde
     crea el esqueleto del proyecto desconetado (``settings.js`` y ``urls.js`` 
-    que son rellenados con la configuración de la aplicación en linea).
+    que son rellenados con la configuración disponible de la aplicación en linea).
     
     Por ejemplo:
     
     .. code-block:: bash
     
-        $ manage.py start_remotesite soporte_offline
+        $ manage.py start_remotesite vendedor_viajante
         
+    Esto crea en el directorio de la aplicación la siguiente estuctura (suponiendo
+    que ``OFFLINE_BASE`` sea la cadena ``soporte_offline``)::
+        
+        soporte_offline/
+            remote_vendedor_viajante.py
+            vendedor_viajante/
+                settings.js
+                urls.js
+                logging.js
+    
+    
  
  * ``list_remotesites``
     
@@ -119,7 +169,23 @@ antes mencionados. Los comandos implementados son los siguientes:
     
     .. code-block:: bash
     
-        $ manage.py migrate_app soporte_offline bookstore
+        $ manage.py migrate_app vendedor_viajante catalogo
+        
+    El ejemplo anterior, basados en lo definido en el comando de más arriba, 
+    produciría la siguiente salida::
+    
+        soporte_offline/
+            remote_vendedor_viajante.py
+            vendedor_viajante/
+                settings.js
+                urls.js
+                logging.js
+                catalogo/
+                    views.js
+                    mixins.js
+                    tests.js
+                    urls.js
+    
     
  * ``manifest_update``
  
@@ -139,23 +205,25 @@ la siguiente estructura:
 
     site = LibrarianRemoteSite('librarian')     
 
-Registro de Modelos
--------------------
+Publicación de Modelos
+----------------------
 
 Como se mencionó en el capítulo introductorio, es deseable contar con 
 un mecanismo de separación de los datos a los cuales accede al cliente
-por seguridad y eficiencia. Esta tarea fue asingada a los ``RemoteSites``.
+por seguridad y eficiencia.
 
+Para tal fin se creó la clase ``RemoteModelProxy`` o proxy de modelos que 
+envuelve a los modelos de las aplicaciones.
 Por defecto ningún modelo es visible para el cliente. Se deben publicar
-explicitamente mediante un método llamado ``register()``. Esta idea también
-fue tomada de la extensión ``django.contrib.admin`` antes mencionada. 
+explicitamente mediante un método llamado ``register(model, proxy = None)`` [*]_.
 
-El método ``register`` debe ser llamado sobre la instancia definida en el módulo 
-``OFFLINE_BASE.remote_<nombre-modulo>`` (en el sistema de archivos 
-OFFLINE_BASE.remote_<nombre-modulo>.py).
+.. [*] Esta idea también fue tomada de la aplicación genérica ``django.contrib.admin`` antes mencionada. 
 
-Opcionalmente ee puede modificar la forma en la que el cliente ve el modelo 
-mediante la definición de una clase ``RemoteModelProxy``.
+El método ``register`` debe ser llamado sobre la instancia del remote site (definida en el módulo 
+``OFFLINE_BASE.remote_<nombre-modulo>`` - en el sistema de archivos 
+OFFLINE_BASE.remote_<nombre-modulo>.py). Este método recibe una instancia 
+opcional de ``RemoteModelProxy`` que en el caso de no ser provista se genera 
+internamente.
 
 Por ejemplo, la definción del sitio remoto quedaría como sigue para el ejemplo
 anterior:
@@ -171,36 +239,27 @@ anterior:
     site.register(Author)
     
 De esta manera las vistas del sitio remoto tendrán disponible los 
-modelos ``Book`` y ``Author``.
+modelos ``Book`` y ``Author``. 
 
-Internamnte el método ``register(model, proxy)`` cuando es llamado sin 
-una instancia de ``RemoteModelProxy`` como segundo argumento, genera un
-proxy que publica toda la especificación del modelo.
-
-Proxies de Modelos
-------------------
-
-Los ``RemoteModelProxy`` son clases que definen la forma en la que se expone
-un modelo en un ``RemoteSite``. Sus atributos definen el modelo al que están asociados, 
-los campos que publican y el manager con el cual se presental al cliente.
-Por ejemplo:
+Para personalizar la definición y acceso a datos de un modelo, se debe 
+crear una subclase de ``RemoteModelProxy``. Dentro de esta subclase se
+pueden definir los campos a publicar mediante (``fields``, ``include``,
+``exclude``) y el ``Manager`` del modelo a utilizar. Por ejemplo:
 
 .. code-block:: python
-    
-    
+
     class TagRemote(RemoteModelProxy):
         class Meta:
-            model = Tag
+            model = Tag # Este campo es opcional
             exclude = ('title', )
             manager = Tag.objects
     
     site.register(Tag, TagRemote) # Registro
 
 El manager permite filtrar las entidades que son accedidas por el cliente.
-Si el cliente es un usuario de la aplicación, mediante la implementación de un
+Si el cliente es un usuario autenticado en el proyecto, mediante la implementación de un
 ``Manager`` que discrimine usuarios autenticados [*]_, se puede limitar la visión
-de las instancias de un modelo
-
+de las instancias de un modelo (o filas sobre la base de datos).
 
 .. [*] El usuario se ha autenticado en la aplicación en línea contra las entidades
        de ``django.contrib.auth.models.User``.
