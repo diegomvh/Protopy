@@ -32,7 +32,7 @@ var History = type('History', [ object ], {
     back: function() {
         history.back();
     },
-    
+
     forward: function() {
         history.forward();
     }
@@ -40,15 +40,16 @@ var History = type('History', [ object ], {
 
 var Document = type('Document', [ object ], {
     __init__: function() {
+        this.html = document.getElementsByTagName('body')[0];
         this.head = document.createElement('div');
-        this.head.id = "head";
+        this.head.id = "doff-head";
         this.body = document.createElement('div');
-        this.body.id = "body";
+        this.body.id = "doff-body";
         // Apagando la chache del selector
         dom.cache(false);
-        $$('body')[0].update('');
-        $$('body')[0].insert(this.head);
-        $$('body')[0].insert(this.body);
+        this.html.update('');
+        this.html.insert(this.head);
+        this.html.insert(this.body);
     },
 
     update: function(content) {
@@ -62,7 +63,21 @@ var Document = type('Document', [ object ], {
             this.body.update(content);
         this.forms = this.body.select('FORM');
         this.links = this.body.select('A');
+    },
+    getElementsByClassName: function(name) {
+        return this.html.getElementsByClassName(name);
+    },
+    getElementsByTagName: function(name) {
+        if (name == "head")
+            return [ this.head ];
+        if (name == "body")
+            return [ this.body ];
+        return this.html.getElementsByTagName(name);
+    },
+    getElementById: function(id){
+        return document.getElementById(id);
     }
+
 });
 
 var DOMAdapter = type('DOMAdapter', [ object ], {
@@ -161,7 +176,7 @@ var DOMAdapter = type('DOMAdapter', [ object ], {
         request.method = 'get';
         this._process_request(request);
     },
-    
+
     _process_from_string: function(s) {
         var url = this._build_url(s);
         var request = this._build_request(url);

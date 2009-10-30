@@ -578,8 +578,7 @@ var DecimalField = type('DecimalField', [ Field ], {
     to_javascript: function(value) {
         if (!value)
             return value;
-        //TODO ver que pasa con los decimal
-        return decimal.Decimal(value);
+        return Number(value);
     },
 
     _format: function(value) {

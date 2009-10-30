@@ -9,13 +9,13 @@ var Panel = type('Panel', object, {
 
         //The body element, panel and hide
         this.body = document.createElement('div');
-        this.body.id = this.id;
-        this.body.setAttribute('class', 'panel');
+        this.body.id = "doff-panel-" + this.id;
+        this.body.setAttribute('class', 'doff-panel');
         this.body.hide();
 
         //Header
         this.header = document.createElement('h1');
-        this.header.setAttribute('class', 'header');
+        this.header.setAttribute('class', 'doff-panel-header');
         this.header.insert('<span>' + this.title + '</span>');
         var close_image = document.createElement('img');
         close_image.src = sys.module_url('doff.utils', 'resources/closebox.gif');
@@ -24,7 +24,7 @@ var Panel = type('Panel', object, {
 
         //Content
         this.content = document.createElement('div');
-        this.content.setAttribute('class', 'content');
+        this.content.setAttribute('class', 'doff-panel-content');
 
         this.body.insert(this.header);
         this.body.insert(this.content);
@@ -35,23 +35,23 @@ var Panel = type('Panel', object, {
     },
 
     set height(value) {
-	this.body.style.height = value;
+        this.body.style.height = value;
     },
-    
+
     set width(value) {
-	this.body.style.width = value;
+        this.body.style.width = value;
     },
 
     hide: function() {
-	this.body.hide();
-	this.bar.active_panel = null;
+        this.body.hide();
+        this.bar.active_panel = null;
     },
 
     show: function() {
-	if (!this.displayed)
-	    this._display();
-	this.body.show();
-	this.bar.active_panel = this;
+        if (!this.displayed)
+            this._display();
+        this.body.show();
+        this.bar.active_panel = this;
     },
 
     visible: function() {
@@ -59,9 +59,9 @@ var Panel = type('Panel', object, {
     },
 
     toggle: function() {
-	if (this.bar.active_panel && this.bar.active_panel !== this && this.bar.active_panel.visible())
-	    this.bar.active_panel.hide();
-	this[this.visible() ? 'hide' : 'show']();
+        if (this.bar.active_panel && this.bar.active_panel !== this && this.bar.active_panel.visible())
+            this.bar.active_panel.hide();
+        this[this.visible() ? 'hide' : 'show']();
     },
 
     get_template: function(){ return ""; },
@@ -77,8 +77,9 @@ var Panel = type('Panel', object, {
 var ToolBar = type('Toolbar', object, {
     __init__: function() {
         this.content = document.createElement('div');
-        this.content.id = 'toolbar';
+        this.content.id = 'doff-toolbar';
         this.ul = document.createElement('ul');
+        this.ul.setAttribute('class', 'doff-toolbar-bar');
         this.content.insert(this.ul);
         this.stylesheet = document.createElement('link');
         this.stylesheet.rel = "stylesheet";
@@ -90,6 +91,7 @@ var ToolBar = type('Toolbar', object, {
     add: function(element) {
         //Toolbar tab
         var tab = document.createElement('li');
+        tab.setAttribute('class', 'doff-toolbar-item');
         if (isinstance(element, Panel)) {
             tab.update(element.name);
             element.tab = tab;
@@ -115,10 +117,10 @@ var ToolBar = type('Toolbar', object, {
     },
 
     _display: function () {
-        $$('head')[0].insert(this.stylesheet);
-        $$('body')[0].insert(this.content);
+        document.getElementsByTagName('head')[0].insert(this.stylesheet);
+        document.getElementsByTagName('body')[0].insert(this.content);
     }
-    
+
 });
 
 publish({ 

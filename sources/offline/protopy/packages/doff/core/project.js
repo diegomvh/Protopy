@@ -9,9 +9,11 @@ var Project = type('Project', object, {
     do_net_checking: true,
 
     onLoad: function() {
-        // Creo el adaptador para el DOM y hago que tome el control de sys.window
+        // Creo el adaptador para el DOM y hago que tome el control de sys.window, sys.document y sys.history
         require('doff.core.client', 'DOMAdapter');
         sys.window = new DOMAdapter();
+        sys.document = sys.window.document;
+        sys.history = sys.window.history;
 
         // Inicio del handler para las url
         require('doff.core.handler', 'LocalHandler');

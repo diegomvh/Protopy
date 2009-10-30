@@ -55,6 +55,7 @@ var BaseFormSet = type('BaseFormSet', [ object ], {
 
     get management_form() {
         /*Returns the ManagementForm instance for this FormSet.*/
+        debugger;
         if (bool(this.data) || bool(this.files)) {
             var form = new ManagementForm({data: this.data, auto_id: this.auto_id, prefix: this.prefix});
             if (!form.is_valid())
@@ -74,7 +75,7 @@ var BaseFormSet = type('BaseFormSet', [ object ], {
             return this.management_form.cleaned_data[TOTAL_FORM_COUNT];
         } else {
             var total_forms = this.initial_form_count() + this.extra;
-            if (total_forms > this.max_num > 0)
+            if (total_forms > this.max_num && this.max_num > 0)
                 total_forms = this.max_num;
         }
         return total_forms;
@@ -87,7 +88,7 @@ var BaseFormSet = type('BaseFormSet', [ object ], {
         } else {
             // Use the length of the inital data if it's there, 0 otherwise.
             var initial_forms = this.initial && len(this.initial) || 0;
-            if (initial_forms > this.max_num > 0)
+            if (initial_forms > this.max_num && this.max_num > 0)
                 initial_forms = this.max_num;
         }
         return initial_forms;
@@ -326,6 +327,7 @@ var BaseFormSet = type('BaseFormSet', [ object ], {
         // XXX: there is no semantic division between forms here, there
         // probably should be. It might make sense to render each form as a
         // table row with each field as a td.
+        debugger;
         var forms = [form.as_table() for each (form in this.forms)].join(' ');
         return [string(this.management_form), forms].join('\n');
     }
@@ -333,11 +335,11 @@ var BaseFormSet = type('BaseFormSet', [ object ], {
 
 function formset_factory(form) {
     /*Return a FormSet for the given form class.*/
-    var arg = new Argumentes(arguments, {formset: BaseFormSet, extra: 1, can_order: false, can_delete: false, max_num:0});
+    var arg = new Arguments(arguments, {formset: BaseFormSet, extra: 1, can_order: false, can_delete: false, max_num:0});
     var attrs = {'form': form, 'extra': arg.kwargs['extra'],
              'can_order': arg.kwargs['can_order'], 'can_delete': arg.kwargs['can_delete'],
              'max_num': arg.kwargs['max_num']};
-    return type(form.__name__ + 'FormSet', [ formset ], attrs);
+    return type(form.__name__ + 'FormSet', [ arg.kwargs['formset'] ], attrs);
 }
 
 function all_valid(formsets) {
