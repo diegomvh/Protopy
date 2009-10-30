@@ -25,6 +25,7 @@ cualquiera de las aplicaciones es transparente.
 
 
 .. figure:: ../_svg/esquema_sync_simple.png
+
 	
 	Esquema de sincronización simple
 
@@ -65,6 +66,8 @@ A estos modelos se los provee con un Proxy que interactua con el servidor para
 service de los datos
 
 
-.. note:
+.. figure:: ../_svg/esquema_sync_client.png
+
+    Estados de sincronización de los modelos en el cliente
     
     
