@@ -92,8 +92,7 @@ var RelatedField = type('RelatedField', [ Field ], {
             var v = val, field = null;
             try {
                 while (true) {
-                    v = v[v._meta.pk.name];
-                    field = v._meta.pk;
+                    [ v, field ] = [ v[v._meta.pk.name], v._meta.pk ];
                 }
             } catch (e) {}
             if (field) {

@@ -35,23 +35,23 @@ var Panel = type('Panel', object, {
     },
 
     set height(value) {
-	this.body.style.height = value;
+        this.body.style.height = value;
     },
 
     set width(value) {
-	this.body.style.width = value;
+        this.body.style.width = value;
     },
 
     hide: function() {
-	this.body.hide();
-	this.bar.active_panel = null;
+        this.body.hide();
+        this.bar.active_panel = null;
     },
 
     show: function() {
-	if (!this.displayed)
-	    this._display();
-	this.body.show();
-	this.bar.active_panel = this;
+        if (!this.displayed)
+            this._display();
+        this.body.show();
+        this.bar.active_panel = this;
     },
 
     visible: function() {
@@ -59,9 +59,9 @@ var Panel = type('Panel', object, {
     },
 
     toggle: function() {
-	if (this.bar.active_panel && this.bar.active_panel !== this && this.bar.active_panel.visible())
-	    this.bar.active_panel.hide();
-	this[this.visible() ? 'hide' : 'show']();
+        if (this.bar.active_panel && this.bar.active_panel !== this && this.bar.active_panel.visible())
+            this.bar.active_panel.hide();
+        this[this.visible() ? 'hide' : 'show']();
     },
 
     get_template: function(){ return ""; },

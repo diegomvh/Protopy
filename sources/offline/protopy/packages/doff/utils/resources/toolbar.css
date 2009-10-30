@@ -1,6 +1,7 @@
 div#doff-toolbar {
     font-family: "Trebuchet MS" Verdana, Arial, sans-serif;
     font-size: 1em;
+    padding: 1px;
     width: 90%;
     height: 25px;
     position: fixed;
@@ -21,7 +22,7 @@ div#doff-toolbar div.doff-panel {
     font-weight: bold;
     text-indent: 15px;
     position: fixed;
-    bottom: 24px;
+    bottom: 27px;
     margin-left: 5%;
 }
 
@@ -39,7 +40,7 @@ div#doff-toolbar div.doff-panel h1.doff-panel-header {
 div#doff-toolbar div.doff-panel h1.doff-panel-header img {
     float: right;
     margin-right: 4px;
-    margin-top: -19px;
+    margin-top: 3px;
 }
 
 div#doff-toolbar div.doff-panel div.doff-panel-content {
@@ -65,11 +66,15 @@ div#doff-toolbar ul.doff-toolbar-bar li.doff-toolbar-item {
     border-right: 1px solid #888888;
     padding-left: 6px;
     padding-right: 6px;
-    //font-size: 70%;
+    font-size: 80%;
     display: inline;
     color: #112ABB;
-    text-decoration: underline;
+    //text-decoration: underline;
     cursor:pointer;
+}
+
+div#doff-toolbar ul.doff-toolbar-bar li.doff-toolbar-item:hover {
+    text-decoration: underline;
 }
 
 div#doff-toolbar ul.doff-toolbar-bar li.doff-toolbar-item:last-child {

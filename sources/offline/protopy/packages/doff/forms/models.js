@@ -312,7 +312,7 @@ function modelform_factory(model) {
     // construct a ModelForm without creating and passing in a temporary
     // inner class.
 
-    var arg = new Argumentes(arguments, {form: ModelForm, fields: null, exclude: null,
+    var arg = new Arguments(arguments, {form: ModelForm, fields: null, exclude: null,
             formfield_callback: function(f) { return f.formfield(); }});
     var kwargs = arg.kwargs;
     // Build up a list of attributes that the Meta object will have.
@@ -324,7 +324,7 @@ function modelform_factory(model) {
 
     // If parent form class already has an inner Meta, the Meta we're
     // creating needs to inherit from the parent's inner meta.
-    var Meta = form.Meta || {};
+    var Meta = kwargs['form'].Meta || {};
 
     // Give this new form class a reasonable name.
     var class_name = model.__name__ + 'Form';
@@ -332,10 +332,10 @@ function modelform_factory(model) {
     // Class attributes for the new form class.
     var form_class_attrs = {
         'Meta': Meta,
-        'formfield_callback': formfield_callback
+        'formfield_callback': kwargs['formfield_callback']
     }
 
-    return type(class_name, [ form ], form_class_attrs);
+    return type(class_name, [ kwargs['form'] ], form_class_attrs);
 }
 
 // ModelFormSets ##############################################################
@@ -350,7 +350,7 @@ var BaseModelFormSet = type('BaseModelFormSet' , [ BaseFormSet ], {
         var arg = new Arguments(arguments, {'data':null, 'files':null, 'auto_id':'id_%s', 'prefix':null,
                         'queryset':null});
         var kwargs = arg.kwargs;
-        this.queryset = queryset;
+        this.queryset = kwargs['queryset'];
         var defaults = {'data': kwargs['data'], 'files': kwargs['files'], 'auto_id': kwargs['auto_id'], 'prefix': kwargs['prefix']};
         extend(defaults, kwargs);
         super(BaseFormSet, this).__init__(defaults);
@@ -383,7 +383,7 @@ var BaseModelFormSet = type('BaseModelFormSet' , [ BaseFormSet ], {
         }
         if (i < this.initial_form_count() && !kwargs['instance'])
             kwargs['instance'] = this.get_queryset().get(i);
-        return super(BaseFormSet, this)._construct_form.apply(this, [ i ].concat(kwargs));
+        return super(BaseFormSet, this)._construct_form( i, kwargs);
     },
 
     get_queryset: function() {
@@ -626,13 +626,13 @@ function modelformset_factory(model) {
     /*
     Returns a FormSet class for the given Django model class.
     */
-    var arg = new Argumentes(arguments, {form: ModelForm, fields: null, exclude: null,
+    var arg = new Arguments(arguments, {form: ModelForm, fields: null, exclude: null,
             formfield_callback: function(f) { return f.formfield(); }, max_num: 0,
             formset: BaseModelFormSet, extra: 1, can_delete: false, can_order: false,});
 
     var form = modelform_factory(model, arg.kwargs);
     var FormSet = formset_factory(form, arg.kwargs);
-    FormSet.model = model;
+    FormSet.prototype.model = model;
     return FormSet;
 }
 
@@ -654,7 +654,7 @@ var BaseInlineFormSet = type('BaseInlineFormSet', [ BaseModelFormSet ], {
         var kwargs = arg.kwargs;
         require('doff.db.models.fields.related', 'RelatedObject');
         if (kwargs['instance'] == null)
-            this.instance = this.model();
+            this.instance = new this.model();
         else
             this.instance = kwargs['instance'];
         this.save_as_new = kwargs['save_as_new'];
@@ -759,7 +759,7 @@ function _get_foreign_key(parent_model, model, fk_name, can_fail) {
         var fks_to_parent = [
             f for each (f in opts.fields)
             if (isinstance(f, ForeignKey)
-            && (f.rel.to == parent_model || include(parent_model._meta.get_parent_list(), fk.rel.to)))
+            && (f.rel.to == parent_model || include(parent_model._meta.get_parent_list(), f.rel.to)))
         ]
         if (len(fks_to_parent) == 1) {
             var fk = fks_to_parent[0];
@@ -781,11 +781,11 @@ function inlineformset_factory(parent_model, model) {
     You must provide ``fk_name`` if ``model`` has more than one ``ForeignKey``
     to ``parent_model``.
     */
-    var arg = new Argumentes(arguments, {form: ModelForm, fields: null, exclude: null, fk_name: null,
+    var arg = new Arguments(arguments, {form: ModelForm, fields: null, exclude: null, fk_name: null,
             formfield_callback: function(f) { return f.formfield(); }, max_num: 0,
             formset: BaseInlineFormSet, extra: 3, can_delete: true, can_order: false,});
     var kwargs = arg.kwargs;
-    var fk = _get_foreign_key(parent_model, model, fk_name=fk_name)
+    var fk = _get_foreign_key(parent_model, model, kwargs['fk_name']);
     // enforce a max_num=1 when the foreign key to the parent model is unique.
     if (fk.unique)
         max_num = 1;
@@ -801,7 +801,7 @@ function inlineformset_factory(parent_model, model) {
         'max_num': kwargs['max_num'],
     }
     var FormSet = modelformset_factory(model, kwargs);
-    FormSet.fk = fk;
+    FormSet.prototype.fk = fk;
     return FormSet;
 }
 
@@ -994,6 +994,7 @@ publish({
     model_to_dict: model_to_dict,
     fields_for_model: fields_for_model,
     save_instance: save_instance,
+    inlineformset_factory: inlineformset_factory,
     form_for_fields: form_for_fields,
     ModelChoiceField: ModelChoiceField,
     ModelMultipleChoiceField: ModelMultipleChoiceField 

@@ -1653,7 +1653,7 @@
             }
         }
         if (isundefined(def))
-            throw new AttributeError(object + ' has no attribute ' + name);
+            throw new AttributeError(object.__name__ || object.name + ' has no attribute ' + name);
         else
             return def;
     }
