@@ -68,7 +68,7 @@ def get_model_definition(init_args):
     field_type, args = init_args
     first_arg = ''
     my_args = SortedDict()
-    
+
     if field_type == 'ManyToManyField':
         first_arg = unicode(args['rel'].to._meta.object_name)
         
