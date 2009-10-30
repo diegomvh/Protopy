@@ -4,28 +4,27 @@ La aplicación
 
 Una vez lograda la implementación de Django en el clinete sobre el framework
 de aplicaciones Doff, se comenzó a trabajar en la integración con los proyectos
-en linea.
+en línea.
 
 
 Doff fue desarrollado con el objetivo de realizar la menor cantidad de 
-reescritura posible de las aplicaciones Django para ser ejecutadas de manera
-desconectada. Si bien fue intecinalmente omitido en el capítulo de Doff,
-el hecho de contar con la misma API de ORM y gracias a que tanto Pyhton
-como JavaScript poseen buenas características de introspección, es factible
-generar los modelos del cliente de manera autónoma a partir del análisis
+reescritura posible de las aplicaciones Django al momento de ser ejecutadas de manera
+desconectada. Si bien fue intecinalmente omitido en el capítulo sobre el
+framework desconectado, el hecho de contar con la misma API de ORM posibilita la generación de 
+modelos del cliente de manera autónoma a partir del análisis
 de las definciones de los modelos de la aplicación en linea.
 
 De la misma manera, las plantillas del proyecto conectado, no requieren
 adaptaciones (en el caso de que utilicen JavaScrpipt, deben adecuarlo
-a las normativas de Doff). Las etiquetas de templates no estándares
-deben ser reescritas en Doff.
+a las normativas de Doff y las etiquetas de templates no estándares
+deben ser reescritas en Doff).
 
-Las visttas y las URLs deben ser reescritas, ya que por
+Las vistas y las URLs deben ser reescritas, ya que por
 no contarse con el mismo soporte para expresiones regulares, y debido
-a que las vistas en Django, son funciones escritas en Python, estas 
+a que las vistas en Django son funciones escritas en Python, estas 
 no pueden ser traducidas a JavaScript sin la intervensión del programador.
 
-En el capítulo sobre Doff se introdujo vagamente una aplicación llamada
+En el capítulo sobre Doff se introdujo vagamente una aplicación Django llamada
 ``offline`` que tenía como objetivo servir estáticamente al cliente con
 el código de Doff y Protopy. En el presente capítulo se crea dentro de 
 dicha aplicación una entidad especial, el RemoteSite con el objetivo de
@@ -148,13 +147,15 @@ un mecanismo de separación de los datos a los cuales accede al cliente
 por seguridad y eficiencia. Esta tarea fue asingada a los ``RemoteSites``.
 
 Por defecto ningún modelo es visible para el cliente. Se deben publicar
-explicitamente mediante un método llamado ``register()``. 
+explicitamente mediante un método llamado ``register()``. Esta idea también
+fue tomada de la extensión ``django.contrib.admin`` antes mencionada. 
 
-Èste método se llama en la instancia definida en el módulo 
-``OFFLINE_BASE.remote_<nombre-modulo>``. 
+El método ``register`` debe ser llamado sobre la instancia definida en el módulo 
+``OFFLINE_BASE.remote_<nombre-modulo>`` (en el sistema de archivos 
+OFFLINE_BASE.remote_<nombre-modulo>.py).
 
-Se puede modificar la forma en la que el cliente ve el modelo mediante
-la definición de una clase ``RemoteModelProxy``.
+Opcionalmente ee puede modificar la forma en la que el cliente ve el modelo 
+mediante la definición de una clase ``RemoteModelProxy``.
 
 Por ejemplo, la definción del sitio remoto quedaría como sigue para el ejemplo
 anterior:
@@ -169,29 +170,46 @@ anterior:
     site.register(Book)
     site.register(Author)
     
-De esta manera las vistas del sitio remoto tendrán disponible el 
+De esta manera las vistas del sitio remoto tendrán disponible los 
+modelos ``Book`` y ``Author``.
+
+Internamnte el método ``register(model, proxy)`` cuando es llamado sin 
+una instancia de ``RemoteModelProxy`` como segundo argumento, genera un
+proxy que publica toda la especificación del modelo.
+
+Proxies de Modelos
+------------------
+
+Los ``RemoteModelProxy`` son clases que definen la forma en la que se expone
+un modelo en un ``RemoteSite``. Sus atributos definen el modelo al que están asociados, 
+los campos que publican y el manager con el cual se presental al cliente.
+Por ejemplo:
+
+.. code-block:: python
+    
+    
+    class TagRemote(RemoteModelProxy):
+        class Meta:
+            model = Tag
+            exclude = ('title', )
+            manager = Tag.objects
+    
+    site.register(Tag, TagRemote) # Registro
+
+El manager permite filtrar las entidades que son accedidas por el cliente.
+Si el cliente es un usuario de la aplicación, mediante la implementación de un
+``Manager`` que discrimine usuarios autenticados [*]_, se puede limitar la visión
+de las instancias de un modelo
 
 
+.. [*] El usuario se ha autenticado en la aplicación en línea contra las entidades
+       de ``django.contrib.auth.models.User``.
 
-
-En cuanto a la base de datos por razones de seguirad y eficiencia, 
-es posible que no se desee realizar una transferencia total de los 
-datos al cliente. 
-
-Por ejempo, tablas que almacenan datos con información privada o confidencial, 
-también es posible que un usuario o grupo tenga diferentes niveles de accesso 
-sobre los datos que otros.
 
 
 .. figure:: ../_svg/esquema_offline_simple.png
 	
 	Análisis inicial de elementos a transferir para lograr una versión offline de un proyecto
-
-Se arriba a la conclusión de que una aplicación offline puede diferir tanto 
-en funcionalidad como en datos de una versión en linea. Por lo tanto se 
-hace necesario definir un proyecto offline, analizando como se realiza la 
-equivalencia de cada elemento de la  versión offline.
-
 
 
 Bootstrap
@@ -219,18 +237,18 @@ Comunicación Entre el RemoteSite y el Proyecto del Cliente
 ----------------------------------------------------------
 
 
-@expose(r'^$')                                    
-@expose(r'^network_check/?$')
-@expose(r'^rpc/?$')
-@expose(r'^rpc/data/(?P<app_label>\w+)/(?P<model_name>\w+)/$')
-@expose('^manifest.json$')
-@expose(r'^templates/(.*)$')
-@expose(r'^template_list/$')
-@expose('^system/(.*)$')
-@expose('^project/(.*)$')
-@expose(r'^network_check/?$')
-@expose(r'^jsonrpc/?$')
-@expose(r'^manifests/system.json$')
-@expose(r'^manifests/project.json$')
-@expose(r'^export/(?P<app_name>.*)/models.js$')
-@expose(r'^export_/(?P<app_name>.*)/models.js$')
+^$')                                    
+^network_check/?$')
+^rpc/?$')
+^rpc/data/(?P<app_label>\w+)/(?P<model_name>\w+)/$')
+manifest.json$')
+^templates/(.*)$')
+^template_list/$')
+system/(.*)$')
+project/(.*)$')
+^network_check/?$')
+^jsonrpc/?$')
+^manifests/system.json$')
+^manifests/project.json$')
+^export/(?P<app_name>.*)/models.js$')
+^export_/(?P<app_name>.*)/models.js$')

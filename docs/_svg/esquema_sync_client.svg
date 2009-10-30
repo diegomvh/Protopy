@@ -146,16 +146,6 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(-11.76478,-192.17285)">
-    <path
-       sodipodi:type="arc"
-       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       id="path2463"
-       sodipodi:cx="27.020588"
-       sodipodi:cy="290.87839"
-       sodipodi:rx="77.944008"
-       sodipodi:ry="15.588801"
-       d="M 104.9646,290.87839 A 77.944008,15.588801 0 1 1 104.9646,290.87839 A 77.944008,15.588801 0 1 1 104.9646,290.87839 z"
-       transform="translate(11.76478,192.17285)" />
     <rect
        style="opacity:0.3;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;filter:url(#filter5319);enable-background:accumulate"
        id="rect5119"
