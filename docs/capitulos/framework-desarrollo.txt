@@ -118,15 +118,21 @@ El módulo ``urls.js`` se reservó para análisis posterior.
 
 La clase proyecto posee los siguientes métodos:
 
- * ``bootstrap`` debe ser llamado cada vez que se quiera ceder el control
+ * ``bootstrap``
+ 	
+    Debe ser llamado cada vez que se quiera ceder el control
     de la navegación a el framework desconectado. Debe ser asociado al evento
     de carga de la página.
     
- * ``install`` se encarga de persistir el framework y proyecto en
+ * ``install`` 
+ 
+   Se encarga de persistir el framework y proyecto en
    el almacenamiento local del cliente. También crea la base de datos equivalente
    a ``manage.py syncdb``.
    
- * ``uninstall`` remueve la base de datos, el proyecto y el código del framework
+ * ``uninstall``
+   
+   Remueve la base de datos, el proyecto y el código del framework
    del cliente.
    
 Un proyecto se crea de la siguiente manera:
