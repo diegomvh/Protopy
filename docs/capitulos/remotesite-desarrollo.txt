@@ -203,7 +203,18 @@ la siguiente estructura:
 
     from offline.sites import RemoteSite 
 
-    site = LibrarianRemoteSite('librarian')     
+    site = LibrarianRemoteSite('librarian')
+    
+Cada aplicación migrada mediante el comando ``migrate_app`` es creada a partir
+de una esqueleto genérico, donde el programador deberá implementar las URLs 
+y vistas. Si bien esta tarea podría parecer tediosa en primera intancia, el
+grado de similitud entre Protopy con Python y el hecho de que Doff implemente
+la misma API que Django facilita mucho la tarea.
+
+Las plantillas y los modelos son provistos autmáticamente por el sitio remoto.
+A continuación se analiza la forma en la que se exponen los modelos y como
+se puede modificar.
+
 
 Publicación de Modelos
 ----------------------
@@ -244,7 +255,7 @@ modelos ``Book`` y ``Author``.
 Para personalizar la definición y acceso a datos de un modelo, se debe 
 crear una subclase de ``RemoteModelProxy``. Dentro de esta subclase se
 pueden definir los campos a publicar mediante (``fields``, ``include``,
-``exclude``) y el ``Manager`` del modelo a utilizar. Por ejemplo:
+``exclude``) y el ``Manager`` del modelo a utilizar [*]_. Por ejemplo:
 
 .. code-block:: python
 
@@ -255,8 +266,11 @@ pueden definir los campos a publicar mediante (``fields``, ``include``,
             manager = Tag.objects
     
     site.register(Tag, TagRemote) # Registro
+    
+.. [*] Se pueden definir campos que no existen en el modelo que deberán ser provistos
+       por el Manager a la hora de la sincronización.
 
-El manager permite filtrar las entidades que son accedidas por el cliente.
+El Manager permite filtrar las entidades que son accedidas por el cliente.
 Si el cliente es un usuario autenticado en el proyecto, mediante la implementación de un
 ``Manager`` que discrimine usuarios autenticados [*]_, se puede limitar la visión
 de las instancias de un modelo (o filas sobre la base de datos).
@@ -264,50 +278,213 @@ de las instancias de un modelo (o filas sobre la base de datos).
 .. [*] El usuario se ha autenticado en la aplicación en línea contra las entidades
        de ``django.contrib.auth.models.User``.
 
+Cuando se migra una aplicación al cliente, mediante el comando ``migrate_app``,
+no se crea un módulo ``models.js`` como podría esperarse. El sitio remoto lo
+genera automáticamente en función de los modelos que hallan sido registrados y
+los publica en cada aplicación del sitio remoto (es decir, los modelos son
+globales al proyecto).
 
+En Django los modelos suelen tener métodos de utilidad, como ``__unicode__`` (
+en el cliente ``__str__``). Estos métodos se deben implementar en un arreglo
+asociativo que se utiliza a modo de ``Mixin``, gracias a que Protopy soporta
+en su sistema de clases la herencia múltiple.
 
-.. figure:: ../_svg/esquema_offline_simple.png
+Durante la instalación del proyecto, cuando el ``ManagedLocalStore`` descarga
+el recurso, el sitio remoto provee automaticamente la conjunción de la introspección
+realizada sobre los modelos con los métodos agregados en el mixin.
+
+En el siguiente esquema se muestra la intreacción entre el sitio remoto, los modelos
+de una apicacción, sus managers y los proxies de modelos.
+
+.. figure:: ../_svg/esquema_remotemodelproxy.png
 	
-	Análisis inicial de elementos a transferir para lograr una versión offline de un proyecto
+	Modelos de una aplicación desconectada
+	
+Por ejemplo, para una definción de un modelo como sigue:
+
+.. code-block:: python
+
+    # ---------------------------------------------------
+    # Definción del modelo en models.py
+    # ---------------------------------------------------
+    
+    from django.db import models
+    
+    class Persona(model.Model):
+        nombre = models.CharField(max_length = 40)
+        apellido = models.CharField(max_length = 40)
+        
+        # Representación en cadena Unicode
+        def __unicode__(self):
+            reutrn u"%s %s" % (self.nombre, self.apellido)
+    
+    # ---------------------------------------------------
+    # Definción del RemoteSite
+    # ---------------------------------------------------
+    
+    site = RemoteSite('personas')
+    site.register(Persona) # Sin proxy
+
+Luego de haber ejecutado el comando ``migrate_app`` el código del Mixin
+para implementar la funcionalidad de ``__unicode__`` sería:
+
+.. code-block:: javascript
+    
+    // El Mixin es simplemente un arreglo asociativo, donde
+    // se pueden incorporar más métodos.
+    
+    var Persona = {
+        // En el servidor la salida del modelo se transforma en el encoding
+        // del template, en cambio, en el cliente la codificación ya está
+        // establecida, por lo que se utiliza el método __str__
+        __str__: function() {
+            return "%s %s".subs(this.nombre, this.apellido);
+        }
+    }
+
+Modelos de Solo Lectura
+=======================
+
+Si bien se tratará la sincronización en un apartado posterior, se ha mencionado
+que existe un mecanismo para sincroizar los datos de los modelos.
+La sincronización puede ocurrir del servidor al cliente, la cual es probablemente
+necesaria en la instalación y en sentido inverso para sincronizar los datos
+generados o modificados durante la ejecución desconectada del proyecto.
+
+Cuando un modelo se registra en un sitio remoto, se concede permiso de modificación
+a los campos definidos en el proxy de modelos (tomados automáticamente del modelo).
+Si se registra una modelo que posee claves foraneas, y los modelos referenciados
+no son registrados, se genera un registro implícito de estos modelos como
+solo lectura.
+
+Es decir, si contamos con un modelo como el siguiente:
+
+.. code-block:: python
+
+    from django.db import models
+    
+    class Pais(models.Model):
+        nombre = models.CharField(max_length = 40)
+        
+    class Provincia(models.Model)
+        provincia = models.ForeignKey(Provincia) # Referencia a Provincia
+        nombre = models.CharField(max_length = 40)
+        habitantes = models.PositiveIntegerField(default = 0)
+        
+continuando el ejemplo, si en la definición del sitio remoto solo se 
+registra la entidad ``Provincia``:
+
+.. code-block:: python
+
+    site.register(Provincia)
+            
+la entidad ``Pais`` se registra implicitamente como un modelo de solo lectura.
+Durante la sincronización los datos solo se transfieren del servidor al cliente.
+Los unicos campos transferidos son el ``pk`` (o ``id``) y la representación
+en cadena del modelo (``__unicode__``).         
+
+Publicación de un Sitio Remoto
+------------------------------
+
+La publicación de un sitio remoto es explícita y consiste en agregar al
+módulo ``urls.py`` del proyecto un patrón como el siguiente (suponiendo 
+que ``OFFLINE_BASE`` sea "soporte_offline" y el nombre del sitio remoto
+sea "bookstore"):
+
+.. code-block:: pyhton
+    from soporte_offline.bookstore import bookstore_site
+    
+    (r'^%s/(.*)' % bookstore_site.urlregex, bookstore_site.root )
+    
+El atributo ``urlregex`` del sitio remoto calcula automáticamente la URL
+del sitio como la concatenación de ``OFFLINE_BASE`` y el nombre del sitio.
+En el caso anterior, para acceder al sitio desconectado se debe acceder a la URL::
+
+    http://misitio.com/soporte_offline/bookstore
+    
+Esta URL genera automáticamente la instancia del proyecto en el cliente.
+
+Sincronización de Datos
+-----------------------
+
+Por simplcidad, en este apartado, se establece la siguiente terminología:
+Cuando se hable de *el cliente* se está refiriendo al proyecto desconectado,
+ *el servidor* es el proyecto en línea.
+
+La sincronziación de datos permite que las entidades definidas en el servidor
+se repliquen en el cliente y que las creadas y modificadas por el cliente
+se transfieran a la aplicación en linea, permitiendo así que se porpaguen
+a el resto de los cileintes.
+
+Sin embargo diversas situaciones en las cuales se pueden presentar conflictos entre
+las versiones de de una misma entidad:
+
+    * Cuando una entidad se modifica tanto en el cliente como en el servidor
+    
+    * Cuando una entidad se modifica en dos clientes
+    
+    * Alguna combinación de los casos anteriores
+    
+La forma en que se resuelven estos conflictos debe ser abordada por el programador
+durante el diseño de la aplicación. El trabajo realizado en Doff y los sitios
+remotos facilitan las tareas de transferencia de datos en alto nivel, sin 
+necesidad de recurrir a SQL.
 
 
-Bootstrap
----------
+Transporte
+----------
 
-Transferencia de los modelos
+JSONRPC, Managers, Serizlizars
+
+Versionado de Modelos
+---------------------
+
+Referencias a Junction
+
+.. figure:: ../_svg/esquema_sync_client.png
+
+    Estados de sincronización de los modelos en el cliente
+    
+
+Escenarios de sincronización
 ----------------------------
 
-
-Debido a que la API de base de datos posee diferencias mínimas,
-la transferencia de la definición de los modelos al cliente se ideó de tal forma
-que sea posible mediante introspección. 
-
-Para que el clinete conozca la definción de un modelo, realiza una 
+Servidor al Cliente
+===================
 
 
+Cliente al Servidor
+=================== 
+
+
+         
+	
 Ciclo de Trabajo
 ----------------
 
 .. figure:: ../_svg/esquema_utilizacion_offline.png
 
 	Esquema de trabajo con la aplicación offline
-	
-Comunicación Entre el RemoteSite y el Proyecto del Cliente
-----------------------------------------------------------
+..	
+    Comunicación Entre el RemoteSite y el Proyecto del Cliente
+    ----------------------------------------------------------
+    
+    
+    ^$')                                    
+    ^network_check/?$')
+    ^rpc/?$')
+    ^rpc/data/(?P<app_label>\w+)/(?P<model_name>\w+)/$')
+    manifest.json$')
+    ^templates/(.*)$')
+    ^template_list/$')
+    system/(.*)$')
+    project/(.*)$')
+    ^network_check/?$')
+    ^jsonrpc/?$')
+    ^manifests/system.json$')
+    ^manifests/project.json$')
+    ^export/(?P<app_name>.*)/models.js$')
+    ^export_/(?P<app_name>.*)/models.js$')
 
-
-^$')                                    
-^network_check/?$')
-^rpc/?$')
-^rpc/data/(?P<app_label>\w+)/(?P<model_name>\w+)/$')
-manifest.json$')
-^templates/(.*)$')
-^template_list/$')
-system/(.*)$')
-project/(.*)$')
-^network_check/?$')
-^jsonrpc/?$')
-^manifests/system.json$')
-^manifests/project.json$')
-^export/(?P<app_name>.*)/models.js$')
-^export_/(?P<app_name>.*)/models.js$')
+Utilidades de Protopy
+---------------------
