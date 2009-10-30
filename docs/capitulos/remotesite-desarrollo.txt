@@ -3,38 +3,176 @@ La aplicación
 ****************
 
 Una vez lograda la implementación de Django en el clinete sobre el framework
-de aplicaciones Doff, aparece la necesidad de conectar el proyecto online
-con el browser. Surge la necesidad de crear un equivalente al proyecto para
-ser instalado en el clinete.
+de aplicaciones Doff, se comenzó a trabajar en la integración con los proyectos
+en linea.
 
-El desarrollo de los doff.models sigue el esquma de aplicaciones de Django.
-
-
-Definición de un proyecto en el cliente
----------------------------------------
-
-.. note:: hacer la referencia al capítulo de django
 
 Doff fue desarrollado con el objetivo de realizar la menor cantidad de 
 reescritura posible de las aplicaciones Django para ser ejecutadas de manera
-desconectada. La transferencia del proyecto al clinete conlleva
-la transferencia de la configuración, las aplicaciones y la base de datos.
+desconectada. Si bien fue intecinalmente omitido en el capítulo de Doff,
+el hecho de contar con la misma API de ORM y gracias a que tanto Pyhton
+como JavaScript poseen buenas características de introspección, es factible
+generar los modelos del cliente de manera autónoma a partir del análisis
+de las definciones de los modelos de la aplicación en linea.
 
-Una aplicación está conformada por al menos un módulo de vistas, uno de 
-urls y un módulo de modelos.
+De la misma manera, las plantillas del proyecto conectado, no requieren
+adaptaciones (en el caso de que utilicen JavaScrpipt, deben adecuarlo
+a las normativas de Doff). Las etiquetas de templates no estándares
+deben ser reescritas en Doff.
 
-En el caso de las vistas, estas deben ser reescritas debido a que 
-si bien Porotpy está diseñado para que los dearrolladores encunetren en
-Javascript 1.7 una sintaxis y semántica cercana a la de Python, pueden
-existir módulos de la API de Python que Protopy no soprte.
-Así como también pueden hacer uso de módulos de terceros, el caso 
-de ReportLab para la genreación de PDF,
-MatplotLib para la generación de gráficas, o alguna otra librería.
+Las visttas y las URLs deben ser reescritas, ya que por
+no contarse con el mismo soporte para expresiones regulares, y debido
+a que las vistas en Django, son funciones escritas en Python, estas 
+no pueden ser traducidas a JavaScript sin la intervensión del programador.
 
-Por lo tanto vemos que no podemos realizar una reescritura uno a uno
-de las vistas. Además las vists que se rendericen sobre templates que
-accedan a datos o servicios de otros dominios tampoco pueden ser transformadas
-de modo directo, sinedo un caso dificilmente salvable.
+En el capítulo sobre Doff se introdujo vagamente una aplicación llamada
+``offline`` que tenía como objetivo servir estáticamente al cliente con
+el código de Doff y Protopy. En el presente capítulo se crea dentro de 
+dicha aplicación una entidad especial, el RemoteSite con el objetivo de
+crear el proyecto en el browser de una manera automatizada, brindar seguridad
+sobre los datos y proveer mecanismos extensibles para sincronización.
+
+RemoteSite
+----------
+
+Se creó la entidad RemoteSite como definición del proyecto desconectado
+dentro de la aplicación en línea que le da origen. 
+Un proyecto puede tener uno o más RemoteSites. Cada sitio remoto está 
+publicado en una URL.
+
+Para esta tarea se tomó el equema propuesto por ``django.contrib.admin`` de 
+generar clases encargadas de trabajar con los modelos. 
+
+Cada ``RemoteSite``, como proyecto desconectado, cuenta con los módulos
+``settings.js``, ``urls.js`` y las aplicaciones con módulos ``views.js``, 
+``models.js``. Todos estos módulos son recursos estáticos que son servidos
+por el ``RemoteSite`` y son almacenados en un subdirectorio del proyecto
+desconectado. Este directorio se define en la variable de configuración
+``OFFLINE_BASE`` en el módulo ``settings.py``.
+
+Las instancias de RemoteSite poseen un nombre único en el proyecto, que
+conjugado con la variable ``OFFLINE_BASE`` definen la URL de publicación del sitio.
+
+El sitio remoto sirve además del proyecto, el código del framework y de 
+Doff. La instancia de ``doff.core.project.Project`` conoce las URLs donde
+el ``RemoteSite`` publica estos recursos.
+
+Migración de una Proyecto
+-------------------------
+
+La migración de un proyecto a través de los sitios remotos consiste
+de los siguientes pasos:
+ 
+    #. Instalación de la aplicación de soporte (``offline``), este paso es necesario
+       solo una vez.
+     
+    #. Creación de un sitio remoto
+
+    #. Migración de una aplicación
+    
+    #. Registro de modelos en el RemoteSite
+    
+    #. Publicación del sitio remoto
+    
+
+
+El primer paso para la migración consiste en la instalación de la
+aplicación de soporte ``offline`` al proyecto. Para esto
+se la descarga y al ``PYTHONPATH`` y luego se la incluye en ``INSTALLED_APPS`` 
+del proyecto en linea. 
+
+Una vez realizado este paso se habilitan varios comandos para la administración 
+de proyectos desconectados al 
+módulo ``manage.py``. Estos comandos permiten realizar varios de los pasos
+antes mencionados. Los comandos implementados son los siguientes:
+
+ * ``start_remotesite``
+	
+    Este comando recibe como argumento el nombre de sitio remoto que se desea
+    crear. Si no exite el directorio ``OFFLINE_BASE`` en el proyecto en
+    línea lo crea y dentro de el añade el módulo ``remote_<nombre-site>.py``
+    en el cual define la instancia de ``RemoteSite`` con el nombre dado. Utiliza
+    también el nombre para crear un subdirectorio en el ``OFFLINE_BASE`` donde
+    crea el esqueleto del proyecto desconetado (``settings.js`` y ``urls.js`` 
+    que son rellenados con la configuración de la aplicación en linea).
+    
+    Por ejemplo:
+    
+    .. code-block:: bash
+    
+        $ manage.py start_remotesite soporte_offline
+        
+ 
+ * ``list_remotesites``
+    
+    Este comando lista los ``RemoteSites`` de un proyecto en línea. Verifica
+    además si estos se encuentran publicados. No recibe argumentos.
+   
+ 
+ * ``migrate_app``
+ 
+    Migra una aplicación conectada a un ``RemoteSite``. Recibe como argumentos
+    el nombre del sitio remoto y el nombre de la aplicación. Dentro
+    de ``OFFLINE_BASE/<nombre-site>/<nombre-app>`` crea la estructura de la 
+    aplicación (módulos ``views.js`` y ``models.js``).
+    
+    Por ejemplo:
+    
+    .. code-block:: bash
+    
+        $ manage.py migrate_app soporte_offline bookstore
+    
+ * ``manifest_update``
+ 
+    Acutaliza los recursos que componen al proyecto desconectado: vistas,
+    templates, modelos y recursos estáticos. 
+    
+Una vez creado un sitio remoto, sus recuros estáticos que lo componen
+se ubican en ``OFFLINE_BASE/<nombre-site>/``. 
+
+La definción de un remotesite dentro de ``OFFLINE_BASE/remote_<nombre-site>.py``,
+resultado del comando ``manage.py create_remotesite <nombre-site>`` tiene 
+la siguiente estructura:
+
+.. code-block:: python
+
+    from offline.sites import RemoteSite 
+
+    site = LibrarianRemoteSite('librarian')     
+
+Registro de Modelos
+-------------------
+
+Como se mencionó en el capítulo introductorio, es deseable contar con 
+un mecanismo de separación de los datos a los cuales accede al cliente
+por seguridad y eficiencia. Esta tarea fue asingada a los ``RemoteSites``.
+
+Por defecto ningún modelo es visible para el cliente. Se deben publicar
+explicitamente mediante un método llamado ``register()``. 
+
+Èste método se llama en la instancia definida en el módulo 
+``OFFLINE_BASE.remote_<nombre-modulo>``. 
+
+Se puede modificar la forma en la que el cliente ve el modelo mediante
+la definición de una clase ``RemoteModelProxy``.
+
+Por ejemplo, la definción del sitio remoto quedaría como sigue para el ejemplo
+anterior:
+
+.. code-block:: python
+    
+    from offline.sites import RemoteSite
+    from offline.sites import RemoteModelProxy
+    from bookstore.core.models import Book, Author  
+
+    site = LibrarianRemoteSite('librarian')
+    site.register(Book)
+    site.register(Author)
+    
+De esta manera las vistas del sitio remoto tendrán disponible el 
+
+
+
 
 En cuanto a la base de datos por razones de seguirad y eficiencia, 
 es posible que no se desee realizar una transferencia total de los 
@@ -54,11 +192,7 @@ en funcionalidad como en datos de una versión en linea. Por lo tanto se
 hace necesario definir un proyecto offline, analizando como se realiza la 
 equivalencia de cada elemento de la  versión offline.
 
-Módulo de vistas y urls en una aplicación offline
--------------------------------------------------
 
-Como hemos se analizó en el apartado anterior, las vistas deben ser
-reescritas para la versión offline.
 
 Bootstrap
 ---------
@@ -74,25 +208,29 @@ que sea posible mediante introspección.
 Para que el clinete conozca la definción de un modelo, realiza una 
 
 
-
-
-Sitio Remoto
-------------
-
-Se creó la entidad RemoteSite para definir un proyecto desconectado.
-Un proyecto puede tener uno o más RemoteSites. Cada sitio remoto está 
-publicado en una URL.
-
-Un sitio remoto consiste en una instancia de una clase que posee un nombre.
-Este nombre coincide con el nombre del directorio que almacena las vistas.
-
-El sitio remoto tiene la responsabilidad de servir el código del framework
-doff y el proyecto offline (vistas, modelos, urls, templates).
-
-
 Ciclo de Trabajo
 ----------------
 
 .. figure:: ../_svg/esquema_utilizacion_offline.png
 
 	Esquema de trabajo con la aplicación offline
+	
+Comunicación Entre el RemoteSite y el Proyecto del Cliente
+----------------------------------------------------------
+
+
+@expose(r'^$')                                    
+@expose(r'^network_check/?$')
+@expose(r'^rpc/?$')
+@expose(r'^rpc/data/(?P<app_label>\w+)/(?P<model_name>\w+)/$')
+@expose('^manifest.json$')
+@expose(r'^templates/(.*)$')
+@expose(r'^template_list/$')
+@expose('^system/(.*)$')
+@expose('^project/(.*)$')
+@expose(r'^network_check/?$')
+@expose(r'^jsonrpc/?$')
+@expose(r'^manifests/system.json$')
+@expose(r'^manifests/project.json$')
+@expose(r'^export/(?P<app_name>.*)/models.js$')
+@expose(r'^export_/(?P<app_name>.*)/models.js$')
