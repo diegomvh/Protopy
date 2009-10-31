@@ -391,7 +391,8 @@ módulo ``urls.py`` del proyecto un patrón como el siguiente (suponiendo
 que ``OFFLINE_BASE`` sea "soporte_offline" y el nombre del sitio remoto
 sea "bookstore"):
 
-.. code-block:: pyhton
+.. code-block:: python
+
     from soporte_offline.bookstore import bookstore_site
     
     (r'^%s/(.*)' % bookstore_site.urlregex, bookstore_site.root )
@@ -426,18 +427,71 @@ las versiones de de una misma entidad:
     * Alguna combinación de los casos anteriores
     
 La forma en que se resuelven estos conflictos debe ser abordada por el programador
-durante el diseño de la aplicación. El trabajo realizado en Doff y los sitios
-remotos facilitan las tareas de transferencia de datos en alto nivel, sin 
-necesidad de recurrir a SQL.
+durante el diseño de la aplicación.
+
+Se implementó una mecánica simple y extendible que resuelve casos simples en
+``doff.contrib.syncrhonization``.
+
+Para implementar la sincronización se trataron los siguientes items:
+
+    * Integridad de la sincronización (orden de los modelos, transacciones)
+    
+    * Transporte de datos
+    
+    * Detección de cambios en instancias en el servidor
+    
+    * Detección de cambios en el cliente
+ 
 
 
-Transporte
-----------
+
+Transporte de Datos
+-------------------
+
+El primer aspecto a considerar es el transporte de datos. Las bases de datos
+relacionales utilizan el lenguaje SQL como estándar para la definicón de su
+estructura y manipulación de datos. Django provee un ORM que encapsula el
+acceso a RDBMS y brinda una capa de abstracción en el lenguaje Python. Doff realiza
+lo propio en el lenguaje JavaScript y apoyándose en las extensiones del 
+lenguaje provistas por Protopy. Gracias al trabajo del sitio remoto, mediante
+el registro de modelos, se obtiene consistencia entre las definciones de alto
+nivel del servidor con las del cliente, por lo cual se optó por realizar el
+transporte utilizando los mecanimos de alto nivel disponibles en Django.
+
+Django provee un módulo llamado ``serializers`` que brinda un conjunto de
+serializadores (*marshalling*) de instancias de ``QuerySet``. Un serializador
+se encarga de *aplanar* las intancias en texto con algún formato. Los formatos
+de salida provistos por Django son: XML, JSON y Python. Cuando un serializador
+trabaja sobre un ``QuerySet`` almacena información sobre el modelo para poder
+luego recuperar las instancias medinate un des-serializador. 
+
+Se optó por el serializador basado en JSON, debido a que presenta ventajas a la 
+hora de depuración aunque teniendo como penalización el tiempo de procesamiento sobre
+conjuntos grandes de datos.
+
+
+
+Los serializadores son obtenidos a través de un factory. Por ejemplo:
+
+.. code-block:: python
+
+    >>> from django.core import serializers
+    >>> serializador = serializers.get_serializer('json')
+    >>>
 
 JSONRPC, Managers, Serizlizars
 
 Versionado de Modelos
 ---------------------
+
+Cuando un proyecto desconectado se instala en un cliente, se realiza una 
+copia de los datos.
+
+Llamada a Procedimiento Remoto (RPC)
+------------------------------------
+
+En concordancia con el sistema de codificación de datos, se eligió JSONRPC
+como mecanismo de comunicación entre el cliente y el servidor.
 
 Referencias a Junction
 
