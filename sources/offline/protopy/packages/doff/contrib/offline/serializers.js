@@ -9,6 +9,13 @@ var models = require('doff.db.models.base');
 
 var RemoteSerializer = type('RemoteSerializer', [ Serializer ], {
 
+    serialize: function(queryset_or_model) {
+        var is_model = isinstance(queryset_or_model, models.Model);
+        if (is_model)
+            return super(Serializer, this).serialize([ queryset_or_model ])[0];
+        return super(Serializer, this).serialize(queryset_or_model);
+    },
+
     start_object: function(obj) {
         this._current = {};
     },

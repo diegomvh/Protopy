@@ -121,9 +121,11 @@ class RemoteManagerBase(object):
 
     def insert(self, values):
         #TODO: Validar que se corresponda con el modelo y otas yerbas
+        import ipdb; ipdb.set_trace()
         obj = self._deserializer([ values ]).next()
+        import ipdb; ipdb.set_trace()
         obj.save()
-        return obj.pk
+        return obj[obj._meta.pk.attname]
 
     def update(self, values):
         #TODO: Validar que se corresponda con el modelo y otas yerbas

@@ -30,6 +30,19 @@ function mark_or_delete_objects(seen_objs) {
     }
 }
 
+//Quitar los que no esten activos o estan marcados para borrar
+var RemoteManager = type('RemoteManager', [ models.Manager ], {
+    get_query_set: function() {
+        return super(models.Manager, this).get_query_set().filter({ active: true }).exclude({ status: "d" });
+    }
+});
+
+var RemoteNewsManager = type('RemoteNewsManager', [ models.Manager ], {
+    get_query_set: function() {
+        return super(models.Manager, this).get_query_set().filter({ server_pk: null });
+    }
+});
+
 var SyncLog = type('SyncLog', [ models.Model ], {
     SYNC_STATUS: [["s", "Synced"], ["c", "Created"], ["m", "Modified"], ["d", "Deleted"], ["b", "Bogus"]]
 },{
@@ -49,6 +62,9 @@ var RemoteModel = type('RemoteModel', [ models.Model ], {
     active: new models.BooleanField( {"default": true, "editable": false, "serialize": false}),
     status: new models.CharField( {"max_length": 1, "choices": SyncLog.SYNC_STATUS, "editable": false, "default": "c", "serialize": false}),
     server_pk: new models.CharField( {"max_length": 255, "unique": true, "null": true, "blank": true, "editable": false, "serialize": false}),
+
+    objects: new RemoteManager(),
+    news: new RemoteNewsManager(),
 
     Meta: {
         abstract: true
@@ -83,42 +99,26 @@ var RemoteModel = type('RemoteModel', [ models.Model ], {
         var server_pk_set = server_pk_val != null;
         var record_exists = true;
         var remotes = this.__class__.remotes;
+        var meta = this._meta;
         debugger;
         if (server_pk_set) {
             // Determine whether a record with the primary key already exists.
             var obj = remotes.filter({'pk': server_pk_val});
             if (bool(obj)) {
                 // It does already exist, so do an UPDATE.
-                values = serializer.serialize([ this ])[0];
-                var rows = remotes.update(values);
-                if (!rows)
-                    throw new DatabaseError('Forced update did not affect any rows.');
+                var values = serializer.serialize(this);
+                remotes.update(values);
             } else {
                 record_exists = false;
             }
         }
         if (!server_pk_set || !record_exists) {
-            if (!pk_set) {
-                var values = [[f, f.get_db_prep_save(this[f.attname] || f.pre_save(this, true))] for each (f in meta.local_fields) if (!(f instanceof models.AutoField))];
-            } else {
-                var values = [[f, f.get_db_prep_save(this[f.attname] || f.pre_save(this, true))] for each (f in meta.local_fields)];
-            }
+            var values = serializer.serialize(this);
 
-            if (meta.order_with_respect_to) {
-                var field = meta.order_with_respect_to;
-                var key1 = field.name;
-                values.concat([meta.get_field_by_name('_order')[0], manager.filter({key1: this[field.attname]}).count()]);
-            }
-            record_exists = false;
-
-            var update_pk = bool(meta.has_auto_field && !pk_set);
-            if (bool(values))
-                // Create a new record.
-                var result = manager._insert(values, {'return_id': update_pk});
-            else
-                // Create a new record with defaults for everything.
-                var result = manager._insert([[meta.pk, connection.ops.pk_default_value()]], {'return_id':update_pk, 'raw_values':true});
-
+            var update_pk = bool(meta.has_auto_field && !server_pk_set);
+            // Create a new record.
+            var result = remotes.insert(values);
+            
             if (update_pk) {
                 this[meta.pk.attname] = result;
             }
