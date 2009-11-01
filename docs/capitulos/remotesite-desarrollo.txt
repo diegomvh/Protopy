@@ -405,6 +405,14 @@ En el caso anterior, para acceder al sitio desconectado se debe acceder a la URL
     
 Esta URL genera automáticamente la instancia del proyecto en el cliente.
 
+Finalmente, podemos resumir el ciclo de migración mediante la siguiente figura:
+
+.. figure:: ../_svg/esquema_utilizacion_offline.png
+
+    Esquema de trabajo con la aplicación offline
+
+A continuación se trata uno de los objetivos 
+
 Sincronización de Datos
 -----------------------
 
@@ -452,7 +460,7 @@ Para implementar la sincronización se trataron los siguientes items:
 
 
 Transporte de Datos
--------------------
+===================
 
 El primer aspecto a considerar es el transporte de datos. Las bases de datos
 relacionales utilizan el lenguaje SQL como estándar para la definicón de su
@@ -568,7 +576,7 @@ de alto nivel, el orden de presedencia fue calculado de manera sencilla.
 
 
 Versionado de Modelos
----------------------
+=====================
 
 Mediante los serializadores y se puede realizar una transferencia de datos
 entre el cliente y el servidor, pero no se ha expuesto aún un mecanismo para
@@ -670,34 +678,39 @@ Se optó por el agregado de información de manera asimétrica: En el cliente la
 entidades se crean con campos extras, mientras que en el servidor se utilizan
 relaciones genéricas.
 
-Metainformación de Sincronización en el Cliente
-===============================================
+Información de Sincronización en el Cliente
+*******************************************
 
-En el cliente se decidió crear una nueva aplicación genérica llamada 
-``doff.contrib.syncrhonization`` y agregar una nueva entidad 
-En el cliente en la cual 
-se agrega la información de la fecha en la cual se ha realizado. Para tal fin se creó
-la entidad ``SyncLog`` con el atributo ``synced_at`` como ``datetime``. Además
-se crearon campos extras en cada entidad del cliente. Cuando se descargan
-entidades del serivodr, estas son referenciadas a la instancia de ``SyncLog`` actual  
+La información sobre sicronización en el cliente se basó en parte en los campos
+que propone Junction, agregándoselos a cada entidad, pero se modeló la
+ sincronización como entidad por separado.
 
+Se creo la aplicación genérica ``doff.contrib.offline`` y donde se definió ``SyncLog``.
+Cada vez que el cliente realiza una sincronización con el servidor, se 
+almacena la fecha sobre una instancia de esta entidad,
+de manera que durante la sincronización siguiente, 
+solo se trabaje con los modelos afectados en el intervalo de tiempo transcurrido.
 
- En cada modelo del cliente
-se optó por agregar los campos:
+Los datos que se agregaron a cada modelo del cliente fueron:
 
     * ``server_pk``
     
         Es la calve de la entidad en el servidor. El campo ``pk`` se refiere
-        al identificador de la entidad en el cliente. 
+        al identificador de la entidad en el cliente. Si la entidad se creo en
+        el cliente, este campo es ``NULL``
         
     * ``active``
         
-        Indica la baja lógica en el servidor.
+        Indica la baja lógica en el servidor. Por defecto toma el valor ``false``.
+        
+    * ``sync_log``
+        
+        Referencia la entidad de ``SyncLog`` en el cual fue sincronizado.
         
     * ``status``
         
         Este campo se creó con el objeto de indicar el estado de una entidad
-        en relación a los datos del servidor, sus valores son los siguientes:
+        con respecto a su contraparte en el servidor, sus valores posibles son los siguientes:
             
             * ``"C"`` (created)
             
@@ -722,9 +735,7 @@ se optó por agregar los campos:
                 servidor pasa a estado ``"S"`` y el atributo ``active`` pasa 
                 a ``false``.
         
-    * ``sync_log``
-        
-        Referencia la entidad de ``SyncLog`` en el cual fue sincronizado.
+    
 
 .. [JunctionDocsSync09] Steve Yen,  
     *TrimPath Junction Syncrhonization*,
@@ -735,7 +746,7 @@ y ``status``, dejando el trabajo de manipulación de los campos ``server_pk`` y
 la relación a ``sync_log`` para el proceso de sincronización.
 
 Metainformación de Sincronización en el Servidor
-================================================
+************************************************
 
 Se mencionó en el capítulo en el cual se introdujo Django que el ORM de este framework
 brinda lo que se conoce como el framework de ``ContentType`` (no confundir
@@ -757,7 +768,7 @@ y eliminación, ``post_delete``.
 
 
 Protocolo de Sincronización
----------------------------
+===========================
 
 En Doff se plantearon dos tipos de sincronización: la *sincronización inicial*, que
 ocurre cuando un cliente instala el proyecto desconectado a partir del sitio
@@ -770,8 +781,8 @@ los conflictos esto no ocurra de manera sorpresiva.
 Se eligió JSON-RPC como mecanismo de invocación de código remoto, debdido a que
 fue el mecanismo elegido en la implentación de Protopy.
 
-La aplicación genérica ``doff.contrib.offline.syncrhonization`` es la encargada del
-manejo de sincronización en el cliente y se instala por defecto (durante la ejecución
+La aplicación genérica ``doff.contrib.offline`` y en especial su módulo ``syncrhonization`` son
+los encargados del manejo de sincronización. Esta aplicación se instala por defecto (durante la ejecución
 del comando ``start_remotesite``).
 
 El sitio remoto publica por cada proxy (modelo registrado) el manager defindo
@@ -827,15 +838,13 @@ instancias del cliente.
 
     Estados de sincronización de los modelos en el cliente
 
-   
-Ciclo de Trabajo
-----------------
+Considreaciones sobre Sincronización
+===================================
 
-.. figure:: ../_svg/esquema_utilizacion_offline.png
-
-	Esquema de trabajo con la aplicación offline
-
-Utilidades de Doff
-------------------
+Doff provee un mecanismo básico de sincronziación adecuado para peuqueñas aplicaciones
+que permite al programador contar con las herramientas para transporte, comunicación RPC
+y control de cambios. Debido a que no existe una política universal aplicable a
+todas las aplicaciones, y debido a que Doff se trata de un framework extendible, 
+se pueden implmentar mecanismos más sofisticados en base a las herramientas expuestas.
 
  
