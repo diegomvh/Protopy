@@ -1,5 +1,5 @@
 #############################
-Conclusiones y lineas futuras
+Conclusiones y Líneas Futuras
 #############################
 
 ************
@@ -7,6 +7,59 @@ Conclusiones
 ************
 
 El desarrollo consistió en el siguiente diagrama:
+
+La solución propuesta se basó integramente en Open Source. Se utilizaron los
+siguientes productos:
+    
+    * Python
+        
+        Lenguaje de programación.
+    
+    * Django
+        
+        Framework de aplicaciones web escrito en Python.
+        
+    * Aspen
+        
+        Servidor Web basado en WSGI
+    
+    * Mozilla Firefox
+    
+        * Firebug
+        
+            Plugin de depuración.
+        
+    * Mercurial
+        
+        Sistema de control de versiones basado en Python.
+    
+    * Sphinx
+    
+        Sistema de generación de documentación basado en REST (REStrcutred Text).
+        Sistema de documentación actual del lenguaje Python y varios proyectos
+        importantes como Matplotlib.
+        
+        Se utilizó la salida a LaTeX y el comando ``pdflatex`` para generar la
+        salida en PDF.
+    
+    * Eclipse 
+    
+        Entorno de desarrollo integrado escrito en Java/SWT multiplataforma.
+        Posee complementos para varios lenguajes como Java, C/C++, PHP, Ruby, 
+        etc. 
+        
+        * MercurialEclipse
+            
+            Plugin para control de versiones mediante Mercurial
+        
+        * Pydev
+            
+            Plugin para proyectos basados en Python, con resaltado de sintaxis,
+            autocompleción, indicación de errores, etc.
+    
+    * Kate
+        
+        Editor de texto basado en el entorno KDE con resaltado de sintaxis.
 
 **************
 Lineas futuras
@@ -20,15 +73,21 @@ sobre los modelos de las aplicaciones de usuario, interactuando con la
 aplicación ``django.contrib.auth`` que provee
 usuarios, grupos y permisos.
  
-Historial de navegación
-=======================
-
 Workers con soporte para Javascript 1.7
 =======================================
-Google Gears provee un mecanismo de ejecución de código en el cliente de manera
+Gears provee un mecanismo de ejecución de código en el cliente de manera
 concurrente llamado Worker Pool. De esta manera tareas que demandan tiempo de
 CPU pueden ser envaidas a segundo plano, de manera de no entorpecer el refresco 
-de la GUI.
+de la interfase del navegador.
 Una caractersística de los worker pools, es que se ejecutan en un ámbito de 
-nombres diferente al del ``hilo principal''. Es decir, existe encapsulamiento
-de su estado.
+nombres diferente al del hilo principal y el único mecanismo de comunicación
+con el hilo principal es un sistema de cola de mensajes.
+
+Se podría aprovechar este esquema para ejecutar ciertas partes de Doff en el 
+uno o más Workers.
+
+Compatibilidad con ES5 y HTML 5
+===============================
+EcmaScrtip 5 o JavaScript 2.0 resulve varios aspetctos que fueron abordados
+por Protopy/Doff, como un sistema de clases. 
+
