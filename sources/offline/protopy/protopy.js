@@ -1588,7 +1588,7 @@
 
                 var ctx = object, expr = p3;
                 var pattern = /^([^.[]+|\[((?:.*?[^\\])?)\])(\.|\[|$)/;
-                match = pattern.exec(expr);
+                var match = pattern.exec(expr);
                 if (match == null) 
                     return before;
 
@@ -2404,7 +2404,7 @@
             var elements = array(this.elements);
             var data = elements.reduce(function(result, element) {
             if (!element.disabled && element.name) {
-                key = element.name; value = element.get_value();
+                var key = element.name; value = element.get_value();
                 if (value != null && element.type != 'file' && (element.type != 'submit')) {
                 if (key in result) {
                     // a key is already present; construct an array of values

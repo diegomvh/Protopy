@@ -54,7 +54,7 @@ var Count = type('Count', [ Aggregate ], {
         this.col = col || '*';
         this.distinct = distinct || false;
     },
-    
+
     relabel_aliases: function(change_map){
         var c = this.col;
         if (type(c) == Array)
@@ -65,11 +65,11 @@ var Count = type('Count', [ Aggregate ], {
         if (!quote_func)
             quote_func = function (x) {return x};
         if (type(this.col) == Array)
-            col = ['%s.%s'.subs([quote_func(c) for (c in this.col)])];
+            var col = ['%s.%s'.subs([quote_func(c) for (c in this.col)])];
         else if (this.col['as_sql'])
-            col = this.col.as_sql(quote_func);
+            var col = this.col.as_sql(quote_func);
         else
-            col = this.col;
+            var col = this.col;
         if (this.distinct)
             return 'COUNT(DISTINCT %s)'.subs(col);
         else
@@ -98,11 +98,11 @@ var Date = type('Date', [ object ], {
         if (!quote_func)
             quote_func = function (x) {return x};
         if (type(this.col) == Array)
-            col = ['%s.%s'.subs([quote_func(c) for (c in this.col)])];
+            var col = ['%s.%s'.subs([quote_func(c) for (c in this.col)])];
         else if (this.col['as_sql'])
-            col = this.col.as_sql(quote_func);
+            var col = this.col.as_sql(quote_func);
         else
-            col = this.col;
+            var col = this.col;
         return this.date_sql_func(this.lookup_type, col);
     }
 });

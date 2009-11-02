@@ -19,7 +19,7 @@ var Query = type('Query', [ object ], {
     LOUTER: 'LEFT OUTER JOIN',
     alias_prefix: 'T',
     query_terms: QUERY_TERMS,
-    
+
     __init__: function(model, connection, where) {
         where = where || WhereNode;
         this.model = model;
@@ -71,7 +71,7 @@ var Query = type('Query', [ object ], {
         // are the fields to defer, or False if these are the only fields to load.
         this.deferred_loading = [ new Set(), true ];
     },
-    
+
     __str__: function(){
         var [sql, params] = this.as_sql();
         return sql.subs(params);
@@ -80,7 +80,7 @@ var Query = type('Query', [ object ], {
     __deepcopy__: function(){
         return this.clone();
     },
-    
+
     /*
      * Returns the Options instance (the model._meta) from which to start
      * processing. Normally, this is self.model._meta, but it can be changed
@@ -178,7 +178,7 @@ var Query = type('Query', [ object ], {
             for each (var row in rows)
                 yield row;
     },
-    
+
     /*
      * Performs a COUNT() query using the current filter constraints.
      */
@@ -226,12 +226,12 @@ var Query = type('Query', [ object ], {
 
         var params = [];
         var result = ["SELECT"];
-        
+
         if (this.distinct)
             result.push("DISTINCT");
         result.push(out_cols.concat(this.ordering_aliases).join(', '));
         result.push("FROM");
-                    
+
         result = result.concat(from_);
         params = params.concat(f_params);
 
@@ -640,7 +640,7 @@ var Query = type('Query', [ object ], {
         * might change the tables we need. This means the select columns and
         * ordering must be done first.
         */
-    'get_from_clause': function get_from_clause() {
+    get_from_clause: function() {
 
         var result = [];
         var qn = getattr(this, 'quote_name_unless_alias');
@@ -681,7 +681,7 @@ var Query = type('Query', [ object ], {
     },
 
     /* Returns a tuple representing the SQL elements in the "group by" clause. */
-    'get_grouping': function get_grouping() {
+    get_grouping: function() {
         var qn = getattr(this, 'quote_name_unless_alias');
         var result = [];
         for each (var col in this.group_by)
@@ -700,7 +700,7 @@ var Query = type('Query', [ object ], {
         * called or are returned unchanged (if they don't have an as_sql()
         * method).
         */
-    'get_having': function get_having() {
+    get_having: function() {
         var result = [];
         var params = [];
         for each (var elt in this.having)
@@ -723,7 +723,7 @@ var Query = type('Query', [ object ], {
         Determining the ordering SQL can change the tables we need to include,
         so this should be run *before* get_from_clause().
         */
-    'get_ordering': function get_ordering() {
+    get_ordering: function() {
         if (bool(this.extra_order_by))
             var ordering = this.extra_order_by;
         else if (!this.default_ordering)
@@ -802,7 +802,7 @@ var Query = type('Query', [ object ], {
         not be) and column name for ordering by the given 'name' parameter.
         The 'name' is of the form 'field1__field2__...__fieldN'.
         */
-    'find_ordering_name': function find_ordering_name(name, opts, alias, default_order, already_seen) {
+    find_ordering_name: function(name, opts, alias, default_order, already_seen) {
         alias = alias || null;
         default_order = default_order || 'ASC';
         already_seen = already_seen || null;
@@ -866,7 +866,7 @@ var Query = type('Query', [ object ], {
         If 'create' is true, a new alias is always created. Otherwise, the
         most recently created alias for the table (if one exists) is reused.
         */
-    'table_alias': function table_alias(table_name, create) {
+    table_alias: function(table_name, create) {
         create = create || false;
         var current = this.table_map[table_name];
         var alias = null;
@@ -891,7 +891,7 @@ var Query = type('Query', [ object ], {
     },
 
     /* Increases the reference count for this alias. */
-    'ref_alias': function ref_alias(alias) {
+    ref_alias: function(alias) {
         this.alias_refcount[alias] = this.alias_refcount[alias] + 1;
     },
 
@@ -908,9 +908,9 @@ var Query = type('Query', [ object ], {
 
         Returns True if the join was promoted.
         */
-    'promote_alias': function promote_alias(alias, unconditional) {
+    promote_alias: function(alias, unconditional) {
         if ((unconditional || this.alias_map[alias][NULLABLE]) && this.alias_map[alias][JOIN_TYPE] != this.LOUTER) {
-            data = array(this.alias_map[alias]);
+            var data = array(this.alias_map[alias]);
             data[JOIN_TYPE] = this.LOUTER;
             this.alias_map[alias] = data;
             return true;
@@ -923,7 +923,7 @@ var Query = type('Query', [ object ], {
         any joins following that. If 'must_promote' is True, all the aliases in
         the chain are promoted.
         */
-    'promote_alias_chain': function promote_alias_chain(chain, must_promote) {
+    promote_alias_chain: function(chain, must_promote) {
         for each (var alias in chain)
             if (this.promote_alias(alias, must_promote))
                 must_promote = true;
@@ -936,20 +936,21 @@ var Query = type('Query', [ object ], {
         then and which ones haven't been used and promotes all of those
         aliases, plus any children of theirs in the alias tree, to outer joins.
         */
-    'promote_unused_aliases': function promote_unused_aliases(initial_refcounts, used_aliases) {
+    promote_unused_aliases: function(initial_refcounts, used_aliases) {
         // FIXME: There's some (a lot of!) overlap with the similar OR promotion
         // in add_filter(). It's not quite identical, but is very similar. So
         // pulling out the common bits is something for later.
         var considered = {};
-        for each (var alias in this.tables)
+        for each (var alias in this.tables) {
             if (!include(used_aliases, alias))
                 continue;
             if (!include(initial_refcounts, alias) || this.alias_refcount[alias] == initial_refcounts[alias]) {
-                parent = this.alias_map[alias][LHS_ALIAS];
-                must_promote = considered.get(parent, false);
-                promoted = this.promote_alias(alias, must_promote);
+                var parent = this.alias_map[alias][LHS_ALIAS];
+                var must_promote = considered[parent] || false;
+                var promoted = this.promote_alias(alias, must_promote);
                 considered[alias] = must_promote || promoted;
             }
+        }
     },
 
     /*
@@ -963,8 +964,8 @@ var Query = type('Query', [ object ], {
         // 1. Update references in "select" and "where".
         this.where.relabel_aliases(change_map);
         for (var [pos, col] in Iterator(this.select)) {
-            if (type(col) == Array) {
-                old_alias = col[0];
+            if (isinstance(col, Array)) {
+                var old_alias = col[0];
                 this.select[pos] = [change_map.get(old_alias, old_alias), col[1]];
             } else {
                 col.relabel_aliases(change_map);
@@ -973,11 +974,11 @@ var Query = type('Query', [ object ], {
 
         // 2. Rename the alias in the internal table/alias datastructures.
         for (var [old_alias, new_alias] in change_map.iteritems()) {
-            alias_data = array(this.alias_map[old_alias]);
+            var alias_data = array(this.alias_map[old_alias]);
             alias_data[RHS_ALIAS] = new_alias;
 
-            t = this.rev_join_map[old_alias];
-            data = array(this.join_map[t]);
+            var t = this.rev_join_map[old_alias];
+            var data = array(this.join_map[t]);
             data[data.index(old_alias)] = new_alias;
             this.join_map[t] = array(data);
             this.rev_join_map[new_alias] = t;
@@ -987,7 +988,7 @@ var Query = type('Query', [ object ], {
             this.alias_map[new_alias] = array(alias_data);
             delete this.alias_map[old_alias];
 
-            table_aliases = this.table_map[alias_data[TABLE_NAME]];
+            var table_aliases = this.table_map[alias_data[TABLE_NAME]];
             for (var [pos, alias] in Iterator(table_aliases)) {
                 if (alias == old_alias) {
                     table_aliases[pos] = new_alias;
@@ -1003,9 +1004,9 @@ var Query = type('Query', [ object ], {
         }
         // 3. Update any joins that refer to the old alias.
         for (var [alias, data] in this.alias_map.iteritems()) {
-            lhs = data[LHS_ALIAS];
+            var lhs = data[LHS_ALIAS];
             if (include(change_map, lhs)) {
-                data = array(data);
+                var data = array(data);
                 data[LHS_ALIAS] = change_map[lhs];
                 this.alias_map[alias] = array(data);
             }
@@ -1043,7 +1044,7 @@ var Query = type('Query', [ object ], {
     /*
         * Returns the first alias for this query, after increasing its reference count.
         */
-    'get_initial_alias': function get_initial_alias() {
+    get_initial_alias: function() {
         if (bool(this.tables)) {
             var alias = this.tables[0];
             this.ref_alias(alias);
@@ -1057,8 +1058,8 @@ var Query = type('Query', [ object ], {
     /*
         * Returns the number of tables in this query with a non-zero reference count.
         */
-    'count_active_tables': function count_active_tables() {
-        return [1 for each (count in values(this.alias_refcount)) if (count)].length;
+    count_active_tables: function() {
+        return len([1 for each (count in values(this.alias_refcount)) if (count)]);
     },
 
     /*
@@ -1144,7 +1145,7 @@ var Query = type('Query', [ object ], {
         this.rev_join_map[alias] = t_ident;
         return alias;
     },
-    
+
     setup_inherited_models: function() {
         /*
         If the model that is the basis for this QuerySet inherits other models,
@@ -1347,11 +1348,11 @@ var Query = type('Query', [ object ], {
             this.split_exclude(filter_expr, parts.slice(0,e.level).join(LOOKUP_SEP), can_reuse);
             return;
         }
-        var final = join_list.length;
+        var final = len(join_list);
         var penultimate = last.pop();
         if (penultimate == final)
             penultimate = last.pop();
-        if (trim && join_list.length > 1) {
+        if (trim && len(join_list) > 1) {
             var extra = join_list.slice(penultimate);
             var join_list = join_list.slice(0, penultimate);
             final = penultimate;
@@ -1463,7 +1464,7 @@ var Query = type('Query', [ object ], {
         column (used for any 'where' constraint), the final 'opts' value and the
         list of tables joined.
         */
-    'setup_joins': function setup_joins(names, opts, alias, dupe_multis, allow_many, allow_explicit_fk, can_reuse, negate, process_extras) {
+    setup_joins: function(names, opts, alias, dupe_multis, allow_many, allow_explicit_fk, can_reuse, negate, process_extras) {
         allow_many = allow_many || true;
         allow_explicit_fk = allow_explicit_fk || false;
         can_reuse = can_reuse || null;
@@ -1648,7 +1649,7 @@ var Query = type('Query', [ object ], {
         * the internal data structures to note that this alias shouldn't be used
         * for those other columns.
         */
-    'update_dupe_avoidance': function update_dupe_avoidance(opts, col, alias) {
+    update_dupe_avoidance: function(opts, col, alias) {
         var ident = id(opts);
         for (name in opts.duplicate_targets[col]) {
             if (!this.dupe_avoidance.has_key([ident, name]))
@@ -1663,7 +1664,7 @@ var Query = type('Query', [ object ], {
         original exclude filter (filter_expr) and the portion up to the first
         N-to-many relation field.
         */
-    'split_exclude': function split_exclude(filter_expr, prefix, can_reuse) {
+    split_exclude: function(filter_expr, prefix, can_reuse) {
         var query = new Query(this.model, this.connection);
         query.add_filter(filter_expr, can_reuse);
         query.bump_prefix();
@@ -1689,7 +1690,7 @@ var Query = type('Query', [ object ], {
         * Adds the given (model) fields to the select set. The field names are
         * added in the order specified.
         */
-    'add_fields': function add_fields(field_names, allow_m2m) {
+    add_fields: function(field_names, allow_m2m) {
 
         allow_m2m = allow_m2m || true;
         var alias = this.get_initial_alias();
@@ -1729,7 +1730,7 @@ var Query = type('Query', [ object ], {
 
         If 'ordering' is empty, all ordering is cleared from the query.
         */
-    'add_ordering': function add_ordering() {
+    add_ordering: function() {
 
         var arg = new Arguments(arguments);
         var ordering = arg.args;
@@ -1751,7 +1752,7 @@ var Query = type('Query', [ object ], {
         * Removes any ordering settings. If 'force_empty' is True, there will be
         * no ordering in the resulting query (not even the model's default).
         */
-    'clear_ordering': function clear_ordering(force_empty) {
+    clear_ordering: function(force_empty) {
         this.order_by = [];
         this.extra_order_by = [];
         if (force_empty)
@@ -1762,7 +1763,7 @@ var Query = type('Query', [ object ], {
         * Converts the query to do count(...) or count(distinct(pk)) in order to
         get its size.
         */
-    'add_count_column': function add_count_column() {
+    add_count_column: function() {
         // TODO: When group_by support is added, this needs to be adjusted so
         // that it doesn't totally overwrite the select list.
         var select = null;
@@ -1798,7 +1799,7 @@ var Query = type('Query', [ object ], {
         * certain related models (as opposed to all models, when
         * self.select_related=True).
         */
-    'add_select_related': function add_select_related(fields) {
+    add_select_related: function(fields) {
         var field_dict = new Dict();
         for each (var field in fields) {
             var d = field_dict;
@@ -1847,7 +1848,7 @@ var Query = type('Query', [ object ], {
         if (order_by)
             this.extra_order_by = order_by;
     },
-    
+
     clear_deferred_loading: function() {
         /*
         Remove any fields from the deferred loading set.
@@ -1924,7 +1925,7 @@ var Query = type('Query', [ object ], {
         * This is needed if we are selecting certain values that don't incldue
         * all of the extra_select names.
         */
-    'trim_extra_select': function trim_extra_select(names) {
+    trim_extra_select: function(names) {
         for (var key in new Set(this.extra_select.keys()).difference(new Set(names)))
             this.extra_select.unset(key);
     },
@@ -1984,7 +1985,7 @@ var Query = type('Query', [ object ], {
                 return empty_iter();
             } else { return; }
         }
-    
+
         var cursor = this.connection.cursor();
         cursor.execute(sql, params);
 
@@ -2061,7 +2062,7 @@ var Query = type('Query', [ object ], {
         * clamped to any existing high value.
         */
     set_limits: function(low, high) {
-    
+
         if (high) {
             if (this.high_mark)
                 this.high_mark = Math.min(this.high_mark, this.low_mark + high);
@@ -2152,6 +2153,6 @@ function add_to_dict(data, key, value) {
 
 var hcp = event.subscribe('class_prepared', setup_join_cache);
 
-publish({  
-    Query: Query  
+publish({
+    Query: Query
 });

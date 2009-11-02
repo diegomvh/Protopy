@@ -141,7 +141,7 @@ var CountQuery = type('CountQuery', [ Query ], {
         var [result, params] = this._query.as_sql();
         return [['(%s) A1'.subs(result)], params];
     },
-    
+
     get_ordering: function() {
         return [];
     }
