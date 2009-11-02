@@ -2,8 +2,8 @@ from django.utils.datastructures import SortedDict
 from django.db.models.fields import Field
 from django.db.models.query import QuerySet
 from offline.util.jsonrpc import SimpleJSONRPCDispatcher
-from django.core.serializers.python import Serializer as PythonSerializer
-from django.core.serializers.python import Deserializer as PythonDeserializer
+from django.core.serializers.base import DeserializedObject
+from django.core.serializers.python import Serializer as PythonSerializer, Deserializer as PythonDeserializer, _get_model
 from django.core.serializers import base
 from django.utils.encoding import smart_unicode
 from django.db import models
@@ -117,21 +117,25 @@ class RemoteManagerBase(object):
     def delete(self, pk):
         obj = self._manager.get(pk = pk)
         obj.delete()
-        return 'OK'
+        return pk
 
     def insert(self, values):
-        #TODO: Validar que se corresponda con el modelo y otas yerbas
-        import ipdb; ipdb.set_trace()
-        obj = self._deserializer([ values ]).next()
-        import ipdb; ipdb.set_trace()
-        obj.save()
-        return obj[obj._meta.pk.attname]
+        objs = self._deserializer(values)
+        ret = []
+        for o in objs:
+            o.save()
+            ret.append(getattr(o.object, o.object._meta.pk.attname))
+        print ret
+        return (len(ret) == 1) and ret[0] or ret
 
     def update(self, values):
-        #TODO: Validar que se corresponda con el modelo y otas yerbas
-        obj = self._deserializer([ values ]).next()
-        obj.save()
-        return 'OK'
+        objs = self._deserializer(values)
+        ret = []
+        for o in objs:
+            o.save()
+            ret.append(getattr(o.object, o.object._meta.pk.attname))
+        print ret
+        return (len(ret) == 1) and ret[0] or ret
 
 #===============================================================================
 # RemoteModel
@@ -164,7 +168,9 @@ class RemoteModelMetaclass(type):
 class RemoteModelProxy(object):
     __metaclass__ = RemoteModelMetaclass
 
-#TODO: MEjorar esto
+#===============================================================================
+# Serializer and Deserializer for RemoteManager
+#===============================================================================    
 class RemoteSerializer(PythonSerializer):
 
     def start_object(self, obj):
@@ -179,10 +185,47 @@ class RemoteSerializer(PythonSerializer):
         })
         self._current = None
 
+def RemoteDeserializer(object_or_list, **options):
+    models.get_apps()
+    if isinstance(object_or_list, dict):
+        object_or_list = [ object_or_list ]
+    for d in object_or_list:
+        # Look up the model and starting build a dict of data for it.
+        Model = _get_model(d["model"])
+        data = {}
+        if d.has_key("pk"):
+            data[ Model._meta.pk.attname ] = Model._meta.pk.to_python(d["pk"])
+        m2m_data = {}
+
+        # Handle each field
+        for (field_name, field_value) in d["fields"].iteritems():
+            if isinstance(field_value, str):
+                field_value = smart_unicode(field_value, strings_only=True)
+
+            field = Model._meta.get_field(field_name)
+
+            # Handle M2M relations
+            if field.rel and isinstance(field.rel, models.ManyToManyRel):
+                m2m_convert = field.rel.to._meta.pk.to_python
+                m2m_data[field.name] = [m2m_convert(smart_unicode(pk)) for pk in field_value]
+
+            # Handle FK fields
+            elif field.rel and isinstance(field.rel, models.ManyToOneRel):
+                if field_value is not None:
+                    data[field.attname] = field.rel.to._meta.get_field(field.rel.field_name).to_python(field_value)
+                else:
+                    data[field.attname] = None
+
+            # Handle all other fields
+            else:
+                data[field.name] = field.to_python(field_value)
+
+        yield DeserializedObject(Model(**data), m2m_data)
+
 class RemoteManager(RemoteManagerBase):
     def __init__(self):
         self._serializer = RemoteSerializer()
-        self._deserializer = PythonDeserializer
+        self._deserializer = RemoteDeserializer
 
     def all(self):
         return self._get_query_set().all()

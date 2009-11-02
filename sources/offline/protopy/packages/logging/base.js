@@ -58,11 +58,11 @@ var LogRecord = type('LogRecord', [ object ], {
         var ct = new Date();
         this.name = name;
         this.msg = msg;
-	/*
+        /*
         if args && (len(args) == 1) and args[0] and (type(args[0]) == types.DictType):
             args = args[0]
         */
-	this.args = args;
+        this.args = args;
         this.levelname = get_level(level);
         this.levelno = level;
         this.pathname = pathname;
@@ -83,15 +83,15 @@ var LogRecord = type('LogRecord', [ object ], {
     */
     get message() {
         var msg = this.msg;
-	if (type(msg) != String)
-	    msg = string(this.msg);
+        if (!isinstance(msg, String))
+            msg = string(this.msg);
         if (this.args)
             msg = msg.subs(this.args);
         return msg;
     },
 
     get time() {
-	return datetime.format(this.created, 'yyyy-mm-dd hh:nn:ss');
+        return datetime.format(this.created, 'yyyy-mm-dd hh:nn:ss');
     }
 });
 
@@ -220,7 +220,11 @@ var Handler = type('Handler', [ Filterer ], {
             var fmt = this.formatter;
         else
             var fmt = _default_formatter;
-        return fmt.subs(record);
+        var obj = {}
+        var values = ['name', 'msg', 'args', 'levelname', 'levelno', 'pathname', 'filename', 'module', 'lineno', 'created', 'relative_created', 'message', 'time'];
+        for each (var v in values)
+            obj[v] = record[v];
+        return fmt.subs(obj);
     },
     
     emit: function(record) {

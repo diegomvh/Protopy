@@ -1738,20 +1738,14 @@
             delete this._key[hash];
             return value;
         },
-        to_object: function() {
-            return create(this.to_array());
-        },
         keys: function() {
             return [k for each (k in this._key)];
         },
         values: function() {
             return [v for each (v in this._value)];
         },
-        to_array: function() {
-            return zip(this.keys(), this.values());
-        },
         items: function() {
-            return this.to_array();
+            return zip(this.keys(), this.values());
         },
         index: function(value) {
             var match = this.detect(function(pair) {
@@ -1956,9 +1950,6 @@
         without: function(array, e) {
             //TODO este para queitar elemenetos de un arreglo
         },
-        html: function(object) {
-            return object && object.__html__ ? object.__html__() : String.interpret(object);
-        },
         include: function(obj, element){
             if (isundefined(obj)) return false;
             if (isinstance(obj, Object))
@@ -1986,6 +1977,14 @@
             if (iterable.length != undefined)
                 return Array.prototype.slice.call(iterable);
         },
+        string: function(object) {
+            if (object && callable(object['__str__'])) 
+                return object.__str__();
+            return String(object);
+        },
+        html: function(object) {
+            return object && object.__html__ ? object.__html__() : String.interpret(object);
+        },
         print: window.console && window.console.log || function(){},
         range: function(start, stop, step){
             //FIXME Validar que el paso no sea negativo
@@ -1997,18 +1996,13 @@
                 ret.push(i);
             return ret;
         },
-        string: function(object) {
-            if (object && callable(object['__str__'])) 
-                return object.__str__();
-            return String(object);
-        },
-        values: function(obj){ 
+        values: function(obj) { 
             return [e for each (e in obj)]
         },
-        keys: function(object){
+        keys: function(object) {
             return [e for (e in object)];
         },
-        items: function(object){
+        items: function(object) {
             return zip(keys(object), values(object));
         },
         inspect: function(object) {
@@ -2023,7 +2017,7 @@
                 return array;
                 }, []);
         },
-        xrange: function(start, stop, step){
+        xrange: function(start, stop, step) {
             //FIXME Validar que el paso no sea negativo
             var xstep = step || 1;
             var xstop = (!stop)? start : stop;
@@ -2031,7 +2025,7 @@
             for (var i = xstart; i < xstop; i += xstep)
                 yield i;
         },
-        zip: function(){
+        zip: function() {
             var args = array(arguments);
             var collections = args.map(array);
             var array1 = collections.shift();

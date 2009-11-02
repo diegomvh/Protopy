@@ -84,7 +84,6 @@ class FieldIntrospection(object):
         args = SortedDict()
         #args = []
         # We start from 1: since we want to skip
-        print self._arg_spec.defaults
         for index, f_name in enumerate(self._arg_spec.args[1:]):
             f_value = getattr(field, f_name, None)
             if self._arg_spec.defaults:

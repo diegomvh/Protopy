@@ -37,14 +37,25 @@ var RemoteManager = type('RemoteManager', [ models.Manager ], {
     }
 });
 
-var RemoteNewsManager = type('RemoteNewsManager', [ models.Manager ], {
+var RemoteStatusManager = type('RemoteNewsManager', [ models.Manager ], {
+    __init__: function(status) {
+        if (!status in SyncLog.SYNC_STATUS)
+            throw new Exception("Status must be s,c,m,d");
+        this.status = status;
+        super(models.Manager, this).__init__();
+    },
+
     get_query_set: function() {
-        return super(models.Manager, this).get_query_set().filter({ server_pk: null });
+        return super(models.Manager, this).get_query_set().filter({ status: this.status });
     }
 });
 
 var SyncLog = type('SyncLog', [ models.Model ], {
-    SYNC_STATUS: [["s", "Synced"], ["c", "Created"], ["m", "Modified"], ["d", "Deleted"], ["b", "Bogus"]]
+    SYNC_STATUS: { "s": "Synced",
+                   "c": "Created",
+                   "m": "Modified",
+                   "d": "Deleted",
+                   "b": "Bogus" }
 },{
     synced_at: new models.DateTimeField('Date', {'editable': false}),
     sync_id: new models.CharField({'max_length': 512}),
@@ -60,11 +71,13 @@ var SyncLog = type('SyncLog', [ models.Model ], {
 var RemoteModel = type('RemoteModel', [ models.Model ], {
     sync_log: new models.ForeignKey(SyncLog, {"db_index": true, "null": true, "blank": true, "editable": false, "serialize": false}),
     active: new models.BooleanField( {"default": true, "editable": false, "serialize": false}),
-    status: new models.CharField( {"max_length": 1, "choices": SyncLog.SYNC_STATUS, "editable": false, "default": "c", "serialize": false}),
+    status: new models.CharField( {"max_length": 1, "choices": items(SyncLog.SYNC_STATUS), "editable": false, "default": "c", "serialize": false}),
     server_pk: new models.CharField( {"max_length": 255, "unique": true, "null": true, "blank": true, "editable": false, "serialize": false}),
 
     objects: new RemoteManager(),
-    news: new RemoteNewsManager(),
+    created: new RemoteStatusManager("c"),
+    modified: new RemoteStatusManager("m"),
+    deleted: new RemoteStatusManager("d"),
 
     Meta: {
         abstract: true
@@ -153,6 +166,6 @@ var hcp = event.subscribe('class_prepared', ensure_default_remote_manager);
 
 publish({
     SyncLog: SyncLog,
-    RemoteReadOnlyModel: RemoteReadOnlyModel,
-    RemoteModel: RemoteModel
+    RemoteModel: RemoteModel,
+    RemoteReadOnlyModel: RemoteReadOnlyModel
 });

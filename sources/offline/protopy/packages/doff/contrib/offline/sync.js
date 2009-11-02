@@ -1,15 +1,20 @@
 require('rpc', 'ServiceProxy');
 require('doff.core.project', 'get_project');
-require('doff.contrib.offline.models', 'SyncLog', 'RemoteModel');
-require('doff.db.models.base', 'get_model_by_identifier');
+require('doff.contrib.offline.models', 'SyncLog', 'RemoteModel', 'RemoteReadOnlyModel');
+require('doff.db.models.base', 'get_model_by_identifier', 'get_models');
 require('doff.db.models.query', 'delete_objects', 'CollectedObjects');
+
+function get_deleted_models() {
+    var models = get_models().filter(function(m) { return issubclass(m, RemoteModel) && ! issubclass(m, RemoteReadOnlyModel) && m.deleted.count() > 0; });
+    return models;
+}
 
 function purge(models) {
     //Elimina objetos que estan inactivos y no estan referenciados
     //Pre-condicion :P los modelos deben estar en orden que permita eliminar sin bloqueos
     for each (var model in models) {
         if (issubclass(model, RemoteModel)) {
-            inactivos = model.objects.filter({'active': false});
+            inactivos = model.objects.filter({ 'active': false });
             for (var obj in inactivos) {
                 var seen_objs = new CollectedObjects();
                 obj._collect_sub_objects(seen_objs);
@@ -47,18 +52,17 @@ function pull() {
                 obj.save();
             model.remotes = null;
         }
-        // Ahora que esta todo guardado purgo
-        purge(models.reverse());
     }
 
-    //rpc.end_synchronization(new_sync_log);
+    rpc.end_synchronization(new_sync_log);
 }
 
-function push(){
+function push() {
 
 }
 
 publish({
+    get_deleted_models: get_deleted_models,
     purge: purge,
     pull: pull,
     push: push

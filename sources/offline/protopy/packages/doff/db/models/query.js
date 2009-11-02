@@ -306,7 +306,7 @@ var QuerySet = type('QuerySet', [ object ], {
      */
     count: function() {
         if (this._result_cache && !this._iter)
-            return this._result_cache.length;
+            return len(this._result_cache);
         return this.query.get_count();
     },
 

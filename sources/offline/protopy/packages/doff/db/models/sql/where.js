@@ -8,12 +8,12 @@ require('doff.db.models.query_utils', 'QueryWrapper');
 var AND = 'AND',
     OR = 'OR';
 
-var WhereNode = type('WhereNode', Node, {
+var WhereNode = type('WhereNode', [ Node ], {
 
     default_connector: AND,
 
     /* Los datos vienen en un objeto */
-    'add': function add(data, connector) {
+    add: function(data, connector) {
         if (!isinstance(data, Array)) {
             super(Node, this).add(data, connector);
             return;
@@ -44,12 +44,12 @@ var WhereNode = type('WhereNode', Node, {
         super(Node, this).add([alias, column, db_type, lookup_type, annotation, params], connector);
     },
     
-    '__str__': function __str__(){
+    __str__: function() {
         var q = this.as_sql();
         return q[0].subs(q[1]);
     },
             
-    'as_sql': function as_sql(qn){
+    as_sql: function(qn) {
 
         if (!qn)
             var qn = getattr(connection.ops, 'quote_name');
@@ -105,7 +105,7 @@ var WhereNode = type('WhereNode', Node, {
         return [sql_string, result_params];
     },
 
-    'make_atom': function make_atom(child, qn) {
+    make_atom: function(child, qn) {
         var lhs = null, cast_sql = null, extra = null;
         var [table_alias, name, db_type, lookup_type, value_annot, params] = child;
             
@@ -153,7 +153,7 @@ var WhereNode = type('WhereNode', Node, {
         throw new TypeError('Invalid lookup_type: ' + lookup_type);
     },
 
-    'relabel_aliases': function relabel_aliases(change_map, node) {
+    relabel_aliases: function(change_map, node) {
     
         if (!node)
             node = this;
@@ -169,24 +169,24 @@ var WhereNode = type('WhereNode', Node, {
     }
 });
 
-var EverythingNode = type('EverythingNode', object, {
+var EverythingNode = type('EverythingNode', [ object ], {
 
-    'as_sql': function as_sql(qn){
+    as_sql: function(qn){
         throw new FullResultSet();
     },
 
-    'relabel_aliases': function relabel_aliases(change_map, node){
+    relabel_aliases: function(change_map, node){
         return;
     }
 });
 
-var NothingNode = type('NothingNode', object, {
+var NothingNode = type('NothingNode', [ object ], {
 
-    'as_sql': function as_sql(qn){
+    as_sql: function(qn) {
         throw new EmptyResultSet();
     },
 
-    'relabel_aliases': function relabel_aliases(change_map, node){
+    relabel_aliases: function(change_map, node) {
         return;
     }
 });
