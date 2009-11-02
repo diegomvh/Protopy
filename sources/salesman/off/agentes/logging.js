@@ -4,16 +4,11 @@
             'level': 'ERROR',
             'handlers': 'firebug'
         },
-        'doff.db.models.sql': {
-            'level':'ERROR',
+        'doff.db.backends.gears.base': {
+            'level':'DEBUG',
             'handlers':'firebug',
-            'propagate': true
-        },
-        'doff.db.backends.gears': {
-            'level':'ERROR',
-            'handlers':'firebug',
-            'propagate': true
-        },
+            'propagate': false
+        }
     },
     'handlers': {
         'firebug': {

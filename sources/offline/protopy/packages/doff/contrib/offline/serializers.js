@@ -23,7 +23,7 @@ var RemoteSerializer = type('RemoteSerializer', [ Serializer ], {
     end_object: function(obj) {
         this.objects.push({
             "model"  : string(obj._meta),
-            "pk"     : string(obj.server_pk),
+            // "pk"     : string(obj.server_pk), Creo que esto solo va si el pk no es un AutoField
             "fields" : this._current
         });
         this._current = null;

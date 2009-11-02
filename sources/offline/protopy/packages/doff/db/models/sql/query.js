@@ -14,7 +14,7 @@ require('event');
 /*
  * A single SQL query
  */
-var Query = type('Query', object, {
+var Query = type('Query', [ object ], {
     INNER: 'INNER JOIN',
     LOUTER: 'LEFT OUTER JOIN',
     alias_prefix: 'T',
@@ -95,7 +95,7 @@ var Query = type('Query', object, {
         * for table names. This avoids problems with some SQL dialects that treat
         * quoted strings specially (e.g. PostgreSQL).
         */
-    'quote_name_unless_alias': function quote_name_unless_alias(name) {
+    quote_name_unless_alias: function(name) {
         if (name in this.quote_cache)
             return this.quote_cache[name];
         if ((name in this.alias_map && !(name in this.table_map)) || this.extra_select.has_key(name)) {
@@ -111,7 +111,7 @@ var Query = type('Query', object, {
         * Creates a copy of the current instance. The 'kwargs' parameter can be
         * used by clients to update attributes after copying has taken place.
         */
-    'clone': function clone(klass) {
+    clone: function(klass) {
 
         var arg = new Arguments(arguments);
         var args = arg.args;
@@ -173,18 +173,18 @@ var Query = type('Query', object, {
     /*
         * Returns an iterator over the results from executing this query.
         */
-    'results_iter': function results_iter() {
+    results_iter: function() {
         for each (var rows in this.execute_sql(MULTI))
             for each (var row in rows)
                 yield row;
     },
     
     /*
-        * Performs a COUNT() query using the current filter constraints.
-        */
-    'get_count': function get_count() {
+     * Performs a COUNT() query using the current filter constraints.
+     */
+    get_count: function() {
         var CountQuery = require('doff.db.models.sql.subqueries', 'CountQuery');
-        obj = this.clone();
+        var obj = this.clone();
         obj.clear_ordering(true);
         obj.clear_limits();
         obj.select_related = false;
@@ -196,10 +196,10 @@ var Query = type('Query', object, {
             obj.extra_select = new SortedDict();
         }
         obj.add_count_column();
-        data = obj.execute_sql(SINGLE);
+        var data = obj.execute_sql(SINGLE);
         if (!data)
             return 0;
-        number = data[0];
+        var number = data[0];
 
         // Apply offset and limit constraints manually, since using LIMIT/OFFSET
         // in SQL (in variants that provide them) doesn't change the COUNT
@@ -211,7 +211,7 @@ var Query = type('Query', object, {
         return number;
     },
 
-    'as_sql': function as_sql(with_limits, with_col_aliases) {
+    as_sql: function(with_limits, with_col_aliases) {
 
         with_limits = with_limits || true;
         with_col_aliases = with_col_aliases || false;
@@ -227,9 +227,9 @@ var Query = type('Query', object, {
         var params = [];
         var result = ["SELECT"];
         
-	if (this.distinct)
-	    result.push("DISTINCT");
-	result.push(out_cols.concat(this.ordering_aliases).join(', '));
+        if (this.distinct)
+            result.push("DISTINCT");
+        result.push(out_cols.concat(this.ordering_aliases).join(', '));
         result.push("FROM");
                     
         result = result.concat(from_);
@@ -270,10 +270,10 @@ var Query = type('Query', object, {
                     var val = this.connection.ops.no_limit_value();
                     if (val)
                         result.push('LIMIT %s'.subs(val));
-		}
-		result.push('OFFSET %s'.subs(this.low_mark));
-	    }
-	}
+                }
+                result.push('OFFSET %s'.subs(this.low_mark));
+            }
+        }
         params = params.concat(this.extra_params);
         return [result.join(' '), params];
     },
@@ -285,24 +285,24 @@ var Query = type('Query', object, {
         * The 'connector' parameter describes how to connect filters from the
         * 'rhs' query.
         */
-    'combine': function combine(rhs, connector) {
+    combine: function(rhs, connector) {
 
         assert(this.model == rhs.model, "Cannot combine queries on two different base models.");
         assert(this.can_filter(), "Cannot combine queries once a slice has been taken.");
         assert(this.distinct == rhs.distinct, "Cannot combine a unique query with a non-unique query.");
 
         // Work out how to relabel the rhs aliases, if necessary.
-        change_map = {};
-        used = new Set();
-        conjunction = (connector == AND);
-        first = true;
+        var change_map = {};
+        var used = new Set();
+        var conjunction = (connector == AND);
+        var first = true;
         for each (var alias in rhs.tables) {
             if (!rhs.alias_refcount[alias])
                 // An unused alias.
                 continue;
-            promote = (rhs.alias_map[alias][JOIN_TYPE] == this.LOUTER);
+            var promote = (rhs.alias_map[alias][JOIN_TYPE] == this.LOUTER);
             //join(connection, always_create, exclusions, promote, outer_if_first, nullable, reuse)
-            new_alias = this.join(rhs.rev_join_map[alias], (conjunction && !first), used, promote, !conjunction);
+            var new_alias = this.join(rhs.rev_join_map[alias], (conjunction && !first), used, promote, !conjunction);
             used.add(new_alias);
             change_map[alias] = new_alias;
             first = false;
@@ -957,7 +957,7 @@ var Query = type('Query', object, {
         relabelling any references to them in select columns and the where
         clause.
         */
-    'change_aliases': function change_aliases(change_map) {
+    change_aliases: function(change_map) {
         assert (new Set(change_map.keys()).intersection(new Set(change_map.values())) == new Set())
 
         // 1. Update references in "select" and "where".
@@ -1024,16 +1024,16 @@ var Query = type('Query', object, {
         The 'exceptions' parameter is a container that holds alias names which
         should not be changed.
         */
-    'bump_prefix': function bump_prefix(exceptions) {
-        var exceptions = exceptions || [];
-        current = ord(this.alias_prefix);
+    bump_prefix: function(exceptions) {
+        exceptions = exceptions || [];
+        var current = ord(this.alias_prefix);
         assert(current < ord('Z'));
-        prefix = chr(current + 1);
+        var prefix = chr(current + 1);
         this.alias_prefix = prefix;
-        change_map = {};
+        var change_map = {};
         for (var [pos, alias] in Iterator(this.tables)) {
             if (include(exceptions, alias)) continue;
-            new_alias = '%s%d'.subs(prefix, pos);
+            var new_alias = '%s%d'.subs(prefix, pos);
             change_map[alias] = new_alias;
             this.tables[pos] = new_alias;
         }

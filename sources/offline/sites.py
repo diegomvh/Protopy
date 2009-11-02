@@ -380,7 +380,8 @@ class RemoteSite(RemoteBaseSite):
         return retorno
 
     @jsonrpc
-    def end_synchronization(self, sync_log = None):
+    def end_synchronization(self, sync_log):
+        
         retorno = {}
         return retorno
 

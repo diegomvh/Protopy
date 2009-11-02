@@ -98,7 +98,7 @@ var GearsCursorWrapper = type('GearsCursorWrapper', [ database.Cursor ], {
         params = params || [];
         try {
             query = this.convert_query(query, params.length);
-
+            
             logger.debug('Query: %s\nParams: %s', query, params, {});
             super(database.Cursor, this).execute(query, params);
         }

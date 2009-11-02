@@ -110,7 +110,8 @@ var InsertQuery = type('InsertQuery', [ Query ], {
         into the query, for example.
         */
     insert_values: function(insert_values, raw_values) {
-        var placeholders = [], values = [];
+        var placeholders = []; 
+        var values = [];
         for each (var [field, val] in insert_values) {
             if (callable(field['get_placeholder']))
                 // Some fields (e.g. geo fields) need special munging before
