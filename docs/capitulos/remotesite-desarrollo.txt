@@ -2,7 +2,7 @@
 La aplicación
 ****************
 
-Una vez lograda la implementación de Django en el clinete sobre el framework
+Una vez lograda la implementación de Django en el cliente, el framework
 de aplicaciones Doff, se comenzó a trabajar en la integración con los proyectos
 en línea.
 
@@ -10,9 +10,9 @@ en línea.
 Doff fue desarrollado con el objetivo de realizar la menor cantidad de 
 reescritura posible de las aplicaciones Django al momento de ser ejecutadas de manera
 desconectada. Si bien fue intecinalmente omitido en el capítulo sobre el
-framework desconectado, el hecho de contar con la misma API de ORM posibilita la generación de 
+framework desconectado, contar con la misma API de ORM hace posible la generación de 
 modelos del cliente de manera autónoma a partir del análisis
-de las definciones de los modelos de la aplicación en linea.
+de las definciones de los modelos de la aplicación en línea.
 
 De la misma manera, las plantillas del proyecto conectado, no requieren
 adaptaciones (en el caso de que utilicen JavaScrpipt, deben adecuarlo
@@ -26,34 +26,35 @@ no pueden ser traducidas a JavaScript sin la intervensión del programador.
 
 En el capítulo sobre Doff se introdujo vagamente una aplicación Django llamada
 ``offline`` que tenía como objetivo servir estáticamente al cliente con
-el código de Doff y Protopy. En el presente capítulo se centra sobre la 
+el código de Doff y Protopy. El presente capítulo se centra sobre la 
 utilidad de dicha aplicación.
 
-Se introduce la entidad ``RemoteSite`` que tiene como objetivo ser el punto
-vínculo con la aplicación desconectada y brindar mecanismos para seguridad
-y sincronización de datos. Esta entidad se encuentra implementada en el 
-la aplicación ``offline``.
+Se introduce la entidad ``RemoteSite`` que tiene como objetivo 
+vincular la aplicación desconectada con la aplicación en línea 
+y brindar mecanismos para seguridad y sincronización de datos.
 
-Como se introdujo en el capítulo teórico sobre las tecnologías del servidor,
-el mecanismo de comunicación con Django es la lína de comandos (CLI) y
+El mecanismo de comunicación con Django es la lína de comandos (CLI) [*]_, y
 brinda una API para la generación de comandos presonalizados que se aprovechó
 para automatizar varios pasos de la migración de un proyecto.
 
+
+.. [*] Tal como se mencionó en el capítulo teórico sobre las tecnologías del servidor.
+ 
 RemoteSite
 ----------
 
-La calse ``RemoteSite`` define un proyecto desconectado. Tiene varias 
-responsabilidades, entre ellas, servir el código del framework Doff,
+La clase ``RemoteSite`` o sitio remoto define un proyecto desconectado. Tiene varias 
+responsabilidades, entre ellas, servir el código JavaScript del framework Doff,
 el del proyecto, administrar la forma en que el cliente accede a los
 datos y permitir la sincornización. Esta clase se impleentó en 
 ``offline.sites.RemoteSite``.
 
-Su interfase está basada en buena medida en la que presenta la adminstración
-que provee Django (``django.contrib.admin``), donde un 
+Su interfase está basada en la adminstración que provee Django 
+(``django.contrib.admin``), donde un 
 sitio de administración se encarga de las operaciones de CRUD sobre 
 los modelos que le son registrados. Pueden existir múltiples sitios de
 administración en un proyecto. Cada sitio se publica en una 
-URLs dentro del proyecto [DjangoNewFormsAdminBranch09]_.
+URL dentro del proyecto [DjangoNewFormsAdminBranch09]_.
 
 .. [DjangoNewFormsAdminBranch09] Brian Rosner, Django Trac,
    *The newforms-admin branch*,
@@ -71,32 +72,96 @@ Mediante el mecanismo de autenticación y autorización de Django
 (``django.contrib.auth``) se puede restringir que usuario o rol
 accede a cada sitio remoto. 
 
-Existe una directorio (que también es un módulo Python) donde se almacenan
-los módulos que definen los sitios remotos. Cada sitio remoto posee un 
+La creación de un sitio remoto no se realiza manualmente. Cuando se instala
+la aplicación ``offline`` en el proyecto en línea, se añade un comando para 
+la creación automatizada. Este comando se encarga de crear
+un directorio (que también es un módulo Python) donde se almacena
+los módulo que define los sitio remoto. Cada sitio remoto posee un 
 nombre único. El nombre de este directorio se define en el módulo ``settings.py``
-del proyecto como ``OFFLINE_BASE``.
+del proyecto como una constante de cadena con el nombre ``OFFLINE_BASE``.
 
 Por cada sitio remoto existe un subdirectorio donde se almacena el código
 JavaScript del proyecto y sus aplicaciones: ``OFFLINE_BASE/<nombre_sitio_remoto>``. 
-
 En su nivel base se cuenta con los módulos ``settings.js``, ``urls.js``.
 Cada aplicación es un subdirectorio y cuenta con módulos ``views.js``, 
 ``mixins.js``, ``tests.js`` y ``urls.js``.
 
-Existe una estrecha interacción entre Doff y los sitios remotos:
-El sitio remoto publica una serie de URLs de donde Doff descarga los modulos y
-recursos que componen a la aplicación, para almacenarlos localmente y poder
-ejecutar el proyecto cuando el cliente se encuentre sin conexión. Esta tarea
-se realiza mediante un manifesto publicado en la URL ``manifest.json``.
+Desde el punto de vista de Django, un sitio
+remoto publica sus métodos como vistas [*]_ y se comporta como un módulo de
+``urls``, pero a diferencia de una vista de usuario, la URL (patrón) donde se publica
+está definida.
+El patrón que se debe utilizar es una propiedad de la instacia
+llamada ``urlregex``, es decir que el programador no define donde se publica el sitio
+sino que está definido por el sito [*]_ (internamente en función del nombre del sitio remoto
+y del parámetro ``OFFLINE_BASE``). Por ejemplo:
 
-El componente ``ManagedLocalStore`` de Gears se encarga de persistir en el
-cliente todas las URLs que publique el manifesto.
+.. code-block:: python
+    
+    from soporte_offline.remote_mi_sitio import site as mi_sitio
+    
+    urlpatterns = patterns('',
+        # Las primeras dos asocaiciones utilizan una cadena 
+        (r'^$', index,)
+        (r'^vendedores/(?P<id>\d)/$', vista_vendedores),
+        
+        # En el caso de los sitios remotos, la URL está indicada por el atributo
+        # urlregex
+        (r'^%s/(.*)' % mi_sitio.urlregex, mi_sitio.root ),
+    )
+         
+En el caso anterior la propiedad ``urlregex`` es ``/soporte_offline/mi_sitio`` y
+en ese lugar se encuentra el punto de entrada para la ejecución del proyecto 
+desconectado. Al acceder a esta URL el navegador se encuentra con:
 
+.. code-block:: html
+    :linenos:
+    
+    <html>
+    <head>
+        <!-- El sitio remoto publica la librería Protopy, como JavaScript 1.7 -->
+        <script type="text/javascript;version=1.7" 
+            src="/soporte_offline/mi_sitio/lib/protopy.js"></script>
+        <!-- Creación de la instancia del proyecto desconectado -->
+        <script type="text/javascript;version=1.7">
+            <!-- Requerir del módulo de proyectos, la función new_project -->
+            require('doff.core.project', 'new_project');
+            <!-- Instanciación  del proyecto --> 
+            var mi_sitio = new_project('mi_sitio', '/soporte_offline/mi_sitio');
+            <!-- Darle el control del navegador a la instancia del proyecto -->
+            mi_sitio.bootstrap();
+        </script>
+    </head>
+    <body>
+    </body>
+    
+    </html>
+        
+.. [*] Tomado de TurboGears y Pylons. 
+
+Como se pudo observar en el ejemplo anterior, el código del Protopy se encuentra
+en ``lib/protopy.js`` (línea 4 y 5), y como se deinfinió en el capítulo anterior, el códgo
+de Doff se encuentra en ``lib/packages/``. En la línea 10, se crea una entrada
+en ``sys.path`` de Protopy, definiendo que el paquete ``mi_sitio`` se encuentra en la
+URL ``/soporte_offline/mi_sitio``. En este caso ``mi_sitio`` es el paquete que define
+al proyecto. Para cargar el módulo ``settings`` mediante 
+``require("mi_sitio.settings")`` se está realizando una petición a
+``/soporte_offline/mi_sitio/js/settings.js``.
+
+.. [*] Si bien no se recomienda modificar la URL en la cual se publica un sitio remoto,
+       el desarrollador puede modificarla.
+
+Además de las URLs descritas, el sitio remoto publica otras de dónde 
+Doff descarga los modulos y recursos que componen a la aplicación, 
+para almacenarlos localmente y poder ejecutar el proyecto cuando el cliente 
+se encuentre sin conexión. Una de estas URLs es ``manifest.json``, en la cual
+se encuentra una lista completa de los archivos que componen al proyecto.
+Durante la instalación del proyecto se utiliza esta lista para alamacenar
+los recursos que componen al proyecto.
 
 A continuación se realiza una descripción del método de migración de proyectos.
 
-Migración de una Proyecto
--------------------------
+Migración de un Proyecto
+------------------------
 
 La migración de un proyecto a través de los sitios remotos consiste
 de los siguientes pasos:
@@ -112,6 +177,8 @@ de los siguientes pasos:
     
     #. Publicación del sitio remoto
     
+    #. Creación del ``manifest.json``, este paso se considera el paso a
+       producción de la aplicación desconectada.
 
 
 El primer paso para la migración consiste en la instalación de la
@@ -130,9 +197,10 @@ antes mencionados. Los comandos implementados son los siguientes:
     crear. Si no exite el directorio ``OFFLINE_BASE`` en el proyecto en
     línea lo crea y dentro de el añade el módulo ``remote_<nombre-site>.py``
     en el cual define la instancia de ``RemoteSite`` con el nombre dado. Utiliza
-    también el nombre para crear un subdirectorio en el ``OFFLINE_BASE`` donde
-    crea el esqueleto del proyecto desconetado (``settings.js`` y ``urls.js`` 
-    que son rellenados con la configuración disponible de la aplicación en linea).
+    también el nombre para crear un subdirectorio en ``OFFLINE_BASE`` donde
+    crea el esqueleto del proyecto desconetado (crando ``settings.js`` y ``urls.js`` 
+    a partir de plantillas que son rellenadas con la configuración disponible 
+    de la aplicación en linea).
     
     Por ejemplo:
     
@@ -163,7 +231,7 @@ antes mencionados. Los comandos implementados son los siguientes:
     Migra una aplicación conectada a un ``RemoteSite``. Recibe como argumentos
     el nombre del sitio remoto y el nombre de la aplicación. Dentro
     de ``OFFLINE_BASE/<nombre-site>/<nombre-app>`` crea la estructura de la 
-    aplicación (módulos ``views.js`` y ``models.js``).
+    aplicación (crea los módulos ``views.js`` y ``models.js`` a partir de plantillas).
     
     Por ejemplo:
     
@@ -171,8 +239,8 @@ antes mencionados. Los comandos implementados son los siguientes:
     
         $ manage.py migrate_app vendedor_viajante catalogo
         
-    El ejemplo anterior, basados en lo definido en el comando de más arriba, 
-    produciría la siguiente salida::
+    Basados en el ejemplo del comando ``start_remotesite``, 
+    produciría la siguiente estructura de archivos::
     
         soporte_offline/
             remote_vendedor_viajante.py
@@ -190,10 +258,10 @@ antes mencionados. Los comandos implementados son los siguientes:
  * ``manifest_update``
  
     Acutaliza los recursos que componen al proyecto desconectado: vistas,
-    templates, modelos y recursos estáticos. 
+    plantillas, modelos y recursos estáticos. 
     
-Una vez creado un sitio remoto, sus recuros estáticos que lo componen
-se ubican en ``OFFLINE_BASE/<nombre-site>/``. 
+.. Una vez creado un sitio remoto, el programador los recuros estáticos que lo componen
+   se ubican en ``OFFLINE_BASE/<nombre-site>/``. 
 
 La definción de un remotesite dentro de ``OFFLINE_BASE/remote_<nombre-site>.py``,
 resultado del comando ``manage.py create_remotesite <nombre-site>`` tiene 
@@ -242,14 +310,13 @@ anterior:
 .. code-block:: python
     
     from offline.sites import RemoteSite
-    from offline.sites import RemoteModelProxy
     from bookstore.core.models import Book, Author  
 
     site = LibrarianRemoteSite('librarian')
     site.register(Book)
     site.register(Author)
     
-De esta manera las vistas del sitio remoto tendrán disponible los 
+De esta manera las vistas del proyecto desconectado tendrán disponible los 
 modelos ``Book`` y ``Author``. 
 
 Para personalizar la definición y acceso a datos de un modelo, se debe 
@@ -259,13 +326,18 @@ pueden definir los campos a publicar mediante (``fields``, ``include``,
 
 .. code-block:: python
 
-    class TagRemote(RemoteModelProxy):
+    from offline.sites import RemoteSite
+    from bookstore.core.models import Book, Author  
+
+    site = LibrarianRemoteSite('librarian')
+
+    class BookRemote(RemoteModelProxy):
         class Meta:
-            model = Tag # Este campo es opcional
-            exclude = ('title', )
-            manager = Tag.objects
+            model = Book # Este campo es opcional
+            exclude = ('author', )
+            manager = Book.objects
     
-    site.register(Tag, TagRemote) # Registro
+    site.register(Book, BookRemote) # Registro
     
 .. [*] Se pueden definir campos que no existen en el modelo que deberán ser provistos
        por el Manager a la hora de la sincronización.
@@ -282,7 +354,25 @@ Cuando se migra una aplicación al cliente, mediante el comando ``migrate_app``,
 no se crea un módulo ``models.js`` como podría esperarse. El sitio remoto lo
 genera automáticamente en función de los modelos que hallan sido registrados y
 los publica en cada aplicación del sitio remoto (es decir, los modelos son
-globales al proyecto).
+globales al proyecto desconectado).
+
+El sitio remoto solo se encarga de publicar la estrcutra del proxy de modelos,
+los métodos opcionales con los que el desarrollador desee contar se deben 
+implementar en un mixin. Para este fin existe una archivo por cada aplicación
+migrada llamado ``mixins.js`` donde se definen los métodos de los modelos
+como un arreglo asociativo. El nombre del arreglo debe conincidir con el nombre
+del modelo. Por ejemplo, para el modelo de ``Book``:
+
+.. code-block:: javascript
+
+    var Book = {
+        __str__: function () {}
+    };
+    
+    publish({
+        Book: Book
+    })
+
 
 En Django los modelos suelen tener métodos de utilidad, como ``__unicode__`` (
 en el cliente ``__str__``). Estos métodos se deben implementar en un arreglo
@@ -819,6 +909,8 @@ Se definieron dos métodos:
         #. Se almacena en el ``SyncLog`` actual la fecha del servidor.
         
     * ``pull()``
+    
+        #. El clinete envía 
     
         Esta operación trae los cambios del servidor al cliente.
         
