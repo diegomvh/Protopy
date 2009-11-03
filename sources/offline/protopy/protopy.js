@@ -588,7 +588,7 @@
             this.responders.push(responder);
         },
         unregister: function(responder) {
-            this.responders = without(this.responders, responder);
+            this.responders = this.responders.filter(function(e) { return e != responder; });
         },
         dispatch: function(callback, request, transport, json) {
             for each (var responder in this.responders) {
@@ -1588,7 +1588,7 @@
 
                 var ctx = object, expr = p3;
                 var pattern = /^([^.[]+|\[((?:.*?[^\\])?)\])(\.|\[|$)/;
-                match = pattern.exec(expr);
+                var match = pattern.exec(expr);
                 if (match == null) 
                     return before;
 
@@ -1671,7 +1671,7 @@
         }
     }
 
-    var Dict = type('Dict', object, {
+    var Dict = type('Dict', [ object ], {
         __init__: function(object) {
             this._value = {};
             this._key = {};
@@ -1946,9 +1946,6 @@
         },
         flatten: function(array) { 
             return array.reduce(function(a,b) { return a.concat(b); }, []); 
-        },
-        without: function(array, e) {
-            //TODO este para queitar elemenetos de un arreglo
         },
         include: function(obj, element){
             if (isundefined(obj)) return false;
@@ -2404,7 +2401,7 @@
             var elements = array(this.elements);
             var data = elements.reduce(function(result, element) {
             if (!element.disabled && element.name) {
-                key = element.name; value = element.get_value();
+                var key = element.name; value = element.get_value();
                 if (value != null && element.type != 'file' && (element.type != 'submit')) {
                 if (key in result) {
                     // a key is already present; construct an array of values

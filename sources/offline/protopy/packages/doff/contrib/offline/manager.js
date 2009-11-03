@@ -20,9 +20,9 @@ var RemoteManager = type('RemoteManager', [ ServiceProxy ], {
         //Meto el sync_log en la consulta
         if (!methodName.startswith('system.'))
             params.push(this.sync_log);
-        
+
         var ret = super(ServiceProxy, this).__callMethod(methodName, params, successHandler, exceptionHandler, completeHandler);
-        
+
         if (!methodName.startswith('system.')) {
             if (isinstance(ret, Array) && bool(ret)) {
                 var new_ret = [];

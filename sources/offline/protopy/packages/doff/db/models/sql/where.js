@@ -4,7 +4,7 @@ require('doff.db.models.fields.base', 'Field');
 require('doff.db.base', 'connection');
 require('doff.db.models.sql.datastructures', 'EmptyResultSet', 'FullResultSet');
 require('doff.db.models.query_utils', 'QueryWrapper');
-        
+
 var AND = 'AND',
     OR = 'OR';
 
@@ -43,19 +43,19 @@ var WhereNode = type('WhereNode', [ Node ], {
 
         super(Node, this).add([alias, column, db_type, lookup_type, annotation, params], connector);
     },
-    
+
     __str__: function() {
         var q = this.as_sql();
         return q[0].subs(q[1]);
     },
-            
+
     as_sql: function(qn) {
 
         if (!qn)
             var qn = getattr(connection.ops, 'quote_name');
         if (!bool(this.children))
             return [null, []];
-        
+
         var result = [],
             result_params = [],
             empty = true,
@@ -90,7 +90,7 @@ var WhereNode = type('WhereNode', [ Node ], {
                 result.push(sql_params[0]);
                 result_params = result_params.concat(sql_params[1]);
         }
-        
+
         if (empty)
             throw new EmptyResultSet();
 
@@ -108,7 +108,7 @@ var WhereNode = type('WhereNode', [ Node ], {
     make_atom: function(child, qn) {
         var lhs = null, cast_sql = null, extra = null;
         var [table_alias, name, db_type, lookup_type, value_annot, params] = child;
-            
+
         if (table_alias)
             lhs = '%s.%s'.subs([qn(table_alias), qn(name)]);
         else
@@ -124,8 +124,7 @@ var WhereNode = type('WhereNode', [ Node ], {
             extra = params.data;
             extra = extra[0];
             params = extra[1];
-        }
-        else
+        } else
             extra = '';
 
         if (connection.operators[lookup_type]){
@@ -154,7 +153,6 @@ var WhereNode = type('WhereNode', [ Node ], {
     },
 
     relabel_aliases: function(change_map, node) {
-    
         if (!node)
             node = this;
         for (var [index, child] in Iterator(node.children)) {
@@ -191,7 +189,7 @@ var NothingNode = type('NothingNode', [ object ], {
     }
 });
 
-publish({    
+publish({
     AND: AND,
     OR: OR,
     WhereNode: WhereNode,

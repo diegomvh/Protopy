@@ -40,6 +40,7 @@ class RemoteManagerBase(object):
         self._serializer = None
         self._deserializer = None
         self._manager = None
+        self._sync_log = None
 
     def _contribute_to_class(self, remote, name):
         try:
@@ -66,6 +67,8 @@ class RemoteManagerBase(object):
 
     def _dispatch(self, method, params):
         methods = self._methods() or []
+        #Limpio el valor del _sync_log
+        self._sync_log = None
         #Busco si tiene sync_log osea estoy en una transacion
         params = self._extract_sync_log(params)
 
@@ -97,7 +100,6 @@ class RemoteManagerBase(object):
         raise StopIteration()
 
     def _extract_sync_log(self, params):
-        self._sync_log = None
         if params and type(params[-1]) == dict and params[-1].has_key('model') and params[-1]['model'] == 'offline.synclog': 
             obj = params.pop()
             # Todo tirar un erro si no esta
@@ -114,10 +116,16 @@ class RemoteManagerBase(object):
                 return sync_data
         return self._manager
 
-    def delete(self, pk):
-        obj = self._manager.get(pk = pk)
-        obj.delete()
-        return pk
+    def delete(self, pks):
+        if not isinstance(pks, list):
+            pks = [ pks ]
+        ret = []
+        for pk in pks:
+            obj = self._manager.get(pk = pk)
+            obj.delete()
+            ret.append(pk)
+        print ret
+        return (len(ret) == 1) and ret[0] or ret
 
     def insert(self, values):
         objs = self._deserializer(values)
@@ -224,6 +232,7 @@ def RemoteDeserializer(object_or_list, **options):
 
 class RemoteManager(RemoteManagerBase):
     def __init__(self):
+        super(RemoteManager, self).__init__()
         self._serializer = RemoteSerializer()
         self._deserializer = RemoteDeserializer
 
@@ -289,6 +298,7 @@ class RemoteReadOnlySerializer(PythonSerializer):
 
 class RemoteReadOnlyManager(RemoteManagerBase):
     def __init__(self):
+        super(RemoteReadOnlyManager, self).__init__()
         self._serializer = RemoteReadOnlySerializer()
         #self.deserializer = PythonDeserializer
 

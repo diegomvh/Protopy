@@ -1,12 +1,37 @@
 require('rpc', 'ServiceProxy');
 require('doff.core.project', 'get_project');
 require('doff.contrib.offline.models', 'SyncLog', 'RemoteModel', 'RemoteReadOnlyModel');
-require('doff.db.models.base', 'get_model_by_identifier', 'get_models');
+require('doff.db.models.base', 'get_model_by_identifier', 'get_models', 'ForeignKey');
 require('doff.db.models.query', 'delete_objects', 'CollectedObjects');
+require('doff.contrib.offline.serializers', 'RemoteDeserializer');
+require('doff.utils.datastructures', 'SortedDict');
+require('doff.contrib.offline.serializers', 'RemoteSerializer');
 
-function get_deleted_models() {
-    var models = get_models().filter(function(m) { return issubclass(m, RemoteModel) && ! issubclass(m, RemoteReadOnlyModel) && m.deleted.count() > 0; });
-    return models;
+function get_model_order(model_lists) {
+    var model_adj = new SortedDict();
+    for each (var model in model_lists)
+        model_adj.set(model, get_related_models(model));
+
+    var order = model_adj.keys().filter(function(m) { return ! bool(model_adj.has_key(m)); });
+    order.map(function(m) { return model_adj.pop(m); });
+    while (bool(model_adj)) {
+        for (var pair in model_adj) {
+            var deps = model_adj.get(pair.key);
+
+            if (deps.map(function (d) {return !include(model_adj, d); }).every(function (e) { return bool(e);})) {
+                order.push(pair.key);
+                model_adj.pop(pair.key);
+            }
+        }
+    }
+    return order;
+}
+
+function get_related_models(model) {
+    var fks = model._meta.fields.filter(function (f) { return isinstance(f, ForeignKey); });
+    fks = fks.map(function (relation) { return relation.rel.to; });
+        
+    return fks.concat(model._meta.many_to_many.map( function (relation) { return relation.rel.to; }));
 }
 
 function purge(models) {
@@ -26,7 +51,7 @@ function purge(models) {
     }
 }
 
-function pull() {
+function asisted_pull() {
     // Creo el objeto rpc para interactuar con el site
     var rpc = new ServiceProxy(get_project().offline_support + '/rpc', {asynchronous: false});
     // Obtengo el ultimo sync_log o null
@@ -36,7 +61,7 @@ function pull() {
     } catch (e if isinstance(e, SyncLog.DoesNotExist)) {}
 
     // Inicio la sincronizacion informando al site las intenciones
-    var new_sync_data = rpc.begin_synchronization(last_sync_log);
+    var new_sync_data = rpc.begin_pull(last_sync_log);
 
     var models = [ get_model_by_identifier(i) for each (i in new_sync_data.models)];
     if (bool(models)) {
@@ -54,15 +79,75 @@ function pull() {
         }
     }
 
-    rpc.end_synchronization(new_sync_log);
+    rpc.end_pull(new_sync_log);
+}
+
+//Si este falla podriamos probar con el otro
+function pull() {
+
+    var rpc = new ServiceProxy(get_project().offline_support + '/rpc', {asynchronous: false});
+
+    var last_sync_log = null;
+    try {
+        last_sync_log = SyncLog.objects.latest();
+    } catch (e if isinstance(e, SyncLog.DoesNotExist)) {}
+
+    // Inicio la sincronizacion informando al site las intenciones
+    var data = rpc.pull(last_sync_log);
+    var new_sync_log = new SyncLog(data);
+    new_sync_log.save();
+
+    for each (var obj in RemoteDeserializer(data['objects'], new_sync_log))
+        obj.save();
 }
 
 function push() {
+    // Los borrados
+    var serializer = new RemoteSerializer();            
+    var models = get_models().filter(function(m) { return issubclass(m, RemoteModel) && ! issubclass(m, RemoteReadOnlyModel) && m.deleted.count() > 0; });
+    // Los ordenamos por dependencias 
+    models = get_model_order(models).reverse();
+    for each (var model in models) {
+        var objs = model.deleted.all();
+        var values = array(objs).map(function (obj) { return obj.server_pk; });
+        var keys = model.remotes.delete(values);
+        for each (var obj in objs ) {
+            obj.status = 's';
+            obj.active = false;
+            obj.save();
+        }
+    }
 
+    // Los creados
+    models = get_models().filter(function(m) { return issubclass(m, RemoteModel) && ! issubclass(m, RemoteReadOnlyModel) && m.created.count() > 0; });
+    // Los ordenamos
+    models = get_model_order(models);
+    for each (var model in models) {
+        var objs = model.created.all();
+        var values = serializer.serialize(objs);
+        var keys = model.remotes.insert(values);
+        for (i = 0; i < len(keys); i++ ) {
+            objs[i].server_pk = keys[i];
+            objs[i].status = 's';
+            objs[i].save();
+        }
+    }
+
+    // Los modificados
+    models = get_models().filter(function(m) { return issubclass(m, RemoteModel) && ! issubclass(m, RemoteReadOnlyModel) && m.modified.count() > 0; });
+    for each (var model in models) {
+        var objs = model.modified.all();
+        var values = serializer.serialize(objs);
+        var keys = model.remotes.update(values);
+        for each (var obj in objs ) {
+            obj.status = 's';
+        }
+    }
 }
 
 publish({
-    get_deleted_models: get_deleted_models,
+    get_model_order: get_model_order,
+    get_related_models: get_related_models,
     purge: purge,
     pull: pull,
     push: push

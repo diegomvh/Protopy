@@ -184,11 +184,10 @@ var ReverseSingleRelatedObjectDescriptor = type('ReverseSingleRelatedObjectDescr
             throw new this.field.rel.to.DoesNotExist(this.field.attname);
             }
             var other_field = this.field.rel.get_related_field();
-            var key = null;
             if (other_field.rel)
-                key = '%s__pk'.subs(this.field.rel.field_name);
+                var key = '%s__pk'.subs(this.field.rel.field_name);
             else
-                key = '%s__exact'.subs(this.field.rel.field_name);
+                var key = '%s__exact'.subs(this.field.rel.field_name);
             var params = {};
             params[key] = val;
             var rel_mgr = this.field.rel.to._default_manager;
@@ -202,7 +201,7 @@ var ReverseSingleRelatedObjectDescriptor = type('ReverseSingleRelatedObjectDescr
         }
         return ret;
     },
-    
+
     __set__: function(instance, instance_type, value) {
         if (!isinstance(instance, instance_type))
             throw new AttributeError("%s must be accessed via instance".subs(this.field.name));

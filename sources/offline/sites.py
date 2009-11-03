@@ -128,20 +128,20 @@ class RemoteSite(RemoteBaseSite):
         else:
             self.name = name
             REMOTE_SITES[ self.name ] = self
-            
+
         if not protopy_root:
             from os.path import abspath, dirname, join
             protopy_root = getattr(get_app('offline'), '__file__')
             protopy_root = join(abspath(dirname(protopy_root)), 'protopy')
         self.protopy_root = protopy_root
-        
+
         # Create a Dispatcher; this handles the calls and translates info to function maps
         #self.rpc_dispatcher = SimpleJSONRPCDispatcher() # Python 2.4
         self.rpc_dispatcher = SimpleJSONRPCDispatcher(allow_none=False, encoding=None) # Python 2.5
         self.rpc_dispatcher.register_introspection_functions() #Un poco de azucar
         self.rpc_dispatcher.register_instance(self)
         self._registry = {}
-            
+
     def _get_project_root(self):
         return os.sep.join([get_project_root(), self.OFFLINE_ROOT, self.name])
     project_root = property(_get_project_root, doc = "File system offline location")
@@ -157,19 +157,19 @@ class RemoteSite(RemoteBaseSite):
             return self.url
         return self.url[1:]
     urlregex = property(_get_urlregex, doc = "For regex in url.py")
-    
+
     def _get_js_url(self):
         return '/'.join([self.url, self.JS_PREFIX])
     js_url = property(_get_js_url, doc = "For something")
-    
+
     def _get_lib_url(self):
         return '/'.join([self.url, self.LIB_PREFIX])
     lib_url = property(_get_lib_url, doc = "For lib")
-    
+
     def _get_templates_url(self):
         return '/'.join([self.url, self.TEMPLATES_PREFIX])
     templates_url = property(_get_templates_url, doc = "Base url for templates")
-    
+
     def _get_media_url(self):
         if settings.MEDIA_URL and settings.MEDIA_URL[-1] == '/':
             return settings.MEDIA_URL[:-1]
@@ -341,8 +341,11 @@ class RemoteSite(RemoteBaseSite):
     def echo(self, value):
         return value
 
+    #===========================================================================
+    # Synchronization
+    #===========================================================================
     @jsonrpc
-    def begin_synchronization(self, sync_log = None):
+    def begin_pull(self, sync_log = None):
         retorno = {}
         first = sync_log == None
 
@@ -380,10 +383,57 @@ class RemoteSite(RemoteBaseSite):
         return retorno
 
     @jsonrpc
-    def end_synchronization(self, sync_log):
-        
+    def end_pull(self, sync_log):
+
         retorno = {}
         return retorno
+
+    @jsonrpc
+    def pull(self, sync_log = None):
+        retorno = {}
+        first = sync_log == None
+
+        new_sync = datetime.datetime.now()
+        if not first:
+            last_sync = datetime.datetime(*time.strptime(sync_log['synced_at'], '%Y-%m-%d %H:%M:%S')[:6])
+            sync_log = { 'last_sync': last_sync, 'new_sync': new_sync }
+
+        # Veamos los modelos
+        models = []
+        for app in self._registry.values():
+            for model in app.keys():
+                # Si no es el primero filtro solo los modelos interesantes
+                if not first:
+                    model_type = ContentType.objects.get_for_model(model)
+                    sd = SyncData.objects.filter(content_type__pk = model_type.id, update_at__range=(last_sync, new_sync))
+                    if bool(sd):
+                        models.append(model)
+                else:
+                    models.append(model)
+
+        models = get_model_order(models)
+        retorno['objects'] = []
+        for model in models:
+            remote = self._registry[model._meta.app_label][model]
+            remote_manager = remote.remotes.instance
+            if not first:
+                remote_manager._sync_log = sync_log
+            values = remote_manager.all()
+            if bool(values):
+                retorno['objects'].extend(remote_manager._serializer.serialize(remote_manager._build_object(values)))
+
+        retorno['synced_at'] = new_sync.strftime("%Y-%m-%d %H:%M:%S")
+        retorno['sync_id'] = random_string(32)
+
+        return retorno
+
+    @jsonrpc
+    def begin_push(self, sync_log = None):
+        return {}
+
+    @jsonrpc
+    def end_push(self, sync_log):
+        return {}
 
     #===========================================================================
     # Manifests
@@ -449,7 +499,7 @@ class RemoteSite(RemoteBaseSite):
         app_registry[model] = remote_proxy
         rm = RemoteManager()
         rm._contribute_to_class(remote_proxy, 'remotes')
-        
+
         related_models = get_related_models(model)
         for related_model in related_models:
             app_registry = self._registry.setdefault(related_model._meta.app_label, {})
