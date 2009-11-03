@@ -512,6 +512,9 @@ Finalmente, podemos resumir el ciclo de migración mediante la siguiente figura:
 
 A continuación se trata uno de los objetivos 
 
+.. note::
+    HASTA ACÁ, ESTE NO ES MENTIROSO
+
 Sincronización de Datos
 -----------------------
 
