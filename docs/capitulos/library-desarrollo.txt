@@ -22,6 +22,7 @@ sus dos "padres", *Prototype JavaScript Library* y el lenguaje de programación
 
     | **proto** type + **py** thon = **protopy**
 
+ 
 
 Características de la Librería
 -------------------------------
@@ -133,6 +134,12 @@ Algunas de las características más relevantes de Protopy son:
     
     Por esta razón Protopy es únicamente compatible con Firefox actualmente.  
 
+
+En la siguiente figura se ilustran los diferentes componentes de Protopy:
+
+.. figure:: ../_svg/esquema_protopy.png
+    
+    Composición de Protopy
 
 .. _protopy-modulos:
 
@@ -339,13 +346,123 @@ Está demasiado escueto. Deberían describir un poquito más cada módulo.
     * ``builtin``
 
         Este módulo cuenta con los tipos y funciones disponibles en 
-        el ámbito global ni bien se inicia el intérprete de Protopy.
-        Provee los tipos básicos y funciones básicas.
+        el ámbito global ni bien se inicia Protopy.
+        Provee los siguientes símbolos:
+        
+        * ``publish()``
+        
+            Publica el contenido de un módulo, recibe como argumento una
+            arreglo asociativo. Como ya se mencionó, en Protopy el contenido
+            de los módulos es privado por defecto.
+            
+            Por ejemplo, para publicar un elemento en un módulo
+            se utiliza el siguiente código:
+            
+            .. code-block:: javascript
+            
+                var contador = 0; // Variable a nivel módulo
+                
+                function saludar() {
+                    // El operador subs sobre String opera de la misma
+                    // manera que el operador % en Python. Similar a printf de C.
+                    
+                    return "Hola mundo, invocado %d veces".subs(contador);
+                }
+                
+                function cant_llamadas() {
+                    // Contador de llamadas sobre el código de 
+                    var tmp = contador;
+                    contador++;
+                    return tmp;
+                }
+                
+                // Publicación explícita
+                publish({
+                    saludar: saludar
+                });
+            
+        * ``require(modulo, [simbolo])``
+        
+            Carga mediante el sistema de paquetes un módulo, incroporandolo al
+            ambito de nombres.
+            
+            Los nombres de las funcinoes ``publish``/``require`` son tomadas de 
+            Dojo.
+            
+            Por ejemplo, para cargar la función del módulo expuesto en el ejemplo
+            de la función ``publish()``:
+            
+            .. code-block:: javascript
+            
+                >>> require('mi_modulo');
+                >>> mi_modulo.saludar()
+                "Hola mundo, invocado 0 veces"
+                >>> mi_modulo.saludar()
+                "Hola mundo, invocado 1 veces"
+                >>> mi_modulo.saludar()
+                "Hola mundo, invocado 2 veces"
+        
+        * ``$("id")`` y ``$$("selector_css")
+        
+            Son alias a los elementos del módulo ``dom`` descrito más abajo.
+        
+        * ``object``
+        
+            En Python el tipo base para todos los objetos es ``object``. Sirve
+            como base para el sistema de tipos Pythonico implementado en 
+            Protopy.
+        
+        * ``type(instancia)`` ó ``type(nombre, bases, [estatico], dinamico)``
+        
+            Este método posee dobe signatura. Cuando se lo invoca con una instancia
+            como argumento, devuelve el tipo/clase de la instancia.
+            
+            La otra signautra sirve para crear tipos y debe ser invocada con 
+            la palabra reservada ``new`` de JavaScript. Recibe como argumentos
+            el nombre del tipo, las calses base, opcionalmente un arreglo
+            asociativo de atributos/métodos de clase y un arreglo asociativo con 
+            los atributos/métodos de instancia.
+            
+            Ambos casos responden al comportamiento del ``builtin`` homónimo de
+            Python.  
+        
+        
+        * ``extend``
 
     * ``dom``
 
-        Funciones de envoltura de DOM.
-
+        En este módulo solo se publica el selector CSS Peppy de James Donaghue.
+        Fue elegido por la velocidad y simplicidad del módulo. De la API
+        [JamesDonaghuePeppyDocs]_ solo se publica ``query()`` y ``cache()``.
+        
+        Por ejemplo sobre el siguiente código HTML:
+        
+        .. code-block:: html
+        
+            <html>
+                <head>
+                    <title>Uno</title>
+                </head>
+                <body>
+                    <div>
+                        <a href="/admin" class="lnk2">Admin</a>
+                        <a href="/ventas">Ventas</a>
+                        <a href="/otros" class="lnk2">Opciones</a>
+                    </div>
+                </body>
+            </html>
+            
+        .. code-block:: javascript
+        
+            // Carga del módulo
+            >>> require('dom');
+            // Utilizando el selector
+            >>> dom.query('.lkn2');
+            [a /admin/, a /otros/]
+       
+       Se publican los símbolos ``$("id")`` y ``$$("selector")`` que referencian
+       a esta función, de manera similar a la API de Prototype. 
+            
     * ``sys``
 
         Equivalente al módulo Python del mismo nombre. Maneja las rutas
@@ -367,6 +484,11 @@ Está demasiado escueto. Deberían describir un poquito más cada módulo.
     * ``timer``
 
         Envoltura de ``window.setTimer()`` y ``window.setInterval()``. 
+
+.. [JamesDonaghuePeppyDocs] James Donaghue,
+    *Documentación de Peppy*,
+    último acceso Noviembre 2009,
+    http://jamesdonaghue.com/static/peppy/docs/            
 
 
 
@@ -552,6 +674,8 @@ Estos métodos son:
         ``next()``. 
         Ejemplo:
         
+        .. code-block:: javascript
+        
             >>> var Iterable = new type('Iterable', [ object ], {
             
                 __init__: function (cadena) { this.cadena = cadena; },
@@ -732,6 +856,25 @@ realizar una adaptación de sintaxis. Ellos son:
         cantidad de argumentos. Los objetos de tipo Arguments de Protopy encapsulan y
         uniforman los argumentos pasados a una función y permiten establecer
         entre otras cosas valores por defecto. 
+        
+        Este objeto tiene como objetivo brindar emapquetado de argumentos en 
+        JavaScript "Pythonico", una caractersística muy utilizada en el framework Django.
+        
+        Utilizando ``Arguments`` se puede convertir la siguiente sentencia:
+        
+        .. code-block:: python
+        
+            def funcion(arg1, arg2=None, arg3=None):
+                print arg1, arg2, arg3
+        
+        al siguiente código JavaScript:
+        
+        .. code-block::
+        
+            function funcion(arg1, {arg2: null, arg3: null}) {
+                var args = new Arguments(arguments);
+            }
+        
 
 Manejo de DOM
 -------------

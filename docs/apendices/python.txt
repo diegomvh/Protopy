@@ -1,19 +1,11 @@
-=====================================
+#####################################
 Referencia sobre el lenguaje Python
-=====================================
-
-Modularidad
------------
-
-Ámbito de nombres
-~~~~~~~~~~~~~~~~~
-
-**TODO**
+#####################################
 
 .. _apendice-python-filosofia:
 
 Filosofía del lenguaje
-~~~~~~~~~~~~~~~~~~~~~~
+----------------------
 
 El código que sigue los principios de Python de legibilidad y transparencia se 
 dice que es *pythonico*. Contrariamente, el código opaco u ofuscado es bautizado 
@@ -69,13 +61,13 @@ como un huevo de pascua que se muestra al ejecutar
 	import this
 
 Ámbito de nombres
-~~~~~~~~~~~~~~~~~
+-----------------
 
 .. note:: O espacio de nombres
 	
 Cuando se ejecuta el intérprete de Python de forma interactiva o
-cuando se invocama para ejecutar un script, están diponibles un conjuto de funciones,
-clases, tipos de excepciones. El conjunto de estos nombres se conoce como ámbito de
+cuando se invoca para ejecutar un script, están diponibles un conjuto de funciones,
+clases, tipos de datos y excepciones. El conjunto de estos nombres se conoce como ámbito de
 nombres __builtin__ (*incorporado*) y en este encontramos: int(), char(),
 str(), object, Exception, TypeError, ValueError, True, False, range, 
 map, zip, locals, globals, entre otras.
@@ -176,54 +168,56 @@ Al realizar
 El único símbolo que encontraremos en nuestro espacio de nombres será,
 *calcular_promedio*.
 
-..	\subsection{Sobrecarga de operadores}
+Sobrecarga de operadores
+========================
 	
-	\subsection{Funciones en Python}
-	En python, una función se define de la sieguiente manera:
-	\begin{lstlisting}[style=python]
-	def funcion(argumento1, argumento2):
-	  ''' Doc de la funcion '''
-	  print argumento1, argumento2
-	\end{lstlisting}
-	Python soporta lo que se ha dadon en llamar \emph{empaquetado de argumentos }
-	tanto en la 
-	definición como en la invocación de una función.
+Funciones en Python
+===================
 	
-	El empaquetado más simple es el del tipo lista, que consiste en la hablidad de
-	una función de
-	recibir argumentos variables en formato lista. Para usar esta caractrística es
-	necesrio utilizar
-	una signatura especial (agregando un asterisco).
+En python, una función se define de la sieguiente manera:
 	
-	\begin{lstlisting}[style=python]
-	def promedio(*lista):
-	  ''' Calcula promedio '''
-	  return sum(lista) / float(len(lista)) # utilizando 
-						# varios builtins
+def funcion(argumento1, argumento2):
+    ''' Doc de la funcion '''
+    print argumento1, argumento2
+	
+Python soporta lo que se ha dadon en llamar *empaquetado de argumentos*
+tanto en la definición como en la invocación de una función.
+	
+El empaquetado más simple es el del tipo lista, que consiste en la hablidad de
+una función de
+recibir argumentos variables en formato lista. Para usar esta caractrística es
+necesrio utilizar una signatura especial (agregando un asterisco).
+
+.. code-block:: python	
+
+    def promedio(*lista):
+        ''' Calcula promedio '''
+        return sum(lista) / float(len(lista)) # utilizando builtins 
+
 	
 	# Ejemplo de utilizacion
 	>>> promedio(1, 2, 4, 5, 5)
 	3.3999999999999999
 	
-	\end{lstlisting}
-	Esta signatura de argumentos se puede combinar con argumentos posicionales.
-	\begin{lstlisting}[style=python]
-	def dividir_suma_por( numero, *lista ):
-	  return sum(lista) / numero
-	\end{lstlisting}
-	La capiacidad de recibir listas puede ser utilizada a la inversa. Es decir,
-	conociendo que una función
-	recibe una cantidad de argumentos, ``acomodar'' en una lista los argumentos que
-	se desean utilizar.
-	\begin{lstlisting}[style=python]
+
+Esta signatura de argumentos se puede combinar con argumentos posicionales.
+
+.. code-block:: python
+
+    def dividir_suma_por( numero, *lista ):
+        return sum(lista) / numero
+	
+La capiacidad de recibir listas puede ser utilizada a la inversa. Es decir,
+conociendo que una función
+recibe una cantidad de argumentos, ``acomodar'' en una lista los argumentos que
+se desean utilizar.
+	
+.. code-block:: python
+
 	# Utilizanodo la funcion promedio anterior
 	>>> lista = [1, 2, 4, 6, 7]
 	>>> promedio( *lista )
 	4.0
-	\end{lstlisting}
-
-
-
 
 
 Módulos
@@ -231,11 +225,9 @@ Módulos
 Un módulo en Python es un archivo con código python. Usualmente con la extensión .py.
 Un módulo puede ser importado en el ámbito de nombres local mediante la sentecia **import**.
 
-Por ejemplo, consideremos el módulo ***funciones.py***
+Por ejemplo, consideremos el módulo ``funciones.py``
 
 .. code-block:: python
-	
-	# coding: utf-8
 	
 	def media(lista):
 		return float(sum(lista)) / len(lista)
@@ -244,7 +236,8 @@ Por ejemplo, consideremos el módulo ***funciones.py***
 		# La raíz puede expresarse como potencia > 1
 		return reduce(lambda x, y: x*y, lista) ** 1.0/len(lista)
 
-Para importar el módulo al ámbito de nombres local se puede utilizar la sentencia **import**.
+Para importar el módulo al ámbito de nombres local se puede utilizar la sentencia 
+``import``.
 
 
 .. code-block:: python
@@ -296,7 +289,7 @@ Se puede definir la estructura de una clase mediante otra clase que herede de ty
 
 .. _apendice_python_callables:
 
-Objetos llamables o *callables*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Objetos  *callables*
+~~~~~~~~~~~~~~~~~~~~
 
-Un objeto callable
+Un objeto *callable*

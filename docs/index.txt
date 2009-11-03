@@ -16,6 +16,6 @@ Sistemas Web Desconectados
     capitulos/library-desarrollo
     capitulos/framework-desarrollo
     capitulos/remotesite-desarrollo
-    capitulos/sincronizacion
+    capitulos/demo
     capitulos/conclusiones
     glosario
