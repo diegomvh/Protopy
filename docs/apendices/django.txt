@@ -7,13 +7,18 @@ Referencia sobre Django
 Instalación de Django
 ---------------------
 
-La mayoría de la gente querrá instalar el lanzamiento oficial más reciente
-de http://www.djangoproject.com/download/. Django usa el método ``distutils``
-estándar de instalación de Python, que en el mundo de Linux es así:
+Para realizar la instalación de la versión oficial más reciente se debe acceder
+a::
+    http://www.djangoproject.com/download/. 
+    
+Django usa el método ``distutils`` (estándar de distribución de Python), que se 
+utiliza de la siguiente manera:
 
-   #. Baja el tarball, que se llamará algo así como *Django-0.96.tar.gz*
+.. code-block:: bash
 
-   #. ``tar xzvf Django-*.tar.gz``
+   $ Baja el tarball, que se llamará algo así como *Django-0.96.tar.gz*
+
+   $ tar xzvf Django-*.tar.gz
 
    #. ``cd Django-*``
 

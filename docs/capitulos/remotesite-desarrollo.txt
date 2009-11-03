@@ -366,7 +366,10 @@ del modelo. Por ejemplo, para el modelo de ``Book``:
 .. code-block:: javascript
 
     var Book = {
-        __str__: function () {}
+        // Representación en cadena del modelo
+        __str__: function () {
+            return this.nombre;
+        }
     };
     
     publish({
@@ -375,9 +378,15 @@ del modelo. Por ejemplo, para el modelo de ``Book``:
 
 
 En Django los modelos suelen tener métodos de utilidad, como ``__unicode__`` (
-en el cliente ``__str__``). Estos métodos se deben implementar en un arreglo
-asociativo que se utiliza a modo de ``Mixin``, gracias a que Protopy soporta
-en su sistema de clases la herencia múltiple.
+en el cliente ``__str__`` [*]_). Estos métodos se deben implementar en un arreglo
+asociativo que se utiliza a modo de ``Mixin``. Como se mencionó en el capítulo
+sobre Protopy, la impmentación de clases soporta herencia múltiple, cuando
+se requiere la url con la definción del modelo, se requieren automáticamente
+los Mixins definidos.
+
+
+.. [*] Una epxplicación sobre los detalles sobre este método se encuentra
+
 
 Durante la instalación del proyecto, cuando el ``ManagedLocalStore`` descarga
 el recurso, el sitio remoto provee automaticamente la conjunción de la introspección
