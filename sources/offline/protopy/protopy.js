@@ -1671,7 +1671,7 @@
         }
     }
 
-    var Dict = type('Dict', object, {
+    var Dict = type('Dict', [ object ], {
         __init__: function(object) {
             this._value = {};
             this._key = {};

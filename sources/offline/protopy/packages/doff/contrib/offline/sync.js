@@ -1,33 +1,39 @@
 require('rpc', 'ServiceProxy');
 require('doff.core.project', 'get_project');
 require('doff.contrib.offline.models', 'SyncLog', 'RemoteModel', 'RemoteReadOnlyModel');
-require('doff.db.models.base', 'get_model_by_identifier', 'get_models');
+require('doff.db.models.base', 'get_model_by_identifier', 'get_models', 'ForeignKey');
 require('doff.db.models.query', 'delete_objects', 'CollectedObjects');
 require('doff.contrib.offline.serializers', 'RemoteDeserializer');
+require('doff.utils.datastructures', 'SortedDict');
 
 function get_model_order(model_lists) {
 
+    debugger;
     var model_adj = new SortedDict();
     for each (var model in model_lists)
         model_adj.set(model, get_related_models(model));
 
     var order = model_adj.keys().filter(function(m) { return ! bool(model_adj.has_key(m)); });
-    order.map(function(m) { return model_adj.pop(m));
-    while model_adj:
-        for model in model_adj:
-            deps = model_adj[model]
+    order.map(function(m) { return model_adj.pop(m); });
+    while (bool(model_adj)) {
+        for (var pair in model_adj) {
+            var deps = model_adj.get(pair.key);
 
-            if all(map(lambda d: d not in model_adj, deps)):
-                order.append(model)
-                model_adj.pop(model)
+            if (deps.map(function (d) {return !include(model_adj, d); }).every(function (e) { return bool(e);})) {
+                order.push(pair.key);
+                model_adj.pop(pair.key);
+            }
+        }
+    }
     return order;
+}
 
-def get_related_models(model):
-    fks = filter(lambda f: isinstance(f, ForeignKey), model._meta.fields)
-    fks = map(related_class, fks)
+function get_related_models(model) {
+    var fks = model._meta.fields.filter(function (f) { return isinstance(f, ForeignKey); });
+    fks = fks.map(function (relation) { return relation.rel.to; });
         
-    return fks + map(related_class, model._meta.many_to_many)
-
+    return fks.concat(model._meta.many_to_many.map( function (relation) { return relation.rel.to; }));
+}
 
 function purge(models) {
     //Elimina objetos que estan inactivos y no estan referenciados
@@ -106,7 +112,8 @@ function push() {
 }
 
 publish({
-    get_deleted_models: get_deleted_models,
+    get_model_order: get_model_order,
+    get_related_models: get_related_models,
     purge: purge,
     pull: pull,
     push: push

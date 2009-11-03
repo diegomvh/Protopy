@@ -136,8 +136,7 @@ def export_remotes(models_and_proxies):
                                 }
                     ... }
                                         
-    @return: Diccionario ordenado con remote -> {nombre_camo: valor_inicializacion_constructor} 
-    
+    @return: Diccionario ordenado con remote -> {nombre_camo: valor_inicializacion_constructor}
     '''
     models = models_and_proxies.keys()
     sorted_models = get_model_order(models)
