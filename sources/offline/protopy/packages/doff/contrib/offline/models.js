@@ -113,7 +113,6 @@ var RemoteModel = type('RemoteModel', [ models.Model ], {
         var record_exists = true;
         var remotes = this.__class__.remotes;
         var meta = this._meta;
-        debugger;
         if (server_pk_set) {
             // Determine whether a record with the primary key already exists.
             var obj = remotes.filter({'pk': server_pk_val});

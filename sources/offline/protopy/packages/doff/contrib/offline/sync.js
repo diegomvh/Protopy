@@ -5,10 +5,9 @@ require('doff.db.models.base', 'get_model_by_identifier', 'get_models', 'Foreign
 require('doff.db.models.query', 'delete_objects', 'CollectedObjects');
 require('doff.contrib.offline.serializers', 'RemoteDeserializer');
 require('doff.utils.datastructures', 'SortedDict');
+require('doff.contrib.offline.serializers', 'RemoteSerializer');
 
 function get_model_order(model_lists) {
-
-    debugger;
     var model_adj = new SortedDict();
     for each (var model in model_lists)
         model_adj.set(model, get_related_models(model));
@@ -103,12 +102,47 @@ function pull() {
 }
 
 function push() {
+    // Los borrados
+    var serializer = new RemoteSerializer();            
     var models = get_models().filter(function(m) { return issubclass(m, RemoteModel) && ! issubclass(m, RemoteReadOnlyModel) && m.deleted.count() > 0; });
-    print(models);
+    // Los ordenamos por dependencias 
+    models = get_model_order(models).reverse();
+    for each (var model in models) {
+        var objs = model.deleted.all();
+        var values = array(objs).map(function (obj) { return obj.server_pk; });
+        var keys = model.remotes.delete(values);
+        for each (var obj in objs ) {
+            obj.status = 's';
+            obj.active = false;
+            obj.save();
+        }
+    }
+
+    // Los creados
     models = get_models().filter(function(m) { return issubclass(m, RemoteModel) && ! issubclass(m, RemoteReadOnlyModel) && m.created.count() > 0; });
-    print(models);
+    // Los ordenamos
+    models = get_model_order(models);
+    for each (var model in models) {
+        var objs = model.created.all();
+        var values = serializer.serialize(objs);
+        var keys = model.remotes.insert(values);
+        for (i = 0; i < len(keys); i++ ) {
+            objs[i].server_pk = keys[i];
+            objs[i].status = 's';
+            objs[i].save();
+        }
+    }
+
+    // Los modificados
     models = get_models().filter(function(m) { return issubclass(m, RemoteModel) && ! issubclass(m, RemoteReadOnlyModel) && m.modified.count() > 0; });
-    print(models);
+    for each (var model in models) {
+        var objs = model.modified.all();
+        var values = serializer.serialize(objs);
+        var keys = model.remotes.update(values);
+        for each (var obj in objs ) {
+            obj.status = 's';
+        }
+    }
 }
 
 publish({

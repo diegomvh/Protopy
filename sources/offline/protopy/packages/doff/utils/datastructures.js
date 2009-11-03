@@ -42,7 +42,7 @@ var SortedDict = type('SortedDict', Dict, {
     },
 
     unset: function(key) {
-        without(this.keyOrder, key);
+        this.keyOrder = this.keyOrder.filter(function (element) { return key != element; });
         return super(Dict, this).unset(key);
     },
 

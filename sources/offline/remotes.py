@@ -116,10 +116,16 @@ class RemoteManagerBase(object):
                 return sync_data
         return self._manager
 
-    def delete(self, pk):
-        obj = self._manager.get(pk = pk)
-        obj.delete()
-        return pk
+    def delete(self, pks):
+        if not isinstance(pks, list):
+            pks = [ pks ]
+        ret = []
+        for pk in pks:
+            obj = self._manager.get(pk = pk)
+            obj.delete()
+            ret.append(pk)
+        print ret
+        return (len(ret) == 1) and ret[0] or ret
 
     def insert(self, values):
         objs = self._deserializer(values)
