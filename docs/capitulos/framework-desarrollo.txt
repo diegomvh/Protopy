@@ -648,20 +648,20 @@ búsqueda es el siguiente:
     * Llamada de método (por ej. ``foo.bar()``)
     * Índice de arreglos (por ej. ``foo[bar]``)
 
-Por ejemplo, ante la siguiente plantilla:
+Por ejemplo, ante la siguiente plantilla
 
 .. code-block:: html
 
     {{ x.elemento }}
     
 al momento de ser procesada, inicialmente se comprobará  si ``x`` es
-un arreglo asociativo y se reemplaza por el contenido de ``x["elemento"]``, si
-no existe la clave o no se trata de un arreglo asociativo, se intenta obtener
+un arreglo asociativo y se reemplazará por el contenido de ``x["elemento"]``, si
+no existe la clave o no se trata de un arreglo asociativo, se intentará obtener
 el atributo, simplemente ``x.elemento``.
-Si en la búqueda como atributo, se encuentra un método se lo ejecuta y se utiliza
-su salida.
+Si en la búqueda como atributo, se encuentra un método, se lo ejecutará y se 
+utilizará su salida para el remplazo.
 En el caso de no poder realizar el reemplazo por ninguna de las anteriores, 
-busca ``elemento`` como índice de arreglos. Tiene sentido cuando lo que se 
+buscará ``elemento`` como índice de arreglos. Tiene sentido cuando lo que se 
 encuentra tras el punto es un numero.
  
 
