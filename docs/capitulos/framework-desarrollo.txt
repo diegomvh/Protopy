@@ -282,12 +282,15 @@ Primero se crea una instancia del modelo pasando argumentos nombrados y
 luego se llama al método ``save()`` de la instancia. Esto genera internamente
 la siguiente sentencia SQL:
 
-.. note:: completar
-
 .. code-block:: sql
 
-    HACER!
-
+    INSERT INTO books_publisher
+    (name , address, city, state_province, country, 
+    website)
+    VALUES
+    ('Addison-Wesley', '75 Arlington Street', 'Boston', 'MA', 'U.S.A.', 
+    'http://www.apress.com/');
+    
     
 En el caso de ``Publisher`` se usa una clave primaria auto incremental ``id``,
 por lo tanto la llamada inicial a ``save()`` hace una cosa más: calcula el valor
@@ -298,7 +301,22 @@ Las subsecuentes llamadas a ``save()`` guardarán el registro en su lugar, sin
 crear un nuevo registro (es decir, ejecutarán la sentencia SQL ``UPDATE`` en
 lugar de un ``INSERT``).
 
-.. note:: Ejemplo del update
+Por ejemplo
+
+.. code-block:: javascript
+    
+    >>> p1.name = "Pearson Education"
+    >>> p1.save()
+
+se traduce en la siguiente secuencia SQL, asumiendo que el ``id`` asignado sea
+1:
+    
+.. code-block:: sql
+    
+    UPDATE books_publisher
+    SET name = "Pearson Education"
+    WHERE id = 1;
+    
 
 Recuperación de Datos
 ---------------------
@@ -465,8 +483,32 @@ Esto se traduce en la siguiente sentencia SQL:
     ORDER BY name
     LIMIT 1;
     
-.. note:: agregar slice    
+También se puede utilizar la sintaxis de rebanadas de JavaScript ``slice(inicio, [fin])``,
+por ejemplo:
 
+.. code-block:: javascript
+    
+    // Retrna a partir del primero
+    >>> Publisher.objects.all().slice(1)
+    [<Publisher: Apress Publishing>, <Publisher: O'Reilly>]
+    // Retorna entre las posiciones 1 y 3
+    >>> Publisher.objects.all().slice(1,3)
+    [<Publisher: Apress Publishing>]
+    
+que genera el siguiente SQL respectivamente:
+
+.. code-block:: sql
+
+    SELECT
+        id, name, address, city, state_province, country, website
+    FROM book_publisher
+    OFFSET 1;
+    
+    SELECT
+        id, name, address, city, state_province, country, website
+    FROM book_publisher
+    OFFSET 1 LIMIT 1;
+    
 
 Eliminación de Datos
 --------------------
@@ -480,8 +522,14 @@ sobre una instancia:
     >>> p.delete();
     >>> array(Publisher.objects.all());
     []
+
+que se traduce en el siguiente SQL:
+
+.. code-block:: sql   
+
+    DELETE FROM books_publisher 
+    WHERE name = 'Adison-Wesley';  
     
-.. note:: traducción en SQL   
 
 Los QuerySet pueden recibir también el método ``delete()`` y esto se traduce
 en la eliminación de todas las filas afectadas por el ``QuerySet``. Por 
@@ -493,7 +541,12 @@ ejemplo:
     >>> publishers.delete();
     >>> array(Publisher.objects.all());
     []
+    
+que se traduce en el siguiente SQL:
 
+.. code-block:: sql
+    
+    DELETE FROM books_publisher;
 
 Plantillas
 ----------
@@ -620,7 +673,8 @@ Se muestra a continuación un ejemplo de una vista que retorna HTML generado por
 plantilla:
 
 .. code-block:: javascript
-
+    
+    // Cargar las clases Template y Context
     require('doff.template.base', 'Template', 'Context');
     require('doff.utils.http', 'HttpResponse');
     require('doff.template.loader', 'get_template');
@@ -632,7 +686,7 @@ plantilla:
     }
     
     
-.. note:: comentarios en el ejemplo
+
 
 En esta vista se utiliza la API para cargar plantillas, a la cual se accede 
 mediante la función `get_template()`.
