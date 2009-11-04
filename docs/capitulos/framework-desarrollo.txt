@@ -640,9 +640,7 @@ Al igual que en Django el objeto ``Context`` puede contener variables más compl
 La forma de inspeccionar estas es con el operador `.` (punto). Usando el
 punto se puede acceder a objetos, atributos, índices, o métodos de un objeto.
 
-.. note:: Poner ejemplo 
-
-Cuando el sistema de plantillas encuentra un punto en una variable el orden de
+En estos casos cuando el sistema de plantillas encuentra un punto en una variable el orden de
 búsqueda es el siguiente:
 
     * Arreglo asociativo (por ej. ``foo["bar"]``)
@@ -650,9 +648,22 @@ búsqueda es el siguiente:
     * Llamada de método (por ej. ``foo.bar()``)
     * Índice de arreglos (por ej. ``foo[bar]``)
 
-.. note:: poner ejemplo
+Por ejemplo, ante la siguiente plantilla:
 
-El sistema utiliza el primer tipo de búsqueda que funcione.
+.. code-block:: html
+
+    {{ x.elemento }}
+    
+al momento de ser procesada, inicialmente se comprobará  si ``x`` es
+un arreglo asociativo y se reemplaza por el contenido de ``x["elemento"]``, si
+no existe la clave o no se trata de un arreglo asociativo, se intenta obtener
+el atributo, simplemente ``x.elemento``.
+Si en la búqueda como atributo, se encuentra un método se lo ejecuta y se utiliza
+su salida.
+En el caso de no poder realizar el reemplazo por ninguna de las anteriores, 
+busca ``elemento`` como índice de arreglos. Tiene sentido cuando lo que se 
+encuentra tras el punto es un numero.
+ 
 
 Si una variable no existe en el contexto, el
 sistema de plantillas la procesa como una cadena vacía. 
@@ -674,14 +685,21 @@ plantilla:
 
 .. code-block:: javascript
     
-    // Cargar las clases Template y Context
+    // Importar las clases Template y Context
     require('doff.template.base', 'Template', 'Context');
+    // Importar la clase HttpResponse
     require('doff.utils.http', 'HttpResponse');
+    // Importar la clase get_template
     require('doff.template.loader', 'get_template');
-
+    
+    // Definición de una vista
     function current_datetime(request) {
+        // Cargar la vista
         var t = get_template('mytemplate.html');
+        // Rednderización sobre la variable html con el contexto con una
+        // fecha
         html = t.render(new Context({'current_date': new Date()}))
+        // Retornar la respuesta en una respuesta http 
         return new HttpResponse(html);
     }
     
@@ -718,8 +736,9 @@ Cuando se recibe una petición en Django, ésta es procesada por una instancia d
 la clase ``Handler``. El equivalente en el proyecto desconectado es ``LocalHandler``,
 que se encarga de procesar las peticiones que envía el ``DOMAdapter``.
 
-
-.. note:: Agregar ``Middlewares`` 
+El ``LocalHandler`` se encarga de realizar el pasaje del ``Request`` por los
+diferentes Middlewares, como indica la figura 2.6 del apartado de tecnologías
+del servidor. En este proceso se llama a la vista.
 
 La salida de la vista se envuelve en un objeto ``Response``, equivalente a
 la respuesta HTTP, que es devuelto al ``DOMAdapter``.
