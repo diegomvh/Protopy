@@ -3,13 +3,32 @@ Aplicación de Demostración
 ###########################
 
 
-Se propuso una aplicación denominada ``salesman`` como demostración de Doff/Protopy.
+Se diseñó una aplicación denominada ``salesman`` (agente de ventas viajante)
+para ejemplificar el funcionamiento de Protopy y Doff. La aplicación modela
+una empresa dedicada a la venta de productos mediante agentes viajantes.
+Cada viajante tiene asignada una serie de ciudades, donde realiza las ventas.
+
+El parámetro ``OFFLINE_BASE`` es ``"off"``.
+
 
 Esta aplicación
 
 Modelo
 ------
 
+.. figure:: ../_svg/modelo_salesman.png
+    :width: 600
+    
+    Diagrama de Base de Datos de Salesman (generado con ``graph_models``)
+
 Vistas
 ------
+
+La mayor parte de las vistas se implementaron mediante vistas genéricas. 
+Este tipo de vistas se encuentran implementadas dentro del paquete 
+``django.views.generic`` y prveen funcionalidad muy frecuente como CRUD, 
+consultas, comentarios, redirección, etc. 
+
+Por ejemplo:
+
 
