@@ -39,18 +39,19 @@ class RemoteManagerBase(object):
     def __init__(self):
         self._serializer = None
         self._deserializer = None
-        self._manager = None
+        self._model_manager = None
         self._sync_log = None
 
-    def _contribute_to_class(self, remote, name):
+    def _contribute_to_class(self, remote, name = 'remotes'):
         try:
-            self._manager = getattr(remote._meta, 'manager')
+            self._model_manager = getattr(remote._meta, 'manager')
         except AttributeError, e:
-            self._manager = getattr(remote._meta.model, '_default_manager')
+            self._model_manager = getattr(remote._meta.model, '_default_manager')
 
         rpc = SimpleJSONRPCDispatcher(allow_none=False, encoding=None)
         rpc.register_introspection_functions()
         rpc.register_instance(self)
+        setattr(remote, '_default_manager', self)
         setattr(remote, name, rpc)
 
     def _methods(self):
@@ -67,11 +68,6 @@ class RemoteManagerBase(object):
 
     def _dispatch(self, method, params):
         methods = self._methods() or []
-        #Limpio el valor del _sync_log
-        self._sync_log = None
-        #Busco si tiene sync_log osea estoy en una transacion
-        params = self._extract_sync_log(params)
-
         if method in methods:
             ret = getattr(self, method)(*params)
 
@@ -89,45 +85,36 @@ class RemoteManagerBase(object):
             if is_sync_data:
                 if sd_instance.content_object:
                     real_instance = sd_instance.content_object
+                    real_instance.active = sd_instance.active
                 else:
-                    real_instance = sd_instance.content_type.model_class()()
-                    real_instance.id = sd_instance.object_id
-                real_instance.active = sd_instance.active
+                    real_instance = sd_instance
             else:
                 real_instance = sd_instance
                 real_instance.active = True
             yield real_instance
         raise StopIteration()
 
-    def _extract_sync_log(self, params):
-        if params and type(params[-1]) == dict and params[-1].has_key('model') and params[-1]['model'] == 'offline.synclog': 
-            obj = params.pop()
-            # Todo tirar un erro si no esta
-            s = Session.objects.get(pk=obj['sync_id'])
-            self._sync_log = s.get_decoded()
-        return params
-
     def _get_query_set(self):
         if self._sync_log != None:
             first = not self._sync_log.has_key('last_sync')
             if not first:
-                model_type = ContentType.objects.get_for_model(self._manager.model)
+                model_type = ContentType.objects.get_for_model(self._model_manager.model)
                 sync_data = SyncData.objects.filter(content_type__pk = model_type.id, update_at__range=(self._sync_log['last_sync'], self._sync_log['new_sync']))
                 return sync_data
-        return self._manager
+        return self._model_manager
 
-    def delete(self, pks):
+    def _delete(self, pks):
         if not isinstance(pks, list):
             pks = [ pks ]
         ret = []
         for pk in pks:
-            obj = self._manager.get(pk = pk)
+            obj = self._model_manager.get(pk = pk)
             obj.delete()
             ret.append(pk)
         print ret
         return (len(ret) == 1) and ret[0] or ret
 
-    def insert(self, values):
+    def _insert(self, values):
         objs = self._deserializer(values)
         ret = []
         for o in objs:
@@ -136,7 +123,7 @@ class RemoteManagerBase(object):
         print ret
         return (len(ret) == 1) and ret[0] or ret
 
-    def update(self, values):
+    def _update(self, values):
         objs = self._deserializer(values)
         ret = []
         for o in objs:
@@ -185,14 +172,24 @@ class RemoteSerializer(PythonSerializer):
         self._current = {}
 
     def end_object(self, obj):
-        self.objects.append({
-            "model"         : smart_unicode(obj._meta),
-            "server_pk"     : smart_unicode(obj._get_pk_val(), strings_only=True),
+        is_sync_data = isinstance(obj, SyncData)
+        if is_sync_data:
+            real_class = obj.content_type.model_class()
+            self.objects.append({
+            "model"         : smart_unicode(real_class._meta),
+            "server_pk"     : smart_unicode(real_class._meta.pk.to_python(obj.object_id), strings_only=True),
             "active"        : smart_unicode(obj.active, strings_only=True),
-            "fields"        : obj.active and self._current or {}
-        })
+            "fields"        : self._current
+            })
+        else:
+            self.objects.append({
+                "model"         : smart_unicode(obj._meta),
+                "server_pk"     : smart_unicode(obj._get_pk_val(), strings_only=True),
+                "active"        : smart_unicode(obj.active, strings_only=True),
+                "fields"        : self._current
+            })
         self._current = None
-
+        
 def RemoteDeserializer(object_or_list, **options):
     models.get_apps()
     if isinstance(object_or_list, dict):

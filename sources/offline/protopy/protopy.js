@@ -327,7 +327,7 @@
 
     /* Modulo: sys - modulo de sistema, proporciona informacion sobre el ambiente y algunas herramientas para interactuar con este */
     var sys = ModuleManager.create('sys', 'built-in', { 
-        version: 0.95,
+        version: 0.90,
         browser: {
             IE:     !!(window.attachEvent && navigator.userAgent.indexOf('Opera') === -1),
             Opera:  navigator.userAgent.indexOf('Opera') > -1,
@@ -362,6 +362,7 @@
         history: history
     });
 
+    sys.selectorCacheOn = !sys.browser.IE && !sys.browser.WebKit;
     sys.gears = get_gears();
 
     /******************** exception ***********************/
@@ -871,9 +872,7 @@
 
     /******************** dom **************************/
     //Based on peppy
-    var doc = sys.document;
     var cache = {};
-    var cacheOn = !sys.browser.IE && !sys.browser.WebKit;
     var persistCache = {};
     var _uid = 0;
 
@@ -1030,7 +1029,7 @@
             root.uid = root.uid || _uid++;
             var cacheKey = selector + root.uid;
             
-            if( cacheOn && cache[ cacheKey ] ) {
+            if( sys.selectorCacheOn && cache[ cacheKey ] ) {
                 result = result.concat( cache[ cacheKey ] );
                 continue;
             }
@@ -1074,7 +1073,7 @@
         root.uid = root.uid || _uid++;
 
         var cacheKey = selectorGroups + root.uid;
-        if( cacheOn && cache[ cacheKey ] ) 
+        if( sys.selectorCacheOn && cache[ cacheKey ] ) 
             return cache[ cacheKey ];
 
         reg.quickTest.lastIndex = 0;
@@ -1417,10 +1416,7 @@
     }
 
     var dom = ModuleManager.create('dom', 'built-in', {
-        query: query,
-        cache: function(value) {
-          cacheOn = value;
-        }
+        query: query
     });
 
     /******************** builtin **************************/

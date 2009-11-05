@@ -92,7 +92,6 @@ function pull() {
         last_sync_log = SyncLog.objects.latest();
     } catch (e if isinstance(e, SyncLog.DoesNotExist)) {}
 
-    // Inicio la sincronizacion informando al site las intenciones
     var data = rpc.pull(last_sync_log);
     var new_sync_log = new SyncLog(data);
     new_sync_log.save();

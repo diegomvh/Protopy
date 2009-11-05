@@ -345,50 +345,6 @@ class RemoteSite(RemoteBaseSite):
     # Synchronization
     #===========================================================================
     @jsonrpc
-    def begin_pull(self, sync_log = None):
-        retorno = {}
-        first = sync_log == None
-
-        if not first:
-            last_sync = datetime.datetime(*time.strptime(sync_log['synced_at'], '%Y-%m-%d %H:%M:%S')[:6])
-
-        new_sync = datetime.datetime.now()
-
-        # Veamos los modelos
-        models = []
-        for app in self._registry.values():
-            for model in app.keys():
-                # Si no es el primero filtro solo los modelos interesantes
-                if not first:
-                    model_type = ContentType.objects.get_for_model(model)
-                    sd = SyncData.objects.filter(content_type__pk = model_type.id, update_at__range=(last_sync, new_sync))
-                    if bool(sd):
-                        models.append(model)
-                else:
-                    models.append(model)
-
-        if bool(models):
-            # Ok esto da para largo, ordenamos, mapeamos y creamos una session
-            models = get_model_order(models)
-            models = map(lambda m: str(m._meta), models)
-            s = SessionStore()
-            if not first:
-                s['last_sync'] = last_sync
-            s['new_sync'] = new_sync
-            s.save()
-            retorno['synced_at'] = new_sync.strftime("%Y-%m-%d %H:%M:%S")
-            retorno['sync_id'] = s.session_key
-
-        retorno['models'] = models
-        return retorno
-
-    @jsonrpc
-    def end_pull(self, sync_log):
-
-        retorno = {}
-        return retorno
-
-    @jsonrpc
     def pull(self, sync_log = None):
         retorno = {}
         first = sync_log == None
@@ -415,7 +371,7 @@ class RemoteSite(RemoteBaseSite):
         retorno['objects'] = []
         for model in models:
             remote = self._registry[model._meta.app_label][model]
-            remote_manager = remote.remotes.instance
+            remote_manager = remote._default_manager
             if not first:
                 remote_manager._sync_log = sync_log
             values = remote_manager.all()
@@ -428,11 +384,7 @@ class RemoteSite(RemoteBaseSite):
         return retorno
 
     @jsonrpc
-    def begin_push(self, sync_log = None):
-        return {}
-
-    @jsonrpc
-    def end_push(self, sync_log):
+    def push(self, sync_log = None):
         return {}
 
     #===========================================================================
@@ -498,7 +450,7 @@ class RemoteSite(RemoteBaseSite):
 
         app_registry[model] = remote_proxy
         rm = RemoteManager()
-        rm._contribute_to_class(remote_proxy, 'remotes')
+        rm._contribute_to_class(remote_proxy)
 
         related_models = get_related_models(model)
         for related_model in related_models:
@@ -516,7 +468,7 @@ class RemoteSite(RemoteBaseSite):
 
             app_registry[related_model] = remote_proxy
             rm = RemoteReadOnlyManager()
-            rm._contribute_to_class(remote_proxy, 'remotes')
+            rm._contribute_to_class(remote_proxy)
 
     def model_saved(self, **kwargs):
         model_type = ContentType.objects.get_for_model(kwargs['sender'])
