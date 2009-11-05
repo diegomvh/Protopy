@@ -120,8 +120,6 @@ Algunas de las características más relevantes de Protopy son:
     por identificador y ``$$("selector_css")`` para recuperar un conjunto basado
     en un criterio CSS.   
      
-
-
 .. [*] Métrica obtenida del comando 
     ``wc -l $(find django -iname "*.py" | grep -v contrib | grep -v backends)``
     

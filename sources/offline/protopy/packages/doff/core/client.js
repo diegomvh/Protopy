@@ -1,11 +1,8 @@
-/* 'HTML utilities suitable for global use.' */
-require('dom');
 require('event');
 require('ajax');
 require('sys');
 require('urls');
 require('doff.utils.http');
-//http://www.contentwithstyle.co.uk/content/fixing-the-back-button-and-enabling-bookmarking-for-ajax-apps
 
 var History = type('History', [ object ], {
     __init__: function() {
@@ -46,7 +43,7 @@ var Document = type('Document', [ object ], {
         this.body = document.createElement('div');
         this.body.id = "doff-body";
         // Apagando la chache del selector
-        dom.cache(false);
+        sys.selectorCacheOn = false;
         this.html.update('');
         this.html.insert(this.head);
         this.html.insert(this.body);

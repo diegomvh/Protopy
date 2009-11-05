@@ -5,15 +5,14 @@ Protopy
 
 Protopy es una librería en JavaScript que simplifica el desarrollo de
 aplicaciones web dinámicas. Agregando un enfoque modular para la inclusión de
-código, orientación a objetos, soporte para :term:`AJAX`, manipulación del :term:`DOM` y
-eventos.
+código, orientación a objetos, soporte para AJAX, manipulación del DOM y eventos.
 
 Módulos
 -------
 Uno de los principales inconvenientes a los que Protopy da solución es a la
-inclusión dinámica de funcionalidad bajo demanda, esto es logrado mediante los
-módulos. Básicamente un modulo en un archivo con código javascript que recide
-en el servidor y es obtenido y ejecutado en el cliente.
+inclusión dinámica de funcionalidad bajo demanda, esto se logra mediante los
+módulos. Básicamente un modulo en un archivo con código JavaScript que recide
+en el servidor y posteriormente obtenido y ejecutado en el cliente.
 
 .. code-block:: javascript
 

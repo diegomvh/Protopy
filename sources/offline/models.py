@@ -99,12 +99,18 @@ class SyncData(models.Model):
     http://trimpath.googlecode.com/svn/trunk/junction_docs/files/junction_doc_sync-txt.html
     '''
     content_type = models.ForeignKey(ContentType, blank=True, null=True, serialize=False)
-    object_id = models.TextField(blank=True, null=True)
+    object_id = models.CharField(max_length=255, serialize=False)
     content_object = generic.GenericForeignKey('content_type', 'object_id')
 
     # Indica si el registro fue borrado en algun cliente
     active = models.BooleanField()
     update_at = models.DateTimeField()
+
+    def __unicode__(self):
+        if self.content_object:
+            return "Modified or Created: %s - %s" % (self.content_type.model_class().__name__, unicode(self.content_object))
+        else:
+            return "Deleted: %s - %s" % (self.content_type.model_class().__name__, self.object_id)
 
     def save(self):
         from datetime import datetime

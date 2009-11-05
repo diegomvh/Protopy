@@ -157,7 +157,6 @@ function ensure_default_remote_manager(cls) {
         } catch (e if isinstance(e, FieldDoesNotExist)) {}
         var remote_descriptor = new RemoteManagerDescriptor(cls);
         cls.__defineGetter__('remotes', function() { return remote_descriptor.__get__(); });
-        cls.__defineSetter__('remotes', function(value) { return remote_descriptor.__set__(value); });
     }
 };
 
