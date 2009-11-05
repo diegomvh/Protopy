@@ -75,6 +75,7 @@ var RemoteModel = type('RemoteModel', [ models.Model ], {
     status: new models.CharField( {"max_length": 1, "choices": items(SyncLog.SYNC_STATUS), "editable": false, "default": "c", "serialize": false}),
     server_pk: new models.CharField( {"max_length": 255, "unique": true, "null": true, "blank": true, "editable": false, "serialize": false}),
 
+    all: new models.Manager(),
     objects: new RemoteManager(),
     created: new RemoteStatusManager("c"),
     modified: new RemoteStatusManager("m"),

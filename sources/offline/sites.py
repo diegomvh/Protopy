@@ -351,7 +351,7 @@ class RemoteSite(RemoteBaseSite):
 
         new_sync = datetime.datetime.now()
         if not first:
-            last_sync = datetime.datetime(*time.strptime(sync_log['synced_at'], '%Y-%m-%d %H:%M:%S')[:6])
+            last_sync = datetime.datetime(*time.strptime(sync_log['fields']['synced_at'], '%Y-%m-%d %H:%M:%S')[:6])
 
         # Veamos los modelos
         # TODO: Mejorar esto de meterle mano al SyncData
@@ -386,14 +386,41 @@ class RemoteSite(RemoteBaseSite):
         return retorno
 
     @jsonrpc
-    def push(self, sync_log = None):
-
+    def push(self, received):
+        #TODO: Tirar errores
+        retorno = {}
+        last_sync = datetime.datetime(*time.strptime(received['sync_log']['fields']['synced_at'], '%Y-%m-%d %H:%M:%S')[:6])
+        
+        # Antes que nada validar que los cambios no estan deprecados en funcion del sync log
+        
+        # Primero los borrados
+        for app_model in received['deleted']['models']:
+            remote = self.get_remote(app_model)
+            remote_manager = remote._default_manager
+            remote_manager.delete(received['deleted']['objects'][app_model])
+        
+        # Luego modificados
+        for app_model in received['modified']['models']:
+            remote = self.get_remote(app_model)
+            remote_manager = remote._default_manager
+            remote_manager.update(received['modified']['objects'][app_model])
+            
+        # Terminando los Creados
+        for app_model in received['created']['models']:
+            remote = self.get_remote(app_model)
+            remote_manager = remote._default_manager
+            remote_manager.insert(received['created']['objects'][app_model])
+            
+        retorno['objects'] = "Los resultados"
+        
+        new_sync = datetime.datetime.now()
+        
         retorno['sync_log'] = {}
         retorno['sync_log']['synced_at'] = new_sync.strftime("%Y-%m-%d %H:%M:%S")
         retorno['sync_log']['sync_id'] = random_string(32)
 
         #Cuando termino de insertar preparo 
-        return {}
+        return retorno
 
     #===========================================================================
     # Manifests
@@ -502,3 +529,11 @@ class RemoteSite(RemoteBaseSite):
         '''
         #return set(map( lambda m: m._meta.app_label, self._registry))
         return self._registry.keys()
+    
+    def get_remote(self, app_model):
+        app_label, model_name = app_model.split('.')
+        models = self._registry.get(app_label, None)
+        if models:
+            model = get_model(app_label, model_name)
+            return models[model]
+        return None

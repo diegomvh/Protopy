@@ -70,7 +70,7 @@ function RemoteDeserializer(object_list, sync_log) {
                     'status': "s"};
         try {
             // Search if exist instance
-            var client_object = Model.objects.get({'server_pk': data["server_pk"]});
+            var client_object = Model._default_manager.get({'server_pk': data["server_pk"]});
             // Si estoy aca es porque la instancia existe, levanto el pk y lo marco
             data[Model._meta.pk.attname] = client_object[Model._meta.pk.attname];
         } catch (e if isinstance(e, Model.DoesNotExist)) {}
@@ -88,12 +88,12 @@ function RemoteDeserializer(object_list, sync_log) {
             if (field.rel && isinstance(field.rel, models.ManyToManyRel)) {
                 var m2m_convert = getattr(field.rel.to._meta.pk, 'to_javascript');
                 // Map to client pks
-                field_value = [field.rel.to.objects.get({'server_pk': f})[Model._meta.pk.attname] for each (f in field_value)]
+                field_value = [field.rel.to._default_manager.get({'server_pk': f})[Model._meta.pk.attname] for each (f in field_value)]
                 m2m_data[field.name] = [m2m_convert(string(pk)) for each (pk in field_value)];
             } else if (field.rel && isinstance(field.rel, models.ManyToOneRel)) { // Handle FK fields
                 if (field_value != null) {
                     // Map to client pk
-                    field_value = field.rel.to.objects.get({'server_pk': field_value})[Model._meta.pk.attname];
+                    field_value = field.rel.to._default_manager.get({'server_pk': field_value})[Model._meta.pk.attname];
                     data[field.attname] = field.rel.to._meta.get_field(field.rel.field_name).to_javascript(field_value);
                 } else {
                     data[field.attname] = null;

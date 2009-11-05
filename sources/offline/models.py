@@ -105,7 +105,7 @@ class SyncData(models.Model):
 
     # Indica si el registro fue borrado en algun cliente
     active = models.BooleanField()
-    update_at = models.DateTimeField()
+    update_at = models.DateTimeField(serialize=False)
 
     def __unicode__(self):
         if self.content_object:

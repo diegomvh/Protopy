@@ -2,14 +2,11 @@
 
 from django.utils.datastructures import SortedDict
 from django.db.models.fields import Field
-from django.db.models.query import QuerySet
 from offline.util.jsonrpc import SimpleJSONRPCDispatcher
 from django.core.serializers.base import DeserializedObject
 from django.core.serializers.python import Serializer as PythonSerializer, Deserializer as PythonDeserializer, _get_model
-from django.core.serializers import base
 from django.utils.encoding import smart_unicode
 from django.db import models
-from django.contrib.sessions.models import Session
 from django.contrib.contenttypes.models import ContentType
 from offline.models import SyncData
 
@@ -104,31 +101,30 @@ class RemoteManagerBase(object):
         objs = self.get_query_set().filter(*args, **kwargs)
         return self.serializer.serialize(self.build_remote_object(objs))
 
-    def delete(self, pks):
-        if not isinstance(pks, list):
-            pks = [ pks ]
+    def delete(self, values):
+        objs = self.deserializer(values)
         ret = []
-        for pk in pks:
-            obj = self.model_manager.get(pk = pk)
-            obj.delete()
+        for o in objs:
+            pk = o.object.pk
+            o.object.delete()
             ret.append(pk)
-        return (len(ret) == 1) and ret[0] or ret
+        return ret
 
     def insert(self, values):
-        objs = self._deserializer(values)
+        objs = self.deserializer(values)
         ret = []
         for o in objs:
             o.save()
             ret.append(getattr(o.object, o.object._meta.pk.attname))
-        return (len(ret) == 1) and ret[0] or ret
+        return ret
 
     def update(self, values):
-        objs = self._deserializer(values)
+        objs = self.deserializer(values)
         ret = []
         for o in objs:
             o.save()
             ret.append(getattr(o.object, o.object._meta.pk.attname))
-        return (len(ret) == 1) and ret[0] or ret
+        return ret
 
 #===============================================================================
 # RemoteModel
@@ -175,7 +171,7 @@ class RemoteSerializer(PythonSerializer):
             real_class = obj.content_type.model_class()
             self.objects.append({
             "model"         : smart_unicode(real_class._meta),
-            "server_pk"     : smart_unicode(real_class._meta.pk.to_python(obj.object_id), strings_only=True),
+            "server_pk"     : smart_unicode(obj._meta.get_field('object_id').to_python(obj.object_id), strings_only=True),
             "active"        : smart_unicode(obj.active, strings_only=True),
             "fields"        : self._current
             })
