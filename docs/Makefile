@@ -15,7 +15,7 @@ SVG_PNG_OUTPUT = $(SVG_FILES:.svg=.png)
 
 .PHONY: help clean html dirhtml pickle json htmlhelp qthelp latex changes linkcheck doctest
 
-all: svg latex
+all: svg latex graph_models
 	$(MAKE) -C _build/latex
 
 help:
@@ -39,6 +39,11 @@ svg:
 clean:
 	-rm -rf _build/*
 	@ $(MAKE) -C _svg clean
+	@ $(MAKE) -C ../sources/salesman
+
+# Crear los modelos
+graph_models:
+	@ $(MAKE) -C ../sources/salesman
 
 re: clean all
 

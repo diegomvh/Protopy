@@ -10,3 +10,6 @@ clean:
 %.png: %.svg
 #	inkscape --file=$< --export-dpi=300 --export-area-drawing --export-png=$@
 	inkscape --file=$< --export-dpi=150 --export-area-canvas --export-png=$@
+
+
+modelo_offline.png:

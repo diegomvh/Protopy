@@ -1,4 +1,4 @@
-****************
+ho****************
 La aplicación
 ****************
 
@@ -872,6 +872,59 @@ y eliminación, ``post_delete``.
 Protocolo de Sincronización
 ===========================
 
+Se eligió RPC sobre HTTP como mecanismo de comunicación entre el cliente y el servidor 
+por sobre llamadas asincrónicas simples o AJAX, debido de que se requiere pasaje
+de parámetros más complejos que los contemplados en la codificación 
+``application/x-www-form-urlencoded`` o ``multipart/form-data`` [W3CFormEncoding09]_. 
+Se eligió JSONRPC como mecanismo de comunicación y se publicó en la URL 
+``/rpc`` del sitio remoto.
+
+Basados en las primitivas de sincronización de los sistemas de control de versiones
+distribuidos como Git [GitDocs09]_, Mercurial [MercurialDocs09]_ o Bazaar 
+[BazaarDocs09]_
+se crearon dos métodos:
+
+    * ``pull()``
+    
+        Requiere los cambios del servidor
+        
+    * ``push()``
+    
+        Envía los cambios al servidor
+        
+.. [W3CFormEncoding09] Dave Raggett, Arnaud Le Hors, Ian Jacobs,
+    *Especificación de codificación de contenidos de formularios en HTML 4.1*,
+    ultimo acceso Noviembre de 2009,
+    http://www.w3.org/TR/html401/interact/forms.html#form-content-type
+
+.. [GitDocs09] Sistema de Control de Versiones Git,
+    último acceso Noviembre de 2009,
+    http://git-scm.com/
+
+.. [MercurialDocs09] Sistema de Control de Versiones Mercurial,
+    último acceso Noviembre de 2009,
+    http://mercurial.selenic.com/guide/    
+
+.. [BazaarDocs09] Martin Pool
+    *Sitio Oficila de Sistema de Control de Versiones Bazaar*,
+    último accseo Noviembre 2009,
+    http://bazaar-vcs.org/en/
+    
+Dentro del modulo ``doff.contrib.offline.sync`` se crearon los métodos 
+``pull()`` y ``push()`` que hacen las llamadas a las funciones homónimas
+publicadas en ``/rpc`` del sitio remoto. Para utilizarlo se reliza lo siguiente:
+
+.. code-block:: javascript
+
+    >>> require('doff.contrib.offline.sync')
+    // Descargar los datos del serivdor
+    >>> sync.pull() 
+ 
+Si bien en el código expuesto la función no recibe parámetros, internamete
+se envía la última instancia del modelo ``SyncLog`` del proyecto desconectado.
+ 
+ 
+    
 En Doff se plantearon dos tipos de sincronización: la *sincronización inicial*, que
 ocurre cuando un cliente instala el proyecto desconectado a partir del sitio
 remoto y la *sincronización normal* que sucede cada vez que el cliente desea
@@ -880,8 +933,6 @@ del modelo del proyecto. La sincronización es explícita para el cliente,
 debdio a que en ocaciones donde se requiera asistencia del usuario para dirmir 
 los conflictos esto no ocurra de manera sorpresiva.
 
-Se eligió JSON-RPC como mecanismo de invocación de código remoto, debdido a que
-fue el mecanismo elegido en la implentación de Protopy.
 
 La aplicación genérica ``doff.contrib.offline`` y en especial su módulo ``syncrhonization`` son
 los encargados del manejo de sincronización. Esta aplicación se instala por defecto (durante la ejecución
