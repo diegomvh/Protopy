@@ -6,12 +6,11 @@ require('doff.utils.http');
 
 var LocalHandler = type('LocalHandler', [ object ], {
     response_fixes: [],
-    __init__: function(urlconf) {
-        require('doff.core.project', 'get_settings');
-        this.settings = get_settings();
+    __init__: function(settings) {
+        this.settings = settings;
         this.load_middleware();
         //Crear el resolver
-        this._resolver = new urlresolvers.RegexURLResolver('^/', urlconf);
+        this._resolver = new urlresolvers.RegexURLResolver('^/', this.settings.ROOT_URLCONF);
     },
 
     load_middleware: function() {

@@ -17,11 +17,15 @@ var Project = type('Project', object, {
 
         // Inicio del handler para las url
         require('doff.core.handler', 'LocalHandler');
-        var handler = new LocalHandler(this.settings.ROOT_URLCONF);
+        var handler = new LocalHandler(this.settings);
 
         // Conecto el adaptador al manejador
         event.connect(sys.window, 'send', handler, 'receive');
         event.connect(handler, 'send', sys.window, 'receive');
+
+        // Inicio del handler para la sincronizacion
+        require('doff.contrib.offline.handler', 'SyncHandler');
+        this.sync = new SyncHandler(this.settings);
 
         // Inicio el logging, si no hay hay archivo de configuracion no pasa nada
         require('logging.config', 'file_config');

@@ -36,17 +36,16 @@ function get_related_models(model) {
 
 var SyncHandler = type('SyncHandler', [ object ], {
     response_fixes: [],
-    __init__: function(urlconf) {
-        require('doff.core.project', 'get_settings');
-        this.settings = get_settings();
+    __init__: function(settings) {
+        this.settings = settings;
         this.server = new ServiceProxy(get_project().offline_support + '/sync', {asynchronous: false});
         this.serializer = new RemoteSerializer();
         this.deserializer = RemoteDeserializer
         this.last_sync_log = null;
         this.new_sync_log = null;
         // MUEJEJEJEJ HOKS
-        //this.load_middleware();
-        //Crear el resolver
+        // this.load_middleware();
+        // Crear el resolver
     },
 
     sync: function() {
@@ -54,16 +53,24 @@ var SyncHandler = type('SyncHandler', [ object ], {
             this.last_sync_log = SyncLog.objects.latest();
         } catch (e if isinstance(e, SyncLog.DoesNotExist)) {
             print('Es el primero, solo hago pull y retorno');
-            var objects = this.pull();
+            var [ received, new_sync_log ] = this.pull();
+
+            this.new_sync_log = new SyncLog(new_sync_log);
             this.new_sync_log.save();
 
-            for (var obj in this.deserializer(data['objects'], this.new_sync_log))
+            for (var obj in this.deserializer(received, this.new_sync_log))
                 obj.save();
             return;
         }
+        
+        var [ received, new_sync_log ] = this.pull();
+        this.new_sync_log = new SyncLog(new_sync_log);
+        this.new_sync_log.save();
 
-        this.push();
-
+        for (var obj in this.deserializer(received, this.new_sync_log))
+            obj.save();
+        
+        var [ confirmed, new_sync_log ] = this.push();
     },
 
     load_middleware: function() {
@@ -135,58 +142,77 @@ var SyncHandler = type('SyncHandler', [ object ], {
         } else {
             var data = this.server.pull();
         }
-        //Si tengo datos los levanto
-        this.new_sync_log = new SyncLog(data['sync_log']);
-        return data['objects'];
+        
+        return [ data['objects'], data['sync_log']];
     },
 
     push: function() {
-        var to_send = {};
+        assert(this.last_sync_log != null, 'Sync log is required');
+    	
+    	var to_send = {};
+    	to_send['sync_log'] = this.serializer.serialize(this.last_sync_log);
+    	
+        // Los borrados
         var models = get_models().filter(function(m) { return issubclass(m, RemoteModel) && ! issubclass(m, RemoteReadOnlyModel) && m.deleted.count() > 0; });
 
-        // Los ordenamos por dependencias 
         models = get_model_order(models).reverse();
+        to_send['deleted'] = {'models': models.map(function(m) { return string(m._meta); }), 'objects': {}};
         for each (var model in models) {
             var objs = model.deleted.all();
-            var values = array(objs).map(function (obj) { return obj.server_pk; });
-            to_send['deleted'] = values;
-            var keys = model.remotes.delete(values);
-            for each (var obj in objs ) {
-                obj.status = 's';
-                obj.active = false;
-                obj.save();
-            }
+            var values = this.serializer.serialize(objs);
+            to_send['deleted']['objects'][string(model._meta)] = values;
         }
 
         // Los creados
         models = get_models().filter(function(m) { return issubclass(m, RemoteModel) && ! issubclass(m, RemoteReadOnlyModel) && m.created.count() > 0; });
         // Los ordenamos
         models = get_model_order(models);
+        to_send['created'] = {'models': models.map(function(m) { return string(m._meta); }), 'objects': {}};
         for each (var model in models) {
             var objs = model.created.all();
-            var values = serializer.serialize(objs);
-            var keys = model.remotes.insert(values);
-            for (i = 0; i < len(keys); i++ ) {
-                objs[i].server_pk = keys[i];
-                objs[i].status = 's';
-                objs[i].save();
-            }
+            var values = this.serializer.serialize(objs);
+            to_send['created']['objects'][string(model._meta)] = values;
         }
 
         // Los modificados
         models = get_models().filter(function(m) { return issubclass(m, RemoteModel) && ! issubclass(m, RemoteReadOnlyModel) && m.modified.count() > 0; });
+        to_send['modified'] = {'models': models.map(function(m) { return string(m._meta); }), 'objects': {}};
         for each (var model in models) {
             var objs = model.modified.all();
-            var values = serializer.serialize(objs);
-            var keys = model.remotes.update(values);
-            for each (var obj in objs ) {
-                obj.status = 's';
-            }
+            var values = this.serializer.serialize(objs);
+            to_send['modified']['objects'][string(model._meta)] = values;
         }
+        
+        var data = this.server.push(to_send);
+        return data['objects'];
     }
 });
 
+/*
+ * para deleted
+ * 
+ *  var keys = model.remotes.delete(values);
+    for each (var obj in objs ) {
+        obj.status = 's';
+        obj.active = false;
+        obj.save();
+    }
+    
+    para created
+    
+    var keys = model.remotes.insert(values);
+    for (i = 0; i < len(keys); i++ ) {
+        objs[i].server_pk = keys[i];
+        objs[i].status = 's';
+        objs[i].save();
+    }
 
+    para modified
+    var keys = model.remotes.update(values);
+    for each (var obj in objs ) {
+        obj.status = 's';
+    }
+ */
 
 
 publish({
