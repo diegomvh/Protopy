@@ -8,16 +8,27 @@ para ejemplificar el funcionamiento de Protopy y Doff. La aplicación modela
 una empresa dedicada a la venta de productos mediante agentes viajantes.
 Cada viajante tiene asignada una serie de ciudades, donde realiza las ventas.
 
-El parámetro ``OFFLINE_BASE`` es ``"off"``.
+El proyecto ``salesman`` se ubicó al mismo nivel que ``offline``. Sobre
+``salesman`` se agregó al ``PYTHONPATH`` la ruta ``".."`` para disponer de
+``offline`` de la siguiente manera:
+
+.. code-block:: python
+
+    sys.path.append('..')
+    from os.path import abspath, dirname, join
+    PATH = abspath(dirname(__file__))
 
 
-Esta aplicación
+El parámetro ``OFFLINE_BASE`` es ``"off"``. El sitio remoto que se creo para
+la demostración es ``ventas``. El objetivo de esta aplicación es la creación
+desconectada de peidos y la sincronización.
+
 
 Modelo
 ------
 
 .. figure:: ../_svg/modelo_salesman.png
-    :width: 600
+    :width: 90
     
     Diagrama de Base de Datos de Salesman (generado con ``graph_models``)
 

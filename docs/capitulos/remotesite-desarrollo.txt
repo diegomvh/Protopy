@@ -1,4 +1,4 @@
-ho****************
+****************
 La aplicación
 ****************
 
@@ -993,8 +993,8 @@ instancias del cliente.
 
     Estados de sincronización de los modelos en el cliente
 
-Considreaciones sobre Sincronización
-===================================
+Considreaciones Sobre Sincronización
+=====================================
 
 Doff provee un mecanismo básico de sincronziación adecuado para peuqueñas aplicaciones
 que permite al programador contar con las herramientas para transporte, comunicación RPC

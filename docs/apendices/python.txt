@@ -292,4 +292,34 @@ Se puede definir la estructura de una clase mediante otra clase que herede de ty
 Objetos  *callables*
 ~~~~~~~~~~~~~~~~~~~~
 
-Un objeto *callable*
+Los objetos con *callables* son aquellos sobre los cuales se puede invocar el
+operador de llamada a función ``()`` (paréntesis). Los objetos de este tipo
+poseen el método ``__call__()``. Forman parte de este grupo las funciones, las
+expresiones lambda, y las clases que implementen ``__call__()``, para evaluar
+si un objeto es ``callable`` se utiliza el builtin homónimo. Por ejemplo:
+
+.. code-block:: python
+    
+    # Definición de una función
+    >>> def x():
+    ...     print "Hola mundo"
+    ...
+    >>> x()
+    Hola mundo
+    # Es callable?
+    >>> callable(x)
+    True
+    # Expresión lambda
+    >>> mi_exp = lambda x: x + 1
+    >>> mi_exp(3)
+    4
+    >>> callable(mi_exp)
+    True
+
+
+     
+
+
+
+
+
