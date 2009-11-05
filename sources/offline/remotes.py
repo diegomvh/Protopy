@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from django.utils.datastructures import SortedDict
 from django.db.models.fields import Field
 from django.db.models.query import QuerySet
@@ -37,16 +39,15 @@ class RemoteOptions(object):
 class RemoteManagerBase(object):
     SYNC_STATUS = (("s", "Synced"), ("c", "Created"), ("m", "Modified"), ("d", "Deleted"), ("b", "Bogus"))
     def __init__(self):
-        self._serializer = None
-        self._deserializer = None
-        self._model_manager = None
-        self._sync_log = None
+        self.serializer = None
+        self.deserializer = None
+        self.model_manager = None
 
-    def _contribute_to_class(self, remote, name = 'remotes'):
+    def contribute_to_class(self, remote, name = 'remotes'):
         try:
-            self._model_manager = getattr(remote._meta, 'manager')
+            self.model_manager = getattr(remote._meta, 'manager')
         except AttributeError, e:
-            self._model_manager = getattr(remote._meta.model, '_default_manager')
+            self.model_manager = getattr(remote._meta.model, '_default_manager')
 
         rpc = SimpleJSONRPCDispatcher(allow_none=False, encoding=None)
         rpc.register_introspection_functions()
@@ -55,7 +56,7 @@ class RemoteManagerBase(object):
         setattr(remote, name, rpc)
 
     def _methods(self):
-        return filter(lambda m: not m.startswith('_'), dir(self))
+        return map(lambda m: m[0:-7], filter(lambda m: not m.startswith('_') and m.endswith('_values'), dir(self)))
 
     def _listMethods(self):
         return self._methods() or []
@@ -69,17 +70,13 @@ class RemoteManagerBase(object):
     def _dispatch(self, method, params):
         methods = self._methods() or []
         if method in methods:
+            method = "%s_values" % method
             ret = getattr(self, method)(*params)
-
-            if isinstance(ret, QuerySet) and self._sync_log != None:
-                ret = self._serializer.serialize(self._build_object(ret))
-            elif isinstance(ret, QuerySet):
-                ret = list(ret.values())
             return ret
         else:
             raise Exception('bad method')
 
-    def _build_object(self, query_set):
+    def build_remote_object(self, query_set):
         is_sync_data = issubclass(query_set.model, SyncData)
         for sd_instance in query_set:
             if is_sync_data:
@@ -92,44 +89,45 @@ class RemoteManagerBase(object):
                 real_instance = sd_instance
                 real_instance.active = True
             yield real_instance
-        raise StopIteration()
 
-    def _get_query_set(self):
-        if self._sync_log != None:
-            first = not self._sync_log.has_key('last_sync')
-            if not first:
-                model_type = ContentType.objects.get_for_model(self._model_manager.model)
-                sync_data = SyncData.objects.filter(content_type__pk = model_type.id, update_at__range=(self._sync_log['last_sync'], self._sync_log['new_sync']))
-                return sync_data
-        return self._model_manager
+    def get_query_set(self):
+        model_type = ContentType.objects.get_for_model(self.model_manager.model)
+        sync_data = SyncData.objects.filter(content_type__pk = model_type.id)
+        return sync_data
 
-    def _delete(self, pks):
+    def all(self):
+        objs = self.model_manager.all()
+        return self.serializer.serialize(self.build_remote_object(objs))
+
+    def filter(self, *args, **kwargs):
+        #TODO: en funcion del filtro ver si tengo o no que usar sync_data o el manager del modelo
+        objs = self.get_query_set().filter(*args, **kwargs)
+        return self.serializer.serialize(self.build_remote_object(objs))
+
+    def delete(self, pks):
         if not isinstance(pks, list):
             pks = [ pks ]
         ret = []
         for pk in pks:
-            obj = self._model_manager.get(pk = pk)
+            obj = self.model_manager.get(pk = pk)
             obj.delete()
             ret.append(pk)
-        print ret
         return (len(ret) == 1) and ret[0] or ret
 
-    def _insert(self, values):
+    def insert(self, values):
         objs = self._deserializer(values)
         ret = []
         for o in objs:
             o.save()
             ret.append(getattr(o.object, o.object._meta.pk.attname))
-        print ret
         return (len(ret) == 1) and ret[0] or ret
 
-    def _update(self, values):
+    def update(self, values):
         objs = self._deserializer(values)
         ret = []
         for o in objs:
             o.save()
             ret.append(getattr(o.object, o.object._meta.pk.attname))
-        print ret
         return (len(ret) == 1) and ret[0] or ret
 
 #===============================================================================
@@ -189,7 +187,7 @@ class RemoteSerializer(PythonSerializer):
                 "fields"        : self._current
             })
         self._current = None
-        
+
 def RemoteDeserializer(object_or_list, **options):
     models.get_apps()
     if isinstance(object_or_list, dict):
@@ -230,18 +228,17 @@ def RemoteDeserializer(object_or_list, **options):
 class RemoteManager(RemoteManagerBase):
     def __init__(self):
         super(RemoteManager, self).__init__()
-        self._serializer = RemoteSerializer()
-        self._deserializer = RemoteDeserializer
+        self.serializer = RemoteSerializer()
+        self.deserializer = RemoteDeserializer
 
-    def all(self):
-        return self._get_query_set().all()
+    def all_values(self):
+        return list(self.model_manager.all().values())
 
-    def filter(self, kwargs):
-        kwargs = dict([(str(v[0]), str(v[1])) for v in kwargs.iteritems()])
-        return self._get_query_set().filter(**kwargs)
+    def filter_values(self, kwargs):
+        return list(self.model_manager.filter(**kwargs).values())
 
-    def count(self):
-        return self._get_query_set().count()
+    def count_values(self):
+        return self.model_manager.count()
 
 #===============================================================================
 # RemoteReadOnlyModel
@@ -284,27 +281,18 @@ class RemoteReadOnlySerializer(PythonSerializer):
         })
         self._current = None
 
-    def handle_field(self, obj, field):
-        pass
-
-    def handle_fk_field(self, obj, field):
-        pass
-
-    def handle_m2m_field(self, obj, field):
-        pass
 
 class RemoteReadOnlyManager(RemoteManagerBase):
     def __init__(self):
         super(RemoteReadOnlyManager, self).__init__()
-        self._serializer = RemoteReadOnlySerializer()
-        #self.deserializer = PythonDeserializer
+        self.serializer = RemoteReadOnlySerializer()
+        self.deserializer = PythonDeserializer
 
-    def all(self):
-        return self._get_query_set().all()
+    def all_values(self):
+        return list(self.model_manager.all().values())
 
-    def filter(self, kwargs):
-        kwargs = dict([(str(v[0]), str(v[1])) for v in kwargs.iteritems()])
-        return self._get_query_set().filter(**kwargs)
+    def filter_values(self, kwargs):
+        return list(self.model_manager.filter(**kwargs).values())
 
-    def count(self):
-        return self._get_query_set().count()
+    def count_values(self):
+        return self.model_manager.count()

@@ -1,4 +1,6 @@
 #! /usr/bin/env python
+# -*- coding: utf-8 -*-
+
 """Simple JSON-RPC Server.
 
 This module can be used to create simple JSON-RPC servers
@@ -142,14 +144,14 @@ class SimpleJSONRPCDispatcher(SimpleXMLRPCServer.SimpleXMLRPCDispatcher):
         of changing method dispatch behavior.
         """
         rawreq = simplejson.loads(data)
-    
+
         #params, method = xmlrpclib.loads(data)
         id = rawreq.get('id', 0)
         method = rawreq['method']
         params = rawreq.get('params', [])
-        
+
         responseDict = {'id':id}
-    
+
         # generate response
         try:
             if dispatch_method is not None:
@@ -169,9 +171,9 @@ class SimpleJSONRPCDispatcher(SimpleXMLRPCServer.SimpleXMLRPCDispatcher):
             #    xmlrpclib.Fault(1, "%s:%s" % (sys.exc_type, sys.exc_value))
             #    )
             responseDict['error'] = "%s:%s" % (sys.exc_type, sys.exc_value)
-    
+
         return simplejson.dumps(responseDict, cls=DjangoJSONEncoder)
-    
+
 
 #class SimpleXMLRPCRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 class SimpleJSONRPCRequestHandler(SimpleXMLRPCServer.SimpleXMLRPCRequestHandler):
@@ -182,7 +184,7 @@ class SimpleJSONRPCRequestHandler(SimpleXMLRPCServer.SimpleXMLRPCRequestHandler)
     """
     def do_POST(self):
         """Handles the HTTP POST request.
-    
+
         Attempts to interpret all HTTP POST requests as JSON-RPC calls,
         which are forwarded to the server's _dispatch method for handling.
         """

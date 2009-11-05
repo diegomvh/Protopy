@@ -39,10 +39,31 @@ var SyncHandler = type('SyncHandler', [ object ], {
     __init__: function(urlconf) {
         require('doff.core.project', 'get_settings');
         this.settings = get_settings();
-        this.rpc = new ServiceProxy(get_project().offline_support + '/rpc', {asynchronous: false});
+        this.server = new ServiceProxy(get_project().offline_support + '/sync', {asynchronous: false});
+        this.serializer = new RemoteSerializer();
+        this.deserializer = RemoteDeserializer
+        this.last_sync_log = null;
+        this.new_sync_log = null;
         // MUEJEJEJEJ HOKS
         //this.load_middleware();
         //Crear el resolver
+    },
+
+    sync: function() {
+        try {
+            this.last_sync_log = SyncLog.objects.latest();
+        } catch (e if isinstance(e, SyncLog.DoesNotExist)) {
+            print('Es el primero, solo hago pull y retorno');
+            var objects = this.pull();
+            this.new_sync_log.save();
+
+            for (var obj in this.deserializer(data['objects'], this.new_sync_log))
+                obj.save();
+            return;
+        }
+
+        this.push();
+
     },
 
     load_middleware: function() {
@@ -106,37 +127,29 @@ var SyncHandler = type('SyncHandler', [ object ], {
         }
     },
 
-    pull: function(last_sync_log) {
+    pull: function() {
         //TODO: Transacciones en la base de datos
-
-        last_sync_log = last_sync_log || null;
-
-        try {
-            last_sync_log = SyncLog.objects.latest();
-        } catch (e if isinstance(e, SyncLog.DoesNotExist)) {}
-
-        //Obtengo los datos
-        var data = this.rpc.pull(last_sync_log);
-
-        //Si tengo datos los levanto
-        if (bool(data['objects'])) {
-            var new_sync_log = new SyncLog(data);
-            new_sync_log.save();
-
-            for (var obj in RemoteDeserializer(data['objects'], new_sync_log))
-                obj.save();
+        if (this.last_sync_log != null) {
+            var to_send = this.serializer.serialize(this.last_sync_log);
+            var data = this.server.pull(to_send);
+        } else {
+            var data = this.server.pull();
         }
+        //Si tengo datos los levanto
+        this.new_sync_log = new SyncLog(data['sync_log']);
+        return data['objects'];
     },
 
     push: function() {
-        // Los borrados
-        var serializer = new RemoteSerializer();
+        var to_send = {};
         var models = get_models().filter(function(m) { return issubclass(m, RemoteModel) && ! issubclass(m, RemoteReadOnlyModel) && m.deleted.count() > 0; });
+
         // Los ordenamos por dependencias 
         models = get_model_order(models).reverse();
         for each (var model in models) {
             var objs = model.deleted.all();
             var values = array(objs).map(function (obj) { return obj.server_pk; });
+            to_send['deleted'] = values;
             var keys = model.remotes.delete(values);
             for each (var obj in objs ) {
                 obj.status = 's';

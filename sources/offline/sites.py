@@ -245,7 +245,7 @@ class RemoteSite(RemoteBaseSite):
     def network_check(self, request):
         return HttpResponse()
 
-    @expose(r'^rpc/?$')
+    @expose(r'^sync/?$')
     def jsonrpc_handler(self, request):
         """
         the actual handler:
@@ -280,7 +280,7 @@ class RemoteSite(RemoteBaseSite):
         response['Content-length'] = str(len(response.content))
         return response
 
-    @expose(r'^rpc/data/(?P<app_label>\w+)/(?P<model_name>\w+)/$')
+    @expose(r'^data/(?P<app_label>\w+)/(?P<model_name>\w+)/$')
     def data(self, request, app_label, model_name):
         response = HttpResponse()
         models = self._registry.get(app_label, None)
@@ -352,9 +352,9 @@ class RemoteSite(RemoteBaseSite):
         new_sync = datetime.datetime.now()
         if not first:
             last_sync = datetime.datetime(*time.strptime(sync_log['synced_at'], '%Y-%m-%d %H:%M:%S')[:6])
-            sync_log = { 'last_sync': last_sync, 'new_sync': new_sync }
 
         # Veamos los modelos
+        # TODO: Mejorar esto de meterle mano al SyncData
         models = []
         for app in self._registry.values():
             for model in app.keys():
@@ -368,23 +368,31 @@ class RemoteSite(RemoteBaseSite):
                     models.append(model)
 
         models = get_model_order(models)
+        retorno['models'] = map(lambda m: str(m._meta), models)
         retorno['objects'] = []
         for model in models:
             remote = self._registry[model._meta.app_label][model]
             remote_manager = remote._default_manager
-            if not first:
-                remote_manager._sync_log = sync_log
-            values = remote_manager.all()
-            if bool(values):
-                retorno['objects'].extend(remote_manager._serializer.serialize(remote_manager._build_object(values)))
+            # Si no es el primero filtro solo los objetos de modelos interesantes
+            if first:
+                retorno['objects'].extend(remote_manager.all())
+            else:
+                retorno['objects'].extend(remote_manager.filter(update_at__range = (last_sync, new_sync)))
 
-        retorno['synced_at'] = new_sync.strftime("%Y-%m-%d %H:%M:%S")
-        retorno['sync_id'] = random_string(32)
+        retorno['sync_log'] = {}
+        retorno['sync_log']['synced_at'] = new_sync.strftime("%Y-%m-%d %H:%M:%S")
+        retorno['sync_log']['sync_id'] = random_string(32)
 
         return retorno
 
     @jsonrpc
     def push(self, sync_log = None):
+
+        retorno['sync_log'] = {}
+        retorno['sync_log']['synced_at'] = new_sync.strftime("%Y-%m-%d %H:%M:%S")
+        retorno['sync_log']['sync_id'] = random_string(32)
+
+        #Cuando termino de insertar preparo 
         return {}
 
     #===========================================================================
@@ -450,7 +458,7 @@ class RemoteSite(RemoteBaseSite):
 
         app_registry[model] = remote_proxy
         rm = RemoteManager()
-        rm._contribute_to_class(remote_proxy)
+        rm.contribute_to_class(remote_proxy)
 
         related_models = get_related_models(model)
         for related_model in related_models:
@@ -468,7 +476,7 @@ class RemoteSite(RemoteBaseSite):
 
             app_registry[related_model] = remote_proxy
             rm = RemoteReadOnlyManager()
-            rm._contribute_to_class(remote_proxy)
+            rm.contribute_to_class(remote_proxy)
 
     def model_saved(self, **kwargs):
         model_type = ContentType.objects.get_for_model(kwargs['sender'])

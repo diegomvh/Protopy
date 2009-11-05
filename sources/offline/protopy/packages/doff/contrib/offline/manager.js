@@ -3,7 +3,7 @@ require('rpc', 'ServiceProxy');
 require('doff.core.project', 'get_project');
 
 //TODO: no me gusta mucho esto de tomar el rpc asi por la fuerza
-var url_base = get_project().offline_support + '/rpc/data';
+var url_base = get_project().offline_support + '/data';
 
 var RemoteManagerDescriptor = type('RemoteManagerDescriptor', [ object ], {
     __init__: function(model) {

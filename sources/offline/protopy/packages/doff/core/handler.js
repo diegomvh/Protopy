@@ -81,7 +81,7 @@ var LocalHandler = type('LocalHandler', [ object ], {
 
         try {
             var [callback, callback_args, callback_kwargs] = this._resolver.resolve(request.path);
-        
+
             // Apply view middleware
             for each (var middleware_method in this._view_middleware) {
                 var response = middleware_method(request, callback, callback_args, callback_kwargs);

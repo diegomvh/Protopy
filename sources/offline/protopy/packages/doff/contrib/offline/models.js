@@ -63,6 +63,7 @@ var SyncLog = type('SyncLog', [ models.Model ], {
     Meta: {
         get_latest_by: 'synced_at'
     },
+
     __json__: function() {
         return json.stringify({ model: string(this._meta), synced_at: this.synced_at, sync_id: this.sync_id });
     }
@@ -130,7 +131,7 @@ var RemoteModel = type('RemoteModel', [ models.Model ], {
             var update_pk = bool(meta.has_auto_field && !server_pk_set);
             // Create a new record.
             var result = remotes.insert(values);
-            
+
             if (update_pk) {
                 this[meta.pk.attname] = result;
             }
