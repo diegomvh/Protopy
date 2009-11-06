@@ -488,6 +488,11 @@ define los metodos básicos que intervienen en el proceso de sincronización.
 Una subclase de ``SyncMiddleware`` se debe declarar en el 
 módulo ``settings.js`` en la variable ``SYNC_MIDDLEWARE_CLASS``.
 
+Los métodos de esta clase se crearon en función a la evaluación de posibles
+conflictos de estados, presentados en esta tabla:
+
+
+
 Se ofrecen al programador las siguientes clases con comportamiento por defecto para resolver
 los conflictos:
     
