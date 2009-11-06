@@ -189,9 +189,7 @@ class RemoteSite(RemoteBaseSite):
     #===========================================================================
     @expose(r'^$')
     def index(self, request):
-        
-        """<script type="text/javascript;version=1.7" src="{{ site.lib_url }}/packages/doff/forms/models.js"></script>
-        """        
+
         content = '''
             <html>
             <head>
@@ -206,7 +204,7 @@ class RemoteSite(RemoteBaseSite):
             </body>
             </html>
         '''
-        
+
         template = Template(content);
         print self.name, self.url 
         return HttpResponse(template.render(Context({'site': self})));
@@ -390,34 +388,53 @@ class RemoteSite(RemoteBaseSite):
         #TODO: Tirar errores
         retorno = {}
         last_sync = datetime.datetime(*time.strptime(received['sync_log']['fields']['synced_at'], '%Y-%m-%d %H:%M:%S')[:6])
-        
-        # Antes que nada validar que los cambios no estan deprecados en funcion del sync log
-        
+
+        # Validacion
+        remote_deleted = dict(map(lambda m: (m, self.get_remote(m)), received['deleted']['models']))
+        remote_modified = dict(map(lambda m: (m, self.get_remote(m)), received['modified']['models']))
+        remote_created = dict(map(lambda m: (m, self.get_remote(m)), received['created']['models']))
+
+        # Hay un remote para cada modelo ? 
+        if not all(remote_deleted.values() + remote_modified.values() + remote_created.values()):
+            raise Exception('Remote Error')
+
+        # Por cada cambio que quiero meter, tenes el utimo sync log?
+        all_models = set(received['deleted']['models'] + received['modified']['models'] + received['created']['models'])
+        import ipdb
+        for app_model in all_models:
+            ipdb.set_trace()
+            model = get_model(*app_model.split('.'))
+            #Esto seria para algo mas granular, pero requiere de un sync_log por modelo
+            #model_type = ContentType.objects.get_for_model(model)
+            #sd = SyncData.objects.filter(content_type__pk = model_type.id, update_at__gt=last_sync)
+            sd = SyncData.objects.filter(update_at__gt=last_sync)
+            if bool(sd):
+                raise Exception('Need Pull')
+
+        # Cada cambio que quiere meter tiene sus objetos correspondientes?
+
         # Si estamos aca es porque todo bien, los cambios entran
         retorno['deleted'] = {'models': received['deleted']['models'], 'pks': {}}
         retorno['modified'] = {'models': received['modified']['models'], 'pks': {}}
         retorno['created'] = {'models': received['created']['models'], 'pks': {}}
-        
+
         # Primero los borrados
-        for app_model in received['deleted']['models']:
-            remote = self.get_remote(app_model)
+        for app_model, remote in remote_deleted.iteritems():
             remote_manager = remote._default_manager
             retorno['deleted']['pks'][app_model] = remote_manager.delete(received['deleted']['objects'][app_model])
-        
+
         # Luego modificados
-        for app_model in received['modified']['models']:
-            remote = self.get_remote(app_model)
+        for app_model, remote in remote_modified.iteritems():
             remote_manager = remote._default_manager
             retorno['modified']['pks'][app_model] = remote_manager.update(received['modified']['objects'][app_model])
-            
+
         # Terminando los Creados
-        for app_model in received['created']['models']:
-            remote = self.get_remote(app_model)
+        for app_model, remote in remote_created.iteritems():
             remote_manager = remote._default_manager
             retorno['created']['pks'][app_model] = remote_manager.insert(received['created']['objects'][app_model])
-        
+
         new_sync = datetime.datetime.now()
-        
+
         retorno['sync_log'] = {}
         retorno['sync_log']['synced_at'] = new_sync.strftime("%Y-%m-%d %H:%M:%S")
         retorno['sync_log']['sync_id'] = random_string(32)
@@ -531,7 +548,7 @@ class RemoteSite(RemoteBaseSite):
         '''
         #return set(map( lambda m: m._meta.app_label, self._registry))
         return self._registry.keys()
-    
+
     def get_remote(self, app_model):
         app_label, model_name = app_model.split('.')
         models = self._registry.get(app_label, None)
