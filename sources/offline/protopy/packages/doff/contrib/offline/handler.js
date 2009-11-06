@@ -43,12 +43,12 @@ var SyncHandler = type('SyncHandler', [ object ], {
         this.deserializer = RemoteDeserializer
         this.last_sync_log = null;
         this.new_sync_log = null;
-        // MUEJEJEJEJ HOKS
+        // MUEJEJEJEJ HOOKS
         // this.load_middleware();
         // Crear el resolver
     },
 
-    sync: function() {
+    update: function() {
         try {
             this.last_sync_log = SyncLog.objects.latest();
         } catch (e if isinstance(e, SyncLog.DoesNotExist)) {
@@ -59,7 +59,12 @@ var SyncHandler = type('SyncHandler', [ object ], {
             this.new_sync_log.save();
 
             for (var obj in this.deserializer(received, this.new_sync_log))
-                obj.save();
+            	// TODO: Implementar los middlewares de sync
+            	//try {
+            		obj.save();
+            	//} catch ( e if isinstace(e, )) {
+            		//this.conflict_middleware.
+            	//}
             return;
         }
         
@@ -71,6 +76,7 @@ var SyncHandler = type('SyncHandler', [ object ], {
             obj.save();
         
         var [ confirmed, new_sync_log ] = this.push();
+        this.purge();
     },
 
     load_middleware: function() {
@@ -83,7 +89,7 @@ var SyncHandler = type('SyncHandler', [ object ], {
         this._exception_middleware = [];
 
         var request_middleware = [];
-        for each (var middleware_path in this.settings.MIDDLEWARE_CLASSES) {
+        for each (var middleware_path in this.settings.SYNC_MIDDLEWARE_CLASSES) {
             var dot = middleware_path.lastIndexOf('.');
             if (dot == -1)
                 throw new exceptions.ImproperlyConfigured('%s isn\'t a middleware module'.subs(middleware_path));
