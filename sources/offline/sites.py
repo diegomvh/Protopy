@@ -393,25 +393,28 @@ class RemoteSite(RemoteBaseSite):
         
         # Antes que nada validar que los cambios no estan deprecados en funcion del sync log
         
+        # Si estamos aca es porque todo bien, los cambios entran
+        retorno['deleted'] = {'models': received['deleted']['models'], 'pks': {}}
+        retorno['modified'] = {'models': received['modified']['models'], 'pks': {}}
+        retorno['created'] = {'models': received['created']['models'], 'pks': {}}
+        
         # Primero los borrados
         for app_model in received['deleted']['models']:
             remote = self.get_remote(app_model)
             remote_manager = remote._default_manager
-            remote_manager.delete(received['deleted']['objects'][app_model])
+            retorno['deleted']['pks'][app_model] = remote_manager.delete(received['deleted']['objects'][app_model])
         
         # Luego modificados
         for app_model in received['modified']['models']:
             remote = self.get_remote(app_model)
             remote_manager = remote._default_manager
-            remote_manager.update(received['modified']['objects'][app_model])
+            retorno['modified']['pks'][app_model] = remote_manager.update(received['modified']['objects'][app_model])
             
         # Terminando los Creados
         for app_model in received['created']['models']:
             remote = self.get_remote(app_model)
             remote_manager = remote._default_manager
-            remote_manager.insert(received['created']['objects'][app_model])
-            
-        retorno['objects'] = "Los resultados"
+            retorno['created']['pks'][app_model] = remote_manager.insert(received['created']['objects'][app_model])
         
         new_sync = datetime.datetime.now()
         
@@ -419,7 +422,6 @@ class RemoteSite(RemoteBaseSite):
         retorno['sync_log']['synced_at'] = new_sync.strftime("%Y-%m-%d %H:%M:%S")
         retorno['sync_log']['sync_id'] = random_string(32)
 
-        #Cuando termino de insertar preparo 
         return retorno
 
     #===========================================================================

@@ -7,6 +7,8 @@ require('doff.core.serializers.javascript', 'Serializer');
 require('doff.core.serializers.base', 'DeserializedObject', 'DeserializationError');
 var models = require('doff.db.models.base');
 
+var ServerPkDoesNotExist = type('ServerPkDoesNotExist', Exception);
+
 var RemoteSerializer = type('RemoteSerializer', [ Serializer ], {
 
     serialize: function(queryset_or_model) {
@@ -36,7 +38,9 @@ var RemoteSerializer = type('RemoteSerializer', [ Serializer ], {
         if (related != null) {
             if (field.rel.field_name == related._meta.pk.name) {
                 // Related to remote object via primary key
-                related = related.server_pk;
+            	if (related.server_pk == null)
+            		throw new ServerPkDoesNotExist('Field: %s'.subs(field.name));
+            	related = related.server_pk;
             } else {
                 // Related to remote object via other field
                 related = getattr(related, field.rel.field_name);
@@ -47,8 +51,12 @@ var RemoteSerializer = type('RemoteSerializer', [ Serializer ], {
 
     handle_m2m_field: function(obj, field) {
         if (field.creates_table) {
-            this._current[field.name] = [string(related.server_pk)
-                for each (related in getattr(obj, field.name).iterator())];
+        	var server_pks = [related.server_pk for each (related in getattr(obj, field.name).iterator())];
+        	server_pks.forEach(function(server_pk) {
+        		if (server_pk == null)
+            		throw new ServerPkDoesNotExist('Field: %s'.subs(field.name));
+        	});
+            this._current[field.name] = [string(server_pk) for each (server_pk in server_pks)];
         }
     }
 });
@@ -116,6 +124,7 @@ function RemoteDeserializer(object_list, sync_log) {
 }
 
 publish({
+	ServerPkDoesNotExist: ServerPkDoesNotExist,
     RemoteSerializer: RemoteSerializer,
     RemoteDeserializer: RemoteDeserializer,
 });
