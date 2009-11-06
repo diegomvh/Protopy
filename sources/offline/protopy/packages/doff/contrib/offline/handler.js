@@ -52,47 +52,47 @@ var SyncHandler = type('SyncHandler', [ object ], {
         	//}
     	}
     },
-    
+
     save_collected: function(collected, sync_log) {
-    	for each (var obj in collected) {
-        	// TODO: Implementar los middlewares de sync
-        	//try {
-        		obj.sync_log = sync_log;
-        		obj.save_base();
-        	//} catch ( e if isinstace(e, )) {
-        		//this.conflict_middleware.
-        	//}
+        for each (var obj in collected) {
+            // TODO: Implementar los middlewares de sync
+            //try {
+                obj.sync_log = sync_log;
+                obj.save_base();
+            //} catch ( e if isinstace(e, )) {
+                //this.conflict_middleware.
+            //}
     	}
     },
-    
+
     update: function() {
         var last_sync_log = null;
-    	try {
+        try {
             last_sync_log = SyncLog.objects.latest('pk');
         } catch (e if isinstance(e, SyncLog.DoesNotExist)) {
-            print('Es el primero, solo hago pull y retorno');
             var [ received, sync_log_data ] = this.pull(last_sync_log);
-            
+
             if (bool(received)) {
-            	var sync_log = new SyncLog(sync_log_data);
-	    		sync_log.save();
-            	this.save_recived(received, sync_log);
-        	}
+                var sync_log = new SyncLog(sync_log_data);
+                sync_log.save();
+                this.save_recived(received, sync_log);
+            }
             return;
         }
-        
+
         debugger;
-        var [ received, sync_log_data ] = this.pull(last_sync_log);
+        var received = [];
+        //var [ received, sync_log_data ] = this.pull(last_sync_log);
         var [ chunked, deleted, created, modified, sync_log_data ] = this.push(last_sync_log);
         var collected = deleted.concat(created, modified);
-        
+
         if (bool(received) || bool(collected)) {
-        	var sync_log = new SyncLog(sync_log_data);
-    		sync_log.save();
-    		this.save_recived(received, sync_log);
-    		this.save_collected(deleted.concat(created, modified), sync_log);
+            var sync_log = new SyncLog(sync_log_data);
+            sync_log.save();
+            this.save_recived(received, sync_log);
+            this.save_collected(deleted.concat(created, modified), sync_log);
         }
-        
+
         this.purge(deleted);
     },
 
@@ -158,19 +158,19 @@ var SyncHandler = type('SyncHandler', [ object ], {
         } else {
             var data = this.server.pull();
         }
-        
+
         return [ data['objects'], data['sync_log']];
     },
 
     push: function(last_sync_log) {
         assert(last_sync_log != null, 'Sync log is required');
-    	
+
         var chunked = false;
-    	var collected_objects = {};
-    	var to_send = {};
-    
-    	to_send['sync_log'] = this.serializer.serialize(last_sync_log);
-    	
+        var collected_objects = {};
+        var to_send = {};
+
+        to_send['sync_log'] = this.serializer.serialize(last_sync_log);
+
         // Los borrados
         var models = get_models().filter(function(m) { return issubclass(m, RemoteModel) && ! issubclass(m, RemoteReadOnlyModel) && m.deleted.count() > 0; });
 
@@ -210,11 +210,11 @@ var SyncHandler = type('SyncHandler', [ object ], {
             collected_objects['modified'][string(model._meta)] = array(objs);
             to_send['modified']['objects'][string(model._meta)] = this.serializer.serialize(objs);
         }
-        
+
         var data = this.server.push(to_send);
-        
+
         // Tengo los datos del servidor
-        
+
         // Los borrados
         var deleted = [];
         for each (var model in data['deleted']['models']) {
@@ -230,7 +230,7 @@ var SyncHandler = type('SyncHandler', [ object ], {
         	}
         	deleted = deleted.concat(collected_objects['deleted'][model]);
         }
-        
+
         // Los creados
         var created = [];
         for each (var model in data['created']['models']) {
