@@ -1,0 +1,26 @@
+These packages are necessary to build the documentation:
+
+
+    * Sphinx
+        
+        This package is available in the cheeseshop. Just use this
+        file to install it (assuming you're in Ubuntu).
+        
+            $ sudo pip install sphinx
+
+    * TexLive
+        
+        You should install texlive-latex-base and texlive-latex-extra
+        in Ubuntu to be able to compile it.
+        
+    * Inkscape to convert images into PNG files
+        
+        There's been some changes in 0.47 CLI arguments. Tested against
+        0.46 and 0.47
+        
+    * Graphviz for model rederization (this pacakge provides graphviz)
+        
+        dot command should be in your path
+        
+    * 
+    

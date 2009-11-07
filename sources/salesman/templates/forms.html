@@ -2,33 +2,33 @@
 
 {% block extra_style %}
 
-form > p > label {
+.django-form > p > label {
     display: block;
     width: 8em;
     font-weight: bolder;
     float: left;
     /* color: red; */
 }
-form input {
+.django-form input {
     border: 1px solid #888;
     padding: 2px;
 }
-.buttons input, .buttons button {
+.django-form .buttons input, .buttons button {
 	border: 1px solid #888;
 	padding: 4px;
 }
-form table.formset {
+.django-form table.formset {
 	maring: 0px;
 	padding: 2px;
 }
 
-form table.formset  tr {
+.django-form table.formset  tr {
 	
 	background-color: red;
 
 }
 
-form table.formset td {
+.django-form table.formset td {
 	padding: 2px;
 }
 
@@ -39,7 +39,7 @@ form table.formset td {
 {% if title %}
 	<h2>{{ title }}</h2>
 {% endif %}
-<form action="" method="post">
+<form action="" method="post" class="django-form">
 	{% block form_content %}
 			{% for field in form %}
 				<p>
@@ -124,4 +124,9 @@ form table.formset td {
         event.connect(sys.window, 'load', onload);
     })();
 </script>
+{% endblock %}
+
+{% block sidebar_wrapper %}
+
+
 {% endblock %}

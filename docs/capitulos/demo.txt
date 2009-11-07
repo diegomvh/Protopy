@@ -8,6 +8,11 @@ para ejemplificar el funcionamiento de Protopy y Doff. La aplicación modela
 una empresa dedicada a la venta de productos mediante agentes viajantes.
 Cada viajante tiene asignada una serie de ciudades, donde realiza las ventas.
 
+El código fuente del proyecto se ubicó en la carpeta ``sources``, donde también
+se encuentra la aplicación ``offline`` mencionada en los captítulos de Doff y
+Protopy.
+
+
 El proyecto ``salesman`` se ubicó al mismo nivel que ``offline``. Sobre
 ``salesman`` se agregó al ``PYTHONPATH`` la ruta ``".."`` para disponer de
 ``offline`` de la siguiente manera:

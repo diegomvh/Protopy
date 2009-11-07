@@ -23,6 +23,7 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     (r'^admin/', include(admin.site.urls)),
     (r'^/?$', 'django.views.generic.simple.direct_to_template', {'template': 'index.html'} ),
+    (r'^test/?$', 'django.views.generic.simple.direct_to_template', {'template': 'earthlingtwo/index.html'} ),
     (r'^ventas/', include('salesman.apps.ventas.urls')),
     (r'^%s/(.*)' % agentes_site.urlregex, agentes_site.root ),
     (r'^databrowse/(.*)', databrowse.site.root),

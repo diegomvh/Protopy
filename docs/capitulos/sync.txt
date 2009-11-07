@@ -9,7 +9,7 @@ Cuando se hable de *el cliente* se está refiriendo al proyecto desconectado,
 La sincronziación de datos permite que las entidades definidas en el servidor
 se repliquen en el cliente y que las creadas y modificadas por el cliente
 se transfieran a la aplicación en linea, permitiendo así que se porpaguen
-a el resto de los cileintes.
+a el resto de los clientes.
 
 Sin embargo diversas situaciones en las cuales se pueden presentar conflictos entre
 las versiones de de una misma entidad:

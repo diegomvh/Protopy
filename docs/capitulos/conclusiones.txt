@@ -61,6 +61,13 @@ siguientes productos:
         
         Editor de texto basado en el entorno KDE con resaltado de sintaxis.
 
+
+Cosas que hacer notar:
+    Que exista el yield y asignación de arreglos
+    
+
+
+
 **************
 Lineas futuras
 **************

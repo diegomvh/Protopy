@@ -1,6 +1,7 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render_to_response
 from salesman.apps.ventas.forms import PedidoConItemsForm, PedidoForm
+from salesman.apps.ventas.models import Pedido
 
 def create_pedido(request, object_id = None, **kwargs):
     if request.method == "POST":
@@ -39,4 +40,4 @@ def edit_pedido(request, object_id):
     else:
         form = PedidoForm(instance = pedido)
         formset = PedidoConItemsForm(instance = pedido)
-    return render_to_response('salesman/pedido_form.html', locals())
+    return render_to_response('ventas/pedido_form.html', locals())

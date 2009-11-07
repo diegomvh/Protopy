@@ -74,11 +74,14 @@
   	{% endfor %}
   	
 </table>
+
+{% comment %}
 <div id="list-controls">
 	<span style="margin-top: 20px; display: block;">
 		<a href="add" class="rounded_link">Crear nuevo</a>
 	</span>
 </div>
+{% endcomment %}
 <script>
 	
 	/*
@@ -102,3 +105,13 @@
 	*/
 </script>
 {% endblock %} 
+
+{% block sidebar %}
+
+<ul>
+                <li>
+                    <h2>Acciones</h2>
+                    <p><strong><a href="add">Crear Nuevo</a></strong></p>
+                </li>
+</ul>
+{% endblock  %}
