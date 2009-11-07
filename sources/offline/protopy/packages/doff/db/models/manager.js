@@ -113,6 +113,18 @@ var Manager = type('Manager', [ object ], {
         return qs.filter.apply(qs, arg.argskwargs);
     },
 
+    aggregate: function(){
+        var arg = new Arguments(arguments);
+        var qs = this.get_query_set();
+        return qs.aggregate.apply(qs, arg.argskwargs);
+    },
+
+    annotate: function(){
+        var arg = new Arguments(arguments);
+        var qs = this.get_query_set();
+        return qs.annotate.apply(qs, arg.argskwargs);
+    },
+
     complex_filter: function() {
         var arg = new Arguments(arguments);
         var qs = this.get_query_set();

@@ -168,7 +168,9 @@
     
     /************************** Types and Objects ****************************/
     /* Base te todos los objetos que crea protopy */
-    function object() { 
+    function object(obj) {
+        if (this == window && !isundefined(obj) && callable(obj['__object__']))
+            return obj.__object__();
         throw 'The wormhole stop here. Please, is just javascript not python :)'; 
     };
 
@@ -1687,13 +1689,21 @@
             }
         },
         __iter__: function() {
-            for each (var hash in this._value) {
+            for (var hash in this._value) {
                 var value = this._value[hash], key = this._key[hash];
                 var pair = [key, value];
                 pair.key = key;
                 pair.value = value;
                 yield pair;
             }
+        },
+        __object__: function() {
+            var obj = new Object();
+            for (var hash in this._value) {
+                var value = this._value[hash], key = this._key[hash];
+                obj[string(key)] = value;
+            }
+            return obj;
         },
         __copy__: function() {
             return new Dict(this);

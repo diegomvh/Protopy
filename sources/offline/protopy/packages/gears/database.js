@@ -59,6 +59,20 @@ database.Connection = type('Connection', [ object ], {
     },
 });
 
+var Row = type('Row', [ object ], {
+    _database_columns: [],
+    __iter__: function() {
+        for each (var column in this._database_columns)
+            yield this[column];
+    },
+    __object__: function() {
+        var obj = new Object();
+        for each (var column in this._database_columns)
+            obj[column] = this[column];
+        return obj;
+    }
+});
+
 database.Cursor = type('Cursor', [ object ], {
     __init__: function(connection){
             this.connection = connection;
@@ -128,15 +142,15 @@ database.Cursor = type('Cursor', [ object ], {
         if (this.lastResulSet == null)
             throw StopIteration;
         if (!this.lastResulSet.isValidRow()) throw StopIteration;
-        var tupla = {};
+        var row = new Row();
         for (var i = 0, length = this.lastResulSet.fieldCount(); i < length; i++) {
             var name = this.lastResulSet.fieldName(i);
             var value = this.lastResulSet.field(i);
-            tupla[name] = value;
-            tupla[i] = value;
+            row._database_columns.push(name);
+            row[name] = value;
         }
         this.lastResulSet.next();
-        return tupla;
+        return row;
     }
 });
 

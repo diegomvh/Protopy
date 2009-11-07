@@ -4,9 +4,12 @@ require('doff.db.models.fields.base', 'Field');
 require('doff.db.base', 'connection');
 require('doff.db.models.sql.datastructures', 'EmptyResultSet', 'FullResultSet');
 require('doff.db.models.query_utils', 'QueryWrapper');
+require('datetime', 'datetime');
 
 var AND = 'AND',
     OR = 'OR';
+
+var EmptyShortCircuit = type('EmptyShortCircuit' , [Exception ]);
 
 var WhereNode = type('WhereNode', [ Node ], {
 
@@ -19,34 +22,37 @@ var WhereNode = type('WhereNode', [ Node ], {
             return;
         }
 
-        var [alias, column, field, lookup_type, value] = data;
-        var params = null, db_type = null;
-
-        try {
-            if (field) {
-                params = field.get_db_prep_lookup(lookup_type, value);
-                db_type = field.db_type();
-            } else {
-                field = new Field();
-                params = field.get_db_prep_lookup(lookup_type, value);
-                db_type = null;
+        var [ obj, lookup_type, value ] = data;
+        if (hasattr(value, '__iter__'))
+            // Consume any generators immediately, so that we can determine
+            // emptiness and transform any non-empty values correctly.
+            value = array(value);
+        if (hasattr(obj, "process")) {
+            try {
+                var [ obj, params ] = obj.process(lookup_type, value);
+            } catch (e if isinstance(e, [ EmptyShortCircuit, EmptyResultSet ])) {
+                // There are situations where we want to short-circuit any
+                // comparisons and make sure that nothing is returned. One
+                // example is when checking for a NULL pk value, or the equivalent.
+                super(Node, this).add(new NothingNode(), connector);
+                return;
             }
-        } catch (e) {
-            super(Node, this).add(new NothingNode(), connector);
+        } else {
+            var params = new Field().get_db_prep_lookup(lookup_type, value);
         }
-
-        var annotation = null;
-        if (value instanceof Date)
-            annotation = new Date();
+        if (isinstance(value, Date))
+            var annotation = Date;
+        else if (hasattr(value, 'value_annotation'))
+            var annotation = getattr(value, value_annotation);
         else
-            annotation = new bool(value);
+            var annotation = bool(value);
 
-        super(Node, this).add([alias, column, db_type, lookup_type, annotation, params], connector);
+        super(Node, this).add([obj, lookup_type, annotation, params], connector);
     },
 
     __str__: function() {
-        var q = this.as_sql();
-        return q[0].subs(q[1]);
+        var [ sql, params ] = this.as_sql();
+        return sql.subs(params);
     },
 
     as_sql: function(qn) {
@@ -58,16 +64,14 @@ var WhereNode = type('WhereNode', [ Node ], {
 
         var result = [],
             result_params = [],
-            empty = true,
-            sql_params = null;
-        for (var i=0; i < this.children.length; i++) {
-            var child = this.children[i];
+            empty = true;
+        for each (var child in this.children) {
             try {
                 if (child['as_sql'])
-                    sql_params = child.as_sql(qn);
+                    var [ sql, params ] = child.as_sql(qn);
                 else
-                    sql_params = this.make_atom(child, qn);
-            } catch (e if e instanceof EmptyResultSet) {
+                    var [ sql, params ] = this.make_atom(child, qn);
+            } catch (e if isinstance(e, EmptyResultSet)) {
                 if (this.connector == AND && !this.negated)
                     throw e;
                 else if (this.negated)
@@ -79,16 +83,17 @@ var WhereNode = type('WhereNode', [ Node ], {
                         empty = true;
                         break;
                     }
-                    return ['', []];
+                    return [ '', [] ];
                 }
                 if (this.negated)
                     empty = true;
                 continue;
             }
             empty = false;
-            if (sql_params[0])
-                result.push(sql_params[0]);
-                result_params = result_params.concat(sql_params[1]);
+            if (sql) {
+                result.push(sql);
+                result_params = result_params.concat(params);
+            }
         }
 
         if (empty)
@@ -106,39 +111,38 @@ var WhereNode = type('WhereNode', [ Node ], {
     },
 
     make_atom: function(child, qn) {
-        var lhs = null, cast_sql = null, extra = null;
-        var [table_alias, name, db_type, lookup_type, value_annot, params] = child;
-
-        if (table_alias)
-            lhs = '%s.%s'.subs([qn(table_alias), qn(name)]);
+        
+        var [ lvalue, lookup_type, value_annot, params ] = child;
+        if (isinstance(lvalue, Array))
+            // A direct database column lookup.
+            var field_sql = this.sql_for_columns(lvalue, qn);
         else
-            lhs = qn(name);
-        var field_sql = connection.ops.field_cast_sql(db_type).subs(lhs);
+            // A smart object with an as_sql() method.
+            var field_sql = lvalue.as_sql(qn);
 
-        if (value_annot instanceof Date)
-            cast_sql = connection.ops.date_cast_sql();
+        if (value_annot == Date)
+            var cast_sql = connection.ops.datetime_cast_sql();
         else
-            cast_sql = '%s';
+            var cast_sql = '%s';
 
-        if (params instanceof QueryWrapper) {
-            extra = params.data;
-            extra = extra[0];
-            params = extra[1];
+        if (hasattr(params, 'as_sql')) {
+            var [ extra, params ] = params.as_sql(qn);
+            cast_sql = '';
         } else
-            extra = '';
+            var extra = '';
 
-        if (connection.operators[lookup_type]){
-            var format = "%s %%s %s".subs(connection.ops.lookup_cast(lookup_type), extra);
-            return [format.subs(field_sql, connection.operators[lookup_type].subs(cast_sql)), params];
+        if (connection.operators[lookup_type]) {
+            var format = "%s %%s %%s".subs(connection.ops.lookup_cast(lookup_type));
+            return [format.subs(field_sql, connection.operators[lookup_type].subs(cast_sql), extra), params];
         }
+
         if (lookup_type == 'in') {
             if (!value_annot)
                 throw new EmptyResultSet();
             if (extra)
                 return ['%s IN %s'.subs(field_sql, extra), params];
             return ['%s IN (%s)'.subs(field_sql, '%s'.times(params.length, ', ')), params];
-        }
-        else if (include(['range', 'year'], lookup_type))
+        } else if (include(['range', 'year'], lookup_type))
             return ['%s BETWEEN %%s and %%s'.subs(field_sql), params];
         else if (include(['month', 'day'], lookup_type))
             return ['%s = %%s'.subs(connection.ops.date_extract_sql(lookup_type, field_sql)), params];
@@ -152,28 +156,54 @@ var WhereNode = type('WhereNode', [ Node ], {
         throw new TypeError('Invalid lookup_type: ' + lookup_type);
     },
 
+    sql_for_columns: function(data, qn) {
+        /*
+        Returns the SQL fragment used for the left-hand side of a column
+        constraint (for example, the "T1.foo" portion in the clause
+        "WHERE ... T1.foo = 6").
+        */
+        var [ table_alias, name, db_type ] = data;
+        if (table_alias)
+            var lhs = '%s.%s'.subs(qn(table_alias), qn(name));
+        else
+            var lhs = qn(name);
+        return connection.ops.field_cast_sql(db_type).subs(lhs);
+    },
+
     relabel_aliases: function(change_map, node) {
         if (!node)
             node = this;
-        for (var [index, child] in Iterator(node.children)) {
+        for (var [pos, child] in Iterator(node.children)) {
             if (child['relabel_aliases'])
                 child.relabel_aliases(change_map);
-            else if (child instanceof Node)
+            else if (isinstance(child, Node))
                 this.relabel_aliases(change_map, child);
-            else
-                if (child[0] in change_map)
-                    node.children[index] = [change_map[child[0]]].concat(child.slice(1, child.length));
+            else {
+                if (isinstance(child[0], Array)) {
+                    var elt = array(child[0]);
+                    if (elt[0] in change_map) {
+                        elt[0] = change_map[elt[0]];
+                        node.children[pos] = [ elt ].concat(child.slice(1, child.length));
+                    }
+                } else {
+                    child[0].relabel_aliases(change_map);
+                }
+
+                // Check if the query value also requires relabelling
+                if (hasattr(child[3], 'relabel_aliases'))
+                    child[3].relabel_aliases(change_map);
+            }
         }
     }
 });
 
 var EverythingNode = type('EverythingNode', [ object ], {
 
-    as_sql: function(qn){
+    as_sql: function(qn) {
         throw new FullResultSet();
     },
 
-    relabel_aliases: function(change_map, node){
+    relabel_aliases: function(change_map, node) {
         return;
     }
 });
@@ -189,10 +219,48 @@ var NothingNode = type('NothingNode', [ object ], {
     }
 });
 
+/*
+ * An object that can be passed to WhereNode.add() and knows how to
+ * pre-process itself prior to including in the WhereNode.
+ */
+var Constraint = type('Constraint', [ object ], {
+
+    __init__: function(alias, col, field) {
+        this.alias = alias;
+        this.col = col;
+        this.field = field;
+    },
+
+    process: function(lookup_type, value) {
+        /*
+         * Returns a tuple of data suitable for inclusion in a WhereNode
+         * instance.
+         */
+        // Because of circular imports, we need to import this here.
+        require('doff.db.models.base', 'ObjectDoesNotExist');
+        try {
+            if (this.field) {
+                var params = this.field.get_db_prep_lookup(lookup_type, value);
+                var db_type = this.field.db_type();
+            } else {
+                // This branch is used at times when we add a comparison to NULL
+                // (we don't really want to waste time looking up the associated
+                // field object at the calling location).
+                var params = new Field().get_db_prep_lookup(lookup_type, value);
+                var db_type = null;
+            }
+        } catch (e if isinstance(e, ObjectDoesNotExist )) { 
+            throw new EmptyShortCircuit();
+        }
+        return [ [ this.alias, this.col, db_type ] , params ];
+    }
+});
+
 publish({
     AND: AND,
     OR: OR,
     WhereNode: WhereNode,
     EverythingNode: EverythingNode,
-    NothingNode: NothingNode 
+    NothingNode: NothingNode,
+    Constraint: Constraint
 });

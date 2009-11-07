@@ -5,11 +5,7 @@ import datetime
 import time
 import os, re
 
-# From Django        
-from django.db.models.fields import Field, AutoField, CharField
-
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound,\
-    HttpResponseServerError
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseServerError
 from django.http import Http404
 from django.core.urlresolvers import Resolver404, RegexURLPattern
 from django.utils.encoding import smart_str
@@ -30,7 +26,6 @@ from django.db.models import exceptions
 from offline.export_models import export_remotes, get_model_order,\
     get_related_models, get_related_apps, filter_field
 from offline.remotes import RemoteModelProxy, RemoteReadOnlyModelProxy, RemoteOptions, RemoteManager, RemoteReadOnlyManager
-from django.contrib.sessions.backends.db import SessionStore
 
 __all__ = ('RemoteSite',
            'expose',
