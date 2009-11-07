@@ -3,7 +3,7 @@ var settings = get_settings();
 var project = get_project();
 
 function offline(request) {
-    return {'OFFLINE': true};
+    return {'offline': true};
 }
 
 publish({

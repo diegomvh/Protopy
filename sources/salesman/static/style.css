@@ -7,10 +7,12 @@ Released for free under a Creative Commons Attribution 2.5 License
 body {
 	margin: 0;
 	padding: 0;
-	background: #F7F7F7 url(images/img01.jpg) repeat left top;
+	background: #C3DDEA url(images/img01.jpg) repeat left top;
+	/* background-color: ; */ 
 	font-family: Georgia, "Times New Roman", Times, serif;
 	font-size: 14px;
 	color: #5A554E;
+	
 }
 
 h1, h2, h3 {
@@ -455,4 +457,10 @@ h2 a {
 #footer a {
 	text-decoration: underline;
 	color: #82A2B9;
+}
+
+code {
+	font-weight: bolder;
+	color: white;
+	
 }

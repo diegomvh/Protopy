@@ -39,9 +39,12 @@ Released   : 20090918
 			{% block main_menu %}
 			<li class="current_page_item"><a href="#">Incicio</a></li>
 			<li><a href="/ventas ">Ventas</a></li>
+			
+			{% if not offline %}
 			<li><a href="/admin">Admin</a></li>
 			<li><a href="/static/docs">Docs</a></li>
 			<li><a href="/vendedores">Filminas</a></li>
+			{% endif %}
 			
 			{% endblock %}
 		</ul>

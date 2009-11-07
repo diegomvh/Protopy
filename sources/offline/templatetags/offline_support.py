@@ -3,7 +3,10 @@ from offline import util
 
 register = template.Library()
 
+def offline():
+    return False
 
+register.simple_tag(offline)
 
 def protopy_js_include():
     from offline import sites

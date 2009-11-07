@@ -30,7 +30,7 @@ publish({
             'doff.core.context_processors.debug',
             'doff.core.context_processors.media',
             'doff.core.context_processors.request',
-            'doff.core.context_processors.offline'
+            'doff.contrib.offline.context_processors.offline'
         ],
 
         TEMPLATE_STRING_IF_INVALID: '',
