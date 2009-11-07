@@ -163,8 +163,15 @@ var Field = type('Field', [ object ], {
 
     get_db_prep_lookup: function(lookup_type, value){
         /* Returns field's value prepared for database lookup. */
-        if (callable(value['as_sql'])) {
-            var [sql, params] = value.as_sql();
+        if (callable(value['as_sql']) || callable(value['_as_sql'])) {
+            // If the value has a relabel_aliases method, it will need to
+            // be invoked before the final SQL is evaluated
+            if (callable(value['relabel_aliases']))
+                return value;
+            if (callable(value['as_sql']))
+                var [ sql, params ] = value.as_sql();
+            else
+                var [ sql, params ] = value._as_sql();
             return new QueryWrapper('(%s)'.subs(sql), params);
         }
 
@@ -187,12 +194,12 @@ var Field = type('Field', [ object ], {
         else if (lookup_type == 'year') {
             value = Number(value);
             if (isNaN(value))
-            throw new ValueError("The __year lookup type requires an integer argument");
+                throw new ValueError("The __year lookup type requires an integer argument");
 
             if (this.get_internal_type() == 'DateField')
-            return connection.ops.year_lookup_bounds_for_date_field(value);
+                return connection.ops.year_lookup_bounds_for_date_field(value);
             else
-            return connection.ops.year_lookup_bounds(value);
+                return connection.ops.year_lookup_bounds(value);
         }
 
         throw new TypeError("Field has invalid lookup: %s".subs(lookup_type));

@@ -421,10 +421,33 @@ var DateQuery = type('DateQuery', [ Query ], {
     }
 });
 
-publish({	
+var AggregateQuery = type('AggregateQuery' , [ Query ], {
+    /*
+    An AggregateQuery takes another query as a parameter to the FROM
+    clause and only selects the elements in the provided list.
+    */
+    add_subquery: function(query) {
+        [ this.subquery, this.sub_params ] = query.as_sql(undefined, true);
+    },
+
+    as_sql: function(quote_func) {
+        /*
+        Creates the SQL for this query. Returns the SQL string and list of
+        parameters.
+        */
+        var sql = ('SELECT %s FROM (%s) subquery'.subs(
+                [ aggregate.as_sql() for each (aggregate in this.aggregate_select.values()) ].join(', '),
+                this.subquery) );
+        var params = this.sub_params;
+        return [ sql, params ];
+    }
+});
+
+publish({
     DeleteQuery: DeleteQuery,
     InsertQuery: InsertQuery,
     DateQuery: DateQuery,
     UpdateQuery: UpdateQuery,
-    CountQuery: CountQuery 
+    CountQuery: CountQuery,
+    AggregateQuery: AggregateQuery
 });

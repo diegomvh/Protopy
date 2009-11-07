@@ -1,5 +1,6 @@
 /* 'doff.db.models.query' */
 require('doff.db.base', 'connection', 'IntegrityError');
+require('doff.db.models.aggregates', 'Aggregate');
 require('doff.db.models.fields.base', 'DateField');
 require('doff.db.models.query_utils', 'Q', 'select_related_descend');
 require('doff.utils.datastructures', 'SortedDict');
@@ -282,15 +283,17 @@ var QuerySet = type('QuerySet', [ object ], {
         if (fill_cache instanceof Object)
             var requested = fill_cache;
         else
-            var requested = null
-        var max_depth = this.query.max_depth
-        var extra_select = this.query.extra_select.keys()
-        var index_start = extra_select.length
+            var requested = null;
+        var max_depth = this.query.max_depth;
+        var extra_select = this.query.extra_select.keys();
+        var aggregate_select = this.query.aggregate_select.keys();
+        var index_start = len(extra_select);
+        var aggregate_start = index_start + len(this.model._meta.fields);
         for each (var row in this.query.results_iter()) {
             if (fill_cache)
-                [obj, none] = get_cached_row(this.model, row, index_start, max_depth, requested);
+                var [obj, none] = get_cached_row(this.model, row, index_start, max_depth, requested, len(aggregate_select));
             else
-                obj = new this.model(row);
+                var obj = new this.model(object(row));
             for (var [i, k] in Iterator(extra_select)) {
                 obj[k] = row[i];
             }
@@ -298,6 +301,25 @@ var QuerySet = type('QuerySet', [ object ], {
         }
     },
 
+    aggregate: function() {
+        /*
+        Returns a dictionary containing the calculations (aggregation)
+        over the current queryset
+
+        If args is present the expression is passed as a kwarg ussing
+        the Aggregate object's default alias.
+        */
+        var arg = new Arguments(arguments);
+        for each (var a in arg.args)
+            arg.kwargs[a.default_alias] = a;
+
+        var query = this.query.clone();
+
+        for each (var [alias, aggregate_expr ] in items(arg.kwargs))
+            query.add_aggregate(aggregate_expr, this.model, alias, true);
+        return query.get_aggregation();
+    },
+    
     /*
      * Performs a SELECT COUNT() and returns the number of records as an
      * integer.
@@ -416,7 +438,7 @@ var QuerySet = type('QuerySet', [ object ], {
             if (!bool(seen_objs))
                 break;
             delete_objects(seen_objs);
-	}
+        }
         // Clear the result cache, in case this QuerySet gets reused.
         this._result_cache = null;
     },
@@ -575,6 +597,26 @@ var QuerySet = type('QuerySet', [ object ], {
         this.query.select_related = other.query.select_related;
     },
 
+    /*
+     * Return a query set in which the returned objects have been annotated
+     * with data aggregated from related fields.
+     */
+    annotate: function() {
+        var arg = new Arguments(arguments);
+        for each (var a in arg.args)
+            kwargs[a.default_alias] = a;
+
+        var obj = this._clone();
+
+        obj._setup_aggregate_query(keys(kwargs));
+
+        // Add the aggregates to the query
+        for each (var [ alias, aggregate_expr ] in items(kwargs))
+            obj.query.add_aggregate(aggregate_expr, this.model, alias, false);
+
+        return obj;
+    },
+
      /* Returns a new QuerySet instance with the ordering changed. */
     order_by: function() {
         var arg = new Arguments(arguments);
@@ -655,8 +697,30 @@ var QuerySet = type('QuerySet', [ object ], {
         return this;
     },
 
-    _merge_sanity_check: function(other) {
-    }
+    _merge_sanity_check: function(other) {},
+
+    _setup_aggregate_query: function(aggregates) {
+        /*
+         * Prepare the query for computing a result that contains aggregate annotations.
+         */
+        var opts = this.model._meta;
+        if (this.query.group_by == null) {
+            var field_names = [f.attname for (f in opts.fields)];
+            this.query.add_fields(field_names, false);
+            this.query.set_group_by();
+        }
+    },
+
+    _as_sql: function() {
+        /*
+        Returns the internal query's SQL and parameters (as a tuple).
+        */
+        var obj = this.values("pk");
+        return obj.query.as_nested_sql();
+    },
+
+    // When used as part of a nested query, a queryset will never be an "always empty" result.
+    value_annotation: true
 });
 
 QuerySet.prototype.delete.alters_data = true;
@@ -674,9 +738,12 @@ var ValuesQuerySet = type('ValuesQuerySet', [ QuerySet ], {
     },
 
     iterator: function() {
-        if (!bool(this.extra_names) && this.field_names.length != this.model._meta.fields.length)
-            this.query.trim_extra_select(this.extra_names);
-        var names = this.query.extra_select.keys().concat(this.field_names);
+        var extra_names = this.query.extra_select.keys();
+        var field_names = this.field_names;
+        var aggregate_names = this.query.aggregate_select.keys();
+
+        var names = extra_names.concat(field_names).concat(aggregate_names);
+
         for each (var row in this.query.results_iter()) {
             yield row;
         }

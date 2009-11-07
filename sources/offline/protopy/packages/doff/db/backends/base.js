@@ -124,6 +124,41 @@ var BaseDatabaseOperations = type('BaseDatabaseOperations', [ object ], {
     },
     year_lookup_bounds_for_date_field: function(value) {
         return this.year_lookup_bounds(value);
+    },
+    convert_values: function(value, field) {
+        /*Coerce the value returned by the database backend into a consistent type that
+        is compatible with the field type.
+        */
+        var internal_type = field.get_internal_type();
+        if (internal_type == 'DecimalField')
+            return value;
+        else if (internal_type && internal_type.endswith('IntegerField') || internal_type == 'AutoField')
+            return Number(value);
+        else if (include([ 'DateField', 'DateTimeField', 'TimeField' ], internal_type))
+            return value;
+        // No field, or the field isn't known to be a decimal or integer
+        // Default to a float
+        return Number(value);
+    },
+
+    check_aggregate_support: function(aggregate_func) {
+        /*Check that the backend supports the provided aggregate
+
+        This is used on specific backends to rule out known aggregates
+        that are known to have faulty implementations. If the named
+        aggregate function has a known problem, the backend should
+        raise NotImplemented.
+        */
+    },
+
+    combine_expression: function(connector, sub_expressions) {
+        /*Combine a list of subexpressions into a single expression, using
+        the provided connecting operator. This is required because operators
+        can vary between backends (e.g., Oracle with %% and &) and between
+        subexpression types (e.g., date expressions)
+        */
+        var conn = ' %s '.subs(connector);
+        return sub_expressions.join(conn);
     }
 });
 

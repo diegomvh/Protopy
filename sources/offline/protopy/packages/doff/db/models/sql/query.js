@@ -1,11 +1,14 @@
 /* "doff.db.models.sql.query" */
 require('doff.utils.tree', 'Node');
 require('doff.utils.datastructures', 'SortedDict');
+require('doff.db.backends.util', 'truncate_name');
 require('doff.db.base', 'connection');
 require('doff.db.models.fields.base', 'FieldDoesNotExist');
 require('doff.db.models.query_utils', 'select_related_descend');
+var base_aggregates_module = require('doff.db.models.sql.aggregates');
+require('doff.db.models.sql.expressions', 'SQLEvaluator');
 require('doff.db.models.sql.datastructures', 'Count', 'EmptyResultSet', 'MultiJoin');
-require('doff.db.models.sql.where', 'WhereNode', 'EverythingNode', 'AND', 'OR');
+require('doff.db.models.sql.where', 'WhereNode', 'Constraint', 'EverythingNode', 'AND', 'OR');
 require('doff.core.exceptions', 'FieldError');
 require('doff.db.models.sql.constants', '*');
 require('copy', 'copy', 'deepcopy');
@@ -14,11 +17,12 @@ require('event');
 /*
  * A single SQL query
  */
-var Query = type('Query', [ object ], {
+var BaseQuery = type('BaseQuery', [ object ], {
     INNER: 'INNER JOIN',
     LOUTER: 'LEFT OUTER JOIN',
     alias_prefix: 'T',
     query_terms: QUERY_TERMS,
+    aggregates_module: base_aggregates_module,
 
     __init__: function(model, connection, where) {
         where = where || WhereNode;
@@ -47,8 +51,8 @@ var Query = type('Query', [ object ], {
         this.tables = [];    // Aliases in the order they are created.
         this.where = new where();
         this.where_class = where;
-        this.group_by = [];
-        this.having = [];
+        this.group_by = null;
+        this.having = new where();
         this.order_by = [];
         this.low_mark = 0;
         this.high_mark = null; // Used for offset/limit
@@ -56,17 +60,26 @@ var Query = type('Query', [ object ], {
         this.select_related = false;
         this.related_select_cols = [];
 
+        // SQL aggregate-related attributes
+        this.aggregates = new SortedDict(); // Maps alias -> SQL aggregate function
+        this.aggregate_select_mask = null;
+        this._aggregate_select_cache = null;
+
+        // Arbitrary maximum limit for select_related. Prevents infinite
+        // recursion. Can be changed by the depth parameter to select_related().
+        this.max_depth = 5;
+        
         // These are for extensions. The contents are more or less appended
         // verbatim to the appropriate clause.
-        this.extra_select = new SortedDict();
+        this.extra = new SortedDict();  // Maps col_alias -> (col_sql, params).
+        this.extra_select_mask = null;
+        this._extra_select_cache = null;
+
         this.extra_tables = [];
         this.extra_where = [];
         this.extra_params = [];
         this.extra_order_by = [];
 
-        // Arbitrary maximum limit for select_related. Prevents infinite
-        // recursion. Can be changed by the depth parameter to select_related().
-        this.max_depth = 5;
         // A tuple that is a set of model field names and either True, if these
         // are the fields to defer, or False if these are the only fields to load.
         this.deferred_loading = [ new Set(), true ];
@@ -91,10 +104,10 @@ var Query = type('Query', [ object ], {
     },
 
     /*
-        * A wrapper around connection.ops.quote_name that doesn't quote aliases
-        * for table names. This avoids problems with some SQL dialects that treat
-        * quoted strings specially (e.g. PostgreSQL).
-        */
+     * A wrapper around connection.ops.quote_name that doesn't quote aliases
+     * for table names. This avoids problems with some SQL dialects that treat
+     * quoted strings specially (e.g. PostgreSQL).
+     */
     quote_name_unless_alias: function(name) {
         if (name in this.quote_cache)
             return this.quote_cache[name];
@@ -108,9 +121,9 @@ var Query = type('Query', [ object ], {
     },
 
     /*
-        * Creates a copy of the current instance. The 'kwargs' parameter can be
-        * used by clients to update attributes after copying has taken place.
-        */
+     * Creates a copy of the current instance. The 'kwargs' parameter can be
+     * used by clients to update attributes after copying has taken place.
+     */
     clone: function(klass) {
 
         var arg = new Arguments(arguments);
@@ -145,15 +158,20 @@ var Query = type('Query', [ object ], {
         obj.where = deepcopy(this.where);
         obj.where_class = this.where_class
         obj.group_by = copy(this.group_by);
-        obj.having = copy(this.having);
+        obj.having = deepcopy(this.having);
         obj.order_by = copy(this.order_by);
         obj.low_mark = this.low_mark;
         obj.high_mark = this.high_mark;
         obj.distinct = this.distinct;
         obj.select_related = this.select_related;
         obj.related_select_cols = [];
+        obj.aggregates = deepcopy(this.aggregates);
+        obj.aggregate_select_mask = copy(this.aggregate_select_mask);
+        obj._aggregate_select_cache = copy(this._aggregate_select_cache);
         obj.max_depth = this.max_depth;
-        obj.extra_select = new SortedDict(this.extra_select);
+        obj.extra = copy(this.extra);
+        obj.extra_select_mask = copy(this.extra_select_mask);
+        obj._extra_select_cache = copy(this._extra_select_cache);
         obj.extra_tables = this.extra_tables;
         obj.extra_where = this.extra_where;
         obj.extra_params = this.extra_params;
@@ -170,13 +188,125 @@ var Query = type('Query', [ object ], {
         return obj;
     },
 
-    /*
-        * Returns an iterator over the results from executing this query.
+    convert_values: function(value, field) {
+        /*Convert the database-returned value into a type that is consistent
+        across database backends.
+
+        By default, this defers to the underlying backend operations, but
+        it can be overridden by Query classes for specific backends.
         */
+        return this.connection.ops.convert_values(value, field);
+    },
+
+    resolve_aggregate: function(value, aggregate) {
+        /*Resolve the value of aggregates returned by the database to
+        consistent (and reasonable) types.
+
+        This is required because of the predisposition of certain backends
+        to return Decimal and long types when they are not needed.
+        */
+        //TODO: ver que pasa con si es flotante o entero
+        if (value == null) {
+            if (aggregate.is_ordinal)
+                return 0;
+            // Return None as-is
+            return value;
+        } else if (aggregate.is_ordinal) {
+            // Any ordinal aggregate (e.g., count) returns an int
+            return Number(value);
+        } else if (aggregate.is_computed) {
+            // Any computed aggregate (e.g., avg) returns a float
+            return Number(value);
+        } else {
+            // Return value depends on the type of the field being processed.
+            return this.convert_values(value, aggregate.field);
+        }
+    },
+
+    /*
+     * Returns an iterator over the results from executing this query.
+     */
     results_iter: function() {
-        for each (var rows in this.execute_sql(MULTI))
-            for each (var row in rows)
+        /*
+        Returns an iterator over the results from executing this query.
+        */
+        var resolve_columns = hasattr(this, 'resolve_columns');
+        var fields = null;
+        for each (var rows in this.execute_sql(MULTI)) {
+            for each (var row in rows) {
+                if (resolve_columns) {
+                    if (fields == null) {
+                        // We only set this up here because
+                        // related_select_fields isn't populated until
+                        // execute_sql() has been called.
+                        if (bool(this.select_fields))
+                            var fields = this.select_fields.concat(this.related_select_fields);
+                        else
+                            var fields = this.model._meta.fields;
+                    }
+                    var row = this.resolve_columns(row, fields);
+                }
+                if (bool(this.aggregate_select)) {
+                    var aggregate_start = len(this.extra_select.keys()) + len(this.select);
+                    var aggregate_end = aggregate_start + len(this.aggregate_select);
+                    var row = array(row);
+                    var row = array(row.slice(0, aggregate_start)).concat(array([
+                        this.resolve_aggregate(value, aggregate)
+                        for ([ aggregate, value ]
+                        in zip(this.aggregate_select.values(), row.slice(aggregate_start, aggregate_end)))
+                    ])).concat(array(row.slice(aggregate_end, -1)));
+                }
                 yield row;
+            }
+        }
+    },
+
+    get_aggregation: function() {
+        /*
+        Returns the dictionary with the values of the existing aggregations.
+        */
+        if (!this.aggregate_select)
+            return {};
+
+        // If there is a group by clause, aggregating does not add useful
+        // information but retrieves only the first row. Aggregate
+        // over the subquery instead.
+        if (this.group_by != null) {
+            require('doff.db.models.sql.subqueries', 'AggregateQuery');
+            var query = new AggregateQuery(this.model, this.connection);
+
+            var obj = this.clone();
+
+            // Remove any aggregates marked for reduction from the subquery
+            // and move them to the outer AggregateQuery.
+            for each (var [ alias, aggregate ] in this.aggregate_select.items()) {
+                if (aggregate.is_summary) {
+                    query.aggregate_select.set(alias, aggregate);
+                    obj.aggregate_select.unset(alias);
+                }
+            }
+            query.add_subquery(obj);
+        } else {
+            var query = this;
+            this.select = [];
+            this.default_cols = false;
+            this.extra = new SortedDict();
+            this.remove_inherited_models();
+        }
+        query.clear_ordering(true);
+        query.clear_limits();
+        query.select_related = false;
+        query.related_select_cols = [];
+        query.related_select_fields = [];
+
+        var result = query.execute_sql(SINGLE);
+        if (result == null)
+            result = [null for each (q in query.aggregate_select.items())];
+
+        return object(new Dict([
+            [ alias_aggregate[0], this.resolve_aggregate(val, alias_aggregate[1]) ]
+            for each ([ alias_aggregate, val ]
+            in zip(query.aggregate_select.items(), result)) ]));
     },
 
     /*
@@ -213,8 +343,8 @@ var Query = type('Query', [ object ], {
 
     as_sql: function(with_limits, with_col_aliases) {
 
-        with_limits = with_limits || true;
-        with_col_aliases = with_col_aliases || false;
+        with_limits = isundefined(with_limits)? true : with_limits;
+        with_col_aliases = isundefined(with_col_aliases)? false: with_col_aliases;
 
         this.pre_sql_setup();
         var out_cols = this.get_columns(with_col_aliases);
@@ -1184,11 +1314,11 @@ var Query = type('Query', [ object ], {
         this.included_inherited_models = new Dict();
     },
     /*
-        * Fill in the information needed for a select_related query. The current
-        depth is measured as the number of connections away from the root model
-        (for example, cur_depth=1 means we are looking at models with direct
-        connections to the root model).
-        */
+     * Fill in the information needed for a select_related query. The current
+     * depth is measured as the number of connections away from the root model
+     * (for example, cur_depth=1 means we are looking at models with direct
+     * connections to the root model).
+     */
     fill_related_selections: function(opts, root_alias, cur_depth, used, requested, restricted, nullable, dupe_set, avoid_set) {
 
         opts = opts || null;
@@ -1281,8 +1411,52 @@ var Query = type('Query', [ object ], {
             this.fill_related_selections(f.rel.to._meta, alias, cur_depth + 1, used, next, restricted, new_nullable, dupe_set, avoid);
     },
 
+    add_aggregate: function(aggregate, model, alias, is_summary) {
+        /*
+         Adds a single aggregate expression to the Query
+        */
+        var opts = model._meta;
+        var field_list = aggregate.lookup.split(LOOKUP_SEP);
+        if (len(field_list) == 1 && include(this.aggregates.keys(), aggregate.lookup)) {
+            // Aggregate is over an annotation
+            var field_name = field_list[0];
+            var col = field_name;
+            var source = this.aggregates[field_name];
+            if (!is_summary)
+                throw new FieldError("Cannot compute %s('%s'): '%s' is an aggregate".subs(aggregate.name, field_name, field_name));
+        } else if ((len(field_list) > 1) || !include([i.name for each (i in opts.fields)], field_list[0]) || this.group_by == null || !is_summary) {
+            // If:
+            //   - the field descriptor has more than one part (foo__bar), or
+            //   - the field descriptor is referencing an m2m/m2o field, or
+            //   - this is a reference to a model field (possibly inherited), or
+            //   - this is an annotation over a model field
+            // then we need to explore the joins that are required.
+
+            var [ field, source, opts, join_list, last, none ] = this.setup_joins(field_list, opts, this.get_initial_alias(), false);
+
+            // Process the join chain to see if it can be trimmed
+            var [ col, none, join_list ] = this.trim_joins(source, join_list, last, false);
+
+            // If the aggregate references a model or field that requires a join,
+            // those joins must be LEFT OUTER - empty join rows must be returned
+            // in order for zeros to be returned for those aggregates.
+            for each (var column_alias in join_list)
+                this.promote_alias(column_alias, true);
+
+            col = [ join_list.slice(-1), col ];
+        } else {
+            // The simplest cases. No joins required -
+            // just reference the provided column alias.
+            var field_name = field_list[0];
+            var source = opts.get_field(field_name);
+            var col = field_name;
+        }
+        // Add the aggregate to the query
+        var alias = truncate_name(alias, this.connection.ops.max_name_length());
+        aggregate.add_to_query(this, alias, col, source, is_summary);
+    },
     /*
-        * Add a single filter to the query. The 'filter_expr' is a pair:
+     * Add a single filter to the query. The 'filter_expr' is a pair:
         (filter_string, value). E.g. ('name__contains', 'fred')
 
         If 'negate' is True, this is an exclude() filter. It's important to
@@ -1323,6 +1497,8 @@ var Query = type('Query', [ object ], {
         else
             var lookup_type = parts.pop();
 
+        var having_clause = false;
+
         // Interpret '__exact=None' as the sql 'is NULL'; otherwise, reject all
         // uses of None as a query value.
         if (value == null) {
@@ -1335,6 +1511,21 @@ var Query = type('Query', [ object ], {
             value = true;
         } else if (callable(value)) { 
             value = value(); 
+        } else if (hasattr(value, 'evaluate')) {
+            // If value is a query expression, evaluate it
+            value = new SQLEvaluator(value, this);
+            having_clause = value.contains_aggregate;
+        }
+
+        for each (var [ alias, aggregate ] in this.aggregates.items()) {
+            if (alias == parts[0]) {
+                var entry = new this.where_class();
+                entry.add([ aggregate, lookup_type, value ], AND);
+                if (negate)
+                    entry.negate();
+                this.having.add(entry, AND);
+                return;
+            }
         }
 
         var opts = this.get_meta();
@@ -1343,52 +1534,20 @@ var Query = type('Query', [ object ], {
 
         try {
             var [field, target, opts, join_list, last, extra_filters] = this.setup_joins(parts, opts, alias, true, allow_many, can_reuse, negate, process_extras);
-        }
-        catch (e if isinstance(e, MultiJoin)) {
-            this.split_exclude(filter_expr, parts.slice(0,e.level).join(LOOKUP_SEP), can_reuse);
+        } catch (e if isinstance(e, MultiJoin)) {
+            this.split_exclude(filter_expr, parts.slice(0, e.level).join(LOOKUP_SEP), can_reuse);
             return;
         }
-        var final = len(join_list);
-        var penultimate = last.pop();
-        if (penultimate == final)
-            penultimate = last.pop();
-        if (trim && len(join_list) > 1) {
-            var extra = join_list.slice(penultimate);
-            var join_list = join_list.slice(0, penultimate);
-            final = penultimate;
-            penultimate = last.pop();
-            var col = this.alias_map[extra[0]][LHS_JOIN_COL];
-            for each (var alias in extra)
-                this.unref_alias(alias);
-        } else { 
-            var col = target.column; 
-        }
-        alias = join_list[join_list.length - 1];
 
-        while (final > 1) {
-            // An optimization: if the final join is against the same column as
-            // we are comparing against, we can go back one step in the join
-            // chain and compare against the lhs of the join instead (and then
-            // repeat the optimization). The result, potentially, involves less
-            // table joins.
-            var join = this.alias_map[alias];
-            if (col != join[RHS_JOIN_COL])
-                break;
-            this.unref_alias(alias);
-            alias = join[LHS_ALIAS];
-            col = join[LHS_JOIN_COL];
-            join_list = join_list.slice(0,-1);
-            final = final - 1;
-            if (final == penultimate)
-                penultimate = last.pop();
-        }
-        if (lookup_type == 'isnull' && value == true && !negate && final > 1) {
-            // If the comparison is against NULL, we need to use a left outer
-            // join when connecting to the previous model. We make that
-            // adjustment here. We don't do this unless needed as it's less
-            // efficient at the database level.
-            this.promote_alias(join_list[penultimate]);
-        }
+        if (lookup_type == 'isnull' && value == true && !negate && len(join_list) > 1)
+            // If the comparison is against NULL, we may need to use some left
+            // outer joins when creating the join chain. This is only done when
+            // needed, as it's less efficient at the database level.
+            this.promote_alias_chain(join_list);
+
+        // Process the join list to see if we can remove any inner joins from
+        // the far end (fewer tables in a query is better).
+        var [ col, alias, join_list ] = this.trim_joins(target, join_list, last, trim);
 
         if (connector == OR) {
             // Some joins may need to be promoted when adding a new filter to a
@@ -1396,50 +1555,61 @@ var Query = type('Query', [ object ], {
             // from any previous joins (ref count is 1 in the table list), we
             // make the new additions (and any existing ones not used in the new
             // join list) an outer join.
-            join_it = Iterator(join_list);
-            table_it = Iterator(this.tables);
+            var join_it = Iterator(join_list);
+            var table_it = Iterator(this.tables);
             join_it.next();
             table_it.next();
-            table_promote = false;
-            join_promote = false;
+            var table_promote = false;
+            var join_promote = false;
             for (var _join in join_it) {
-                table = table_it.next();
-                if (_join == table && this.alias_refcount[_join] > 1) { continue; }
+                var table = table_it.next();
+                if (_join == table && this.alias_refcount[_join] > 1) 
+                    continue;
                 join_promote = this.promote_alias(_join);
-                if (table != _join) { table_promote = this.promote_alias(table); }
+                if (table != _join)
+                    table_promote = this.promote_alias(table);
                 break;
             }
             this.promote_alias_chain(join_it, join_promote);
             this.promote_alias_chain(table_it, table_promote);
         }
-        this.where.add([alias, col, field, lookup_type, value], connector);
+
+        if (having_clause)
+            this.having.add([ new Constraint(alias, col, field), lookup_type, value ], connector);
+        else
+            this.where.add([ new Constraint(alias, col, field), lookup_type, value ], connector);
 
         if (negate) {
             this.promote_alias_chain(join_list);
             if (lookup_type != 'isnull') {
-                if (final > 1) {
+                if (len(join_list) > 1) {
                     for (alias in join_list) {
                         if (this.alias_map[alias][JOIN_TYPE] == this.LOUTER) {
                             var j_col = this.alias_map[alias][RHS_JOIN_COL];
                             var entry = new this.where_class();
-                            entry.add([alias, j_col, null, 'isnull', true], AND);
+                            entry.add([ new Constraint(alias, j_col, null), 'isnull', true ], AND);
                             entry.negate();
                             this.where.add(entry, AND);
                             break;
                         }
                     }
-                } else if (!(lookup_type == 'in' && !value) && field.none) {
+                } else if (!(   lookup_type == 'in' && 
+                                !hasattr(value, 'as_sql') &&
+                                !hasattr(value, '_as_sql') &&
+                                !value) && field.none) {
                     // Leaky abstraction artifact: We have to specifically
                     // exclude the "foo__in=[]" case from this handling, because
                     // it's short-circuited in the Where class.
                     var entry = new this.where_class();
-                    entry.add([alias, col, null, 'isnull', true], AND);
+                    entry.add([ new Constraint(alias, col, None), 'isnull', true ], AND);
                     entry.negate();
                     this.where.add(entry, AND);
                 }
             }
         }
-        if (can_reuse) { can_reuse.update(join_list) }
+
+        if (can_reuse != null) 
+            can_reuse.update(join_list);
         if (process_extras) {
             for each (var filter in extra_filters) {
                 this.add_filter(filter, null, negate, null, can_reuse, false);
@@ -1642,6 +1812,61 @@ var Query = type('Query', [ object ], {
                 throw new FieldError("Join on field %r not permitted.".subs(name));
         }
         return [field, target, opts, joins, last, extra_filters];
+    },
+
+    trim_joins: function(target, join_list, last, trim) {
+        /*
+        Sometimes joins at the end of a multi-table sequence can be trimmed. If
+        the final join is against the same column as we are comparing against,
+        and is an inner join, we can go back one step in a join chain and
+        compare against the LHS of the join instead (and then repeat the
+        optimization). The result, potentially, involves less table joins.
+
+        The 'target' parameter is the final field being joined to, 'join_list'
+        is the full list of join aliases.
+
+        The 'last' list contains offsets into 'join_list', corresponding to
+        each component of the filter.  Many-to-many relations, for example, add
+        two tables to the join list and we want to deal with both tables the
+        same way, so 'last' has an entry for the first of the two tables and
+        then the table immediately after the second table, in that case.
+
+        The 'trim' parameter forces the final piece of the join list to be
+        trimmed before anything. See the documentation of add_filter() for
+        details about this.
+
+        Returns the final active column and table alias and the new active
+        join_list.
+        */
+        var final = len(join_list);
+        var penultimate = last.pop();
+        if (penultimate == final)
+            penultimate = last.pop();
+        if (trim && len(join_list) > 1) {
+            var extra = join_list.slice(penultimate, -1);
+            var join_list = join_list.slice(0, penultimate);
+            final = penultimate;
+            penultimate = last.pop();
+            var col = this.alias_map[extra[0]][LHS_JOIN_COL];
+            for each (var alias in extra)
+                this.unref_alias(alias);
+        } else {
+            var col = target.column;
+        }
+        var alias = join_list.slice(-1);
+        while (final > 1) {
+            var _join = this.alias_map[alias];
+            if (col != _join[RHS_JOIN_COL] || _join[JOIN_TYPE] != this.INNER)
+                break;
+            this.unref_alias(alias);
+            alias = _join[LHS_ALIAS];
+            col = _join[LHS_JOIN_COL];
+            join_list = join_list.slice(0, -1);
+            final -= 1;
+            if (final == penultimate)
+                penultimate = last.pop();
+        }
+        return [col, alias, join_list];
     },
 
     /*
@@ -1930,6 +2155,37 @@ var Query = type('Query', [ object ], {
             this.extra_select.unset(key);
     },
 
+    get aggregate_select() {
+        /*The SortedDict of aggregate columns that are not masked, and should
+        be used in the SELECT clause.
+
+        This result is cached for optimization purposes.
+        */
+        if (this._aggregate_select_cache != null) {
+            return this._aggregate_select_cache;
+        } else if (this.aggregate_select_mask != null) {
+            this._aggregate_select_cache = new SortedDict([
+                [ k, v ] for each ([ k, v ] in this.aggregates.items())
+                if (include(this.aggregate_select_mask, k)) ]);
+            return this._aggregate_select_cache;
+        } else {
+            return this.aggregates;
+        }
+    },
+
+    get extra_select() {
+        if (this._extra_select_cache != null) {
+            return this._extra_select_cache;
+        } else if (this.extra_select_mask != null) {
+            this._extra_select_cache = new SortedDict([
+                [ k, v ] for each ([ k, v ] in this.extra.items())
+                if (include(this.extra_select_mask, k)) ]);
+            return this._extra_select_cache;
+        } else {
+            return this.extra;
+        }
+    },
+    
     /* Sets the table from which to start joining. The start position is
         * specified by the related attribute from the base model. This will
         * automatically set to the select column to be the column linked from the
@@ -2092,12 +2348,19 @@ var Query = type('Query', [ object ], {
     }
 });
 
-        /*
-    * Returns the field name and direction for an order specification. For
-    * example, '-foo' is returned as ('foo', 'DESC').
-    * The 'default' param is used to indicate which way no prefix (or a '+'
-    * prefix) should sort. The '-' prefix always sorts the opposite way.
-    */
+// Use the backend's custom Query class if it defines one. Otherwise, use the default.
+if (connection.features.uses_custom_query_class)
+    var Query = connection.ops.query_class(BaseQuery);
+else
+    var Query = BaseQuery;
+
+
+/*
+ * Returns the field name and direction for an order specification. For
+ * example, '-foo' is returned as ('foo', 'DESC').
+ * The 'default' param is used to indicate which way no prefix (or a '+'
+ * prefix) should sort. The '-' prefix always sorts the opposite way.
+ */
 function get_order_dir(field, def) {
     var def = def || 'ASC';
     var dirn = ORDER_DIR[def]
@@ -2154,5 +2417,6 @@ function add_to_dict(data, key, value) {
 var hcp = event.subscribe('class_prepared', setup_join_cache);
 
 publish({
-    Query: Query
+    Query: Query,
+    BaseQuery: BaseQuery
 });
