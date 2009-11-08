@@ -104,7 +104,7 @@ var BaseDatabaseOperations = type('BaseDatabaseOperations', [ object ], {
     value_to_db_datetime: function(value) {
         if (!value)
             return null;
-        return string(value);
+        return value.getTime();
     },
     value_to_db_time: function(value) {
         if (!value)

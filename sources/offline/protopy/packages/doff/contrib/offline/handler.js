@@ -46,7 +46,7 @@ var SyncHandler = type('SyncHandler', [ object ], {
         for (var obj in this.deserializer(received)) {
             // TODO: Implementar los middlewares de sync
             //try {
-                obj.sync_log = sync_log;
+                obj.object.sync_log = sync_log;
                 obj.save();
             //} catch ( e if isinstace(e, )) {
                 //this.conflict_middleware.
@@ -91,7 +91,14 @@ var SyncHandler = type('SyncHandler', [ object ], {
             }
             return;
         }
+    
+        debugger;
+        var [ received, sync_log_data ] = this.pull(last_sync_log);
+        var sync_log = new SyncLog(sync_log_data);
+        sync_log.save();
+        this.save_recived(received, sync_log);
 
+        debugger;
         var go_ahead = true;
         while (go_ahead) {
             var [ need_pull, chunked, deleted, modified, created, sync_log_data ] = this.push();
@@ -197,7 +204,7 @@ var SyncHandler = type('SyncHandler', [ object ], {
             collected_objects['deleted'][model_name] = array(objs);
             to_send['deleted']['objects'][model_name] = this.serializer.serialize(objs);
             if (!(model_name in to_send['sync_log'])) {
-                var last_sync_log = model.all.latest('sync_log_id').sync_log;
+                var last_sync_log = model.all.latest('sync_log').sync_log;
                 to_send['sync_log'][model_name] = this.serializer.serialize(last_sync_log);
             }
         }
@@ -212,7 +219,7 @@ var SyncHandler = type('SyncHandler', [ object ], {
             collected_objects['modified'][model_name] = array(objs);
             to_send['modified']['objects'][model_name] = this.serializer.serialize(objs);
             if (!(model_name in to_send['sync_log'])) {
-                var last_sync_log = model.all.latest('sync_log_id').sync_log;
+                var last_sync_log = model.all.latest('sync_log').sync_log;
                 to_send['sync_log'][model_name] = this.serializer.serialize(last_sync_log);
             }
         }
@@ -231,7 +238,7 @@ var SyncHandler = type('SyncHandler', [ object ], {
                 collected_objects['created'][model_name] = array(objs);
                 to_send['created']['models'].push(model_name);
                 if (!(model_name in to_send['sync_log'])) {
-                    var last_sync_log = model.all.latest('sync_log_id').sync_log;
+                    var last_sync_log = model.all.latest('sync_log').sync_log;
                     to_send['sync_log'][model_name] = this.serializer.serialize(last_sync_log);
                 }
             } catch (e if isinstance(e, ServerPkDoesNotExist)) {

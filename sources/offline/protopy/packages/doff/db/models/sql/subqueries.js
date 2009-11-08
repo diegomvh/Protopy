@@ -418,7 +418,6 @@ var AggregateQuery = type('AggregateQuery' , [ Query ], {
         Creates the SQL for this query. Returns the SQL string and list of
         parameters.
         */
-        debugger;
         var sql = ('SELECT %s FROM (%s) subquery'.subs(
                 [ aggregate.as_sql() for each (aggregate in this.aggregate_select.values()) ].join(', '),
                 this.subquery) );

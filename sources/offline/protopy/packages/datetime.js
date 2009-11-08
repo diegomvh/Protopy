@@ -442,7 +442,7 @@ var datetime = {
         ***/
         return {
             'year': d.getFullYear(), 
-            'month': d.getUTCMonth()+1,  // JavaScript reports January as year 0
+            'month': d.getUTCMonth() + 1,  // JavaScript reports January as year 0
             'day': d.getUTCDate(), 
             'hour': d.getUTCHours(), 
             'minute': d.getUTCMinutes(), 

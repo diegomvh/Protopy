@@ -570,7 +570,7 @@ var BaseQuery = type('BaseQuery', [ object ], {
                 must_include.get(old_model).add(source);
                 add_to_dict(must_include, cur_model, opts.pk);
             }
-            var [ field, model, x, y] = opts.get_field_by_name(parts.slice(-1));
+            var [ field, model, x, y] = opts.get_field_by_name(parts.slice(-1)[0]);
             if (model == null)
                 model = cur_model;
             add_to_dict(seen, model, field);
@@ -922,9 +922,10 @@ var BaseQuery = type('BaseQuery', [ object ], {
                 continue;
             }
             var [ col, order ] = get_order_dir(field, asc);
-            if (include(this.aggregate_select, col))
+            if (include(this.aggregate_select, col)) {
                 result.push('%s %s'.subs(col, order));
                 continue;
+            }
             if (include(field, '.')) {
                 // This came in through an extra(order_by=...) addition. Pass it on verbatim.
                 var [table, col] = col.split('.', 1);
@@ -978,8 +979,7 @@ var BaseQuery = type('BaseQuery', [ object ], {
         if (!alias)
             alias = this.get_initial_alias();
         var [field, target, opts, joins, last, extra] = this.setup_joins(pieces, opts, alias, false);
-
-        alias = joins[joins.length - 1];
+        alias = joins.slice(-1)[0];
         var col = target.column;
         if (!field.rel) {
             // To avoid inadvertent trimming of a necessary alias, use the
@@ -989,16 +989,16 @@ var BaseQuery = type('BaseQuery', [ object ], {
         }
 
         // Must use left outer joins for nullable fields.
-        this.promote_alias_chain(joins);
+        this.promote_alias_chain(joins, this.alias_map[joins[0]][JOIN_TYPE] == this.LOUTER);
 
         // If we get to this point and the field is a relation to another model,
         // append the default ordering for that model.
-        if (field.rel && joins.length > 1 && opts.ordering) {
+        if (field.rel && len(joins) > 1 && opts.ordering) {
             // Firstly, avoid infinite loops.
             if (!already_seen)
                 already_seen = new Set();
-            join_tuple = [this.alias_map[j][TABLE_NAME] for (j in joins)];
-            if (join_tuple in already_seen)
+            var join_tuple = [this.alias_map[j][TABLE_NAME] for each (j in joins)];
+            if (include(already_seen, join_tuple))
                 throw new FieldError('Infinite loop caused by ordering.');
             already_seen.add(join_tuple);
 
@@ -1484,7 +1484,7 @@ var BaseQuery = type('BaseQuery', [ object ], {
             for each (var column_alias in join_list)
                 this.promote_alias(column_alias, true);
 
-            col = [ join_list.slice(-1), col ];
+            col = [ join_list.slice(-1)[0], col ];
         } else {
             // The simplest cases. No joins required -
             // just reference the provided column alias.
@@ -1894,7 +1894,7 @@ var BaseQuery = type('BaseQuery', [ object ], {
         } else {
             var col = target.column;
         }
-        var alias = join_list.slice(-1);
+        var alias = join_list.slice(-1)[0];
         while (final > 1) {
             var _join = this.alias_map[alias];
             if (col != _join[RHS_JOIN_COL] || _join[JOIN_TYPE] != this.INNER)
@@ -2285,9 +2285,8 @@ var BaseQuery = type('BaseQuery', [ object ], {
         */
     execute_sql: function(result_type) {
         result_type = (typeof(result_type) === 'undefined')? MULTI : result_type;
-        var sql = null, params = null;
         try {
-            [sql, params] = this.as_sql();
+            var [sql, params] = this.as_sql();
             if (!sql)
                 throw new EmptyResultSet();
         } catch (e if isinstance(e, EmptyResultSet)) {
@@ -2373,13 +2372,13 @@ var BaseQuery = type('BaseQuery', [ object ], {
         */
     set_limits: function(low, high) {
 
-        if (high) {
+        if (high != null) {
             if (this.high_mark)
                 this.high_mark = Math.min(this.high_mark, this.low_mark + high);
             else
                 this.high_mark = this.low_mark + high;
         }
-        if (low) {
+        if (low != null) {
             if (this.high_mark)
                 this.low_mark = Math.min(this.high_mark, this.low_mark + low);
             else
