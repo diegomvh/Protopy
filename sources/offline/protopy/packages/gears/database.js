@@ -59,8 +59,10 @@ database.Connection = type('Connection', [ object ], {
     },
 });
 
-var Row = type('Row', [ object ], {
-    _database_columns: [],
+database.Row = type('Row', [ object ], {
+    __init__: function() {
+        this._database_columns = [];
+    },
     __iter__: function() {
         for each (var column in this._database_columns)
             yield this[column];
@@ -142,7 +144,7 @@ database.Cursor = type('Cursor', [ object ], {
         if (this.lastResulSet == null)
             throw StopIteration;
         if (!this.lastResulSet.isValidRow()) throw StopIteration;
-        var row = new Row();
+        var row = new database.Row();
         for (var i = 0, length = this.lastResulSet.fieldCount(); i < length; i++) {
             var name = this.lastResulSet.fieldName(i);
             var value = this.lastResulSet.field(i);

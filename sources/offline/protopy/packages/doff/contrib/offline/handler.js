@@ -43,14 +43,15 @@ var SyncHandler = type('SyncHandler', [ object ], {
     },
 
     save_recived: function(received, sync_log) {
-    	for (var obj in this.deserializer(received, sync_log)) {
-        	// TODO: Implementar los middlewares de sync
-        	//try {
-        		obj.save();
-        	//} catch ( e if isinstace(e, )) {
-        		//this.conflict_middleware.
-        	//}
-    	}
+        for (var obj in this.deserializer(received)) {
+            // TODO: Implementar los middlewares de sync
+            //try {
+                obj.sync_log = sync_log;
+                obj.save();
+            //} catch ( e if isinstace(e, )) {
+                //this.conflict_middleware.
+            //}
+        }
     },
 
     save_collected: function(collected, sync_log) {
@@ -62,7 +63,18 @@ var SyncHandler = type('SyncHandler', [ object ], {
             //} catch ( e if isinstace(e, )) {
                 //this.conflict_middleware.
             //}
-    	}
+        }
+    },
+
+    save_chunkeds: function(created) {
+        for each (var obj in created) {
+            // TODO: Implementar los middlewares de sync
+            //try {
+                obj.save_base();
+            //} catch ( e if isinstace(e, )) {
+                //this.conflict_middleware.
+            //}
+        }
     },
 
     update: function() {
@@ -80,20 +92,25 @@ var SyncHandler = type('SyncHandler', [ object ], {
             return;
         }
 
-        debugger;
-        var received = [];
-        //var [ received, sync_log_data ] = this.pull(last_sync_log);
-        var [ chunked, deleted, created, modified, sync_log_data ] = this.push(last_sync_log);
-        var collected = deleted.concat(created, modified);
-
-        if (bool(received) || bool(collected)) {
+        var go_ahead = true;
+        while (go_ahead) {
+            var [ need_pull, chunked, deleted, modified, created, sync_log_data ] = this.push();
+            if (need_pull) {
+                var [ received, sync_log_data ] = this.pull(last_sync_log);
+                var sync_log = new SyncLog(sync_log_data);
+                sync_log.save();
+                this.save_recived(received, sync_log);
+                go_ahead = need_pull;
+                continue;
+            }
+            var collected = deleted.concat(created, modified);
             var sync_log = new SyncLog(sync_log_data);
             sync_log.save();
-            this.save_recived(received, sync_log);
-            this.save_collected(deleted.concat(created, modified), sync_log);
+            this.save_collected(collected, sync_log);
+            go_ahead = chunked;
         }
 
-        this.purge(deleted);
+        //this.purge(deleted);
     },
 
     load_middleware: function() {
@@ -146,7 +163,7 @@ var SyncHandler = type('SyncHandler', [ object ], {
             obj._collect_sub_objects(seen_objs);
             var items = seen_objs.items()
             if (len(items) == 1 && len(items[0][1]) == 1)
-            	obj.delete();
+                obj.delete();
         }
     },
 
@@ -162,14 +179,11 @@ var SyncHandler = type('SyncHandler', [ object ], {
         return [ data['objects'], data['sync_log']];
     },
 
-    push: function(last_sync_log) {
-        assert(last_sync_log != null, 'Sync log is required');
-
+    push: function() {
+        
         var chunked = false;
         var collected_objects = {};
-        var to_send = {};
-
-        to_send['sync_log'] = this.serializer.serialize(last_sync_log);
+        var to_send = {'sync_log': {}};
 
         // Los borrados
         var models = get_models().filter(function(m) { return issubclass(m, RemoteModel) && ! issubclass(m, RemoteReadOnlyModel) && m.deleted.count() > 0; });
@@ -179,8 +193,28 @@ var SyncHandler = type('SyncHandler', [ object ], {
         collected_objects['deleted'] = {};
         for each (var model in models) {
             var objs = model.deleted.all();
-            collected_objects['deleted'][string(model._meta)] = array(objs);
-            to_send['deleted']['objects'][string(model._meta)] = this.serializer.serialize(objs);
+            var model_name = string(model._meta);
+            collected_objects['deleted'][model_name] = array(objs);
+            to_send['deleted']['objects'][model_name] = this.serializer.serialize(objs);
+            if (!(model_name in to_send['sync_log'])) {
+                var last_sync_log = model.all.latest('sync_log_id').sync_log;
+                to_send['sync_log'][model_name] = this.serializer.serialize(last_sync_log);
+            }
+        }
+
+        // Los modificados
+        models = get_models().filter(function(m) { return issubclass(m, RemoteModel) && ! issubclass(m, RemoteReadOnlyModel) && m.modified.count() > 0; });
+        to_send['modified'] = {'models': models.map(function(m) { return string(m._meta); }), 'objects': {}};
+        collected_objects['modified'] = {};
+        for each (var model in models) {
+            var objs = model.modified.all();
+            var model_name = string(model._meta);
+            collected_objects['modified'][model_name] = array(objs);
+            to_send['modified']['objects'][model_name] = this.serializer.serialize(objs);
+            if (!(model_name in to_send['sync_log'])) {
+                var last_sync_log = model.all.latest('sync_log_id').sync_log;
+                to_send['sync_log'][model_name] = this.serializer.serialize(last_sync_log);
+            }
         }
 
         // Los creados
@@ -191,78 +225,78 @@ var SyncHandler = type('SyncHandler', [ object ], {
         collected_objects['created'] = {};
         for each (var model in models) {
             var objs = model.created.all();
+            var model_name = string(model._meta);
             try {
-            	to_send['created']['objects'][string(model._meta)] = this.serializer.serialize(objs);
-            	collected_objects['created'][string(model._meta)] = array(objs);
-            	to_send['created']['models'].push(string(model._meta));
+                to_send['created']['objects'][model_name] = this.serializer.serialize(objs);
+                collected_objects['created'][model_name] = array(objs);
+                to_send['created']['models'].push(model_name);
+                if (!(model_name in to_send['sync_log'])) {
+                    var last_sync_log = model.all.latest('sync_log_id').sync_log;
+                    to_send['sync_log'][model_name] = this.serializer.serialize(last_sync_log);
+                }
             } catch (e if isinstance(e, ServerPkDoesNotExist)) {
-            	chunked = true;
-            	break;
+                chunked = true;
+                break;
             }
         }
-
-        // Los modificados
-        models = get_models().filter(function(m) { return issubclass(m, RemoteModel) && ! issubclass(m, RemoteReadOnlyModel) && m.modified.count() > 0; });
-        to_send['modified'] = {'models': models.map(function(m) { return string(m._meta); }), 'objects': {}};
-        collected_objects['modified'] = {};
-        for each (var model in models) {
-            var objs = model.modified.all();
-            collected_objects['modified'][string(model._meta)] = array(objs);
-            to_send['modified']['objects'][string(model._meta)] = this.serializer.serialize(objs);
+        
+        try {
+            var data = this.server.push(to_send);
+        } catch (e) {
+            // TODO: algunas exeptions;
+            return [ true, true, [], [], [], {}];
         }
-
-        var data = this.server.push(to_send);
 
         // Tengo los datos del servidor
 
         // Los borrados
         var deleted = [];
         for each (var model in data['deleted']['models']) {
-        	var pks_len = len(data['deleted']['pks'][model]);
-        	var objs_len = len(collected_objects['deleted'][model]);
-        	if (pks_len != objs_len) {
-        		//Algo esta muy mal
-        		throw new Exception('Deleted data number');
-        	}
-        	for (i = 0; i < objs_len; i++) {
-        		collected_objects['deleted'][model][i].status = 's';
-        		collected_objects['deleted'][model][i].active = false;
-        	}
-        	deleted = deleted.concat(collected_objects['deleted'][model]);
+            var pks_len = len(data['deleted']['pks'][model]);
+            var objs_len = len(collected_objects['deleted'][model]);
+            if (pks_len != objs_len) {
+                //Algo esta muy mal
+                throw new Exception('Deleted data number');
+            }
+            for (i = 0; i < objs_len; i++) {
+                collected_objects['deleted'][model][i].status = 's';
+                collected_objects['deleted'][model][i].active = false;
+            }
+            deleted = deleted.concat(collected_objects['deleted'][model]);
         }
 
         // Los creados
         var created = [];
         for each (var model in data['created']['models']) {
-        	var pks_len = len(data['created']['pks'][model]);
-        	var objs_len = len(collected_objects['created'][model]);
-        	if (pks_len != objs_len) {
-        		//Algo esta muy mal
-        		throw new Exception('Created data number');
-        	}
-        	for (i = 0; i < objs_len; i++) {
-        		collected_objects['created'][model][i].status = 's';
-        		collected_objects['created'][model][i].server_pk = data['created']['pks'][model][i];
-        	}
-        	created = created.concat(collected_objects['created'][model]);
+            var pks_len = len(data['created']['pks'][model]);
+            var objs_len = len(collected_objects['created'][model]);
+            if (pks_len != objs_len) {
+                //Algo esta muy mal
+                throw new Exception('Created data number');
+            }
+            for (i = 0; i < objs_len; i++) {
+                collected_objects['created'][model][i].status = 's';
+                collected_objects['created'][model][i].server_pk = data['created']['pks'][model][i];
+            }
+            created = created.concat(collected_objects['created'][model]);
         }
         
         // Los modificados
         var modified = [];
         for each (var model in data['modified']['models']) {
-        	var pks_len = len(data['modified']['pks'][model]);
-        	var objs_len = len(collected_objects['modified'][model]);
-        	if (pks_len != objs_len) {
-        		//Algo esta muy mal
-        		throw new Exception('Modified data number');
-        	}
-        	for (i = 0; i < objs_len; i++) {
-        		collected_objects['modified'][model][i].status = 's';
-        	}
-        	modified = modified.concat(collected_objects['modified'][model]);
+            var pks_len = len(data['modified']['pks'][model]);
+            var objs_len = len(collected_objects['modified'][model]);
+            if (pks_len != objs_len) {
+                //Algo esta muy mal
+                throw new Exception('Modified data number');
+            }
+            for (i = 0; i < objs_len; i++) {
+                collected_objects['modified'][model][i].status = 's';
+            }
+            modified = modified.concat(collected_objects['modified'][model]);
         }
 
-        return [ chunked, deleted, created, modified, data['sync_log']];
+        return [ false, chunked, deleted, modified, created, data['sync_log']];
     }
 });
 

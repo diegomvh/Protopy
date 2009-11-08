@@ -25,7 +25,7 @@ var Aggregate = type('Aggregate', [ object ], {
     is_computed: false,
     sql_template: '%(function)s(%(field)s)',
 
-    __init__: function(col, source, is_summary) {
+    __init__: function(col) {
         /*Instantiate an SQL aggregate
 
          * col is a column reference describing the subject field
@@ -52,8 +52,8 @@ var Aggregate = type('Aggregate', [ object ], {
         */
         var arg = new Arguments(arguments);
         this.col = col
-        this.source = source || null;
-        this.is_summary = is_summary || false;
+        this.source = arg.kwargs['source'] || null;
+        this.is_summary = arg.kwargs['is_summary'] || false;
         this.extra = arg.kwargs;
 
         // Follow the chain of aggregate sources back until you find an

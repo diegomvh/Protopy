@@ -265,7 +265,7 @@ var BaseQuery = type('BaseQuery', [ object ], {
         /*
         Returns the dictionary with the values of the existing aggregations.
         */
-        if (!this.aggregate_select)
+        if (!bool(this.aggregate_select))
             return {};
 
         // If there is a group by clause, aggregating does not add useful
@@ -306,38 +306,34 @@ var BaseQuery = type('BaseQuery', [ object ], {
         return object(new Dict([
             [ alias_aggregate[0], this.resolve_aggregate(val, alias_aggregate[1]) ]
             for each ([ alias_aggregate, val ]
-            in zip(query.aggregate_select.items(), result)) ]));
+            in zip(query.aggregate_select.items(), array(result))) ]));
     },
 
     /*
      * Performs a COUNT() query using the current filter constraints.
      */
     get_count: function() {
-        var CountQuery = require('doff.db.models.sql.subqueries', 'CountQuery');
         var obj = this.clone();
-        obj.clear_ordering(true);
-        obj.clear_limits();
-        obj.select_related = false;
-        obj.related_select_cols = [];
-        obj.related_select_fields = [];
-        if (obj.select.length > 1) {
-            obj = this.clone(CountQuery, {'_query':obj, 'where': this.where_class(), 'distinct': false});
-            obj.select = [];
-            obj.extra_select = new SortedDict();
+        if (len(this.select) > 1 || bool(this.aggregate_select)) {
+            // If a select clause exists, then the query has already started to
+            // specify the columns that are to be returned.
+            // In this case, we need to use a subquery to evaluate the count.
+            require('doff.db.models.sql.subqueries', 'AggregateQuery');
+            var subquery = obj;
+            subquery.clear_ordering(true);
+            subquery.clear_limits();
+
+            obj = new AggregateQuery(obj.model, obj.connection);
+            obj.add_subquery(subquery);
         }
         obj.add_count_column();
-        var data = obj.execute_sql(SINGLE);
-        if (!data)
-            return 0;
-        var number = data[0];
+        var number = obj.get_aggregation()['null'];
 
         // Apply offset and limit constraints manually, since using LIMIT/OFFSET
-        // in SQL (in variants that provide them) doesn't change the COUNT
-        // output.
+        // in SQL (in variants that provide them) doesn't change the COUNT output.
         number = Math.max(0, number - this.low_mark);
-        if (this.high_mark)
+        if (this.high_mark != null)
             number = Math.min(number, this.high_mark - this.low_mark);
-
         return number;
     },
 
@@ -348,20 +344,25 @@ var BaseQuery = type('BaseQuery', [ object ], {
 
         this.pre_sql_setup();
         var out_cols = this.get_columns(with_col_aliases);
-        var ordering = this.get_ordering();
+        //TODO: ver el ordering
+        var [ ordering, ordering_group_by ] = this.get_ordering();
 
-        /* retorna el from/where y los parametros en un arreglo */
+        // This must come after 'select' and 'ordering' -- see docstring of get_from_clause() for details.
         var [from_, f_params] = this.get_from_clause();
-        var [where, w_params] = this.where.as_sql(getattr(this, 'quote_name_unless_alias'));
 
+        var qn = getattr(this, 'quote_name_unless_alias');
+        var [where, w_params] = this.where.as_sql(qn);
+        var [having, h_params] = this.having.as_sql(qn);
         var params = [];
-        var result = ["SELECT"];
+        for each (var val in this.extra_select.values())
+            params = params.concat(val[1]);
 
+        var result = ["SELECT"];
         if (this.distinct)
             result.push("DISTINCT");
         result.push(out_cols.concat(this.ordering_aliases).join(', '));
-        result.push("FROM");
 
+        result.push("FROM");
         result = result.concat(from_);
         params = params.concat(f_params);
 
@@ -378,15 +379,32 @@ var BaseQuery = type('BaseQuery', [ object ], {
             result.push(this.extra_where.join(' AND '));
         }
 
-        if (bool(this.group_by)){
-            var grouping = this.get_grouping();
+        var [ grouping, gb_params ] = this.get_grouping();
+        
+        //ver que retornan para poner bool o no
+        if (grouping) {
+            if (ordering) {
+                // If the backend can't group by PK (i.e., any database
+                // other than MySQL), then any fields mentioned in the
+                // ordering clause needs to be in the group by clause.
+                if (!this.connection.features.allows_group_by_pk) {
+                    for each (var [col, col_params] in ordering_group_by) {
+                        if (!include(grouping, col)) {
+                            grouping.push(string(col));
+                            gb_params = gb_params.concat(col_params);
+                        }
+                    }
+                }
+            } else {
+                ordering = this.connection.ops.force_no_ordering();
+            }
             result.push('GROUP BY %s'.subs(grouping.join(', ')));
+            params = params.concat(gb_params);
         }
 
         if (bool(this.having)) {
-            having = this.get_having();
-            result.push('HAVING %s'.subs(having[0].join(', ')));
-            params = params.concat(having[1]);
+            result.push('HAVING %s'.subs(having));
+            params = params.concat(h_params);
         }
 
         if (bool(ordering))
@@ -404,6 +422,7 @@ var BaseQuery = type('BaseQuery', [ object ], {
                 result.push('OFFSET %s'.subs(this.low_mark));
             }
         }
+
         params = params.concat(this.extra_params);
         return [result.join(' '), params];
     },
@@ -438,7 +457,7 @@ var BaseQuery = type('BaseQuery', [ object ], {
             first = false;
         }
         // So that we don't exclude valid results in an "or" query combination,
-        // the first join that is exclusive to the lhs (self) must be converted
+        // the first join that is exclusive to the lhs (this) must be converted
         // to an outer join.
         if (!conjunction)
             for each (var alias in this.tables.slice(1, this.tables.length))
@@ -507,7 +526,6 @@ var BaseQuery = type('BaseQuery', [ object ], {
     pre_sql_setup: function() {
 
         if (!bool(this.tables))
-            //join(connection, always_create, exclusions, promote, outer_if_first, nullable, reuse)
             this.join([null, this.model._meta.db_table, null, null]);
         if (!bool(this.select) && this.default_cols && !bool(this.included_inherited_models))
             this.setup_inherited_models()
@@ -685,6 +703,15 @@ var BaseQuery = type('BaseQuery', [ object ], {
             result = result.concat(cols);
             aliases.update(new_aliases);
         }
+
+        result = result.concat([
+            '%s%s'.subs(
+                aggregate.as_sql(qn),
+                alias != null && ' AS %s'.subs(qn(alias) || '')
+            )
+            for each ([ alias, aggregate ] in this.aggregate_select.items())
+        ]);
+
         for each (var [table, col] in this.related_select_cols) {
             var r = '%s.%s'.subs(qn(table), qn(col));
             if (with_aliases && include(col_aliases, col)) {
@@ -854,6 +881,7 @@ var BaseQuery = type('BaseQuery', [ object ], {
         so this should be run *before* get_from_clause().
         */
     get_ordering: function() {
+
         if (bool(this.extra_order_by))
             var ordering = this.extra_order_by;
         else if (!this.default_ordering)
@@ -865,6 +893,7 @@ var BaseQuery = type('BaseQuery', [ object ], {
         var distinct = this.distinct;
         var select_aliases = this._select_aliases;
         var result = [];
+        var group_by = [];
         var ordering_aliases = [];
         if (this.standard_ordering)
             var [asc, desc] = ORDER_DIR['ASC'];
@@ -889,18 +918,23 @@ var BaseQuery = type('BaseQuery', [ object ], {
                 else
                     order = asc;
                 result.push('%s %s'.subs(field, order));
+                group_by.push([ field, [] ]);
                 continue;
             }
+            var [ col, order ] = get_order_dir(field, asc);
+            if (include(this.aggregate_select, col))
+                result.push('%s %s'.subs(col, order));
+                continue;
             if (include(field, '.')) {
-                // This came in through an extra(order_by=...) addition. Pass it
-                // on verbatim.
-                var [col, order] = get_order_dir(field, asc);
+                // This came in through an extra(order_by=...) addition. Pass it on verbatim.
                 var [table, col] = col.split('.', 1);
                 if (!include(processed_pairs, [table, col]))
                     var elt = '%s.%s'.subs(qn(table), col);
                     processed_pairs.add([table, col]);
-                    if (!distinct || elt in select_aliases)
+                    if (!distinct || elt in select_aliases) {
                         result.push('%s %s'.subs(elt, order));
+                        group_by.push([ elt, [] ]);
+                    }
             } else if (!(this.extra_select.has_key(get_order_dir(field)[0]))) {
                 // 'col' is of the form 'field' or 'field1__field2' or
                 // '-field1__field2__field', etc.
@@ -913,18 +947,20 @@ var BaseQuery = type('BaseQuery', [ object ], {
                         if (distinct && !(elt in select_aliases))
                             ordering_aliases.push(elt);
                         result.push('%s %s'.subs(elt, order));
+                        group_by.push([ elt, [] ]);
                     }
                 }
             } else {
-                var [col, order] = get_order_dir(field, asc);
                 var elt = qn2(col);
                 if (distinct && !(col in select_aliases))
                     ordering_aliases.push(elt);
                 result.push('%s %s'.subs(elt, order));
+                debugger; // Ver bien que es extra_select para ver si corresponde get o []
+                group_by.push(this.extra_select.get(col));
             }
         }
         this.ordering_aliases = ordering_aliases;
-        return result;
+        return [ result, group_by ];
     },
 
     /*
@@ -1089,16 +1125,21 @@ var BaseQuery = type('BaseQuery', [ object ], {
         clause.
         */
     change_aliases: function(change_map) {
+
         assert (new Set(change_map.keys()).intersection(new Set(change_map.values())) == new Set())
 
-        // 1. Update references in "select" and "where".
+        // 1. Update references in "select" (normal columns plus aliases),
+        // "group by", "where" and "having".
         this.where.relabel_aliases(change_map);
-        for (var [pos, col] in Iterator(this.select)) {
-            if (isinstance(col, Array)) {
-                var old_alias = col[0];
-                this.select[pos] = [change_map.get(old_alias, old_alias), col[1]];
-            } else {
-                col.relabel_aliases(change_map);
+        this.having.relabel_aliases(change_map);
+        for each (var columns in [ this.select, this.aggregates.values(), bool(this.group_by) || [] ]) {
+            for (var [pos, col] in Iterator(columns)) {
+                if (isinstance(col, Array)) {
+                    var old_alias = col[0];
+                    this.select[pos] = [change_map.get(old_alias, old_alias), col[1]];
+                } else {
+                    col.relabel_aliases(change_map);
+                }
             }
         }
 
@@ -1661,7 +1702,7 @@ var BaseQuery = type('BaseQuery', [ object ], {
                 var [field, model, direct, m2m] = opts.get_field_by_name(name);
             } catch (e if isinstance(e, FieldDoesNotExist)) {
                 if (!bool(opts.fields)) {
-                    names = opts.get_all_field_names();
+                    names = opts.get_all_field_names().concat(this.aggregate_select.keys());
                     throw new FieldError("Cannot resolve keyword %r into field. Choices are: %s".subs(name, names.join(", ")));
                 }
                 for each (var f in opts.fields) {
@@ -1941,7 +1982,7 @@ var BaseQuery = type('BaseQuery', [ object ], {
         } catch (e if isinstance(e, MultiJoin)) {
             throw new FieldError("Invalid field name: '%s'".subs(name));
         } catch (e if isinstance(e, FieldError)) {
-            var names = opts.get_all_field_names() + this.extra_select.keys();
+            var names = opts.get_all_field_names().concat(this.extra_select.keys()).concat(this.aggregate_select.keys());
             names.sort();
             throw new FieldError("Cannot resolve keyword %r into field. Choices are: %s".subs(name, names.join(", ")))
         }
@@ -1989,34 +2030,35 @@ var BaseQuery = type('BaseQuery', [ object ], {
         get its size.
         */
     add_count_column: function() {
-        // TODO: When group_by support is added, this needs to be adjusted so
-        // that it doesn't totally overwrite the select list.
-        var select = null;
+        /*
+        Converts the query to do count(...) or count(distinct(pk)) in order to
+        get its size.
+        */
         if (!this.distinct) {
-            if (!bool(this.select))
-                select = new Count();
-            else {
+            if (!bool(this.select)) {
+                var count = new this.aggregates_module.Count('*', false, { is_summary: true });
+            } else {
                 assert (this.select.length == 1,"Cannot add count col with multiple cols in 'select': %s" % this.select);
-                select = new Count(this.select[0]);
+                var count = new this.aggregates_module.Count(this.select[0], false);
             }
         } else {
             var opts = this.model._meta;
             if (!bool(this.select)) {
-                //join(connection, always_create, exclusions, promote, outer_if_first, nullable, reuse)
-                select = new Count([this.join([null, opts.db_table, null, null]), opts.pk.column], true);
+                var count = new this.aggregates_module.Count([this.join([null, opts.db_table, null, null]), opts.pk.column], true, { is_summary: true });
             } else {
                 // Because of SQL portability issues, multi-column, distinct
                 // counts need a sub-query -- see get_count() for details.
-                assert (this.select.length == 1, "Cannot add count col with multiple cols in 'select'.");
-                select = new Count(this.select[0], true);
+                assert (len(this.select) == 1, "Cannot add count col with multiple cols in 'select'.");
+                var count = new this.aggregates_module.Count(this.select[0], true);
             }
-            // Distinct handling is done in Count(), so don't do it at this
-            // level.
+            // Distinct handling is done in Count(), so don't do it at this level.
             this.distinct = false;
         }
-        this.select = [select];
-        this.select_fields = [null];
-        this.extra_select = new SortedDict();
+        // Set only aggregate to be the count column.
+        // Clear out the select cache to reflect the new unmasked aggregates.
+        this.aggregates = new SortedDict({ null: count });
+        this.set_aggregate_mask(null);
+        this.group_by = null;
     },
 
     /*
@@ -2145,14 +2187,26 @@ var BaseQuery = type('BaseQuery', [ object ], {
         target[model] = new Set([f.name for each (f in fields)]);
     },
 
-    /*
-        * Removes any aliases in the extra_select dictionary that aren't in 'names'.
-        * This is needed if we are selecting certain values that don't incldue
-        * all of the extra_select names.
+    set_aggregate_mask: function(names) {
+        /* Set the mask of aggregates that will actually be returned by the SELECT */
+        if (names == null)
+            this.aggregate_select_mask = null;
+        else
+            this.aggregate_select_mask = new Set(names);
+        this._aggregate_select_cache = null;
+    },
+
+    set_extra_mask: function(names) {
+        /*
+        Set the mask of extra select items that will be returned by SELECT,
+        we don't actually remove them from the Query since they might be used
+        later
         */
-    trim_extra_select: function(names) {
-        for (var key in new Set(this.extra_select.keys()).difference(new Set(names)))
-            this.extra_select.unset(key);
+        if (names == null)
+            this.extra_select_mask = null;
+        else
+            this.extra_select_mask = new Set(names);
+        this._extra_select_cache = null;
     },
 
     get aggregate_select() {

@@ -38,9 +38,9 @@ var RemoteSerializer = type('RemoteSerializer', [ Serializer ], {
         if (related != null) {
             if (field.rel.field_name == related._meta.pk.name) {
                 // Related to remote object via primary key
-            	if (related.server_pk == null)
-            		throw new ServerPkDoesNotExist('Field: %s'.subs(field.name));
-            	related = related.server_pk;
+                if (related.server_pk == null)
+                    throw new ServerPkDoesNotExist('Field: %s'.subs(field.name));
+                related = related.server_pk;
             } else {
                 // Related to remote object via other field
                 related = getattr(related, field.rel.field_name);
@@ -51,11 +51,11 @@ var RemoteSerializer = type('RemoteSerializer', [ Serializer ], {
 
     handle_m2m_field: function(obj, field) {
         if (field.creates_table) {
-        	var server_pks = [related.server_pk for each (related in getattr(obj, field.name).iterator())];
-        	server_pks.forEach(function(server_pk) {
-        		if (server_pk == null)
-            		throw new ServerPkDoesNotExist('Field: %s'.subs(field.name));
-        	});
+            var server_pks = [related.server_pk for each (related in getattr(obj, field.name).iterator())];
+            server_pks.forEach(function(server_pk) {
+                if (server_pk == null)
+                    throw new ServerPkDoesNotExist('Field: %s'.subs(field.name));
+            });
             this._current[field.name] = [string(server_pk) for each (server_pk in server_pks)];
         }
     }
@@ -64,7 +64,7 @@ var RemoteSerializer = type('RemoteSerializer', [ Serializer ], {
 /* Quiza un nombre mejor para esto, porque no solo deserializa sino que tambien 
  * transforma los objetos del servidor en objetos del cliente
  */
-function RemoteDeserializer(object_list, sync_log) {
+function RemoteDeserializer(object_list) {
     /* Para pasar los datos a objetos de modelo asume que ya estan ordenados al obtener las referencias */
     models.get_apps();
     for each (var d in object_list) {
@@ -72,8 +72,7 @@ function RemoteDeserializer(object_list, sync_log) {
         var Model = models.get_model_by_identifier(d["model"]);
         if (Model == null)
             throw new sbase.DeserializationError("Invalid model identifier: '%s'".subs(model_identifier));
-        var data = {'sync_log': sync_log,
-                    'server_pk': d["server_pk"],
+        var data = {'server_pk': d["server_pk"],
                     'active': d["active"],
                     'status': "s"};
         try {
@@ -124,7 +123,7 @@ function RemoteDeserializer(object_list, sync_log) {
 }
 
 publish({
-	ServerPkDoesNotExist: ServerPkDoesNotExist,
+    ServerPkDoesNotExist: ServerPkDoesNotExist,
     RemoteSerializer: RemoteSerializer,
     RemoteDeserializer: RemoteDeserializer,
 });

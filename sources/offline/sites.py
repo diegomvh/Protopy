@@ -382,7 +382,6 @@ class RemoteSite(RemoteBaseSite):
     def push(self, received):
         #TODO: Tirar errores
         retorno = {}
-        last_sync = datetime.datetime(*time.strptime(received['sync_log']['fields']['synced_at'], '%Y-%m-%d %H:%M:%S')[:6])
 
         # Validacion
         remote_deleted = dict(map(lambda m: (m, self.get_remote(m)), received['deleted']['models']))
@@ -395,14 +394,12 @@ class RemoteSite(RemoteBaseSite):
 
         # Por cada cambio que quiero meter, tenes el utimo sync log?
         all_models = set(received['deleted']['models'] + received['modified']['models'] + received['created']['models'])
-        import ipdb
         for app_model in all_models:
-            ipdb.set_trace()
             model = get_model(*app_model.split('.'))
+            last_sync = datetime.datetime(*time.strptime(received['sync_log'][app_model]['fields']['synced_at'], '%Y-%m-%d %H:%M:%S')[:6])
             #Esto seria para algo mas granular, pero requiere de un sync_log por modelo
-            #model_type = ContentType.objects.get_for_model(model)
-            #sd = SyncData.objects.filter(content_type__pk = model_type.id, update_at__gt=last_sync)
-            sd = SyncData.objects.filter(update_at__gt=last_sync)
+            model_type = ContentType.objects.get_for_model(model)
+            sd = SyncData.objects.filter(content_type__pk = model_type.id, update_at__gt = last_sync)
             if bool(sd):
                 raise Exception('Need Pull')
 

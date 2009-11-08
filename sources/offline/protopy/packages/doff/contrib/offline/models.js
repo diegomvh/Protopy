@@ -62,10 +62,6 @@ var SyncLog = type('SyncLog', [ models.Model ], {
 
     Meta: {
         get_latest_by: 'synced_at'
-    },
-
-    __json__: function() {
-        return json.stringify({ model: string(this._meta), synced_at: this.synced_at, sync_id: this.sync_id });
     }
 });
 

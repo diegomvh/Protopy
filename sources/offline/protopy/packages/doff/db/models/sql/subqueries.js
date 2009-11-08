@@ -130,23 +130,6 @@ var InsertQuery = type('InsertQuery', [ Query ], {
         }
     }
     });
-    
-/*
-    * A CountQuery knows how to take a normal query which would select over
-    * multiple distinct columns and turn it into SQL that can be used on a
-    * variety of backends (it requires a select in the FROM clause).
-    */
-var CountQuery = type('CountQuery', [ Query ], {
-    get_from_clause: function() {
-        var [result, params] = this._query.as_sql();
-        return [['(%s) A1'.subs(result)], params];
-    },
-
-    get_ordering: function() {
-        return [];
-    }
-});
-
 
 /*
     * Represents an "update" SQL query.
@@ -435,6 +418,7 @@ var AggregateQuery = type('AggregateQuery' , [ Query ], {
         Creates the SQL for this query. Returns the SQL string and list of
         parameters.
         */
+        debugger;
         var sql = ('SELECT %s FROM (%s) subquery'.subs(
                 [ aggregate.as_sql() for each (aggregate in this.aggregate_select.values()) ].join(', '),
                 this.subquery) );
@@ -448,6 +432,5 @@ publish({
     InsertQuery: InsertQuery,
     DateQuery: DateQuery,
     UpdateQuery: UpdateQuery,
-    CountQuery: CountQuery,
     AggregateQuery: AggregateQuery
 });
