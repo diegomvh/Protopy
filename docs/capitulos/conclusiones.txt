@@ -6,7 +6,19 @@ Conclusiones y Líneas Futuras
 Conclusiones
 ************
 
-El desarrollo consistió en el siguiente diagrama:
+Durante el desarrollo de la presente tesina se realizó un análisis sobre las
+tecnologías disponibles para el desarrollo de aplicaciones web destacando
+el aporte de los frameworks orientados a aplicaciones de contenidos, como Ruby On Rails o 
+Django. Gracias a estar implementados en lenguajes de alto nivel y minimizando
+la cantidad de capas, facilitan la tarea de extensión.
+
+   
+
+El trabajo fue realizado integramente con Software Libre y el producto
+también consituye un framework bajo el mismo tipo de licencia.
+
+
+
 
 La solución propuesta se basó integramente en Open Source. Se utilizaron los
 siguientes productos:
@@ -72,29 +84,55 @@ Cosas que hacer notar:
 Lineas futuras
 **************
 
+Conversión de código Python en JavaScript
+=========================================
+
+Google publicó en Mayo de 2006 un proyecto llamado Google Web Toolkit (GWT) [*]_, que 
+consiste en un compilador de Java en JavaScript, que permite al programador
+relizar aplicaciones web totalmente en Java. James Tauber y Luke Casson Leighton
+realizaron una implementación similar a GWT sobre Python, denominada PyJamas [*]_.
+Es posible por lo tanto generar un compilador de código Python a JavaScript,
+utilizando la API de Protopy y Doff, permitiendo que los programadores utilizen 
+Python para la totalidad del desarrollo.
+
+
+.. [*] http://code.google.com/intl/es-AR/webtoolkit/
+.. [*] http://pyjs.org/features.html
+
 Sitio de administración
 =======================
-Django se caracteriza por brindar una aplicación ``django.contrib.admin``
-de admnistración que permite realizar CRUD (Create, Retrieve, Update, Delete)
-sobre los modelos de las aplicaciones de usuario, interactuando con la
-aplicación ``django.contrib.auth`` que provee
-usuarios, grupos y permisos.
+Django se caracteriza por brindar una aplicación de admnistración (``django.contrib.admin``) 
+que permite 
+realizar CRUD (Create, Retrieve, Update, Delete) sobre los modelos de las 
+aplicaciones de usuario, interactuando con la aplicación  de autorización y permisos
+(``django.contrib.auth``).
+En base a la implemetnación de Protopy y Doff sería posible implementar un 
+sitio de administración similar.
+
  
 Workers con soporte para Javascript 1.7
 =======================================
 Gears provee un mecanismo de ejecución de código en el cliente de manera
-concurrente llamado Worker Pool. De esta manera tareas que demandan tiempo de
-CPU pueden ser envaidas a segundo plano, de manera de no entorpecer el refresco 
+concurrente llamado Worker Pool que permite a tareas que demandan tiempo de
+CPU considerables ser ejecutadas en segundo plano, evitando entorpecer el refresco 
 de la interfase del navegador.
 Una caractersística de los worker pools, es que se ejecutan en un ámbito de 
 nombres diferente al del hilo principal y el único mecanismo de comunicación
 con el hilo principal es un sistema de cola de mensajes.
 
-Se podría aprovechar este esquema para ejecutar ciertas partes de Doff en el 
-uno o más Workers.
+Se podrían aislar partes del framework Doff para relizar tareas como el ciclo
+del ``Request`` o las tareas de acceso a la base de datos en un Worker Pool.
+
 
 Compatibilidad con ES5 y HTML 5
 ===============================
 EcmaScrtip 5 o JavaScript 2.0 resulve varios aspetctos que fueron abordados
-por Protopy/Doff, como un sistema de clases. 
+por Protopy/Doff, como un sistema de clases. Muchas optimizaciones realizadas
+sobre Doff 
+
+
+Optimizaciones en Base a Permanencia de Estado
+==============================================
+
+.. note:: completar!!! 
 

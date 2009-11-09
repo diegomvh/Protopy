@@ -2,10 +2,11 @@
 La aplicación
 ****************
 
-Una vez lograda la implementación de Django en el cliente, el framework
-de aplicaciones Doff, se comenzó a trabajar en la integración con los proyectos
-en línea.
-
+El presente capítulo profundiza sobre el soporte en el servidor para lograr
+la desconexión de proyectos basados en Django. Este soporte se realiza mediante
+la aplicación genérica ``offline``. Sus objetivos son brindar las facilidades
+para desconectar una aplicación, es decir, instalar el proyecto desconectado y
+sincronizar datos.
 
 Doff fue desarrollado con el objetivo de realizar la menor cantidad de 
 reescritura posible de las aplicaciones Django al momento de ser ejecutadas de manera

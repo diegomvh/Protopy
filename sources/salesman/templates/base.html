@@ -37,13 +37,15 @@ Released   : 20090918
 	<div id="menu">
 		<ul>
 			{% block main_menu %}
-			<li class="current_page_item"><a href="#">Incicio</a></li>
+			<li class="current_page_item"><a href="/">Incicio</a></li>
 			<li><a href="/ventas ">Ventas</a></li>
 			
 			{% if not offline %}
+			
+			<li><a href="/off/agentes">Offline</a></li>
 			<li><a href="/admin">Admin</a></li>
 			<li><a href="/static/docs">Docs</a></li>
-			<li><a href="/vendedores">Filminas</a></li>
+			
 			{% endif %}
 			
 			{% endblock %}
@@ -76,8 +78,11 @@ Released   : 20090918
 			{% block sidebar %}
 			<ul>
 				<li>
-					<h2>Veroeros sit dolore</h2>
-					<p><strong>Donec turpis orci</strong> facilisis et ornare eget, sagittis eu massa. Quisque dui diam, euismod et lobortis sed etiam lorem ipsum dolor etiam nullam et faucibus. <a href="#">More&#8230;</a></p>
+					<h2>Documentación</h2>
+					<p>
+						<a href="">Archivo de documentación</a><br/>
+						<a href="">Filminas</a><br/>
+					</p>
 				</li>
 				<li>
 					<h2>Categorías</h2>
