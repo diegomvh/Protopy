@@ -53,6 +53,7 @@ var BaseDatabaseFeatures = type('BaseDatabaseFeatures', [ object ], {
     can_use_chunked_reads: true,
     uses_savepoints: false,
     related_fields_match_type: false,
+    can_return_id_from_insert: false,
     can_read_columns_name: false
 });
 
@@ -83,6 +84,8 @@ var BaseDatabaseOperations = type('BaseDatabaseOperations', [ object ], {
     max_name_length: function() { return null; },
     no_limit_value: function() { throw new NotImplementedError() },
     pk_default_value: function() { return 'DEFAULT'; },
+    process_clob: function(value) { return value; },
+    return_insert_id: function() {},
     query_class: function(DefaultQueryClass) { return null; },
     quote_name: function(name) { throw new NotImplementedError(); },
     random_function_sql: function() { return 'RANDOM()'; },
