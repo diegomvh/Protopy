@@ -3,7 +3,7 @@
 TARGETS=../../docs/_svg/modelo_salesman.png  ../../docs/_svg/modelo_offline.png
 DOTS=$(TARGETS:.png=.dot)
 GRAPHVIZ=dot
-GRAPHVIZ_PARAM="-Gdpi=150 -Tpng"
+GRAPHVIZ_PARAM=-Gdpi=150 -Tpng
 
 all: $(TARGETS)
 	echo "Construi el" $(TARGETS)

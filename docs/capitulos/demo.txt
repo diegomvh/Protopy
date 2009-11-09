@@ -7,30 +7,69 @@ Se diseñó una aplicación denominada ``salesman`` (agente de ventas viajante)
 para ejemplificar el funcionamiento de Protopy y Doff. La aplicación modela
 una empresa dedicada a la venta de productos mediante agentes viajantes.
 Cada viajante tiene asignada una serie de ciudades, donde toma pedidos, 
-y crea clientes.
+y crea clientes. Una vez que un agente vuelve a tener contacto con la aplicación
+web
 
 El código fuente del proyecto se ubicó en la carpeta ``sources``, donde también
 se encuentra la aplicación ``offline`` mencionada en los captítulos de Doff y
 Protopy. ``salesman`` se ubicó al mismo nivel que ``offline``, para instalar
-``offline`` en ``salesman`` se aumentó el PYTHONPATH. 
+``offline`` en ``salesman`` se aumentó el PYTHONPATH en el módulo ``settings.py``.
 
 .. code-block:: python
 
+    # Se agrega el directorio padre como repositorio de paquetes Python
     sys.path.append('..')
-    from os.path import abspath, dirname, join
-    PATH = abspath(dirname(__file__))
+    
 
-
-El parámetro ``OFFLINE_BASE`` es ``"off"``. El sitio remoto que se creo para
-la demostración es ``ventas``. El objetivo de esta aplicación es la creación
-desconectada de peidos y la sincronización.
+El parámetro ``OFFLINE_BASE`` es la cadena ``"off"``. El sitio remoto que se creo para
+la demostración fue llamado ``ventas``. El objetivo de esta aplicación es la creación
+desconectada de peidos y la sincronización de estos.
 
 
 Modelo
 ------
 
+El proyecto se dividió en dos aplicaciones: ``core`` con entidades reusables y
+``ventas`` donde se definieron los pedidos.
+
+Las entidades definidas en la aplicación ``core`` fueron las siguientes:
+    
+    * Pais
+    
+    * Provincia
+        
+        Relacionado con Pais.
+        
+    * Ciudad
+    
+        Relacionado con Provincia
+    
+    * Vendedor
+    
+        Posee información personal y las ciudades asingadas.
+    
+    * Porveedor
+        
+        Relacionado con los productos que provee.
+    
+    * Categoria
+        
+        Identificación de tipos de productos. 
+    
+    * Producto
+    
+    
+        
+
+En la aplicación ``ventas`` cuenta con las entidades:
+
+    * Pedidas
+    
+    * ItemPedido
+    
+ 
 .. figure:: ../_svg/modelo_salesman.png
-    :width: 90
+    :width: 70
     
     Diagrama de Base de Datos de Salesman (generado con ``graph_models``)
 
@@ -42,6 +81,27 @@ Este tipo de vistas se encuentran implementadas dentro del paquete
 ``django.views.generic`` y prveen funcionalidad muy frecuente como CRUD, 
 consultas, comentarios, redirección, etc. 
 
-Por ejemplo:
+Las vistas genéricas utilzadas fueron:
+
+    * ``django.views.generic.simple.direct_to_template``
+    
+        Procesa un template como salida, recibe como arugmento el template
+        en un diccionario.
+        
+    * ``django.views.generic.create_update.create_object``
+        
+        Crea una entidad en la base de datos. Recibe los argumentos:
+        
+            * post_save_redirect: La URL a la cual el cliente es redirigod
+              tras la creación existosa de la entidad, por defecto es  ``object.get_absolute_url()``.
+      
+            * template_name: Nombre del template que se usará para generar la salida.
+            
+            * extra_context: Elementos extra para generar el template.
+    
+        
+    * ``django.views.generic.create_update.update_object``
+    * ``django.views.generic.create_update.delete_object``
+    
 
 
