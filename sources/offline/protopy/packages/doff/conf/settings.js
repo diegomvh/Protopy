@@ -35,6 +35,8 @@ publish({
 
         TEMPLATE_STRING_IF_INVALID: '',
 
+        SYNC_MIDDLEWARE_CLASS: 'doff.middleware.sync.SyncMiddleware',
+
         MIDDLEWARE_CLASSES: [
             'doff.middleware.common.CommonMiddleware',
             'doff.contrib.auth.middleware.AuthenticationMiddleware',

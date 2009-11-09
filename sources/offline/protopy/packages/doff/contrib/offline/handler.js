@@ -5,6 +5,7 @@ require('doff.db.models.base', 'get_model_by_identifier', 'get_models', 'Foreign
 require('doff.db.models.query', 'delete_objects', 'CollectedObjects');
 require('doff.contrib.offline.serializers', 'RemoteSerializer', 'RemoteDeserializer', 'ServerPkDoesNotExist');
 require('doff.utils.datastructures', 'SortedDict');
+require('doff.core.exceptions', 'ImproperlyConfigured');
 
 function get_model_order(model_lists) {
     var model_adj = new SortedDict();
@@ -39,7 +40,7 @@ var SyncHandler = type('SyncHandler', [ object ], {
         this.server = new ServiceProxy(get_project().offline_support + '/sync', {asynchronous: false});
         this.serializer = new RemoteSerializer();
         this.deserializer = RemoteDeserializer
-        // this.load_middleware();
+        this.load_middleware();
     },
 
     save_recived: function(received, sync_log) {
@@ -91,7 +92,7 @@ var SyncHandler = type('SyncHandler', [ object ], {
             }
             return;
         }
-    
+
         debugger;
         var [ received, sync_log_data ] = this.pull(last_sync_log);
         var sync_log = new SyncLog(sync_log_data);
@@ -124,44 +125,21 @@ var SyncHandler = type('SyncHandler', [ object ], {
         /*
         Populate middleware lists from settings.MIDDLEWARE_CLASSES.
         */
-        require('doff.core.exceptions');
-        this._view_middleware = [];
-        this._response_middleware = [];
-        this._exception_middleware = [];
+        this._sync_middleware = null;
 
-        var request_middleware = [];
-        for each (var middleware_path in this.settings.SYNC_MIDDLEWARE_CLASSES) {
-            var dot = middleware_path.lastIndexOf('.');
-            if (dot == -1)
-                throw new exceptions.ImproperlyConfigured('%s isn\'t a middleware module'.subs(middleware_path));
-            var [ mw_module, mw_classname ] = [ middleware_path.slice(0, dot), middleware_path.slice(dot + 1)];
-            try {
-                var mod = require(mw_module);
-            } catch (e if isinstance(e, LoadError)) {
-                throw new exceptions.ImproperlyConfigured('Error importing middleware %s: "%s"'.subs(mw_module, e));
-            }
-            var mw_class = getattr(mod, mw_classname);
-            if (isundefined(mw_class))
-                throw new exceptions.ImproperlyConfigured('Middleware module "%s" does not define a "%s" class'.subs(mw_module, mw_classname));
-
-            try {
-                var mw_instance = new mw_class();
-            } catch (e if isinstance(e, exceptions.MiddlewareNotUsed)) {
-                continue;
-            }
-
-            if (hasattr(mw_instance, 'process_request'))
-                request_middleware.push(mw_instance.process_request);
-            if (hasattr(mw_instance, 'process_view'))
-                this._view_middleware.push(mw_instance.process_view);
-            if (hasattr(mw_instance, 'process_response'))
-                this._response_middleware.shift(mw_instance.process_response);
-            if (hasattr(mw_instance, 'process_exception'))
-                this._exception_middleware.shift(mw_instance.process_exception);
+        var dot = this.settings.SYNC_MIDDLEWARE_CLASS.lastIndexOf('.');
+        if (dot == -1)
+            throw new exceptions.ImproperlyConfigured('%s isn\'t a middleware module'.subs(middleware_path));
+        var [ mw_module, mw_classname ] = [ this.settings.SYNC_MIDDLEWARE_CLASS.slice(0, dot), this.settings.SYNC_MIDDLEWARE_CLASS.slice(dot + 1)];
+        try {
+            var mod = require(mw_module);
+        } catch (e if isinstance(e, LoadError)) {
+            throw new exceptions.ImproperlyConfigured('Error importing middleware %s: "%s"'.subs(mw_module, e));
         }
-        // We only assign to this when initialization is complete as it is used
-        // as a flag for initialization being complete.
-        this._request_middleware = request_middleware;
+        var mw_class = getattr(mod, mw_classname);
+        if (isundefined(mw_class))
+            throw new exceptions.ImproperlyConfigured('Middleware module "%s" does not define a "%s" class'.subs(mw_module, mw_classname));
+        this._sync_middleware = new mw_class();
     },
 
     purge: function(objs) {
@@ -187,7 +165,7 @@ var SyncHandler = type('SyncHandler', [ object ], {
     },
 
     push: function() {
-        
+
         var chunked = false;
         var collected_objects = {};
         var to_send = {'sync_log': {}};
