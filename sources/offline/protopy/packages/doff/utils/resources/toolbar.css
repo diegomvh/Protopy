@@ -1,3 +1,22 @@
+/* v1.0 | 20080212 */
+
+div#doff-toolbar h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-size: 100%;
+    vertical-align: baseline;
+    background: transparent;
+}
+
 div#doff-toolbar {
     font-family: "Trebuchet MS" Verdana, Arial, sans-serif;
     font-size: 1em;
@@ -57,7 +76,6 @@ div#doff-toolbar ul.doff-toolbar-bar {
     border-left: 1px solid #CCCCCC;
     border-right: 1px solid #CCCCCC;
     margin: 0px;
-    padding: 4px;
     height: 29px;
 }
 

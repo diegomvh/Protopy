@@ -1,4 +1,4 @@
-require('doff.core.exception', 'ImproperlyConfiguredException');
+require('doff.core.exceptions', 'ImproperlyConfiguredException');
 require('doff.core.project', 'get_settings');
 
 var SyncMiddleware = type('SyncMiddleware', [ object ], {
@@ -59,20 +59,24 @@ var SyncMiddleware = type('SyncMiddleware', [ object ], {
 
 var ClientWins = type('ClientWins', [ SyncMiddleware ], {
 
-    resolve_unique: function(local_object, remote_object) {
-        throw new NotImplementedError();
+    resolve_Unique: function(local_object, remote_object) {
+        print("Gana el cliente");
+        return local_object;
     },
 
     reoslve_LocalDeletedRemoteModified: function(local_object, remote_object) {
-        throw new NotImplementedError();
+        print("Gana el cliente");
+        return local_object;
     },
 
     resolve_LocalModifiedRemoteModified: function(local_object, remote_object) {
-        throw new NotImplementedError();
+        print("Gana el cliente");
+        return local_object;
     },
 
     reoslve_LocalModifiedRemoteDeleted: function(local_object, remote_object) {
-        throw new NotImplementedError();
+        print("Gana el cliente");
+        return local_object;
     },
 
 
@@ -80,19 +84,23 @@ var ClientWins = type('ClientWins', [ SyncMiddleware ], {
 var SeverWins = type('ClientWins', [ SyncMiddleware ], {
 
     resolve_unique: function(local_object, remote_object) {
-        throw new NotImplementedError();
+        print("Gana el servidor");
+        return remote_object;
     },
 
     reoslve_LocalDeletedRemoteModified: function(local_object, remote_object) {
-        throw new NotImplementedError();
+        print("Gana el servidor");
+        return remote_object;
     },
 
     resolve_LocalModifiedRemoteModified: function(local_object, remote_object) {
-        throw new NotImplementedError();
+        print("Gana el servidor");
+        return remote_object;
     },
 
     reoslve_LocalModifiedRemoteDeleted: function(local_object, remote_object) {
-        throw new NotImplementedError();
+        print("Gana el servidor");
+        return remote_object;
     },
 
 

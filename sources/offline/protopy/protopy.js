@@ -1639,7 +1639,7 @@
     function getattr(object, name, def) {
         //TODO: validar argumentos
         var attr = null;
-        if (!isundefined(object)) {
+        if (!isundefined(object) && object != null) {
             attr = object[name];
             if (!isundefined(attr)) {
                 if (type(attr) == Function && isundefined(attr['__new__'])) {
@@ -1650,8 +1650,8 @@
                 }
             }
         }
-        if (isundefined(def))
-            throw new AttributeError(object.__name__ || object.name + ' has no attribute ' + name);
+        if (object === null || isundefined(def))
+            throw new AttributeError(object + ' has no attribute ' + name);
         else
             return def;
     }

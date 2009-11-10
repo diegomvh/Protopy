@@ -33,8 +33,8 @@ var Project = type('Project', object, {
             file_config(sys.module_url(this.package, 'logging.js'));
         } catch (except) {}
 
-        //this._create_toolbar();
-        // this.network_check();
+        this._create_toolbar();
+        //this.network_check();
         // this.start_network_thread();
         // this.go_offline();
         sys.window.location = '/';
@@ -191,6 +191,7 @@ var Project = type('Project', object, {
             return;
         this.thread = window.setInterval(getattr(this, '_network_check'), this.NET_CHECK * 1000);
     },
+
     stop_network_thread: function(){
         if (this.thread != null) {
             window.clearInterval(this.thread);

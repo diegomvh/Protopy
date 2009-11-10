@@ -354,7 +354,7 @@ class RemoteSite(RemoteBaseSite):
                 # Si no es el primero filtro solo los modelos interesantes
                 if not first:
                     model_type = ContentType.objects.get_for_model(model)
-                    sd = SyncData.objects.filter(content_type__pk = model_type.id, update_at__range=(last_sync, new_sync))
+                    sd = SyncData.objects.filter(content_type__pk = model_type.id, update_at__gt=last_sync).filter(update_at__lt=new_sync)
                     if bool(sd):
                         models.append(model)
                 else:
@@ -370,7 +370,7 @@ class RemoteSite(RemoteBaseSite):
             if first:
                 retorno['objects'].extend(remote_manager.all())
             else:
-                retorno['objects'].extend(remote_manager.filter(update_at__range = (last_sync, new_sync)))
+                retorno['objects'].extend(remote_manager.filter(update_at__gt = last_sync, update_at__lt = new_sync))
 
         retorno['sync_log'] = {}
         retorno['sync_log']['synced_at'] = new_sync.strftime("%Y-%m-%d %H:%M:%S")
