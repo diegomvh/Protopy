@@ -6,19 +6,29 @@ El presente capítulo profundiza sobre el soporte en el servidor para lograr
 la desconexión de proyectos basados en Django. Este soporte se realiza mediante
 la aplicación genérica ``offline``. Sus objetivos son brindar las facilidades
 para la "desconexión", es decir, instalar el proyecto Doff en el cliente y
-brindar soporte para sincronizar datos.
+brindar un mecanismo integrado para la sincronizar datos.
 
 Doff fue desarrollado con el objetivo de realizar la menor cantidad de 
 reescritura posible de las aplicaciones Django al momento de ser ejecutadas de manera
-desconectada. Si bien fue intecinalmente omitido en el capítulo sobre el
-framework desconectado, contar con la misma API de ORM hace posible la generación de 
-modelos del cliente de manera autónoma a partir del análisis
-de las definciones de los modelos de la aplicación en línea.
+desconectada. Esto se manifiesta en que:
 
-De la misma manera, las plantillas del proyecto conectado, no requieren
-adaptaciones (en el caso de que utilicen JavaScrpipt, deben adecuarlo
-a las normativas de Doff y las etiquetas de templates no estándares
-deben ser reescritas en Doff).
+    * Al contar con la misma API de ORM los modelos de las aplicaciones del cliente
+      pueden ser generados a partir del análisis de las definiciones de los
+      modelos del proyecto en línea.   
+       
+    * Las plantillas del proyecto conectado son las mismas que se utilzan
+      en el proyecto desconectado, adaptando las sentencias de JavaScript 
+      a la librería Porotpy y reescribiendo las etiquetas de plantilla (*template tags*).
+      
+Sin embargo existen dos aspectos que requieren la reescritura por parte del 
+programador:
+
+    * Las URLs,
+    
+    * Las vistas
+           
+Debido a que las expresiones regulares de JavaScript no poseen la
+misma sintaxis que en Python, los módulos ``url`` deben ser reescritos.      
 
 Las vistas y las URLs deben ser reescritas, ya que por
 no contarse con el mismo soporte para expresiones regulares, y debido
