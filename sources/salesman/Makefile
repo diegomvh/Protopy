@@ -9,10 +9,10 @@ all: $(TARGETS)
 	echo "Construi el" $(TARGETS)
     
 ../../docs/_svg/modelo_salesman.dot: ./apps/core/models.py ./apps/ventas/models.py
-	manage.py graph_models -g core ventas $(GRAPHIZ_PARAM) -o $@
+	./manage.py graph_models -g core ventas $(GRAPHIZ_PARAM) -o $@
     
 ../../docs/_svg/modelo_offline.dot: ../offline/models.py
-	manage.py graph_models -g offline contenttypes $(GRAPHIZ_PARAM) -o $@
+	./manage.py graph_models -g offline contenttypes $(GRAPHIZ_PARAM) -o $@
 
 ../../docs/_svg/modelo_offline.png: ../../docs/_svg/modelo_offline.dot
 	$(GRAPHVIZ) $(GRAPHVIZ_PARAM) -o $@ $^
