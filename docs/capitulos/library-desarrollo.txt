@@ -4,16 +4,12 @@
 Protopy
 #######
 
-
-
-
 El presente capítulo profundiza sobre el desarrollo de la librería de JavaScript
 sobre la cual se implementó una versión desconectada de Django. Como se mencionó
 en el capítulo anterior, si bien JavaScript en sus versiones 1.7 y 1.8 incorpora
 muchos elementos que acercan su sintaxis a la de Python, fue 
 necesario implementar esta capa intermedia entre JavaScript y Django "desconectado".
 Uno de los objetivos más relevante es emular la API estándar de Python.
-
 
 La biblioteca se basó en el código fuente de Prototype, sobre la cual se fue agregando
 y sustituyendo código. El resultado de esta modificación se denomino Protopy en honor a 
@@ -22,31 +18,34 @@ sus dos "padres", *Prototype JavaScript Library* y el lenguaje de programación
 
     | **proto** type + **py** thon = **protopy**
 
- 
+.. note:: me gustaria poner las problematicas antes de entrar en las caracteristicas.
 
 Características de la Librería
--------------------------------
+==============================
 
 Algunas de las características más relevantes de Protopy son:
 
-
 * Modularización y ámbito de nombres.
+
+    Un framework con funciones minimas, como una API de base de datos y un motor
+    de plantillas, requiere de varias lineas de código para su implementación.
+    Es por esto que resulta deseable que existan formas de organizar y obtener
+    código en el cliente; liberando así al desarrollador de estas tareas
+    tediosas y permitiendole enfocarse en la funcionalidad.
 
     Un framework con funciones mínimas, como una API de base de datos y un motor
     de plantillas, requiere una cantidad considerable de código. Django por ejemplo
-    consta de alrededor de 43000 líneas, sin contar las aplicaciones 
-    contribuidas (administración, GIS, sesiones, autenticación, bitácora) [*]_.
+    consta de alrededor de 43000 líneas [*]_.
     En particular, para migrar un framework implementado sobre Python, el sistema
     de paquetes es muy importante. En Python los módulos definen ámbitos de nombres
     de los cuales se pueden importar selectivamente sólo los símbolos usados, sin
     contaminar el ámbito local.
-    
+
     Protopy implementa un sistema de ámbitos de nombres similar al de Python, 
     integrado con el sistema de paquetes. Cada módulo posee un ámbito de nombres
     aislado. La publicación de símbolos de un paquete (funciones, constantes, 
     clases) es explícito a diferencia de Python.
 
-   
 
 * Orientación a Objetos "Pythonica"
 
@@ -104,46 +103,46 @@ Algunas de las características más relevantes de Protopy son:
             filter( function (e) { return e.getAttribute('href'); });
 
     Mientras que con selección CSS, esto se reduce a:
-    
+
     .. code-block:: javascript
-    
+
         var links = $$('a[href]');
-       
+
     Las librerías YUI, Prototype, jQuery, Dojo y Ext JS entre otras poseen este
     tipo de selector. Su utilización libera al desarrollador de incompatibilidades 
     o implementaciones pobres de DOM, a la hora de interactuar con los elementos
     del documento. 
-    
+
     Peppy es una librería de JavaScript que implementa un selector CSS que 
     fue incorporado dentro del núcleo de Protopy como selector de elementos
     del DOM. Las funciones se implentaron en ``$("id")`` para recuperar elementos
     por identificador y ``$$("selector_css")`` para recuperar un conjunto basado
     en un criterio CSS.   
-     
+
 .. [*] Métrica obtenida del comando 
     ``wc -l $(find django -iname "*.py" | grep -v contrib | grep -v backends)``
-    
+
 * Compatibilidad de Protopy
 
     JavaScript 1.7 sólo se encuentra disponible sobre la plataforma Mozilla
     (Firefox 3.0+), de modo que se eliminaron  
     gran parte de los arreglos de compatibilidad presentes originalmente en Prototype
     y se portó a la nueva sintaxis muchas partes del código original.
-    
+
     Por esta razón Protopy es únicamente compatible con Firefox actualmente.  
 
 
 En la siguiente figura se ilustran los diferentes componentes de Protopy:
 
 .. figure:: ../_svg/esquema_protopy.png
-    
+
     Composición de Protopy
 
 .. _protopy-modulos:
 
 
 Utilización de la Biblioteca
------------------------------
+============================
 
 La librería Protopy consiste en un único recurso JavaScript llamado
 ``protopy.js``. Su inclusión debe realizarse en la cabecera del documento, 
@@ -160,70 +159,66 @@ en la jerarquía de directorios *(/ruta/a/protopy/* en el ejemplo expuesto anter
 
 Tambien mediante el atributo ``src`` de la etiqueta ``script`` de inclusión de Protopy, se pueden
 pasar argumentos en la URL. Por ejemplo::
-    
+
     src="/ruta/a/protopy/protopy.js?argumento=valor&argumento=valor"
-    
+
 Existen algunos argumentos utilizados por el framework desconectado que se 
 analizarán en el capítulo siguiente.
-    
 
 
-Recursos y Módulos 
------------------------
-
+Recursos y Módulos
+==================
 
 Como se mencionó en el apartado teórico dedicado a JavaScript, la inclusión
 de código en un documento HTML se realiza mediante la etiqueta ``script`` definiendo
-en el atributo ``src`` la URL del recurso. 
-Cuando el navegador encuentra estas
-etiquetas en el análisis del documento (o *parsing*), descarga el recurso y lo
-evalúa en el contexto de elemento ``window`` (es decir, si en el código se define
-una variable ``a`` fuera del bloque de una función, ésta pasa a ser miembro
-del objeto ``window``).
- 
-La carga de JavaScript mediante etiquetas de inclusión es práctico para proyectos pequeños
-(donde se utiliza JavaScript para validación, enriquecimiento de formularios, accesibilidad) 
-pero resulta limitado y poco mantenible en proyectos grandes ( en los cuales la cantidad de JavaScript crece).
+en el atributo ``src`` la URL del recurso.
+Cuando el navegador encuentra estas etiquetas en el análisis del documento,
+descarga el recurso y lo evalúa en el contexto de elemento ``window``
+(es decir, si en el código se define una variable ``a`` fuera del bloque de una
+función, ésta pasa a ser miembro del objeto ``window``).
+
+La carga de JavaScript mediante etiquetas de inclusión es práctico para
+proyectos pequeños (donde se utiliza JavaScript para validación, enriquecimiento
+de formularios, accesibilidad) pero resulta limitado y poco mantenible en
+proyectos grandes (en los cuales la cantidad de JavaScript crece).
 
 En Protopy se buscó la forma de solucionar este problema analizando la forma
-en la que se resuelve en el lenguaje Python, en donde la modularidad y 
-la creación de ámbitos de nombres están íntimamente relacionados.
+en la que se resuelve en el lenguaje Python, en donde la modularidad y la creación
+de ámbitos de nombres están íntimamente relacionados. De esta forma desarrollo
+se oriento en pequeñas unidades funcionales llamadas *modulos*. 
 
-En vez de cargar los recursos mediante la inclusión de etiquetas, se tomó la idea 
-de la carga asincrónica de código de Kris Kowal [KrisKowal09]_, también
-presente en YUI [YahooYUILoader09]_, donde se utiliza una función de inclusión
+    "Namespaces are one honking great idea -- let's do more of those!"
+
+    -- import this
+
+El enfoque modular no es nuevo en programación y basicamente, la implementación
+de Protopy, implica llevar el concepto de "divide y vencerás" ó "análisis
+descendente (Top-Down)" al hambito de JavaScript.
+
+En vez de cargar los recursos mediante la inclusión de etiquetas, se tomó la idea
+de la carga asincrónica de código donde se utiliza una función de inclusión
 que genera peticiones ``XmlHTTPRequest`` a los recursos y los evalúa cuando se
-completan. Se utilizó la implementación de Dojo quedando de manifiesto en los 
-comandos de inclusión, por ejemplo, ``require`` en lugar de  ``import``.  
+completan. Esta idea esta basa en la implementación de Dojo [DojoToolkit09],
+pero a diferencia del mismo cada módulo define en si mismo un espacio de nombres.
 
-
-.. [KrisKowal09] Kris Kowal,
-                Proyecto module.js,
+.. [DojoToolkit09] The Dojo Toolkit,
+                Documentacion de la función ``require``,
                 útlimo acceso Septiembre 2009,
-                http://modulesjs.com/
+                http://www.dojotoolkit.org/
 
-.. [YahooYUILoader09] YUI Team,
-                Documentación del módulo YUI Loader,
-                último acceso Septiembre 2009,
-                http://developer.yahoo.com/yui/yuiloader/
+Por ello, se agregó a Protopy la función ``require( "nombre_modulo" )``, esta 
+recibe como parámetro una cadena con el nombre del módulo que se desea obtener
+y posteriormente lo descarga asincrónicamente del servidor retornando al ámbito
+del llamador el módulo evaluado en un contexto aislado. La funcion ``require``
+tiene otros modos de uso detallados en el apendice.
 
-Por ello, se agregó al ámbito global la función ``require( "nombre_modulo" )`` que recibe
-como parámetro una cadena con el nombre del módulo que se desea cargar y lo descarga asincrónicamente
-para luego evaluarlo en un contexto aislado.
+En Protopy, un módulo es un recurso JavaScript que publica explícitamente una
+interface. De esta manera la funcionalidad se encuentra encapsulada. Para
+publicar un elemento del módulo se utiliza la función
+``publish({nombre: objeto, nombre: objeto})``.
 
-.. http://www.gulic.org/almacen/diveintopython-5.4-es/html_processing/locals_and_globals.html
-
-En Protopy, un módulo es un recurso JavaScript que publica explícitamente una interface. 
-De esta manera la funcionalidad se encuentra encapsulada. Para publicar un elemento
-del módulo se utiliza la función ``publish({nombre: objeto, nombre: objeto})``.
- 
-Además de cargar el módulo, la función ``require()`` se encarga publicación en
-el ámbito local a la invocación de los símbolos que sean publicados mediante ``publish()``.
-
-..note:: EH?? Me parece que la oración anterior no está bien escrita! 
-
-Durante la evaluación se encuentra disponible la variable ``__name__`` que 
-tiene como valor el nombre del módulo que se está evaluando.
+Durante la evaluación de un módulo se encuentran disponibles las variables 
+``__name__`` y ``__file__``, las cuales permiten al módul conocer su identidad.
 
 Los módulos se pueden organizar jerarquicamente en directorios, los cuales se
 denomina paquetes. El comando ``require("a.b")`` carga el elemento ``b`` del
@@ -238,7 +233,7 @@ per se [*]_ . La única función de ellos es la de establecer una estructura.
     ``import paquete``)
 
 Carga de Módulos
-~~~~~~~~~~~~~~~~
+----------------
 
 Cuando se utiliza la función ``require`` la búsqueda de los módulos se realiza
 en la *ruta base*. Esta se estableció como el subdirectorio ``packages``
@@ -281,7 +276,7 @@ La función ``require`` se puede usar para:
 Una descripción detallada se encuentra en el apéndice dedicado a Protopy.
 
 Publicación de Módulos
-~~~~~~~~~~~~~~~~~~~~~~
+----------------------
 
 En Python no es necesario declarar de manera explícita que símbolos se exponen
 en un módulo, ya que todas las definiciones son públicas. Por ejemplo, si
@@ -291,7 +286,7 @@ se define un módulo ``utils.py`` con el siguiente código:
 
     def promedio(lista_de_enteros):
         return sum(lita_de_enteros) / float(len(lista_de_enteros))
-    
+
     def cantidad_palabras(linea):
         return len(linea.split())
 
@@ -314,17 +309,14 @@ y publicación de las dos funciones mostradas en el ejemplo anterior:
     :linenos:
 
     function promedio(lista_de_enteros) {
-        var suma = 0;
-        for (int i = 0; i < lista_de_enteros.length; i++){
-            suma += lista_de_enteros[i]
-        }
+        var suma = lista_de_enteros.reduce(function(a, b){ return a + b; });
         return suma / lista_de_enteros.length;
     }
-    
+
     function cantidad_palabras(linea) {
         return linea.split(' ').length
     }
-    
+
     publish({
         promedio: promedio,
         cantidad_palabras: cantidad_palabras
@@ -346,13 +338,13 @@ Está demasiado escueto. Deberían describir un poquito más cada módulo.
         Este módulo cuenta con los tipos y funciones disponibles en 
         el ámbito global ni bien se inicia Protopy.
         Provee los siguientes símbolos:
-        
+
         * ``publish()``
-        
+
             Publica el contenido de un módulo, recibe como argumento una
             arreglo asociativo. Como ya se mencionó, en Protopy el contenido
             de los módulos es privado por defecto.
-            
+
             Por ejemplo, para publicar un elemento en un módulo
             se utiliza el siguiente código:
             

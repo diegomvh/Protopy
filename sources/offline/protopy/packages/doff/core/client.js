@@ -149,8 +149,10 @@ var DOMAdapter = type('DOMAdapter', [ object ], {
     _process_request: function(request) {
         //Te queres ir?
         //if (!request.is_valid()) return;
-        if (!request.is_same_origin(this._root_url))
+        if (!request.is_same_origin(this._root_url)) {
             window.location = string(request.URL);
+            return;
+        }
         this.history.navigate(this._path_to_state(request.path), request.URL);
         this._current_url = request.URL;
         this.send(request);

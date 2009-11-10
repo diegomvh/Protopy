@@ -341,7 +341,7 @@ var BaseQuery = type('BaseQuery', [ object ], {
 
         with_limits = isundefined(with_limits)? true : with_limits;
         with_col_aliases = isundefined(with_col_aliases)? false: with_col_aliases;
-
+        
         this.pre_sql_setup();
         var out_cols = this.get_columns(with_col_aliases);
         //TODO: ver el ordering

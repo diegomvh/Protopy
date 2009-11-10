@@ -1,0 +1,29 @@
+########################
+with overline, for parts
+########################
+
+bla bla
+
+***************************
+with overline, for chapters
+***************************
+
+bla bla
+
+for sections
+============
+
+bal bal
+
+for sections
+------------
+
+bal bal
+
+for sections
+^^^^^^^^^^^^
+
+bal bal
+
+for sections
+""""""""""""

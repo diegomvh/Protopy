@@ -5,6 +5,7 @@ require('doff.db.models.base', 'get_model_by_identifier', 'get_models', 'Foreign
 require('doff.db.models.query', 'delete_objects', 'CollectedObjects');
 require('doff.contrib.offline.serializers', 'RemoteSerializer', 'RemoteDeserializer', 'ServerPkDoesNotExist');
 require('doff.utils.datastructures', 'SortedDict');
+require('doff.core.exceptions', 'ImproperlyConfigured');
 
 function get_model_order(model_lists) {
     var model_adj = new SortedDict();
@@ -39,7 +40,7 @@ var SyncHandler = type('SyncHandler', [ object ], {
         this.server = new ServiceProxy(get_project().offline_support + '/sync', {asynchronous: false});
         this.serializer = new RemoteSerializer();
         this.deserializer = RemoteDeserializer
-        // this.load_middleware();
+        this.load_middleware();
     },
 
     save_recived: function(received, sync_log) {
@@ -58,18 +59,8 @@ var SyncHandler = type('SyncHandler', [ object ], {
         for each (var obj in collected) {
             // TODO: Implementar los middlewares de sync
             //try {
-                obj.sync_log = sync_log;
-                obj.save_base();
-            //} catch ( e if isinstace(e, )) {
-                //this.conflict_middleware.
-            //}
-        }
-    },
-
-    save_chunkeds: function(created) {
-        for each (var obj in created) {
-            // TODO: Implementar los middlewares de sync
-            //try {
+                if (sync_log != null)
+                    obj.sync_log = sync_log;
                 obj.save_base();
             //} catch ( e if isinstace(e, )) {
                 //this.conflict_middleware.
@@ -78,42 +69,45 @@ var SyncHandler = type('SyncHandler', [ object ], {
     },
 
     update: function() {
-        var last_sync_log = null;
-        try {
-            last_sync_log = SyncLog.objects.latest('pk');
-        } catch (e if isinstance(e, SyncLog.DoesNotExist)) {
-            var [ received, sync_log_data ] = this.pull(last_sync_log);
-
-            if (bool(received)) {
-                var sync_log = new SyncLog(sync_log_data);
-                sync_log.save();
-                this.save_recived(received, sync_log);
-            }
-            return;
+        var first = SyncLog.objects.count() == 0;
+        var [ received, sync_log_data ] = this.pull();
+        if (bool(received)) {
+            var sync_log = new SyncLog(sync_log_data);
+            sync_log.save();
+            this.save_recived(received, sync_log);
         }
-    
-        debugger;
-        var [ received, sync_log_data ] = this.pull(last_sync_log);
-        var sync_log = new SyncLog(sync_log_data);
-        sync_log.save();
-        this.save_recived(received, sync_log);
-
+        if (first) return;
+        
         debugger;
         var go_ahead = true;
-        while (go_ahead) {
+        var collected = [];
+        while (go_ahead) {                      // Mientras que continuo
             var [ need_pull, chunked, deleted, modified, created, sync_log_data ] = this.push();
-            if (need_pull) {
-                var [ received, sync_log_data ] = this.pull(last_sync_log);
-                var sync_log = new SyncLog(sync_log_data);
+            if (need_pull) {                    // Tengo que traer datos del servidor 
+                var [ received, sync_log_data ] = this.pull();
+                /*if (!bool(received))
+                    throw new Exception('Server says pull, and not pulled data'); */
+                var sync_log = new SyncLog(sync_log_data);          // Creo el sync log para el pull
                 sync_log.save();
-                this.save_recived(received, sync_log);
+                this.save_recived(received, sync_log);              // Guardo el pull con su sync log
+                if (bool(collected)) {                              // Tenia datos recolectados de antes?
+                    this.save_collected(collected, sync_log);       // Los guardo con el mismo sync log
+                    collected = [];                                 // y limpio lo recolectado
+                }
                 go_ahead = need_pull;
                 continue;
             }
-            var collected = deleted.concat(created, modified);
-            var sync_log = new SyncLog(sync_log_data);
-            sync_log.save();
-            this.save_collected(collected, sync_log);
+            var collected = collected.concat(deleted, created, modified);   // Recolecto los datos del push
+            if (bool(collected)) {                                          // Tengo datos
+                if (!chunked) {                                             // Si no estan cortado
+                    var sync_log = new SyncLog(sync_log_data);              // Preparo el sync log para guardar
+                    sync_log.save();
+                } else {
+                    var sync_log = null;                                    // Estan cortado, no les pongo sync log hasta que no esten todos 
+                }
+                //TODO: Estoy haciendo que se llame a save al pedo sobre los objetos si son producto de un corte
+                this.save_collected(collected, sync_log);
+            }
             go_ahead = chunked;
         }
 
@@ -124,44 +118,21 @@ var SyncHandler = type('SyncHandler', [ object ], {
         /*
         Populate middleware lists from settings.MIDDLEWARE_CLASSES.
         */
-        require('doff.core.exceptions');
-        this._view_middleware = [];
-        this._response_middleware = [];
-        this._exception_middleware = [];
+        this._sync_middleware = null;
 
-        var request_middleware = [];
-        for each (var middleware_path in this.settings.SYNC_MIDDLEWARE_CLASSES) {
-            var dot = middleware_path.lastIndexOf('.');
-            if (dot == -1)
-                throw new exceptions.ImproperlyConfigured('%s isn\'t a middleware module'.subs(middleware_path));
-            var [ mw_module, mw_classname ] = [ middleware_path.slice(0, dot), middleware_path.slice(dot + 1)];
-            try {
-                var mod = require(mw_module);
-            } catch (e if isinstance(e, LoadError)) {
-                throw new exceptions.ImproperlyConfigured('Error importing middleware %s: "%s"'.subs(mw_module, e));
-            }
-            var mw_class = getattr(mod, mw_classname);
-            if (isundefined(mw_class))
-                throw new exceptions.ImproperlyConfigured('Middleware module "%s" does not define a "%s" class'.subs(mw_module, mw_classname));
-
-            try {
-                var mw_instance = new mw_class();
-            } catch (e if isinstance(e, exceptions.MiddlewareNotUsed)) {
-                continue;
-            }
-
-            if (hasattr(mw_instance, 'process_request'))
-                request_middleware.push(mw_instance.process_request);
-            if (hasattr(mw_instance, 'process_view'))
-                this._view_middleware.push(mw_instance.process_view);
-            if (hasattr(mw_instance, 'process_response'))
-                this._response_middleware.shift(mw_instance.process_response);
-            if (hasattr(mw_instance, 'process_exception'))
-                this._exception_middleware.shift(mw_instance.process_exception);
+        var dot = this.settings.SYNC_MIDDLEWARE_CLASS.lastIndexOf('.');
+        if (dot == -1)
+            throw new ImproperlyConfigured('%s isn\'t a middleware module'.subs(middleware_path));
+        var [ mw_module, mw_classname ] = [ this.settings.SYNC_MIDDLEWARE_CLASS.slice(0, dot), this.settings.SYNC_MIDDLEWARE_CLASS.slice(dot + 1)];
+        try {
+            var mod = require(mw_module);
+        } catch (e if isinstance(e, LoadError)) {
+            throw new ImproperlyConfigured('Error importing middleware %s: "%s"'.subs(mw_module, e));
         }
-        // We only assign to this when initialization is complete as it is used
-        // as a flag for initialization being complete.
-        this._request_middleware = request_middleware;
+        var mw_class = getattr(mod, mw_classname);
+        if (isundefined(mw_class))
+            throw new ImproperlyConfigured('Middleware module "%s" does not define a "%s" class'.subs(mw_module, mw_classname));
+        this._sync_middleware = new mw_class();
     },
 
     purge: function(objs) {
@@ -174,12 +145,12 @@ var SyncHandler = type('SyncHandler', [ object ], {
         }
     },
 
-    pull: function(last_sync_log) {
-        //TODO: Transacciones en la base de datos
-        if (last_sync_log != null) {
+    pull: function() {
+        try {
+            var last_sync_log = SyncLog.objects.latest('pk');
             var to_send = this.serializer.serialize(last_sync_log);
             var data = this.server.pull(to_send);
-        } else {
+        } catch (e if isinstance(e, SyncLog.DoesNotExist)) {
             var data = this.server.pull();
         }
 
@@ -187,7 +158,7 @@ var SyncHandler = type('SyncHandler', [ object ], {
     },
 
     push: function() {
-        
+
         var chunked = false;
         var collected_objects = {};
         var to_send = {'sync_log': {}};
@@ -204,7 +175,7 @@ var SyncHandler = type('SyncHandler', [ object ], {
             collected_objects['deleted'][model_name] = array(objs);
             to_send['deleted']['objects'][model_name] = this.serializer.serialize(objs);
             if (!(model_name in to_send['sync_log'])) {
-                var last_sync_log = model.all.latest('sync_log').sync_log;
+                var last_sync_log = model.all.latest('sync_log__id').sync_log;
                 to_send['sync_log'][model_name] = this.serializer.serialize(last_sync_log);
             }
         }
@@ -219,7 +190,7 @@ var SyncHandler = type('SyncHandler', [ object ], {
             collected_objects['modified'][model_name] = array(objs);
             to_send['modified']['objects'][model_name] = this.serializer.serialize(objs);
             if (!(model_name in to_send['sync_log'])) {
-                var last_sync_log = model.all.latest('sync_log').sync_log;
+                var last_sync_log = model.all.latest('sync_log__id').sync_log;
                 to_send['sync_log'][model_name] = this.serializer.serialize(last_sync_log);
             }
         }
@@ -238,7 +209,7 @@ var SyncHandler = type('SyncHandler', [ object ], {
                 collected_objects['created'][model_name] = array(objs);
                 to_send['created']['models'].push(model_name);
                 if (!(model_name in to_send['sync_log'])) {
-                    var last_sync_log = model.all.latest('sync_log').sync_log;
+                    var last_sync_log = model.all.latest('sync_log__id').sync_log;
                     to_send['sync_log'][model_name] = this.serializer.serialize(last_sync_log);
                 }
             } catch (e if isinstance(e, ServerPkDoesNotExist)) {
@@ -251,7 +222,7 @@ var SyncHandler = type('SyncHandler', [ object ], {
             var data = this.server.push(to_send);
         } catch (e) {
             // TODO: algunas exeptions;
-            return [ true, true, [], [], [], {}];
+            return [ true, chunked, [], [], [], {}];
         }
 
         // Tengo los datos del servidor
