@@ -1,9 +1,9 @@
-RST2S5=rst2s5
-TARGET=presentacion.html
+RST2S5=$(shell which rst2s5 || which rst2s5.py)
+TARGET=index.html
 all: $(TARGET) 
 
 
-presentacion.html: presentacion.txt
+index.html: presentacion.txt
 	$(RST2S5) --theme=small-black $^ $@
 
 clean:

@@ -3,14 +3,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.6: http://docutils.sourceforge.net/" />
 <meta name="version" content="S5 1.1" />
 <title>Aplicaciones Web Desconectadas</title>
 <style type="text/css">
 
 /*
 :Author: David Goodger (goodger@python.org)
-:Id: $Id: html4css1.css 5196 2007-06-03 20:25:28Z wiemann $
+:Id: $Id: html4css1.css 5951 2009-05-18 18:03:10Z milde $
 :Copyright: This stylesheet has been placed in the public domain.
 
 Default cascading style sheet for the HTML output of Docutils.
@@ -158,11 +158,32 @@ h2.subtitle {
 hr.docutils {
   width: 75% }
 
-img.align-left {
-  clear: left }
+img.align-left, .figure.align-left{
+  clear: left ;
+  float: left ;
+  margin-right: 1em }
 
-img.align-right {
-  clear: right }
+img.align-right, .figure.align-right {
+  clear: right ;
+  float: right ;
+  margin-left: 1em }
+
+.align-left {
+  text-align: left }
+
+.align-center {
+  clear: both ;
+  text-align: center }
+
+.align-right {
+  text-align: right }
+
+/* reset inner alignment in figures */
+div.align-right {
+  text-align: left }
+
+/* div.align-center * { */
+/*   text-align: left } */
 
 ol.simple, ul.simple {
   margin-bottom: 1em }
@@ -217,8 +238,7 @@ p.topic-title {
 pre.address {
   margin-bottom: 0 ;
   margin-top: 0 ;
-  font-family: serif ;
-  font-size: 100% }
+  font: inherit }
 
 pre.literal-block, pre.doctest-block {
   margin-left: 2em ;
@@ -372,7 +392,7 @@ de Framework Web consitente</p>
 </li>
 </ul>
 </div>
-<div class="slide" id="tecnolog-as-existentes-1">
+<div class="slide" id="tecnologias-existentes-1">
 <h1>Tecnologías Existentes (1)</h1>
 <ul>
 <li><dl class="first docutils">
@@ -391,7 +411,7 @@ lengauje de <em>scripting</em> ActionScript 2/3.</p>
 </li>
 </ul>
 </div>
-<div class="slide" id="tecnolog-as-existentes-2">
+<div class="slide" id="tecnologias-existentes-2">
 <h1>Tecnologías Existentes (2)</h1>
 <ul>
 <li><dl class="first docutils">
@@ -416,7 +436,7 @@ híbridas. Probado <a class="footnote-reference" href="#id2" id="id1">[*]</a></p
 </tbody>
 </table>
 </div>
-<div class="slide" id="tecnolog-as-existentes-3">
+<div class="slide" id="tecnologias-existentes-3">
 <h1>Tecnologías Existentes (3)</h1>
 <ul>
 <li><dl class="first docutils">
@@ -529,6 +549,12 @@ Ej: jQuery, Prototype, Dojo, YUI, MooTools, MochiKit</p>
 </div>
 <div class="slide" id="django-workflow">
 <h1>Django Workflow</h1>
+<blockquote>
+<ul class="simple">
+<li>El requiere una URL: <tt class="docutils literal">/</tt>, <tt class="docutils literal">/ventas</tt>, <tt class="docutils literal">/personal/agente/1/</tt>, etc.</li>
+<li>La U</li>
+</ul>
+</blockquote>
 </div>
 <div class="slide" id="django-proyecto">
 <h1>Django Proyecto</h1>
@@ -536,19 +562,19 @@ Ej: jQuery, Prototype, Dojo, YUI, MooTools, MochiKit</p>
 <dt>Un proyecto django consta de 3 archivos (módulos en Python):</dt>
 <dd><ul class="first last">
 <li><dl class="first docutils">
-<dt><tt class="docutils literal"><span class="pre">settings.py</span></tt></dt>
+<dt><tt class="docutils literal">settings.py</tt></dt>
 <dd><p class="first last">Configuración global: Base de Datos, Directorio de Plantillas, Aplicaciones Instaladas</p>
 </dd>
 </dl>
 </li>
 <li><dl class="first docutils">
-<dt><tt class="docutils literal"><span class="pre">manage.py</span></tt></dt>
+<dt><tt class="docutils literal">manage.py</tt></dt>
 <dd><p class="first last">Recibe como argumentos comandos para manejo del proyecto.</p>
 </dd>
 </dl>
 </li>
 <li><dl class="first docutils">
-<dt><tt class="docutils literal"><span class="pre">urls.py</span></tt></dt>
+<dt><tt class="docutils literal">urls.py</tt></dt>
 <dd><p class="first last">Mapeo inicial de URLs en vistas (funciones planas).</p>
 </dd>
 </dl>
@@ -557,25 +583,25 @@ Ej: jQuery, Prototype, Dojo, YUI, MooTools, MochiKit</p>
 </dd>
 </dl>
 </div>
-<div class="slide" id="django-aplicaci-n">
+<div class="slide" id="django-aplicacion">
 <h1>Django Aplicación</h1>
 <dl class="docutils">
 <dt>Una aplicación en Django es un paquete que consta de 3 módulos</dt>
 <dd><ul class="first last">
 <li><dl class="first docutils">
-<dt><tt class="docutils literal"><span class="pre">views.py</span></tt></dt>
+<dt><tt class="docutils literal">views.py</tt></dt>
 <dd><p class="first last">Definición de las funciones que manejan las URLs, las funciones
-reciben un <tt class="docutils literal"><span class="pre">HTTPRequest</span></tt> y datos de la URL y devuelven <tt class="docutils literal"><span class="pre">HTTPResponse</span></tt></p>
+reciben un <tt class="docutils literal">HTTPRequest</tt> y datos de la URL y devuelven <tt class="docutils literal">HTTPResponse</tt></p>
 </dd>
 </dl>
 </li>
 <li><dl class="first docutils">
-<dt><tt class="docutils literal"><span class="pre">models.py</span></tt></dt>
+<dt><tt class="docutils literal">models.py</tt></dt>
 <dd><p class="first last">Definción de las entidades de la base de datos mediante una API de ORM.</p>
 </dd>
 </dl>
 </li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">urls.py</span></tt></p>
+<li><p class="first"><tt class="docutils literal">urls.py</tt></p>
 </li>
 </ul>
 </dd>
@@ -598,10 +624,10 @@ reciben un <tt class="docutils literal"><span class="pre">HTTPRequest</span></tt
 <p>Estas son algunas métricas del trabajo realizado:</p>
 <blockquote>
 <ul class="simple">
-<li>2700 líneas de código Python en la extensión <tt class="docutils literal"><span class="pre">offline</span></tt></li>
+<li>2700 líneas de código Python en la extensión <tt class="docutils literal">offline</tt></li>
 <li>26400 lineas de código JavaScript</li>
 <li>700 revisiones en HG</li>
-<li>Inumerables búsquedas en <tt class="docutils literal"><span class="pre">Google</span></tt> ;)</li>
+<li>Inumerables búsquedas en <tt class="docutils literal">Google</tt> ;)</li>
 </ul>
 </blockquote>
 </div>
