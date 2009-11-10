@@ -76,32 +76,54 @@ En la aplicación ``ventas`` cuenta con las entidades:
 Vistas
 ------
 
-La mayor parte de las vistas se implementaron mediante vistas genéricas. 
-Este tipo de vistas se encuentran implementadas dentro del paquete 
-``django.views.generic`` y prveen funcionalidad muy frecuente como CRUD, 
-consultas, comentarios, redirección, etc. 
+La mayor parte de las vistas se implementaron mediante vistas genéricas 
+(generic views) provistas por Django [DjangoDocsGenericViews09]_ (en el servidor) 
+y Doff (en el cliente).
+Django prvee varios tipos de vistas genéricas [*]_, de los cuales solo se utilizaron  
+las relacionadas con CRUD. 
+
+.. [*] CRUD, consultas, comentarios, redirección, etc.
+
+.. [DjangoDocsGenericViews09] Vistas Genéricas,
+    Documentación de Django,
+    último acceso Noviembre de 2009,
+    http://docs.djangoproject.com/en/dev/ref/generic-views/
+ 
 
 Las vistas genéricas utilzadas fueron:
 
     * ``django.views.generic.simple.direct_to_template``
     
-        Procesa un template como salida, recibe como arugmento el template
-        en un diccionario.
+        Procesa un template como salida, recibe como arugmento el ``template_name``
+        con el nombre del la plantilla.
         
     * ``django.views.generic.create_update.create_object``
         
         Crea una entidad en la base de datos. Recibe los argumentos:
+            
+            * ``form_class`` o ``model``: Un ``ModelForm`` o ``Model`` sobre el cual se realizará la creación.
         
-            * post_save_redirect: La URL a la cual el cliente es redirigod
+            * ``post_save_redirect``: La URL a la cual el cliente es redirigod
               tras la creación existosa de la entidad, por defecto es  ``object.get_absolute_url()``.
       
-            * template_name: Nombre del template que se usará para generar la salida.
+            * ``template_name``: Nombre del template que se usará para generar la salida.
             
-            * extra_context: Elementos extra para generar el template.
+            * ``extra_context``: Elementos extra para generar el template.
     
         
     * ``django.views.generic.create_update.update_object``
+        
+        Los parámetros de esta vista son iguales a ``create_object`` agregando
+        
+        * ``object_id``: Identificador del objeto a editar.
+        
     * ``django.views.generic.create_update.delete_object``
     
-
+        * ``model``: Modelo al cual pertenece la instancia a ser eliminada.
+        
+        * ``post_delete_redirect``: URL a la cual se redirige luego de una eliminación exitosa.
+        
+        * ``object_id``: Identificador de la instancia a eliminar.
+        
+        
 

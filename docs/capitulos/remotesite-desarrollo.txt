@@ -5,8 +5,8 @@ La aplicación
 El presente capítulo profundiza sobre el soporte en el servidor para lograr
 la desconexión de proyectos basados en Django. Este soporte se realiza mediante
 la aplicación genérica ``offline``. Sus objetivos son brindar las facilidades
-para desconectar una aplicación, es decir, instalar el proyecto desconectado y
-sincronizar datos.
+para la "desconexión", es decir, instalar el proyecto Doff en el cliente y
+brindar soporte para sincronizar datos.
 
 Doff fue desarrollado con el objetivo de realizar la menor cantidad de 
 reescritura posible de las aplicaciones Django al momento de ser ejecutadas de manera
@@ -286,34 +286,47 @@ se puede modificar.
 
 
 Publicación de Modelos
-----------------------
+======================
 
 Como se mencionó en el capítulo introductorio, es deseable contar con 
 un mecanismo de separación de los datos a los cuales accede al cliente
-por seguridad y eficiencia.
+por seguridad y eficiencia. 
 
-Para tal fin se creó la clase ``RemoteModelProxy`` o proxy de modelos que 
-envuelve a los modelos de las aplicaciones.
-Por defecto ningún modelo es visible para el cliente. Se deben publicar
-explicitamente mediante un método llamado ``register(model, proxy = None)`` [*]_.
+Para lograr este objetivo se creó una entidad encargada de arbitrar el 
+acceso a los modelos. Este recubrimiento o *porxy* permite definir a 
+que datos accede el cliente de dos maneras: defineindo a que campos accede
+(columnas de la base de datos) y a que elementos meidnate la definición
+de un manager (a que filas accede).
 
-.. [*] Esta idea también fue tomada de la aplicación genérica ``django.contrib.admin`` antes mencionada. 
+Esta entidad se denominó ``RemoteModelProxy`` o proxy.
+Se adoptó como política que por defecto, ningún modelo se encuentra visible
+al cliente. Para poder acceder a un modelo es necesario publicarlo explícitamente
+en el sitio remoto. Para esta tarea el ``RemoteSite`` cuenta con el método
+``register(model, proxy = None)`` [*]_.
 
-El método ``register`` debe ser llamado sobre la instancia del remote site (definida en el módulo 
-``OFFLINE_BASE.remote_<nombre-modulo>`` - en el sistema de archivos 
-OFFLINE_BASE.remote_<nombre-modulo>.py). Este método recibe una instancia 
-opcional de ``RemoteModelProxy`` que en el caso de no ser provista se genera 
-internamente.
+.. [*] Esta idea también fue tomada de la aplicación genérica ``django.contrib.admin``
+       antes mencionada. 
 
-Por ejemplo, la definción del sitio remoto quedaría como sigue para el ejemplo
-anterior:
+El método ``register`` recibe como primer argumetno el modelo a publicar y 
+opcionalmente una instancia de ``RemoteModelProxy``. Cuando el método es llamado
+sin el parámetro ``proxy``, el sitio remoto genera automáticamente un proxy 
+que publica todos los campos del modelo y todas sus filas.
+
+Por ejemplo, sobre un sitio remoto llamado ``librarian``, con los modelos
+definidos en el capítulo de Doff (autor, libro, editor), el código sería
+el siguiente:
 
 .. code-block:: python
     
+    # Importación el sitio remoto
     from offline.sites import RemoteSite
+    # Importación el libro
     from bookstore.core.models import Book, Author  
-
+    
+    # Creación del sitio remoto
     site = LibrarianRemoteSite('librarian')
+    
+    # Registro de modelos
     site.register(Book)
     site.register(Author)
     
@@ -335,8 +348,8 @@ pueden definir los campos a publicar mediante (``fields``, ``include``,
     class BookRemote(RemoteModelProxy):
         class Meta:
             model = Book # Este campo es opcional
-            exclude = ('author', )
-            manager = Book.objects
+            exclude = ('author', ) # Se excluye el campo autor
+            manager = Book.objects # El managers es el manager por defecto
     
     site.register(Book, BookRemote) # Registro
     
@@ -443,7 +456,7 @@ para implementar la funcionalidad de ``__unicode__`` sería:
     }
 
 Modelos de Solo Lectura
-=======================
+***********************
 
 Si bien se tratará la sincronización en un apartado posterior, se ha mencionado
 que existe un mecanismo para sincroizar los datos de los modelos.
@@ -484,7 +497,7 @@ Los unicos campos transferidos son el ``pk`` (o ``id``) y la representación
 en cadena del modelo (``__unicode__``).         
 
 Publicación de un Sitio Remoto
-------------------------------
+==============================
 
 La publicación de un sitio remoto es explícita y consiste en agregar al
 módulo ``urls.py`` del proyecto un patrón como el siguiente (suponiendo 
@@ -513,9 +526,13 @@ Finalmente, podemos resumir el ciclo de migración mediante la siguiente figura:
 
 A continuación se trata uno de los objetivos 
 
-.. note::
-    HASTA ACÁ, ESTE NO ES MENTIROSO
+Modelos de la Aplicación Offline
+================================
 
+La aplicación ``offline`` posee estos modelos:
 
+.. figure:: ../_svg/modelo_offline.png
 
+    Modelos
+    
  
