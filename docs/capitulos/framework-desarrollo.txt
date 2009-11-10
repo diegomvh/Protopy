@@ -1,29 +1,30 @@
-####
+****
 Doff
-####
+****
 
 En capítulos anteriores se mencionó que la creación de un
 framework generalmente surge de la identificación de objetos reusables en
 el desarrollo de software. Posteriormente los objetos identificados constituyen
 componentes que forman parte de una arquitectura. A éstos se accede
 mediante una API específica y se añade o modifica sus funcionalidades mediante 
-configuración o extensión.
+configuración o extensión. Esta forma de obtener un framework, implica pasar por
+varias etapas de maduración en el desarrollo, pero requieren de un punto de
+partida esencial y es justamente un proyecto que oriente la identificacion de
+las partes reusables.
 
-
-En el desarrollo del framework desconectado de esta tesina, si bien se contaba con Django
-como base, se detectó que muchos aspectos no estaban claramente definidos y algunos componentes
-carecían de sentido en el contexto del navegador. Por esta razón
-se realizaron dos proyectos que sirvieron para identificar las piezas necesarias
-del framework y mejorar el enfoque de Protopy, además de permitir crear
-nuevos componentes reusables que no están presentes en Django [*]_.
+En el desarrollo del framework desconectado de esta tesina, si bien se contaba
+con Django como base, se detectó que muchos aspectos no estaban claramente
+definidos y algunos componentes carecían de sentido en el contexto del navegador.
+Por esta razón se realizaron dos proyectos [*]_ que sirvieron para identificar
+las piezas necesarias del framework y mejorar el enfoque de Protopy, además de
+permitir crear nuevos componentes reusables.
 
 El framework desconectado, de manera similar a Protopy, se denominó Doff en base
-a su padre y a la tarea que cumple, tomando
-la *d* de Django y *off* de offline (desconectado). Su nombre significa, por
-lo tanto, Django Desconectado:
+a su padre y a la tarea que cumple, tomando la *d* de Django y *off* de offline
+(desconectado). Su nombre significa, por lo tanto, Django Desconectado:
 
     | **d** jango + **off** line = **doff**
-    
+
 .. [*] Inicialmente se creó una aplicación de *blog*, debido a la popularidad de este tipo de
         aplicaciones, y luego "salesman" (o agente de ventas viajante) 
         para explotar las posibilidades de contar con una aplicación web desconectada.
@@ -33,7 +34,7 @@ que se definieron para ejecutar un proyecto en un ambiente desconectado.
 En el capítulo siguiente se presenta el trabajo realizado para lograr la 
 interacción con un proyecto existente.  
 
-    
+
 Migración de Componentes Básicos
 -------------------------------
 

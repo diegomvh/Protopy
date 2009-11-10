@@ -13,7 +13,6 @@ los paquetes de la  librería estándar ``re``, ``sys``, ``time``,
 ``urllib``, ``datetime``, ``mimetypes``, entre otros, que son utilizados
 por el framework.
 
-
 Además de la posibilidad de ejecución del intérprete en el navegador, se necesitó
 un sistema de almacenamiento persistente en el cliente tanto para el código
 de la aplicación (framework + aplicación) como para los datos (típicamente un
@@ -61,13 +60,13 @@ de aplicaciones desconectadas con la aplicación web original.
 ..
     Elementos de una aplicación web
     -------------------------------
-    
+
     Una aplicación web que se ejecuta en un servidor web posee 3 componentes 
     arquitecturales
-    
+
     .. figure:: ../_svg/esquema_tranfer_app_inicial.png
-    	
-    	Elementos a transferir desde la aplicación online
+
+        Elementos a transferir desde la aplicación online
 
 Python en el Navegador
 ----------------------
@@ -89,8 +88,6 @@ necesarias para el desarrollo de aplicaciones para la web.
 Es posible considerar esta solución "cross-browser" gracias a proyectos como
 *Plug-in For Hosting ActiveX Controls* [*]_ pero no es multiplataforma. 
 
-
-
 .. [*] *ActiveX para Mozilla* http://www.iol.ie/~locka/mozilla/plugin.htm.
 
 La segunda alternativa es utilizar la tecnología Silverlight de Microsoft, que 
@@ -110,12 +107,11 @@ de IronPython se implementó la API estándar lográndose ejecutar Django sobre
 IronPython [InforQDjangoIP09]_.
 
 
- 
 .. [IronRubyNet09] IronRuby,
                     implementación de Ruby sobre .NET,
                     ultimo acceso Septiembre 2009,
                     http://www.ironruby.net/
- 
+
 .. [InforQDjangoIP09] InfoQ, *Django On IronPython*, último acceso Octubre 2009,
                          http://www.infoq.com/news/2008/03/django-and-ironpython 
 
@@ -123,7 +119,7 @@ IronPython [InforQDjangoIP09]_.
                         *Silverlight, a new way for Python?*,
                         ultimo acceso Septiembre de 2009,
                         http://mail.python.org/pipermail/python-list/2007-May/610021.html
-                        
+
 .. [MichaelFroodIP09] Michael Frood,
                       Blog Oficial de Michael Frood, 
                       *explicación de como ejecutar IronPython sobre .Net*,
@@ -144,32 +140,30 @@ ejecutar Django en el cliente sin conexión [AshishShettySlvlght09]_.
     
     Esquema de desarrollo de Silverlight
 
-
 Sin embargo, la arquitectura de software necesaria para
 desplegar este tipo de aplicaciones es considerablemente compleja lo que va en
 contraposición a los ideales de Python y Django.
 Además tiene varias limitaciones:
- 
+
  * Necesidad de plugin propietario
- 
+
  	Es necesario un plugin en el navegador que no se encuentra disponible para todas las
  	plataformas.
- 	
+
  * Herramientas de desarrollo no multiplataforma
-  
+
  	Las herramientas de desarrollo sólo están en un estado más maduro sobre la plataforma Windows.
  	Si bien existen compiladores gratuitos, las IDEs que
  	permiten un desarrollo más eficiente son propietarias.
- 	
+
  * No existe soporte para IronPython en la IDE VisualStudio
- 
+
  * La implementación de Python no es la estándar, y carece de soporte [IronPythonFAQ2009]_ .
- 
+
 .. [MSDNSilverlightDOM09] Microsoft Developer Network, 
    Silverlight Programming Models, XAML, and the HTML DOM,
    último acceso Octubre 2009
    http://msdn.microsoft.com/en-us/library/cc838215%28VS.95%29.aspx
-
 
 .. [IronPythonFAQ2009] Sitio oficial de IronPython,
                         *Diferencias entre IronPython y CPython*,
@@ -185,13 +179,12 @@ Además tiene varias limitaciones:
         *Isolated Storage in Silverlight 2.0*,
         ultimo acceso Agsoto de 2009,
         http://www.ddj.com/windows/208300036
-        
+
 .. [AshishShettySlvlght09] Ashish Shetty, 
     *Silverlight out-of-navegador apps: Local Data Store*,
     ultimo acceso Agosto 2009,
     http://nerddawg.blogspot.com/2009/04/silverlight-out-of-navegador-apps-local.html
 
- 
 Debido a estas limitaciones se descartó para el desarrollo de esta tesina a 
 Silverlight como tecnología de soporte. 
 
@@ -242,7 +235,7 @@ con llaves [*]_" [GuyonMoreePythonBraces09]_.
        sentencia ``from __future__ import braces`` y produce la excepción
        ``SyntaxError: not a chance`` (*Not a chance* se traduce coloquialmente
        como "*imposible*, *olvídalo!*").
-         
+
 JavaScript no posee mecanismos de almacenamiento local. Si bien un navegador
 almacena muchos recursos de este tipo en su caché, lo hace con el objetivo de
 mejorar la performance y su permanencia en el equipo del cliente no está garantizada.
@@ -268,16 +261,18 @@ los navegadores que adopten este estándar.
     *How HTML 5 Is Already Changing the Web*,
     último acceso Septiembre 2009,
     http://www.webmonkey.com/blog/How_HTML_5_Is_Already_Changing_the_Web
-    
+
 .. [W3CHTML5OffWebApp09] World Wide Web Consortium,
     Apartado sobre Aplicaciones Web Desconectadas en el borrador sobre la especificación HTML5, 
     último acceso Septiembre 2009 (Revision 1.2852),
     http://www.w3.org/TR/html5/desconectado.html#desconectado
-    
+
 
 Por lo tanto, la combinación de JavaScript y Gears constituye la alternativa
 más promisoria para la implementación de aplicaciones desconectadas escritas en Django
 por lo que se utilizaron para llevar a cabo el desarrollo de la presente tesina.
+
+.. note:: Me suena a que doff es producto de este proyecto, no me gusta :(
 
 Tras el análisis del proyecto *Gears On Rails* [GearsOnRails09]_ que persigue objetivos 
 similares a los de esta tesina, pero basado en el framework Ruby On Rails, se descubrió un proyecto
@@ -285,29 +280,29 @@ denominado Django Offline [DjangoOffline09]_, que divide a Django en componentes
 y analiza cuáles son necesarios implementar en el modo desconectado:
 
     * API de modelos: no
-        
+
         Los modelos se definen únicamente en el servidor se utiliza la definición
-        para el cliente. Los modelos, en su estructura, deben estar sincronizados.    
-        
+        para el cliente. Los modelos, en su estructura, deben estar sincronizados.
+
     * Soporte para base de datos: sí
-    
+
         Sólo se requiere soporte para SQLite.
-        
+
     * Managers de modelos: sí
-    
+
     * Despacho de URLs: sí
-    
+
     * Middlewares: no
-    
-    * Formularios: no 
- 
+
+    * Formularios: no
+
 Basados en los componentes anteriores, también realiza un análisis de las
 partes transportables de manera automatizada al cliente:
 
     * Modelos: sí
-    
+
     * URLs: sí
-    
+
     * Vistas: no
 
 
@@ -342,7 +337,6 @@ y realizar consultas. Por ejemplo para definir una tabla:
       connection:"default"
     });
 
-    
 Presenta la particularidad de evaluación perezosa de las consultas. Cada consulta
 devuelve una instancia de ``Query``, similar a los ``QuerySet`` persentes en 
 Django. Desafortunadamente la definición del criterio de selección es de bajo
@@ -356,7 +350,6 @@ nivel, como se observa en el siguiente ejemplo:
       console.log(person.firstName);
     });
 
-
 El autor se centró en algunas características como conexiones con múltiples bases de
 datos, que aún no están presentes en Django, pero abandonó el proyecto sin 
 implementar elementos esenciales como las claves foráneas y las relaciones
@@ -366,7 +359,6 @@ muchos a muchos.
                     *Introducing JStORM*,
                     último acceso Septiembre 2009,
                     http://www.urielkatz.com/archive/detail/introducing-jstorm/
-  
 
 JazzRecord es otro ORM analizado, que implementa la API ActiveRecord (la misma de 
 ORM de Ruby On Rails). Se encuentra en un estado mucho más maduro que JStORM, 
@@ -400,6 +392,8 @@ equivalen a los ``QuerySet``. JazzRecord fue descartado como candidato a ORM
 del cliente en la presente tesina, por la diferencia de filosofía con Django
 (convesión (Rails) vs. definición (Django)).
 
+.. note:: este parrafo mezcla un lado con el otro, (cliente, servidor)
+
 Luego del análisis de los ORM existentes se decidió implementar el ORM de 
 Django (API de base de datos) en JavaScript 1.7 como primera tarea para la 
 desconexión de una aplicación. Con una implementación en JavaScript de la misma API, 
@@ -428,6 +422,8 @@ mecanismo que en Prototype no existe (Prototype toma la orientación a objetos d
 Esta inicialización en dos fases se utiliza en el ORM y formularios de Django,
 por lo que se decidió modificar Protoype para que admitiera la orientación
 a objetos de Python.
+
+.. note:: Se descarta prototype sobreviviendo unicamente unas extenciones a los elementos HTMLForm y HTMLElement del DOM
 
 Otro elemento ausente en Prototype [*]_ es un sistema de módulos y paquetes, necesario
 para implementar muchos elementos de Django. Por ello se decidió implementar esta
@@ -460,10 +456,9 @@ En los siguientes capítulos se detalla el desarrollo de esta librería y a la m
                     Google Code,
                     ultimo acceso Septiembre 2009,
                     http://code.google.com/p/django-offline/wiki/Goals
-                    
-                    
+
+
 .. [NickCarterJazzModels09] Nick Carter,
                             *Model - JazzRecord JavaScript ORM Documentation*
                             último acceso Septiembre 2009,
                             http://www.jazzrecord.org/docs/model#finders 
-                     
