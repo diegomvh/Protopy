@@ -1,8 +1,8 @@
 .. _apendices-protopy:
 
-*******
+#######
 Protopy
-*******
+#######
 
 Protopy es una librería en JavaScript que simplifica el desarrollo de
 aplicaciones web dinámicas. Agregando un enfoque modular para la inclusión de

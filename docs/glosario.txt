@@ -1,8 +1,8 @@
 .. _glosario:
 
-********
+##########
 Glosario
-********
+##########
 
 .. if you add new entries, keep the alphabetical sorting!
 

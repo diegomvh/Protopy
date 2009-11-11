@@ -1,4 +1,4 @@
-﻿****
+****
 Doff
 ****
 
@@ -36,7 +36,7 @@ interacción con un proyecto existente.
 
 
 Migración de Componentes Básicos
-================================
+-------------------------------
 
 
 Doff se inició como un conjunto de módulos para Protopy. Estos módulos implementaban
@@ -98,7 +98,7 @@ en el sistema de módulos de Protopy. Esta funcionalidad se situó en el módulo
     http://www.dojotoolkit.org/book/dojo-book-0-9/part-5-dojox/dojox-dtl/ 
 
 Definición de Proyecto 
-======================
+-----------------------
 
 Luego de haber alcanzado un nivel de funcionalidad básico en ``doff.db.models`` y 
 ``doff.templates`` se definió la interacción básica con Django, mediante
@@ -166,7 +166,7 @@ plantillas, vistas y formularios. Además se hace un análisis de una tarea
 fundamental del ``Project`` que es emular HTTP.
 
 Modelos
-=======
+-------
 
 Doff implementa la misma API que Django de definición y consultas, realizando adaptaciones
 a la sintaxis de JavaScript y a la librería Protopy.
@@ -320,7 +320,7 @@ se traduce en la siguiente secuencia SQL, asumiendo que el ``id`` asignado sea
     
 
 Recuperación de Datos
-=====================
+---------------------
 
 La forma de seleccionar y filtrar los datos es la utilización de ``Managers``
 o administradores de consultas.
@@ -512,7 +512,7 @@ que genera el siguiente SQL respectivamente:
     
 
 Eliminación de Datos
-====================
+--------------------
 
 Para eliminar objetos, simplemente se debe llamar al método ``delete()`` 
 sobre una instancia:
@@ -550,7 +550,7 @@ que se traduce en el siguiente SQL:
     DELETE FROM books_publisher;
 
 Plantillas
-==========
+----------
 
 Doff brinda soporte al sistema de plantillas de Django. Las plantillas escritas 
 para una aplicación en línea son reutilizables sin modificaciones en la aplicación
@@ -568,7 +568,7 @@ A continuación se realiza un breve análisis de la API de plantillas y
 su utilización en Doff.
 
 Creación
---------
+========
 
 Doff implementa la clase ``Template`` para crear plantillas, que 
 se encuentra en el módulo ``doff.template.base``. El argumento para la
@@ -594,7 +594,7 @@ de ``Template`` falla. Los errores contemplados son:
 En todos los casos, el sistema lanza una excepción ``TemplateSyntaxError``.
 
 Contexto
---------
+========
 
 Para obtener la salida procesada de una instancia de ``Template``, 
 es necesario proveer un *contexto*. Un contexto es simplemente un
@@ -673,7 +673,7 @@ la variable de configuración ``TEMPLATE_STRING_IF_INVALID`` en el módulo
 ``settings.js``.
 
 Cargador de Plantillas
-----------------------
+======================
 
 Si bien en los ejemplos anteriores se mostró la API de plantillas con
 cadenas como argumentos, las plantillas puden estar almacenadas en 
@@ -718,7 +718,7 @@ se instanció el proyecto.
 
 
 Emulación de HTTP
-=================
+-----------------
 
 En una aplicación en línea, con cada click sobre un enlace, envío de formulario
 o solicitud asincrónica (AJAX) se realiza un requerimiento al servidor, es decir
@@ -834,7 +834,7 @@ Como se ha descripto, Doff modifica el comportamiento de varios módulos de Prot
 para lograr consistencia en el entorno desconectado.
 
 Vistas
-======
+------
 
 Las vistas en Doff son funciones que contienen la lógica de la aplicación. Están
 asociadas a URLs en el archivo ``urls.js`` (siempre que no se haya modificado
@@ -914,7 +914,7 @@ contexto)`` para simplificar el prceso de construcción e interpretación de una
 plantilla y generación de la instancia del ``HTTPResponse``.
 
 Formularios
-===========
+-----------
 
 Los formularios son casi por excelencia el mecanismo de entrada 
 para las operaciones CRUD en los sistemas de información basados en
@@ -1029,7 +1029,7 @@ utilidad de representarse en HTML.
 
 
 Validación de Datos
--------------------
+===================
 
 Un formulario vinculado, tiene la responsabilidad de validar los datos
 con los cuales ha sido instanciado. 
@@ -1102,7 +1102,7 @@ cuando se realiza su representación.
 
 
 Cración de Formularios a Partir de Modelos
-------------------------------------------
+==========================================
 
 La mayoría de las veces los formularios son utilizados para el ingreso
 de datos a los modelos, por lo que la tarea de escribir un formulario

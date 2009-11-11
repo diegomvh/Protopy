@@ -1,9 +1,10 @@
-﻿*****************************
+#############################
 Conclusiones y Líneas Futuras
-*****************************
+#############################
 
+************
 Conclusiones
-============
+************
 
 Durante el desarrollo de la presente tesina se realizó un análisis sobre las
 tecnologías disponibles para el desarrollo de aplicaciones web destacando
@@ -79,12 +80,12 @@ Cosas que hacer notar:
 
 
 
-
+**************
 Lineas futuras
-==============
+**************
 
 Conversión de código Python en JavaScript
------------------------------------------
+=========================================
 
 Google publicó en Mayo de 2006 un proyecto llamado Google Web Toolkit (GWT) [*]_, que 
 consiste en un compilador de Java en JavaScript, que permite al programador
@@ -99,8 +100,7 @@ Python para la totalidad del desarrollo.
 .. [*] http://pyjs.org/features.html
 
 Sitio de administración
------------------------------------------
-
+=======================
 Django se caracteriza por brindar una aplicación de admnistración (``django.contrib.admin``) 
 que permite 
 realizar CRUD (Create, Retrieve, Update, Delete) sobre los modelos de las 
@@ -111,8 +111,7 @@ sitio de administración similar.
 
  
 Workers con soporte para Javascript 1.7
------------------------------------------
-
+=======================================
 Gears provee un mecanismo de ejecución de código en el cliente de manera
 concurrente llamado Worker Pool que permite a tareas que demandan tiempo de
 CPU considerables ser ejecutadas en segundo plano, evitando entorpecer el refresco 
@@ -126,15 +125,14 @@ del ``Request`` o las tareas de acceso a la base de datos en un Worker Pool.
 
 
 Compatibilidad con ES5 y HTML 5
------------------------------------------
-
+===============================
 EcmaScrtip 5 o JavaScript 2.0 resulve varios aspetctos que fueron abordados
 por Protopy/Doff, como un sistema de clases. Muchas optimizaciones realizadas
 sobre Doff 
 
 
 Optimizaciones en Base a Permanencia de Estado
-----------------------------------------------
+==============================================
 
 .. note:: completar!!! 
 

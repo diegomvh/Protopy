@@ -1,6 +1,7 @@
-﻿**************************
+###########################
 Aplicación de Demostración
-**************************
+###########################
+
 
 Se diseñó una aplicación denominada ``salesman`` (agente de ventas viajante)
 para ejemplificar el funcionamiento de Protopy y Doff. La aplicación modela
@@ -26,7 +27,7 @@ desconectada de peidos y la sincronización de estos.
 
 
 Modelo
-======
+------
 
 El proyecto se dividió en dos aplicaciones: ``core`` con entidades reusables y
 ``ventas`` donde se definieron los pedidos.
@@ -73,7 +74,7 @@ En la aplicación ``ventas`` cuenta con las entidades:
     Diagrama de Base de Datos de Salesman (generado con ``graph_models``)
 
 Vistas
-======
+------
 
 La mayor parte de las vistas se implementaron mediante vistas genéricas 
 (generic views) provistas por Django [DjangoDocsGenericViews09]_ (en el servidor) 

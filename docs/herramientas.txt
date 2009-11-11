@@ -1,12 +1,12 @@
-﻿***************************
+﻿###########################
 with overline, for chapters
-***************************
+###########################
 
 ::
 
-    ***************************
+    ###########################
     with overline, for chapters
-    ***************************
+    ###########################
 
 for sections
 ============
@@ -16,27 +16,28 @@ for sections
     for sections
     ============
 
-for subsections
+for subsección
 --------------
 
 ::
 
-    for subsections
+    for subsección
     --------------
 
+
+for subsubsección
+~~~~~~~~~~~~~~~~~
+
+::
+
+    for subsubsección
+    ~~~~~~~~~~~~~~~~~
     
-for subsubsections
-^^^^^^^^^^^^
+for sections
+“”””””””””””
 
 ::
 
-    for subsubsections
-    ^^^^^^^^^^^^
-
-for paragraphs
-""""""""""""""
-
-::
-
-    for paragraphs
-    """"""""""""""    
+    for sections
+    “”””””””””””
+    

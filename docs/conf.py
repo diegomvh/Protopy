@@ -210,7 +210,7 @@ latex_preamble = '\\setcounter{tocdepth}{4}'
 latex_appendices = [
 		    'apendices/python',
                     'apendices/django',
-                    #'apendices/protopy',
+                    'apendices/protopy',
                     #'apendices/herraminetas',
                     #'apendices/doff/modelos',
                     #'apendices/doff/dbapi',

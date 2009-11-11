@@ -1,12 +1,12 @@
-﻿**************
+***************
 Sitios Remotos
-**************
+***************
 
 El presente capítulo profundiza sobre el soporte en el servidor para lograr
 la desconexión de proyectos basados en Django. Este soporte se realiza mediante
 la aplicación genérica ``offline``. Sus objetivos son brindar las facilidades
 para la "desconexión", es decir, instalar el proyecto Doff en el cliente y
-un mecanismo básico de sincronización de datos [*]_.
+un mecanismo básico de socronización de datos [*]_.
 
 .. [*] La sincronización de datos se aborda en el capítulo siguiente
 
@@ -14,7 +14,8 @@ Hasta este momento se habló de que un proyecto Doff se compone de un conjunto
 de módulos JavaScript y que son publicados estáticamente.
 
 .. Se debe recordar que un proyecto Doff, de la misma manera que un 
-   proyecto Django, se compone de módulos de modelos, vistas y asociaciones de urls, además de un conjunto de plantillas.
+   proyecto Django, se compone de módulos de modelos, vistas y asociaciones de urls, 
+   además de un conjunto de templates.
 
 Con el objeto de evaluar una técnica que permita mantener consistencia 
 entre la aplicación en línea y la aplicación desconectada se
@@ -33,7 +34,7 @@ realizó el siguiente análisis sobre los módulos que componen al proyecto desc
       El sistema de plantillas de Doff es muy similar al de Django. Es decir,
       una plantilla utilizada en una aplicación Django se puede utilizar en
       un proyecto Doff.
-      En este caso, no hace falta ningún tipo de introspección, como en el caso
+      En este caso, no hace falta ningun tipo de introspección, como en el caso
       anterior de los modelos, para lograr consistencia entre los proyectos
       simplemente se debe publicar las plantillas como parte del 
       proyecto.
@@ -58,8 +59,8 @@ las vistas especiales para los modelos y las plantillas antes mencionados.
 A continuación se describe la mecánica de migración de proyectos Django a su
 versión desconectada utilzando los sitios remotos.
  
-La Clase RemoteSite
-===================
+RemoteSite
+----------
 
 La clase ``RemoteSite`` define un proyecto desconectado. Tiene varias 
 responsabilidades, entre ellas, servir el código JavaScript del framework Doff,
@@ -69,7 +70,7 @@ el módulo ``sites`` de la aplicación ``offline``.
 
 Un ``RemoteSite`` representa *una migración* [*]_ del proyecto en línea. Es decir,
 para un mismo proyecto en línea, pueden existir una o más migraciones.
-Su interfase está basada en la administración que provee Django 
+Su interfase está basada en la adminstración que provee Django 
 (``django.contrib.admin``), donde un 
 sitio de administración se encarga de las operaciones de CRUD sobre 
 los modelos que le son registrados. Pueden existir múltiples sitios de
@@ -224,7 +225,7 @@ los recursos que componen al proyecto.
 A continuación se realiza una descripción del método de migración de proyectos.
 
 Migración de un Proyecto
-========================
+------------------------
 
 La migración de un proyecto a través de los sitios remotos consiste
 de los siguientes pasos:
@@ -252,8 +253,7 @@ El siguiente gráfico resume la mecánica de migración:
     Esquema de trabajo con la aplicación offline
 
 Instalación y Configuración de la Aplicación Offline 
-----------------------------------------------------
-
+****************************************************
 El primer paso de la migración consiste en la instalación de la
 aplicación de soporte ``offline`` al proyecto. Para esto
 se la descarga y añade al ``PYTHONPATH``. Posteriormente se debe agregar a
@@ -277,7 +277,7 @@ URL en la cual se publicará será ``http://misitio.com/off/ventas``.
 
  
 Creación de un Sitio Remoto
----------------------------
+****************************
 
 Este paso se realiza mediante la ejecución del comando ``start_remotesite``, su
 sintaxis es la siguiente:
@@ -327,7 +327,7 @@ de la aplicación en linea).
     además si estos se encuentran publicados. No recibe argumentos.
    
 Migración de una Aplicación
----------------------------
+***************************
  
  * ``migrate_app``
  
@@ -387,7 +387,7 @@ se puede modificar.
 
 
 Publicación de Modelos
-----------------------
+======================
 
 Como se mencionó en el capítulo introductorio, es deseable contar con 
 un mecanismo de separación de los datos a los cuales accede al cliente
@@ -598,7 +598,7 @@ Los unicos campos transferidos son el ``pk`` (o ``id``) y la representación
 en cadena del modelo (``__unicode__``).         
 
 Publicación de un Sitio Remoto
-------------------------------
+==============================
 
 La publicación de un sitio remoto es explícita y consiste en agregar al
 módulo ``urls.py`` del proyecto un patrón como el siguiente (suponiendo 

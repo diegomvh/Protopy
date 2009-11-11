@@ -1,8 +1,8 @@
 ﻿.. _servidor:
 
-************************
+########################
 Tecnologías del Servidor
-************************
+########################
 
 Este capítulo tiene como finalidad introducir los conceptos básicos concernientes
 a la *generación dinámica de contenido* en el servidor web (2.1).
@@ -14,8 +14,9 @@ A continuación se analizan las características que hacen relevante
 el estudio de los lenguajes dinámicos como plataforma de desarrollo de aplicaciones
 web dinámicas.
 
+**********************************
 Generación Dinámica de Páginas Web
-==================================
+**********************************
 
 En el enfoque dinámico, cuando un usuario realiza una solicitud, el mensaje
 enviado tiene como objetivo la ejecución de un programa o secuencia de comandos
@@ -23,9 +24,11 @@ en el servidor. Por lo general, el procesamiento involucra el uso de la
 información proporcionada por el usuario para buscar registros en una base de
 datos y generar una página HTML personalizada para el cliente.
 
+
 Tradicionalmente, la tecnología utilizada se conoce como CGI,
 estándar que consiste en delegar la generación de contenido a un
 programa. CGI se limita a definir la entrada y salida de éste.
+
 
 Un enfoque más moderno para la generación de contenido dinámico 
 es la incrustación de secuencias de comandos dentro de 
@@ -61,6 +64,7 @@ En junio de 2004 se publica el proyecto Ruby On Rails, un framework de aplicacio
 web, desarrollado en el lenguaje de programación Ruby, que revolucionó la forma de 
 concebir los frameworks y la web.
 
+
 James Duncan Davidson, el creador de Tomcat y Ant, llegó a decir que Ruby On Rails
 es el framework web mejor pensado que él ha usado. Davison pasó
 10 años desarrollando aplicaciones web, frameworks y la especificación de los
@@ -84,7 +88,7 @@ A continuación se realiza una revisión general de los componentes de un servid
 luego, se analizan los lenguajes dinámicos y sus frameworks.
 
 Servidor Web
-------------
+============
 
 Un servidor web, o *web server*, es un software encargado de recibir solicitudes
 de recursos de un cliente, típicamente un navegador web, a través del
@@ -115,7 +119,7 @@ es a través de una URL, independientemente de su naturaleza.
 .. _servidor-cgi:
 
 CGI
----
+===
 
 Common Gateway Interface (CGI) [*]_ surge alrededor del año 1998,
 como el primer estándar de comunicación o API entre un servidor web y un
@@ -219,7 +223,7 @@ sesión. Cada petición se trata de manera independiente [DwightErwin1996]_.
 .. _servidor-lenguajes:
 
 Lenguajes Dinámicos
--------------------
+===================
 
 .. note:: Se copio a la intro
 
@@ -289,7 +293,7 @@ En base a la clasificación antes mencionada, a continuacion se analizan los len
 populares para el desarrollo de aplicaciones web.
 
 Perl
-^^^^
+----
 
 Es un lenguaje de programación de propósito general diseñado por Larry Wall en 1987. Perl toma características
 del lenguaje C, del lenguaje interpretado shell (sh), de los lenguajes AWK, sed y Lisp, y, en menor medida, de
@@ -307,7 +311,7 @@ puede ser realizada de varias maneras diferentes, dando lugar a confusión en lo
 
 
 Java
-^^^^
+----
 
 Es un lenguaje de programación orientado a objetos, multiplataforma y de propósito general, basado en máquina virtual,
 de compilación explícita.
@@ -334,7 +338,7 @@ http://www.archive.org/details/SeanKellyRecoveryfromAddiction
 
 
 PHP
-^^^
+---
 
 Es un lenguaje interpretado, originalmente diseñado para ser embebido 
 dentro del código HTML y procesado en el servidor, lo cual lo convierte en un DSL.
@@ -364,7 +368,7 @@ Los autores de los frameworks Django y Ruby On Rails provienen del lenguaje PHP 
 .. [BlogHardz2008] http://hardz.wordpress.com/2008/02/07/php-hipertexto-pre-procesado/
 
 Ruby
-^^^^
+----
 
 Es un lenguaje orientado fuertemente a objetos, multiplataforma, creado en 1995 por 
 Yukihiro "Matz" Matsumoto, en Japón.
@@ -399,7 +403,7 @@ lenguajes dinámicos similares como Python).
 .. _lenguaje-python:
 
 Python
-^^^^^^
+------
 
 Es un lenguaje de programación interpretado multiparadigma,
 de propósito general. Fue creado por Guido van Rossum en el año 1991.
@@ -486,8 +490,9 @@ En el :ref:`apéndice <apendices-python>` se encuentra una referecia detallada d
 
 .. [*] Por sin no les quedaba duda del fanatismo del defo, by **gisE**!!!
 
+***************
 Frameworks Web
-==============
+***************
 
 .. _servidor-frameworks:
 
@@ -551,7 +556,7 @@ de frameworks:
 .. _servidor-mvc:
 
 Patrón Model View Controler en Frameworks Web
----------------------------------------------
+=============================================
 
 Normalmente en el desarrollo de las aplicaciones web, mediante lenguajes
 de etiquetas como PHP o ASP, el diseño de la interfase, la lógica de la
@@ -594,7 +599,7 @@ web. Gran cantidad de frameworks que surgieron desde entonces han aplicado en
 mayor o menor grado este concepto.
 
 Componentes de un Framework Web MVC
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 Un framework web MVC suele contar con los siguientes componentes [WIKI002]_:
 	
@@ -663,7 +668,7 @@ Un framework web MVC suele contar con los siguientes componentes [WIKI002]_:
 
 
 Mapeador Objeto-Relacional (ORM)
---------------------------------
+================================
 
 
 Los lenguajes orientados a objetos utilizan clases, atributos y referencias para
@@ -712,7 +717,7 @@ de objetos.
 
 
 Django
-------
+======
 
 Django es un framework web escrito en Python que se apoya en el patrón MVC.
 Surge para la administración de páginas de noticias, lo que se pone de manifiesto
@@ -782,7 +787,7 @@ que se buscan tales características en el trabajo a realizar.
 .. note:: Correcciones de Marta hasta 06/10/2009
 
 Estructura de un Proyecto
-^^^^^^^^^^^^^^^^^^^^^^^^^
+-------------------------
 
 Durante la instalación del framework en el sistema del desarrollador, se añade
 a la variable de sistema ``PATH`` [*]_ un comando con el nombre ``django-admin.py``.
@@ -831,7 +836,7 @@ Se analizan a continuación la función de cada uno de los 3 módulos de un proy
 .. _django-proyecto-settings:
 
 Módulo settings
-“””””””””””””””
+~~~~~~~~~~~~~~~
 
 El modulo settings es código fuente y configura globalmente el proyecto.
 Define las aplicaciones instaladas (*INSTALLED_APPS*),
@@ -852,7 +857,7 @@ que no es factible utilizando lenguajes de marcado como XML, YAML, archivos INI,
 .. _django-proyecto-manage:
 
 Módulo manage
-“””””””””””””
+~~~~~~~~~~~~~
 
 Este módulo a diferencia de ``settings`` y ``urls``, es ejecutable. Sirve como interfase
 con el framework. Su invocación recibe como primer argumento un nombre de comando,
@@ -866,7 +871,7 @@ administrar usuarios, etc.
 .. _django-proyecto-urls:
 
 Módulo urls
-“””””””””””
+~~~~~~~~~~~
 
 Este módulo define las asociaciones entre las URLs y las vistas a nivel de proyecto.
 Dentro de éste, se puede derivar el tratado de ciertas URLs en módulos similares
@@ -897,7 +902,7 @@ al módulo de urls de la aplicación personas:
 
 
 Sistema de Plantillas
-^^^^^^^^^^^^^^^^^^^^^
+---------------------
 
 El sistema de plantillas aparece en la última fase de la generación de la respuesta
 al cliente. Tiene como objetivo la separación del procesamiento de datos de
@@ -996,7 +1001,7 @@ La salida sería:
 .. Una referencia detallada se encuentra en la documentación de Django: http://docs.djangoproject.com/en/dev/ref/templates/builtins/
 
 Estructura de una Aplicación
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+----------------------------
 
 Una aplicación es un paquete Python que consta de dos módulos: ``models`` y ``views``.
 
@@ -1025,7 +1030,7 @@ Se analizan a continuación la función de cada uno de los 2 módulos de una apl
 .. _django-proyecto-models:
 
 Módulo models
-^^^^^^^^^^^^^
+-------------
 
 Al crear una aplicación se genera un módulo ``models`` en cual se definen 
 las clases que extienden de ``django.db.models.Model``. Estas definiciones
@@ -1045,7 +1050,7 @@ Por ejemplo:
 .. [*] Mediante el comando ``syncdb`` del módulo ``manage`` del proyecto.
 	    
 Módulo views
-^^^^^^^^^^^^
+------------
 
 Cada aplicación posee un módulo ``views``, donde se definen las funciones que responden
 al cliente y se activan por medio del mapeo definido en el módulo ``urls`` del proyecto
@@ -1068,11 +1073,10 @@ El siguiente ejemplo integra un fragmento de los módulos ``urls`` y ``views``:
         return render_to_response('plantilla.html', datos)
 
 
-
 .. tecnologias-servidor-django-static:
 
 Contenido Dinámico y Estático
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------
 
 Django no se ocupa de generar contenido estático, sin embargo éste es
 necesario para el desarrollo completo de una aplicación web (imágenes, 
@@ -1097,7 +1101,7 @@ para ser delegadas al servidor web, tal como antes se mencionó.
 
 
 Ciclo de una Petición 
-^^^^^^^^^^^^^^^^^^^^^
+---------------------
 
 Se describe a continuación de manera más detallada el ciclo de una petición
 en Django. 
@@ -1171,7 +1175,7 @@ mostrados en la figura siguiente.
 .. _django-orm-modelos:
 
 API del Modelo
-^^^^^^^^^^^^^^
+--------------
 
 Un modelo de Django es una descripción de alto nivel de la estructura 
 de la base de datos. Esta descripción se realiza en lenguaje Python en el módulo 
@@ -1272,7 +1276,7 @@ Las tareas del ORM son:
 .. [*] **Data Manipulation Language** son las sentencias encargadas de la creación, recuperación, modificación. La compoenen las sentencias INSERT, UPDATE, DELETE.
 
 Claves en los modelos
-“””””””””””””””””””””
+~~~~~~~~~~~~~~~~~~~~~
 
 Los modelos en Django poseen un solo campo clave. Si ningún campo es definido como
 clave, con el argumento ``primary_key = True``, se agrega de manera automática un
@@ -1300,7 +1304,7 @@ se pueden definir campos ``unique`` y ``unique_together``, por ejemplo:
 
 
 Acceso a la API de modelos desde la consola interactiva
-“””””””””””””””””””””””””””””””””””””””””””””””””””””””
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Uno de los comandos provistos por el módulo manage es ``shell``, que invoca el intérprete
 de Python de manera interactiva agregando al PythonPath el proyecto.
@@ -1329,7 +1333,7 @@ El ejemplo anterior permite observar los siguientes puntos
 .. _django_managers:
 
 Managers
-^^^^^^^^
+--------
 
 Los managers se encargan de realizar las querys sobre las entidades
 de la base de datos. Presentan una API para realizar las consultas y devuelven
@@ -1380,7 +1384,7 @@ Los managers están presentes en:
 
 
 API de los Managers
-^^^^^^^^^^^^^^^^^^^
+-------------------
 
 La API provista por los managers consiste en dos grupos de métodos: los que retornan instancias de ``QuerySet`` y los que no. 
 
@@ -1461,7 +1465,7 @@ El conjunto de métodos que no devuleven ``QuerySet`` es:
 
 
 Formularios
-^^^^^^^^^^^
+-----------
 
 El elemento de entrada tradicional de las aplicaciones web está constituido por los formularios.
 En un sistema de información, la forma de realizar las operaciones CRUD es a través de éstos.

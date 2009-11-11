@@ -1,6 +1,6 @@
-﻿**************************
+##########################
 Introducción al Desarrollo
-**************************
+##########################
 
 En este capítulo se realiza una breve descripción del análisis de las tecnologías
 evaluadas para llevar a cabo la desconexión de una aplicación web.
@@ -69,7 +69,7 @@ de aplicaciones desconectadas con la aplicación web original.
         Elementos a transferir desde la aplicación online
 
 Python en el Navegador
-======================
+----------------------
 
 Sobre la plataforma Windows, existen dos formas de ejecutar Python en el navegador.
 La primera consiste en la ejecución del intérprete embebido en un control ActiveX.
@@ -201,7 +201,7 @@ se decidió analizar la posibilidad de realizar la aplicación del cliente utili
 las tecnologías propias del navegador.
 
 Lenguaje de Aplicación en el Cliente
-====================================
+--------------------------------------
 
 Como ya se introdujo en los apartados teóricos, JavaScript es el lenguaje de
 programación presente en todas las implementaciones de los navegadores
@@ -314,7 +314,7 @@ en JavaScript ni la totalidad del proyecto, reduciendo el tiempo de desarrollo
 y logrando mayor cohesión entre las partes.
 
 Análisis de Migración de Componentes
-====================================
+------------------------------------
 
 El primer componente del framework que se analizó fue el ORM, el cual
 debe ser migrado a JavaScript para conservar la semántica de acceso a datos
