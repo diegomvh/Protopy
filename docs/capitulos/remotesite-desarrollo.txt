@@ -66,11 +66,10 @@ La clase ``RemoteSite`` define un proyecto desconectado. Tiene varias
 responsabilidades, entre ellas, servir el código JavaScript del framework Doff,
 el del proyecto, publicar los templates, generar la definición de los modelos
 mediante introspección y permitir la sincornización. Esta clase se impleentó en 
-``offline.sites.RemoteSite``.
+el módulo ``sites`` de la aplicación ``offline``.
 
 Un ``RemoteSite`` representa *una migración* [*]_ del proyecto en línea. Es decir,
 para un mismo proyecto en línea, pueden existir una o más migraciones.
-
 Su interfase está basada en la adminstración que provee Django 
 (``django.contrib.admin``), donde un 
 sitio de administración se encarga de las operaciones de CRUD sobre 
@@ -88,6 +87,15 @@ manera, un sitio remoto se publica en una URL en el poryecto.
 .. [*] No confundir con migración de esquema, termino bajo el cual se agrupan
     las herramientas que permiten el pasaje de una definción de base de datos
     de alto nivel (ORM) a otro.
+
+Un sitio remoto se comporta ante el registro de URLs como la incusión de un
+módulo. Es decir, es similar a utilizar:
+
+.. code-block:: python
+    
+    urlpatterns = patterns('',
+        include('miapp.urls'),
+    )
 
 A diferencia de los sitios de administración de ``django.contrib.admin``, los
 sitios remotos están publicados bajo una URL base común. Esta debe ser definida
@@ -244,6 +252,8 @@ El siguiente gráfico resume la mecánica de migración:
 
     Esquema de trabajo con la aplicación offline
 
+Instalación y Configuración de la Aplicación Offline 
+****************************************************
 El primer paso de la migración consiste en la instalación de la
 aplicación de soporte ``offline`` al proyecto. Para esto
 se la descarga y añade al ``PYTHONPATH``. Posteriormente se debe agregar a
@@ -316,6 +326,8 @@ de la aplicación en linea).
     Este comando lista los ``RemoteSites`` de un proyecto en línea. Verifica
     además si estos se encuentran publicados. No recibe argumentos.
    
+Migración de una Aplicación
+***************************
  
  * ``migrate_app``
  
