@@ -1,14 +1,16 @@
 .. _apendices-protopy:
 
+#######
 Protopy
-=======
+#######
 
 Protopy es una librería en JavaScript que simplifica el desarrollo de
 aplicaciones web dinámicas. Agregando un enfoque modular para la inclusión de
 código, orientación a objetos, soporte para AJAX, manipulación del DOM y eventos.
 
 Módulos
--------
+=======
+
 Uno de los principales inconvenientes a los que Protopy da solución es a la
 inclusión dinámica de funcionalidad bajo demanda, esto se logra mediante los
 módulos. Básicamente un modulo en un archivo con código JavaScript que recide
@@ -54,720 +56,809 @@ en el servidor y posteriormente obtenido y ejecutado en el cliente.
 
 Módulos incluidos
 -----------------
+
 Estos módulos están incluidos en el núcleo de Protopy, es decir que están
 disponibles con la sola inclusión de la librería en el documento.
 Los módulos que a continuación se detallan engloban las herramientas básicas
 requeridas para el desarrollo del lado del cliente.
 
-.. module:: builtin
-    Este modulo contiene las funciones principales de Protopy, en el se encuentran
-    las herramientas básicas para realizar la mayoría de las tareas.
-    No es necesario requerir este modulo en el espacio de nombres principal
-    (``window``), ya que su funcionalidad esta disponible desde la carga de Protopy
-    en el mismo.
+builtin
 
-.. function:: compile(source : string[, filename, symbol]) -> object
+Este modulo contiene las funciones principales de Protopy, en el se encuentran
+las herramientas básicas para realizar la mayoría de las tareas.
+No es necesario requerir este modulo en el espacio de nombres principal
+(``window``), ya que su funcionalidad esta disponible desde la carga de Protopy
+en el mismo.
 
-.. function:: format_exception(etype, value, tb[, limit=None])
+    publish(simbols: Object)
 
-    Format the exception with a traceback.
+        Publica la funcionalidad de un modulo. 
+        Para interactuar con el código definido en un modulo es necesario exponer una
+        interfase de acceso al mismo, de esto se encarga la función publish.
 
-    :param etype: exception type
-    :param value: exception value
-    :param tb: traceback object
-    :param limit: maximum number of stack frames to show
-    :type limit: integer or None
-    :rtype: list of strings
+    require(module_name: String[, simbol: String...]) -> module: Object | simbol
 
-.. function:: publish(simbols: Object)
+        Importa un modulo en el espacio de nombres.
+        Al invocar a esta función un modulo es cargado desde el servidor y ejecutado en
+        el cliente, la forma en que el modulo se presenta en el espacio de nombres
+        depende de la invocación.
 
-    Publica la funcionalidad de un modulo. 
-    Para interactuar con el código definido en un modulo es necesario exponer una
-    interfase de acceso al mismo, de esto se encarga la función publish.
+        * var cntx = require('doff.template.context')
+            Importa el modulo :mod:`doff.template.context` y lo retorna en "cntx", dejando también una referencia
+            en el espacio de nombres llamado "context", esta dualidad en la asociación del modulo permite importar
+            módulos sin asociarlos a una variable, simplemente alcanza con asumir que la parte final del
+            nombre es la referencia a usar.
 
-.. function:: require(module_name: String[, simbol: String...]) -> module: Object | simbol
+        * var cur = require('gears.database', 'cursor')
+            Importa el modulo ``gears.databse`` y retorna en cur el objeto publicado bajo el nombre de cursor,
+            similar al caso anterior una referencia se define en el espacio de nombres para cursor.
+
+        * require('doff.db.models', 'model', 'query')
+            Importa el modulo :mod:`doff.db.models` y define en el espacio de nombres las referencias a model y query
+            usando los mismos nombres.
+
+        * require('doff.core.urlpattern', '*')
+            Importa del modulo :mod:`doff.core.urlpattern` todos los objetos publicados y los publica en el espacio de nombres.
+
+    type(name: String, [bases: Array ] [, class: Object ], instance: Object) -> Type
+
+        Función encargada de la construcción de nuevos tipos de objeto o
+        simplemente clases.
+        Una vez definido un nuevo tipo este puede ser utilizado para la construcción
+        de instancias mediante el operador "new".
+        Los argumentos para la funcion "type" son, el nombre para el nuevo tipo de
+        objeto, los tipos base de los cuales se hereda funcionalidad, opcionalmente los
+        atributos y/o metodos de clase y los atributos y/o metodos para la instancia.
+        La función que inicializa los objetos tiene por nombre \verb|__init__| y es
+        llamada en el momento de la construcción; en conjunto con otros metodos que se
+        mencionaran a lo largo del texto estas funciones resultan de especial interés
+        para interactuar con nuestros objetos y existen operadores en Protopy para
+        manejarlas; esto es, no debieran ser invocadas o llamadas directamente.
+
+        .. code-block:: javascript
+
+            var Animal = type('Animal', object, {
+                contador: 0,
+            }, {
+                __init__: function(especie) {
+                this.especie = especie;
+                this.orden = Animal.contador++;
+                }
+            });
+
+            var Terrestre = type('Terrestre', Animal, {
+                caminar: function() {
+                console.log(this.especie + ' caminando');
+                }
+            });
+
+            var Acuatico = type('Acuatico', Animal, {
+                nadar: function() {
+                console.log(this.especie + ' nadando');
+                }
+            });
+
+            var Anfibio = type('Anfibio', [Terrestre, Acuatico]);
+
+            var Piton = type('Piton', Terrestre, {
+                __init__: function(nombre) {
+                super(Terrestre, this).__init__(this.__name__);
+                this.nombre = nombre;
+                },
+                caminar: function() {
+                throw new Exception(this.especie + ' no camina');
+                },
+                reptar: function() {
+                console.log(this.nombre + ' la ' + this.especie.toLowerCase() + ' esta
+            reptando');
+                }
+            });
+
+            var doris = new Piton('Doris');
+            var ballena = new Acuatico('Ballena');
+            var rana = new Anfibio('Rana');
+
+        .. code-block:: python
+
+            >>> doris
+            window.Piton especie=Piton orden=0 nombre=Doris __name__=Piton
+            >>> rana
+            window.Anfibio especie=Rana orden=2 __name__=Anfibio
+            >>> isinstance(rana, Terrestre)
+            true
+            >>> isinstance(doris, Animal)
+            true
+            >>> issubclass(Anfibio, Acuatico)
+            true
+            >>> issubclass(Piton, Animal)
+            true
+            >>> doris.caminar()
+            Exception: Piton no camina args=[1] message=Piton no camina
+            >>> doris.reptar()
+            Doris la piton esta reptando
+
+    $(id: String) -> HTMLElement
+    $(id: String[, id...]) -> [HTMLElement...]
+
+        Esta función recibe una cadena de texto y retorna el elemento del documento
+        cuyo ``id'' se corresponda con la cadena. En conjunto con la función \$\$
+        constituyen dos herramientas muy útiles para recuperar elementos e interactuar
+        con el árbol DOM. Si mas de un argumento es pasado, la forma de retorno es
+        mediante un arreglo, permitiendo así la iteración sobre los mismos.
+
+    .. code-block:: python
+
+        >>> $('content')
+        <div id="content">
+        >>> $('content body')
+        >>> $('content', 'body')
+        [div#content, div#body]
+        >>> $('content', 'body', 'head')
+        [div#content, div#body, undefined]
+
+    $$(cssRule: String) -> [HTMLElement...]
+
+        Recupera elementos del documento, basando las reglas de seleccion en las
+        reglas de css o hoja de estilos.
+
+        >>> $$('div')
+        [div#wrap, div#top, div#content, div.header, div.breadcrumbs, div.middle, div,
+        div.right, div#clear, div#footer, div#toolbar]
+        >>> $$('div#toolbar')
+        [div#toolbar]
+        >>> $$('div#toolbar li')
+        [li, li.panel, li.panel, li, li]
+        >>> $$('div#toolbar li.panel')
+        [li.panel, li.panel]
+        >>> $$('a:not([href~=google])')
+        [a add_post, a add_tag, a removedb, a syncdb]
+        >>> $$('a:not([href=google])')
+        [a add_post, a add_tag, a#google www.google.com, a removedb, a syncdb]
+        >>> $$('div:empty')
+        [div#logger.panel, div#dbquery.panel, div#clear, div#top]
+
+    extend(destiny: Object, source: Object) -> alteredDestiny: Object
+
+        Extiende sobre un objeto destino todos los objetos pasados como argumentos a
+        continuación, copiando cada uno de los atributos correspondientes, el objeto
+        destino es retornado modificado.
+
+        >>> a = {perro: 4}
+        >>> b = {gato: 4}
+        >>> c = extend(a, b)
+        >>> c
+        Object perro=4 gato=4
+        >>> a
+        Object perro=4 gato=4
+        >>> b
+        Object gato=4
+
+    super(type: Type, instance: Object) -> boundedObject: Object
     
-    Importa un modulo en el espacio de nombres.
-    Al invocar a esta función un modulo es cargado desde el servidor y ejecutado en
-    el cliente, la forma en que el modulo se presenta en el espacio de nombres
-    depende de la invocación.
+        Enlaza un objeto con un tipo de objeto, de este modo la invocación sobre una
+        función del tipo se realizara sobre el objeto enlazado.
+        Normalmente esta función es utilizada para llamar a metodos de un tipo base.
+    
+    isundefined(object: Object) -> boolean
+    
+        Determina si un objeto no esta definido o asociado a un valor. Retorna un valor
+        de verdad correspondiente.
+    
+    isinstance(object, type | [type...]) -> boolean
+    
+        Retorna verdadero si el objeto es una instancia del tipo, si un arreglo de tipos
+        es pasado como segundo argumento el valor de verdad surge de preguntar por cada
+        uno de ellos.
+    
+    issubclass(type1, type2 | [type...]) -> boolean
+    
+        Retorna si type1 es una subclase de type2, cuando se pasa un arreglo en lugar de
+        type2 la evaluación se realiza para cada una de las clases incluidas en el mismo.
+    
+    Arguments(arguments) -> Arguments
+    
+        Clase Argumentes En JavaScript 
+        El objeto para los argumentos asociativos debe ir al final de la invocación
 
-    * var cntx = require('doff.template.context')
-        Importa el modulo :mod:`doff.template.context` y lo retorna en "cntx", dejando también una referencia
-        en el espacio de nombres llamado "context", esta dualidad en la asociación del modulo permite importar
-        módulos sin asociarlos a una variable, simplemente alcanza con asumir que la parte final del
-        nombre es la referencia a usar.
-
-    * var cur = require('gears.database', 'cursor')
-        Importa el modulo ``gears.databse`` y retorna en cur el objeto publicado bajo el nombre de cursor,
-        similar al caso anterior una referencia se define en el espacio de nombres para cursor.
-
-    * require('doff.db.models', 'model', 'query')
-        Importa el modulo :mod:`doff.db.models` y define en el espacio de nombres las referencias a model y query
-        usando los mismos nombres.
-
-    * require('doff.core.urlpattern', '*')
-        Importa del modulo :mod:`doff.core.urlpattern` todos los objetos publicados y los publica en el espacio de nombres.
-
-.. function:: type(name: String, [bases: Array ] [, class: Object ], instance: Object) -> Type
-
-    Función encargada de la construcción de nuevos tipos de objeto o
-    simplemente clases.
-    Una vez definido un nuevo tipo este puede ser utilizado para la construcción
-    de instancias mediante el operador "new".
-    Los argumentos para la funcion "type" son, el nombre para el nuevo tipo de
-    objeto, los tipos base de los cuales se hereda funcionalidad, opcionalmente los
-    atributos y/o metodos de clase y los atributos y/o metodos para la instancia.
-    La función que inicializa los objetos tiene por nombre \verb|__init__| y es
-    llamada en el momento de la construcción; en conjunto con otros metodos que se
-    mencionaran a lo largo del texto estas funciones resultan de especial interés
-    para interactuar con nuestros objetos y existen operadores en Protopy para
-    manejarlas; esto es, no debieran ser invocadas o llamadas directamente.
-
-.. code-block:: javascript
-
-    var Animal = type('Animal', object, {
-        contador: 0,
-    }, {
-        __init__: function(especie) {
-        this.especie = especie;
-        this.orden = Animal.contador++;
+        function unaFuncion(arg1, arg2, arg3) { 
+            var todos = new Arguments(arguments);
+            print('Argumento 1: %s o %s o %s', arg1, todos[0], todos.arg1);
+            print('Argumento 2: %s o %s o %s', arg2, todos[1], todos.arg2);
+            print('Argumento 3: %s o %s o %s', arg3, todos[2], todos.arg3);
+            print('Otros argumentos: %s', todos.args);
+            print('Argumentos pasados por objeto: %o', todos.kwargs);
         }
-    });
-
-    var Terrestre = type('Terrestre', Animal, {
-        caminar: function() {
-        console.log(this.especie + ' caminando');
+        function otraFuncion(arg1) { 
+            var todos = new Arguments(arguments, {'def1': 1, 'def2': 2});
+            print('Argumento 1: %s o %s o %s', arg1, todos[0], todos.arg1);
+            print('Otros argumentos: %s', todos.args);
+            print('Argumentos pasados por objeto: %o', todos.kwargs);
         }
-    });
 
-    var Acuatico = type('Acuatico', Animal, {
-        nadar: function() {
-        console.log(this.especie + ' nadando');
-        }
-    });
+        >>> unaFuncion('uno', 2, null, 3, 4, 5, {'nombre': 'Diego', 'apellido': 'van Haaster'})
+        Argumento 1: uno o uno o uno
+        Argumento 2: 2 o 2 o 2
+        Argumento 3: null o null o null
+        Otros argumentos: 3,4,5
+        Argumentos pasados por objeto: Object nombre=Diego apellido=van Haaster
+        >>> unaFuncion('uno', 2, null, {'nombre': 'Diego', 'apellido': 'van Haaster'})
 
-    var Anfibio = type('Anfibio', [Terrestre, Acuatico]);
+        Otros argumentos:
+        Argumentos pasados por objeto: Object nombre=Diego apellido=van Haaster
+        >>> unaFuncion('uno', 2, null, 3, 2, 3, 4)
 
-    var Piton = type('Piton', Terrestre, {
-        __init__: function(nombre) {
-        super(Terrestre, this).__init__(this.__name__);
-        this.nombre = nombre;
-        },
-        caminar: function() {
-        throw new Exception(this.especie + ' no camina');
-        },
-        reptar: function() {
-        console.log(this.nombre + ' la ' + this.especie.toLowerCase() + ' esta
-    reptando');
-        }
-    });
-
-    var doris = new Piton('Doris');
-    var ballena = new Acuatico('Ballena');
-    var rana = new Anfibio('Rana');
-
-.. code-block:: python
+        Otros argumentos: 3,2,3,4
+        Argumentos pasados por objeto: Object
+        >>> otraFuncion('uno', 2, {'nombre': 'Diego', 'apellido': 'van Haaster'})
+        Argumento 1: uno o uno o uno
+        Otros argumentos: 2
+        Argumentos pasados por objeto: Object def1=1 def2=2 nombre=Diego apellido=van Haaster
+        >>> otraFuncion('uno', 2, {'def1': 'Diego', 'apellido': 'van Haaster'})
+        Argumento 1: uno o uno o uno
+        Otros argumentos: 2
+        Argumentos pasados por objeto: Object def1=Diego def2=2 apellido=van Haaster
     
-    >>> doris
-    window.Piton especie=Piton orden=0 nombre=Doris __name__=Piton
-    >>> rana
-    window.Anfibio especie=Rana orden=2 __name__=Anfibio
-    >>> isinstance(rana, Terrestre)
-    true
-    >>> isinstance(doris, Animal)
-    true
-    >>> issubclass(Anfibio, Acuatico)
-    true
-    >>> issubclass(Piton, Animal)
-    true
-    >>> doris.caminar()
-    Exception: Piton no camina args=[1] message=Piton no camina
-    >>> doris.reptar()
-    Doris la piton esta reptando
+    Template(destiny, source) -> Template
 
-.. function:: $(id: String) -> HTMLElement
-              $(id: String[, id...]) -> [HTMLElement...]
+        Clase Templates
 
-    Esta función recibe una cadena de texto y retorna el elemento del documento
-    cuyo ``id'' se corresponda con la cadena. En conjunto con la función \$\$
-    constituyen dos herramientas muy útiles para recuperar elementos e interactuar
-    con el árbol DOM. Si mas de un argumento es pasado, la forma de retorno es
-    mediante un arreglo, permitiendo así la iteración sobre los mismos.
-
-.. code-block:: python
-
-    >>> $('content')
-    <div id="content">
-    >>> $('content body')
-    >>> $('content', 'body')
-    [div#content, div#body]
-    >>> $('content', 'body', 'head')
-    [div#content, div#body, undefined]
-
-.. function:: $$(cssRule: String) -> [HTMLElement...]
-    Recupera elementos del documento, basando las reglas de seleccion en las
-    reglas de css o hoja de estilos.
-
-    >>> $$('div')
-    [div#wrap, div#top, div#content, div.header, div.breadcrumbs, div.middle, div,
-    div.right, div#clear, div#footer, div#toolbar]
-    >>> $$('div#toolbar')
-    [div#toolbar]
-    >>> $$('div#toolbar li')
-    [li, li.panel, li.panel, li, li]
-    >>> $$('div#toolbar li.panel')
-    [li.panel, li.panel]
-    >>> $$('a:not([href~=google])')
-    [a add_post, a add_tag, a removedb, a syncdb]
-    >>> $$('a:not([href=google])')
-    [a add_post, a add_tag, a#google www.google.com, a removedb, a syncdb]
-    >>> $$('div:empty')
-    [div#logger.panel, div#dbquery.panel, div#clear, div#top]
+    Dict(object) -> Dict
+        
+        Clase Dict
     
-.. function:: extend(destiny: Object, source: Object) -> alteredDestiny: Object
-    Extiende sobre un objeto destino todos los objetos pasados como argumentos a
-    continuación, copiando cada uno de los atributos correspondientes, el objeto
-    destino es retornado modificado.
+        >>> dic = new Dict({'db': 5, 'template': 2, 'core': 9})
+        >>> obj = {'un': 'objeto'}
+        >>> dic.set(obj, 10)
+        >>> arreglo = [1,2,3,4,obj]
+        >>> dic.set(arreglo, 50)
+        >>> dic.get('template')
+        2
+        >>> dic.get(arreglo)
+        50
+        >>> dic.get(obj)
+        10
+        >>> dic.items()
+        [["db", 5], ["template", 2], ["core", 9], [Object un=objeto, 10], [[1, 2, 3, 2
+        more...], 50]]
+        >>> dic.keys()
+        ["db", "template", "core", Object un=objeto, [1, 2, 3, 2 more...]]
+        >>> dic.values()
+        [5, 2, 9, 10, 50]
 
-    >>> a = {perro: 4}
-    >>> b = {gato: 4}
-    >>> c = extend(a, b)
-    >>> c
-    Object perro=4 gato=4
-    >>> a
-    Object perro=4 gato=4
-    >>> b
-    Object gato=4
+    Set(array) -> Set
 
-.. function:: super(type: Type, instance: Object) -> boundedObject: Object
-    Enlaza un objeto con un tipo de objeto, de este modo la invocación sobre una
-    función del tipo se realizara sobre el objeto enlazado.
-    Normalmente esta función es utilizada para llamar a metodos de un tipo base.
+        Clase Set
+        Un set es una coleccion de elementos unicos, de forma similar a los conjuntos
+        este objeto soporta intersecciones, uniones, restas, etc.
 
-.. function:: isundefined(object: Object) -> boolean
-    Determina si un objeto no esta definido o asociado a un valor. Retorna un valor
-    de verdad correspondiente.
-
-.. function:: isinstance(object, type | [type...]) -> boolean
-    Retorna verdadero si el objeto es una instancia del tipo, si un arreglo de tipos
-    es pasado como segundo argumento el valor de verdad surge de preguntar por cada
-    uno de ellos.
-
-.. function:: issubclass(type1, type2 | [type...]) -> boolean
-    Retorna si type1 es una subclase de type2, cuando se pasa un arreglo en lugar de
-    type2 la evaluación se realiza para cada una de las clases incluidas en el mismo.
-
-.. function:: new Arguments(arguments) -> Arguments
-    En JavaScript 
-    El objeto para los argumentos asociativos debe ir al final de la invocación
+        >>> set = new Set([1,2,3,4,5,6,7,8,9,3,6,1,4,7])
+        >>> len(set)
+        9
+        >>> set.add(6)
+        >>> set)
+        9
+        >>> set2 = set.intersection([1,3,5,6])
+        >>> set2.elements
+        [1, 3, 5, 6]
     
-    function unaFuncion(arg1, arg2, arg3) { 
-    var todos = new Arguments(arguments);
-    print('Argumento 1: %s o %s o %s', arg1, todos[0], todos.arg1);
-    print('Argumento 2: %s o %s o %s', arg2, todos[1], todos.arg2);
-    print('Argumento 3: %s o %s o %s', arg3, todos[2], todos.arg3);
-    print('Otros argumentos: %s', todos.args);
-    print('Argumentos pasados por objeto: %o', todos.kwargs);
-    }
-    function otraFuncion(arg1) { 
-    var todos = new Arguments(arguments, {'def1': 1, 'def2': 2});
-    print('Argumento 1: %s o %s o %s', arg1, todos[0], todos.arg1);
-    print('Otros argumentos: %s', todos.args);
-    print('Argumentos pasados por objeto: %o', todos.kwargs);
-    }
-
-    >>> unaFuncion('uno', 2, null, 3, 4, 5, {'nombre': 'Diego', 'apellido': 'van Haaster'})
-    Argumento 1: uno o uno o uno
-    Argumento 2: 2 o 2 o 2
-    Argumento 3: null o null o null
-    Otros argumentos: 3,4,5
-    Argumentos pasados por objeto: Object nombre=Diego apellido=van Haaster
-    >>> unaFuncion('uno', 2, null, {'nombre': 'Diego', 'apellido': 'van Haaster'})
-    ...
-    Otros argumentos:
-    Argumentos pasados por objeto: Object nombre=Diego apellido=van Haaster
-    >>> unaFuncion('uno', 2, null, 3, 2, 3, 4)
-    ...
-    Otros argumentos: 3,2,3,4
-    Argumentos pasados por objeto: Object
-    >>> otraFuncion('uno', 2, {'nombre': 'Diego', 'apellido': 'van Haaster'})
-    Argumento 1: uno o uno o uno
-    Otros argumentos: 2
-    Argumentos pasados por objeto: Object def1=1 def2=2 nombre=Diego apellido=van Haaster
-    >>> otraFuncion('uno', 2, {'def1': 'Diego', 'apellido': 'van Haaster'})
-    Argumento 1: uno o uno o uno
-    Otros argumentos: 2
-    Argumentos pasados por objeto: Object def1=Diego def2=2 apellido=van Haaster
-
-.. function:: new Template(destiny, source) -> Template
-
-.. function:: new Dict(object) -> Dict
-
-    >>> dic = new Dict({'db': 5, 'template': 2, 'core': 9})
-    >>> obj = {'un': 'objeto'}
-    >>> dic.set(obj, 10)
-    >>> arreglo = [1,2,3,4,obj]
-    >>> dic.set(arreglo, 50)
-    >>> dic.get('template')
-    2
-    >>> dic.get(arreglo)
-    50
-    >>> dic.get(obj)
-    10
-    >>> dic.items()
-    [["db", 5], ["template", 2], ["core", 9], [Object un=objeto, 10], [[1, 2, 3, 2
-    more...], 50]]
-    >>> dic.keys()
-    ["db", "template", "core", Object un=objeto, [1, 2, 3, 2 more...]]
-    >>> dic.values()
-    [5, 2, 9, 10, 50]
-
-.. function:: new Set(array) -> Set
-    Un set es una coleccion de elementos unicos, de forma similar a los conjuntos
-    este objeto soporta intersecciones, uniones, restas, etc.
-
-    >>> set = new Set([1,2,3,4,5,6,7,8,9,3,6,1,4,7])
-    >>> len(set)
-    9
-    >>> set.add(6)
-    >>> set)
-    9
-    >>> set2 = set.intersection([1,3,5,6])
-    >>> set2.elements
-    [1, 3, 5, 6]
-
-.. function:: hash(string | number) -> number
-    Retorna un valor de hash para el argumento dado, para los mismos argumentos se
-    teronran los mismos valores de hash.
-
-.. function:: id(value) -> number
-    Asigna y retorna un identificador unico para el valor pasado como argumento.
-    Al pasar un valor que sea de tipo objeto la funcion id modificara la
-    estructura interna agregando el atributo \verb|__hash__| para ``etiquetar''
-    el objeto y en posteriores llamadas retornara el mismo identificador.
-
-.. function:: getattr(object, name, default) -> value
-    Obtiene un atributo de un objeto mediante su nombre, en caso de pasar un valor
-    por defecto este es retornado si el atributo buscado no esta definido en el
-    objeto, en caso contrario una excepcion es lanzada.
-
-.. function:: setattr(object, name, value)
-    Establece un atributo en un objeto con el nombre pasado. El valor establecido
-    pasa a formar parte del objeto.
-
-.. function:: hasattr(object, name) -> boolean
-    Retrona verdadero en caso de que el objeto tenga un atributo con el nombre
-    correspondiente, falso en caso contrario.
-
-.. function:: assert(boolean, mesage)
-    Chequea que el valor de verdad pasado sea verdadero en caso contrario retorna
-    una excepcion conteniendo el mensaje pasado.
-
-.. function:: bool(object)
-    Determina el valor de verdad de un objeto pasado, los valores de verdad son como
-    sigue: arreglos, objetos y cadenas vacias en conjunto con los valores null y
-    undefined son falsos; todos los demas casos son verdaderos.
-    En el caso particular de que un objeto defina el metodo \verb|__nonzero__| este
-    es invocado para determinar el valor de verdad.
-
-.. function:: callable(value) -> boolean
-    Retorna verdadero en caso de que el valor pasado sea instancia de una funcion
-    osea pueda ser llamado, falso en caso contrario.
-
-.. function:: chr(number) -> character
-    Retorna el caracter correspondiente al numero ordinal pasado.
-
-.. function:: ord(character) -> number
-    Retorna un numero correspondiente al caracter pasado.
-
-    >>> ord(chr(65))
-    65
-    >>> chr(ord("A"))
-    "A"
-
-.. function:: bisect(seq, element) -> position
-    Dada una secuencia ordenada y un elemento la funcion bisect retorna un numero
-    referenciando a la posicion en que el elemnto debe ser insertado en la
-    secuencia, para que esta conseve su orden.
-    Si los elementos de la secuencia definen el metodo \verb|__cmp__| este es
-    invocado para determinar la posicion a retornar.
-
-    >>> a = [1,2,3,4,5]
-    >>> bisect(a,6)
-    5
-    >>> bisect(a,2)
-    2
-    >>> a[bisect(a,3)] = 3
-    >>> a
-    [1, 2, 3, 3, 5]
-
-.. function:: equal(object1, object2) -> boolean
-    Compara dos objetos determinando el valor de igual para los mismos, verdadero es
-    retornado en caso de ser los dos objetos iguales.
-    En caso de que object1 defina el metodo \verb|__eq__| este es invocado con
-    object2 pasado como parametro para determinar la igualdad.
-
-.. function:: nequal(object, object) -> boolean
-    Compara dos objetos determinando el valor de igual para los mismos, verdadero es
-    retornado en caso de ser los dos objetos distintos.
-    En caso de que object1 defina el metodo \verb|__ne__| este es invocado con
-    object2 pasado como parametro para determinar la no igualdad.
-
-.. function:: number(object) -> number
-    Convierte un objeto a su representacion numerica.
-
-.. function:: flatten(array) -> flattenArray
-    Aplana un arreglo de modo que el resultado sea un unico arreglo conteniendo
-    todos los elementos que se pasaron en multiples arreglos a la funcion.
-
-.. function:: include(seq, element) -> boolean
-    Determina si un elemento esta incluido en una secuencia o coleccion de objetos,
-    si la coleccion implementa el metodo __contains__, este es utilizado para
-    determinar la pertenencia del elemento.
-
-.. function:: len(seq) -> boolean
-    Retorna un valor numerico representando la cantidad de elementos contenidos en
-    la secuencia o coleccion, si la coleccion implementa el metodo __len__,
-    este es utilizado para determinar la cantidad de elementos.
-
-.. function:: array(seq) -> [element...]
-    Genera un arreglo en base a la secuencia pasada, si la secuencia implementa el
-    metodo __iter__, este es utilizado para llenar el arrgelo con los
-    elementos.
-
-.. function:: print(text...)
-    Si la consola de firebug esta instalada este metodo imprime el texto pasado por
-    consola.
-
-.. function:: string(object)
-    Retorna una reprecentacion en texto del objeto pasado como argumento.
-    Si el objeto define el metodo __str__ este es invocado para obtener la
-    reprecentacion.
-
-.. function:: values(object) -> [value...]
-    Retorna un arreglo con los valores del objeto pasado como argumento.
-
-.. function:: keys(object) -> [key...]
-    Retorna un arreglo con las claves del objeto pasado como argumento.
-
-.. function:: items(object) -> [[key, value]...]
-    Retorna en forma de arreglo cada pareja clave, valor de un objeto pasado como
-    argumento.
-
-    >>> items({'perro': 1, 'gato': 7})
-    [["perro", 1], ["gato", 7]]
-
-.. function:: inspect(object) -> string
-
-.. function:: unique(array) -> [element...]
-    Dado un arreglo con elementos repetidos retorna un nuevo arreglo que se compone
-    de los elementos unicos encontrados.
-
-.. function:: range([begin = 0, ] end[, step = 1]) -> [number...]
-    Retorna un arreglo conteniendo una progresion aritmetica de numeros enteros.
-    Los parametros son variables y en su invocacion mas simple se pasa solo el final
-    de la secuencia de numeros a generar, asumiendo para ello un inicio en 0 y un
-    incremento en una unidad, estos valores pueden ser modificados.
-
-    >>> range(10)
-    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-    >>> range(4, 10)
-    [4, 5, 6, 7, 8, 9]
-    >>> range(4, 10, 2)
-    [4, 6, 8]
-
-.. function:: xrange([begin = 0, ] end[, step = 1]) -> generator
-    Similar a range pero en lugar de retornar un arrglo retorna un objeto que
-    generar los valores bajo demanda.
-
-.. function:: zip(seq1 [, seq2 [...]]) -> [[seq1[0], seq2[0] ...], [...]]
-    Retorna un arreglo en donde cada secuencia contenida es el resultado de combinar
-    cada una de las secuencias que se pasaron como argumento, la longitud de las
-    secuencias queda acotada a la longitud de la secuencia mas corta.
-
-    >>> zip([1,2,3,4,5,6], ['a','b','c','d','e','f'])
-    [[1, "a"], [2, "b"], [3, "c"], [4, "d"], [5, "e"], [6, "f"]]
-    >>> zip([1,2,3,4,5,6], ['a','b','c','d','e','f','g','h'])
-    [[1, "a"], [2, "b"], [3, "c"], [4, "d"], [5, "e"], [6, "f"]]
-    >>> zip([1,2,3,4,5,6], ['a','b','c','d'])
-    [[1, "a"], [2, "b"], [3, "c"], [4, "d"], [5, undefined], [6, undefined]]
-    >>> zip([1,2,3,4,5,6], ['a','b','c','d','e','f'], [10,11,12,13,14,15,16])
-    [[1, "a", 10], [2, "b", 11], [3, "c", 12], [4, "d", 13], [5, "e", 14], [6, "f",
-    15]]
-
-.. module:: sys
-
-    Este módulo provee acceso a algunos objetos y funciones mantenidas por Protopy y
-    que resultan de utilidad para interactuar con el ambiente.
-
-.. attribute:: version
-    Version de Protopy.
-
-.. attribute:: browser
-    Este objeto provee informacion sobre el navegador en el cual protopy se cargo.
+    hash(string | number) -> number
     
-        * IE Si el navegador es Internet Explorer.
-        * Opera Si el navegador es Opera.
-        * WebKit Si el navegador es AppleWebKit.
-        * Geck Si el navegador es Gecko.
-        * MobileSafari Si el navegador es Apple Mobile Safari.
-        * fatures Algunas herramientas que el navegador proveea, por ejemplo
-            XPath, un selector de css, y otras extensiones.
-
-.. attribute:: gears
-    Objeto gears para interactuar con el plugin de google gears.
-    installed
-    install
-    factory
+        Retorna un valor de hash para el argumento dado, para los mismos argumentos se
+        teronran los mismos valores de hash.
     
-.. function:: register_path
-    Registra una ruta en el servidor para un paquete, de este modo, las imporaciones
-    de modulos dependientes de de ese paquete se realizaran sobre la ruta asociada. 
+    id(value) -> number
+    
+        Asigna y retorna un identificador unico para el valor pasado como argumento.
+        Al pasar un valor que sea de tipo objeto la funcion id modificara la
+        estructura interna agregando el atributo \verb|__hash__| para ``etiquetar''
+        el objeto y en posteriores llamadas retornara el mismo identificador.
+    
+    getattr(object, name, default) -> value
+    
+        Obtiene un atributo de un objeto mediante su nombre, en caso de pasar un valor
+        por defecto este es retornado si el atributo buscado no esta definido en el
+        objeto, en caso contrario una excepcion es lanzada.
+    
+    setattr(object, name, value)
+    
+        Establece un atributo en un objeto con el nombre pasado. El valor establecido
+        pasa a formar parte del objeto.
+    
+    hasattr(object, name) -> boolean
+    
+        Retrona verdadero en caso de que el objeto tenga un atributo con el nombre
+        correspondiente, falso en caso contrario.
+    
+    assert(boolean, mesage)
+    
+        Chequea que el valor de verdad pasado sea verdadero en caso contrario retorna
+        una excepcion conteniendo el mensaje pasado.
+    
+    bool(object)
+    
+        Determina el valor de verdad de un objeto pasado, los valores de verdad son como
+        sigue: arreglos, objetos y cadenas vacias en conjunto con los valores null y
+        undefined son falsos; todos los demas casos son verdaderos.
+        En el caso particular de que un objeto defina el metodo \verb|__nonzero__| este
+        es invocado para determinar el valor de verdad.
+    
+    callable(value) -> boolean
+    
+        Retorna verdadero en caso de que el valor pasado sea instancia de una funcion
+        osea pueda ser llamado, falso en caso contrario.
+    
+    chr(number) -> character
+    
+        Retorna el caracter correspondiente al numero ordinal pasado.
+    
+    ord(character) -> number
+    
+        Retorna un numero correspondiente al caracter pasado.
+    
+        >>> ord(chr(65))
+        65
+        >>> chr(ord("A"))
+        "A"
+    
+    bisect(seq, element) -> position
+    
+        Dada una secuencia ordenada y un elemento la funcion bisect retorna un numero
+        referenciando a la posicion en que el elemnto debe ser insertado en la
+        secuencia, para que esta conseve su orden.
+        Si los elementos de la secuencia definen el metodo \verb|__cmp__| este es
+        invocado para determinar la posicion a retornar.
+    
+        >>> a = [1,2,3,4,5]
+        >>> bisect(a,6)
+        5
+        >>> bisect(a,2)
+        2
+        >>> a[bisect(a,3)] = 3
+        >>> a
+        [1, 2, 3, 3, 5]
+    
+    equal(object1, object2) -> boolean
+    
+        Compara dos objetos determinando el valor de igual para los mismos, verdadero es
+        retornado en caso de ser los dos objetos iguales.
+        En caso de que object1 defina el metodo \verb|__eq__| este es invocado con
+        object2 pasado como parametro para determinar la igualdad.
+    
+    nequal(object, object) -> boolean
+    
+        Compara dos objetos determinando el valor de igual para los mismos, verdadero es
+        retornado en caso de ser los dos objetos distintos.
+        En caso de que object1 defina el metodo \verb|__ne__| este es invocado con
+        object2 pasado como parametro para determinar la no igualdad.
+    
+    number(object) -> number
+    
+        Convierte un objeto a su representacion numerica.
+    
+    flatten(array) -> flattenArray
+    
+        Aplana un arreglo de modo que el resultado sea un unico arreglo conteniendo
+        todos los elementos que se pasaron en multiples arreglos a la funcion.
+    
+    include(seq, element) -> boolean
+    
+        Determina si un elemento esta incluido en una secuencia o coleccion de objetos,
+        si la coleccion implementa el metodo __contains__, este es utilizado para
+        determinar la pertenencia del elemento.
+    
+    len(seq) -> boolean
+    
+        Retorna un valor numerico representando la cantidad de elementos contenidos en
+        la secuencia o coleccion, si la coleccion implementa el metodo __len__,
+        este es utilizado para determinar la cantidad de elementos.
+    
+    array(seq) -> [element...]
+    
+        Genera un arreglo en base a la secuencia pasada, si la secuencia implementa el
+        metodo __iter__, este es utilizado para llenar el arrgelo con los
+        elementos.
+    
+    print(text...)
+    
+        Si la consola de firebug esta instalada este metodo imprime el texto pasado por
+        consola.
+    
+    string(object)
+    
+        Retorna una reprecentacion en texto del objeto pasado como argumento.
+        Si el objeto define el metodo __str__ este es invocado para obtener la
+        reprecentacion.
+    
+    values(object) -> [value...]
+    
+        Retorna un arreglo con los valores del objeto pasado como argumento.
+    
+    keys(object) -> [key...]
+    
+        Retorna un arreglo con las claves del objeto pasado como argumento.
+    
+    items(object) -> [[key, value]...]
+    
+        Retorna en forma de arreglo cada pareja clave, valor de un objeto pasado como
+        argumento.
+    
+        >>> items({'perro': 1, 'gato': 7})
+        [["perro", 1], ["gato", 7]]
+    
+    inspect(object) -> string
+    
+    unique(array) -> [element...]
+    
+        Dado un arreglo con elementos repetidos retorna un nuevo arreglo que se compone
+        de los elementos unicos encontrados.
+    
+    range([begin = 0, ] end[, step = 1]) -> [number...]
+    
+        Retorna un arreglo conteniendo una progresion aritmetica de numeros enteros.
+        Los parametros son variables y en su invocacion mas simple se pasa solo el final
+        de la secuencia de numeros a generar, asumiendo para ello un inicio en 0 y un
+        incremento en una unidad, estos valores pueden ser modificados.
+    
+        >>> range(10)
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        >>> range(4, 10)
+        [4, 5, 6, 7, 8, 9]
+        >>> range(4, 10, 2)
+        [4, 6, 8]
+    
+    xrange([begin = 0, ] end[, step = 1]) -> generator
+    
+        Similar a range pero en lugar de retornar un arrglo retorna un objeto que
+        generar los valores bajo demanda.
+    
+    zip(seq1 [, seq2 [...]]) -> [[seq1[0], seq2[0] ...], [...]]
+    
+        Retorna un arreglo en donde cada secuencia contenida es el resultado de combinar
+        cada una de las secuencias que se pasaron como argumento, la longitud de las
+        secuencias queda acotada a la longitud de la secuencia mas corta.
 
-.. function:: module_url
-    Retorna la ruta correspondiente al nombre de modulo pasado.
+        >>> zip([1,2,3,4,5,6], ['a','b','c','d','e','f'])
+        [[1, "a"], [2, "b"], [3, "c"], [4, "d"], [5, "e"], [6, "f"]]
+        >>> zip([1,2,3,4,5,6], ['a','b','c','d','e','f','g','h'])
+        [[1, "a"], [2, "b"], [3, "c"], [4, "d"], [5, "e"], [6, "f"]]
+        >>> zip([1,2,3,4,5,6], ['a','b','c','d'])
+        [[1, "a"], [2, "b"], [3, "c"], [4, "d"], [5, undefined], [6, undefined]]
+        >>> zip([1,2,3,4,5,6], ['a','b','c','d','e','f'], [10,11,12,13,14,15,16])
+        [[1, "a", 10], [2, "b", 11], [3, "c", 12], [4, "d", 13], [5, "e", 14], [6, "f",
+        15]]
 
-.. attribute:: modules
-    Un objeto para asociar los nombres de modulos con los modulos propiamente dicho
-    que se van cargando bajo demanda.
+sys
 
-.. attribute:: paths
-    Las rutas registradas para la carga de modulos.
+Este módulo provee acceso a algunos objetos y funciones mantenidas por Protopy y
+que resultan de utilidad para interactuar con el ambiente.
 
-.. module:: exception
-    Modulo que reune todas las excepciones que Protopy provee a la hora de mostrar
-    errores, este modulo es cargado en el ambiente cuando Protopy inicia, no siendo
-    necesario su requerimiento posteriormente.
+    version
+
+        Version de Protopy.
+    
+    browser
+
+        Este objeto provee informacion sobre el navegador en el cual protopy se cargo.
+        
+            * IE Si el navegador es Internet Explorer.
+            * Opera Si el navegador es Opera.
+            * WebKit Si el navegador es AppleWebKit.
+            * Geck Si el navegador es Gecko.
+            * MobileSafari Si el navegador es Apple Mobile Safari.
+            * fatures Algunas herramientas que el navegador proveea, por ejemplo
+                XPath, un selector de css, y otras extensiones.
+    
+    gears
+        
+        //TODO: Poner bien esto
+        Objeto gears para interactuar con el plugin de google gears.
+        installed
+        install
+        factory
+        
+    register_path
+
+        Registra una ruta en el servidor para un paquete, de este modo, las imporaciones
+        de modulos dependientes de de ese paquete se realizaran sobre la ruta asociada. 
+    
+    module_url
+
+        Retorna la ruta correspondiente al nombre de modulo pasado.
+    
+    modules
+
+        Un objeto para asociar los nombres de modulos con los modulos propiamente dicho
+        que se van cargando bajo demanda.
+    
+    paths
+
+        Las rutas registradas para la carga de modulos.
+
+exception
+Modulo que reune todas las excepciones que Protopy provee a la hora de mostrar
+errores, este modulo es cargado en el ambiente cuando Protopy inicia, no siendo
+necesario su requerimiento posteriormente.
 
     Excepciones
         Exception, AssertionError, AttributeError, LoadError, KeyError,
         NotImplementedError, TypeError, ValueError.
 
-.. module:: event
-    Este es el modulo encargado de encapsular la logica de eventos requerida tanto
-    por los elementos del DOM como por el usuario.
+event
 
-.. function:: connect(obj: Object|null, event: String, context: Object|null, method:
-    String|Function, dontFix: Boolean) -> handle: Handle 
-    Provee un mecanimos para conectar la ejecucion de una funcion a otra o a un
-    evento del DOM.  
+Este es el modulo encargado de encapsular la logica de eventos requerida tanto
+por los elementos del DOM como por el usuario.
 
-.. function:: disconnect(handle: Handle)
-    Quita el la relacion establecida por ``connect''.
+    connect(obj: Object|null, event: String, context: Object|null, method:
 
-.. function:: subscribe(topic: String, context: Object|null, method: String|Function) ->
-    handle: Handle
-    Subscribe una funcion a un evento de usuario expresado como un texto, cuando el
-    evento ocurra la funcion se ejecuta.
+        String|Function, dontFix: Boolean) -> handle: Handle 
+        Provee un mecanimos para conectar la ejecucion de una funcion a otra o a un
+        evento del DOM.  
 
-.. function:: unsubscribe(handle: Handle)
-    Quita la relacion de la funcion con el evento. 
+    disconnect(handle: Handle)
 
-.. function:: publish(topic: String, arguments: Array)
-    Emite el evento de usuario, provocando la ejecucion de las funciones subscriptas
-    y pasando los argumentos correspondientes.
+        Quita el la relacion establecida por ``connect''.
 
-.. function:: connectPublisher(topic: String, obj: Object, event: String) -> handle: Handle
-    Conecta un evento a un evento de usuario asegurando que cada vez que el evento
-    se produsca se llamara a la funcion registrada para el evento de usuario.
+    subscribe(topic: String, context: Object|null, method: String|Function) -> handle: Handle
 
-.. function:: fixEvent(evt: Event, sender: DOMNode)
-    Normaliza las propiedades de un evento, tanto pulsasiones del teclado como
-    posiciones x/y del raton.
+        Subscribe una funcion a un evento de usuario expresado como un texto, cuando el
+        evento ocurra la funcion se ejecuta.
+    
+    unsubscribe(handle: Handle)
 
-.. function:: stopEvent(evt: Event)
-    Detiene el evento, evitando la propagacion y la accion por defecto.
+        Quita la relacion de la funcion con el evento. 
+    
+    publish(topic: String, arguments: Array)
 
-.. attribute:: keys
-    Objeto que encapsula los codigos de las teclas de funcion y control.
+        Emite el evento de usuario, provocando la ejecucion de las funciones subscriptas
+        y pasando los argumentos correspondientes.
+    
+    connectPublisher(topic: String, obj: Object, event: String) -> handle: Handle
 
-.. module:: timer
+        Conecta un evento a un evento de usuario asegurando que cada vez que el evento
+        se produsca se llamara a la funcion registrada para el evento de usuario.
+    
+    fixEvent(evt: Event, sender: DOMNode)
 
-.. function:: delay(function)
-.. function:: defer(function)
+        Normaliza las propiedades de un evento, tanto pulsasiones del teclado como
+        posiciones x/y del raton.
+    
+    stopEvent(evt: Event)
 
-.. module:: ajax
-    Este modulo contiene funcionalidad propia del ajax, para el manejo de peticiones
-    asincronicas al servidor.
+        Detiene el evento, evitando la propagacion y la accion por defecto.
+    
+    keys
 
-.. function:: new Request()
+        Objeto que encapsula los codigos de las teclas de funcion y control.
+
+timer
+
+    
+    delay(function)
+
+    defer(function)
+
+ajax
+
+Este modulo contiene funcionalidad propia del ajax, para el manejo de peticiones
+asincronicas al servidor.
+
     new Request()
 
-.. function:: new Response()
+        new Request()
+    
     new Response()
 
-.. function:: toQueryParams(string, separator) -> object
+        new Response()
+    
+    toQueryParams(string, separator) -> object
+    
+    toQueryString(params) -> string
+    
+dom
 
-.. function:: toQueryString(params) -> string
+Este modulo brinda el soporte para el manejo del DOM de una forma simple para
+el usuario.
 
-.. module:: dom
-    Este modulo brinda el soporte para el manejo del DOM de una forma simple para
-    el usuario.
-
-.. function:: query(cssRule) -> [HTMLElement...]
+    query(cssRule) -> [HTMLElement...]
 
 Extendiendo Javascript
 ----------------------
+
 Protopy no solo aporta modulos y funciones utiles al desarrollo, sino que
 tambien agrega nueva funcionalidad a los objetos de javascript.
 
-.. class:: String
-    Estos metodos amplian las herramientas para el manejo de cadenas de texto.
+String
 
-.. method:: sub(pattern, replacement[, count = 1]) -> string
-    Retorna una cadena donde la primera ocurrencia del patron pasado es reemplazado
-    por la cadena o cada uno de los valores retornados por la funcion pasada como
-    segundo argumento. El patron puede ser una exprecion regular o una cadena.
+Estos metodos amplian las herramientas para el manejo de cadenas de texto.
 
-.. method:: subs(value...) -> string
-    Substitulle cada patron encontrado en la cadena por los valores
-    correspondientes, si el primer valor es un objeto, se espera un patron del
-    tipo clave en la cadena para su reemplazo.
+    sub(pattern, replacement[, count = 1]) -> string
 
-.. method:: format(f) -> string
-    Da formato a una cadena de texto, al estilo C.
+        Retorna una cadena donde la primera ocurrencia del patron pasado es reemplazado
+        por la cadena o cada uno de los valores retornados por la funcion pasada como
+        segundo argumento. El patron puede ser una exprecion regular o una cadena.
+    
+    subs(value...) -> string
 
-.. method:: inspect(use_double_quotes) -> string
-    Retorna una version de debug de la cadena, esta puede ser con comillas simples o
-    con comillas dobles.
+        Substitulle cada patron encontrado en la cadena por los valores
+        correspondientes, si el primer valor es un objeto, se espera un patron del
+        tipo clave en la cadena para su reemplazo.
+    
+    format(f) -> string
 
-.. method:: truncate([length = 30[, suffix = '...']]) -> string
-    Recorta una cadena recortada en la longitud indicada o 30 caracteres por
-    defecto, si se pasa un sufijo este es utilizado para indicar el recorte, sino
-    los ''...'' son utilizados.
+        Da formato a una cadena de texto, al estilo C.
+    
+    inspect(use_double_quotes) -> string
 
-.. method:: strip() -> string
-    Quita los espacios en blanco al principio y al final de una cadena.
+        Retorna una version de debug de la cadena, esta puede ser con comillas simples o
+        con comillas dobles.
+    
+    truncate([length = 30[, suffix = '...']]) -> string
 
-.. method:: striptags() -> string
-    Quita las etiquetas HTML de una cadena.
+        Recorta una cadena recortada en la longitud indicada o 30 caracteres por
+        defecto, si se pasa un sufijo este es utilizado para indicar el recorte, sino
+        los ''...'' son utilizados.
+    
+    strip() -> string
 
-.. method:: stripscripts() -> string
-    Quita todos los bloques ''strips'' de una cadena.
+        Quita los espacios en blanco al principio y al final de una cadena.
+    
+    striptags() -> string
 
-.. method:: extractscripts() -> [ string... ]
-    Extrae todos los scripts contenidos en la cadena y los retorna en un arreglo.
+        Quita las etiquetas HTML de una cadena.
+    
+    stripscripts() -> string
 
-.. method:: evalscripts() -> [ value... ]
-    Evalua todos los scripts contenidos en la cadena y retorna un arreglos con los
-    resultados de cada evaluacion.
+        Quita todos los bloques ''strips'' de una cadena.
+    
+    extractscripts() -> [ string... ]
 
-.. method:: escapeHTML() -> string
-    Convierte los caracteres especiales del HTML a sus entidades equivalentes.
+        Extrae todos los scripts contenidos en la cadena y los retorna en un arreglo.
+    
+    evalscripts() -> [ value... ]
 
-.. method:: unescapeHTML() -> string
-    Convierte las entidades de caracteres especiales del HTML a sus respectivos
-    simbolos.
+        Evalua todos los scripts contenidos en la cadena y retorna un arreglos con los
+        resultados de cada evaluacion.
+    
+    escapeHTML() -> string
 
-.. method:: succ() -> string
-    Convierte un caracter en el caracter siguiente segun la tabla de caracteres
-    Unicode.
+        Convierte los caracteres especiales del HTML a sus entidades equivalentes.
+    
+    unescapeHTML() -> string
 
-.. method:: times(count[, separator = '']) -> string
-    Concatena una cadena tantas veces como se indique, si se pasa un separador, este
-    es utilizado para intercalar.
+        Convierte las entidades de caracteres especiales del HTML a sus respectivos
+        simbolos.
+    
+    succ() -> string
+        
+        Convierte un caracter en el caracter siguiente segun la tabla de caracteres
+        Unicode.
+    
+    times(count[, separator = '']) -> string
 
-.. method:: camelize() -> string
-    Convierte una cadena separada por guiones medios (``-'') a una nueva cadena tipo
-    ''camello''. Por ejemplo, 'foo-bar' pasa a ser 'fooBar'.
+        Concatena una cadena tantas veces como se indique, si se pasa un separador, este
+        es utilizado para intercalar.
+    
+    camelize() -> string
 
-.. method:: capitalize() -> string
-    Pasa a mayuscula la primera letra y el resto de la cadena a minusculas.
+        Convierte una cadena separada por guiones medios (``-'') a una nueva cadena tipo
+        ''camello''. Por ejemplo, 'foo-bar' pasa a ser 'fooBar'.
+    
+    capitalize() -> string
 
-.. method:: underscore() -> string
-    Convierte una cadena tipo "camello" a una nueva cadena separada por guiones
-    bajos ("_").
+        Pasa a mayuscula la primera letra y el resto de la cadena a minusculas.
+    
+    underscore() -> string
 
-.. method:: dasherize() -> string
-    Remplaza cada ocurrencia de un guion bajo ("_") por un guion medio ("-").
+        Convierte una cadena tipo "camello" a una nueva cadena separada por guiones
+        bajos ("_").
+    
+    dasherize() -> string
 
-.. method:: startswith(pattern) -> boolean
-    Chequea si la cadena inicia con el patron pasado.
+        Remplaza cada ocurrencia de un guion bajo ("_") por un guion medio ("-").
+    
+    startswith(pattern) -> boolean
 
-.. method:: endswith(pattern) -> boolean
-    Chequea si la cadena termina con el patron pasado.
+        Chequea si la cadena inicia con el patron pasado.
+    
+    endswith(pattern) -> boolean
 
-.. method:: blank() -> boolean
-    Chequea si una cadena esta en blanco, esto es si esta vacia o solo contiene
-    espacios en blanco.
+        Chequea si la cadena termina con el patron pasado.
+    
+    blank() -> boolean
 
-.. class:: Number
-    Estos metodos agregan funcionalidad sobre los objetos numericos.
+        Chequea si una cadena esta en blanco, esto es si esta vacia o solo contiene
+        espacios en blanco.
 
-    .. method:: format(f, radix) -> string
+Number
+
+Estos metodos agregan funcionalidad sobre los objetos numericos.
+
+    format(f, radix) -> string
+
         Da formato a un numero en base a una cadena de texto, al estilo C.
 
-.. class:: Date
+Date
 
-    .. method:: toISO8601() -> string
+    toISO8601() -> string
+        
         Retorna una representacion de la fecha en ISO8601.
 
-.. class:: Element
-    Extencion sobre los elementos del DOM, simplificando trabajos comunes de
-    desarrollo.
+Element
 
-.. method:: visible() -> Boolean
-    Retorna un valor de verdad que determina si el elemento esta visible al
-    usuario, verificando el atributo de estilo ``display''.
+Extencion sobre los elementos del DOM, simplificando trabajos comunes de desarrollo.
 
-.. method:: toggle() -> HTMLElement
-    Alterna la visibilidad del elemento.
+    visible() -> Boolean
 
-.. method:: hide() -> HTMLElement
-    Oculta el elemento al usuario, modificando el atributo de estilo.
+        Retorna un valor de verdad que determina si el elemento esta visible al
+        usuario, verificando el atributo de estilo ``display''.
+    
+    toggle() -> HTMLElement
 
-.. method:: show() -> HTMLElement
-    Muestra el elemento.
+        Alterna la visibilidad del elemento.
+    
+    hide() -> HTMLElement
 
-.. method:: remove() -> HTMLElement
-    Quita el elemento del documento y lo retorna.
+        Oculta el elemento al usuario, modificando el atributo de estilo.
+    
+    show() -> HTMLElement
 
-.. method:: update(content) -> HTMLElement
-    Reemplaza el contendio del elemento con el argumento pasado y terorna el
-    elemento.
+        Muestra el elemento.
+    
+    remove() -> HTMLElement
 
-.. method::   insert({ position: content }) -> HTMLElement
-                insert(content) -> HTMLElement
-    Inserta conentido al principio, al final, sobre o debajo del
-    elemento, para definir la poscicion de la insercion el argumento se debe pasar
-    en forma de objeto, donde la clave es la pocicion y el valor el contenido a
-    insertar; si el argumento es contenido a insertar este se inserta al final
-    del elemento.
+        Quita el elemento del documento y lo retorna.
+    
+    update(content) -> HTMLElement
 
-.. method:: select(selector) -> HTMLElement
-    Toma un numero arbitrario de selectores CSS y retorna un arreglo con los
-    elementos que concuerden con estos y esten dentro del elemento al que se aplica
-    la funcion.
+        Reemplaza el contendio del elemento con el argumento pasado y terorna el
+        elemento.
+    
+    insert({ position: content }) -> HTMLElement
+    insert(content) -> HTMLElement
 
-    >>> $('PostForm').select('input')
-    [input#id_title, input guardar]
-    >>> $('content').select('div')
-    [div.header, div.breadcrumbs, div.middle, div, div.right, div#clear]
-    >>> $('content').select('div.middle')
-    [div.middle]
+        Inserta conentido al principio, al final, sobre o debajo del
+        elemento, para definir la poscicion de la insercion el argumento se debe pasar
+        en forma de objeto, donde la clave es la pocicion y el valor el contenido a
+        insertar; si el argumento es contenido a insertar este se inserta al final
+        del elemento.
+    
+    select(selector) -> HTMLElement
 
-.. 
-    Camelcase camelcase HAAAAAAAAA!
-    empty: function()
-    getStyle: function(style)
-    getOpacity: function(element)
-    setStyle: function(styles)
-    setOpacity: function(value)
+        Toma un numero arbitrario de selectores CSS y retorna un arreglo con los
+        elementos que concuerden con estos y esten dentro del elemento al que se aplica
+        la funcion.
+    
+        >>> $('PostForm').select('input')
+        [input#id_title, input guardar]
+        >>> $('content').select('div')
+        [div.header, div.breadcrumbs, div.middle, div, div.right, div#clear]
+        >>> $('content').select('div.middle')
+        [div.middle]
+    
+    .. 
+        Camelcase camelcase HAAAAAAAAA!
+        empty: function()
+        getStyle: function(style)
+        getOpacity: function(element)
+        setStyle: function(styles)
+        setOpacity: function(value)
 
-.. class:: Forms
+Forms
 
-    Estos metodos decoran a los elementos del tipo formulario, agregando
-    funcionalidad sobre los mismos y sobre los campos que contienen.
+Estos metodos decoran a los elementos del tipo formulario, agregando
+funcionalidad sobre los mismos y sobre los campos que contienen.
 
-    .. method:: disable() -> HTMLFormElement
+    disable() -> HTMLFormElement
+
         Deshabilita todos los campos de este formulario para el ingreso de
         valores.
 
-    .. method:: enable() -> HTMLFormElement
+    enable() -> HTMLFormElement
+
         Habilita todo campos del formulario para el ingreso de valores.
 
-    .. method:: serialize() -> object
+    serialize() -> object
+
         Retorna un objeto conteniendo todos campos del formulario serializados
         con sus respectivos valores.
 
@@ -776,12 +867,13 @@ tambien agrega nueva funcionalidad a los objetos de javascript.
         >>> $('PostForm').serialize()
         Object title=Hola mundo body=Este es un post tags=[1]
 
-.. class:: Forms.Element
+Forms.Element
 
-    Los metodos que a continuación se presentan decoran a los elementos o campos de
-    un formulario, simplificando y agilizando el trabajo con los mismos.
+Los metodos que a continuación se presentan decoran a los elementos o campos de
+un formulario, simplificando y agilizando el trabajo con los mismos.
 
-    .. method:: serialize() -> string
+    serialize() -> string
+
         Crea una cadena en URL-encoding representando el contenido del
         campo expresado como clave=valor, para su uso en una peticion AJAX por
         ejemplo.
@@ -790,40 +882,48 @@ tambien agrega nueva funcionalidad a los objetos de javascript.
         Si se requiere es el valor del campo en lugar de la pareja clave=valor, vea
         get_value().
 
-    .. method:: get_value() -> value
+    get_value() -> value
+
         Retorna el valor actual del campo. Una cadena de texto es retornada en la
         mayoria de los casos excepto en el caso de un select multiple, en que se retorna
         un arreglo con los valores.
 
-    .. method:: set_value(value) -> HTMLElement
+    set_value(value) -> HTMLElement
+
         Establese el valor de un campo.
 
-    .. method:: clear() -> HTMLElement
+    clear() -> HTMLElement
+
         Limpia un campo de texto asignando como valor la cadena vacia.
 
-    .. method:: present() -> boolean
+    present() -> boolean
+
         Retorna verdadero si el campo de texto tiene un valor asignado, falso en otro
         caso.
 
-    .. method:: activate() -> HTMLElement
+    activate() -> HTMLElement
+
         Pone el cursor sobre el campo y selecciona el valor si el campo es del tipo
         texto.
 
-    .. method:: disable() -> HTMLElement
+    disable() -> HTMLElement
+
         Deshabilita el campo, impidiendo de este modo que se modifique su valor hasta
         que sea habilitado nuevamente.
         Los campos de un formulario que esten deshabilitados no se serializan.
 
-    .. method:: HTMLElement.enable() -> HTMLElement
+    HTMLElement.enable() -> HTMLElement
+
         Habilita un campo, previamente deshabilitado, para el ingreso de valores.
 
 Otros modulos
 -------------
-.. module:: gears
 
-.. module:: logging
+gears
 
-.. module:: json
+logging
+
+json
 
     >>> require('json')
     >>> toJson = {'numero': 1, 'cadena': 'texto', 'arreglo': [1,2,3,4,5,6], 'objeto': {'clave': 'valor'}, 'logico': true}
@@ -832,7 +932,7 @@ Otros modulos
     >>> fromJson = json.parse(toSend)
     Object numero=1 cadena=texto arreglo=[6] objeto=Object
 
-.. module:: rpc
+rpc
 
 .. code-block:: python
 

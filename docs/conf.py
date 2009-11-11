@@ -185,7 +185,8 @@ latex_font_size = '12pt'
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
   ('index', 'SistemasWebDesconectados.tex', u'Aplicaciones Web Desconectadas',
-   # Orden alfabético: no quiero llevarme crédito :S
+   # Orden alfabético: no quiero llevarme crédito :S,
+   # jajajajajaj :), si es la historia de mi vida :P el ultimo de la fila toda la primaria :P, pero por suerte el ultimo en pasar a dar leccion ;)
    u'Defossé, Nahuel; van Haaster, Diego Marcos', 'manual'),
 ]
 
@@ -207,7 +208,7 @@ latex_preamble = '\\setcounter{tocdepth}{4}'
 # Documents to append as an appendix to all manuals.
 #latex_appendices = ['apendices/protopy', 'apendices/python', 'apendices/django']
 latex_appendices = [
-                    'apendices/python',
+		    'apendices/python',
                     'apendices/django',
                     #'apendices/doff/modelos',
                     #'apendices/doff/dbapi',

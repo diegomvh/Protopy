@@ -20,8 +20,8 @@ sus dos "padres", *Prototype JavaScript Library* y el lenguaje de programación
 
 .. note:: me gustaria poner las problematicas antes de entrar en las caracteristicas.
 
-Características de la Librería
-==============================
+Características
+===============
 
 Algunas de las características más relevantes de Protopy son:
 
@@ -141,30 +141,30 @@ En la siguiente figura se ilustran los diferentes componentes de Protopy:
 .. _protopy-modulos:
 
 
-Utilización de la Biblioteca
-============================
+Utilización
+===========
 
 La librería Protopy consiste en un único recurso JavaScript llamado
 ``protopy.js``. Su inclusión debe realizarse en la cabecera del documento, 
 de la siguiente manera:
 
-.. code-block:: javascript
+.. code-block:: html
 
-    <script type="text/javascript;version=1.7" src="/ruta/a/protopy/protopy.js">
+    <script type="text/javascript;version=1.7" src="/ruta/a/protopy/protopy.js"></script>
+
+De esta inclusión Protopy toma por defecto del atributo ``src`` la ruta absoluta
+o **ruta base** al archivo js, posteriormente esta ruta más el sufijo *packages*
+conforman la ruta donde la librería tomara los módulos cuando sen requeridos,
+en el ejemplo anterior */ruta/a/protopy/* es la ruta base.
+
+Otra forma de espesificar la ruta base es mediante la dupla ``base``, ``/valor/``
+en el atributo ``pyconfig`` de la etiqueta ``script``. Este atributo representa el
+punto de entrada a la configuracion de Protopy como se muestra a continuación::
+
+.. code-block:: html
+
+    <script ... pyconfig="base:/otra/ruta/,debug:ture" src="/ruta/a/protopy/protopy.js">
     </script>
-
-Dentro del atributo ``src`` se define lo que se denomina *ruta base* y consiste
-en la jerarquía de directorios *(/ruta/a/protopy/* en el ejemplo expuesto anterior).
-
-
-Tambien mediante el atributo ``src`` de la etiqueta ``script`` de inclusión de Protopy, se pueden
-pasar argumentos en la URL. Por ejemplo::
-
-    src="/ruta/a/protopy/protopy.js?argumento=valor&argumento=valor"
-
-Existen algunos argumentos utilizados por el framework desconectado que se 
-analizarán en el capítulo siguiente.
-
 
 Recursos y Módulos
 ==================
@@ -236,16 +236,26 @@ Carga de Módulos
 ----------------
 
 Cuando se utiliza la función ``require`` la búsqueda de los módulos se realiza
-en la *ruta base*. Esta se estableció como el subdirectorio ``packages``
-a partir de la ruta desde la cual se cargó la librería Protopy.
+en la ruta establecida en la carga de Protopy (/ruta/a/protopy/ + packages).
 Por ejemplo, si ``protopy.js`` se encuentra en ``http://dominio.com/media/js/protopy.js`` 
 la invocación ``require("dom")`` cargará el archivo ``dom.js`` desde  
 ``http://dominio.com/media/js/packages/dom.js``.
 
 La búsqueda de módulos se puede ampliar más allá de la ruta base. En el módulo
-``sys`` existe la variable ``paths``, que consiste en una lista de rutas en
-las cuales se realiza la búsqueda cuando el módulo no se encuentra en la ruta 
-base. El programador puede añadir entradas a ``sys.path``.
+``sys`` existe la variable ``paths``, que consiste en un arreglo asociativo
+entre paquetes y rutas. El programador puede añadir entradas a ``sys.path``.
+De forma similar al ejemplo anterior cuando un módulo llamado foo.spam es
+importado, Protopy busca en primera instancia en ``sys.path`` si existe una ruta
+asociada al paquete ``foo``, de encontrar la ruta el archivo spam.js es buscado
+en esta, por otra parte si ``sys.path`` no contiene una la ruta archivo
+foo/spam.js es buscado en la ruta base.
+
+El uso del objeto ``sys.path`` permite a los programadores que saben lo
+que están haciendo modificar o reemplazar el camino de búsqueda para los
+módulos.
+
+Las formas en que el modulo obtenido es presentado al llamador difiere en
+funcion de los parametros pasados a ``require``. Estas formas son:
 
 La función ``require`` se puede usar para:
 
@@ -260,11 +270,11 @@ La función ``require`` se puede usar para:
             require('events');  // Events queda en el espacio global
 
 
-    * Obtener un símbolo de un módulo
+    * Obtener un o mas símbolos de un módulo
 
         .. code-block:: javascript
 
-            require('events', 'Event');    
+            require('events', 'Event', 'Keys', ...);
 
     * Importar todas las definiciones del módulo en el espacio de
       nombres del llamador.
@@ -278,6 +288,7 @@ Una descripción detallada se encuentra en el apéndice dedicado a Protopy.
 Publicación de Módulos
 ----------------------
 
+La acción de publicar un modulo implica exponer la funcionalidad que este define.
 En Python no es necesario declarar de manera explícita que símbolos se exponen
 en un módulo, ya que todas las definiciones son públicas. Por ejemplo, si
 se define un módulo ``utils.py`` con el siguiente código:
@@ -290,20 +301,20 @@ se define un módulo ``utils.py`` con el siguiente código:
     def cantidad_palabras(linea):
         return len(linea.split())
 
-el programador puede usar las sentencias ``from utils import promedio`` que
-incorpora la función ``promedio`` al ámbito de nombres local, 
+El programador puede usar las sentencias ``from utils import promedio`` que
+incorpora la función ``promedio`` al ámbito de nombres local,
 ``from utils import *`` que incorpora todas las funciones de ``utils`` al ámbito
 de nombres o simplemente ``import utils``, que incorpora el módulo, el cual
 tiene como miembros en este caso a ``promedio`` y a ``cantidad_palabras``.
 
 En cambio los módulos en Protopy se evalúan dentro de una clausura y los 
-llamadores no podrán acceder a sus funciones si no son publicadas. 
+llamadores no podrán acceder a sus funciones si no son publicadas.
 
 La función ``publish`` es la encargada de realizar la tarea de publicar el
 contenido del módulo.
 
-A continuación se presenta un fragmento de código que ejemplifica la definición 
-y publicación de las dos funciones mostradas en el ejemplo anterior:
+A continuación se presenta una traduccion del ejemplo anterior en Python a
+Protopy:
 
 .. code-block:: javascript
     :linenos:
@@ -322,22 +333,27 @@ y publicación de las dos funciones mostradas en el ejemplo anterior:
         cantidad_palabras: cantidad_palabras
     });
 
+De esta forma el programador puede incorporar al ámbito de nombres local las
+funciones ``promedio`` y ``cantidad_palabras`` mediante la invocación a 
+``require('utils', 'promedio', 'cantidad_palabras');``.
+
+Como observación final cabe destacar que una función que se defina en un módulo
+ y no se publique es de uso interno a este.
+
 Módulos Nativos
 ---------------
 
-Como mencionó en el capítulo anterior, es necesario que la 
-implementación de Python que se utilice en el navegador como soporte para
-Django, posea algunos módulos de la API estándar de Python. Por esta razón se
-incorporaron los siguientes módulos a Protopy:
-  
-.. note:: ¿Y todo esto cómo se relaciona con Protopy? Deberían decir que entonces se desarrollaron los siguientes módulos, etc.
-Está demasiado escueto. Deberían describir un poquito más cada módulo.
+Como mencionó en el capítulo anterior, para desarrollar un buen soporte en el
+navegador es necesaria sierta funcionalidad básica que posee la implementación
+de Python y que seria deseable tener en el cliente al momento de correr el
+Framework desconectado. Por esta razón se incorporaron los siguientes módulos a
+Protopy:
 
     * ``builtin``
 
-        Este módulo cuenta con los tipos y funciones disponibles en 
-        el ámbito global ni bien se inicia Protopy.
-        Provee los siguientes símbolos:
+        Este módulo cuenta con los tipos y funciones disponibles en el ámbito
+        global ni bien se inicia Protopy. Provee funcionalidad básica y algunos
+        de los símbolos que expone son:
 
         * ``publish()``
 
@@ -345,90 +361,52 @@ Está demasiado escueto. Deberían describir un poquito más cada módulo.
             arreglo asociativo. Como ya se mencionó, en Protopy el contenido
             de los módulos es privado por defecto.
 
-            Por ejemplo, para publicar un elemento en un módulo
-            se utiliza el siguiente código:
-            
-            .. code-block:: javascript
-            
-                var contador = 0; // Variable a nivel módulo
-                
-                function saludar() {
-                    // El operador subs sobre String opera de la misma
-                    // manera que el operador % en Python. Similar a printf de C.
-                    
-                    return "Hola mundo, invocado %d veces".subs(contador);
-                }
-                
-                function cant_llamadas() {
-                    // Contador de llamadas sobre el código de 
-                    var tmp = contador;
-                    contador++;
-                    return tmp;
-                }
-                
-                // Publicación explícita
-                publish({
-                    saludar: saludar
-                });
-            
         * ``require(modulo, [simbolo])``
-        
+
             Carga mediante el sistema de paquetes un módulo, incroporandolo al
             ambito de nombres.
-            
-            Los nombres de las funcinoes ``publish``/``require`` son tomadas de 
-            Dojo.
-            
-            Por ejemplo, para cargar la función del módulo expuesto en el ejemplo
-            de la función ``publish()``:
-            
-            .. code-block:: javascript
-            
-                >>> require('mi_modulo');
-                >>> mi_modulo.saludar()
-                "Hola mundo, invocado 0 veces"
-                >>> mi_modulo.saludar()
-                "Hola mundo, invocado 1 veces"
-                >>> mi_modulo.saludar()
-                "Hola mundo, invocado 2 veces"
-        
+
         * ``$("id")`` y ``$$("selector_css")
-        
+
             Son alias a los elementos del módulo ``dom`` descrito más abajo.
-        
+
         * ``object``
-        
+
             En Python el tipo base para todos los objetos es ``object``. Sirve
             como base para el sistema de tipos Pythonico implementado en 
             Protopy.
-        
+
         * ``type(instancia)`` ó ``type(nombre, bases, [estatico], dinamico)``
-        
+
             Este método posee dobe signatura. Cuando se lo invoca con una instancia
             como argumento, devuelve el tipo/clase de la instancia.
-            
-            La otra signautra sirve para crear tipos y debe ser invocada con 
-            la palabra reservada ``new`` de JavaScript. Recibe como argumentos
-            el nombre del tipo, las calses base, opcionalmente un arreglo
-            asociativo de atributos/métodos de clase y un arreglo asociativo con 
-            los atributos/métodos de instancia.
-            
+
+            La otra signautra sirve para crear clases o tipos. Recibe como
+            argumentos el nombre de la clase, las calses base, opcionalmente un
+            arreglo asociativo de atributos/métodos de clase y un arreglo
+            asociativo con los atributos/métodos de instancia.
+
             Ambos casos responden al comportamiento del ``builtin`` homónimo de
             Python.  
-        
-        
+
         * ``extend``
+
+            Esta funcion copia atributo por atributo todas las definiciones de
+            un arreglo asociativo en otro.
+
+        * ``isinstance``, ``issubclass``
+
+            Estas funciones trabajan sobre las clases y las instancias
+            definiendo la pertenencia o la herencia respectivamente.
 
     * ``dom``
 
-        En este módulo solo se publica el selector CSS Peppy de James Donaghue.
-        Fue elegido por la velocidad y simplicidad del módulo. De la API
-        [JamesDonaghuePeppyDocs]_ solo se publica ``query()`` y ``cache()``.
-        
+        En este módulo se publica el selector de elementos del DOM.
+
         Por ejemplo sobre el siguiente código HTML:
-        
+
         .. code-block:: html
-        
+
             <html>
                 <head>
                     <title>Uno</title>
@@ -441,22 +419,22 @@ Está demasiado escueto. Deberían describir un poquito más cada módulo.
                     </div>
                 </body>
             </html>
-            
+
         .. code-block:: javascript
-        
+
             // Carga del módulo
             >>> require('dom');
             // Utilizando el selector
             >>> dom.query('.lkn2');
             [a /admin/, a /otros/]
-       
+
        Se publican los símbolos ``$("id")`` y ``$$("selector")`` que referencian
-       a esta función, de manera similar a la API de Prototype. 
-            
+       a esta función.
+
     * ``sys``
 
-        Equivalente al módulo Python del mismo nombre. Maneja las rutas
-        de cargas de módulos.
+        Equivalente al módulo Python del mismo nombre. Representa una interface 
+        con el nucleo de Protopy y el navegador.
 
     * ``event``
 
@@ -467,22 +445,7 @@ Está demasiado escueto. Deberían describir un poquito más cada módulo.
         Envoltura de ``XMLHttpRequest``, facilidades de interpretación de tipos
         de respuesta.
 
-    * ``exceptions``
-
-        Conjunto de excepciones.
-
-    * ``timer``
-
-        Envoltura de ``window.setTimer()`` y ``window.setInterval()``. 
-
-.. [JamesDonaghuePeppyDocs] James Donaghue,
-    *Documentación de Peppy*,
-    último acceso Noviembre 2009,
-    http://jamesdonaghue.com/static/peppy/docs/            
-
-
-
-.. _protopy-tipos:
+Más modulos nativos y detalles sobre estos en el apéndice de Protopy.
 
 Orientación a Objetos Basada en Clases
 --------------------------------------
@@ -492,13 +455,12 @@ el enfoque OO que posee JavaScript. Para lograr migrar muchos componentes
 de Django a JavaScript, se requiere un sistema de objetos basado en clases.
 Muchos autores cuestionan el intento de imponer un sistema de clases sobre
 un lenguaje que ya posee su técnica para crear objetos, argumentando que no 
-tiene sentido emular un paradigma dentro de otro. 
+tiene sentido emular un paradigma dentro de otro.
 
-Habiendo analizado la situación, se llegó a la conclusión
-que tanto para la presente tesina como para acercar a los programadores
-que utilizan Django al lenguaje JavaScript/Protopy era necesario proveer en Protopy
-un sistema de tipos similar al de Python. Prototype  hace lo propio con el 
-lenguaje Ruby.
+Habiendo analizado la situación, se llegó a la conclusión que tanto para la
+presente tesina como para acercar a los programadores que utilizan Django al
+lenguaje JavaScript/Protopy era necesario proveer en Protopy un sistema de
+tipos similar al de Python.
 
 La forma de crear nuevos "tipos de objetos" en Protopy es a través de la función
 ``type``. Esta función no fue parte de la biblioteca hasta que no se observó la
@@ -570,27 +532,30 @@ asociativo con los atributos y métodos para los objetos de ese tipo.
 Con los constructores así definidos es posible tener instancias que se
 comporten en función de sus respectivas definiciones:
 
-.. note:: Comentar el código
-
 .. code-block:: javascript
 
+    // Nueva instancia de SortedDict con la tupla uno=1
     >>> d = new SortedDict({'uno': 1})
+    // Agrego dos=2
     >>> d.set('dos', 2)
     >>> d.get('dos')
     2
+    // Todos los pares de clave=valor en un arreglo
     >>> d.items()
     [["uno", 1 ], ["dos", 2 ]]
 
-Como se observa en este ejemplo, para instanciar un nuevo tipo se utiliza el operador ``new`` de
-JavaScript, este operador crea el nuevo objeto e invoca a la función `__init__`.
+Como se observa en este ejemplo, para instanciar un nuevo tipo se utiliza el
+operador ``new`` de JavaScript, este operador crea el nuevo objeto e invoca a
+la función `__init__`.
 
 En los métodos la palabra reservada ``this`` hace referencia al objeto
 instanciado con ``new``.
 
-Internamente ``type`` utiliza al objeto ``prototype`` para la construcción, con lo
-cual el operador ``instanceof`` presenta un comportamiento coherente. Pese a esto
-se recomienda usar la función ``isinstance`` disponible como ``builtin`` en Protopy,
-ya que ésta permite navegar por la cadena de herencia, como se muestra en el siguente ejemplo:
+Internamente ``type`` utiliza al objeto ``prototype`` para la construcción,
+con lo cual el operador ``instanceof`` presenta un comportamiento coherente.
+Pese a esto se recomienda usar la función ``isinstance`` disponible como
+``builtin`` en Protopy, ya que ésta permite navegar por la cadena de herencia,
+como se muestra en el siguente ejemplo:
 
 .. code-block:: javascript
 
@@ -635,9 +600,9 @@ Estos métodos son:
         en texto del objeto. Si bien JavaScript provee para esta tarea el método
         ``toString``, por compatibilidad con Python y consistencia con 
         la filosofía Python, se recomienda utilizar ``__str__``. Ejemplo:
-        
+
         .. code-block:: javascript
-        
+
             >>> var Persona = new type('Persona', {
                     // Constructor 
                     __init__: function (nombre) {
@@ -864,7 +829,7 @@ realizar una adaptación de sintaxis. Ellos son:
             function funcion(arg1, {arg2: null, arg3: null}) {
                 var args = new Arguments(arguments);
             }
-        
+
 
 Manejo de DOM
 -------------
@@ -885,7 +850,10 @@ Los eventos están uniformados bajo un módulo de manejo de eventos (``events``)
 que permite conectar eventos DOM con funciones en JavaScript, así como también 
 crear eventos de usuario.
 
-.. note:: Discutir
+.. [JamesDonaghuePeppyDocs] James Donaghue,
+    *Documentación de Peppy*,
+    último acceso Noviembre 2009,
+    http://jamesdonaghue.com/static/peppy/docs/
 
 Agregados a JavaScript
 ----------------------
@@ -898,8 +866,6 @@ y obtención de valores, etc.
 También se extendieron los tipos de datos propios de JavaScript, como el caso
 de las cadenas (``str`` en Python) agregando métodos de sustitución de patrones,
 conversión de números, manejo de fecha, etc. 
-
-
 
 Envoltura de Google Gears
 -------------------------

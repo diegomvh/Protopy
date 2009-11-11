@@ -2057,10 +2057,10 @@
         throw new Exception('Error fatal');
     var m = script[0].src.match(new RegExp('^.*' + location.host + '(/?.*/?)protopy.js$', 'i'));
     ModuleManager.base = m[1];
-    ModuleManager.default_path = m[1] + ModuleManager.default_path;
     var config = script[0].getAttribute('pyconfig');
     if (config) //TODO: validate config
         __extend__(false, ModuleManager, eval('({' + config + '})'));
+    ModuleManager.default_path = ModuleManager.base + ModuleManager.default_path;
 
 // ******************************* EXTENDING JAVASCRIPT ************************************* //
 (function(){
