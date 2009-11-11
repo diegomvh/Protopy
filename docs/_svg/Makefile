@@ -11,7 +11,7 @@ GRAPHVIZ_PARAM=-Gdpi=150 -Tpng
 
 all: ${SVG2PNG_FILES}
 	# Por ahora no queda otra, quizás mas adelante una solución mas elegante
-	reframe.py $(shell ls *.png)
+	./reframe.py $(shell ls *.png)
 	
 clean:
 	@ rm ${SVG2PNG_FILES}
@@ -34,7 +34,7 @@ dots: $(DOT2PNG_FILES)
 	
 %.png: %.dot
 	$(GRAPHVIZ) $(GRAPHVIZ_PARAM) -o $@ $^
-	reframe.py $@
+	./reframe.py $@
 	
 clean_modelos:
 	$(MAKE) -C ../../sources/salesman/ clean
