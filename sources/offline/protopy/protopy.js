@@ -2367,8 +2367,31 @@
             return value == 'auto' ? null : value;
         },
 
-        getOpacity: function(element) {
-            return this.getStyle('opacity');
+        classNames: function() {
+            return this.className.split(' ');
+        },
+
+        hasClassName: function(className) {
+            var elementClassName = this.className;
+            return (elementClassName.length > 0 && (elementClassName == className ||
+            new RegExp("(^|\\s)" + className + "(\\s|$)").test(elementClassName)));
+        },
+
+        addClassName: function(className) {
+            if (!this.hasClassName(className))
+                this.className += (this.className ? ' ' : '') + className;
+            return this;
+        },
+
+        removeClassName: function(className) {
+            this.className = this.className.replace(
+            new RegExp("(^|\\s+)" + className + "(\\s+|$)"), ' ').strip();
+            return this;
+        },
+
+        toggleClassName: function(className) {
+            return this[this.hasClassName(element, className) ?
+            'removeClassName' : 'addClassName'](className);
         },
 
         setStyle: function(styles) {
@@ -2392,7 +2415,12 @@
             this.style.opacity = (value == 1 || value === '') ? '' :
             (value < 0.00001) ? 0 : value;
             return this;
+        },
+
+        getOpacity: function(element) {
+            return this.getStyle('opacity');
         }
+        
     });
 
     //--------------------------------------- Forms -------------------------------------//    

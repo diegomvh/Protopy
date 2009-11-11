@@ -1,18 +1,28 @@
 {% extends "base.html" %}
 
 {% block extra_style %}
-
-      
+  
 {% endblock %}
 
 {% block content %}
-<h2>Sitio de demostración</h2>
-<div id="links">
-	<ul>
-		<li><a href="/admin/">Sitio de administración</a></li>
-		<li><a href="/ventas/">Ir a la aplicación <u>desconectable</u></a></li>
-	</ul>
-	
-    
-</div>
+<h2>Aplicaciones Web Desconectadas</h2>
 {% endblock %}
+{% block sidebar %}
+<h3>autores</h3>
+<ul>
+    <li>Defossé, Nahuel</li>
+    <li>van Haaster, Diego Marcos</li>
+</ul>
+<h3>tutor</h3>
+<ul>
+    <li>Sáenz Lopez, Marta</li>
+</ul>
+<h3>fecha</h3>
+<ul>
+    <li>Diciembre 2009</li>
+</ul>
+<h3>url</h3>
+<ul>
+    <li>https://hg.protopy.com.ar/protopy</li>
+</ul>
+{% endblock %} 

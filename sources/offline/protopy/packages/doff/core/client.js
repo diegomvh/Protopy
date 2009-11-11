@@ -190,7 +190,19 @@ var DOMAdapter = type('DOMAdapter', [ object ], {
 
     set location(value) {
         this._process_from_string(value);
-    }
+    },
+
+    get location() {
+        var result = {};
+        for each (var name in [ 'host', 'port', 'protocol'])
+            result[name] = this._current_url[name];
+        result['hash'] = this._current_url['anchor']? "#" + this._current_url['anchor'] : "";
+        result['hostname'] = this._current_url['domain'];
+        result['href'] = this._current_url['url'];
+        result['pathname'] = this._current_url['path'];
+        result['search'] = this._current_url['query']? "?" + this._current_url['query'] : "";
+        return result;
+    },
 });
 
 publish({
