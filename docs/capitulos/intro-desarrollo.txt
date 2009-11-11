@@ -1,6 +1,6 @@
-##########################
+﻿**************************
 Introducción al Desarrollo
-##########################
+**************************
 
 En este capítulo se realiza una breve descripción del análisis de las tecnologías
 evaluadas para llevar a cabo la desconexión de una aplicación web.

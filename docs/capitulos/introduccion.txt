@@ -10,7 +10,7 @@ Motivación
 ==========
 
 .. Hoy más que ayer, pero seguramente menos que mañana, Internet es "la red de
-.. redes". El alto contenido de información 
+.. redes". El alto contenido de información
 
 
 Hoy en día Internet supone más que un medio de intercambio de información,
