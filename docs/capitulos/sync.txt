@@ -345,6 +345,11 @@ Cada vez que se registra un modelo a un sitio remoto internamente también
 se registran manejadores de eventos ante las señales de guardado, ``post_save`` 
 y eliminación, ``post_delete``.
 
+La aplicación ``offline`` posee estos modelos:
+
+.. figure:: ../_svg/modelo_offline.png
+
+    Modelos
 
 
 Protocolo de Sincronización

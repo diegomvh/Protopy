@@ -1,6 +1,6 @@
-****************
-La aplicación
-****************
+***************
+Sitios Remotos
+***************
 
 El presente capítulo profundiza sobre el soporte en el servidor para lograr
 la desconexión de proyectos basados en Django. Este soporte se realiza mediante
@@ -10,51 +10,52 @@ brindar un mecanismo integrado para la sincronizar datos.
 
 Doff fue desarrollado con el objetivo de realizar la menor cantidad de 
 reescritura posible de las aplicaciones Django al momento de ser ejecutadas de manera
-desconectada. Esto se manifiesta en que:
+desconectada. Se debe recordar que un proyecto Doff, de la misma manera que un 
+proyecto Django, se compone de módulos de modelos, vistas y asociaciones de urls, 
+además de un conjunto de templates. Los elementos que se pueden migrar de manera
+directa al proyecto desconectado desde la aplicación en línea son:  
 
-    * Al contar con la misma API de ORM los modelos de las aplicaciones del cliente
+    * Modelos
+    
+      Al contar con la misma API de ORM los modelos de las aplicaciones del cliente
       pueden ser generados a partir del análisis de las definiciones de los
       modelos del proyecto en línea.   
        
-    * Las plantillas del proyecto conectado son las mismas que se utilzan
+    * Templates
+    
+      Las plantillas del proyecto conectado son las mismas que se utilzan
       en el proyecto desconectado, adaptando las sentencias de JavaScript 
       a la librería Porotpy y reescribiendo las etiquetas de plantilla (*template tags*).
       
-Sin embargo existen dos aspectos que requieren la reescritura por parte del 
+Sin embargo existen dos elementos que requieren la reescritura por parte del 
 programador:
 
-    * Las URLs,
+    * URLs
     
-    * Las vistas
-           
-Debido a que las expresiones regulares de JavaScript no poseen la
-misma sintaxis que en Python, los módulos ``url`` deben ser reescritos.      
-
-Las vistas y las URLs deben ser reescritas, ya que por
-no contarse con el mismo soporte para expresiones regulares, y debido
-a que las vistas en Django son funciones escritas en Python, estas 
-no pueden ser traducidas a JavaScript sin la intervensión del programador.
-
-En el capítulo sobre Doff se introdujo vagamente una aplicación Django llamada
-``offline`` que tenía como objetivo servir estáticamente al cliente con
-el código de Doff y Protopy. El presente capítulo se centra sobre la 
-utilidad de dicha aplicación.
-
-Se introduce la entidad ``RemoteSite`` que tiene como objetivo 
-vincular la aplicación desconectada con la aplicación en línea 
-y brindar mecanismos para seguridad y sincronización de datos.
-
-El mecanismo de comunicación con Django es la lína de comandos (CLI) [*]_, y
-brinda una API para la generación de comandos presonalizados que se aprovechó
-para automatizar varios pasos de la migración de un proyecto.
+      Las URLs deben ser reescritas utilizando la sintaxis de JavaScript, que
+      si bien es similar no permite la recuperación de grupos nombrados.
+    
+    * Vistas
+    
+      Las vistas deben ser reescritas en JavaScript adaptando la sintaxis
+      a Doff y Protopy.
 
 
-.. [*] Tal como se mencionó en el capítulo teórico sobre las tecnologías del servidor.
+
+Se creó una entidad denominada ``RemoteSite`` o sitio remoto con el objeto de
+publicar el proyecto desconectado para su instalación en el navegador.
+Los sitios remotos poseen un nombre único y se publican en una URL.
+
+Para facilitar la creación y administración de sitios remotos se utilzó la API de comandos 
+presonalizados de Django. 
+
+A continuación se describe la mecánica de migración de proyectos Django a su
+versión desconectada utilzando los sitios remotos.
  
 RemoteSite
 ----------
 
-La clase ``RemoteSite`` o sitio remoto define un proyecto desconectado. Tiene varias 
+La clase ``RemoteSite`` define un proyecto desconectado. Tiene varias 
 responsabilidades, entre ellas, servir el código JavaScript del framework Doff,
 el del proyecto, administrar la forma en que el cliente accede a los
 datos y permitir la sincornización. Esta clase se impleentó en 
@@ -179,7 +180,9 @@ de los siguientes pasos:
  
     #. Instalación de la aplicación de soporte (``offline``), este paso es necesario
        solo una vez.
-     
+       
+    #. Agregado de ``OFFLINE_BASE`` a ``settings.py``
+        
     #. Creación de un sitio remoto
 
     #. Migración de una aplicación
@@ -191,28 +194,61 @@ de los siguientes pasos:
     #. Creación del ``manifest.json``, este paso se considera el paso a
        producción de la aplicación desconectada.
 
+El siguiente gráfico resume la mecánica de migración:
 
-El primer paso para la migración consiste en la instalación de la
+.. figure:: ../_svg/esquema_utilizacion_offline.png
+
+    Esquema de trabajo con la aplicación offline
+
+El primer paso de la migración consiste en la instalación de la
 aplicación de soporte ``offline`` al proyecto. Para esto
 se la descarga y añade al ``PYTHONPATH``. Posteriormente se debe agregar a
 ``INSTALLED_APPS`` del proyecto en linea. 
 
 Una vez realizado este paso se habilitan varios comandos para la administración 
-de proyectos desconectados al 
-módulo ``manage.py``. Estos comandos permiten realizar varios de los pasos
-antes mencionados. Los comandos implementados son los siguientes:
-
- * ``start_remotesite``
-	
-    Este comando recibe como argumento el nombre de sitio remoto que se desea
-    crear. Si no exite el directorio ``OFFLINE_BASE`` en el proyecto en
-    línea lo crea y dentro de el añade el módulo ``remote_<nombre-site>.py``
-    en el cual define la instancia de ``RemoteSite`` con el nombre dado. Utiliza
-    también el nombre para crear un subdirectorio en ``OFFLINE_BASE`` donde
-    crea el esqueleto del proyecto desconetado (crando ``settings.js`` y ``urls.js`` 
-    a partir de plantillas que son rellenadas con la configuración disponible 
-    de la aplicación en linea).
+de proyectos desconectados al módulo ``manage.py``. 
+Paso seguido es necesario agregar la constante ``OFFLINE_BASE`` al módulo
+``settings.py``. El valor de esta constante se utiliza para definir el directorio
+donde se almacenan los sitios remotos y sus recursos y también la base común
+de la URL en la que se publican. Este paso se realiza por única vez, por 
+ejemplo:
     
+    code-block:: python
+    
+        OFFLINE_BASE = "off"
+    
+De crearse un sitio remoto llamado, por ejemplo, ``"ventas", los recursos 
+que lo componen se almacenarán en ``<ruta_del_proyecto>/off/ventas`` y la 
+URL en la cual se publicará será ``http://misitio.com/off/ventas``.     
+
+ 
+Creación del Sitio Remoto
+***************************
+
+Este paso se realiza mediante la ejecución del comando ``start_remotesite``, su
+sintaxis es la siguiente:
+
+    ``start_remotesite <nombre_sitio_remoto>``
+
+Este comando crea la estructura de directorios del sitio remoto y la definicón
+de la instancia del ``RemoteSite`` en un módulo Python.
+Si no exite el directorio ``OFFLINE_BASE`` en el proyecto en
+línea lo crea.
+Dentro del directorio antes mencionado, añade el módulo ``remote_<nombre_sitio>.py``
+en el cual define la instancia de ``RemoteSite`` con el nombre dado. Por ejemplo,
+al crear la aplicación ``ventas`` dentro de un proyecto llamado ``salesman``, con
+``OFFLINE_BASE`` igual a ``"off"``, la definción del módulo sería la siguiente:
+
+
+
+
+
+ Utiliza
+también el nombre para crear un subdirectorio en ``OFFLINE_BASE`` donde
+crea el esqueleto del proyecto desconetado (crando ``settings.js`` y ``urls.js`` 
+a partir de plantillas que son rellenadas con la configuración disponible 
+de la aplicación en linea).
+
     Por ejemplo:
     
     .. code-block:: bash
@@ -271,8 +307,7 @@ antes mencionados. Los comandos implementados son los siguientes:
     Acutaliza los recursos que componen al proyecto desconectado: vistas,
     plantillas, modelos y recursos estáticos. 
     
-.. Una vez creado un sitio remoto, el programador los recuros estáticos que lo componen
-   se ubican en ``OFFLINE_BASE/<nombre-site>/``. 
+
 
 La definción de un remotesite dentro de ``OFFLINE_BASE/remote_<nombre-site>.py``,
 resultado del comando ``manage.py create_remotesite <nombre-site>`` tiene 
@@ -530,19 +565,5 @@ Esta URL genera automáticamente la instancia del proyecto en el cliente.
 
 Finalmente, podemos resumir el ciclo de migración mediante la siguiente figura:
 
-.. figure:: ../_svg/esquema_utilizacion_offline.png
-
-    Esquema de trabajo con la aplicación offline
-
-A continuación se trata uno de los objetivos 
-
-Modelos de la Aplicación Offline
-================================
-
-La aplicación ``offline`` posee estos modelos:
-
-.. figure:: ../_svg/modelo_offline.png
-
-    Modelos
     
  
