@@ -263,7 +263,7 @@ entidades se crean con campos extras, mientras que en el servidor se utilizan
 relaciones genéricas.
 
 Información de Sincronización en el Cliente
-*******************************************
+-------------------------------------------
 
 La información sobre sicronización en el cliente se basó en parte en los campos
 que propone Junction, agregándoselos a cada entidad, pero se modeló la
@@ -327,7 +327,7 @@ Los datos que se agregaron a cada modelo del cliente fueron:
     http://trimpath.googlecode.com/svn/trunk/junction_docs/files/junction_doc_sync-txt.html
 
 Información de Sincronización en el Servidor
-********************************************
+--------------------------------------------
 
 Se mencionó en el capítulo en el cual se introdujo Django que el ORM de este framework
 brinda lo que se conoce como el framework de ``ContentType`` (no confundir

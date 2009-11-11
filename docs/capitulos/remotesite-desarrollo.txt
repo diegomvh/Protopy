@@ -59,7 +59,7 @@ A continuación se describe la mecánica de migración de proyectos Django a su
 versión desconectada utilzando los sitios remotos.
  
 La Clase RemoteSite
--------------------
+===================
 
 La clase ``RemoteSite`` define un proyecto desconectado. Tiene varias 
 responsabilidades, entre ellas, servir el código JavaScript del framework Doff,
@@ -224,7 +224,7 @@ los recursos que componen al proyecto.
 A continuación se realiza una descripción del método de migración de proyectos.
 
 Migración de un Proyecto
-------------------------
+========================
 
 La migración de un proyecto a través de los sitios remotos consiste
 de los siguientes pasos:
@@ -252,7 +252,8 @@ El siguiente gráfico resume la mecánica de migración:
     Esquema de trabajo con la aplicación offline
 
 Instalación y Configuración de la Aplicación Offline 
-****************************************************
+----------------------------------------------------
+
 El primer paso de la migración consiste en la instalación de la
 aplicación de soporte ``offline`` al proyecto. Para esto
 se la descarga y añade al ``PYTHONPATH``. Posteriormente se debe agregar a
@@ -276,7 +277,7 @@ URL en la cual se publicará será ``http://misitio.com/off/ventas``.
 
  
 Creación de un Sitio Remoto
-****************************
+---------------------------
 
 Este paso se realiza mediante la ejecución del comando ``start_remotesite``, su
 sintaxis es la siguiente:
@@ -326,7 +327,7 @@ de la aplicación en linea).
     además si estos se encuentran publicados. No recibe argumentos.
    
 Migración de una Aplicación
-***************************
+---------------------------
  
  * ``migrate_app``
  
@@ -386,7 +387,7 @@ se puede modificar.
 
 
 Publicación de Modelos
-======================
+----------------------
 
 Como se mencionó en el capítulo introductorio, es deseable contar con 
 un mecanismo de separación de los datos a los cuales accede al cliente
@@ -597,7 +598,7 @@ Los unicos campos transferidos son el ``pk`` (o ``id``) y la representación
 en cadena del modelo (``__unicode__``).         
 
 Publicación de un Sitio Remoto
-==============================
+------------------------------
 
 La publicación de un sitio remoto es explícita y consiste en agregar al
 módulo ``urls.py`` del proyecto un patrón como el siguiente (suponiendo 
