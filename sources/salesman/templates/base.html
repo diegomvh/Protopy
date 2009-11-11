@@ -19,113 +19,59 @@ Released   : 20090918
 
     {% load offline_support %}
     {% protopy_js_include %}
-	<style type="text/css">
-	{% block extra_style %}
-	{% endblock %}
-	</style>
+    <style type="text/css">
+    {% block extra_style %}
+    {% endblock %}
+    </style>
 </head>
 <body>
 <div id="wrapper">
-	<div id="header">
-		<div id="logo">
-			<h1><a href="#">Vendedor Viajante</a></h1>
-			<p>Tesina de grado 
-			 </p>
-		</div>
-	</div>
-	<!-- end #header -->
-	<div id="menu">
-		<ul>
-			{% block main_menu %}
-			<li class="current_page_item"><a href="/">Incicio</a></li>
-			<li><a href="/ventas">Ventas</a></li>
-			
-			{% if not offline %}
-			
-			<li><a href="/off/agentes">Offline</a></li>
-			<li><a href="/admin">Admin</a></li>
-			<li><a href="/static/docs">Docs</a></li>
-			
-			<li><a href="/vendedores">Filminas</a></li>
-			{% endif %}
-			
-			{% endblock %}
-		</ul>
-	</div>
-	<!-- end #menu -->
-	<div id="page">
-		<div id="content">
-			{% comment %}
-			<div id="banner"><img src="images/img07.jpg" alt="" /></div>
-			<div class="post">
-				<h2 class="title"><a href="#">Lorem ipsum dolor sit amet </a></h2>
-				<p class="meta">Aliquam sit amet tempus sed consequat</p>
-				<div class="entry">
-					<p>This is <strong>EarthlingTwo</strong>, a free template by <a href="http://www.nodethirtythree.com">nodethirtythree</a> and <a href="http://www.freecsstemplates.org">Free CSS Templates</a>.  It’s kind of a sequel to an older template I did for FCT a long time ago named <a href="http://www.freecsstemplates.org/preview/earthling">Earthling</a>.</p>
-					<p>This template is released under the <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution</a> license, so use it however you like, just keep the links back to our sites. The scenic photo above is a public domain work from <a href="http://www.pdphoto.org">PDPhoto.org</a>. Be sure to check out my other work at <a href="http://www.nodethirtythree.com/">my site</a> or follow me on <a href="http://twitter.com/nodethirtythree/">Twitter</a> for news and updates. Have fun.</p>
-					<p class="links"><a href="#" class="more">Read More</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" class="comments">Comments (33)</a></p>
-				</div>
-			</div>
-			<div style="clear: both;">&nbsp;</div>
-			{% endcomment %}
-			{% block content %}
-			
-			
-			{% endblock %}
-		</div>
-		<!-- end #content -->
-		{% block sidebar_wrapper %}
-		<div id="sidebar">
-			{% block sidebar %}
-			<ul>
-				<li>
-					<h2>Documentación</h2>
-					<p>
-						<a href="">Archivo de documentación</a><br/>
-						<a href="">Filminas</a><br/>
-					</p>
-				</li>
-				<li>
-					<h2>Categorías</h2>
-					<ul>
-						<li><span>09.13.09</span><a href="#">Sincronización</a></li>
-						<li><span>09.13.09</span><a href="#">Transporte de datos</a></li>
-					</ul>
-				</li>
-			</ul>
-			{% endblock %}
-		</div>
-		<!-- end #sidebar -->
-		
-		<div style="clear: both;">&nbsp;</div>
-		{% endblock %}
-	</div>
-	<!-- end #page -->
+    <div id="header">
+        <div id="logo">
+            <h1><a href="#">Tesina de grado</a></h1>
+        </div>
+    </div>
+    <!-- end #header -->
+    <div id="menu">
+        <ul>
+            {% block main_menu %}
+            <li class="page_item" ><a href="/inicio">Inicio</a></li>
+            <li class="page_item" ><a href="/ventas">Vendedores</a></li>
+            <li class="page_item" ><a href="/compras">Proveedores</a></li>
+            <li class="page_item" ><a href="/finanzas">Contadores</a></li> 
+            {% if not offline %}
+            {% endif %}
+            {% endblock %}
+        </ul>
+    </div>
+    <!-- end #menu -->
+    <div id="page">
+        <div id="content">
+            {% block content %}
+            {% endblock %}
+        </div>
+        <div id="sidebar">
+            {% block sidebar %}
+            {% endblock %}
+        </div>
+        <div style="clear: both;">&nbsp;</div>
+    </div>
+    <!-- end #page -->
 </div>
 <div id="footer-content">
-	<div class="column1">
-		<h2>Aplicaciones Web Desconectadas</h2>
-		<p>
-			Este sistema se realizó con el objeto de demostrar las capacidades
-			de la aplicación <code>offline</code>.
-			
-		</p>
-	</div>
-	<div class="column2">
-		<h3>Tecnologías utilizadas</h3>
-		<ul class="list">
-			<li><a href="http://www.getfirefox.om">Mozilla Firefox <small>JavaScript 1.7 :)</small></a></li>
-			<li><a href="http://gears.google.com">Gears</a></li>
-			<li><a href="http://www.django-project.com">Django for Web Apps</a></li>
-			<li><a href="http://docutils.sourceforge.net/rst.html">Sphinx for Documentation</a></li>
-			<li><a href="http://docutils.sourceforge.net/rst.html">ReST for Slides</a></li>
-			
-		</ul>
-	</div>
 </div>
 <div id="footer">
-	<p> (c) 2009 Sitename.com. Design by <a href="http://www.nodethirtythree.com">nodethirtythree</a> and <a href="http://www.freecsstemplates.org">Free CSS Templates</a>.</p>
+    <p> (c) 2009 Sitename.com. Design by <a href="http://www.nodethirtythree.com">nodethirtythree</a> and <a href="http://www.freecsstemplates.org">Free CSS Templates</a>.</p>
 </div>
 <!-- end #footer -->
 </body>
 </html>
+
+<script type="text/javascript">
+    require('sys');
+    var items = $$('.page_item');
+    var href = sys.window.location.href;
+    for each (var item in items)
+        if(item.firstChild.nodeName == "A" && href.startswith(item.firstChild.href))
+            item.addClassName("current_page_item");
+</script>
