@@ -1,7 +1,6 @@
-###########################
+﻿**************************
 Aplicación de Demostración
-###########################
-
+**************************
 
 Se diseñó una aplicación denominada ``salesman`` (agente de ventas viajante)
 para ejemplificar el funcionamiento de Protopy y Doff. La aplicación modela

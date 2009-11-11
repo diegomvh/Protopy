@@ -1,10 +1,9 @@
-#############################
+﻿*****************************
 Conclusiones y Líneas Futuras
-#############################
+*****************************
 
-************
 Conclusiones
-************
+============
 
 Durante el desarrollo de la presente tesina se realizó un análisis sobre las
 tecnologías disponibles para el desarrollo de aplicaciones web destacando

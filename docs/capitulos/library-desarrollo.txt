@@ -1,8 +1,8 @@
-.. _capitulos-protopy:
+﻿.. _capitulos-protopy:
 
-#######
+*******
 Protopy
-#######
+*******
 
 El presente capítulo profundiza sobre el desarrollo de la librería de JavaScript
 sobre la cual se implementó una versión desconectada de Django. Como se mencionó

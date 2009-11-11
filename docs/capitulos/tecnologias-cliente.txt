@@ -1,12 +1,11 @@
-.. _cliente:
+﻿.. _cliente:
 
-#######################
+***********************
 Tecnologías del Cliente
-#######################
+***********************
 
-*********************************************
 Web Dinámica Desde la Perspectiva del Cliente
-*********************************************
+=============================================
 
 Desde la perspectiva del usuario, la Web consiste en una gran cantidad de
 documentos interconectados a nivel mundial llamados *páginas web* a los cuales

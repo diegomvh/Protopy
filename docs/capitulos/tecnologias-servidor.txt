@@ -1,8 +1,8 @@
-.. _servidor:
+﻿.. _servidor:
 
-########################
+************************
 Tecnologías del Servidor
-########################
+************************
 
 Este capítulo tiene como finalidad introducir los conceptos básicos concernientes
 a la *generación dinámica de contenido* en el servidor web (2.1).
@@ -14,9 +14,8 @@ A continuación se analizan las características que hacen relevante
 el estudio de los lenguajes dinámicos como plataforma de desarrollo de aplicaciones
 web dinámicas.
 
-**********************************
 Generación Dinámica de Páginas Web
-**********************************
+==================================
 
 En el enfoque dinámico, cuando un usuario realiza una solicitud, el mensaje
 enviado tiene como objetivo la ejecución de un programa o secuencia de comandos
@@ -24,11 +23,9 @@ en el servidor. Por lo general, el procesamiento involucra el uso de la
 información proporcionada por el usuario para buscar registros en una base de
 datos y generar una página HTML personalizada para el cliente.
 
-
 Tradicionalmente, la tecnología utilizada se conoce como CGI,
 estándar que consiste en delegar la generación de contenido a un
 programa. CGI se limita a definir la entrada y salida de éste.
-
 
 Un enfoque más moderno para la generación de contenido dinámico 
 es la incrustación de secuencias de comandos dentro de 
@@ -64,7 +61,6 @@ En junio de 2004 se publica el proyecto Ruby On Rails, un framework de aplicacio
 web, desarrollado en el lenguaje de programación Ruby, que revolucionó la forma de 
 concebir los frameworks y la web.
 
-
 James Duncan Davidson, el creador de Tomcat y Ant, llegó a decir que Ruby On Rails
 es el framework web mejor pensado que él ha usado. Davison pasó
 10 años desarrollando aplicaciones web, frameworks y la especificación de los
@@ -88,7 +84,7 @@ A continuación se realiza una revisión general de los componentes de un servid
 luego, se analizan los lenguajes dinámicos y sus frameworks.
 
 Servidor Web
-============
+------------
 
 Un servidor web, o *web server*, es un software encargado de recibir solicitudes
 de recursos de un cliente, típicamente un navegador web, a través del
@@ -119,7 +115,7 @@ es a través de una URL, independientemente de su naturaleza.
 .. _servidor-cgi:
 
 CGI
-===
+---
 
 Common Gateway Interface (CGI) [*]_ surge alrededor del año 1998,
 como el primer estándar de comunicación o API entre un servidor web y un
@@ -223,7 +219,7 @@ sesión. Cada petición se trata de manera independiente [DwightErwin1996]_.
 .. _servidor-lenguajes:
 
 Lenguajes Dinámicos
-===================
+-------------------
 
 .. note:: Se copio a la intro
 

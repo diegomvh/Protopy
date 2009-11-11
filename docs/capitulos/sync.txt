@@ -1,6 +1,6 @@
-#########################
+﻿***********************
 Sincronización de Datos
-#########################
+***********************
 
 Por simplcidad, en este capítulo, se establece la siguiente terminología:
 Cuando se hable de *el cliente* se está refiriendo al proyecto desconectado,

@@ -1,14 +1,13 @@
-############
+﻿************
 Introducción 
-############
+************
 
     "Yo sólo puedo mostrarte la puerta. Tú eres quien debe atravesarla."
     
     -- Morfeo
 
-**********
 Motivación
-**********
+==========
 
 .. Hoy más que ayer, pero seguramente menos que mañana, Internet es "la red de
 .. redes". El alto contenido de información 
@@ -83,9 +82,8 @@ basados en lenguajes propietarios son liberados bajo licencias OpenSource.
 .. [OSI2009] *Opne Source Intiative* http://www.opensource.org/
 .. [NetCraft2009] *Estadisticas de utilización de servidores de NetCraft* http://news.netcraft.com/archives/web_server_survey.html
 
-*********
 Objetivos
-*********
+=========
 
 La principal limitación de las aplicaciones web, en comparación con las
 aplicaciones tradicionales, es la necesidad de contar con conexión constante
@@ -112,9 +110,8 @@ convergiendo en un único proceso de desarrollo.
 
 .. Citas copadas http://es.wikiquote.org/wiki/The\_Matrix
 
-*******
 Alcance
-*******
+=======
 
 .. note:: Debe estar en pasado. Hay que de todos modos re-readactar según marta.
 
