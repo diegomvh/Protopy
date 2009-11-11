@@ -1,0 +1,43 @@
+***************************
+with overline, for chapters
+***************************
+
+::
+
+    ***************************
+    with overline, for chapters
+    ***************************
+
+for sections
+============
+
+::
+
+    for sections
+    ============
+
+for subsección
+--------------
+
+::
+
+    for subsección
+    --------------
+
+
+for sections
+""""""""""""
+
+::
+
+    for sections
+    """"""""""""
+    
+for sections
+^^^^^^^^^^^^
+
+::
+
+    for sections
+    ^^^^^^^^^^^^
+    
