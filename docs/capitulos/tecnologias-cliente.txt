@@ -71,14 +71,13 @@ llamado Google Gears que agrega tres componentes:
 
         Un mecanismo para la ejecución de JavaScript como procesos.
 
-**************************
 Estructura de un Navegador
-**************************
+==========================
 
 .. _navegador-web:
 
 Navegador Web
-=============
+-------------
 
 Es un software que presenta documentos de hipertexto al usuario.
 Los lenguajes de codificación de hipertexto más populares son HTML y XHTML.
@@ -148,7 +147,7 @@ esquema suele ser ``file`` y el anfitrión se encuentra ausente, por ejemplo:
     file:///home/nacho/paginas/pepe.html
 
 HTTP
-====
+----
 
 HTTP es el protocolo de transferencia de hipertexto.
 
@@ -191,7 +190,7 @@ la respuesta, que generalmente es una página codificada en HTML.
 .. _cliente-html:
 
 HTML
-====
+----
 
 HTML es un lenguaje de marcado que tiene como objetivo describir un documento
 de hipertexto.
@@ -266,7 +265,7 @@ ellas:
 .. _cliente-css:
 
 CSS
-===
+---
 
 CSS es un lenguaje utilizado para definir el estilo de las páginas.
 Una hoja de estilo en cascada o **StyleSheet** determina cómo se va a mostrar un documento 
@@ -283,7 +282,7 @@ mantener coherencia y consistencia en todo el sitio.
 .. _cliente-javascript:
 
 JavaScript
-==========
+----------
 
 JavaScript es un lenguaje de programación interpretado creado originalmente por
 Brendan Eich, para la empresa Netscape, con el nombre de Mocha. Surgió
@@ -304,7 +303,7 @@ arreglo asociativo, el uso de prototipos y las clausuras.
 
 
 Arreglo Asociativo (``Object``)
--------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         
 Este tipo de dato representa una lista de asociaciones clave-valor, donde
 la clave y el valor pueden ser de cualquier tipo arbitrario.
@@ -342,7 +341,7 @@ Esta técnica se utiliza en combinación con las clausuras en las librerías
 de JavaScript como Prototype [ProtypeOrgSrc09]_ para lograr encapsulamiento.
 		
 Prototipos
-----------
+^^^^^^^^^^
 		
 Un prototipo es el equivalente a una clase en los lenguajes como Java o C++.
 Consiste en la definición de la función que es llamada anteponiendo la
@@ -385,7 +384,7 @@ Esta técnica permite implementar herencia.
 	
 	
 Clausuras
----------
+^^^^^^^^^
 		
 Una clausura es la utilización de funciones internas con referencias locales
 que permanecen enlazadas aún cuando el contexto contenedor ha desaparecido [StuartLangridgeClosures09]_.
@@ -415,7 +414,7 @@ y respuestas asincrónicas.
                                
 
 DOM
-===
+---
 
 
 Document Object Model [*]_ es una API para documentos XML y HTML. Provee una representación en objetos de 
@@ -528,7 +527,7 @@ Por ejemplo:
 .. [WIKIDOM09] Wikipedia, *DOM*, último acceso Octubre 2009,
                 http://es.wikipedia.org/wiki/Document_Object_Model
 AJAX
-====
+----
 
 AJAX (Asynchronous JavaScript And Xml) es una tecnología que surge tras la
 necesidad de agilizar las interfaces de usuario basadas en la web.
@@ -581,7 +580,7 @@ Esta tecnología utiliza 4 elementos [WIKIAJAX09]_:
 
 
 Funcionamiento
---------------
+^^^^^^^^^^^^^^
 
     #. Se crea y configura un objeto ``XMLHttpRequest``:
     
@@ -632,7 +631,7 @@ y dificultades para la impresión.
 
 
 JSON
-====
+----
 
 JSON [JSONOrg2009]_ (JavaScript Object Notation) es un estándar de codificación de datos, 
 inspirado en la sintaxis de objetos de JavaScript.
@@ -736,11 +735,8 @@ El equivalente en XML es:
     </menu>
     
 
-
-
-************
 Google Gears
-************
+============
 
 Google Gears [GGGears09]_ es un plugin de código abierto distribuido por Google que añade
 tres componentes al navegador.

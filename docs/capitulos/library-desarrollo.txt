@@ -448,7 +448,7 @@ Protopy:
 Más modulos nativos y detalles sobre estos en el apéndice de Protopy.
 
 Orientación a Objetos Basada en Clases
---------------------------------------
+======================================
 
 En el capítulo dedicado a las tecnologías del cliente se describió en
 el enfoque OO que posee JavaScript. Para lograr migrar muchos componentes
@@ -567,7 +567,7 @@ como se muestra en el siguente ejemplo:
     true
 
 Inicialización
-~~~~~~~~~~~~~~
+--------------
 
 En el ejemplo de creación de una clase en Protopy se muestra la 
 inicialización del tipo ``SorteDict`` usando una funcion
@@ -581,7 +581,7 @@ Los métodos ``__init__`` deben llamar explícitamente al método ``__init__`` d
 la(s) clase(s) padre(s) de ser necesario.
 
 Métodos Especiales
-~~~~~~~~~~~~~~~~~~
+------------------
 
 Protopy soporta la definición de algunos métodos especiales para los objetos, que 
 serán invocados por la biblioteca en circunstancias particulares o cuando se 
@@ -683,7 +683,7 @@ algún comportamiento de Python en JavaScript. Una descripción detallada se
 encuentra en el apéndice dedicado a Protopy.
 
 Herencia
-~~~~~~~~~
+--------
 
 Como ya se mencionó, el código de un framework no debe ser modificado.
 El mecanismo de extensión en lenguajes OO es la especialización de componentes
@@ -725,7 +725,7 @@ Protopy establece por defecto a ``object``, encargado de
 proveer los principales métodos (``__init__``, ``__str__``).
 
 Métodos y Atributos de Clase
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------------------------
 
 Protopy contempla la definición de métodos y atributos de clase. Esta tarea se realiza
 agregando el conjunto de atributos y métodos de clase como un arreglo asociativo
@@ -832,7 +832,7 @@ realizar una adaptación de sintaxis. Ellos son:
 
 
 Manejo de DOM
--------------
+=============
 
 .. note:: Está parte está bastante confusa y escueta. Cuenten más y pongan métodos relevantes de ejemplo.
 Va a ir en dos secciones distintas. Así que ya las rearmé, pero por favor hay que describirlas más y mejor.
@@ -856,7 +856,7 @@ crear eventos de usuario.
     http://jamesdonaghue.com/static/peppy/docs/
 
 Agregados a JavaScript
-----------------------
+======================
 
 Con la idea de extender el atributo ``prototype`` de los ``HTMLElement`` de
 la biblioteca de JavaScript Prototype, se agregaron funciones para modificar e
@@ -868,7 +868,7 @@ de las cadenas (``str`` en Python) agregando métodos de sustitución de patrone
 conversión de números, manejo de fecha, etc. 
 
 Envoltura de Google Gears
--------------------------
+=========================
 
 
 Como se mencionó en el capítulo anterior, para la migración del framework
@@ -920,7 +920,7 @@ Por otra parte, el desarrollo del framework implicó extender los siguientes com
         para tipos de datos, etc.
 
 Auditado de Código
-------------------
+==================
 
 Un obstáculo muy común con el cual se encuentran los desarrolladores a la 
 hora de la codificación de JavaScript es la dificultad de depuración en 
@@ -1027,7 +1027,7 @@ código en la consola de Firebug y en una URL con distintos formatos.
 
 
 Interactuando con el Servidor
------------------------------
+=============================
 
 Protopy provee una interface de recubrimiento sobre las peticiones asincrónicas
 (AJAX) con el fin de simplificar la utilización de ``XMLHttpRequest`` y de trabajar
@@ -1113,7 +1113,7 @@ HTTP.
 
 
 Soporte para JSON
------------------
+=================
 
 JSON fue el formato elegido para la transmisión de datos entre el framework
 desconectado en el navegador y su contra parte en el servidor. Estos datos 
@@ -1130,7 +1130,7 @@ los objetivos de la presente tesina. Sin embargo se puede implementar esta
 característica en futuras versiones.
 
 RPC (Remote Procedure Call)
----------------------------
+===========================
 
 .. JSON-RPC http://json-rpc.org/ 
 .. XML-RPC http://www.xmlrpc.com/
