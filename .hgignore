@@ -41,10 +41,9 @@ sources/offline_demo/static/*.zip
 sources/offline_demo/static/*.txt
 *.dot
 
-
 docs/sphinx-ref/*
 
 syntax: regexp
 ^nbproject
 ^.*~$
-
+.*\#$
