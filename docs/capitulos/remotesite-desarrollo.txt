@@ -6,7 +6,7 @@ El presente capítulo profundiza sobre el soporte en el servidor para lograr
 la desconexión de proyectos basados en Django. Este soporte se realiza mediante
 la aplicación genérica ``offline``. Sus objetivos son brindar las facilidades
 para la "desconexión", es decir, instalar el proyecto Doff en el cliente y
-un mecanismo básico de socronización de datos [*]_.
+un mecanismo básico de sincronización de datos [*]_.
 
 .. [*] La sincronización de datos se aborda en el capítulo siguiente
 
@@ -14,8 +14,7 @@ Hasta este momento se habló de que un proyecto Doff se compone de un conjunto
 de módulos JavaScript y que son publicados estáticamente.
 
 .. Se debe recordar que un proyecto Doff, de la misma manera que un 
-   proyecto Django, se compone de módulos de modelos, vistas y asociaciones de urls, 
-   además de un conjunto de templates.
+   proyecto Django, se compone de módulos de modelos, vistas y asociaciones de urls, además de un conjunto de plantillas.
 
 Con el objeto de evaluar una técnica que permita mantener consistencia 
 entre la aplicación en línea y la aplicación desconectada se
@@ -34,7 +33,7 @@ realizó el siguiente análisis sobre los módulos que componen al proyecto desc
       El sistema de plantillas de Doff es muy similar al de Django. Es decir,
       una plantilla utilizada en una aplicación Django se puede utilizar en
       un proyecto Doff.
-      En este caso, no hace falta ningun tipo de introspección, como en el caso
+      En este caso, no hace falta ningún tipo de introspección, como en el caso
       anterior de los modelos, para lograr consistencia entre los proyectos
       simplemente se debe publicar las plantillas como parte del 
       proyecto.
@@ -59,8 +58,8 @@ las vistas especiales para los modelos y las plantillas antes mencionados.
 A continuación se describe la mecánica de migración de proyectos Django a su
 versión desconectada utilzando los sitios remotos.
  
-RemoteSite
-----------
+La Clase RemoteSite
+-------------------
 
 La clase ``RemoteSite`` define un proyecto desconectado. Tiene varias 
 responsabilidades, entre ellas, servir el código JavaScript del framework Doff,
@@ -70,7 +69,7 @@ el módulo ``sites`` de la aplicación ``offline``.
 
 Un ``RemoteSite`` representa *una migración* [*]_ del proyecto en línea. Es decir,
 para un mismo proyecto en línea, pueden existir una o más migraciones.
-Su interfase está basada en la adminstración que provee Django 
+Su interfase está basada en la administración que provee Django 
 (``django.contrib.admin``), donde un 
 sitio de administración se encarga de las operaciones de CRUD sobre 
 los modelos que le son registrados. Pueden existir múltiples sitios de
