@@ -202,7 +202,7 @@ latex_logo = '_static/nasa_django_logo.png'
 latex_use_parts = False
 
 # Additional stuff for the LaTeX preamble.
-#latex_preamble = ''
+latex_preamble = '\\setcounter{tocdepth}{4}'
 
 # Documents to append as an appendix to all manuals.
 #latex_appendices = ['apendices/protopy', 'apendices/python', 'apendices/django']
