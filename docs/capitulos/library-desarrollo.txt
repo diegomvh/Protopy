@@ -1,4 +1,4 @@
-﻿.. _capitulos-protopy:
+.. _capitulos-protopy:
 
 #######
 Protopy
@@ -294,6 +294,7 @@ en un módulo, ya que todas las definiciones son públicas. Por ejemplo, si
 se define un módulo ``utils.py`` con el siguiente código:
 
 .. code-block:: javascript
+    :linenos:
 
     def promedio(lista_de_enteros):
         return sum(lita_de_enteros) / float(len(lista_de_enteros))
@@ -343,11 +344,13 @@ Como observación final cabe destacar que una función que se defina en un módu
 Módulos Nativos
 ---------------
 
-Como mencionó en el capítulo anterior, para desarrollar un buen soporte en el
+Como se mencionó en el capítulo anterior, para desarrollar un buen soporte en el
 navegador es necesaria sierta funcionalidad básica que posee la implementación
 de Python y que seria deseable tener en el cliente al momento de correr el
-Framework desconectado. Por esta razón se incorporaron los siguientes módulos a
-Protopy:
+Framework desconectado. Por esta razón se incorporaron en nucleo de Protopy
+módulos y funciones indispensables para desarrolladores Python, algunos de estos
+se explican a continuacion, para una referencia completa de la API puede
+remitirse al apéndice de Protopy.
 
     * ``builtin``
 
@@ -370,25 +373,6 @@ Protopy:
 
             Son alias a los elementos del módulo ``dom`` descrito más abajo.
 
-        * ``object``
-
-            En Python el tipo base para todos los objetos es ``object``. Sirve
-            como base para el sistema de tipos Pythonico implementado en 
-            Protopy.
-
-        * ``type(instancia)`` ó ``type(nombre, bases, [estatico], dinamico)``
-
-            Este método posee dobe signatura. Cuando se lo invoca con una instancia
-            como argumento, devuelve el tipo/clase de la instancia.
-
-            La otra signautra sirve para crear clases o tipos. Recibe como
-            argumentos el nombre de la clase, las calses base, opcionalmente un
-            arreglo asociativo de atributos/métodos de clase y un arreglo
-            asociativo con los atributos/métodos de instancia.
-
-            Ambos casos responden al comportamiento del ``builtin`` homónimo de
-            Python.  
-
         * ``extend``
 
             Esta funcion copia atributo por atributo todas las definiciones de
@@ -398,6 +382,23 @@ Protopy:
 
             Estas funciones trabajan sobre las clases y las instancias
             definiendo la pertenencia o la herencia respectivamente.
+
+        * ``array``
+
+        * ``string``
+
+        * ``len``
+
+            La función incorporada ``len`` devuelve la longitud de un objeto.
+
+                >>> len([1, 2, 4]);
+                3
+
+        * ``print``
+
+        * ``cmp``
+
+        * ``zip``
 
     * ``dom``
 
@@ -444,8 +445,6 @@ Protopy:
 
         Envoltura de ``XMLHttpRequest``, facilidades de interpretación de tipos
         de respuesta.
-
-Más modulos nativos y detalles sobre estos en el apéndice de Protopy.
 
 Orientación a Objetos Basada en Clases
 ======================================
@@ -569,30 +568,31 @@ como se muestra en el siguente ejemplo:
 Inicialización
 --------------
 
-En el ejemplo de creación de una clase en Protopy se muestra la 
-inicialización del tipo ``SorteDict`` usando una funcion
-``__init__``. Este método es llamado por el operador ``new`` inmediatamente
-después de crear una instancia. Actúa de una forma similar a un constructor del
-lenguaje Java, pero Python y Protopy permiten también la personalización de la 
-instanciación implementando el método ``__new__``. El constructor es el conjunto
-``__new__`` e ``__init__``.
+En el ejemplo de creación de una clase en Protopy se muestra la inicialización
+del tipo ``SorteDict`` usando una funcion ``__init__``. Este método es llamado
+por el operador ``new`` inmediatamente después de crear una instancia. Actúa de
+una forma similar a un constructor del lenguaje Java, pero Python y Protopy
+permiten también la personalización de la instanciación implementando el método
+``__new__``. El constructor es el conjunto ``__new__`` e ``__init__``.
 
 Los métodos ``__init__`` deben llamar explícitamente al método ``__init__`` de 
 la(s) clase(s) padre(s) de ser necesario.
+
+* ``__new__``.
+
+        Este método permite al desarrollador tomar parte en la construcción del
+        tipo, los parámetros son de una forma similar a Python, el nombre del
+        nuevo tipo, el arreglo con los tipos base y el objeto con atributos
+        y métodos de instancia.
 
 Métodos Especiales
 ------------------
 
 Protopy soporta la definición de algunos métodos especiales para los objetos, que 
-serán invocados por la biblioteca en circunstancias particulares o cuando se 
-use una sintaxis específica.
+serán invocados por funciones especiales de la biblioteca en circunstancias
+particulares.
 
-.. note:: Está un tanto confuso el párrafo anterior. Los métodos son invocados por la misma 
-    librería ante determinadas circunstancias o se invocan directamente por el usuario??
-    Tampoco es clara la descripción de los métodos (finalidad o uso, quién o cuándo se invocan)
-
-Estos métodos son:
-
+Algunso de estos métodos son:
 
     * ``__str__``
 
@@ -602,6 +602,7 @@ Estos métodos son:
         la filosofía Python, se recomienda utilizar ``__str__``. Ejemplo:
 
         .. code-block:: javascript
+            :linenos:
 
             >>> var Persona = new type('Persona', {
                     // Constructor 
@@ -609,10 +610,10 @@ Estos métodos son:
                         this.nombre = nombre || "Sin nombre";
                     },
                     __str__: function (){
-                        return "Soy la persona de nombre: " +this.nombre;
+                        return "Soy la persona de nombre: " + this.nombre;
                     }
                 });
-            
+
             // Se crea una instancia con el nombre
             >>> p = new Persona("diego");
             // Se invoca la representación en cadena por cohersión
@@ -620,87 +621,116 @@ Estos métodos son:
             "Soy la persona de nombre: diego" 
 
     * ``__iter__``
-        
+
         Este método se utiliza cuando se requiere un iterador de la instancia
         sobre la cual es invocado.
-        
+
         Protopy se vale de versiones modernas de JavaScript para brindar 
         este método, que debe retornar un objeto que implemente el método 
         ``next()``. 
         Ejemplo:
-        
+
         .. code-block:: javascript
-        
-            >>> var Iterable = new type('Iterable', [ object ], {
-            
-                __init__: function (cadena) { this.cadena = cadena; },
+            :linenos:
+
+            var Iterable = new type('Iterable', [ object ], {
+
+                __init__: function (cadena) { 
+                    this.cadena = cadena; 
+                },
+
                 __iter__: function () {
-                    
+                    var max = len(cadena);
+                    var index = 0;
+                    var cadena = this.cadena;
                     return {
                         next: function() {
-                            // Completar
+                            if (index == max)
+                                throw StopIteration;
+                            return cadena[index++];
                         }
                     };
-                
-                
                 }
-            
             });
-        
-            for (var elem in objeto_iterable) {
+
+            var iterable = new Iterable();
+            for (var elem in iterable) {
                 print (elem)
             }
-        
-        
+
     * ``__cmp__``
 
-        Llamado al comparar dos instancias de tipo con las funciones ``equal`` o
-        ``nequal``.
-        
-        Ejemplo
+        Un objeto que implemente este método es comparable con otro, esto le
+        confiere al objeto una precedencia sobre otros objetos.
+        Internamente la funcion ``cmp`` llama a este metdo para determinar el
+        orden de precedencia con otro objeto.
+        El valor de retorno del método debe ser un número negativo, positivo
+        o cero, indicando menor precedencia, mayor precedencia o la igualdad
+        respectivamente.
+
+        .. code-block:: javascript
+            :linenos:
+
+            var Persona = new type('Iterable', [ object ], {
+
+                __init__: function (nombre, edad) { 
+                    this.nombre = nombre;
+                    this.edad = edad;
+                },
+
+                __cmp__: function (persona) {
+                    return persona.edad - this.edad;
+                }
+            });
+
+            >>> var nahuel = new Persona('Nahuel', 25);
+            >>> var diego = new Persona('Diego', 28);
+            >>> var pablo = new Persona('Pablo', 28);
+            >>> cmp(nahuel, diego);
+            -3
+            >>> cmp(diego, pablo);
+            0
+            >>> cmp(pablo, nahuel);
+            3
+
+    * ``__eq__`` ``__ne__``
+
+        Un objeto que implemente alguno de estos este método es igualable con
+        otro, las funciones de Protopy ``equal`` o ``nequal`` trabajan sobre
+        estos métodos.
 
     * ``__len__``
 
-        Este método es usado por la función ``len``. La función incorporada ``len``
-        devuelve la longitud de un objeto. Funciona sobre cualquier objeto posea
-        longitud (listas, diccionarios, etc.). Por ejemplo:
-            
-            >>> len([1, 2, 4])
-            3
+        Este método es usado por la función ``len``. Se asume que los objetos
+        que lo implementan son contables o tienen una longitud en funcion de
+        elementos que contienen.
 
     * ``__copy__`` y ``__deepcopy__``
-    
-        Se utilizan para copiar un objeto de manera superficial o profunda
-        respectivamente.
-        
+
+        Los objetos que implementen estos métodos pueden ser copiados de manera
+        superficial o en profundidad respectivamente. El módulo ``copy`` es el
+        encargado de trabajar sobre estos métodos.
+
     * ``__json__`` y ``__html__``
-    
+
         Son métodos para serialización (o *marshalling*) del objeto en HTML o 
         JSON respectivamente.
 
-Protopy tiene otros métodos especiales, que generalmente están orientados a emular
-algún comportamiento de Python en JavaScript. Una descripción detallada se 
+Protopy tiene otros métodos especiales, que generalmente están orientados a
+emular algún comportamiento de Python en JavaScript. Una descripción detallada se 
 encuentra en el apéndice dedicado a Protopy.
 
 Herencia
 --------
 
-Como ya se mencionó, el código de un framework no debe ser modificado.
-El mecanismo de extensión en lenguajes OO es la especialización de componentes
-mediante herencia. Por esta razón se consideró fundamental dotar el 
-constructor de tipos ``type`` con la capacidad de herencia similar a la de Python,
-ya lo que se desea migrar es un framework OO escrito en Python.
-
+Como ya se mencionó, el código de un framework no debe ser modificado y su
+utilizacion esta respaldada en algun mecanimo de extención, redefinicion o 
+especializcion de componentes. Es en este punto donde proveer de una forma de
+herencia al constructor de tipos resulta un paso en la dirección correcta.
 Cuando el desarrollador implemente funcionalidad basada en las características
 del framework desconectado, lo hará extendiendo alguna clase. Es por ello que 
 Protopy utiliza la herencia del tipo **Prototype chaining**, aunque lo hace de
 una forma un poco más compleja con el objeto de soportar herencia múltiple.
-
-.. 
-    herencia al constructor de tipos resulta un paso en la dirección correcta,
-    eventualmente el desarrollador que requiera componentes específicos podrá
-    heredar de los tipos correspondientes e implementar solo lo que haga falta.
-
 
 Para implementar la herencia y en particular la herencia múltiple, el constructor
 de tipos recibe una lista de los tipos base e internamente crea un
@@ -720,18 +750,19 @@ determina el tipo de la instancia, y mediante éste accede al método buscado.
 Este comportamiento es el equivalente en JavaScript al de llamar al método 
 del tipo base con la función ``Function.apply`` o ``Function.call``.
 
-Se debe destacar que de no especificar por lo menos un tipo base, 
-Protopy establece por defecto a ``object``, encargado de
-proveer los principales métodos (``__init__``, ``__str__``).
+Se debe destacar que de no especificar por lo menos un tipo base, Protopy
+establece por defecto a ``object``, encargado de proveer los principales
+métodos (``__init__``, ``__str__``).
 
 Métodos y Atributos de Clase
 ----------------------------
 
-Protopy contempla la definición de métodos y atributos de clase. Esta tarea se realiza
-agregando el conjunto de atributos y métodos de clase como un arreglo asociativo
-opcional que se antepone al que define la estructura de los de instancia.
+Protopy contempla la definición de métodos y atributos de clase. Esta tarea se
+realiza agregando el conjunto de atributos y métodos de clase como un arreglo
+asociativo opcional que se antepone al que define la estructura de los de
+instancia.
 
-El siguiente ejemplo define la clase “Planeta”:
+El siguiente ejemplo define la clase "Planeta":
 
 .. code-block:: javascript
 
@@ -777,18 +808,11 @@ A continuación se muestra cómo usar dicha clase.
     >>> tierra = new Planeta('Tierra')
     window.Planeta name=Tierra count=3 __name__=Planeta
 
-
-.. Existe una función muy importante que se puede definir para el tipo, buscando la
-   emulación de Python se adopto el método ``__new__``. Este método permite al
-   desarrollador tomar parte en la construcción del tipo, los parámetros son de una
-   forma similar a Python, el nombre del nuevo tipo, el arreglo con los tipos base
-   y el objeto con atributos y métodos de instancia. 
-
 Objetos Nativos
 ---------------
 
-Los objetos nativos de Protopy tienen como objetivo emular tipos de datos de Python o
-realizar una adaptación de sintaxis. Ellos son:   
+Los objetos nativos de Protopy tienen como objetivo emular tipos de datos de
+Python o realizar una adaptación de sintaxis. Ellos son:
 
     * ``Dict``
 
@@ -811,25 +835,28 @@ realizar una adaptación de sintaxis. Ellos son:
         cantidad de argumentos. Los objetos de tipo Arguments de Protopy encapsulan y
         uniforman los argumentos pasados a una función y permiten establecer
         entre otras cosas valores por defecto. 
-        
+
         Este objeto tiene como objetivo brindar emapquetado de argumentos en 
         JavaScript "Pythonico", una caractersística muy utilizada en el framework Django.
-        
+
         Utilizando ``Arguments`` se puede convertir la siguiente sentencia:
-        
+
         .. code-block:: python
-        
-            def funcion(arg1, arg2=None, arg3=None):
+
+            def funcion(arg1, arg2 = None, arg3 = None):
                 print arg1, arg2, arg3
-        
+
         al siguiente código JavaScript:
-        
+
         .. code-block::
-        
-            function funcion(arg1, {arg2: null, arg3: null}) {
-                var args = new Arguments(arguments);
+
+            function funcion(arg1) {
+                var ar = new Arguments(arguments, {arg2: null, arg3: null});
+                print(arg1, ar.kwargs['arg2'], ar.kwargs['arg3']);
             }
 
+Nuevamente para ver una definicion completa de los objetos en el core de Protopy
+se puede remitir al apendice correspondiente.
 
 Manejo de DOM
 =============
@@ -870,7 +897,6 @@ conversión de números, manejo de fecha, etc.
 Envoltura de Google Gears
 =========================
 
-
 Como se mencionó en el capítulo anterior, para la migración del framework
 a un framework desconectado, son necesarios los componentes ``DataBase`` y
 ``Local Server``.
@@ -885,13 +911,12 @@ la inicialización de la librería se detecta si el navegador tiene disponible
 la API de Gears. Si el desarrollador requiere almacenamiento persistente deberá
 asegurarse de que Gears esté instalado.
 
-
 Dentro del módulo ``sys``, se publica el objeto  ``gears`` que
 almacena información sobre la disponibilidad de Gears, qué permisos
 le ha otorgado el usuario, qué versión del plugin está disponible, el factory de 
 Gears, etc. Además provee un mecanismo para facilitar la instalación de Gears si 
 no se encuentra instalado.
- 
+
 El método ``create`` del objeto ``sys.gears`` es el encargado de crear y retornar
 las instancias de los diversos módulos de Gears. Es un recubrimiento 
 del factory original de Gears.
@@ -963,7 +988,7 @@ el módulo con el nombre ``__name__``.
 
 
 .. code-block:: javascript
-    
+
     // Requerir el modulo 'logging.base'
     var logging = require('logging.base');
     // Crear un logger con el nombre del módulo actual, que se almacena
@@ -1072,31 +1097,31 @@ A cada función manejadora se la invoca con un objeto que representa la respuest
 y que está en relación con el evento capturado, como argumento.
 
 Otras funciones manejadoras de evento que se pueden definir son:
-    
+
     * ``onUninitialized``
-        
+
         Se invoca inmediatamente después de la instancición. 
-        
+
     * ``onLoading``
-    
+
         Se invoca periodicamente mientras la petición se encuentra en curso. 
-        
+
     * ``onLoaded``
-    
+
         Se invoca cuando el contenido de la respuesta ha sido cargado en su totalidad. 
-        
+
     * ``onInteractive``
-    
+
         Se invoca periodicamente mientras la petición se encuentra en curso, pero no se
         invoca si se trata del final de la respuesta.
-        
+
     * ``onComplete``
-    
+
         Se invoca cuando se ha procesado la respuesta, trasformandola a un tipo de dato adecuado, 
         en el caso de existir un ``content-type`` como JSON.
-        
+
     * ``onException`` 
-    
+
         Se invoca cuando se produce algún tipo de error.
 
 
@@ -1155,4 +1180,3 @@ como protocolo de transporte. Es considerado el más simple de los mecanismos
 para publicación de servicios web y se incorporó a la librería Protopy como
 mecanismo para comunicación entre el framework desconectado y la aplicación
 en línea.
-
