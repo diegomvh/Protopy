@@ -24,7 +24,7 @@ realizó el siguiente análisis sobre los módulos que componen al proyecto desc
     
       Al contar con la misma API de ORM que Django, los modelos de proyecto Doff
       pueden ser generados a partir del análisis de las definiciones de los
-      modelos del proyecto en línea. Es decir, a través de una vista se puede generar
+      modelos del proyecto en línea (introspección). Es decir, a través de una vista se puede generar
       la salida en código JavaScript de la definición de los modelos de las
       aplicaciones que compongan al proyecto Django.   
        
@@ -69,13 +69,14 @@ el módulo ``sites`` de la aplicación ``offline``.
 
 Un ``RemoteSite`` representa *una migración* [*]_ del proyecto en línea. Es decir,
 para un mismo proyecto en línea, pueden existir una o más migraciones.
-Su interfase está basada en la administración que provee Django 
-(``django.contrib.admin``), donde un 
-sitio de administración se encarga de las operaciones de CRUD sobre 
-los modelos que le son registrados. Pueden existir múltiples sitios de
-administración en un proyecto. Cada sitio se publica en una 
-URL dentro del proyecto [DjangoNewFormsAdminBranch09]_. De la misma
-manera, un sitio remoto se publica en una URL en el poryecto.
+Su implementación está basada en la aplicación administración que provee Django 
+(``django.contrib.admin``), que provee una clase cuyas instancias son
+publicadas como vistas y permiten realizar oepraciones CRUD sobre un conjunto
+de modelos que registre el programador.
+Pueden existir múltiples sitios de
+administración en un proyecto, cada sitio se publica en una 
+URL dentro del proyecto [DjangoNewFormsAdminBranch09]_. La misma filosofía se
+aplicó en la implementación de los sitios remotos.
 
 .. [DjangoNewFormsAdminBranch09] Brian Rosner, Django Trac,
    *The newforms-admin branch*,
@@ -87,37 +88,22 @@ manera, un sitio remoto se publica en una URL en el poryecto.
     las herramientas que permiten el pasaje de una definción de base de datos
     de alto nivel (ORM) a otro.
 
-Un sitio remoto se comporta ante el registro de URLs como la incusión de un
-sub módulo de ``urls``. Es decir, es similar a utilizar:
 
-.. code-block:: python
-    
-    urlpatterns = patterns('',
-        include('miapp.urls'),
-    )
-
-Este comportamiento se implementó mediante un decorador, el decorador recibe
-como argumento la expresión regular con la cual se expone el método, por 
-ejemplo:
-    
-    # Definición de la clase
-    class RemoteSite(object):
-        # Exposición de el método template_list como vista bajo la URL 
-        # "/template_list"
-        @expose(r'^template_list/?$')
-        def template_list(self, request):
-            return HttpResponse( html_output(
-                    full_template_list(), indent = 2))
-
- 
-
-A diferencia de los sitios de administración de ``django.contrib.admin``, los
-sitios remotos están publicados bajo una URL base común. Esta debe ser definida
-por el usuario en el módulo ``settings.py`` del proyecto en línea con el nombre
-``OFFLINE_BASE``. La URL de un sitio remoto es la concatenación de ``OFFLINE_BASE``
+A diferencia de los sitios de administración de ``django.contrib.admin``, donde
+la URL de publicación es arbitraria, se decidió que los 
+sitios remotos se publican bajo una URL base común a partir de ``/``.
+Esta URL base debe ser introducida en la constante ``OFFLINE_BASE`` en el modulo
+de configuración del proyecto en línea (``settings.py``).
+La URL de un sitio remoto es la concatenación de ``OFFLINE_BASE``
 y el nombre del sitio remoto. Debido a que el nombre de el sitio remoto es único en
-el proyecto, su URL también lo es. Esta URL es generada automáticamente en 
-la propiedad ``urlregex`` de las instancias de ``RemoteSite``. Por ejemplo:
+el proyecto, su URL también lo es. 
+
+Para evitar errores en la escritura de la URL al momento de su inclusión se 
+decidió almacenar en un propiedad de la clase [IanBickingPyDecorator09]_
+[AdamGomaaPyDecorator09]_ llamada ``urlregex`` la expresión regular de publicación.
+Debe ser usada al momento de la publicación del sitio en el módulo ``urls.py``
+del proyecto [*]_ (no se permite la inclusión de sitios remotos en módulos de URLs
+a nivel aplicación). Para ejemplificar esto se expone el siguiente código: 
 
 .. code-block:: python
     
@@ -131,51 +117,83 @@ la propiedad ``urlregex`` de las instancias de ``RemoteSite``. Por ejemplo:
     >>> site.urlregex
     "/off/ventas"
     
-La finalidad de la propiedad ``urlregex`` es definir el patrón con el cual se 
-publica un sito remoto dentro del archivo ``urls.py``. Además se definió que 
-estas publicaciones deben hacerse en el nivel raíz de un proyecto Django, es
-decir, en el módulo apuntado por ``ROOT_URLCONF`` del módulo ``settings.py``.    
-     
+    # El registro en el módulo de urls sería como sigue 
+    # (en el urls.py del proyecto)
+    urlpatterns = patterns('',
+        # ... urls del usuario
+        ('/%s' % site.urlregex, site.root),
+        # ... más urls del usuario
+    )
+    
+
+.. [IanBickingPyDecorator09] Ian Bicking
+    *Decoradores en Python*,
+    último acceso Noviembre 2009,
+    http://blog.ianbicking.org/property-decorator.html
+    
+.. [AdamGomaaPyDecorator09] Adam Gomaa,
+    *The Python Property Builtin*,
+    último acceso Noviembre 2009, 
+    http://adam.gomaa.us/blog/2008/aug/11/the-python-property-builtin/    
 
 
-Además de la definción en Python, cada proyecto desconectado o *migración* posee
-un conjunto de módulos JavaScript. El directorio donde se deben almacenar esta
-dado también por el valor de ``OFFLINE_BASE`` y el nombre del sitio remoto.
+.. [*] Recordar que el módulo de URLs raíz del proyecto es el apuntado por
+    la constante ``ROOT_URLCONF`` del módulo ``settings.py``
 
+Hasta aquí se ha definido esta clase como una agrupación de vistas con un
+mecanismo alternativo de URLs, sin embargo es importante recordar que como
+se dijo en la introducción del presente capítulo, existe código JavaScript escrito
+por el programador, se trata de las vistas y URLs del proyecto desconectado.
+Además, la definición de la instancia de ``RemoteSite`` también se debe ubicar
+en un sitio específico. Para esto se definió una serie de rutas que reutilizan
+la constante ``OFFLINE_BASE``:
 
- sitio remoto posee una serie de modelos registrados, sobre los cuales
-se puede definir cuales son de solo lectura y cuales de lectura-escritura
-(en la sincronización).
-Mediante el mecanismo de autenticación y autorización de Django 
-(``django.contrib.auth``) se puede restringir que usuario o rol
-accede a cada sitio remoto. 
+    #. Debe existir un directorio con el nombre de la constante ``OFFLINE_BASE``
+    
+    #. Dentro del directorio existe un módulo Python con el nombre 
+       ``site_<nombre>.py`` donde se define la instancia del sitio. Por ejemlpo:
+       
+       .. code-block:: python
+        
+         from offline.sites import RemoteSite
+         
+         site = RemoteSite('vendedores')
+    
+    #. Por cada sitio remoto, debe existir un subdirectorio de 1, con el nombre
+       del sitio remoto. Este direcotrio consituye el proyecto Doff de donde
+       se desprende ``settings.js`` y ``urls.js``.
+       
+Por ejemplo, 
+para los valores del ejemplo anterior en un proyecto denominado ``mi_proyecto``
+se tendría la siguiente jeraquía::
 
-La creación de un sitio remoto no se realiza manualmente. Cuando se instala
-la aplicación ``offline`` en el proyecto en línea, se añade un comando para 
-la creación automatizada. Este comando se encarga de crear
-un directorio (que también es un módulo Python) donde se almacena
-los módulo que define los sitio remoto. Cada sitio remoto posee un 
-nombre único. El nombre de este directorio se define en el módulo ``settings.py``
-del proyecto como una constante de cadena con el nombre ``OFFLINE_BASE``.
+    mi_proyecto/
+        mi_aplicacion/
+            models.py
+            views.py
+            urls.py
+        off/
+            ventas/
+                mi_aplicacion/
+                    views.js
+                    urls.js
+                urls.js
+                settings.js
+            site_vendedores.py
 
-Por cada sitio remoto existe un subdirectorio donde se almacena el código
-JavaScript del proyecto y sus aplicaciones: ``OFFLINE_BASE/<nombre_sitio_remoto>``. 
-En su nivel base se cuenta con los módulos ``settings.js``, ``urls.js``.
-Cada aplicación es un subdirectorio y cuenta con módulos ``views.js``, 
-``mixins.js``, ``tests.js`` y ``urls.js``.
+Se optó por automatizar la generación de esta estrucura de directorios
+mediante comandos de usuario. Estos comandos se tratan en el apartado siguiente,
+entrando en los detalles de la migración de un proyecto Django existente.
 
-Desde el punto de vista de Django, un sitio
-remoto publica sus métodos como vistas [*]_ y se comporta como un módulo de
-``urls``, pero a diferencia de una vista de usuario, la URL (patrón) donde se publica
-está definida.
-El patrón que se debe utilizar es una propiedad de la instacia
-llamada ``urlregex``, es decir que el programador no define donde se publica el sitio
-sino que está definido por el sito [*]_ (internamente en función del nombre del sitio remoto
-y del parámetro ``OFFLINE_BASE``). Por ejemplo:
+A continuación se hace un análisis de lo que sucede cuando un sitio es
+publicado en el módulo de URLs del proyecto, basado en los ejemplos expuestos:
 
 .. code-block:: python
     
-    from soporte_offline.remote_mi_sitio import site as mi_sitio
+    # Manejo de URLs 
+    from django.conf.urls import *
+    # Importar el sitio reomto
+    from off.site_ventas import site as site_ventas
     
     urlpatterns = patterns('',
         # Las primeras dos asocaiciones utilizan una cadena 
@@ -187,7 +205,7 @@ y del parámetro ``OFFLINE_BASE``). Por ejemplo:
         (r'^%s/(.*)' % mi_sitio.urlregex, mi_sitio.root ),
     )
          
-En el caso anterior la propiedad ``urlregex`` es ``/soporte_offline/mi_sitio`` y
+En el caso anterior la propiedad ``urlregex`` es ``/off/ventas`` y
 en ese lugar se encuentra el punto de entrada para la ejecución del proyecto 
 desconectado. Al acceder a esta URL el navegador se encuentra con:
 
@@ -198,15 +216,15 @@ desconectado. Al acceder a esta URL el navegador se encuentra con:
     <head>
         <!-- El sitio remoto publica la librería Protopy, como JavaScript 1.7 -->
         <script type="text/javascript;version=1.7" 
-            src="/soporte_offline/mi_sitio/lib/protopy.js"></script>
+            src="/off/ventas/lib/protopy.js"></script>
         <!-- Creación de la instancia del proyecto desconectado -->
         <script type="text/javascript;version=1.7">
             <!-- Requerir del módulo de proyectos, la función new_project -->
             require('doff.core.project', 'new_project');
             <!-- Instanciación  del proyecto --> 
-            var mi_sitio = new_project('mi_sitio', '/soporte_offline/mi_sitio');
+            var ventas = new_project('ventas', '/off/ventas');
             <!-- Darle el control del navegador a la instancia del proyecto -->
-            mi_sitio.bootstrap();
+            ventas.bootstrap();
         </script>
     </head>
     <body>
@@ -214,19 +232,17 @@ desconectado. Al acceder a esta URL el navegador se encuentra con:
     
     </html>
         
-.. [*] Tomado de TurboGears y Pylons. 
+
 
 Como se pudo observar en el ejemplo anterior, el código del Protopy se encuentra
 en ``lib/protopy.js`` (línea 4 y 5), y como se deinfinió en el capítulo anterior, el códgo
 de Doff se encuentra en ``lib/packages/``. En la línea 10, se crea una entrada
-en ``sys.path`` de Protopy, definiendo que el paquete ``mi_sitio`` se encuentra en la
+en ``sys.path`` de Protopy, definiendo que el paquete ``ventas`` se encuentra en la
 URL ``/soporte_offline/mi_sitio``. En este caso ``mi_sitio`` es el paquete que define
 al proyecto. Para cargar el módulo ``settings`` mediante 
-``require("mi_sitio.settings")`` se está realizando una petición a
-``/soporte_offline/mi_sitio/js/settings.js``.
+``require("ventas.settings")`` se está realizando una petición a
+``/off/ventas/js/settings.js``.
 
-.. [*] Si bien no se recomienda modificar la URL en la cual se publica un sitio remoto,
-       el desarrollador puede modificarla.
 
 Además de las URLs descritas, el sitio remoto publica otras de dónde 
 Doff descarga los modulos y recursos que componen a la aplicación, 
@@ -340,6 +356,14 @@ de la aplicación en linea).
     
     Este comando lista los ``RemoteSites`` de un proyecto en línea. Verifica
     además si estos se encuentran publicados. No recibe argumentos.
+   
+   
+Por cada sitio remoto existe un subdirectorio donde se almacena el código
+JavaScript del proyecto y sus aplicaciones: ``OFFLINE_BASE/<nombre_sitio_remoto>``. 
+En su nivel base se cuenta con los módulos ``settings.js``, ``urls.js``.
+Cada aplicación es un subdirectorio y cuenta con módulos ``views.js``, 
+``mixins.js``, ``tests.js`` y ``urls.js``.
+   
    
 Migración de una Aplicación
 ---------------------------
