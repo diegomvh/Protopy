@@ -18,7 +18,8 @@ Released   : 20090918
 <link href="/static/style.css" rel="stylesheet" type="text/css" media="screen" />
 
     {% load offline_support %}
-    {% protopy_js_include %}
+    {% protopy_js %}
+    {% offline_detect "agentes" %}
     <style type="text/css">
     {% block extra_style %}
     {% endblock %}

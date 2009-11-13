@@ -17,11 +17,11 @@ var Project = type('Project', object, {
 
         // Inicio del handler para las url
         require('doff.core.handler', 'LocalHandler');
-        var handler = new LocalHandler(this.settings);
+        this.handler = new LocalHandler(this.settings);
 
         // Conecto el adaptador al manejador
-        event.connect(sys.window, 'send', handler, 'receive');
-        event.connect(handler, 'send', sys.window, 'receive');
+        event.connect(sys.window, 'send', this.handler, 'receive');
+        event.connect(this.handler, 'send', sys.window, 'receive');
 
         // Inicio del handler para la sincronizacion
         require('doff.contrib.offline.handler', 'SyncHandler');
@@ -34,16 +34,11 @@ var Project = type('Project', object, {
         } catch (except) {}
 
         this._create_toolbar();
-        //this.network_check();
-        // this.start_network_thread();
-        // this.go_offline();
+        this.start_network_thread();
         sys.window.location = '/';
     },
 
-    onNetwork: function(type) {
-        var m = 'go_' + type;
-        this[m]();
-    },
+    onNetwork: function(type) {},
 
     __init__: function(package, offline_support) {
         this.package = package;
@@ -55,13 +50,14 @@ var Project = type('Project', object, {
         // Url para ver si estoy conectado
         this.availability_url = this.offline_support + '/network_check';
 
+        // Los templates
         this.templates_url = this.offline_support + '/templates/';
 
         if (sys.gears.installed && sys.gears.hasPermission)
             this._create_store();
     },
 
-    _create_toolbar: function(){
+    _create_toolbar: function() {
         require('doff.utils.toolbar', 'ToolBar');
 
         this.toolbar = new ToolBar();
@@ -83,7 +79,6 @@ var Project = type('Project', object, {
         this.managed_store = localserver.createManagedStore(this.package + '_manifest');
         this.managed_store.manifestUrl = this.offline_support + '/manifest.json';
         this.managed_store.checkForUpdate();
-        //this.managed_store.manifestUrl = this.offline_support + '/manifest.json?refered=' + this.start_url;
     },
 
     _remove_store: function() {
@@ -118,14 +113,6 @@ var Project = type('Project', object, {
             }
         });
         return this._settings;
-    },
-
-    go_offline: function() { 
-        this.adapter.add_hooks();
-    },
-
-    go_online: function(callback) {
-        this.adapter.remove_hooks();
     },
 
     get_permission: function() {

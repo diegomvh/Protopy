@@ -72,7 +72,7 @@ MIDDLEWARE_CLASSES = (
     
 )
 
-ROOT_URLCONF = 'blog.urls'
+ROOT_URLCONF = 'protopy.urls'
 
 TEMPLATE_DIRS = [
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
@@ -82,35 +82,20 @@ TEMPLATE_DIRS = [
     os.path.join(os.path.dirname(__file__), 'templates'),
 ]
 
-if LOCAL_DEVELOPMENT:
-    # Enable databrowse
-    import django
-    django_dir = os.path.dirname(os.path.abspath(django.__file__))
-    TEMPLATE_DIRS.append( os.path.join(django_dir, 'contrib/databrowse/templates' ) )
-
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
-    'django.contrib.admin',
-    
+    #'django.contrib.admin',
+
     # Ver si queda global y se instala con setuptools o 
     # si se copia dentro de la aplicación...
     'offline',
-    
-    # Aplicaciones de prueba
-    'blog.post',
-    
-)
 
-try:
-    import django_extensions
-    assert 'django_extensions' in INSTALLED_APPS
-except ImportError:
-    pass
-except AssertionError:
-    INSTALLED_APPS += ('django_extensions', )
+    # Aplicaciones de prueba
+    'demo',
+)
 
 # Habría que ver como hacer que las URLs se añadan de manera automática
 # como en django-command-extensions

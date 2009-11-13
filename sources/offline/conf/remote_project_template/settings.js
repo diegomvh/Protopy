@@ -22,7 +22,7 @@
         'doff.contrib.offline'
     ],
 
-    'TEMPLATE_URLS': [ 
+    'TEMPLATE_URLS': [
         '{{ settings.OFFLINE_BASE }}/templates/' 
     ],
 
@@ -30,4 +30,3 @@
         'doff.template.loaders.url.load_template_source'
     ]
 }
-
