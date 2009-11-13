@@ -254,6 +254,7 @@ los recursos que componen al proyecto.
 
 A continuación se realiza una descripción del método de migración de proyectos.
 
+
 Migración de un Proyecto
 ========================
 

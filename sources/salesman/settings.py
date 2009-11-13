@@ -4,7 +4,7 @@ import sys
 sys.path.append('..')
 from os.path import abspath, dirname, join
 PATH = abspath(dirname(__file__))
-
+sys.path.append(join(PATH, '..')) #Necesario para invocar el manage.py desde afuera
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG

@@ -68,8 +68,7 @@ En la aplicación ``ventas`` cuenta con las entidades:
     * ItemPedido
     
  
-.. figure:: ../_svg/modelo_salesman.png
-    :width: 70
+.. figure:: ../_dot/django_models.png
     
     Diagrama de Base de Datos de Salesman (generado con ``graph_models``)
 

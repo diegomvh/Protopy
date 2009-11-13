@@ -347,7 +347,7 @@ y eliminación, ``post_delete``.
 
 La aplicación ``offline`` posee estos modelos:
 
-.. figure:: ../_svg/modelo_offline.png
+.. figure:: ../_dot/offline_models.png
 
     Modelos
 
@@ -477,7 +477,7 @@ en la sincronización.
 Durante la sincronización ocurren cambios sobre el atributo ``status`` de las 
 instancias del cliente.
 
-.. figure:: ../_svg/esquema_sync_client.png
+.. figure:: ../_dot/estados_sincronziacion_cliente.png
 
     Estados de sincronización de los modelos en el cliente
 
