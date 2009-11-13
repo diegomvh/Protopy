@@ -1,4 +1,4 @@
-.. _capitulos-protopy:
+﻿.. _capitulos-protopy:
 
 #######
 Protopy
@@ -18,7 +18,7 @@ sus dos "padres", *Prototype JavaScript Library* y el lenguaje de programación
 
     | **proto** type + **py** thon = **protopy**
 
-.. note:: me gustaria poner las problematicas antes de entrar en las caracteristicas.
+.. note:: me gustaría poner las problemáticas antes de entrar en las características.
 
 Características
 ===============
@@ -345,11 +345,11 @@ Módulos Nativos
 ---------------
 
 Como se mencionó en el capítulo anterior, para desarrollar un buen soporte en el
-navegador es necesaria sierta funcionalidad básica que posee la implementación
+navegador es necesaria cierta funcionalidad básica que posee la implementación
 de Python y que seria deseable tener en el cliente al momento de correr el
-Framework desconectado. Por esta razón se incorporaron en nucleo de Protopy
-módulos y funciones indispensables para desarrolladores Python, algunos de estos
-se explican a continuacion, para una referencia completa de la API puede
+framework desconectado. Por esta razón se incorporaron en núcleo de Protopy
+módulos y funciones indispensables para el desarrollo, algunos de estos
+se explican a continuación, para una referencia completa de la API puede
 remitirse al apéndice de Protopy.
 
     * ``builtin``
@@ -366,8 +366,8 @@ remitirse al apéndice de Protopy.
 
         * ``require(modulo, [simbolo])``
 
-            Carga mediante el sistema de paquetes un módulo, incroporandolo al
-            ambito de nombres.
+            Carga mediante el sistema de paquetes un módulo, incorporándolo al
+            ámbito de nombres local o del llamador.
 
         * ``$("id")`` y ``$$("selector_css")
 
@@ -375,7 +375,7 @@ remitirse al apéndice de Protopy.
 
         * ``extend``
 
-            Esta funcion copia atributo por atributo todas las definiciones de
+            Esta función copia atributo por atributo todas las definiciones de
             un arreglo asociativo en otro.
 
         * ``isinstance``, ``issubclass``
@@ -385,7 +385,12 @@ remitirse al apéndice de Protopy.
 
         * ``array``
 
+            Consume un objeto iterable para retornar un arreglo con los 
+            elementos tomados del mismo.
+
         * ``string``
+
+            Retorna una cadena de texto en función del objeto pasado.
 
         * ``len``
 
@@ -393,8 +398,6 @@ remitirse al apéndice de Protopy.
 
                 >>> len([1, 2, 4]);
                 3
-
-        * ``print``
 
         * ``cmp``
 
@@ -724,7 +727,7 @@ Herencia
 --------
 
 Como ya se mencionó, el código de un framework no debe ser modificado y su
-utilizacion esta respaldada en algun mecanimo de extención, redefinicion o 
+utilización esta respaldada en algun mecanimo de extensión, redefinicion o 
 especializcion de componentes. Es en este punto donde proveer de una forma de
 herencia al constructor de tipos resulta un paso en la dirección correcta.
 Cuando el desarrollador implemente funcionalidad basada en las características
@@ -836,9 +839,8 @@ Python o realizar una adaptación de sintaxis. Ellos son:
         uniforman los argumentos pasados a una función y permiten establecer
         entre otras cosas valores por defecto. 
 
-        Este objeto tiene como objetivo brindar emapquetado de argumentos en 
-        JavaScript "Pythonico", una caractersística muy utilizada en el framework Django.
-
+        Este objeto tiene como objetivo brindar empaquetado de argumentos en 
+        JavaScript "Pythonico".
         Utilizando ``Arguments`` se puede convertir la siguiente sentencia:
 
         .. code-block:: python
@@ -848,15 +850,15 @@ Python o realizar una adaptación de sintaxis. Ellos son:
 
         al siguiente código JavaScript:
 
-        .. code-block::
+        .. code-block:: javascript
 
             function funcion(arg1) {
                 var ar = new Arguments(arguments, {arg2: null, arg3: null});
                 print(arg1, ar.kwargs['arg2'], ar.kwargs['arg3']);
             }
 
-Nuevamente para ver una definicion completa de los objetos en el core de Protopy
-se puede remitir al apendice correspondiente.
+Nuevamente, mas información sobre los objetos incluidos en el núcleo de Protopy
+puede ser encontrada en el apéndice.
 
 Manejo de DOM
 =============

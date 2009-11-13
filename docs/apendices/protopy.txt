@@ -1,11 +1,11 @@
-.. _apendices-protopy:
+﻿.. _apendices-protopy:
 
 #######
 Protopy
 #######
 
 Protopy es una librería en JavaScript que simplifica el desarrollo de
-aplicaciones web dinámicas. Agregando un enfoque modular para la inclusión de
+aplicaciones web dinámicas. Basada en Python, aporta un enfoque modular para la inclusión de
 código, orientación a objetos, soporte para AJAX, manipulación del DOM y eventos.
 
 Módulos
@@ -13,10 +13,11 @@ Módulos
 
 Uno de los principales inconvenientes a los que Protopy da solución es a la
 inclusión dinámica de funcionalidad bajo demanda, esto se logra mediante los
-módulos. Básicamente un modulo en un archivo con código JavaScript que recide
-en el servidor y posteriormente obtenido y ejecutado en el cliente.
+módulos. Básicamente un modulo en un archivo con código JavaScript que reside
+en el servidor y posteriormente es obtenido y ejecutado en el cliente.
 
 .. code-block:: javascript
+    :linenos:
 
     //Archivo: tests/module.js
     require('event');
@@ -40,7 +41,7 @@ en el servidor y posteriormente obtenido y ejecutado en el cliente.
         get_texto: get_texto
     });
 
-.. code-block:: python
+.. code-block:: javascript
 
     >>> require('tests.module')
     >>> module.get_texto()
@@ -54,8 +55,8 @@ en el servidor y posteriormente obtenido y ejecutado en el cliente.
     >>> get_texto()
     "Hola luuu!!!"
 
-Módulos incluidos
------------------
+Módulos Nativos
+---------------
 
 Estos módulos están incluidos en el núcleo de Protopy, es decir que están
 disponibles con la sola inclusión de la librería en el documento.
@@ -63,78 +64,86 @@ Los módulos que a continuación se detallan engloban las herramientas básicas
 requeridas para el desarrollo del lado del cliente.
 
 builtin
+~~~~~~~
 
 Este modulo contiene las funciones principales de Protopy, en el se encuentran
 las herramientas básicas para realizar la mayoría de las tareas.
-No es necesario requerir este modulo en el espacio de nombres principal
+No es necesario requerir este modulo en el espacio de nombres global
 (``window``), ya que su funcionalidad esta disponible desde la carga de Protopy
 en el mismo.
 
-    publish(simbols: Object)
+    * publish(simbols: Object)
 
-        Publica la funcionalidad de un modulo. 
+        Publica la funcionalidad de un modulo.
         Para interactuar con el código definido en un modulo es necesario exponer una
-        interfase de acceso al mismo, de esto se encarga la función publish.
+        interfase de acceso al mismo, de esto se encarga la función ``publish``.
 
-    require(module_name: String[, simbol: String...]) -> module: Object | simbol
+    * require(module_name: String[, simbol: String...]) -> module: Object | simbol
 
-        Importa un modulo en el espacio de nombres.
-        Al invocar a esta función un modulo es cargado desde el servidor y ejecutado en
-        el cliente, la forma en que el modulo se presenta en el espacio de nombres
+        Importa un modulo en el espacio de nombres local.
+        Al invocar a esta función un módulo es cargado desde el servidor y ejecutado en
+        el cliente, la forma en que el módulo se presenta en el espacio de nombres
         depende de la invocación.
 
         * var cntx = require('doff.template.context')
-            Importa el modulo :mod:`doff.template.context` y lo retorna en "cntx", dejando también una referencia
-            en el espacio de nombres llamado "context", esta dualidad en la asociación del modulo permite importar
+
+            Importa el modulo ``doff.template.context`` y lo retorna en ``cntx``, dejando también una referencia
+            en el espacio de nombres llamada ``context``, esta dualidad en la asociación del modulo permite importar
             módulos sin asociarlos a una variable, simplemente alcanza con asumir que la parte final del
             nombre es la referencia a usar.
 
         * var cur = require('gears.database', 'cursor')
-            Importa el modulo ``gears.databse`` y retorna en cur el objeto publicado bajo el nombre de cursor,
-            similar al caso anterior una referencia se define en el espacio de nombres para cursor.
+
+            Importa el modulo ``gears.databse`` y retorna en ``cur`` el objeto publicado bajo el nombre de cursor,
+            similar al caso anterior una referencia se define en el espacio de nombres para ``cursor``.
 
         * require('doff.db.models', 'model', 'query')
-            Importa el modulo :mod:`doff.db.models` y define en el espacio de nombres las referencias a model y query
+
+            Importa el modulo ``doff.db.models`` y define en el espacio de nombres las referencias a ``model`` y ``query``
             usando los mismos nombres.
 
         * require('doff.core.urlpattern', '*')
-            Importa del modulo :mod:`doff.core.urlpattern` todos los objetos publicados y los publica en el espacio de nombres.
 
-    type(name: String, [bases: Array ] [, class: Object ], instance: Object) -> Type
+            Importa del modulo ``doff.core.urlpattern`` todos los símbolos exportados y los publica en el espacio de nombres.
+
+    * type(name: String, [bases: Array ] [, class: Object ], instance: Object) -> Type
 
         Función encargada de la construcción de nuevos tipos de objeto o
         simplemente clases.
         Una vez definido un nuevo tipo este puede ser utilizado para la construcción
         de instancias mediante el operador "new".
-        Los argumentos para la funcion "type" son, el nombre para el nuevo tipo de
+        Los argumentos para la función ``type`` son, el nombre para el nuevo tipo de
         objeto, los tipos base de los cuales se hereda funcionalidad, opcionalmente los
-        atributos y/o metodos de clase y los atributos y/o metodos para la instancia.
-        La función que inicializa los objetos tiene por nombre \verb|__init__| y es
-        llamada en el momento de la construcción; en conjunto con otros metodos que se
-        mencionaran a lo largo del texto estas funciones resultan de especial interés
-        para interactuar con nuestros objetos y existen operadores en Protopy para
-        manejarlas; esto es, no debieran ser invocadas o llamadas directamente.
+        atributos y/o métodos de clase y los atributos y/o métodos para la instancia.
+        El método que inicializa los objetos tiene por nombre ``__init__`` y es
+        llamada en el momento de la instanciación de un objeto.
+
+        Existen otros métodos “mágicos” que tienen un comportamiento especial al ser llamados por
+        funciones especificas de Protopy, estas no debieran ser invocadas o llamadas directamente
+        por el desarrollador y se verán a lo largo del apéndice sus nombres y las funciones del 
+        núcleo que trabajan sobre ellas.
 
         .. code-block:: javascript
+            :linenos:
 
             var Animal = type('Animal', object, {
                 contador: 0,
             }, {
                 __init__: function(especie) {
-                this.especie = especie;
-                this.orden = Animal.contador++;
+                    this.especie = especie;
+                    this.orden = Animal.contador++;
                 }
             });
 
             var Terrestre = type('Terrestre', Animal, {
                 caminar: function() {
-                console.log(this.especie + ' caminando');
+                    console.log(this.especie + ' caminando');
                 }
             });
 
             var Acuatico = type('Acuatico', Animal, {
                 nadar: function() {
-                console.log(this.especie + ' nadando');
+                    console.log(this.especie + ' nadando');
                 }
             });
 
@@ -142,15 +151,14 @@ en el mismo.
 
             var Piton = type('Piton', Terrestre, {
                 __init__: function(nombre) {
-                super(Terrestre, this).__init__(this.__name__);
-                this.nombre = nombre;
+                    super(Terrestre, this).__init__(this.__name__);
+                    this.nombre = nombre;
                 },
                 caminar: function() {
-                throw new Exception(this.especie + ' no camina');
+                    throw new Exception(this.especie + ' no camina');
                 },
                 reptar: function() {
-                console.log(this.nombre + ' la ' + this.especie.toLowerCase() + ' esta
-            reptando');
+                    console.log(this.nombre + ' la ' + this.especie.toLowerCase() + ' esta reptando');
                 }
             });
 
@@ -158,7 +166,7 @@ en el mismo.
             var ballena = new Acuatico('Ballena');
             var rana = new Anfibio('Rana');
 
-        .. code-block:: python
+        .. code-block:: javascript
 
             >>> doris
             window.Piton especie=Piton orden=0 nombre=Doris __name__=Piton
@@ -177,16 +185,15 @@ en el mismo.
             >>> doris.reptar()
             Doris la piton esta reptando
 
-    $(id: String) -> HTMLElement
-    $(id: String[, id...]) -> [HTMLElement...]
+    * $(id: String) -> HTMLElement
 
         Esta función recibe una cadena de texto y retorna el elemento del documento
-        cuyo ``id'' se corresponda con la cadena. En conjunto con la función \$\$
+        cuyo ``id'' se corresponda con la cadena. En conjunto con la función $$
         constituyen dos herramientas muy útiles para recuperar elementos e interactuar
-        con el árbol DOM. Si mas de un argumento es pasado, la forma de retorno es
+        con el árbol DOM. Si más de un argumento es pasado, la forma de retorno es
         mediante un arreglo, permitiendo así la iteración sobre los mismos.
 
-    .. code-block:: python
+    .. code-block:: javascript
 
         >>> $('content')
         <div id="content">
@@ -196,10 +203,12 @@ en el mismo.
         >>> $('content', 'body', 'head')
         [div#content, div#body, undefined]
 
-    $$(cssRule: String) -> [HTMLElement...]
+    * $$(cssRule: String) -> [HTMLElement...]
 
-        Recupera elementos del documento, basando las reglas de seleccion en las
-        reglas de css o hoja de estilos.
+        Recupera elementos del árbol DOM, basando las reglas de selección en los
+        atributos de estilo o CSS.
+
+    .. code-block:: javascript
 
         >>> $$('div')
         [div#wrap, div#top, div#content, div.header, div.breadcrumbs, div.middle, div,
@@ -217,11 +226,13 @@ en el mismo.
         >>> $$('div:empty')
         [div#logger.panel, div#dbquery.panel, div#clear, div#top]
 
-    extend(destiny: Object, source: Object) -> alteredDestiny: Object
+    * extend(destiny: Object, source: Object) -> alteredDestiny: Object
 
         Extiende sobre un objeto destino todos los objetos pasados como argumentos a
         continuación, copiando cada uno de los atributos correspondientes, el objeto
         destino es retornado modificado.
+
+    .. code-block:: javascript
 
         >>> a = {perro: 4}
         >>> b = {gato: 4}
@@ -233,32 +244,38 @@ en el mismo.
         >>> b
         Object gato=4
 
-    super(type: Type, instance: Object) -> boundedObject: Object
+    * super(type: Type, instance: Object) -> boundedObject: Object
     
-        Enlaza un objeto con un tipo de objeto, de este modo la invocación sobre una
+        Asocia un objeto con un tipo de objeto, de este modo la invocación sobre una
         función del tipo se realizara sobre el objeto enlazado.
-        Normalmente esta función es utilizada para llamar a metodos de un tipo base.
+        Normalmente esta función es utilizada para llamar a métodos de un tipo base.
     
-    isundefined(object: Object) -> boolean
+    * isundefined(object: Object) -> boolean
     
         Determina si un objeto no esta definido o asociado a un valor. Retorna un valor
         de verdad correspondiente.
     
-    isinstance(object, type | [type...]) -> boolean
+    * isinstance(object, type | [type...]) -> boolean
     
         Retorna verdadero si el objeto es una instancia del tipo, si un arreglo de tipos
         es pasado como segundo argumento el valor de verdad surge de preguntar por cada
         uno de ellos.
     
-    issubclass(type1, type2 | [type...]) -> boolean
+    * issubclass(type1, type2 | [type...]) -> boolean
     
         Retorna si type1 es una subclase de type2, cuando se pasa un arreglo en lugar de
         type2 la evaluación se realiza para cada una de las clases incluidas en el mismo.
     
-    Arguments(arguments) -> Arguments
+    * Arguments(arguments) -> Arguments
     
-        Clase Argumentes En JavaScript 
-        El objeto para los argumentos asociativos debe ir al final de la invocación
+        La clase ``Argumentes`` tiene como objetivo agregar a JavaScript el empaquetado de argumentos.
+        JavaScript soporta argumentos variables en las llamadas a función, internamente una funcion
+        puede inspeccionar sus argumentos a través del objeto ``arguments``, Protopy ofrece esta clase
+        como una forma uniforme de trabajar sobre el objeto ``arguments`` e incorporar atributos por
+        defecto a las llamadas.
+
+    .. code-block:: javascript
+        :linenos:
 
         function unaFuncion(arg1, arg2, arg3) { 
             var todos = new Arguments(arguments);
@@ -268,6 +285,7 @@ en el mismo.
             print('Otros argumentos: %s', todos.args);
             print('Argumentos pasados por objeto: %o', todos.kwargs);
         }
+
         function otraFuncion(arg1) { 
             var todos = new Arguments(arguments, {'def1': 1, 'def2': 2});
             print('Argumento 1: %s o %s o %s', arg1, todos[0], todos.arg1);
@@ -298,13 +316,38 @@ en el mismo.
         Otros argumentos: 2
         Argumentos pasados por objeto: Object def1=Diego def2=2 apellido=van Haaster
     
-    Template(destiny, source) -> Template
+    * Template(template, pattern) -> Template
 
-        Clase Templates
+        La clase ``Template`` es la encargada de interpretar cadenas de texto en función de una plantilla y valores.
+        La plantilla debe contener etiquetas especificas relacionadas con el patrón de inspección pasado a la
+        construcción, en una instancia posterior los objeto ``Template`` son evaluados y retornan una cadena de texto.  
 
-    Dict(object) -> Dict
+    .. code-block:: javascript
+        :linenos:
+
+        // creamos un Template
+       var myTemplate = new Template('El show televisivo #{title} fue creado por #{author}.');
+
+       // los datos para dar formato al template
+       var show = {
+           title: 'The Simpsons',
+           author: 'Matt Groening',
+           network: 'FOX'
+       };
+
+       // evaluamos el template
+       >>> myTemplate.evaluate(show);
+       "The TV show The Simpsons was created by Matt Groening.
+
+
+    * Dict(object) -> Dict
         
-        Clase Dict
+        La clase ``Dict`` de manera similar a un diccionario de Python (``dict``), trabaja con
+       duplas de la forma clave = valor, las instancias de esta clase soportan a objetos
+       como claves en lugar de solo cadenas como ocurre en los arreglos asociativos de JavaScript.
+
+    .. code-block:: javascript
+        :linenos:
     
         >>> dic = new Dict({'db': 5, 'template': 2, 'core': 9})
         >>> obj = {'un': 'objeto'}
@@ -325,11 +368,13 @@ en el mismo.
         >>> dic.values()
         [5, 2, 9, 10, 50]
 
-    Set(array) -> Set
+    * Set(array) -> Set
 
-        Clase Set
-        Un set es una coleccion de elementos unicos, de forma similar a los conjuntos
+        Un set es una colección de elementos únicos, de forma similar a los conjuntos
         este objeto soporta intersecciones, uniones, restas, etc.
+
+    .. code-block:: javascript
+        :linenos:
 
         >>> set = new Set([1,2,3,4,5,6,7,8,9,3,6,1,4,7])
         >>> len(set)
@@ -341,73 +386,81 @@ en el mismo.
         >>> set2.elements
         [1, 3, 5, 6]
     
-    hash(string | number) -> number
+    * hash(string | number) -> number
     
-        Retorna un valor de hash para el argumento dado, para los mismos argumentos se
-        teronran los mismos valores de hash.
+        Retorna un valor de ``hash`` para el argumento dado.
     
-    id(value) -> number
+    * id(value) -> number
     
-        Asigna y retorna un identificador unico para el valor pasado como argumento.
-        Al pasar un valor que sea de tipo objeto la funcion id modificara la
-        estructura interna agregando el atributo \verb|__hash__| para ``etiquetar''
+        Asigna y retorna un identificador único para el valor pasado como argumento.
+        Al pasar un valor que sea de tipo arreglo asosciativo la función ``id`` modificara la
+        estructura interna agregando el atributo ``__hash__`` para “etiquetar”
         el objeto y en posteriores llamadas retornara el mismo identificador.
     
-    getattr(object, name, default) -> value
+    * getattr(object, name, default) -> value
     
         Obtiene un atributo de un objeto mediante su nombre, en caso de pasar un valor
         por defecto este es retornado si el atributo buscado no esta definido en el
-        objeto, en caso contrario una excepcion es lanzada.
+        objeto, en caso contrario una excepción es lanzada.
     
-    setattr(object, name, value)
+    * setattr(object, name, value)
     
         Establece un atributo en un objeto con el nombre pasado. El valor establecido
         pasa a formar parte del objeto.
     
-    hasattr(object, name) -> boolean
+    * hasattr(object, name) -> boolean
     
-        Retrona verdadero en caso de que el objeto tenga un atributo con el nombre
+        Retorna verdadero en caso de que el objeto tenga un atributo con el nombre
         correspondiente, falso en caso contrario.
     
-    assert(boolean, mesage)
+    * assert(boolean, mesage)
     
-        Chequea que el valor de verdad pasado sea verdadero en caso contrario retorna
-        una excepcion conteniendo el mensaje pasado.
+        Evalua si el valor de verdad pasado es verdadero en caso contrario retorna
+        una excepción conteniendo el mensaje pasado.
     
-    bool(object)
+    * bool(object)
     
         Determina el valor de verdad de un objeto pasado, los valores de verdad son como
-        sigue: arreglos, objetos y cadenas vacias en conjunto con los valores null y
-        undefined son falsos; todos los demas casos son verdaderos.
-        En el caso particular de que un objeto defina el metodo \verb|__nonzero__| este
+        sigue: arreglos, arreglos asociativos y cadenas vaciás en conjunto con los valores null y
+        undefined son falsos; todos los demás casos son verdaderos.
+        En el caso particular de que un objeto defina el método ``__nonzero__`` este
         es invocado para determinar el valor de verdad.
     
-    callable(value) -> boolean
+    * callable(value) -> boolean
     
-        Retorna verdadero en caso de que el valor pasado sea instancia de una funcion
+        Retorna verdadero en caso de que el valor pasado sea instancia de una función
         osea pueda ser llamado, falso en caso contrario.
     
-    chr(number) -> character
+    * chr(number) -> character
     
-        Retorna el caracter correspondiente al numero ordinal pasado.
+        Retorna el carácter correspondiente al numero ordinal pasado.
     
-    ord(character) -> number
+    * cmp(object, object) -> number
+
+         Compara la precedencia de dos objetos, retornando un valor numérico positivo, negativo o cero
+         indicando mayor precedencia, menor precedencia o igualdad.
+         Si el objeto define el método ``__cmp__`` la función se vale de este para determinar la precedencia de los objetos.
+
+    * ord(character) -> number
     
-        Retorna un numero correspondiente al caracter pasado.
+        Retorna un numero correspondiente al carácter pasado.
     
+    ::
+
         >>> ord(chr(65))
         65
         >>> chr(ord("A"))
         "A"
     
-    bisect(seq, element) -> position
+    * bisect(seq, element) -> position
     
-        Dada una secuencia ordenada y un elemento la funcion bisect retorna un numero
-        referenciando a la posicion en que el elemnto debe ser insertado en la
-        secuencia, para que esta conseve su orden.
-        Si los elementos de la secuencia definen el metodo \verb|__cmp__| este es
-        invocado para determinar la posicion a retornar.
+        Dada una secuencia ordenada y un elemento la función ``bisect`` retorna el número
+        correspondiente a la posición en que el elemento debe ser insertado en la
+        secuencia, para que esta conserve su orden.
+        Internamente esta función utiliza la función de comparación de Protopy.
     
+    ::
+
         >>> a = [1,2,3,4,5]
         >>> bisect(a,6)
         5
@@ -417,45 +470,45 @@ en el mismo.
         >>> a
         [1, 2, 3, 3, 5]
     
-    equal(object1, object2) -> boolean
+    * equal(object1, object2) -> boolean
     
         Compara dos objetos determinando el valor de igual para los mismos, verdadero es
         retornado en caso de ser los dos objetos iguales.
-        En caso de que object1 defina el metodo \verb|__eq__| este es invocado con
-        object2 pasado como parametro para determinar la igualdad.
+        En caso de que object1 defina el método ``__eq__`` este es invocado con
+        object2 pasado como parámetro para determinar la igualdad.
     
-    nequal(object, object) -> boolean
+    * nequal(object1, object2) -> boolean
     
         Compara dos objetos determinando el valor de igual para los mismos, verdadero es
         retornado en caso de ser los dos objetos distintos.
-        En caso de que object1 defina el metodo \verb|__ne__| este es invocado con
-        object2 pasado como parametro para determinar la no igualdad.
+        En caso de que object1 defina el método ``__ne__`` este es invocado con
+        object2 pasado como parámetro para determinar la no igualdad.
     
-    number(object) -> number
+    * number(object) -> number
     
-        Convierte un objeto a su representacion numerica.
+        Convierte un objeto a su representación numérica.
     
-    flatten(array) -> flattenArray
+    * flatten(array) -> flattenArray
     
-        Aplana un arreglo de modo que el resultado sea un unico arreglo conteniendo
-        todos los elementos que se pasaron en multiples arreglos a la funcion.
+        Aplana un arreglo de modo que el resultado sea un único arreglo conteniendo
+        todos los elementos que se pasaron en múltiples arreglos a la función.
     
-    include(seq, element) -> boolean
+    * include(seq, element) -> boolean
     
-        Determina si un elemento esta incluido en una secuencia o coleccion de objetos,
-        si la coleccion implementa el metodo __contains__, este es utilizado para
+        Determina si un elemento esta incluido en una secuencia o colección de objetos,
+        si la colección implementa el método ``__contains__``, este es utilizado para
         determinar la pertenencia del elemento.
     
-    len(seq) -> boolean
+    * len(seq) -> boolean
     
-        Retorna un valor numerico representando la cantidad de elementos contenidos en
-        la secuencia o coleccion, si la coleccion implementa el metodo __len__,
+        Retorna un valor numérico representando la cantidad de elementos contenidos en
+        la secuencia o colección, si la colección implementa el método ``__len__``,
         este es utilizado para determinar la cantidad de elementos.
     
-    array(seq) -> [element...]
+    * array(seq) -> [element...]
     
         Genera un arreglo en base a la secuencia pasada, si la secuencia implementa el
-        metodo __iter__, este es utilizado para llenar el arrgelo con los
+        método ``__iter__``, este es utilizado para llenar el arreglo con los
         elementos.
     
     print(text...)
