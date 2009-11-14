@@ -1,4 +1,8 @@
-﻿###############
+﻿
+
+
+
+###############
 Sitios Remotos
 ###############
 
@@ -143,10 +147,11 @@ a nivel aplicación). Para ejemplificar esto se expone el siguiente código:
 Hasta aquí se ha definido esta clase como una agrupación de vistas con un
 mecanismo alternativo de URLs, sin embargo es importante recordar que como
 se dijo en la introducción del presente capítulo, existe código JavaScript escrito
-por el programador, se trata de las vistas y URLs del proyecto desconectado.
+por el programador, se trata de las vistas y URLs del proyecto desconectado, es
+necesario definir una ubicación para estos recursos.
 Además, la definición de la instancia de ``RemoteSite`` también se debe ubicar
-en un sitio específico. Para esto se definió una serie de rutas que reutilizan
-la constante ``OFFLINE_BASE``:
+en un sitio específico. Para esto se definió una serie de rutas que hacen uso
+de la constante ``OFFLINE_BASE``:
 
     #. Debe existir un directorio con el nombre de la constante ``OFFLINE_BASE``
     
@@ -210,7 +215,7 @@ en ese lugar se encuentra el punto de entrada para la ejecución del proyecto
 desconectado. Al acceder a esta URL el navegador se encuentra con:
 
 .. code-block:: html
-    :linenos:
+
     
     <html>
     <head>
@@ -661,5 +666,3 @@ Esta URL genera automáticamente la instancia del proyecto en el cliente.
 
 Finalmente, podemos resumir el ciclo de migración mediante la siguiente figura:
 
-    
- 

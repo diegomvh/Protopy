@@ -1,7 +1,0 @@
-This is makeindex, version 2.15 [20-Nov-2007] (kpathsea + Thai support).
-Scanning input file informe.glo...
-!! Input index error (file = informe.glo, line = 1):
-   -- Unknown index keyword \glossaryentry.
-done (0 entries accepted, 1 rejected).
-Nothing written in informe.ind.
-Transcript written in informe.ilg.

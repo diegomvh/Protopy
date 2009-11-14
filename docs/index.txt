@@ -27,3 +27,8 @@ Sistemas Web Desconectados
 .. Este último es de referencia 
     
     
+.. highlight:: python
+   :linenothreshold: 5
+
+.. highlight:: html
+   :linenothreshold: 5   
