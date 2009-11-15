@@ -36,8 +36,13 @@ function get_related_models(model) {
 
 var SyncHandler = type('SyncHandler', [ object ], {
     __init__: function(settings) {
+		var project = get_project();
         this.settings = settings;
-        this.server = new ServiceProxy(get_project().offline_support + '/sync', {asynchronous: false});
+        try {
+        	this.proxy = new ServiceProxy(project.offline_support + '/sync', {asynchronous: false});
+        } catch (e) {
+        	// No esta conectado
+        }
         this.serializer = new RemoteSerializer();
         this.deserializer = RemoteDeserializer
         this.load_middleware();
@@ -149,9 +154,9 @@ var SyncHandler = type('SyncHandler', [ object ], {
         try {
             var last_sync_log = SyncLog.objects.latest('pk');
             var to_send = this.serializer.serialize(last_sync_log);
-            var data = this.server.pull(to_send);
+            var data = this.proxy.pull(to_send);
         } catch (e if isinstance(e, SyncLog.DoesNotExist)) {
-            var data = this.server.pull();
+            var data = this.proxy.pull();
         }
 
         return [ data['objects'], data['sync_log']];
@@ -219,7 +224,7 @@ var SyncHandler = type('SyncHandler', [ object ], {
         }
         
         try {
-            var data = this.server.push(to_send);
+            var data = this.proxy.push(to_send);
         } catch (e) {
             // TODO: algunas exeptions;
             return [ true, chunked, [], [], [], {}];

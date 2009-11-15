@@ -7,6 +7,7 @@ var Project = type('Project', object, {
     NET_CHECK: 5,
     availability_url: null,
     do_net_checking: true,
+    managed_store: null,
 
     onLoad: function() {
         // Creo el adaptador para el DOM y hago que tome el control de sys.window, sys.document y sys.history
@@ -33,7 +34,7 @@ var Project = type('Project', object, {
             file_config(sys.module_url(this.package, 'logging.js'));
         } catch (except) {}
 
-        this._create_toolbar();
+        this.load_toolbar();
         this.start_network_thread();
         sys.window.location = '/';
     },
@@ -53,35 +54,46 @@ var Project = type('Project', object, {
         // Los templates
         this.templates_url = this.offline_support + '/templates/';
 
-        if (sys.gears.installed && sys.gears.hasPermission)
-            this._create_store();
+        // Estoy conectado?
+        this.network_check();
     },
 
-    _create_toolbar: function() {
+    load_toolbar: function() {
+    	require('doff.core.exceptions');
         require('doff.utils.toolbar', 'ToolBar');
 
         this.toolbar = new ToolBar();
-        // The status and installer bar
-        require('doff.utils.toolbars.status', 'Status');
-        this.toolbar.add(new Status(this));
-        if (this.settings['DEBUG']) {
-            require('doff.utils.toolbars.dbquery', 'DataBaseQuery');
-            require('doff.utils.toolbars.logger', 'Logger');
-            this.toolbar.add(new DataBaseQuery());
-            this.toolbar.add(new Logger());
+        
+        for each (var toolbar_path in this.settings.TOOLBAR_CLASSES) {
+            var dot = toolbar_path.lastIndexOf('.');
+            if (dot == -1)
+                throw new exceptions.ImproperlyConfigured('%s isn\'t a toolbar module'.subs(toolbar_path));
+            var [ tb_module, tb_classname ] = [ toolbar_path.slice(0, dot), toolbar_path.slice(dot + 1)];
+            try {
+                var mod = require(tb_module);
+            } catch (e if isinstance(e, LoadError)) {
+                throw new exceptions.ImproperlyConfigured('Error importing toolbar %s: "%s"'.subs(tb_module, e));
+            }
+            var tb_class = getattr(mod, tb_classname);
+            if (isundefined(tb_class))
+                throw new exceptions.ImproperlyConfigured('Toolbar module "%s" does not define a "%s" class'.subs(tb_module, tb_classname));
+
+            var tb_instance = new tb_class();
+            
+            this.toolbar.add(tb_instance);
         }
-        this.toolbar.add('Help');
+        
         this.toolbar.show();
     },
 
-    _create_store: function() {
+    create_store: function() {
         var localserver = sys.gears.create('beta.localserver');
         this.managed_store = localserver.createManagedStore(this.package + '_manifest');
         this.managed_store.manifestUrl = this.offline_support + '/manifest.json';
         this.managed_store.checkForUpdate();
     },
 
-    _remove_store: function() {
+    remove_store: function() {
         var localserver = sys.gears.create('beta.localserver');
         localserver.removeManagedStore(this.package + '_manifest');
         this.managed_store = null;
@@ -128,18 +140,19 @@ var Project = type('Project', object, {
     },
 
     get is_installed() {
-        // TODO: Un cache
         try {
             var localserver = sys.gears.create('beta.localserver');
-            return localserver.canServeLocally('/');
+            return localserver.canServeLocally(this.offline_support + '/');
         } catch (e) { return false; }
     },
 
+    onInstallProgress: function(type) {},
+    
     install: function() {
-        /*if (!sys.gears.installed) sys.gears.install();
+        if (!sys.gears.installed) sys.gears.install();
         if (!this.get_permission()) return;
-        if (isundefined(this.managed_store))
-            this._create_store();*/
+        if (this.managed_store == null)
+            this.create_store();
 
         require('doff.db.utils','syncdb');
         syncdb();
@@ -149,13 +162,13 @@ var Project = type('Project', object, {
         require('doff.db.utils','removedb');
         removedb();
 
-        //this._remove_store();
+        this.remove_store();
     },
 
     /***************************************************************************
      * Network Check
      */
-    _network_check: function network_check(){
+    network_check: function network_check(){
         var self = this;
         var get = new ajax.Request(this._get_availability_url(), {
             method: 'GET',
@@ -176,7 +189,7 @@ var Project = type('Project', object, {
     start_network_thread: function(){
         if(!this.do_net_checking)
             return;
-        this.thread = window.setInterval(getattr(this, '_network_check'), this.NET_CHECK * 1000);
+        this.thread = window.setInterval(getattr(this, 'network_check'), this.NET_CHECK * 1000);
     },
 
     stop_network_thread: function(){

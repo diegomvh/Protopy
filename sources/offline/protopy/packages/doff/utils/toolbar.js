@@ -10,12 +10,12 @@ var Panel = type('Panel', object, {
         //The body element, panel and hide
         this.body = document.createElement('div');
         this.body.id = "doff-panel-" + this.id;
-        this.body.setAttribute('class', 'doff-panel');
+        this.body.addClassName('doff-panel');
         this.body.hide();
 
         //Header
         this.header = document.createElement('h1');
-        this.header.setAttribute('class', 'doff-panel-header');
+        this.header.addClassName('doff-panel-header');
         this.header.insert('<span>' + this.title + '</span>');
         var close_image = document.createElement('img');
         close_image.src = sys.module_url('doff.utils', 'resources/closebox.gif');
@@ -24,8 +24,14 @@ var Panel = type('Panel', object, {
 
         //Content
         this.content = document.createElement('div');
-        this.content.setAttribute('class', 'doff-panel-content');
+        this.content.addClassName('doff-panel-content');
 
+        //MenuTab
+        this.tab = document.createElement('li');
+        this.tab.update(this.name);
+        this.tab.addClassName('doff-toolbar-item');
+        event.connect(this.tab, 'click', this, 'toggle');
+        
         this.body.insert(this.header);
         this.body.insert(this.content);
 
@@ -34,6 +40,14 @@ var Panel = type('Panel', object, {
         this.width = '80%';
     },
 
+    set icon(value) {
+        this.tab.setStyle({ 
+        	paddingLeft: '26px', 
+        	backgroundImage: "url('" + value + "')", 
+        	backgroundRepeat: 'no-repeat',
+            backgroundPosition: '6px 50%'	});
+    },
+    
     set height(value) {
         this.body.style.height = value;
     },
@@ -90,16 +104,15 @@ var ToolBar = type('Toolbar', object, {
 
     add: function(element) {
         //Toolbar tab
-        var tab = document.createElement('li');
-        tab.setAttribute('class', 'doff-toolbar-item');
         if (isinstance(element, Panel)) {
-            tab.update(element.name);
-            element.tab = tab;
+        	var tab = element.tab;
             element.bar = this;
             this.content.insert(element.body);
-            event.connect(tab, 'click', element, 'toggle');
-        } else if (isinstance(element, String))
+        } else if (isinstance(element, String)) {
+        	var tab = document.createElement('li');
+            tab.addClassName('doff-toolbar-item'); 
             tab.update(element);
+        }
         this.ul.insert(tab);
         return tab;
     },

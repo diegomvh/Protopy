@@ -11,6 +11,7 @@ var Logger = type('Logger', [Panel, Handler], {
         this.set_level(this.root.level);
         this.set_formatter('<p><span class=%(levelname)s>%(levelname)s</span> %(name)s - %(time)s:<br/>%(message)s</p>');
         this.paused = false;
+        this.icon = sys.module_url('doff.utils', 'resources/logger.png');
     },
 
     get_template: function() {

@@ -1,4 +1,5 @@
 require('doff.utils.toolbar', 'Panel');
+require('doff.core.project', 'get_project');
 require('ajax');
 require('event');
 require('sys');
@@ -66,34 +67,32 @@ var installed_template =
 ]]></r>).toString();
 
 var Status = type('Status', [ Panel ], {
-    __init__: function(project) {
-        this.project = project;
-        this.config = project.settings;
+    __init__: function() {
+        this.project = get_project();
+        this.config = this.project.settings;
 
-        var title = (!this.is_installed) ? 'Offline Support' : (this.project.is_online) ? 'Online' : 'Offline';
-        super(Panel, this).__init__('status', title, 'Install offline access for ' + this.config['PROJECT_NAME']);
-
+        super(Panel, this).__init__('status', 'Offline Support', 'Install offline access for ' + this.config['PROJECT_NAME']);
+        this.icon = sys.module_url('doff.utils', 'resources/protopy.png');
+        
+        this.set_status(this.project.is_online ? 'Online' : 'Offline');
+        
         this.width = '40%';
         this.height = '20em';
 
-        event.connect(project, 'onNetwork', this, 'set_status');
+        event.connect(this.project, 'onNetwork', this, 'set_status');
     },
 
     set_status: function(status) {
         if (this.project.is_installed) {
-            this.tab.update(status.capitalize());
+        	this.tab.update(status.capitalize());
+        	this.icon = sys.module_url('doff.utils', 'resources/' + status.toLowerCase() + '.png');
         }
     },
 
     install: function(e) {
-        if (!sys.gears.hasPermission && !this.project.get_permission())
-            return;
-        if (isundefined(this.project.system))
-            this.project._create_stores();
-
         e.target.remove();
         $('status-content').insert('<div class="doff-progress-container"><div id="doff-status-store-progress"/></div>');
-        var c = len(this.project.managed_stores);
+        /*var c = len(this.project.managed_stores);
         for (var i = 0; i < c; i++)
             event.connect(this.project.managed_stores[i], 'onSyncProgress', function(event) {
                 var cantidad = c;
@@ -101,7 +100,7 @@ var Status = type('Status', [ Panel ], {
                 var valor = ((100 / cantidad) * indice) + Math.ceil((event.filesComplete / event.filesTotal) * ( 100 / cantidad ));
                 print(valor);
                 $('doff-status-store-progress').style.width = valor + "%";
-            });
+            });*/
         this.project.install();
     },
 
