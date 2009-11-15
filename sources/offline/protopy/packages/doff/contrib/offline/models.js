@@ -1,8 +1,11 @@
+require('json');
+require('event');
+require('rpc', 'ServiceProxy');
 require('doff.contrib.offline.serializers', 'RemoteSerializer');
 require('doff.db.models.fields.base', 'FieldDoesNotExist');
 require('doff.db.models.query', 'CollectedObjects');
 var models = require('doff.db.models.base');
-require('json');
+require('doff.core.project', 'get_project');
 
 var serializer = new RemoteSerializer();
 
@@ -146,9 +149,38 @@ var RemoteReadOnlyModel = type('RemoteReadOnlyModel', [ RemoteModel ], {
     }
 });
 
+/* REMOTES AND MANAGERS */
+
+
+var RemoteManagerDescriptor = type('RemoteManagerDescriptor', [ object ], {
+    __init__: function(model) {
+        var project =  get_project();
+        this.model = model;
+        this.url_data = project.offline_support + '/data/' + string(this.model._meta).replace('.', '/') + '/';
+        if (project.is_online) {
+            this._proxy = new ServiceProxy(this.url_data, {asynchronous: false});
+            this.proxy = this._proxy;
+        }
+        event.connect(project, 'onNetwork', this, 'state_change');
+    },
+
+    __get__: function() {
+        return this.proxy;
+    },
+
+    state_change: function(state) {
+        if(state == 'online') 
+            this.proxy = this._proxy;
+        else 
+            this.proxy = null;
+    }
+});
+
+//TODO: no me gusta mucho esto de tomar el rpc asi por la fuerza
+var url_base = get_project().offline_support + '/data';
+
 function ensure_default_remote_manager(cls) {
     if (!cls._meta['abstract'] && issubclass(cls, RemoteModel)) {
-        require('doff.contrib.offline.manager', 'RemoteManagerDescriptor');
         try {
             var f = cls._meta.get_field('remotes');
             throw new ValueError("Model %s must specify a custom Manager, because it has a field named 'objects'".subs(cls.name));

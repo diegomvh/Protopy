@@ -37,7 +37,7 @@ def get_sites():
     from django.conf import settings
     from offline import sites
     project_name = get_project_name()
-    
+
     package = __import__('.'.join([project_name, 'offline' ] ), {}, {}, ['*', ])
     path = package.__path__[0]
     sites = []
