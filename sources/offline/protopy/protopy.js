@@ -289,7 +289,7 @@
             }
         }
 
-        window.google = {}, window.google.gears = {'installed': !!factory};
+        window.google = {}, window.google.gears = {'installed': !!factory, 'objects': {}};
         if(factory) {
             window.google.gears._factory = factory;
 
@@ -304,15 +304,18 @@
             window.google.gears.__defineGetter__('version', function() {return window.google.gears._factory.version;});
 
             window.google.gears.create = function (className, classVersion) {
-                //Has module?
                 var gears_object = null;
                 var module_name = className.slice(className.lastIndexOf('.') + 1);
-
+                
+                if (!isundefined(window.google.gears.objects[module_name]))
+                	return window.google.gears.objects[module_name];
+                
                 try {
                     gears_object = require('gears.' + module_name, module_name);
                 } catch (e if isinstance(e, LoadError)) {
                     gears_object = window.google.gears._factory.create(className, classVersion);
                 }
+                window.google.gears.objects[module_name] = gears_object;
                 return gears_object;
             }
         } else {

@@ -9,6 +9,7 @@ var DataBaseQuery = type('DataBaseQuery', Panel, {
         this.command_history = [];
         //Black magic, the first time init the db
         this.execute_sql = this.init_db;
+        this.icon = sys.module_url('doff.utils', 'resources/dbquery.png');
     },
 
     get_template: function() {

@@ -84,7 +84,8 @@ div#doff-toolbar ul.doff-toolbar-bar li.doff-toolbar-item {
     border-right: 1px solid #888888;
     padding-left: 6px;
     padding-right: 6px;
-    font-size: 80%;
+    padding-top: 2px;
+    font-size: 90%;
     display: inline;
     color: #112ABB;
     //text-decoration: underline;

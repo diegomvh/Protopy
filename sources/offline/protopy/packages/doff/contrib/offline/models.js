@@ -157,27 +157,25 @@ var RemoteManagerDescriptor = type('RemoteManagerDescriptor', [ object ], {
         var project =  get_project();
         this.model = model;
         this.url_data = project.offline_support + '/data/' + string(this.model._meta).replace('.', '/') + '/';
-        if (project.is_online) {
-            this._proxy = new ServiceProxy(this.url_data, {asynchronous: false});
-            this.proxy = this._proxy;
-        }
+        if (project.is_online)
+        	this._proxy = this.proxy = new ServiceProxy(this.url_data, {asynchronous: false});
         event.connect(project, 'onNetwork', this, 'state_change');
     },
 
     __get__: function() {
         return this.proxy;
     },
-
+    
     state_change: function(state) {
-        if(state == 'online') 
+    	if(state == 'online') {
+    		if (isundefined(this._proxy))
+    			this._proxy = new ServiceProxy(this.url_data, {asynchronous: false});
             this.proxy = this._proxy;
-        else 
+    	} else { 
             this.proxy = null;
+    	}
     }
 });
-
-//TODO: no me gusta mucho esto de tomar el rpc asi por la fuerza
-var url_base = get_project().offline_support + '/data';
 
 function ensure_default_remote_manager(cls) {
     if (!cls._meta['abstract'] && issubclass(cls, RemoteModel)) {

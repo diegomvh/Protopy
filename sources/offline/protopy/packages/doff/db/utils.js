@@ -3,15 +3,8 @@ var models = require('doff.db.models.base');
 require('doff.db.transaction');
 require('doff.core.project', 'get_settings');
 
-function syncdb() {
+function syncdb(callback) {
     var settings = get_settings();
-    /* No creo que sea necesario
-    for each (var app_name in settings.INSTALLED_APPS) {
-	try {
-	    require(app_name + '.management');
-	} catch (e if e instanceof LoadError) { }
-    }
-    */
     var cursor = connection.cursor();
     
     // Get a list of already installed *models* so that references work right.
@@ -65,10 +58,6 @@ function syncdb() {
 
     transaction.commit_unless_managed();
 
-    // Send the post_syncdb signal, so individual apps can do whatever they need
-    // to do at this point.
-    //emit_post_sync_signal(created_models, verbosity, interactive);
-
     // The connection may have been closed by a syncdb handler.
     cursor = connection.cursor();
 
@@ -93,6 +82,7 @@ function syncdb() {
             }
         }
     }
+    
     // Install SQL indicies for all newly created models
     for each (var app in models.get_apps()) {
         var app_name = app.__name__.split('.').slice(-2)[0];
@@ -113,10 +103,6 @@ function syncdb() {
             }
         }
     }
-    
-    // Install the 'initial_data' fixture, using format discovery
-    //from django.core.management import call_command
-    //call_command('loaddata', 'initial_data', verbosity=verbosity)
 }
 
 function removedb() {

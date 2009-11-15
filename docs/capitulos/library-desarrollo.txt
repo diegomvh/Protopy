@@ -863,21 +863,44 @@ puede ser encontrada en el apéndice.
 Manejo de DOM
 =============
 
-.. note:: Está parte está bastante confusa y escueta. Cuenten más y pongan métodos relevantes de ejemplo.
-Va a ir en dos secciones distintas. Así que ya las rearmé, pero por favor hay que describirlas más y mejor.
-
-
 Dentro del módulo ``dom`` de Protopy se provee un selector CSS que permite
 seleccionar elementos basados en selectores de nivel 3 de CSS [W3CCSelCSS309]_.
+
+Un selector de elementos del DOM resulta una herramienta útil cuando el dasarrollador debe trabajar manipulando el documento una ves presentado al usuario. Protopy incluye una adaptación de la herramienta Peppy [JamesDonaghuePeppyDocs]_ mediante este el arbol DOM pude ser manejado con facilidad. 
+
+Peppy se adapto al enfoque modular de Protopy y su principal función ``query`` esta presente como ya se menciono en el modulo ``dom``, aunque por motivos prácticos el modulo ``builtins`` incluye el alias $ y $$ para seleccionar elementos por *identificador* y *estilo* respectivamente; el desarrollador que requiera de consultas mas complejas puede requerir el modulo correspondiente y usar la función ``query`` para tal fin.
+
+A continuación de presenta un ejemplo de selección de elementos:
+
+.. code-block:: html
+
+    <h3>Pruebas de DOM</h3>
+    <div id="debug">
+        <h3>Debug: </h3><span>on</span>
+        <ul>
+            <li class=”item”>Uno</li>
+            <li class=”item”>Dos</li>
+            <li class=”item”>Tres</li>
+        </ul>
+    </div>
+
+.. code-block:: javascript
+
+    >>> $('debug')
+    <div id="debug">
+    >>> $$('ul')
+    [ul]
+    >>> $$('.item')
+    [li.item, li.item, li.item]
+
+Los eventos están uniformados bajo un módulo de manejo de eventos (``events``),
+que permite conectar eventos DOM con funciones en JavaScript, así como también 
+crear eventos de usuario.
 
 .. [W3CCSelCSS309] W3C,
     Documentación de Selectores CSS de nivel 3,
     ultimo acceso Septiembre 2009,
     http://www.w3.org/TR/css3-selectors/
-
-Los eventos están uniformados bajo un módulo de manejo de eventos (``events``),
-que permite conectar eventos DOM con funciones en JavaScript, así como también 
-crear eventos de usuario.
 
 .. [JamesDonaghuePeppyDocs] James Donaghue,
     *Documentación de Peppy*,
