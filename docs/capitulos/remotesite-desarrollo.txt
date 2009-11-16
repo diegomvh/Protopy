@@ -1,5 +1,3 @@
-﻿
-
 
 
 ###############
@@ -215,7 +213,6 @@ en ese lugar se encuentra el punto de entrada para la ejecución del proyecto
 desconectado. Al acceder a esta URL el navegador se encuentra con:
 
 .. code-block:: html
-
     
     <html>
     <head>
@@ -306,7 +303,7 @@ Paso seguido es necesario agregar la constante ``OFFLINE_BASE`` al módulo
 ``settings.py``. Por ejemplo:
     
 .. code-block:: python
-
+    
     # ...
     
     INSTALLED_APPS = (
@@ -548,7 +545,6 @@ de una aplicación, sus managers y los proxies de modelos.
 Por ejemplo, para una definción de un modelo como sigue:
 
 .. code-block:: python
-
     
     from django.db import models
     
