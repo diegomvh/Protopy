@@ -1,0 +1,54 @@
+<style>
+
+div#dbquery-output {
+    background-color: #FFFFFF;
+    height: 70%;
+    overflow: auto;
+}
+
+div#dbquery-output h3 {
+    font-size: 150%;
+    padding-bottom: 2px;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+div#dbquery-output table {
+    background: #F3F5F7 none repeat scroll 0 0;
+    color: #333333;
+    font-size: 85%;
+    margin: 10px;
+    padding: 0;
+}
+
+div#dbquery-output table thead th {
+    background: #3A4856 none repeat scroll 0 0;
+    color: #FFFFFF;
+    font-weight: normal;
+    padding: 5px 5px;
+    text-align: center;
+}
+
+div#dbquery-output table tbody tr.odd {
+    background:#F0F2F4 none repeat scroll 0 0;
+}
+
+div#dbquery-active {
+    margin-top: 4px;
+    text-align: center;
+}
+
+div#dbquery-active textarea {
+    border: 0;
+    overflow: hidden;
+    font-size: 15px;
+}
+</style>
+
+<div id="dbquery-output"></div>
+
+<div id="dbquery-active">
+    <textarea id="dbquery-sql" cols=110 rows=2 spellcheck=false></textarea>
+    <button id="dbquery-execute">Execute</button>
+    <button id="dbquery-clear">Clear</button>
+</div>
