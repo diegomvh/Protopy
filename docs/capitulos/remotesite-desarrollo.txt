@@ -1,4 +1,4 @@
-
+﻿
 
 ###############
 Sitios Remotos
@@ -140,7 +140,7 @@ a nivel aplicación). Para ejemplificar esto se expone el siguiente código:
 
 
 .. [*] Recordar que el módulo de URLs raíz del proyecto es el apuntado por
-    la constante ``ROOT_URLCONF`` del módulo ``settings.py``
+       la constante ``ROOT_URLCONF`` del módulo ``settings.py``
 
 Hasta aquí se ha definido esta clase como una agrupación de vistas con un
 mecanismo alternativo de URLs, sin embargo es importante recordar que como

@@ -530,6 +530,7 @@ Por ejemplo:
 
 .. [WIKIDOM09] Wikipedia, *DOM*, último acceso Octubre 2009,
                 http://es.wikipedia.org/wiki/Document_Object_Model
+                
 AJAX
 ====
 
