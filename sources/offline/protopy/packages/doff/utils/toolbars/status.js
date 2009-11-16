@@ -73,9 +73,9 @@ var Status = type('Status', [ Panel ], {
 
         super(Panel, this).__init__('status', 'Offline Support', 'Install offline access for ' + this.config['PROJECT_NAME']);
         this.icon = sys.module_url('doff.utils', 'resources/protopy.png');
-        
+
         this.set_status(this.project.is_online ? 'Online' : 'Offline');
-        
+
         this.width = '40%';
         this.height = '20em';
 
@@ -84,8 +84,8 @@ var Status = type('Status', [ Panel ], {
 
     set_status: function(status) {
         if (this.project.is_installed) {
-        	this.tab.update(status.capitalize());
-        	this.icon = sys.module_url('doff.utils', 'resources/' + status.toLowerCase() + '.png');
+            this.tab.update(status.capitalize());
+            this.icon = sys.module_url('doff.utils', 'resources/' + status.toLowerCase() + '.png');
         }
     },
 

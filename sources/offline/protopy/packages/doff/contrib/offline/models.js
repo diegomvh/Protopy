@@ -150,8 +150,6 @@ var RemoteReadOnlyModel = type('RemoteReadOnlyModel', [ RemoteModel ], {
 });
 
 /* REMOTES AND MANAGERS */
-
-
 var RemoteManagerDescriptor = type('RemoteManagerDescriptor', [ object ], {
     __init__: function(model) {
         var project =  get_project();
@@ -165,17 +163,19 @@ var RemoteManagerDescriptor = type('RemoteManagerDescriptor', [ object ], {
     __get__: function() {
         return this.proxy;
     },
-    
+
     state_change: function(state) {
-    	if(state == 'online') {
-    		if (isundefined(this._proxy))
-    			this._proxy = new ServiceProxy(this.url_data, {asynchronous: false});
+        if(state == 'online') {
+            if (isundefined(this._proxy))
+                this._proxy = new ServiceProxy(this.url_data, {asynchronous: false});
             this.proxy = this._proxy;
-    	} else { 
+        } else { 
             this.proxy = null;
-    	}
+        }
     }
 });
+
+// SI este archivo se cargo es porque esta incluido como app, porque del lado del server estan exportando modelos, hago los links para todo el despelote */
 
 function ensure_default_remote_manager(cls) {
     if (!cls._meta['abstract'] && issubclass(cls, RemoteModel)) {

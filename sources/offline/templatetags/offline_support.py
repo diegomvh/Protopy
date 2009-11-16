@@ -3,6 +3,7 @@ from offline import util
 
 register = template.Library()
 
+#TODO: esto es un context_processor
 def offline():
     return False
 
@@ -21,8 +22,12 @@ def offline_detect(remote_site):
     a_site = get_site(remote_site)
     assert(a_site != None, "No remote site named: " % a_site)
     return '''<script type="text/javascript;version=1.7">
-            require('doff.contrib.offline.online');
-            alert('%s');
-        </script>''' % a_site.url
+            require('sys');
+            require('doff.contrib.offline.utils', 'start_network_thread', 'is_installed');
+            start_network_thread('%s', function() {
+                if (is_installed('%s'))
+                    sys.window.location = '%s';
+            });
+        </script>''' % (a_site.url, a_site.url, a_site.url)
 
 register.simple_tag(offline_detect)

@@ -32,13 +32,13 @@ publish({
             'doff.core.context_processors.request',
             'doff.contrib.offline.context_processors.offline'
         ],
-        
+
         TOOLBAR_CLASSES: [
              'doff.utils.toolbars.status.Status',
              'doff.utils.toolbars.dbquery.DataBaseQuery',
-             'doff.utils.toolbars.logger.Logger'   
+             'doff.utils.toolbars.logger.Logger'
         ],
-        
+
         TEMPLATE_STRING_IF_INVALID: '',
 
         SYNC_MIDDLEWARE_CLASS: 'doff.middleware.sync.SyncMiddleware',

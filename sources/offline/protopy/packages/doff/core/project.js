@@ -24,10 +24,6 @@ var Project = type('Project', object, {
         event.connect(sys.window, 'send', this.handler, 'receive');
         event.connect(this.handler, 'send', sys.window, 'receive');
 
-        // Inicio del handler para la sincronizacion
-        require('doff.contrib.offline.handler', 'SyncHandler');
-        this.sync = new SyncHandler(this.settings);
-
         // Inicio el logging, si no hay hay archivo de configuracion no pasa nada
         require('logging.config', 'file_config');
         try {
@@ -59,11 +55,11 @@ var Project = type('Project', object, {
     },
 
     load_toolbar: function() {
-    	require('doff.core.exceptions');
+        require('doff.core.exceptions');
         require('doff.utils.toolbar', 'ToolBar');
 
         this.toolbar = new ToolBar();
-        
+
         for each (var toolbar_path in this.settings.TOOLBAR_CLASSES) {
             var dot = toolbar_path.lastIndexOf('.');
             if (dot == -1)
@@ -79,10 +75,10 @@ var Project = type('Project', object, {
                 throw new exceptions.ImproperlyConfigured('Toolbar module "%s" does not define a "%s" class'.subs(tb_module, tb_classname));
 
             var tb_instance = new tb_class();
-            
+
             this.toolbar.add(tb_instance);
         }
-        
+
         this.toolbar.show();
     },
 
@@ -147,7 +143,7 @@ var Project = type('Project', object, {
     },
 
     onInstallProgress: function(type) {},
-    
+
     install: function() {
         if (!sys.gears.installed) sys.gears.install();
         if (!this.get_permission()) return;
