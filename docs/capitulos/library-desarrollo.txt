@@ -869,9 +869,17 @@ Manejo de DOM
 Dentro del módulo ``dom`` de Protopy se provee un selector CSS que permite
 seleccionar elementos basados en selectores de nivel 3 de CSS [W3CCSelCSS309]_.
 
-Un selector de elementos del DOM resulta una herramienta útil cuando el dasarrollador debe trabajar manipulando el documento una ves presentado al usuario. Protopy incluye una adaptación de la herramienta Peppy [JamesDonaghuePeppyDocs]_ mediante este el arbol DOM pude ser manejado con facilidad. 
+Elementos
+---------
+
+Un selector de elementos del DOM resulta una herramienta útil cuando el dasarrollador debe trabajar manipulando el documento una ves presentado al usuario. Protopy incluye una adaptación de la herramienta Peppy [JamesDonaghuePeppyDocs]_ mediante este el árbol DOM pude ser manejado con facilidad. 
 
 Peppy se adapto al enfoque modular de Protopy y su principal función ``query`` esta presente como ya se menciono en el modulo ``dom``, aunque por motivos prácticos el modulo ``builtins`` incluye el alias $ y $$ para seleccionar elementos por *identificador* y *estilo* respectivamente; el desarrollador que requiera de consultas mas complejas puede requerir el modulo correspondiente y usar la función ``query`` para tal fin.
+
+.. [JamesDonaghuePeppyDocs] James Donaghue,
+    *Documentación de Peppy*,
+    último acceso Noviembre 2009,
+    http://jamesdonaghue.com/static/peppy/docs/
 
 A continuación de presenta un ejemplo de selección de elementos:
 
@@ -896,19 +904,20 @@ A continuación de presenta un ejemplo de selección de elementos:
     >>> $$('.item')
     [li.item, li.item, li.item]
 
-Los eventos están uniformados bajo un módulo de manejo de eventos (``events``),
-que permite conectar eventos DOM con funciones en JavaScript, así como también 
-crear eventos de usuario.
+Eventos
+-------
+
+El sistema de eventos de Protopy esta basado en el de Dojo. El manejo de eventos 
+ofrece una buena adaptación al sistema tradicional de eventos del DOM, posibilitando ademas conectar eventos creados por el usuario o funciones entre sí.
+
+Protopy provee en el modulo ``event`` dos funciones indispensables para trabajar con eventos, ``connect`` y ``disconnect``. La función ``connect`` es la encargada de conectar funciones a los eventos del DOM o a otras funciones, mientras que ``disconnect`` desconecta los eventos previamente establecidos. 
+
 
 .. [W3CCSelCSS309] W3C,
     Documentación de Selectores CSS de nivel 3,
     ultimo acceso Septiembre 2009,
     http://www.w3.org/TR/css3-selectors/
 
-.. [JamesDonaghuePeppyDocs] James Donaghue,
-    *Documentación de Peppy*,
-    último acceso Noviembre 2009,
-    http://jamesdonaghue.com/static/peppy/docs/
 
 Agregados a JavaScript
 ======================
