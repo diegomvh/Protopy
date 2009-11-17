@@ -1,4 +1,6 @@
-﻿.. _servidor:
+﻿
+
+.. _servidor:
 
 ########################
 Tecnologías del Servidor

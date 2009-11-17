@@ -1,4 +1,6 @@
-﻿###############
+﻿
+
+###############
 Sitios Remotos
 ###############
 
@@ -64,7 +66,7 @@ La Clase RemoteSite
 La clase ``RemoteSite`` define un proyecto desconectado. Tiene varias 
 responsabilidades, entre ellas, servir el código JavaScript del framework Doff,
 el del proyecto, publicar los templates, generar la definición de los modelos
-mediante introspección y permitir la sincornización. Esta clase se impleentó en 
+mediante introspección y permitir la sincronización. Esta clase se implementó en 
 el módulo ``sites`` de la aplicación ``offline``.
 
 Un ``RemoteSite`` representa *una migración* [*]_ del proyecto en línea. Es decir,
@@ -138,15 +140,16 @@ a nivel aplicación). Para ejemplificar esto se expone el siguiente código:
 
 
 .. [*] Recordar que el módulo de URLs raíz del proyecto es el apuntado por
-    la constante ``ROOT_URLCONF`` del módulo ``settings.py``
+       la constante ``ROOT_URLCONF`` del módulo ``settings.py``
 
 Hasta aquí se ha definido esta clase como una agrupación de vistas con un
 mecanismo alternativo de URLs, sin embargo es importante recordar que como
 se dijo en la introducción del presente capítulo, existe código JavaScript escrito
-por el programador, se trata de las vistas y URLs del proyecto desconectado.
+por el programador, se trata de las vistas y URLs del proyecto desconectado, es
+necesario definir una ubicación para estos recursos.
 Además, la definición de la instancia de ``RemoteSite`` también se debe ubicar
-en un sitio específico. Para esto se definió una serie de rutas que reutilizan
-la constante ``OFFLINE_BASE``:
+en un sitio específico. Para esto se definió una serie de rutas que hacen uso
+de la constante ``OFFLINE_BASE``:
 
     #. Debe existir un directorio con el nombre de la constante ``OFFLINE_BASE``
     
@@ -165,7 +168,7 @@ la constante ``OFFLINE_BASE``:
        
 Por ejemplo, 
 para los valores del ejemplo anterior en un proyecto denominado ``mi_proyecto``
-se tendría la siguiente jeraquía::
+se tendría la siguiente jerarquía::
 
     mi_proyecto/
         mi_aplicacion/
@@ -210,7 +213,6 @@ en ese lugar se encuentra el punto de entrada para la ejecución del proyecto
 desconectado. Al acceder a esta URL el navegador se encuentra con:
 
 .. code-block:: html
-    :linenos:
     
     <html>
     <head>
@@ -245,11 +247,11 @@ al proyecto. Para cargar el módulo ``settings`` mediante
 
 
 Además de las URLs descritas, el sitio remoto publica otras de dónde 
-Doff descarga los modulos y recursos que componen a la aplicación, 
+Doff descarga los módulos y recursos que componen a la aplicación, 
 para almacenarlos localmente y poder ejecutar el proyecto cuando el cliente 
 se encuentre sin conexión. Una de estas URLs es ``manifest.json``, en la cual
 se encuentra una lista completa de los archivos que componen al proyecto.
-Durante la instalación del proyecto se utiliza esta lista para alamacenar
+Durante la instalación del proyecto se utiliza esta lista para almacenar
 los recursos que componen al proyecto.
 
 A continuación se realiza una descripción del método de migración de proyectos.
@@ -260,11 +262,12 @@ Migración de un Proyecto
 
 La migración de un proyecto a través de los sitios remotos consiste
 de los siguientes pasos:
- 
-    #. Instalación de la aplicación de soporte (``offline``), este paso es necesario
-       solo una vez.
+
+    #. Instalación de la aplicación de soporte (``offline``), este paso se realiza una 
+       única vez.
        
-    #. Agregado de ``OFFLINE_BASE`` a ``settings.py``
+    #. Agregado de ``OFFLINE_BASE`` a ``settings.py``, este paso se realiza una 
+       única vez.
         
     #. Creación de un sitio remoto
 
@@ -277,11 +280,14 @@ de los siguientes pasos:
     #. Creación del ``manifest.json``, este paso se considera el paso a
        producción de la aplicación desconectada.
 
-El siguiente gráfico resume la mecánica de migración:
+La secuencia de los pasos 4-7 se debe repetir por cada sitio remoto que se
+desee crear en el proyecto.
 
-.. figure:: ../_svg/esquema_utilizacion_offline.png
 
-    Esquema de trabajo con la aplicación offline
+.. figure:: ../_dot/migracion_proyecto.pdf
+    
+    Pasos para la migración de un proyecto   
+
 
 Instalación y Configuración de la Aplicación Offline 
 ----------------------------------------------------
@@ -294,137 +300,119 @@ se la descarga y añade al ``PYTHONPATH``. Posteriormente se debe agregar a
 Una vez realizado este paso se habilitan varios comandos para la administración 
 de proyectos desconectados al módulo ``manage.py``. 
 Paso seguido es necesario agregar la constante ``OFFLINE_BASE`` al módulo
-``settings.py``. El valor de esta constante se utiliza para definir el directorio
-donde se almacenan los sitios remotos y sus recursos y también la base común
-de la URL en la que se publican. Este paso se realiza por única vez, por 
-ejemplo:
+``settings.py``. Por ejemplo:
     
-code-block:: python
+.. code-block:: python
+    
+    # ...
+    
+    INSTALLED_APPS = (
+        # Aplicaciones de usuario
+        'offline', # Aplicación offline
+    
+    )
 
+    # ...
+    
+    # Definición de la ruta/url base para los sitios remotos
     OFFLINE_BASE = "off"
-    
-De crearse un sitio remoto llamado, por ejemplo, ``"ventas", los recursos 
-que lo componen se almacenarán en ``<ruta_del_proyecto>/off/ventas`` y la 
-URL en la cual se publicará será ``http://misitio.com/off/ventas``.     
 
+La mayor parte de los pasos siguientes se realizan mediante un comando implementado
+en ``offline``. Debido a que se debe describir un proceso donde es neceario 
+discernir la definción de una vairable/constante de el acceso a su contenido,
+se utilizará la siguiente conversión:
+    
+    * ``NOMBRE_CONSTANTE``
+      Se refiere al nombre de una constante.
+     
+    * ``$(NOMBRE_VARIABLE)`` o ``$(nombre_variable)``
+      Se refiere al contenido de la constante o variable. 
  
 Creación de un Sitio Remoto
 ---------------------------
 
+
 Este paso se realiza mediante la ejecución del comando ``start_remotesite``, su
 sintaxis es la siguiente:
 
-    ``start_remotesite <nombre_sitio_remoto>``
+    ``start_remotesite <nombre_sitio>``
 
-Este comando crea la estructura de directorios del sitio remoto y la definicón
+Este comando crea la estructura de directorios del sitio remoto y la definición
 de la instancia del ``RemoteSite`` en un módulo Python.
-Si no exite el directorio ``OFFLINE_BASE`` en el proyecto en
-línea lo crea.
-Dentro del directorio antes mencionado, añade el módulo ``remote_<nombre_sitio>.py``
-en el cual define la instancia de ``RemoteSite`` con el nombre dado. Por ejemplo,
-al crear la aplicación ``ventas`` dentro de un proyecto llamado ``salesman``, con
-``OFFLINE_BASE`` igual a ``"off"``, la definción del módulo sería la siguiente:
 
+El comando realiza la siguientes acciones:
 
-
-
-
- Utiliza
-también el nombre para crear un subdirectorio en ``OFFLINE_BASE`` donde
-crea el esqueleto del proyecto desconetado (crando ``settings.js`` y ``urls.js`` 
-a partir de plantillas que son rellenadas con la configuración disponible 
-de la aplicación en linea).
-
-    Por ejemplo:
+    #. Si no existe el directorio ``$(OFFLINE_BASE)`` en el proyecto en
+       línea lo crea.
+      
+    #. Dentro del directorio, añade el módulo ``remote_$(nombre_sitio).py``
+       en el cual define la instancia de ``RemoteSite`` con el nombre dado. 
+       Por ejemlpo, para un sitio remoto llamado ``ventas`` y ``OFFLINE_BASE``
+       como ``"off"``, tras la ejecución del comando, se creará un archivo
+       ``off/remote_ventas.py``:
+       
+       .. code-block:: python
+       
+           from offline.sites import RemoteSite
+           
+           site = RemoteSite("ventas")
     
-    .. code-block:: bash
-    
-        $ manage.py start_remotesite vendedor_viajante
-        
-    Esto crea en el directorio de la aplicación la siguiente estuctura (suponiendo
-    que ``OFFLINE_BASE`` sea la cadena ``soporte_offline``)::
-        
-        soporte_offline/
-            remote_vendedor_viajante.py
-            vendedor_viajante/
+    #. Se crea el directorio ``$(OFFLINE_BASE)/$(nombre_sitio)``, como paquete
+       de Protopy, donde crea el proyecto desconectado, definiendo los módulos
+       ``settings.js``, ``urls.js`` y ``logging.js`` (estos módulos son plantillas internas de
+       la aplicación ``offline`` y se rellenan automáticamente con valores 
+       extraídos de ``settings.py`` y de la invocación del comando). Por ejemplo:: 
+       
+           off/
+              remote_ventas.py
+              ventas/
                 settings.js
                 urls.js
                 logging.js
     
-    
- 
- * ``list_remotesites``
-    
-    Este comando lista los ``RemoteSites`` de un proyecto en línea. Verifica
-    además si estos se encuentran publicados. No recibe argumentos.
-   
-   
-Por cada sitio remoto existe un subdirectorio donde se almacena el código
-JavaScript del proyecto y sus aplicaciones: ``OFFLINE_BASE/<nombre_sitio_remoto>``. 
-En su nivel base se cuenta con los módulos ``settings.js``, ``urls.js``.
-Cada aplicación es un subdirectorio y cuenta con módulos ``views.js``, 
-``mixins.js``, ``tests.js`` y ``urls.js``.
-   
    
 Migración de una Aplicación
 ---------------------------
- 
- * ``migrate_app``
- 
-    Migra una aplicación conectada a un ``RemoteSite``. Recibe como argumentos
-    el nombre del sitio remoto y el nombre de la aplicación. Dentro
-    de ``OFFLINE_BASE/<nombre-site>/<nombre-app>`` crea la estructura de la 
-    aplicación (crea los módulos ``views.js`` y ``models.js`` a partir de plantillas).
+
+Este paso se realiza mediante el comando ``migrate_app``. Recibe como argumento
+el nombre del sitio remoto y el nombre de la aplicación (que debe existir) 
+del proyecto en linea. Por ejemplo:
+
+.. code-block:: bash
     
-    Por ejemplo:
+    # Migrar la aplicación "core" al sitio remoto "ventas"
+    $ manage.py migrate_app ventas core 
+
+Dentro de ``$(OFFLINE_BASE)/$(nombre_sitio)/$(nombre_app)`` crea el esqueleto
+de la aplicación con los módulos ``views.js``, ``mixins.js``, ``tests.js`` y
+``urls.js`` (al igual que en el comando anterior, el contenido de estos 
+archivos se genera a partir de plantillas).
+
+La estructura generada sobre el ejemplo aterior sería la siguiente::
     
-    .. code-block:: bash
-    
-        $ manage.py migrate_app vendedor_viajante catalogo
-        
-    Basados en el ejemplo del comando ``start_remotesite``, 
-    produciría la siguiente estructura de archivos::
-    
-        soporte_offline/
-            remote_vendedor_viajante.py
-            vendedor_viajante/
-                settings.js
+    off/
+        remote_ventas.py
+        ventas/
+            settings.js
+            urls.js
+            logging.js
+            core/
+                views.js
+                mixins.js
+                tests.js
                 urls.js
-                logging.js
-                catalogo/
-                    views.js
-                    mixins.js
-                    tests.js
-                    urls.js
-    
-    
- * ``manifest_update``
- 
-    Acutaliza los recursos que componen al proyecto desconectado: vistas,
-    plantillas, modelos y recursos estáticos. 
-    
+                
+En el ejemplo se puede observar la ausencia del módulo ``models.js``.
+Esto se debe a que la definición de los modelos no es realizada en JavaScript
+por el programador sino que se genera a partir de la introspección de la definición
+de los modelos del proyecto en línea.                
 
-
-La definción de un remotesite dentro de ``OFFLINE_BASE/remote_<nombre-site>.py``,
-resultado del comando ``manage.py create_remotesite <nombre-site>`` tiene 
-la siguiente estructura:
-
-.. code-block:: python
-
-    from offline.sites import RemoteSite 
-
-    site = LibrarianRemoteSite('librarian')
-    
-Cada aplicación migrada mediante el comando ``migrate_app`` es creada a partir
-de una esqueleto genérico, donde el programador deberá implementar las URLs 
-y vistas. Si bien esta tarea podría parecer tediosa en primera intancia, el
+Los módulos creados a partir de las plantillas deben ser modificados por el 
+programador, agregando las URLs, las vistas y otras funcionalidades.  
+Si bien esta tarea podría parecer tediosa en principio, el
 grado de similitud entre Protopy con Python y el hecho de que Doff implemente
 la misma API que Django facilita mucho la tarea.
-
-Las plantillas y los modelos son provistos autmáticamente por el sitio remoto.
-A continuación se analiza la forma en la que se exponen los modelos y como
-se puede modificar.
-
+    
 
 Publicación de Modelos
 ----------------------
@@ -435,8 +423,8 @@ por seguridad y eficiencia.
 
 Para lograr este objetivo se creó una entidad encargada de arbitrar el 
 acceso a los modelos. Este recubrimiento o *porxy* permite definir a 
-que datos accede el cliente de dos maneras: defineindo a que campos accede
-(columnas de la base de datos) y a que elementos meidnate la definición
+que datos accede el cliente de dos maneras: definiendo los campos visibles 
+(columnas de la base de datos) e instancias visibles, mediante la definición
 de un manager (a que filas accede).
 
 Esta entidad se denominó ``RemoteModelProxy`` o proxy.
@@ -515,7 +503,7 @@ El sitio remoto solo se encarga de publicar la estrcutra del proxy de modelos,
 los métodos opcionales con los que el desarrollador desee contar se deben 
 implementar en un mixin. Para este fin existe una archivo por cada aplicación
 migrada llamado ``mixins.js`` donde se definen los métodos de los modelos
-como un arreglo asociativo. El nombre del arreglo debe conincidir con el nombre
+como un arreglo asociativo. El nombre del arreglo debe coincidir con el nombre
 del modelo. Por ejemplo, para el modelo de ``Book``:
 
 .. code-block:: javascript
@@ -535,8 +523,8 @@ del modelo. Por ejemplo, para el modelo de ``Book``:
 En Django los modelos suelen tener métodos de utilidad, como ``__unicode__`` (
 en el cliente ``__str__`` [*]_). Estos métodos se deben implementar en un arreglo
 asociativo que se utiliza a modo de ``Mixin``. Como se mencionó en el capítulo
-sobre Protopy, la impmentación de clases soporta herencia múltiple, cuando
-se requiere la url con la definción del modelo, se requieren automáticamente
+sobre Protopy, la implementación de clases soporta herencia múltiple, cuando
+se requiere la url con la definición del modelo, se requieren automáticamente
 los Mixins definidos.
 
 
@@ -544,11 +532,11 @@ los Mixins definidos.
 
 
 Durante la instalación del proyecto, cuando el ``ManagedLocalStore`` descarga
-el recurso, el sitio remoto provee automaticamente la conjunción de la introspección
+el recurso, el sitio remoto provee automáticamente la conjunción de la introspección
 realizada sobre los modelos con los métodos agregados en el mixin.
 
-En el siguiente esquema se muestra la intreacción entre el sitio remoto, los modelos
-de una apicacción, sus managers y los proxies de modelos.
+En el siguiente esquema se muestra la interacción entre el sitio remoto, los modelos
+de una aplicación, sus managers y los proxies de modelos.
 
 .. figure:: ../_svg/esquema_remotemodelproxy.png
 	
@@ -557,10 +545,6 @@ de una apicacción, sus managers y los proxies de modelos.
 Por ejemplo, para una definción de un modelo como sigue:
 
 .. code-block:: python
-
-    # ---------------------------------------------------
-    # Definción del modelo en models.py
-    # ---------------------------------------------------
     
     from django.db import models
     
@@ -600,14 +584,14 @@ Modelos de Solo Lectura
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 Si bien se tratará la sincronización en un apartado posterior, se ha mencionado
-que existe un mecanismo para sincroizar los datos de los modelos.
+que existe un mecanismo para sincronizar los datos de los modelos.
 La sincronización puede ocurrir del servidor al cliente, la cual es probablemente
 necesaria en la instalación y en sentido inverso para sincronizar los datos
 generados o modificados durante la ejecución desconectada del proyecto.
 
 Cuando un modelo se registra en un sitio remoto, se concede permiso de modificación
 a los campos definidos en el proxy de modelos (tomados automáticamente del modelo).
-Si se registra una modelo que posee claves foraneas, y los modelos referenciados
+Si se registra una modelo que posee claves foráneas, y los modelos referenciados
 no son registrados, se genera un registro implícito de estos modelos como
 solo lectura.
 
@@ -632,9 +616,9 @@ registra la entidad ``Provincia``:
 
     site.register(Provincia)
             
-la entidad ``Pais`` se registra implicitamente como un modelo de solo lectura.
+la entidad ``Pais`` se registra implícitamente como un modelo de solo lectura.
 Durante la sincronización los datos solo se transfieren del servidor al cliente.
-Los unicos campos transferidos son el ``pk`` (o ``id``) y la representación
+Los únicos campos transferidos son el ``pk`` (o ``id``) y la representación
 en cadena del modelo (``__unicode__``).         
 
 Publicación de un Sitio Remoto
@@ -659,7 +643,35 @@ En el caso anterior, para acceder al sitio desconectado se debe acceder a la URL
     
 Esta URL genera automáticamente la instancia del proyecto en el cliente.
 
-Finalmente, podemos resumir el ciclo de migración mediante la siguiente figura:
 
-    
- 
+Generación de Manifest
+-----------------------
+
+Como paso final de la migración de un proyecto, se deben generar un listado
+de entradas de recursos (Doff, Protopy, código del proyecto, plantillas y medios
+estáticos). Esto se realiza mediante el comando ``manifest_update``, 
+que recibe como argumento el nombre del sitio remoto.
+
+A partir de este momento el proyecto se puede ejecutar en el cliente, y ser 
+instalado con la capicadad de funcionalidad desconectada.
+
+Cuando existan modificaciones en el código del sitio remoto se debe volver a 
+ejecutar el comando ``manifest_update``.
+
+El Manifest se publica mediante una vista del sitio remoto. De esta manera, 
+cuando el proyecto desconectado detecta conexión, descarga de manera autónoma
+las actualizaciones.
+
+Un ejemplo de la salida de la vista de un manifest es la siguiente:
+
+.. code-block:: javascript
+
+    {   "version": "gcIiKrJeWjljDdvgScuqTcMNvDIPfneu", 
+        "betaManifestVersion": 1, 
+        "entries": [{"url": "/off/agentes/"},
+        // Código de /
+        // Doff
+        // Proyecto
+        
+    }
+

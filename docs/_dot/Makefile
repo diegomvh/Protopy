@@ -4,23 +4,29 @@ DOTS=$(shell ls *.dot)
 GENERATED_DOTS=django_models.dot offline_models.dot
 DOT_FILES=$(DOTS) $(GENERATED_DOTS)
 PNG_FILES=$(DOT_FILES:.dot=.png)
+PDF_FILES=$(DOT_FILES:.dot=.pdf)
 DOT = dot
-GRAPHVIZ_OPTS = -Tpng -Gdpi=300
+GRAPHVIZ_PNG_OPTS = -Tpng -Gdpi=300
 # Paths
 SALESMAN_SOURCE=../../sources/salesman
 OFFLINE_SOURCE=$(SALESMAN_SOURCE)/../offline
 
-all: dots pngs
-	
+all: dots pngs pdfs
+
+pdfs: $(PDF_FILES)
+
 pngs: $(PNG_FILES)
 	
 dots: $(GENERATED_DOTS)
 	
 %.png: %.dot
-	$(DOT) $(GRAPHVIZ_OPTS) -o $@ $^
+	$(DOT) -Tpng -Gdpi=150 -o $@ $^
 	@ file $@
 	@ ./reframe.py $@
-	
+
+%.pdf: %.dot
+	$(DOT) -Tpdf $(GRAPHVIZ_PDF_OPTS) -o $@ $^
+		
 clean:
 	-rm -rf $(PNG_FILES) $(GENERATED_DOTS)
 	

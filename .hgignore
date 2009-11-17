@@ -35,6 +35,8 @@ build/*
 chiron/*
 *.swp
 
+docs/_dot/*
+
 # Aplicacion de demostracion
 sources/offline_demo/static/devkit/*
 sources/offline_demo/static/*.zip

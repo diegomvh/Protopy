@@ -16,6 +16,7 @@ SVG_PNG_OUTPUT = $(SVG_FILES:.svg=.png)
 .PHONY: help clean html dirhtml pickle json htmlhelp qthelp latex changes linkcheck doctest
 
 all: svg dot latex graph_models
+	
 	$(MAKE) -C _build/latex
 
 help:
@@ -95,6 +96,7 @@ latex:
 	@echo "Build finished; the LaTeX files are in _build/latex."
 	@echo "Run \`make all-pdf' or \`make all-ps' in that directory to" \
 	      "run these through (pdf)latex."
+	@ ./rencode.py _build/latex/SistemasWebDesconectados.tex
 
 changes:
 	$(SPHINXBUILD) -b changes $(ALLSPHINXOPTS) _build/changes

@@ -1,10 +1,12 @@
+
+
 #########################
 Sincronización de Datos
 #########################
 
 Por simplcidad, en este capítulo, se establece la siguiente terminología:
 Cuando se hable de *el cliente* se está refiriendo al proyecto desconectado,
- *el servidor* es el proyecto en línea.
+*el servidor* es el proyecto en línea.
 
 La sincronziación de datos permite que las entidades definidas en el servidor
 se repliquen en el cliente y que las creadas y modificadas por el cliente
@@ -267,7 +269,7 @@ Información de Sincronización en el Cliente
 
 La información sobre sicronización en el cliente se basó en parte en los campos
 que propone Junction, agregándoselos a cada entidad, pero se modeló la
- sincronización como entidad por separado.
+sincronización como entidad por separado.
 
 Se creo la aplicación genérica ``doff.contrib.offline`` y donde se definió ``SyncLog``.
 Cada vez que el cliente realiza una sincronización con el servidor, se 
