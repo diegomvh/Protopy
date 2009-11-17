@@ -38,9 +38,9 @@ Released   : 20090918
             {% block main_menu %}
             <li class="page_item" ><a href="/inicio">Inicio</a></li>
             <li class="page_item" ><a href="/ventas">Vendedores</a></li>
+            {% if not offline %}
             <li class="page_item" ><a href="/compras">Proveedores</a></li>
             <li class="page_item" ><a href="/finanzas">Contadores</a></li> 
-            {% if not offline %}
             {% endif %}
             {% endblock %}
         </ul>

@@ -152,26 +152,25 @@ var RemoteReadOnlyModel = type('RemoteReadOnlyModel', [ RemoteModel ], {
 /* REMOTES AND MANAGERS */
 var RemoteManagerDescriptor = type('RemoteManagerDescriptor', [ object ], {
     __init__: function(model) {
-        var project =  get_project();
         this.model = model;
+        var project = get_project();
         this.url_data = project.offline_support + '/data/' + string(this.model._meta).replace('.', '/') + '/';
-        if (project.is_online)
-        	this._proxy = this.proxy = new ServiceProxy(this.url_data, {asynchronous: false});
-        event.connect(project, 'onNetwork', this, 'state_change');
+        this.hgon = event.subscribe('go_online', getattr(this, 'go_online'));
+        this.hgoff = event.subscribe('go_offline', getattr(this, 'go_offline')); 
     },
 
     __get__: function() {
         return this.proxy;
     },
 
-    state_change: function(state) {
-        if(state == 'online') {
-            if (isundefined(this._proxy))
-                this._proxy = new ServiceProxy(this.url_data, {asynchronous: false});
-            this.proxy = this._proxy;
-        } else { 
-            this.proxy = null;
-        }
+    go_online: function() {
+    	if (isundefined(this._proxy))
+    		this._proxy = new ServiceProxy(this.url_data, {asynchronous: false});
+    	this.proxy = this._proxy;
+    },
+    
+    go_offline: function() {
+    	this.proxy = null;
     }
 });
 
@@ -188,7 +187,14 @@ function ensure_default_remote_manager(cls) {
     }
 };
 
+function ensure_data_first_synchronization(project) {
+	require('doff.contrib.offline.handler', 'SyncHandler');
+	var sync = new SyncHandler(project.settings);
+	sync.update();
+}
+
 var hcp = event.subscribe('class_prepared', ensure_default_remote_manager);
+var hpi = event.subscribe('post_install', ensure_data_first_synchronization);
 
 publish({
     SyncLog: SyncLog,

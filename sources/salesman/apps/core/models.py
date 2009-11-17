@@ -5,7 +5,7 @@ Modelo de prueba
 from django.db import models
 
 # Some useful things
-   
+
 mod_name = __name__.split('.')[-2]
 abs_url = lambda inst: '/%s' % '/'.join( [mod_name, inst._meta.module_name, str(inst.id)])
 
@@ -61,6 +61,7 @@ class Cliente(models.Model):
     El cliente
     '''
     razon_social = models.CharField(max_length = 50)
+    direccion = models.TextField()
     ciudad = models.ForeignKey(Ciudad)
     correo = models.EmailField()
     
@@ -90,12 +91,13 @@ class Categoria(models.Model):
     Cada producto tiene una categoria
     '''
     nombre = models.CharField(max_length = 50)
+    super = models.ForeignKey('self', null = True, blank = True)
     
     get_absolute_url = abs_url
     
     class Meta:
-        verbose_name = "Categoría"
-        verbose_name_plural = "Categorías"
+        verbose_name = "Categoria"
+        verbose_name_plural = "Categorias"
 
     def __unicode__(self):
         return self.nombre
@@ -105,9 +107,9 @@ class Producto(models.Model):
     Un producto es provisto por un proveedor o mas de un proveedor
     '''
     nombre = models.CharField(max_length = 50)
+    #imagen = models.ImageField(upload_to='productos')
     descripcion = models.CharField(max_length = 500)
-    categoria = models.ForeignKey(Categoria, blank = True, null = True) # Puede no tener categorias
-    provisto_por = models.ManyToManyField(Proveedor, blank = True, null = True)
+    categoria = models.ForeignKey(Categoria, blank = True, null = True)
     precio_uniatario = models.DecimalField(default = 0.0, max_digits = 10, decimal_places = 3)
     
     get_absolute_url = abs_url

@@ -181,12 +181,13 @@ def get_model_order(model_lists):
         model_adj[ model ]  = get_related_models(model)
     
     order = filter(lambda m: not bool(model_adj[m]), model_adj.keys())
-    map(lambda m: model_adj.pop(m), order) 
-    # TODO: Detect encadenamiento y resolverlo
+    map(lambda m: model_adj.pop(m), order)
     while model_adj:
         for model in model_adj:
             deps = model_adj[model]
-
+            if model in deps:
+                #Es recursivo
+                deps.remove(model)
             if all(map(lambda d: d not in model_adj, deps)):
                 order.append(model)
                 model_adj.pop(model)

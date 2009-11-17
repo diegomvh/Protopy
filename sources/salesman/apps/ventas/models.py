@@ -7,7 +7,7 @@ from salesman.apps.core.models import abs_url, Cliente, Producto
         
 class Pedido(models.Model):
     '''
-    El número de pedido se toma de la primary key
+    El numero de pedido se toma de la primary key
     '''
     cliente = models.ForeignKey(Cliente)
     fecha = models.DateField(auto_now = True)

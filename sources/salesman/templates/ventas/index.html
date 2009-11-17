@@ -1,31 +1,23 @@
 {% extends "base.html" %}
 
-
 {% block content %}
     <h3>Sistema de Vendedor Viajante</h3>
     <p>Breve descripción del sitema</p>
-
-    {% block listado %}
-    <h4>Ventas</h4>
-    <ul>
-        <li><em>Categoria</em>
-            <p>
-                <a class="nuevo" href="/core/categoria/add">Agregar nuevo/a</a>
-                <a class="lista" href="/core/categorias">Ver</a>
-            </p>
-        </li>
-        <li><em>Items de Pedido</em>
-            <p>
-                <a class="nuevo" href="items_pedido/add">Agregar nuevo/a</a>
-                <a class="lista" href="items_pedidos">Ver</a>
-            </p>
-        </li>
-        <li><em>Pedidos</em>
-            <p>
-                <a class="nuevo" href="pedido/add">Agregar nuevo/a</a>
-                <a class="lista" href="pedidos">Ver</a>
-            </p>
-        </li>
-    </ul>
-    {% endblock %}
 {% endblock %}
+{% block sidebar %}
+<li>
+	<h2>Pedidos</h2>
+	<ul>
+		<li><a href="#">Nuevo pedido</a></li>
+		<li><a href="#">Ver pedidos</a></li>
+	</ul>
+</li>
+<li>
+<h2>Clientes</h2>
+	<ul>
+		<li><a href="#">Nuevo cliente</a></li>
+		<li><a href="#">Nueva ciudad</a></li>
+		<li><a href="#">Ver clientes</a></li>
+	</ul>
+</li>
+{% endblock %}    

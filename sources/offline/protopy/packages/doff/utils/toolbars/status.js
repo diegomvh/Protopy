@@ -74,18 +74,31 @@ var Status = type('Status', [ Panel ], {
         super(Panel, this).__init__('status', 'Offline Support', 'Install offline access for ' + this.config['PROJECT_NAME']);
         this.icon = sys.module_url('doff.utils', 'resources/protopy.png');
 
-        this.set_status(this.project.is_online ? 'Online' : 'Offline');
+        this.project.is_online ? this.go_online() : this.go_offline();
 
         this.width = '40%';
         this.height = '20em';
-
-        event.connect(this.project, 'onNetwork', this, 'set_status');
+        
+        this.hgon = event.subscribe('go_online', getattr(this, 'go_online'));
+        this.hgoff = event.subscribe('go_offline', getattr(this, 'go_offline'));
+        /*this.hpi = event.subscribe('post_install', ensure_data_first_synchronization);
+        this.hpi = event.subscribe('pre_install', ensure_data_first_synchronization);
+        this.hpi = event.subscribe('pre_uninstall', ensure_data_first_synchronization);
+        this.hpi = event.subscribe('post_uninstall', ensure_data_first_synchronization);*/
+        
     },
 
-    set_status: function(status) {
+    go_online: function(status) {
         if (this.project.is_installed) {
-            this.tab.update(status.capitalize());
-            this.icon = sys.module_url('doff.utils', 'resources/' + status.toLowerCase() + '.png');
+            this.tab.update('Online');
+            this.icon = sys.module_url('doff.utils', 'resources/online.png');
+        }
+    },
+    
+    go_offline: function(status) {
+        if (this.project.is_installed) {
+            this.tab.update('Offline');
+            this.icon = sys.module_url('doff.utils', 'resources/offline.png');
         }
     },
 

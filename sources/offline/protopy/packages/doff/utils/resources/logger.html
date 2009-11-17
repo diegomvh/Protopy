@@ -1,8 +1,9 @@
 <style>
 div#logger-output {
     background-color: #FFFFFF;
-    height: 70%;
+    height: 68%;
     overflow: auto;
+    width: 100%;
 }
 
 div#logger-output p {
@@ -32,6 +33,7 @@ div#logger-output p span.FATAL {
 
 div#logger-active {
     margin-top: 4px;
+    text-align: center;
 }
 
 div#logger-active span {
@@ -85,9 +87,10 @@ div#logger-active span label.fatal {
     </span>
     <span class="logger-filter">
 	<label for="logger-filter-modulo">Modulo</label>
-        <select id="logger-filter-modulo">
+        <select class="doff-panel-button" id="logger-filter-modulo">
 	</select>
     </span>
-    <button id="logger-pause">Pause</button>
-    <button id="logger-clear">Clear</button>
+    <br>
+    <button class="doff-panel-button" id="logger-pause">Pause</button>
+    <button class="doff-panel-button" id="logger-clear">Clear</button>
 </div>

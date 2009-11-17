@@ -12,6 +12,7 @@ var ServerPkDoesNotExist = type('ServerPkDoesNotExist', Exception);
 var RemoteSerializer = type('RemoteSerializer', [ Serializer ], {
 
     serialize: function(queryset_or_model) {
+		//TODO: detectar recursividad y cortar con una excepcion y los datos que se pudieron hacer
         var is_model = isinstance(queryset_or_model, models.Model);
         if (is_model)
             return super(Serializer, this).serialize([ queryset_or_model ])[0];
@@ -125,5 +126,5 @@ function RemoteDeserializer(object_list) {
 publish({
     ServerPkDoesNotExist: ServerPkDoesNotExist,
     RemoteSerializer: RemoteSerializer,
-    RemoteDeserializer: RemoteDeserializer,
+    RemoteDeserializer: RemoteDeserializer
 });

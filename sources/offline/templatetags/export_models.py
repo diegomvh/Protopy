@@ -64,13 +64,13 @@ class LazyEncoder(JSONEncoder):
 SKIP_KEYS = ('name', 'rel', 'verbose_name', 'db_index')
 
 @register.simple_tag
-def get_model_definition(init_args):
+def get_model_definition(app_name, model_name, init_args):
     field_type, args = init_args
     first_arg = ''
     my_args = SortedDict()
-
+    app_model = app_name + "." + model_name.lower()
     if field_type == 'ManyToManyField':
-        first_arg = unicode(args['rel'].to._meta.object_name)
+        first_arg = app_model == str(args['rel'].to._meta) and '"this"' or unicode(args['rel'].to._meta.object_name)
         
         for k, v in args.iteritems():
             if k in SKIP_KEYS:
@@ -78,7 +78,7 @@ def get_model_definition(init_args):
             else:
                 my_args[k] = v
     elif field_type == 'ForeignKey':
-        first_arg = unicode(args['rel'].to._meta.object_name)
+        first_arg = app_model == str(args['rel'].to._meta) and '"this"' or unicode(args['rel'].to._meta.object_name)
         
         for k, v in args.iteritems():
             if k in SKIP_KEYS:

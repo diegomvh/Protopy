@@ -3,7 +3,7 @@ require('event');
 require('ajax');
 
 var Project = type('Project', object, {
-    is_online: true,
+    is_online: null,
     NET_CHECK: 5,
     availability_url: null,
     do_net_checking: true,
@@ -34,8 +34,6 @@ var Project = type('Project', object, {
         this.start_network_thread();
         sys.window.location = '/';
     },
-
-    onNetwork: function(type) {},
 
     __init__: function(package, offline_support) {
         this.package = package;
@@ -136,29 +134,35 @@ var Project = type('Project', object, {
     },
 
     get is_installed() {
+    	if (!sys.gears.installed || !sys.gears.hasPermission) return false;
         try {
             var localserver = sys.gears.create('beta.localserver');
             return localserver.canServeLocally(this.offline_support + '/');
-        } catch (e) { return false; }
+        } catch (e) { 
+        	return false; 
+        }
     },
-
-    onInstallProgress: function(type) {},
 
     install: function() {
         if (!sys.gears.installed) sys.gears.install();
         if (!this.get_permission()) return;
+        
+        event.publish('pre_install', [this]);
         if (this.managed_store == null)
             this.create_store();
 
         require('doff.db.utils','syncdb');
         syncdb();
+        event.publish('post_install', [this]);
     },
 
     uninstall: function() {
+    	event.publish('pre_uninstall', [this]);
         require('doff.db.utils','removedb');
         removedb();
 
         this.remove_store();
+        event.publish('post_uninstall', [this]);
     },
 
     /***************************************************************************
@@ -170,13 +174,13 @@ var Project = type('Project', object, {
             method: 'GET',
             onComplete: function(transport) {
                 if (200 == transport.status) {
-                    if(!self.is_online) {
+                    if(!self.is_online || self.is_online == null) {
                         self.is_online = true;
-                        self.onNetwork("online");
+                        event.publish('go_online', [self]);
                    }
-                } else if(self.is_online) {
+                } else if(self.is_online || self.is_online == null) {
                     self.is_online = false;
-                    self.onNetwork("offline");
+                    event.publish('go_offline', [self]);
                 }
             }
         });

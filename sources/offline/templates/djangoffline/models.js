@@ -6,7 +6,7 @@ require('doff.contrib.offline.models', 'RemoteModel', 'RemoteReadOnlyModel');
 
 {% for name, class, fields in models %}//Create Object
 var mixed{{ name }} = extend(mixin.{{ name }} || {}, {
-{% for field_name, arguments in fields.iteritems %}    {{ field_name }}: new models.{{ arguments|first }}({% get_model_definition arguments %}),
+{% for field_name, arguments in fields.iteritems %}    {{ field_name }}: new models.{{ arguments|first }}({% get_model_definition app name arguments %}),
 {% endfor %}});
 
 //Create Model

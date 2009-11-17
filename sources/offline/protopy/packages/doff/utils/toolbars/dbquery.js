@@ -7,6 +7,7 @@ var DataBaseQuery = type('DataBaseQuery', Panel, {
         super(Panel, this).__init__('dbquery', 'Query Tool', 'Consultas sobre la base de datos');
         this.current_command_index = 0;
         this.command_history = [];
+        this.height = '30em';
         //Black magic, the first time init the db
         this.execute_sql = this.init_db;
         this.icon = sys.module_url('doff.utils', 'resources/dbquery.png');

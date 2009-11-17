@@ -2,8 +2,9 @@
 
 div#dbquery-output {
     background-color: #FFFFFF;
-    height: 70%;
+    height: 68%;
     overflow: auto;
+    width: 100%;
 }
 
 div#dbquery-output h3 {
@@ -42,6 +43,8 @@ div#dbquery-active textarea {
     border: 0;
     overflow: hidden;
     font-size: 15px;
+    width: 100%;
+    height: 13%;
 }
 </style>
 
@@ -49,6 +52,7 @@ div#dbquery-active textarea {
 
 <div id="dbquery-active">
     <textarea id="dbquery-sql" cols=110 rows=2 spellcheck=false></textarea>
-    <button id="dbquery-execute">Execute</button>
-    <button id="dbquery-clear">Clear</button>
+    <br>
+    <button class="doff-panel-button" id="dbquery-execute">Execute</button>
+    <button class="doff-panel-button" id="dbquery-clear">Clear</button>
 </div>
