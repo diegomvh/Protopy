@@ -151,6 +151,7 @@ var FileDescriptor = type('FileDescriptor', [ object ], {
 
 var FileField = type('FileField', [ Field ], {
     attr_class: FieldFile,
+    descriptor_class: FileDescriptor,
 
     __init__: function(verbose_name, name, upload_to, storage) {
         verbose_name = verbose_name || null;
@@ -158,8 +159,8 @@ var FileField = type('FileField', [ Field ], {
         upload_to = upload_to || '';
         storage = storage || null;
         var arg = new Arguments(arguments);
-        for each (var arg in ['primary_key', 'unique']) {
-            if (arg in arg.kwargs)
+        for each (var a in ['primary_key', 'unique']) {
+            if (a in arg.kwargs)
                 throw new TypeError("'%s' is not a valid argument for %s.".subs(arg, this.__class__));
         }
 
@@ -193,7 +194,7 @@ var FileField = type('FileField', [ Field ], {
     contribute_to_class: function(cls, name) {
         //TODO: Hacer los enlaces con los descriptores
         super(Field, this).contribute_to_class(cls, name)
-        setattr(cls, this.name, FileDescriptor(this))
+        setattr(cls, this.name, this.descriptor_class(this))
         signals.post_delete.connect(this.delete_file, sender=cls)
     }
 
@@ -270,6 +271,7 @@ var ImageFieldFile = type('ImageFieldFile', [ ImageFile, FieldFile ], {
 
 var ImageField = type('ImageField', [ FileField ], {
     attr_class: ImageFieldFile,
+    descriptor_class: ImageFileDescriptor,
 
     __init__: function(verbose_name=None, name=None, width_field=None, height_field=None, **kwargs):
         [ this.width_field, this.height_field ] = [ width_field, height_field ];
@@ -288,4 +290,4 @@ var ImageField = type('ImageField', [ FileField ], {
 publish({
     FileField: FileField,
     ImageField: ImageField,
-})
+});
