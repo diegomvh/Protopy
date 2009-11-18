@@ -1,4 +1,4 @@
-require('blog.post.models', 'Post', 'Tag');
+require('todo.post.models', 'Task', 'Tag');
 require('doff.utils.shortcuts', 'render_to_response');
 require('doff.template.context', 'RequestContext');
 

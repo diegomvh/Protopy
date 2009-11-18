@@ -91,12 +91,9 @@ INSTALLED_APPS = (
 
     # Ver si queda global y se instala con setuptools o 
     # si se copia dentro de la aplicación...
-    'offline',
-
-    # Aplicaciones de prueba
-    'demo',
+    'offline'
 )
 
 # Habría que ver como hacer que las URLs se añadan de manera automática
 # como en django-command-extensions
-OFFLINE_BASE = 'offline'
+OFFLINE_BASE = 'off'

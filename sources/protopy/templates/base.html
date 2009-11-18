@@ -1,61 +1,43 @@
-<html>
-<head>
-{% block head %}
-<link rel="stylesheet" href="{{ MEDIA_URL }}main.css" type="text/css" ></link>
-{% endblock %}
-</head>
-<body>
-<div id="wrap">
-
-    <div id="top"></div>
-
-    <div id="content">
-
-        <div class="header">
-            {% block header %}
-            <h1><a href="#">Protopy is in the House</a></h1>
-            <h2>...and doff too</h2>
-            {% endblock %}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html><head>
+  <title>Protopy JavaScript Library</title>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="{{ MEDIA_URL }}style/stormy_day.css" type="text/css">
+<style type="text/css">
+      div#category_box_wrapper {
+        display: none;
+      }
+      div#content-inner {
+        padding: 0 0 10px 0;
+      }
+    </style> </head><body>
+<div id="header">
+    <div id="header-inner">
+        <div id="protopylogo">
+            <h1 id="protopytext"><a href="http://www.protopy.com.ar/">Protopy</a></h1>
         </div>
-    
-        <div class="breadcrumbs">
-            {% block breadcrumbs %}
-            <a href="#">Inicio</a> tu estas aqui
-            {% endblock %}
-        </div>
-
-        <div class="middle">
-            {% block middle %}
-            {% if sin_tablas %}
-            <h2>El proyecto no esta instalado</h2>
-            <br />
-            {% endif %}
-            {% endblock %}
-        </div>
-
-        <div class="right">
-            {% block right %}
-            <h2>{{ pepe|yesno }}</h2>
-            <h2><a href="/">Inicio</a></h2>
-            <h2><a href="/doffline/list_templates/">Lista de Templates</a></h2>
-            <h2><a id='google' href="http://www.google.com">Google</a></h2>
-	    {% if not sin_tablas %}
-		<h2><a href="/add_tag/">Agregar Tag</a></h2>
-		<h2><a href="/add_post/">Agregar Post</a></h2>
-	    {% endif %}
-	    {% endblock %}
-        </div>
-
-        <div id="clear"></div>
-
     </div>
 </div>
 
-<div id="footer">
-    {% block footer %}
-    Design by <a href="http://www.minimalistic-design.net">Minimalistic Design</a>
-    {% endblock %}
-</div>
+<ul id="navbar">
+   <li><a href="http://dev.deluge-torrent.org/wiki/About">About</a></li>
+   <li><a href="http://dev.deluge-torrent.org/wiki/Download">Download</a></li>
+   <li><a href="http://forum.deluge-torrent.org/">Community</a></li>
+   <li><a href="http://dev.deluge-torrent.org/">Development</a></li>
+   <li><a href="http://dev.deluge-torrent.org/wiki/Faq">FAQ</a></li>
+   <li><a href="http://forum.deluge-torrent.org/">Documentación</a></li>
+   <li><a href="http://forum.deluge-torrent.org/">OnLine Demo</a></li>
+</ul>
 
+<div id="content">
+{% block content %}
+
+{% endblock %}
+</div>
+<div id="copyright-container">
+    <div id="copyright">
+        <br>2009<br> Template from <a href="http://lifecodeidiocy.enanocms.org/">Dan Fuhry</a><br> <br>
+    </div>
+</div>
 </body>
 </html>
