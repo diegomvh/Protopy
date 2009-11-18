@@ -16,13 +16,13 @@ from django.db.models.loading import cache
 */
 
 //TODO: ver el tipo file para gears
-var FieldFile = type('FieldFile', [ File ], {
+var FieldFile = type('FieldFile', [ object ], {
     __init__: function(instance, field, name) {
         this.instance = instance;
         this.field = field;
         this.storage = field.storage;
         this._name = name || '';
-        this._closed = false;
+        this._committed = true;
     },
 
     __eq__: function(other) {
@@ -31,6 +31,10 @@ var FieldFile = type('FieldFile', [ File ], {
         if (hasattr(other, 'name'))
             return this.name == other.name;
         return this.name == other;
+    },
+
+    __ne__: function(other) {
+        return !this.__eq__(other);
     },
 
     // The standard File contains most of the necessary properties, but
@@ -44,9 +48,13 @@ var FieldFile = type('FieldFile', [ File ], {
 
     get file() {
         this._require_file();
-        if (!hasattr(this, '_file'))
+        if (!hasattr(this, '_file') || this._file == null)
             this._file = this.storage.open(this.name, 'rb');
         return this._file;
+    },
+
+    set file(file) {
+        this._file = file;
     },
 
     get path() {
@@ -60,17 +68,17 @@ var FieldFile = type('FieldFile', [ File ], {
     },
 
     get size() {
-        this._require_file();
+        if (!this._committed)
+            return len(this.file);
         return this.storage.size(this.name);
     },
 
     open: function(mode) {
         mode = mode || 'rb';
         this._require_file();
-        return super(File, this).open(mode);
+        this.file.open(mode);
     // open() doesn't alter the file's contents, but it does reset the pointer
     },
-    open.alters_data = true
 
     // In addition to the standard File API, FieldFiles have extra methods
     // to further manipulate the underlying file, as well as update the

@@ -150,7 +150,7 @@ var Project = type('Project', object, {
         event.publish('pre_install', [this]);
         if (this.managed_store == null)
             this.create_store();
-
+        debugger;
         require('doff.db.utils','syncdb');
         syncdb();
         event.publish('post_install', [this]);

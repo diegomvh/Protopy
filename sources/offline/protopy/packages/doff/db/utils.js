@@ -1,6 +1,5 @@
 require('doff.db.base', 'connection');
 var models = require('doff.db.models.base');
-require('doff.db.transaction');
 require('doff.core.project', 'get_settings');
 
 function syncdb(callback) {
@@ -56,8 +55,6 @@ function syncdb(callback) {
         }
     }
 
-    transaction.commit_unless_managed();
-
     // The connection may have been closed by a syncdb handler.
     cursor = connection.cursor();
 
@@ -74,9 +71,6 @@ function syncdb(callback) {
                             cursor.execute(sql);
                     } catch (e) {
                         print("Failed to install custom SQL for %s.%s model: %s".subs(app_name, model._meta.object_name, e));
-                        transaction.rollback_unless_managed();
-                    } finally {
-                        transaction.commit_unless_managed();
                     }
                 }
             }
@@ -95,9 +89,6 @@ function syncdb(callback) {
                             cursor.execute(sql);
                     } catch (e) {
                         print("Failed to install index for %s.%s model: %s".subs(app_name, model._meta.object_name, e));
-                        transaction.rollback_unless_managed()
-                    } finally {
-                        transaction.commit_unless_managed();
                     }
                 }
             }
