@@ -11,6 +11,7 @@ database.Connection = type('Connection', [ object ], {
         this.detect_types = options['detect_types'];
         this.factory = options['factory'] || database.Cursor;
         this.connection = null;
+        this.transaction = false;
         this.open();
     },
 
@@ -35,7 +36,7 @@ database.Connection = type('Connection', [ object ], {
         }
     },
 
-    remove: function(){
+    remove: function() {
         try {
             this.connection.remove();
             this.connection = null;
@@ -44,19 +45,27 @@ database.Connection = type('Connection', [ object ], {
         }
     },
 
+    execute: function(query, params) {
+        try {
+            this.connection.execute(query, params);
+        }
+        catch(e) {
+            throw new Exception(e.message);
+        }
+    },
+    
     cursor: function() {
         var cur = new this.factory(this.connection);
         return cur;
     },
 
-    execute: function(query, params) {
-        try {
-            return this.connection.execute(query, params);
-        }
-        catch(ex) {
-            throw new Exception(ex.message || ex.description || String(ex));
-        }
+    commit: function() {
+    	this.connection.execute('COMMIT');
     },
+
+    rollback: function() {
+    	this.connection.execute('ROLLBACK');
+    }
 });
 
 database.Row = type('Row', [ object ], {
@@ -77,8 +86,8 @@ database.Row = type('Row', [ object ], {
 
 database.Cursor = type('Cursor', [ object ], {
     __init__: function(connection){
-            this.connection = connection;
-            this.lastResulSet = null;
+        this.connection = connection;
+        this.lastResulSet = null;
     },
 
     get lastrowid(){
@@ -89,7 +98,7 @@ database.Cursor = type('Cursor', [ object ], {
         return this.connection.rowsAffected;
     },
 
-    execute: function(query, params){
+    execute: function(query, params) {
         params = params || [];
         try {
             this.lastResulSet = this.connection.execute(query, params);

@@ -140,6 +140,7 @@ var DataBaseQuery = type('DataBaseQuery', Panel, {
     init_db: function(val) {
         require('doff.db.base', 'connection');
         connection.open();
+        //RAW CONNECTION
         this.db = connection.connection.connection;
         this.execute_sql = this.execute_and_print;
         return this.execute_sql(val);

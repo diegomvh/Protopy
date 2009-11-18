@@ -7,5 +7,5 @@ require('doff.db.models.model', 'Model');
 require('doff.db.models.aggregates', '*');
 require('doff.db.models.fields.base', '*');
 //var SubfieldBase = require('doff.db.models.fields.subclassing', ['SubfieldBase']);
-//var [FileField, ImageField] = require('doff.db.models.fields.files', ['FileField', 'ImageField']);
+//require('doff.db.models.fields.files', 'FileField', 'ImageField');
 require('doff.db.models.fields.related', '*');

@@ -11,6 +11,11 @@ var BaseDatabaseWrapper = type('BaseDatabaseWrapper', [ object ], {
         this.settings = settings;
     },
 
+    _begin: function() {
+        if (this.connection)
+            return this.connection.execute(this.ops.start_transaction_sql());
+    },
+    
     _commit: function() {
         if (this.connection)
             return this.connection.commit();
@@ -21,6 +26,9 @@ var BaseDatabaseWrapper = type('BaseDatabaseWrapper', [ object ], {
             return this.connection.rollback();
     },
 
+    _enter_transaction_management: function(managed) {},
+    _leave_transaction_management: function(managed) {},
+    
     open: function() {
         if (this.connection == null) {
             this._cursor(this.settings);
