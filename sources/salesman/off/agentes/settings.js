@@ -10,7 +10,7 @@
     DATABASE_NAME: 'agentes_sqlite.db',
     DATABASE_OPTIONS: {},
 
-    MEDIA_URL: '',
+    MEDIA_URL: '/static/',
 
     ROOT_URLCONF: 'agentes.urls',
 

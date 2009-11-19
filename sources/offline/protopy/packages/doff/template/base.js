@@ -486,7 +486,49 @@ var Library = type('Library', [ object ], {
             throw new InvalidTemplateLibrary("Unsupported arguments to Library.filter: (%s, %s)".subs(name, filter_func));
         }
     },
-
+    inclusion_tag: function(file_name, context_class, takes_context) {
+    	context_class = context_class || Context;
+    	function dec(func) {
+    		var params = func.toString().match(/^[\s\(]*function[^(]*\(([^\)]*)\)/)[1].replace(/\s+/g, '').split(',');
+            params = params.length == 1 && !params[0] ? [] : params;
+            
+            if (takes_context) {
+                if (params[0] == 'context')
+                    params = params.slice(1, -1);
+                else
+                    throw new TemplateSyntaxError("Any tag function decorated with takes_context=True must have a first argument of 'context'");
+            }
+            var InclusionNode = type('InclusionNode', [ Node ], {
+            	__init__: function(vars_to_resolve) {
+            		this.vars_to_resolve = vars_to_resolve.map(function(v) { return new Variable(v); });
+            	},
+            	render: function(context) {
+                    var resolved_vars = [v.resolve(context) for each (v in this.vars_to_resolve)];
+                    if (takes_context)
+                        var args = [context].concat(resolved_vars);
+                    else
+                        var args = resolved_vars;
+                    var dict = func.apply(this, args);
+                    
+                    if (!hasattr(this, 'nodelist')) {
+                        require('doff.template.loader', 'get_template', 'select_template');
+                        if (!isinstance(file_name, String) && is_iterable(file_name))
+                            var t = select_template(file_name);
+                        else
+                            var t = get_template(file_name);
+                        this.nodelist = t.nodelist;
+                    }
+                    return this.nodelist.render(new context_class(dict, context.autoescape));
+                }
+            });
+            var compile_func = curry(generic_tag_compiler, params, func.name, InclusionNode);
+            this.tag(func.name, compile_func);
+            return func;
+    	}
+    	var self = this;
+        return function() { return dec.apply(self, arguments); };
+    },
+    
     simple_tag: function(func) {
         var params = func.toString().match(/^[\s\(]*function[^(]*\(([^\)]*)\)/)[1].replace(/\s+/g, '').split(',');
         params = params.length == 1 && !params[0] ? [] : params;
