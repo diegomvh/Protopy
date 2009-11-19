@@ -1,0 +1,8 @@
+<h1>Cat&aacute;logo</h1>
+<div class="left-box">
+	<ul class="sidemenu">
+		{% for categoria in categorias %}
+		<li><a href="/catalogo/categoria/{{ categoria.id }}/">{{categoria.nombre}}</a></li>
+		{% endfor %}
+	</ul>	
+</div>

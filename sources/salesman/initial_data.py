@@ -2,7 +2,6 @@
 
 def prepopulate_models():
     from salesman.apps.core import models
-    (arg, _) = models.Pais.objects.get_or_create(nombre = 'Argentina')
     provincias = ("Buenos Aires",
             "Córdoba",
             "Santa Fe",
@@ -27,4 +26,4 @@ def prepopulate_models():
             "Santa Cruz",
             "Tierra del Fuego",
         )
-    map(lambda n: arg.provincia_set.get_or_create(nombre = n), provincias)
+    map(lambda n: models.Provincia(nombre = n).save(), provincias)

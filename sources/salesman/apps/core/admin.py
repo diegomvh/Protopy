@@ -1,7 +1,6 @@
 from django.contrib import admin
 from salesman.apps.core.models import *
 
-admin.site.register(Pais)
 admin.site.register(Provincia)
 admin.site.register(Ciudad)
 admin.site.register(Vendedor)

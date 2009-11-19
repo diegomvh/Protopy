@@ -22,8 +22,9 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     (r'^admin/', include(admin.site.urls)),
-    (r'^/?$', 'django.views.generic.simple.direct_to_template', {'template': 'index.html'} ),
-    (r'^core/', include('salesman.apps.core.urls') ),
+    (r'^/?$', 'django.views.generic.simple.direct_to_template', {'template': 'orig-index.html'} ),
+    (r'^catalogo/categoria/(?P<categoria>\d+)/$', 'salesman.apps.core.views.productos_por_categoria'),
+    (r'^core/', include('salesman.apps.core.urls')),
     (r'^ventas/', include('salesman.apps.ventas.urls')),
     (r'^%s/(.*)' % agentes_site.urlregex, agentes_site.root ),
     (r'^databrowse/(.*)', databrowse.site.root),
@@ -31,7 +32,7 @@ urlpatterns = patterns('',
 
 # static media
 urlpatterns += patterns('django.views.static',
-    (r'^%s/(?P<path>.*)$' % settings.MEDIA_URL[1:], 
+    (r'^%s/(?P<path>.*)$' % settings.MEDIA_URL[1:-1], 
             'serve', {'document_root': settings.MEDIA_ROOT,
                       'show_indexes': True, }),
 )
