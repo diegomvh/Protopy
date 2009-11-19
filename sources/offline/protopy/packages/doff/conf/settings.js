@@ -45,8 +45,8 @@ publish({
 
         MIDDLEWARE_CLASSES: [
             'doff.middleware.common.CommonMiddleware',
+            'doff.contrib.sessions.middleware.SessionMiddleware',
             'doff.contrib.auth.middleware.AuthenticationMiddleware',
-            //'doff.contrib.sessions.middleware.SessionMiddleware',
         ],
 
         //The tablespaces to use for each model when not specified otherwise.

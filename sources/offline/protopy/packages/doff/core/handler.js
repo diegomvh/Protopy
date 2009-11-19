@@ -48,7 +48,7 @@ var LocalHandler = type('LocalHandler', [ object ], {
             if (hasattr(mw_instance, 'process_view'))
                 this._view_middleware.push(mw_instance.process_view);
             if (hasattr(mw_instance, 'process_response'))
-                this._response_middleware.shift(mw_instance.process_response);
+                this._response_middleware.unshift(mw_instance.process_response);
             if (hasattr(mw_instance, 'process_exception'))
                 this._exception_middleware.shift(mw_instance.process_exception);
         }

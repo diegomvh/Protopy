@@ -6,35 +6,6 @@ var absolute_http_url_re = RegExp("^https?://", 'i');
 
 var Http404 = type('Http404', Exception);
 
-//Parsers para armar el request
-function parse_uri(str) {
-    var options = {
-        strictMode: false,
-        key: ["source","protocol","authority","userInfo","user","password","host","port","relative","path","directory","file","query","anchor"],
-        q: {
-            name: "queryKey",
-            parser: /(?:^|&)([^&=]*)=?([^&]*)/g
-        },
-        parser: {
-            strict: /^(?:([^:\/?#]+):)?(?:\/\/((?:(([^:@]*):?([^:@]*))?@)?([^:\/?#]*)(?::(\d*))?))?((((?:[^?#\/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/,
-            loose:  /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*):?([^:@]*))?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/
-        }
-    }
-    var m   = options.parser[options.strictMode ? "strict" : "loose"].exec(str),
-        uri = {},
-        i   = 14;
-
-    while (i--) 
-        uri[options.key[i]] = m[i] || "";
-
-    uri[options.q.name] = {};
-    uri[options.key[12]].replace(options.q.parser, function ($0, $1, $2) {
-        if ($1) 
-            uri[options.q.name][$1] = $2;
-    });
-    return uri;
-};
-
 /*A basic HTTP request.*/
 var HttpRequest = type ('HttpRequest', [ object ], {
 
@@ -190,6 +161,7 @@ var HttpResponse = type('HttpResponse', object, {
     },
 
     set_cookie: function( key, value, max_age, expires, path, domain, secure ) {
+    	debugger;
         var cookie_string = key + "=" + escape ( value );
         if ( max_age )
             cookie_string += "; max_age=" + max_age.toGMTString();
