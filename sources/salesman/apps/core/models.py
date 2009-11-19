@@ -80,7 +80,7 @@ class Categoria(models.Model):
     
 class Producto(models.Model):
     nombre = models.CharField(max_length = 50)
-    #imagen = models.ImageField(upload_to='productos', null = True, blank = True)
+    imagen = models.ImageField(upload_to='productos', null = True, blank = True)
     descripcion = models.TextField()
     categoria = models.ForeignKey(Categoria)
     precio_uniatario = models.DecimalField(default = 0.0, max_digits = 10, decimal_places = 3)

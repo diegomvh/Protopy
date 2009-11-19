@@ -266,17 +266,36 @@ class RemoteReadOnlySerializer(PythonSerializer):
 
     def start_object(self, obj):
         self._current = {
-            "server_pk"     : smart_unicode(obj._get_pk_val(), strings_only=True),
             "value"         : smart_unicode(unicode(obj), strings_only=True),
         }
 
     def end_object(self, obj):
-        self.objects.append({
-            "model"  : smart_unicode(obj._meta),
-            "fields" : self._current
-        })
+        is_sync_data = isinstance(obj, SyncData)
+        if is_sync_data:
+            real_class = obj.content_type.model_class()
+            self.objects.append({
+            "model"         : smart_unicode(real_class._meta),
+            "server_pk"     : smart_unicode(obj._meta.get_field('object_id').to_python(obj.object_id), strings_only=True),
+            "active"        : smart_unicode(obj.active, strings_only=True),
+            "fields"        : self._current
+            })
+        else:
+            self.objects.append({
+                "model"         : smart_unicode(obj._meta),
+                "server_pk"     : smart_unicode(obj._get_pk_val(), strings_only=True),
+                "active"        : smart_unicode(obj.active, strings_only=True),
+                "fields"        : self._current
+            })
         self._current = None
 
+    def handle_field(self, obj, field):
+        pass
+    
+    def handle_fk_field(self, obj, field):
+        pass
+    
+    def handle_m2m_field(self, obj, field):
+        pass
 
 class RemoteReadOnlyManager(RemoteManagerBase):
     def __init__(self):

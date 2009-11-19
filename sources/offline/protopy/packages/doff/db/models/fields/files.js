@@ -2,7 +2,6 @@
 import os
 
 from django.conf import settings
-from django.db.models.fields import Field
 from django.core.files.base import File, ContentFile
 from django.core.files.storage import default_storage
 from django.core.files.images import ImageFile, get_image_dimensions
@@ -11,11 +10,14 @@ from django.utils.functional import curry
 from django.db.models import signals
 from django.utils.encoding import force_unicode, smart_str
 from django.utils.translation import ugettext_lazy, ugettext as _
-from django import forms
 from django.db.models.loading import cache
 */
+require('event');
+require('doff.db.models.fields.base', 'Field');
+var forms = require('doff.forms.base');
 
-//TODO: ver el tipo file para gears
+var default_storage = {};
+
 var FieldFile = type('FieldFile', [ object ], {
     __init__: function(instance, field, name) {
         this.instance = instance;
@@ -97,7 +99,6 @@ var FieldFile = type('FieldFile', [ object ], {
         if (save)
             this.instance.save();
     },
-    save.alters_data = true
 
     delete: function(save) {
         save = save || true;
@@ -119,7 +120,6 @@ var FieldFile = type('FieldFile', [ object ], {
         if (save)
             this.instance.save();
     },
-    delete.alters_data = true
 
     __getstate__: function() {
         // FieldFile needs access to its associated model field and an instance
@@ -136,24 +136,22 @@ var FileDescriptor = type('FileDescriptor', [ object ], {
     },
 
     __get__: function(instance, owner) {
-            //TODO: hacer los enlaces que correspondan
         if (isundefined(instance))
             throw new AttributeError("%s can only be accessed from %s instances.".subs(this.field.name(this.owner.__name__)));
-        var file = instance.__dict__[this.field.name];
+        var file = instance[this.field.name];
         if (!isinstance(file, FieldFile)) {
             // Create a new instance of FieldFile, based on a given file name
-            instance.__dict__[this.field.name] = this.field.attr_class(instance, this.field, file);
+            instance[this.field.name] = this.field.attr_class(instance, this.field, file);
         } else if (!hasattr(file, 'field'))
             // The FieldFile was pickled, so some attributes need to be reset.
             file.instance = instance;
             file.field = this.field;
             file.storage = this.field.storage;
-        return instance.__dict__[this.field.name];
+        return instance[this.field.name];
     },
 
     __set__: function(instance, value) {
-        //TODO: hacer los enlaces que correspondan
-        instance.__dict__[this.field.name] = value;
+        instance[this.field.name] = value;
     }
 });
 
@@ -162,23 +160,20 @@ var FileField = type('FileField', [ Field ], {
     descriptor_class: FileDescriptor,
 
     __init__: function(verbose_name, name, upload_to, storage) {
-        verbose_name = verbose_name || null;
-        name = name || null;
-        upload_to = upload_to || '';
-        storage = storage || null;
-        var arg = new Arguments(arguments);
+		var arg = new Arguments(arguments, {'verbose_name': null, 'name':null, 'upload_to':'', 'storage':null});
+		var kwargs = arg.kwargs;
         for each (var a in ['primary_key', 'unique']) {
             if (a in arg.kwargs)
                 throw new TypeError("'%s' is not a valid argument for %s.".subs(arg, this.__class__));
         }
 
-        this.storage = storage || default_storage;
-        this.upload_to = upload_to;
+        this.storage = kwargs['storage'] || default_storage;
+        this.upload_to = kwargs['upload_to'];
         if (callable(upload_to))
             this.generate_filename = upload_to;
 
         arg.kwargs['max_length'] = arg.kwargs['max_length'] || 100;
-        super(Field, this).__init__(verbose_name, name, arg.kwargs);
+        super(Field, this).__init__(arg);
     },
 
     get_internal_type: function() {
@@ -194,17 +189,18 @@ var FileField = type('FileField', [ Field ], {
     get_db_prep_value: function(value) {
         /* Returns field's value prepared for saving into a database.*/
         // Need to convert File objects provided via a form to unicode for database insertion
-        if (isundefined(value) || value is null)
+        if (isundefined(value) || value == null)
             return null;
         return string(value);
     },
     
     contribute_to_class: function(cls, name) {
-        //TODO: Hacer los enlaces con los descriptores
-        super(Field, this).contribute_to_class(cls, name)
-        setattr(cls, this.name, this.descriptor_class(this))
-        signals.post_delete.connect(this.delete_file, sender=cls)
-    }
+        super(Field, this).contribute_to_class(cls, name);
+        var fd = new this.descriptor_class(this);
+        cls.prototype.__defineGetter__(this.name, function(){ return fd.__get__(this, this.constructor); });
+        cls.prototype.__defineSetter__(this.name, function(value){ return fd.__set__(this, this.constructor, value); });
+        event.subscribe('post_delete', this.delete_file);
+    },
 
     delete_file: function(instance, sender) {
         var arg = new Arguments(arguments);
@@ -213,7 +209,9 @@ var FileField = type('FileField', [ Field ], {
         // and it's not the default value for future objects,
         // delete it from the backend.
         //TODO: no se puede filtar asi, hay que armar el objeto
-        if (file && file.name != this.default && !sender._default_manager.filter({this.name: file.name})
+        var filter = {};
+        filter[this.name] = file.name;
+        if (file && file.name != this.default && !sender._default_manager.filter(filter))
             file.delete(false);
         else if (file)
             // Otherwise, just close the file, so it doesn't tie up resources.
@@ -222,7 +220,7 @@ var FileField = type('FileField', [ Field ], {
     
     get_directory_name: function() {
         return os.path.normpath(force_unicode(datetime.datetime.now().strftime(smart_str(this.upload_to))));
-    }
+    },
 
     get_filename: function(filename) {
         return os.path.normpath(this.storage.get_valid_name(os.path.basename(filename)));
@@ -249,31 +247,27 @@ var FileField = type('FileField', [ Field ], {
         if ('initial' in kwargs)
             defaults['required'] = false;
         extend(defaults, kwargs);
-	return super(Field, this).formfield(defaults);
+        return super(Field, this).formfield(defaults);
     }
 });
 
-var ImageFieldFile = type('ImageFieldFile', [ ImageFile, FieldFile ], {
-    save: function(name, content, save) {
-        save = save || true;
-        // Repopulate the image dimension cache.
-        this._dimensions_cache = get_image_dimensions(content);
+var ImageFileDescriptor = type('ImageFileDescriptor' ,[ FileDescriptor ], {
+    __set__: function(instance, value) {
+        var previous_file = instance[this.field.name];
+        super(FileDescriptor, this).__set__(instance, value);
 
-        // Update width/height fields, if needed
-        if (this.field.width_field)
-            setattr(this.instance, this.field.width_field, this.width);
-        if (this.field.height_field)
-            setattr(this.instance, this.field.height_field, this.height);
+        if (!isundefined(previous_file) && previous_file != null)
+            this.field.update_dimension_fields(instance, true);
+	}
+});
 
-        super(FieldFile, this).save(name, content, save);
-    }
-
+var ImageFieldFile = type('ImageFieldFile', [ FieldFile ], {
     delete: function(save) {
         // Clear the image dimensions cache
         save = save || true;
         if (hasattr(this, '_dimensions_cache'))
             delete this._dimensions_cache;
-        super(ImageFieldFile, this).delete(save);
+        super(FieldFile, this).delete(save);
     }
 });
 
@@ -281,21 +275,31 @@ var ImageField = type('ImageField', [ FileField ], {
     attr_class: ImageFieldFile,
     descriptor_class: ImageFileDescriptor,
 
-    __init__: function(verbose_name=None, name=None, width_field=None, height_field=None, **kwargs):
-        [ this.width_field, this.height_field ] = [ width_field, height_field ];
-        FileField.__init__(verbose_name, name, **kwargs);
+    __init__: function(verbose_name, name, width_field, height_field) {
+		var arg = new Arguments(arguments, {'verbose_name': null, 'name':null, 'width_field':null, 'height_field':null});
+		var kwargs = arg.kwargs;
+		this.width_field = kwargs['width_field'];
+		this.height_field = kwargs['height_field'];
+        super(FileField, this).__init__(verbose_name, name);
+    },
+    
+    contribute_to_class: function(cls, name) {
+    	event.subscribe('post_init', this.update_dimension_fields);
+        super(FileField, this).contribute_to_class(cls, name);
     },
 
+    update_dimension_fields: function(instance) {},
+    
     formfield: function() {
         var arg = new Arguments(arguments);
         var kwargs = arg.kwargs;
         var defaults = {'form_class': forms.ImageField};
         extend(defaults, kwargs);
-        return super(ImageField, this).formfield(defaults);
+        return super(FileField, this).formfield(defaults);
     }
 });
 
 publish({
     FileField: FileField,
-    ImageField: ImageField,
+    ImageField: ImageField
 });

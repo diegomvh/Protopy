@@ -1044,7 +1044,7 @@ var BaseQuery = type('BaseQuery', [ object ], {
 
         // Create a new alias for this table.
         if (current) {
-            alias = '%s%s'.subs(this.alias_prefix, new String(this.alias_map.length + 1));
+            alias = '%s%s'.subs(this.alias_prefix, string(len(this.alias_map) + 1));
             current.push(alias);
         } else {
             // The first occurence of a table uses the table name directly.

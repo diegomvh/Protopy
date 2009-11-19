@@ -546,7 +546,32 @@ var DateTimeField = type('DateTimeField', [ DateField ], {
             return value;
         if (isinstance(value, Date))
             return value;
-        return new Date(value);
+        if (isinstance(value, Number))
+        	return new Date(value);
+        if (isinstance(value, String)) {
+	        var matches;
+	        if(matches = value.match(/^(?:(\d\d\d\d)-(\d\d)(?:-(\d\d)(?:T| (\d\d)(?::(\d\d)(?::(\d\d)(?:\.(\d+))?)?)?)?)?)$/)){
+	        	value = new Date();
+	            if (matches[1])
+	            	value.setUTCFullYear(Number(matches[1]));
+	            if (matches[2])
+	            	value.setUTCMonth(Number(matches[2]) - 1);
+	            if (matches[3])
+	            	value.setUTCDate(Number(matches[3]));
+	            if (matches[4])
+	            	value.setUTCHours(Number(matches[4]));
+	            if (matches[5])
+	            	value.setUTCMinutes(Number(matches[5]));
+	            if (matches[6])
+	            	value.setUTCSeconds(Number(matches[6]));
+	        } else if (matches = value.match(/^@(\d+)@$/)) {
+	        	value = new Date(Number(matches[1]));
+	        } else if (matches = value.match(/^\/Date\((\d+)\)\/$/)) {
+	        	value = new Date(Number(matches[1]));
+	        }
+	        return value;
+        }
+        throw new Exception('Implementame DateTimeField para %s'.subs(value));
     },
 
     get_db_prep_value: function(value) {

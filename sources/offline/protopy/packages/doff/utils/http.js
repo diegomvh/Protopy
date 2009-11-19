@@ -161,10 +161,9 @@ var HttpResponse = type('HttpResponse', object, {
     },
 
     set_cookie: function( key, value, max_age, expires, path, domain, secure ) {
-    	debugger;
         var cookie_string = key + "=" + escape ( value );
         if ( max_age )
-            cookie_string += "; max_age=" + max_age.toGMTString();
+            cookie_string += "; max-age=" + max_age;
         if ( expires )
             cookie_string += "; expires=" + expires.toGMTString();
         if ( path )

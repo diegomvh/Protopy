@@ -74,6 +74,7 @@ var SyncHandler = type('SyncHandler', [ object ], {
         var first = SyncLog.objects.count() == 0;
         var [ received, sync_log_data ] = this.pull();
         if (bool(received)) {
+        	debugger;
             var sync_log = new SyncLog(sync_log_data);
             sync_log.save();
             this.save_recived(received, sync_log);

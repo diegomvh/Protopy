@@ -23,11 +23,9 @@ Lastest Approach:
 '''
 
 from django.utils.datastructures import SortedDict
-from pprint import pformat
 import sys
-from django.conf import settings
-from django.db.models import AutoField, ForeignKey, ManyToManyField
-from inspect import isclass, ismodule
+from django.db.models import AutoField, ForeignKey
+from inspect import isclass
 
 python_version = map(int, sys.version.split(' ')[0].split('.'))
 

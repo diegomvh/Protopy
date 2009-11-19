@@ -6,7 +6,7 @@ from django.utils.datastructures import SortedDict
 from simplejson.encoder import JSONEncoder
 from django.utils.functional import Promise
 from django.utils.encoding import force_unicode
-from django.db.models.fields.related import ManyToManyRel, ManyToManyField
+from django.db.models.fields.related import ManyToManyRel
 
 register = template.Library()
 
@@ -61,7 +61,7 @@ class LazyEncoder(JSONEncoder):
         else:
             return super(LazyEncoder, self).default(o)
 
-SKIP_KEYS = ('name', 'rel', 'verbose_name', 'db_index')
+SKIP_KEYS = ('name', 'rel', 'verbose_name', 'db_index', 'storage')
 
 @register.simple_tag
 def get_model_definition(app_name, model_name, init_args):

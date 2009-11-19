@@ -68,9 +68,10 @@ var parse = function (value, sanitize) {
     value = value.replace(/^\/\*-secure-([\s\S]*)\*\/\s*$/, "$1");
     try {
         if(!sanitize || value.isJSON())
-            data = eval('(' + value + ')');
-            if (date.decode)
+            var data = eval('(' + value + ')');
+            /*if (date.decode)
                 data = decode_dates(data);
+            */
             return data;
     } catch(e){ 
         throw new SyntaxError('Badly formed JSON string: ' + value + " ... " + (e ? e.message : '')); 
