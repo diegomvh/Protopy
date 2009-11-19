@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block main %}
+{% for categoria in categorias %}
+<a name="{{categoria}}"></a>
+<h1>{{categoria}}</h1>
+	{% for producto in categoria.producto_set.all %}
+		<p>
+			<a href="/producto/">
+				<img src="{{MEDIA_URL}}{{producto.imagen}}" alt="{{producto}}" class="float-left" />
+				<h3>{{producto}}</h3>
+			</a>
+			{{producto.descripcion}}
+			<h4>U$S {{producto.precio_uniatario}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="blue">(iva incluído)</span></h4>
+		</p>
+		<p class="comments align-right clear">
+			<a href="index.html">Comprar</a> : 
+			<a href="index.html">Preguntas</a> : 
+			<a href="index.html">Detalles</a>
+		</p>
+	{% endfor %}
+{% endfor %}
+{% endblock %}

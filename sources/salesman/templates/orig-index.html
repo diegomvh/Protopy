@@ -21,8 +21,8 @@
 			<span id="slogan"> your site slogan here...</span>
 			
 			<!-- tabs -->
-			<ul id="tabs" >
-				<li><a href="/"><span>Inicio</span></a></li>
+			<ul>
+				<li id="current"><a href="index.html"><span>Home</span></a></li>
 				<li><a href="index.html"><span>Archives</span></a></li>
 				<li><a href="index.html"><span>Downloads</span></a></li>
 				<li><a href="index.html"><span>Services</span></a></li>
@@ -79,8 +79,84 @@
 		
 							
 		<div id="main">				
-			{% block main %}
-			{% endblock %}							
+			
+			<a name="TemplateInfo"></a>
+			<h1>Template Info</h1>
+				
+			<p><strong>Underground 1.1</strong> is a free, W3C-compliant, CSS-based website template 
+			by <strong><a href="http://www.styleshout.com/">styleshout.com</a></strong>. This work is 
+			distributed under the <a rel="license" href="http://creativecommons.org/licenses/by/2.5/">
+			Creative Commons Attribution 2.5  License</a>, which means that you are free to 
+			use and modify it for any purpose. All I ask is that you include a link back to  
+			<a href="http://www.styleshout.com/">my website</a> in your credits.</p>  
+
+			<p>For more free designs, you can visit 
+			<a href="http://www.styleshout.com/">my website</a> to see 
+			my other works.</p>
+		
+			<p>Good luck and I hope you find my free templates useful!</p>
+						
+			<p class="comments align-right clear">
+				<a href="index.html">Read more</a> : 
+				<a href="index.html">comments(3)</a> : 
+				10.18.06
+			</p>
+			
+			<a name="SampleTags"></a>
+			<h1>Sample Tags</h1>
+				
+			<h3>Code</h3>				
+			<p>
+			<code>
+			code-sample { <br />
+			font-weight: bold;<br />
+			font-style: italic;<br />				
+			}
+			</code></p>	
+				
+			<h3>Example Lists</h3>
+				
+			<ol>
+				<li>example of</li>
+				<li>ordered list</li>								
+			</ol>	
+							
+			<ul>
+				<li>example of</li>
+				<li>unordered list</li>								
+			</ul>				
+				
+			<h3>Blockquote</h3>			
+			<blockquote><p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy 
+			nibh euismod tincidunt ut laoreet dolore magna aliquam erat....</p></blockquote>
+				
+			<h3>Image and text</h3>
+			<p><a href="http://getfirefox.com/"><img src="images/firefox-gray.jpg" width="100" height="120" alt="firefox" class="float-left" /></a>
+			Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec libero. Suspendisse bibendum. 
+			Cras id urna. Morbi tincidunt, orci ac convallis aliquam, lectus turpis varius lorem, eu 
+			posuere nunc justo tempus leo. Donec mattis, purus nec placerat bibendum, dui pede condimentum 
+			odio, ac blandit ante orci ut diam. Cras fringilla magna. Phasellus suscipit, leo a pharetra 
+			condimentum, lorem tellus eleifend magna, eget fringilla velit magna id neque. Curabitur vel urna. 
+			In tristique orci porttitor ipsum. Aliquam ornare diam iaculis nibh. Proin luctus, velit pulvinar 
+			ullamcorper nonummy, mauris enim eleifend urna, congue egestas elit lectus eu est. 				
+			</p>
+								
+			<h3>Example Form</h3>
+			
+			<form action="#">		
+				<p>
+				<label>Name</label>
+				<input name="dname" value="Your Name" type="text" size="30" />
+				<label>Email</label>
+				<input name="demail" value="Your Email" type="text" size="30" />
+				<label>Your Comments</label>
+				<textarea rows="5" cols="5"></textarea>
+				<br />	
+				<input class="button" type="submit" />		
+				</p>		
+			</form>				
+			<br />					
+											
 		</div>			
 		
 <!-- wrap ends here -->
@@ -100,14 +176,7 @@
 		<a href="index.html">RSS Feed</a>				
 		</p>
 		
-</div>
+</div>	
+	
 </body>
-<script type="text/javascript">
-	require('sys');
-	var items = $('tabs').childNodes;
-	var href = sys.window.location.href;
-	for each (var item in items)
-		if(item.firstChild && item.firstChild.nodeName == "A" && href.startswith(item.firstChild.href))
-			item.addClassName("current");
-</script>
 </html>

@@ -5,25 +5,10 @@ Modelo de prueba
 from django.db import models
 
 # Some useful things
-
 mod_name = __name__.split('.')[-2]
 abs_url = lambda inst: '/%s' % '/'.join( [mod_name, inst._meta.module_name, str(inst.id)])
 
-class Pais(models.Model):
-    nombre = models.CharField(max_length = 45)
-    simbolo_moneda = models.CharField(max_length = 8, default = '$')
-    
-    def __unicode__(self):
-        return self.nombre
-    
-    class Meta:
-        verbose_name = u"País"
-        verbose_name_plural = u"Paises"
-    
-    get_absolute_url = abs_url
-
 class Provincia(models.Model):
-    pais = models.ForeignKey(Pais)
     nombre = models.CharField(max_length = 140)
     
     def __unicode__(self):
@@ -57,9 +42,6 @@ class Vendedor(models.Model):
         return u','.join((self.nombre, self.apellido))
         
 class Cliente(models.Model):
-    '''
-    El cliente
-    '''
     razon_social = models.CharField(max_length = 50)
     direccion = models.TextField()
     ciudad = models.ForeignKey(Ciudad)
@@ -71,9 +53,6 @@ class Cliente(models.Model):
         return u'%s, %s' % (self.razon_social, self.ciudad)
     
 class Proveedor(models.Model):
-    '''
-    El proveedor
-    '''
     razon_social = models.CharField(max_length = 50)
     direccion = models.CharField(max_length = 200)
     correo = models.EmailField()
@@ -87,10 +66,7 @@ class Proveedor(models.Model):
         return self.razon_social
 
 class Categoria(models.Model):
-    '''
-    Cada producto tiene una categoria
-    '''
-    nombre = models.CharField(max_length = 50)
+    nombre = models.CharField(max_length = 50, unique = True)
     super = models.ForeignKey('self', null = True, blank = True)
     
     get_absolute_url = abs_url
@@ -100,16 +76,13 @@ class Categoria(models.Model):
         verbose_name_plural = "Categorias"
 
     def __unicode__(self):
-        return self.nombre
+        return self.super and "%s - %s " % (unicode(self.super), self.nombre) or self.nombre
     
 class Producto(models.Model):
-    '''
-    Un producto es provisto por un proveedor o mas de un proveedor
-    '''
     nombre = models.CharField(max_length = 50)
-    #imagen = models.ImageField(upload_to='productos')
-    descripcion = models.CharField(max_length = 500)
-    categoria = models.ForeignKey(Categoria, blank = True, null = True)
+    imagen = models.ImageField(upload_to='productos', null = True, blank = True)
+    descripcion = models.TextField()
+    categoria = models.ForeignKey(Categoria)
     precio_uniatario = models.DecimalField(default = 0.0, max_digits = 10, decimal_places = 3)
     
     get_absolute_url = abs_url
