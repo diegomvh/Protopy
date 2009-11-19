@@ -452,9 +452,10 @@ se instala por defecto en ``settings.js`` con la ejecución del comando ``start_
 
 Dentro del modulo ``doff.contrib.offline.handler`` se creó la clase ``SyncHandler``
 con los métodos ``pull()`` y ``push()`` que hacen las llamadas a las funciones homónimas
-publicadas en ``/sync`` del sitio remoto.
+publicadas en ``/sync`` del sitio remoto y un método llamado ``update()`` encargado
+de realizar la tarea de sincronización.
  
-.. figure:: ../_dot/sync.pdf
+.. figure:: ../_dot/sync.png
     
     Entidades intervinientes en la sincronización
  
