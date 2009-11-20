@@ -20,7 +20,6 @@ Sistemas Web Desconectados
     capitulos/sync
     capitulos/demo
     capitulos/conclusiones
-    herramientas
     glosario
     
 

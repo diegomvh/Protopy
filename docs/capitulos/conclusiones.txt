@@ -9,10 +9,14 @@ Conclusiones
 ************
 
 Durante el desarrollo de la presente tesina se realizó un análisis sobre las
-tecnologías disponibles para el desarrollo de aplicaciones web destacando
+tecnologías disponibles para el desarrollo de aplicaciones web destacandas
 el aporte de los frameworks orientados a aplicaciones de contenidos, como Ruby On Rails o 
-Django. Gracias a estar implementados en lenguajes de alto nivel y minimizando
-la cantidad de capas, facilitan la tarea de extensión.
+Django. Los lenguajes dinámicos de alto nivel, a pesar de el overhead que introducen,
+facilitan la creación de frameworks simples, como es el caso de Django.
+
+Si bien no se trató en la presente tesina, los navegadores web comienzan a daoptar
+las especificaciones de HTML5. Mediante este estándard las aplicaciones web 
+comenzaran a cerrar la breacha con las aplicaciones de escritorio.
 
    
 
