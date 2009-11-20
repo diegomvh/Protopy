@@ -4,10 +4,6 @@ Datatypes
 import sys as _sys
 from operator import itemgetter as _itemgetter
 from keyword import iskeyword as _iskeyword
-try:
-    import decimal
-except ImportError:
-    from django.utils import _decimal as decimal    # Python 2.3 fallback
 
 #===============================================================================
 # Python <2.6 support code

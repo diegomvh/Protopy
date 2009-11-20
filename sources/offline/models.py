@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
-from django.utils.datastructures import SortedDict
-from simplejson import loads, dumps
+from simplejson import dumps
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.conf import settings

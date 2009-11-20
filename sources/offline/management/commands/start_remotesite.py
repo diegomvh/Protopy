@@ -1,12 +1,10 @@
 from django.template import Template
 from django.template.context import Context
-from offline.management.commands import  OfflineLabelCommand
+from offline.management.commands import OfflineLabelCommand
 import shutil
-import sys
-from os.path import exists, join, abspath, dirname, basename
-from os import getcwd, mkdir, sep
+from os.path import exists, join, abspath, dirname
+from os import getcwd, mkdir
 from django.core.management.base import CommandError
-from glob import glob
 import offline
 
 class Command(OfflineLabelCommand):

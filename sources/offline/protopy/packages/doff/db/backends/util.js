@@ -24,8 +24,7 @@ var truncate_name = function(name, length) {
  * Formats a number into a string with the requisite number of digits and decimal places.
  */
 var format_number = function(value, max_digits, decimal_places) {
-    //TODO: format del numero
-    return value;
+    return value.toFixed(decimal_places);
 };
 
 publish({    

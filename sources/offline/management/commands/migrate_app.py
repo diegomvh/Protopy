@@ -12,16 +12,11 @@
 
 
 """
-from os.path import dirname, abspath, exists, join
-from django.db.models.loading import get_app
-from django.template import Template
-from django.template.context import Context
+from os.path import dirname, join
 from offline.management.commands import OfflineBaseCommand
 from django.core.exceptions import ImproperlyConfigured
-import os, glob, shutil
-from os.path import basename
-import sys
-from django.core.management.base import BaseCommand, make_option, CommandError
+import os, shutil
+from django.core.management.base import CommandError
 from django.db import models
 
 import offline

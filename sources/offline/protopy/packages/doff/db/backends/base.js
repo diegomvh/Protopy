@@ -2,6 +2,8 @@
 /*
  * Represents a database connection.
  */
+require('doff.db.backends.util');
+
 var BaseDatabaseWrapper = type('BaseDatabaseWrapper', [ object ], {
 
     ops: null,
@@ -125,7 +127,6 @@ var BaseDatabaseOperations = type('BaseDatabaseOperations', [ object ], {
     value_to_db_decimal: function(value, max_digits, decimal_places) {
         if (!value)
             return null;
-        //TODO: pasar a decimal,
         return util.format_number(value, max_digits, decimal_places);
     },
     year_lookup_bounds: function(value) {

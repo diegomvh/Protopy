@@ -2,8 +2,7 @@
 Lists the registered remotes on the project
 '''
 
-from os.path import exists, abspath, dirname, join, isdir
-from os import listdir
+from os.path import isdir
 from offline.management.commands import OfflineBaseCommand
 from offline.sites import REMOTE_SITES
 

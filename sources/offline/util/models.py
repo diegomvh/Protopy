@@ -2,7 +2,6 @@
 Models
 '''
 from django.utils.datastructures import SortedDict
-from copy import copy
 
 #def itemodule(mod, skip_underunder = True):
 #    '''

@@ -135,23 +135,28 @@ var FileDescriptor = type('FileDescriptor', [ object ], {
         this.field = field;
     },
 
-    __get__: function(instance, owner) {
+    __get__: function(instance, instance_type) {
         if (isundefined(instance))
             throw new AttributeError("%s can only be accessed from %s instances.".subs(this.field.name(this.owner.__name__)));
-        var file = instance[this.field.name];
-        if (!isinstance(file, FieldFile)) {
-            // Create a new instance of FieldFile, based on a given file name
-            instance[this.field.name] = this.field.attr_class(instance, this.field, file);
-        } else if (!hasattr(file, 'field'))
-            // The FieldFile was pickled, so some attributes need to be reset.
+        var file = instance["_" + this.field.name];
+        if (isinstance(file, String) || file == null) {
+            var attr = new this.field.attr_class(instance, this.field, file);
+            instance["_" + this.field.name + "_file"] = attr;
+        } else if (isinstance(file, File) && !isinstance(file, FieldFile)) {
+            var file_copy = new this.field.attr_class(instance, this.field, file.name);
+            file_copy.file = file;
+            file_copy._committed = false;
+            instance["_" + this.field.name + "_file"] = file_copy;
+        } else if (isinstance(file, FieldFile) && !hasattr(file, 'field')) {
             file.instance = instance;
             file.field = this.field;
             file.storage = this.field.storage;
-        return instance[this.field.name];
+        }
+        return instance["_" + this.field.name];
     },
 
-    __set__: function(instance, value) {
-        instance[this.field.name] = value;
+    __set__: function(instance, instance_type, value) {
+    	instance["_" + this.field.name] = value;
     }
 });
 
@@ -252,11 +257,11 @@ var FileField = type('FileField', [ Field ], {
 });
 
 var ImageFileDescriptor = type('ImageFileDescriptor' ,[ FileDescriptor ], {
-    __set__: function(instance, value) {
-        var previous_file = instance[this.field.name];
-        super(FileDescriptor, this).__set__(instance, value);
+    __set__: function(instance, instance_type, value) {
+        var previous_file = !isundefined(instance["_" + this.field.name]);
+        super(FileDescriptor, this).__set__(instance, instance_type, value);
 
-        if (!isundefined(previous_file) && previous_file != null)
+        if (previous_file)
             this.field.update_dimension_fields(instance, true);
 	}
 });
