@@ -420,6 +420,7 @@ o Bazaar [BazaarDocs09]_ se crearon dos métodos:
         
         
         
+        
 .. [W3CFormEncoding09] Dave Raggett, Arnaud Le Hors, Ian Jacobs,
     *Especificación de codificación de contenidos de formularios en HTML 4.1*,
     ultimo acceso Noviembre de 2009,
@@ -476,7 +477,7 @@ funcionalidad:
        de django (se describe en el siguiente apartado). Esto deja al cliente
        sincronizado con el server.
        
-    #. 
+    #. Ejecuta ``push()``
 
 
 

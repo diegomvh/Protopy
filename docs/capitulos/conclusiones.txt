@@ -14,9 +14,10 @@ el aporte de los frameworks orientados a aplicaciones de contenidos, como Ruby O
 Django. Los lenguajes dinámicos de alto nivel, a pesar de el overhead que introducen,
 facilitan la creación de frameworks simples, como es el caso de Django.
 
-Si bien no se trató en la presente tesina, los navegadores web comienzan a daoptar
-las especificaciones de HTML5. Mediante este estándard las aplicaciones web 
-comenzaran a cerrar la breacha con las aplicaciones de escritorio.
+Si bien no se trató especificamente en la presente tesina, la aparción de HTML5,
+(estándar en el cual la funcionalidad de Gears queda compredida) reduce la brecha
+entre las aplicaciones de escritorio y las aplicaciones web. ES5, o JavaScript 2.0,
+reforzará la 
 
    
 
