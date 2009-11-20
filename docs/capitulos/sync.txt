@@ -357,25 +357,69 @@ La aplicación ``offline`` posee estos modelos:
 Protocolo de Sincronización
 ===========================
 
-Se eligió RPC sobre HTTP como mecanismo de comunicación entre el cliente y el servidor 
-por sobre llamadas asincrónicas simples o AJAX, debido de que se requiere pasaje
-de parámetros más complejos que los contemplados en la codificación 
-``application/x-www-form-urlencoded`` o ``multipart/form-data`` [W3CFormEncoding09]_. 
-Se eligió JSONRPC como mecanismo de comunicación y se publicó en la URL 
-``/sync`` del sitio remoto.
+El proceso de sincronización entre ORMs conlleva la transferecia de datos
+con una *estuctura* y en un *orden* para garantizar la integridad referencial de la
+bases de datos subyacentes. Por ejemplo, no se puede crear una entidad débil sin 
+antes crear la entidad a la cual referencia en este proceso.
 
-Basados en las primitivas de sincronización de los sistemas de control de versiones
-distribuidos como Git [GitDocs09]_, Mercurial [MercurialDocs09]_ o Bazaar 
-[BazaarDocs09]_
-se crearon dos métodos:
+Para realizar esta tarea se eligió JSONRPC en vez de HTTP puro como mecanismo de 
+comunicación entre el cliente y el servidor.
+Esta desición se tomó debido a que la codificación de parámetoros que
+ofrece HTTP, ``application/x-www-form-urlencoded`` y ``multipart/form-data`` [W3CFormEncoding09]_, 
+está orientada al pasaje de texto sin estructura.
 
-    * ``pull()``
+JSONRPC es un prtocolo de llamado a procedimiento remoto muy similar a XMLRPC, 
+pero que utiliza  JSON para codificación de de los mensajes, contribuyendo a una fácil lecutra de 
+la información enviada por parte del programador durante la depuración y generalmente una
+menor cantidad de caracteres enviados [WikiJSONRPC09]_. 
+ 
+.. [WikiJSONRPC09]  Wikipedia,
+    *JSONRPC*,
+    último acceso Noviembre de 2009,
+    http://en.wikipedia.org/wiki/JSON-RPC
+ 
+Se implementó en la URL ``/sync`` de la calse ``RemoteSite`` un manejador de 
+llamadas JSONRPC. Por simplicidad y consitencia con el decorador ``expose`` 
+se creó el decorador ``jsonrpc``. Por ejemplo, una método expuesto en el 
+sitio remoto se implementa de la siguiente manera:
+
+.. code-block:: python
     
-        Requiere los cambios del servidor
+    @jsonrpc
+    def echo(self, value):
+        return value
+    
+    
+Una vez definido el mecanismo de comunicación, fue necesario definir las métodos
+a publicar. Basados en las primitivas de sincronización de los sistemas de 
+control de versiones distribuidos como Git [GitDocs09]_, Mercurial [MercurialDocs09]_
+o Bazaar [BazaarDocs09]_ se crearon dos métodos:
+
+    * ``pull(sync_log = None):``
+    
+        Retorna los cambios del servidor en un volcado de datos JSON de los 
+        modelos registrados al sitio remoto [*]_.
         
-    * ``push()``
+        Recibe opcionalmente un agumento ``sync_log``,
+        en el cual el cliente debe enviar a la última instancia de la clase ``SyncLog``
+        con el objeto de filtrar los cambios realizados sobre los modelos desde
+        la última sincronización del cliente. 
+        
+        En la sincronización inicial, no existen instancias de de ``SyncLog`` en el
+        cliente para enviar, por lo que este argumetno es nulo.  
+        
+        En este caso, el método RPC devuelve un volcado completo de los modelos
+        registrados. 
+        
+        
+    * ``push(received)``
     
-        Envía los cambios al servidor
+        Recibe en ``recevied`` el volcado de datos de todos los cambios desde
+        la última fecha de sincronización del cliente. El cliente realiza el 
+        filtro por el campo ``status``.
+        
+        
+        
         
 .. [W3CFormEncoding09] Dave Raggett, Arnaud Le Hors, Ian Jacobs,
     *Especificación de codificación de contenidos de formularios en HTML 4.1*,
@@ -395,33 +439,50 @@ se crearon dos métodos:
     último accseo Noviembre 2009,
     http://bazaar-vcs.org/en/
 
-Estas operaciones tienen caracter atómico.   
+.. [*] En el paradigma OO, un método tiene asociada una instancia o clase. RPC
+    se define en un entorno procedural. No confundir la definición de método con
+    *remoting* de objetos o RMI.
+
+
+Ámbas operaciones tienen caracter atómico, se ejecutan dentro de una transacción
+de la base de datos.
+
+En cuanto al cliente, se implementó una aplicación ``doff.contrib.offline``, que
+se instala por defecto en ``settings.js`` con la ejecución del comando ``start_remotesite``.
+ 
+
 Dentro del modulo ``doff.contrib.offline.handler`` se creó la clase ``SyncHandler``
-con los métodos 
-``pull()`` y ``push()`` que hacen las llamadas a las funciones homónimas
-publicadas en ``/sync`` del sitio remoto. Una instancia de objeto se encuentra
-en proyecto desconectado. Por ejemplo, en un poryecto llamado agentes [*]_:
+con los métodos ``pull()`` y ``push()``.
 
-.. code-block:: javascript
 
-    // Descargar los datos del serivdor
-    >>> agentes.sync
+ 
+.. figure:: ../_dot/sync.pdf
     
-    doff.contrib.offline.handler.SyncHandler 
-        settings=Object server=rpc.ServiceProxy
+    Entidades intervinientes en la sincronización
+ 
+El Método RPC Update
+====================
 
-.. [*] Tomado de la aplicación de ejemplo descrita en el capítulo siguiente
- 
- 
- 
+
+Luego de haber plateado la sincronización mediante ``push()`` y ``pull()`` se 
+observó la siguiente problemática: Cuando un cliente evnía modelos que tienen
+realciones, los identificadores en la relación son locales. Ante este problema
+se decidió mantener la implementación del servidor lo más simple posible, generando
+un nuevo método en el ``SyncHandler`` llamado ``update()`` con la siguiente
+funcionalidad:
     
-En Doff se plantearon dos tipos de sincronización: la *sincronización inicial*, que
-ocurre cuando un cliente instala el proyecto desconectado a partir del sitio
-remoto y la *sincronización normal* que sucede cada vez que el cliente desea
-enviar sus cambios y obtener las novedades sobre las instancias
-del modelo del proyecto. La sincronización es explícita para el cliente, 
-debdio a que en ocaciones donde se requiera asistencia del usuario para dirmir 
-los conflictos esto no ocurra de manera sorpresiva.
+    #. Traer cambios desde el servidor, mediante el llamado a ``pull()`` de
+       la instancia del ``SyncHandler``. Ante posibles conflictos se utliza
+       la clase un sistema de resolución de conflictos similar a los Middlewares
+       de django (se describe en el siguiente apartado). Esto deja al cliente
+       sincronizado con el server.
+       
+    #. Ejecuta ``push()``
+
+
+
+    
+
 
 
 La aplicación genérica ``doff.contrib.offline`` y en especial su módulo ``syncrhonization`` son

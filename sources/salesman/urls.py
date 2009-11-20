@@ -22,7 +22,7 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     (r'^admin/', include(admin.site.urls)),
-    (r'^/?$', 'django.views.generic.simple.direct_to_template', {'template': 'orig-index.html'} ),
+    (r'^/?$', 'django.views.generic.simple.direct_to_template', {'template': 'index.html'} ),
     (r'^catalogo/categoria/(?P<categoria>\d+)/$', 'salesman.apps.core.views.productos_por_categoria'),
     (r'^core/', include('salesman.apps.core.urls')),
     (r'^ventas/', include('salesman.apps.ventas.urls')),
