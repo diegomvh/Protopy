@@ -3,7 +3,7 @@
 require('doff.conf.urls', '*');
 
 var urlpatterns = patterns('',
-    ['^/?$', 'doff.views.generic.simple.direct_to_template', {'template': 'orig-index.html'} ],
+    ['^/?$', 'doff.views.generic.simple.direct_to_template', {'template': 'index.html'} ],
     ['^catalogo/categoria/(\\d+)/$', 'agentes.core.views.productos_por_categoria'],
     ['^ventas', include('agentes.ventas.urls')]
 )
