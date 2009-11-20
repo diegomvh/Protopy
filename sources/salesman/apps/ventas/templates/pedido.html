@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block main %}
+	<h1>Pedido de Compra</h1>
+	{% if producto %}
+	<p class="comments align-left clear">Ud. agreg&oacute; el siguiente producto al pedido</p>
+	<p>
+		<h2>{{producto.categoria}}</h2>
+		<img src="{{MEDIA_URL}}{{producto.imagen}}" alt="{{producto}}" class="float-left" />
+		<h3>{{producto}}</h3>
+		<h4>U$S {{producto.precio}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="blue">(iva iclu&iacute;do)</span></h4>
+	</p>
+	{% endif %}
+	<p class="comments align-left clear">Estado del pedido</p>
+	<form action="#">		
+	<table>
+		<tr>
+			<th class="first">quitar</th>
+			<th>cantidad</th>
+			<th>producto</th>
+			<th>precio</th>
+			<th>importe</th>
+		</tr>
+        {% for item in pedido.items.values %}
+			<tr class="{% cycle '' 'altrow' %}">
+				<td class="align-center"><input type="checkbox" name="quitar"/></td>
+				<td class="align-center"><input type="text" value="{{item.cantidad}}" size="1"/></td>
+				<td>{{item.producto.nombre}}</td>
+				<td class="align-right">{{item.producto.precio|stringformat:"0.2f"}}</td>
+				<td class="align-right">{{item.importe|stringformat:"0.2f"}}</td>
+			</tr>
+		{% endfor %}
+	</table>
+    <p class="comments align-right clear">
+        <input type="submit" class="button" value="Actualizar"/>
+        <input type="submit" class="button strong" value="Finalizar Pedido"/>
+    </p>
+	</form>
+{% endblock %}

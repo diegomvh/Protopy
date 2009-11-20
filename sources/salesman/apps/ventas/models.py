@@ -17,6 +17,14 @@ class Pedido(models.Model):
     def __unicode__(self):
         return u"%s %s" % (self.pk, self.cliente)
         
+    def agregar_producto(self, producto, cantidad = 1):
+        assert(isinstance(producto, Producto), '%s no es un producto' % producto)
+        item = ItemPedido()
+        item.producto = producto
+        item.cantidad = cantidad
+        item.precio = producto.precio * cantidad
+        self.itempedido_set.add(item)
+        
 class ItemPedido(models.Model):
     producto = models.ForeignKey(Producto)
     cantidad = models.PositiveIntegerField()
@@ -24,10 +32,6 @@ class ItemPedido(models.Model):
     pedido = models.ForeignKey(Pedido)
 
     get_absolute_url = abs_url
-    
-    def save(self, *largs, **kwargs):
-        self.precio = self.producto.precio_uniatario
-        return  super(ItemPedido, self).save(*largs, **kwargs)
     
     class Meta:
         verbose_name_plural = 'Items de Pedido'

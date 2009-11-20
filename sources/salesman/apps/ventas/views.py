@@ -1,7 +1,8 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render_to_response
-from salesman.apps.ventas.forms import PedidoConItemsForm, PedidoForm
 from salesman.apps.ventas.models import Pedido
+from salesman.apps.core.models import Producto
+from django.template.context import RequestContext
 
 def create_pedido(request, object_id = None, **kwargs):
     if request.method == "POST":
@@ -41,3 +42,17 @@ def edit_pedido(request, object_id):
         form = PedidoForm(instance = pedido)
         formset = PedidoConItemsForm(instance = pedido)
     return render_to_response('ventas/pedido_form.html', locals())
+    
+def agregar_producto(request, producto):
+    if 'pedido' not in request.session:
+        pedido = {'cliente': None, 'items': {}}
+    else:
+        pedido = request.session['pedido']
+
+	producto = get_object_or_404(Producto, id = producto)
+    if not pedido['items'].has_key(producto.id):
+        pedido['items'][producto.id] = {'cantidad': 0, 'producto': producto, 'importe': 0}
+    pedido['items'][producto.id]['cantidad'] += 1
+    pedido['items'][producto.id]['importe'] = pedido['items'][producto.id]['cantidad'] * producto.precio
+    request.session['pedido'] = pedido
+    return render_to_response('pedido.html', {'pedido': pedido, 'producto': producto}, context_instance = RequestContext(request))
