@@ -102,7 +102,7 @@ blockquote {
 /* start - table */
 table {
 	border-collapse: collapse;
-	margin: 10px;		
+	margin-top: 5px;		
 }
 tr { background: #fff; }
 tr.altrow { background: #F9F9F9;	}
@@ -272,10 +272,10 @@ form.search input.searchbutton {
 #header a:hover span {
    background-position:100% -42px;
 }
-#header #current a {
+#header .current a {
    background-position:0% -42px;
 }
-#header #current a span {
+#header .current a span {
    background-position:100% -42px;
 }
 

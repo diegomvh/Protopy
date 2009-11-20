@@ -10,29 +10,41 @@
 		<h4>U$S {{producto.precio}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="blue">(iva iclu&iacute;do)</span></h4>
 	</p>
 	{% endif %}
+	{% if pedido %}
 	<p class="comments align-left clear">Estado del pedido</p>
-	<form action="#">		
-	<table>
-		<tr>
-			<th class="first">quitar</th>
-			<th>cantidad</th>
-			<th>producto</th>
-			<th>precio</th>
-			<th>importe</th>
-		</tr>
+	<form action="/pedido/modificar/" method="post">		
+	<table width="100%">
+		<thead>
+			<tr>
+				<th>quitar</th>
+				<th>cantidad</th>
+				<th>producto</th>
+				<th>precio</th>
+				<th>importe</th>
+			</tr>
+		</thead>
         {% for item in pedido.items.values %}
 			<tr class="{% cycle '' 'altrow' %}">
-				<td class="align-center"><input type="checkbox" name="quitar"/></td>
-				<td class="align-center"><input type="text" value="{{item.cantidad}}" size="1"/></td>
+				<td class="align-center"><input type="checkbox" name="quitar_{{item.producto.id}}"/></td>
+				<td class="align-center"><input type="text" value="{{item.cantidad}}" size="1" name="cantidad_{{item.producto.id}}"/></td>
 				<td>{{item.producto.nombre}}</td>
 				<td class="align-right">{{item.producto.precio|stringformat:"0.2f"}}</td>
 				<td class="align-right">{{item.importe|stringformat:"0.2f"}}</td>
 			</tr>
 		{% endfor %}
+		<tfoot>
+			<tr>
+				<th class="align-right" colspan="4">subtotal</th>
+				<th class="align-right">{{ pedido.subtotal|stringformat:"0.2f" }}</th>
+			</tr>
+		</tfoot>
 	</table>
-    <p class="comments align-right clear">
+	<p class="comments align-right clear">
         <input type="submit" class="button" value="Actualizar"/>
         <input type="submit" class="button strong" value="Finalizar Pedido"/>
     </p>
 	</form>
+	{% else %}
+	<p class="comments align-left clear">No hay pedido</p>
+	{% endif %}
 {% endblock %}

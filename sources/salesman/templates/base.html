@@ -23,7 +23,7 @@
 			<!-- tabs -->
 			<ul id="tabs" >
 				<li><a href="/"><span>Inicio</span></a></li>
-				<li><a href="index.html"><span>Archives</span></a></li>
+				<li><a href="/pedido/"><span>Pedido</span></a></li>
 				<li><a href="index.html"><span>Downloads</span></a></li>
 				<li><a href="index.html"><span>Services</span></a></li>
 				<li><a href="index.html"><span>Support</span></a></li>
@@ -57,7 +57,7 @@
 			</div>
 				
 			
-			<h1>Documentación del Proyecto</h1>
+			<h1>Documentacion del Proyecto</h1>
 			<div class="left-box">
 				<p>&quot;Big men and big personalities make mistakes and admit them.
 				 It is the little man who is afraid to admit he has been wrong&quot;</p>
@@ -96,11 +96,14 @@
 </div>
 <script type="text/javascript">
 	require('sys');
-	var items = $('tabs').childNodes;
+	var items = $$('#tabs > li');
 	var href = sys.window.location.href;
-	for each (var item in items)
-		if(item.firstChild && item.firstChild.nodeName == "A" && href.startswith(item.firstChild.href))
-			item.addClassName("current");
+	var current = items.shift();
+	for each (var item in items) {
+		if(item.firstChild.nodeName == "A" && href.startswith(item.firstChild.href) && len(current.firstChild.href) < len(item.firstChild.href))
+			current = item;
+	}
+	current.addClassName("current");
 </script>
 </body>
 </html>
