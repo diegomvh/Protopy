@@ -451,23 +451,37 @@ se instala por defecto en ``settings.js`` con la ejecución del comando ``start_
  
 
 Dentro del modulo ``doff.contrib.offline.handler`` se creó la clase ``SyncHandler``
-con los métodos ``pull()`` y ``push()`` que hacen las llamadas a las funciones homónimas
-publicadas en ``/sync`` del sitio remoto y un método llamado ``update()`` encargado
-de realizar la tarea de sincronización.
+con los métodos ``pull()`` y ``push()``.
+
+
  
-.. figure:: ../_dot/sync.png
+.. figure:: ../_dot/sync.pdf
     
     Entidades intervinientes en la sincronización
  
- 
+El Método RPC Update
+====================
+
+
+Luego de haber plateado la sincronización mediante ``push()`` y ``pull()`` se 
+observó la siguiente problemática: Cuando un cliente evnía modelos que tienen
+realciones, los identificadores en la relación son locales. Ante este problema
+se decidió mantener la implementación del servidor lo más simple posible, generando
+un nuevo método en el ``SyncHandler`` llamado ``update()`` con la siguiente
+funcionalidad:
     
-En Doff se plantearon dos tipos de sincronización: la *sincronización inicial*, que
-ocurre cuando un cliente instala el proyecto desconectado a partir del sitio
-remoto y la *sincronización normal* que sucede cada vez que el cliente desea
-enviar sus cambios y obtener las novedades sobre las instancias
-del modelo del proyecto. La sincronización es explícita para el cliente, 
-debdio a que en ocaciones donde se requiera asistencia del usuario para dirmir 
-los conflictos esto no ocurra de manera sorpresiva.
+    #. Traer cambios desde el servidor, mediante el llamado a ``pull()`` de
+       la instancia del ``SyncHandler``. Ante posibles conflictos se utliza
+       la clase un sistema de resolución de conflictos similar a los Middlewares
+       de django (se describe en el siguiente apartado). Esto deja al cliente
+       sincronizado con el server.
+       
+    #. 
+
+
+
+    
+
 
 
 La aplicación genérica ``doff.contrib.offline`` y en especial su módulo ``syncrhonization`` son
