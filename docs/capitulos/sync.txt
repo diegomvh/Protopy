@@ -11,7 +11,7 @@ Cuando se hable de *el cliente* se está refiriendo al proyecto desconectado,
 La sincronziación de datos permite que las entidades definidas en el servidor
 se repliquen en el cliente y que las creadas y modificadas por el cliente
 se transfieran a la aplicación en linea, permitiendo así que se porpaguen
-a el resto de los clientes.
+a el resto de los clientes posteriormente.
 
 Sin embargo diversas situaciones en las cuales se pueden presentar conflictos entre
 las versiones de de una misma entidad:
@@ -36,7 +36,7 @@ Se implementó una mecánica simple y extendible que resuelve casos simples en
 
 Para implementar la sincronización se trataron los siguientes items:
 
-    * Integridad de la sincronización (orden de los modelos, transacciones)
+    * Integridad de la sincronización (orden de trasnferencia de los modelos, transacciones)
     
     * Transporte de datos
     
@@ -54,7 +54,7 @@ El primer aspecto a considerar es el transporte de datos. Las bases de datos
 relacionales utilizan el lenguaje SQL como estándar para la definicón de su
 estructura y manipulación de datos. Django provee un ORM que encapsula el
 acceso al RDBMS y brinda una capa de abstracción en el lenguaje Python. Doff realiza
-lo propio en el lenguaje JavaScript y apoyándose en las extensiones del 
+lo propio en el lenguaje JavaScript, apoyándose en las extensiones del 
 provistas por Protopy. Gracias al trabajo del sitio remoto, mediante
 el registro de modelos, se obtiene consistencia entre las definciones de alto
 nivel del servidor con las del cliente, por lo cual se optó por realizar el
@@ -66,14 +66,14 @@ serializadores (*marshalling*) de instancias de ``QuerySet``. Un serializador
 se encarga de *aplanar* las intancias en texto con algún formato. Los formatos
 de salida provistos por Django son: XML, JSON y Python. Cuando un serializador
 trabaja sobre un ``QuerySet`` almacena información sobre el modelo para poder
-luego recuperar las instancias medinate un des-serializador. L
+luego recuperar las instancias medinate un des-serializador. 
 
 Se optó por el serializador basado en JSON, debido a que presenta ventajas a la 
 hora de depuración aunque teniendo como penalización el tiempo de procesamiento sobre
 conjuntos grandes de datos.
 
-Los serializadores son obtenidos a través de un factory de clases con la signatura 
-``get_serializer(nombre)``. Para el siguiente modelo:
+Los serializadores, en Django, son obtenidos a través de un factory de clases con la signatura 
+``get_serializer(nombre)``. Por ejemplo, para el siguiente modelo:
 
 .. code-block:: python
 
@@ -96,7 +96,7 @@ Los serializadores son obtenidos a través de un factory de clases con la signat
         def __unicode__(self):
             return self.nombre
 
-se puede serializar en JSON de la siguiente forma
+se puede serializar en JSON de la siguiente forma:
 
 .. code-block:: python
     :linenos:
@@ -393,7 +393,7 @@ sitio remoto se implementa de la siguiente manera:
 Una vez definido el mecanismo de comunicación, fue necesario definir las métodos
 a publicar. Basados en las primitivas de sincronización de los sistemas de 
 control de versiones distribuidos como Git [GitDocs09]_, Mercurial [MercurialDocs09]_
-o Bazaar [BazaarDocs09]_ se crearon dos métodos:
+o Bazaar [BazaarDocs09]_ se crearon dos métodos: ``pull`` y ``push``.
 
     * ``pull(sync_log = None):``
     
@@ -409,7 +409,9 @@ o Bazaar [BazaarDocs09]_ se crearon dos métodos:
         cliente para enviar, por lo que este argumetno es nulo.  
         
         En este caso, el método RPC devuelve un volcado completo de los modelos
-        registrados. 
+        registrados.
+        
+        
         
         
     * ``push(received)``
