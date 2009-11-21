@@ -141,5 +141,24 @@ sobre Doff
 Optimizaciones en Base a Permanencia de Estado
 ==============================================
 
-.. note:: completar!!! 
+
+Implementación de Storage o Almacenamiento en el Cliente
+========================================================
+
+Implementar un sistema de almacenamiento para archivos en el cliente, utilizando
+el ``localserver`` de Gears.
+
+
+Compilación de JavaScript
+=========================
+
+Doff aprovechó las ventajas de la sintaxis de JavaScript 1.7 y 1.8, que no se 
+encuentran disponibles en navegadores fuera de la plataforma Mozilla. Con el 
+objeto de compatiblizar con otros navegadores disponibles en el mercado, se podría
+implementar un compilador de JavaScript 1.7 en JavaScript 1.6, utilizando el
+mecanismo de orientación a objetos de Protopy. Además, esta complicación podría
+traer aparejado un aumento de la velocidad.
+
+Manejo de Migraciones de Esquema
+================================
 
