@@ -83,7 +83,7 @@ class Producto(models.Model):
     imagen = models.ImageField(upload_to='productos', null = True, blank = True)
     descripcion = models.TextField()
     categoria = models.ForeignKey(Categoria)
-    precio_uniatario = models.DecimalField(default = 0.0, max_digits = 10, decimal_places = 3)
+    precio = models.DecimalField(default = 0.0, max_digits = 10, decimal_places = 3)
     
     get_absolute_url = abs_url
     

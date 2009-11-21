@@ -99,40 +99,74 @@ blockquote {
 	font-weight: bold;  
 }
 
+/* start - table */
+table {
+	border-collapse: collapse;
+	margin-top: 5px;		
+}
+tr { background: #fff; }
+tr.altrow { background: #F9F9F9;	}
+th, td {
+	text-align: left;			
+	border-width: 1px;
+  	border-style: solid;
+}
+th {
+	color: #555555;
+	background: #F0FBFF;
+    border-color: #D8EBF5 #D8EBF5 #B9DBEE;
+	padding: .8em 1em;		
+}
+td {
+	border-color: #EFEFEF;	
+	padding: .7em 1em;	
+}	
+/* end - table */
+
 /* form elements */
 form {
-	margin:10px; padding: 0 5px;
+	/* margin: 10px; */ 
+	padding: 0 5px;
 	border: 1px solid #f2f2f2; 
-	background-color: #FAFAFA; 
+	/* background-color: #FAFAFA; */ 
 }
+
 label {
 	display:block;
 	font-weight:bold;
 	margin:5px 0;
 }
+
 input {
 	padding: 2px;
-	border:1px solid #eee;
+	border: 1px solid #eee;
 	font: normal 1em Verdana, sans-serif;
-	color:#777;
+	color: #777;
 }
+
 textarea {
-	width:400px;
-	padding:2px;
+	width: 400px;
+	padding: 2px;
 	font: normal 1em Verdana, sans-serif;
-	border:1px solid #eee;
-	height:100px;
-	display:block;
-	color:#777;
+	border: 1px solid #eee;
+	height: 100px;
+	display: block;
+	color: #777;
 }
+
 input.button { 
 	margin: 0; 
-	font: bolder 12px Arial, Sans-serif; 
+	font: normal 12px Arial, Sans-serif; 
 	border: 1px solid #CCC; 
 	padding: 1px; 
 	background: #FFF;
 	color: #417690;
 }
+
+input.strong { 
+	font: bolder 12px Arial, Sans-serif; 
+}
+
 /* search form */
 form.search {
 	position: absolute;
@@ -141,6 +175,7 @@ form.search {
 	border: none;
 	background-color: transparent; 
 }
+
 form.search input.textbox { 
 	margin: 0; 
 	width: 120px;
@@ -148,6 +183,7 @@ form.search input.textbox {
 	background: #FFF;
 	color: #333; 
 }
+
 form.search input.searchbutton { 
 	margin: 0; 
 	font-size: 100%; 
@@ -236,10 +272,10 @@ form.search input.searchbutton {
 #header a:hover span {
    background-position:100% -42px;
 }
-#header #current a {
+#header .current a {
    background-position:0% -42px;
 }
-#header #current a span {
+#header .current a span {
    background-position:100% -42px;
 }
 
@@ -318,6 +354,7 @@ form.search input.searchbutton {
 .float-right { float: right; }
 .align-left  { text-align: left; }
 .align-right { text-align: right; }
+.align-center { text-align: center; }
 
 /* display and additional classes  */
 .clear {	clear: both; }
