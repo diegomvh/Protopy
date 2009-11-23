@@ -1,5 +1,4 @@
 from django import template
-from offline import util
 
 register = template.Library()
 

@@ -3,7 +3,7 @@ require('doff.core.project', 'get_project');
 require('doff.contrib.offline.models', 'SyncLog', 'RemoteModel', 'RemoteReadOnlyModel');
 require('doff.db.models.base', 'get_model_by_identifier', 'get_models', 'ForeignKey');
 require('doff.db.models.query', 'delete_objects', 'CollectedObjects');
-require('doff.contrib.offline.serializers', 'RemoteSerializer', 'RemoteDeserializer', 'ServerPkDoesNotExist');
+require('doff.contrib.offline.serializers', 'RemoteSerializer', 'RemoteDeserializer', 'ChunkedSerialization');
 require('doff.utils.datastructures', 'SortedDict');
 require('doff.core.exceptions', 'ImproperlyConfigured');
 
@@ -208,15 +208,18 @@ var SyncHandler = type('SyncHandler', [ object ], {
             var model_name = string(model._meta);
             try {
                 to_send['created']['objects'][model_name] = this.serializer.serialize(objs);
-                collected_objects['created'][model_name] = array(objs);
-                to_send['created']['models'].push(model_name);
-                if (!(model_name in to_send['sync_log'])) {
-                    var last_sync_log = model.all.latest('sync_log__id').sync_log;
-                    to_send['sync_log'][model_name] = this.serializer.serialize(last_sync_log);
-                }
-            } catch (e if isinstance(e, ServerPkDoesNotExist)) {
-                chunked = true;
-                break;
+            } catch (e if isinstance(e, ChunkedSerialization)) {
+            	chunked = true;
+            	if (!bool(e.kwargs['values'])) 
+            		continue;
+            	to_send['created']['objects'][model_name] = e.kwargs['values'];
+            	objs = new Set(array(objs)).difference(e.kwargs['chunkeds']);
+            }
+            collected_objects['created'][model_name] = array(objs);
+            to_send['created']['models'].push(model_name);
+            if (!(model_name in to_send['sync_log'])) {
+                var last_sync_log = model.all.latest('sync_log__id').sync_log;
+                to_send['sync_log'][model_name] = this.serializer.serialize(last_sync_log);
             }
         }
         

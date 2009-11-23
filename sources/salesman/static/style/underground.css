@@ -112,9 +112,9 @@ th, td {
   	border-style: solid;
 }
 th {
-	color: #555555;
-	background: #F0FBFF;
-    border-color: #D8EBF5 #D8EBF5 #B9DBEE;
+	color: #FFFFFF;
+	background: #7CA0C7;
+    border-color: #EFEFEF;
 	padding: .8em 1em;		
 }
 td {

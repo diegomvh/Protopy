@@ -7,7 +7,7 @@ from django.contrib.contenttypes import generic
 from django.conf import settings
 import os
 import datetime
-from offline.util import abswalk_with_simlinks, get_site, full_template_list
+from offline.util import get_site
 
 class GearsManifest(models.Model):
     '''

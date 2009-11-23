@@ -1,6 +1,4 @@
 ﻿
-
-
 .. _capitulos-protopy:
 
 ###################################
@@ -904,6 +902,11 @@ A continuación de presenta un ejemplo de selección de elementos:
     >>> $$('.item')
     [li.item, li.item, li.item]
 
+Con la idea de extender el atributo ``prototype`` de los ``HTMLElement`` de
+la biblioteca de JavaScript Prototype, se agregaron funciones para modificar e
+incorporar elementos al documento, serialización (o *marshalling*) de formularios 
+y obtención de valores, etc.
+
 Eventos
 -------
 
@@ -922,10 +925,12 @@ Protopy provee en el modulo ``event`` dos funciones indispensables para trabajar
 Agregados a JavaScript
 ======================
 
-Con la idea de extender el atributo ``prototype`` de los ``HTMLElement`` de
-la biblioteca de JavaScript Prototype, se agregaron funciones para modificar e
-incorporar elementos al documento, serialización (o *marshalling*) de formularios 
-y obtención de valores, etc.
+JavaScript incorpora una gran cantidad de funciones como metodos de sus tipos
+base para trabajar con
+cadenas de texto, numeros, fechas y otros, con el objetivo de extender estos m
+extender los tipos base incorporando metodos para encapsular en ellos la
+funcionalidad y accederla a traves de sus instancias, basicamente este es el
+caso del tipo String. Por ejemplo:
 
 También se extendieron los tipos de datos propios de JavaScript, como el caso
 de las cadenas (``str`` en Python) agregando métodos de sustitución de patrones,

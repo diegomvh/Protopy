@@ -17,14 +17,14 @@ from django.contrib.admin.sites import AlreadyRegistered
 from django.shortcuts import render_to_response
 from offline.util.jsonrpc import SimpleJSONRPCDispatcher
 from django.db.models.loading import get_app, get_model
-from offline.util import random_string, get_project_root, full_template_list, abswalk_with_simlinks
+from offline.util import random_string, get_project_root, full_template_list
 from offline.models import GearsManifest, SyncData
 from django.db.models import signals
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import exceptions
 from offline.export_models import export_remotes, get_model_order,\
-    get_related_models, get_related_apps, filter_field
+    get_related_models, get_related_apps
 from offline.remotes import RemoteModelProxy, RemoteReadOnlyModelProxy, RemoteOptions, RemoteManager, RemoteReadOnlyManager
 
 __all__ = ('RemoteSite',
@@ -397,7 +397,6 @@ class RemoteSite(RemoteBaseSite):
         for app_model in all_models:
             model = get_model(*app_model.split('.'))
             last_sync = datetime.datetime(*time.strptime(received['sync_log'][app_model]['fields']['synced_at'], '%Y-%m-%d %H:%M:%S')[:6])
-            #Esto seria para algo mas granular, pero requiere de un sync_log por modelo
             model_type = ContentType.objects.get_for_model(model)
             sd = SyncData.objects.filter(content_type__pk = model_type.id, update_at__gt = last_sync)
             if bool(sd):

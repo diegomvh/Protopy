@@ -105,7 +105,6 @@ server.handle_request()
 # Original SimpleXMLRPCServer module was written by Brian
 # Quinlan (brian@sweetapp.com), Based on code written by Fredrik Lundh.
 
-import xmlrpclib
 from xmlrpclib import Fault
 import SocketServer
 import BaseHTTPServer
@@ -115,8 +114,6 @@ import os
 import SimpleXMLRPCServer
 from django.utils import simplejson
 from django.core.serializers.json import DjangoJSONEncoder #Para que pueda hacer fechas tambien
-
-import traceback
 
 try:
     import fcntl

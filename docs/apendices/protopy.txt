@@ -342,7 +342,7 @@ en el mismo.
 
     * Dict(object) -> Dict
         
-        La clase ``Dict`` de manera similar a un diccionario de Python (``dict``), trabaja con
+       La clase ``Dict`` de manera similar a un diccionario de Python (``dict``), trabaja con
        duplas de la forma clave = valor, las instancias de esta clase soportan a objetos
        como claves en lugar de solo cadenas como ocurre en los arreglos asociativos de JavaScript.
 
@@ -526,7 +526,7 @@ en el mismo.
     
         Retorna un arreglo con los valores del objeto pasado como argumento.
     
-    keys(object) -> [key...]
+    * keys(object) -> [key...]
     
         Retorna un arreglo con las claves del objeto pasado como argumento.
     
@@ -642,7 +642,7 @@ Modulo que reúne todas las excepciones que Protopy provee a la hora de mostrar
 errores, este modulo es cargado en el ambiente cuando Protopy inicia, no siendo
 necesario su requerimiento posteriormente.
 
-    * Excepciones que provee
+    * Excepciones
         ``Exception``, ``AssertionError``, ``AttributeError``, ``LoadError``, ``KeyError``,
         ``NotImplementedError``, ``TypeError``, ``ValueError``
 
@@ -707,20 +707,37 @@ Timer
 ajax
 ~~~~
 
-Este modulo contiene funcionalidad, para el manejo de peticiones
-asincrónicas al servidor.
+Este modulo contiene funcionalidad, para el manejo de peticiones asincrónicas
+al servidor.
 
-    new Request()
+    * Request()
 
         new Request()
     
-    new Response()
+    * Response()
 
         new Response()
     
     toQueryParams(string, separator) -> object
     
+    	Convierte una cadena conteniendo una consulta de URL a un objeto de la
+    	forma clave = valor. El separador por defecto para estas consultas es el
+    	caracter ``&`` aunque otro separador puede ser usado.
+    
     toQueryString(params) -> string
+    
+    	Realiza el proceso inverso a ``toQueryParams``, conviertiendo un objeto
+    	a una consulta de URL.
+    	
+    .. code-block:: javascript
+        :linenos:
+    
+	    >>> require('ajax')
+		>>> ajax.toQueryString({numero:1, cadena:'Hola mundo', fecha: new Date(), arreglo: [1,2,3,4]})
+		"numero=1&cadena=Hola%20mundo&fecha=1258839800956&arreglo=1&arreglo=2&arreglo=3&arreglo=4"
+		>>> var query = ajax.toQueryString({numero:1, cadena:'Hola mundo'})
+		>>> ajax.toQueryParams(query)
+		{ numero="1" cadena="Hola mundo"}
     
 dom
 
