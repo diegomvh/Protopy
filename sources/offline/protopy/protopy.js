@@ -864,7 +864,7 @@
                         if(str) str += '&';
                         str += encodeURIComponent(key) + "=";
                         if(params[key] instanceof Date)
-                            str += encodeURIComponent(rpc.dateToISO8601(params[key]));
+                            str += encodeURIComponent(params[key].getTime());
                         else if(params[key] instanceof Object)
                             throw Error('Unable to pass objects as parameters while in making a cross-site request. The object in question has this constructor: ' + params[key].constructor);
                         else str += encodeURIComponent(String(params[key]));
@@ -2084,8 +2084,8 @@
             }
         });
 
-        extend(String.prototype, {
-            sub: function(pattern, replacement, count) {
+    extend(String.prototype, {
+        sub: function(pattern, replacement, count) {
             count = (!count) ? 1 : count;
             return this.replace(pattern, function(str) {
                 if (--count < 0) return str;
@@ -2093,7 +2093,6 @@
             }, 'g');
         },
 
-        //% operator like python
         subs: function() {
             var args = flatten(array(arguments));
             //%% escaped

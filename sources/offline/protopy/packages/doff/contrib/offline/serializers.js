@@ -8,15 +8,51 @@ require('doff.core.serializers.base', 'DeserializedObject', 'DeserializationErro
 var models = require('doff.db.models.base');
 
 var ServerPkDoesNotExist = type('ServerPkDoesNotExist', Exception);
+var ChunkedSerialization = type('ChunkedSerialization', Exception);
 
 var RemoteSerializer = type('RemoteSerializer', [ Serializer ], {
 
     serialize: function(queryset_or_model) {
 		//TODO: detectar recursividad y cortar con una excepcion y los datos que se pudieron hacer
         var is_model = isinstance(queryset_or_model, models.Model);
-        if (is_model)
-            return super(Serializer, this).serialize([ queryset_or_model ])[0];
-        return super(Serializer, this).serialize(queryset_or_model);
+        var queryset = is_model ? [ queryset_or_model ] : queryset_or_model;
+        var chunkeds = [];
+        
+        this.start_serialization();
+        for each (var obj in queryset) {
+            this.start_object(obj);
+            try {
+		        for each (var field in obj._meta.local_fields) {
+		            if (field.serialize) {
+		                if (field.rel == null) {
+		                    if (this.selected_fields == null || include(this.selected_fields, field.attname)) {
+		                        this.handle_field(obj, field);
+		                    }
+		                } else {
+		                    if (this.selected_fields == null || include(this.selected_fields, field.attname.slice(0, -3)))
+		                        this.handle_fk_field(obj, field);
+		                }
+		            }
+		        }
+		        for each (var field in obj._meta.many_to_many) {
+		            if (field.serialize) {
+		                if (this.selected_fields == null || include(this.selected_fields, field.attname))
+		                    this.handle_m2m_field(obj, field);
+		            }
+		        }
+            } catch (e if isinstance(e, ServerPkDoesNotExist)) {
+            	chunkeds.push(obj);
+            	continue;
+        	}
+            this.end_object(obj);
+        }
+        this.end_serialization();
+        
+        var values = is_model ? this.getvalue()[0] : this.getvalue();
+        // Si tengo objetos cortados
+        if (bool(chunkeds))
+        	throw new ChunkedSerialization({'values': values, 'chunkeds': chunkeds});
+        return values;
     },
 
     start_object: function(obj) {
@@ -28,8 +64,10 @@ var RemoteSerializer = type('RemoteSerializer', [ Serializer ], {
             "model"  : string(obj._meta),
             "fields" : this._current
         };
+        // Si ya esta en el servidor pongo el pk del servidor
         if (obj.server_pk != null)
             values["pk"] = obj.server_pk;
+        
         this.objects.push(values);
         this._current = null;
     },
@@ -124,7 +162,7 @@ function RemoteDeserializer(object_list) {
 }
 
 publish({
-    ServerPkDoesNotExist: ServerPkDoesNotExist,
+	ChunkedSerialization: ChunkedSerialization,
     RemoteSerializer: RemoteSerializer,
     RemoteDeserializer: RemoteDeserializer
 });
