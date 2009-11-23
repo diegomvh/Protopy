@@ -415,22 +415,34 @@ o Bazaar [BazaarDocs09]_ se crearon dos métodos: ``pull`` y ``push`` en el serv
     
         Recibe en ``recevied`` un diccionario con las claves:
             
-            * ``"deleted"`` Modelos que han sidoe eliminados, es un diccionario
+            * ``"deleted"`` 
+                
+                Modelos que han sidoe eliminados, es un diccionario
                 con las siguientes claves:
                     
-                    * ``"models``: Nombres de los modelos en orden que deben ser
+                    * ``"models``
+                       
+                       Nombres de los modelos en orden que deben ser
                        eliminados. Desde las entidades débiles hacia las fuertes.
                     
-                    * ``"objects"``: Es un objeto, dónde las claves son los nombres
+                    * ``"objects"``
+                      
+                      Es un diccionario, dónde las claves son los nombres
                       de los modelos y lo valores son los objetos serializados.
             
-            * ``"modified"``: Modelos que han sido modificados en el cliente,
+            * ``"modified"``
+                
+                Modelos que han sido modificados en el cliente,
                 es un diccionario similar al de la clave  ``"deleted"``.
                 
-            * ``"created"``: Modelos que han sido creados en el cliente, es
-              un diccionario similar al de ``"deleted"`` y ``"modified"``.
+            * ``"created"``
+                
+                Modelos que han sido creados en el cliente, es
+                un diccionario similar al de ``"deleted"`` y ``"modified"``.
             
-            * ``"syn_log"``: Diccionario de SyncLogs correpondientes a cada 
+            * ``"syn_log"``
+                
+                Diccionario de SyncLogs correpondientes a cada 
                 modelo. Por cada modelo que figure en ``"delted"``, ``"modified"``
                 o ``"created"``, debe haber un par clave-valor en este diccionario.                   
         
@@ -512,10 +524,6 @@ estos métodos se genera una insancia de la clase y se realiza la operación des
     >>> sl.push(); // Para enviar cambios hacia el servidor
 
  
-.. figure:: ../_dot/sync.pdf
-    
-    Entidades intervinientes en la sincronización
- 
 Problemas de Sincronización 
 ===========================
 
@@ -569,16 +577,6 @@ es también un método del ``SyncHandler``. Su algoritmo es el siguiente:
            
 
 
-
-La aplicación genérica ``doff.contrib.offline`` y en especial su módulo ``syncrhonization`` son
-los encargados del manejo de sincronización. Esta aplicación se instala por defecto (durante la ejecución
-del comando ``start_remotesite``).
-
-El sitio remoto publica por cada proxy (modelo registrado) el manager defindo
-(``objects`` por defecto) mediante JSONRPC en la URL ``/rpc``. 
-Cuando se requiere un ``QuerySet`` de algún Manager expuesto, éste se serailzia 
-utilizando el mecanismo de serializers de Django.
-
 Se definieron dos métodos:
 
     * ``push()``
@@ -612,39 +610,78 @@ Se definieron dos métodos:
         #. El clinete envía 
     
         Esta operación trae los cambios del servidor al cliente.
-        
-En el siguiente diagrama se muestran las entidades que tienen entran en juego
-en la sincronización.
 
+.. Esto lo sacamos porque no va mas la arquitectura y el gráfico es confuso        
 
-.. figure:: ../_svg/esquema_sync_simple.png
+..
+    En el siguiente diagrama se muestran las entidades que tienen entran en juego
+    en la sincronización.
     
-    Esquema de sincronización en el que inteviene el módulo ``synchronization``
-    y el sitio remoto publicando los ``RemoteManager`` mediante JSONRPC.
+    
+    .. figure:: ../_svg/esquema_sync_simple.pdf
+        
+        Esquema de sincronización en el que inteviene el módulo ``synchronization``
+        y el sitio remoto publicando los ``RemoteManager`` mediante JSONRPC.
+    
+    Durante la sincronización ocurren cambios sobre el atributo ``status`` de las 
+    instancias del cliente.
 
-Durante la sincronización ocurren cambios sobre el atributo ``status`` de las 
-instancias del cliente.
-
-.. figure:: ../_dot/estados_sincronziacion_cliente.png
+.. figure:: ../_dot/estados_sincronziacion_cliente.pdf
 
     Estados de sincronización de los modelos en el cliente
 
 Resolución de Conflictos
 ========================
 
-Durante la ejecución de ``pull()`` del manejador de sincronización pueden
-ocurrir conflictos o errores que requieran la intervensión del usuario o hallan
-sido contemplados por el desarrollador mediante una política de resolución.
+Durante la ejecución de ``pull()`` y ``push()`` pueden
+ocurrir conflictos de consistencia (por ejemplo, cuando los datos fueron 
+modificados y/o eliminados en ámbos extremos, o cuando las entidades creadas 
+generan errores de unicidad).
+Para tratar estos problemas, se creó una clase especial de Middlewares, llamados
+Middlwares de sincronización. A diferencia del resto de los Middlewares de Django y
+Doff, existe una solo Middleware de este tipo por proyecto desconectado.
 
-Para implementar esta lógica se creó la calse ``SyncMiddleware``, la cual
-define los metodos básicos que intervienen en el proceso de sincronización.
-Una subclase de ``SyncMiddleware`` se debe declarar en el 
-módulo ``settings.js`` en la variable ``SYNC_MIDDLEWARE_CLASS``.
+Este Middleware es una clase que debe heredar de ``SyncMiddleware`` y estar 
+referenciado bajo el nombre ``SYNC_MIDDLEWARE_CLASS`` en ``settings.js``.
 
-Los métodos de esta clase se crearon en función a la evaluación de posibles
-conflictos de estados, presentados en esta tabla:
+Los métodos que brinda este middleware para ser sobrecargados por el programador
+son los siguientes:
 
-
+    * ``resolve_unique(local_object, remote_object)``
+    
+        Llamado cuando se genera un error
+        de unicidad en el servidor. Este método es invocado con el objeto
+        local y remoto en conflicto.
+         
+    * ``resolve_localDeleteRemoteModified(local_object, remote_object)``
+        
+        Llamado cuando se ha borrado una instancia localmente, que en el servidor
+        se ha modificado. Sus argumentos son el objeto local y el objeto remoto.
+        
+    * ``resolve_localModifiedRemoteModified(local_object, remote_object)``
+        
+        Llamado cuando se ha modificado una instancia localmente y que en el servidor
+        también ha sido modificada. Sus argumentos son el objeto local y el objeto remoto.
+    
+    * ``resolve_localModifiedRemoteDeleted(local_object, remote_object)``
+    
+        Llamado cuando se ha modificado una instancia localmente, que en el servidor
+        se ha eliminado. Sus argumentos son el objeto local y el objeto remoto.
+        
+    * ``before_push(data)``
+        
+        Llamado previo a la ejecución de ``push()``, con los datos serializados
+        como argumentos.
+        
+    * ``before_pull(data)``
+        
+        Llamado previo a la ejecución de ``push()``, con los datos serializados
+        como argumentos.
+        
+    * ``after_pull(data)``
+        
+        Llamado posteriormente a la ejecución de ``push()``, con los datos serializados
+        como argumentos.
 
 Se ofrecen al programador las siguientes clases con comportamiento por defecto para resolver
 los conflictos:
@@ -661,8 +698,7 @@ los conflictos:
     
         Solo si se utiliza la herramienta de desarrllador ``toolbar`` de Doff.
           
-Ante un conflicto, se ejecuta algún método de estas clases.
-
+Este tipo de Middlewares es opcional.
 
 Considreaciones Sobre Sincronización
 =====================================
