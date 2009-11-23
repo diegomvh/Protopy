@@ -334,6 +334,23 @@ form.search input.searchbutton {
 	background: none;
 }
 
+#sidebar ul.login {
+	list-style: none;
+	text-align: left;
+	margin: 3px 0px 8px 0; 
+	padding: 0;
+	text-decoration: none;		
+}
+#sidebar ul.login li { 	
+	padding: 3px 5px 3px 25px;
+	margin: 0;	
+}
+#sidebar ul.login a {
+	font-weight: bolder;
+	padding: 3px 0px;	
+	background: none;
+}
+
 /* footer */
 .footer { 
 	clear: both; 	

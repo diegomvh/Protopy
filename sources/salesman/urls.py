@@ -1,13 +1,8 @@
 from django.conf.urls.defaults import *
 from django.contrib import admin
 from django.db.models.loading import get_app, get_models
-from django.contrib import databrowse
 from salesman.off.remote_agentes import agentes_site
 from django.conf import settings
-
-# Map de modelos para el databrowse
-map(databrowse.site.register, get_models(get_app('core')))
-map(databrowse.site.register, get_models(get_app('ventas')))
 
 # Autodiscover para la admin
 admin.autodiscover()
@@ -22,7 +17,9 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     (r'^admin/', include(admin.site.urls)),
-    (r'^/?$', 'django.views.generic.simple.direct_to_template', {'template': 'index.html'} ),
+    (r'^$', 'django.views.generic.simple.direct_to_template', {'template': 'index.html'} ),
+    (r'^login/?$', 'salesman.views.login' ),
+    (r'^logout/?$', 'salesman.views.logout' ),
     (r'^catalogo/categoria/(?P<categoria>\d+)/$', 'salesman.apps.core.views.productos_por_categoria'),
     (r'^catalogo/buscar/$', 'salesman.apps.core.views.buscar_productos'),
     (r'^pedido/agregar/(?P<producto>\d+)/$', 'salesman.apps.ventas.views.agregar_producto'),
@@ -31,7 +28,6 @@ urlpatterns = patterns('',
     (r'^core/', include('salesman.apps.core.urls')),
     (r'^ventas/', include('salesman.apps.ventas.urls')),
     (r'^%s/(.*)' % agentes_site.urlregex, agentes_site.root ),
-    (r'^databrowse/(.*)', databrowse.site.root),
 )
 
 # static media

@@ -41,6 +41,7 @@ class RemoteManagerBase(object):
         self.model_manager = None
 
     def contribute_to_class(self, remote, name = 'remotes'):
+        self.remote = remote
         try:
             self.model_manager = getattr(remote._meta, 'manager')
         except AttributeError, e:
@@ -94,12 +95,12 @@ class RemoteManagerBase(object):
 
     def all(self):
         objs = self.model_manager.all()
-        return self.serializer.serialize(self.build_remote_object(objs))
+        return self.serializer.serialize(self.build_remote_object(objs), fields = self.remote.base_fields.keys())
 
     def filter(self, *args, **kwargs):
         #TODO: en funcion del filtro ver si tengo o no que usar sync_data o el manager del modelo
         objs = self.get_query_set().filter(*args, **kwargs)
-        return self.serializer.serialize(self.build_remote_object(objs))
+        return self.serializer.serialize(self.build_remote_object(objs), fields = self.remote.base_fields.keys())
 
     def delete(self, values):
         objs = self.deserializer(values)
@@ -113,9 +114,12 @@ class RemoteManagerBase(object):
     def insert(self, values):
         objs = self.deserializer(values)
         ret = []
-        for o in objs:
-            o.save()
-            ret.append(getattr(o.object, o.object._meta.pk.attname))
+        for obj in objs:
+            if hasattr(self.remote, 'save'):
+                obj = self.remote.save(obj)
+            else:
+                obj.save()
+            ret.append(getattr(obj.object, o.object._meta.pk.attname))
         return ret
 
     def update(self, values):

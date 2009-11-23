@@ -3,6 +3,7 @@
 Modelo de prueba
 '''
 from django.db import models
+from django.contrib.auth.models import User
 
 # Some useful things
 mod_name = __name__.split('.')[-2]
@@ -29,23 +30,11 @@ class Ciudad(models.Model):
     
     get_absolute_url = abs_url
 
-class Vendedor(models.Model):
-    nombre = models.CharField(max_length = 50)
-    apellido = models.CharField(max_length = 50)
-    ciudades_asignadas = models.ManyToManyField(Ciudad)
-    
-    get_absolute_url = abs_url
-    
-    class Meta:
-        verbose_name_plural = "Vendedores"
-    def __unicode__(self):
-        return u','.join((self.nombre, self.apellido))
-        
-class Cliente(models.Model):
+class Cliente(User):
     razon_social = models.CharField(max_length = 50)
     direccion = models.TextField()
     ciudad = models.ForeignKey(Ciudad)
-    correo = models.EmailField()
+    cuit = models.CharField(max_length = 11)
     
     get_absolute_url = abs_url
     

@@ -3,6 +3,7 @@
 Modelo de prueba
 '''
 from django.db import models
+from django.contrib.auth.models import User
 from salesman.apps.core.models import abs_url, Cliente, Producto 
         
 class Pedido(models.Model):

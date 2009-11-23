@@ -106,6 +106,7 @@ var RemoteSerializer = type('RemoteSerializer', [ Serializer ], {
 function RemoteDeserializer(object_list) {
     /* Para pasar los datos a objetos de modelo asume que ya estan ordenados al obtener las referencias */
     models.get_apps();
+    
     for each (var d in object_list) {
         // Look up the model and starting build a dict of data for it.
         var Model = models.get_model_by_identifier(d["model"]);
@@ -121,7 +122,7 @@ function RemoteDeserializer(object_list) {
             data[Model._meta.pk.attname] = client_object[Model._meta.pk.attname];
         } catch (e if isinstance(e, Model.DoesNotExist)) {}
         var m2m_data = {};
-
+        debugger;
         // Handle each field
         for each (var [field_name, field_value] in items(d["fields"])) {
             //Esto esta copiado por el tema de unicode

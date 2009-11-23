@@ -461,7 +461,7 @@ class RemoteSite(RemoteBaseSite):
             models = map(lambda m: (m[0]._meta.object_name, \
                             issubclass(self._registry[app_label][m[0]], RemoteModelProxy) and 'RemoteModel' or 'RemoteReadOnlyModel', \
                             m[1]), models.items())
-            related_apps = get_related_apps(self._registry[app_label].keys())
+            related_apps = get_related_apps(self._registry[app_label])
             related_apps.discard(app_label)
             return render_to_response(
                             'djangoffline/models.js',
@@ -474,9 +474,24 @@ class RemoteSite(RemoteBaseSite):
     #===========================================================================
     # Model handling
     #===========================================================================
-    def register(self, model, remote_proxy = None):
-        assert issubclass(model, models.Model), "%s is not a Models subclass" % model
-
+    def register(self, model_or_proxy):
+        remote_proxy = None
+        model = None
+        
+        if issubclass(model_or_proxy, RemoteModelProxy):
+            model = model_or_proxy._meta.model
+            remote_proxy = model_or_proxy
+        elif issubclass(model_or_proxy, models.Model):
+            model = model_or_proxy
+            # If no class is given, create a basic one based on the model
+            name = model._meta.object_name
+            basic_meta = type('%sMeta' % name, (object,), {'model': model})
+            remote_proxy = type('%sRemote' % name, 
+                                (RemoteModelProxy, ), 
+                                {'Meta': RemoteOptions(basic_meta)} )
+        else:
+            raise Exception("%s is not a Models or RemoteModelProxy subclass" % model_or_proxy)
+            
         app_registry = self._registry.setdefault(model._meta.app_label, {})
 
         if model in app_registry and not isinstance(app_registry[model], RemoteReadOnlyModelProxy):
@@ -485,19 +500,11 @@ class RemoteSite(RemoteBaseSite):
             signals.post_save.connect(self.model_saved, model)
             signals.post_delete.connect(self.model_deleted, model)
 
-        if not remote_proxy:
-            # If no class is given, create a basic one based on the model
-            name = model._meta.object_name
-            basic_meta = type('%sMeta' % name, (object,), {'model': model})
-            remote_proxy = type('%sRemote' % name, 
-                                (RemoteModelProxy, ), 
-                                {'Meta': RemoteOptions(basic_meta)} )
-
         app_registry[model] = remote_proxy
         rm = RemoteManager()
         rm.contribute_to_class(remote_proxy)
-
-        related_models = get_related_models(model)
+        
+        related_models = get_related_models(model, remote_proxy)
         for related_model in related_models:
             app_registry = self._registry.setdefault(related_model._meta.app_label, {})
             if related_model in app_registry:

@@ -1111,7 +1111,7 @@ una petición es creando una instancia del objeto ``ajax.Request``.
     // Request
     new ajax.Request('una/url', {method: 'GET'});
 
-.. note:: RESCRIBIR    
+.. note:: RESCRIBIR
 .. note:: Hay que redactar un poco mejor lo del arreglo asociativo con sus parámetros opcionales. Está un poco confuso.
 
 El primer argumento de ``Request`` es la URL a la cual se realizará la solicitud. 

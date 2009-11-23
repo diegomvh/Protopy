@@ -196,15 +196,25 @@ def model_order_for_app(app_label):
     models = get_models(get_app(app_label))
     return get_model_order(models)
 
-def get_related_models(model):
-    fks = filter(lambda f: isinstance(f, ForeignKey), model._meta.fields)
-    fks = map(related_class, fks)
-        
-    return fks + map(related_class, model._meta.many_to_many)
-
-def get_related_apps(models):
+def get_related_models(model, remote = None):
+    '''
+        Determina los modelor relacionados en base al modelo pasado, 
+        toma la configuracion del remote en caso de que exista uno
+    '''
+    if remote:
+        remote_fields = remote.base_fields.values()
+        fks = filter(lambda f: isinstance(f, ForeignKey) and f in remote_fields, model._meta.fields)
+        fks = map(related_class, fks)
+        fks = fks + map(related_class, filter(lambda f: f in remote_fields, model._meta.many_to_many))
+    else:
+        fks = filter(lambda f: isinstance(f, ForeignKey), model._meta.fields)
+        fks = map(related_class, fks)
+        fks = fks + map(related_class, model._meta.many_to_many)
+    return fks
+    
+def get_related_apps(registry_entry):
     apps = []
-    for m in models:
-        ms = get_related_models(m)
+    for m, r in registry_entry.iteritems():
+        ms = get_related_models(m, r)
         apps += map(lambda m: m._meta.app_label, ms)
     return set(apps)

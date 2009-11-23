@@ -24,10 +24,14 @@
 			<ul id="tabs" >
 				<li><a href="/"><span>Inicio</span></a></li>
 				<li><a href="/pedido/"><span>Pedido</span></a></li>
-				<li><a href="index.html"><span>Downloads</span></a></li>
-				<li><a href="index.html"><span>Services</span></a></li>
-				<li><a href="index.html"><span>Support</span></a></li>
-				<li><a href="index.html"><span>About</span></a></li>			
+				{% if user.is_authenticated and not user.is_staff %}
+				<li><a href="/off/agentes/"><span>Desconectar Cliente</span></a></li>
+				{% endif %}
+				{% if user.is_authenticated and user.is_staff %}
+				<li><a href="/off/agentes/"><span>Desconectar Agente</span></a></li>
+				{% endif %}
+				<li><a href="#"><span>Clientes</span></a></li>
+				<li><a href="#"><span>Contactos</span></a></li>
 			</ul>
 											
 		</div>
@@ -44,6 +48,32 @@
 		<div id="sidebar" >							
 			
 			{% catalogo %}
+			
+			{% if user.is_authenticated %}
+			<h1>{{ user.username }} <a class="blue align-right" href="/logout/">Salir</a></h1>
+			<div class="left-box">
+				<p>
+					<h2>{{ user.last_name }}, {{ user.first_name }}</h2>
+				</p>
+			</div>
+			{% else %}
+			<h1>Usuario</h1>
+			<div class="left-box">
+			<form action="/login/" method="post">
+				<p>
+					<label>Nombre</label>
+				   	<input type="text" name="username"/>
+				</p>
+				<p>
+					<label>Clave</label>
+					<input type="text" name="password"/>
+              	</p>
+              	<p class="align-center">
+                	<input name="login" value="Ingresar" type="submit" />
+                </p>
+			</form>
+			</div>
+			{% endif %}
 			
 			<h1>Enlaces</h1>
 			<div class="left-box">
@@ -64,9 +94,6 @@
                         <a href="/core/cliente">Cliente</a>
                         <a href="/core/cliente/add">+</a>
                     </li>					
-
-					
-					 		
 				</ul>	
 			</div>
 				

@@ -113,43 +113,6 @@ urlpatterns = patterns('',
         }),
         
         #---------------------------------------------------------------------------------
-        # Vendedores
-        #---------------------------------------------------------------------------------
-        (r'vendedor/$', 'django.views.generic.simple.redirect_to', {'url':'/core/vendedores/'}),
-        
-        # vendedors -> Edit
-        (r'vendedor/(?P<object_id>\d{1,5})/edit/$', 'django.views.generic.create_update.update_object',{
-            'model': Vendedor,
-            'post_save_redirect': '/core/vendedores/',
-            'template_name': 'forms.html',
-            'extra_context': {'title': 'Editar vendedor', 'submit_text': 'Actualizar',}, 
-        }),
-        
-        # vendedor -> Listar
-        (r'vendedores/$', 'django.views.generic.list_detail.object_list',{
-            'queryset': Vendedor.objects.all()
-            }
-        ),
-        
-        # vendedor -> Crear
-        (r'vendedores/add/$', 'django.views.generic.simple.redirect_to', 
-            {'url': '../../vendedor/add/'}),
-            
-        (r'vendedor/add/$', 'django.views.generic.create_update.create_object', {
-            'model': Vendedor,
-            'template_name': 'forms.html',
-            'post_save_redirect': '/core/vendedores/',
-                                                                               
-        }),
-        # Vendedor -> Eliminar
-        (r'vendedor/(?P<object_id>\d{1,5})/delete/$', 'django.views.generic.create_update.delete_object', {
-            'model': Vendedor,
-            'post_delete_redirect': '/core/vendedores/',
-            'template_name': 'confirm_delete.html',
-                                                                               
-        }),
-        
-        #---------------------------------------------------------------------------------
         # Proveedores
         #---------------------------------------------------------------------------------
         (r'proveedor/$', 'django.views.generic.simple.redirect_to', {'url':'/core/proveedores/'}),

@@ -40,7 +40,7 @@ var RemoteManager = type('RemoteManager', [ models.Manager ], {
     }
 });
 
-var RemoteStatusManager = type('RemoteNewsManager', [ models.Manager ], {
+var RemoteStatusManager = type('RemoteStatusManager', [ models.Manager ], {
     __init__: function(status) {
         if (!status in SyncLog.SYNC_STATUS)
             throw new Exception("Status must be s,c,m,d");

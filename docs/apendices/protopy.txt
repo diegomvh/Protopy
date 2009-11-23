@@ -707,8 +707,9 @@ Timer
 ajax
 ~~~~
 
-Este modulo contiene funcionalidad, para el manejo de peticiones asincrónicas
-al servidor.
+Este modulo provee una interface de recubrimiento sobre las peticiones asincrónicas
+al servidor o simplemente ``AJAX``, uno de sus principales objetivos es el de encapsular y 
+simplificar la utilización del objeto ``XMLHttpRequest``.
 
     * Request()
 
