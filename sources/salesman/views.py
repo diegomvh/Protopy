@@ -12,5 +12,6 @@ def login(request):
         
         
 def logout(request):
+    request.session.clear()
     django_logout(request)
     return redirect('/')

@@ -947,6 +947,7 @@ function delete_objects(seen_objs) {
     var obj_pairs = {};
     for each (var cls in ordered_classes) {
         var itms = items(seen_objs.get(cls));
+        debugger; //Ver el sort
         itms.sort();
         obj_pairs[cls.__name__] = itms;
 

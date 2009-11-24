@@ -1,5 +1,5 @@
 from django.contrib import admin
-from salesman.apps.core.models import *
+from salesman.apps.core.models import Provincia, Ciudad, Cliente, Proveedor, Producto, Categoria
 
 admin.site.register(Provincia)
 admin.site.register(Ciudad)

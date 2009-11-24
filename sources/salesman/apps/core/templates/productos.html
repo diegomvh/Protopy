@@ -1,4 +1,12 @@
 {% extends "base.html" %}
+
+{% load productos %}
+
+{% block sidebar %}
+	{{ block.super }}
+	{% categorias %}
+{% endblock %}
+
 {% block main %}
 	{% for categoria in categorias %}
 	<a name="{{categoria}}"></a>

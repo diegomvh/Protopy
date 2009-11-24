@@ -1983,6 +1983,7 @@ var BaseQuery = type('BaseQuery', [ object ], {
             throw new FieldError("Invalid field name: '%s'".subs(name));
         } catch (e if isinstance(e, FieldError)) {
             var names = opts.get_all_field_names().concat(this.extra_select.keys()).concat(this.aggregate_select.keys());
+            debugger; // Ver el sort
             names.sort();
             throw new FieldError("Cannot resolve keyword %r into field. Choices are: %s".subs(name, names.join(", ")))
         }

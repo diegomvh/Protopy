@@ -1,44 +1,7 @@
-{% extends "base.html" %}
-
-{% block extra_style %}
-
-.django-form > p > label {
-    display: block;
-    width: 8em;
-    font-weight: bolder;
-    float: left;
-    /* color: red; */
-}
-.django-form input {
-    border: 1px solid #888;
-    padding: 2px;
-}
-.django-form .buttons input, .buttons button {
-	border: 1px solid #888;
-	padding: 4px;
-}
-.django-form table.formset {
-	maring: 0px;
-	padding: 2px;
-}
-
-.django-form table.formset  tr {
-	
-	background-color: red;
-
-}
-
-.django-form table.formset td {
-	padding: 2px;
-}
-
-{% endblock %}
-
+{% extends "administrar.html" %}
 
 {% block main %}
-{% if title %}
-	<h2>{{ title }}</h2>
-{% endif %}
+<h1>{{ titulo }}</h1>
 <form action="" method="post" class="django-form">
 	{% block form_content %}
 			{% for field in form %}
@@ -49,51 +12,14 @@
 			{% endfor %}
 	
 	{% endblock %}
-	
-    {% comment %}	
-    {# Esta forma de rederizar el formset no está buena #}
-    <table>	
-	{{ formset }}
-	</table>
-    {% endcomment %}
-
-    {% block formsets %}
-    
-	{% if formset %}
-		<!-- Formsets -->
-		{% for f in formset.management_form %}
-			<!-- Management -->
-    		{{ f }}
-		{% endfor %}
-		<h4>{% if formsets_title %} {{ formsets_title }} {% else %} Items: {% endif %}</h4>
-		<table class="formset" cellpadding="0" cellspacing="0">
-			{% for inline_from in formset.forms %}
-				<tr>
-					{% for field in inline_from %}
-						<td>
-							{% if field.errors %} {{ field.errors }} {% endif %}
-                            {% if not field.is_hidden %} {{ field.label_tag }} {% endif %}
-							{{ field }}
-						</td>
-					{% endfor %}
-				</tr> 
-				{#{ inline_from.as_table }#}
-			
-			{% endfor %}
-		</table>
-	{% endif %}
-	
-	{% block form_buttons %}
-		<div class="buttons">
-			{% block button_inputs %}	
-				<input type="submit" value="{% if submit_text %} {{submit_text}} {%else%} Crear {% endif %}">
-				<!-- <input type="reset" value="Reset" id="reset_form"> -->
-				<button id="cancelar_form">Cancelar</button>
+    {% block form_buttons %}
+		<p class="comments align-right clear">
+			{% block button_inputs %}
+				<input id="cancelar" type="button" class="button" value="Cancelar"/>
+				<input type="submit" class="button strong" value="{% if submit_text %} {{submit_text}} {%else%} Agregar {% endif %}"/>
 			{% endblock %}
 		</div>
 	{% endblock%}
-	
-    {% endblock %}
 </form>
 
 <script type="text/javascript">
@@ -102,7 +28,7 @@
         require('event');
         var initial_data = {};
         function onload() {
-            var btn_cancel = $$('#cancelar_form')[0];
+            var btn_cancel = $('cancelar');
             event.connect(btn_cancel, 'click', function (e) {
                 event.stopEvent(e);
                 sys.window.history.back();
@@ -124,9 +50,4 @@
         event.connect(sys.window, 'load', onload);
     })();
 </script>
-{% endblock %}
-
-{% block sidebar_wrapper %}
-
-
 {% endblock %}

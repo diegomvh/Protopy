@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block sidebar %}
+{{ block.super }}
+<h1>Administrar</h1>
+<div class="left-box">
+	<ul class="sidemenu">
+		<li>
+        	Ciudades :
+			<a href="/administrar/ciudades/">listar</a> :
+			<a href="/administrar/ciudad/agregar/">agregar</a>
+		</li>
+		<li>
+			Clientes :
+			<a href="/administrar/clientes/">listar</a> : 
+			<a href="/administrar/cliente/agregar/">agregar</a>
+		</li>
+		<li>
+			Productos :
+			<a href="/administrar/productos/">listar</a> : 
+			<a href="/administrar/producto/agregar/">agregar</a>
+		</li>
+		<li>
+			Categorias :
+            <a href="/administrar/categorias/">listar</a> :
+            <a href="/administrar/categoria/agregar/">agregar</a>
+        </li>
+	</ul>	
+</div>
+{% endblock  %}

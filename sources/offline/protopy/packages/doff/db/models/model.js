@@ -19,12 +19,12 @@ var subclass_exception = function(name, parent, module) {
 
 var Model = type('Model', [ object ], {
     __new__: function(name, bases, attrs) {
-
+		
         if (name == 'Model' && bases[0] == object ) {
             return super(Model, this).__new__(name, bases, attrs);
         }
         var parents = [b for each (b in bases) if (issubclass(b, Model))];
-
+        
         //Armar attributos falsos para protopy
         var module = this.__module__;
         var fake_attrs = {};
@@ -112,7 +112,7 @@ var Model = type('Model', [ object ], {
             }
             // Inherit managers from the abstract base classes.
             var base_managers = base._meta.abstract_managers;
-            base_managers.sort();
+            base_managers.sort(function(m1, m2) { return m1[0] > m2[0]; });
             for each (var element in base_managers) {
                 var [none, mgr_name, manager] = element;
                 var val = this[mgr_name];

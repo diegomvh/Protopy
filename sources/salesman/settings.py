@@ -69,6 +69,14 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
 )
 
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.core.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'salesman.context_processors.pedido',
+)
+
 ROOT_URLCONF = 'salesman.urls'
 
 TEMPLATE_DIRS = (
@@ -90,7 +98,6 @@ INSTALLED_APPS = (
     # User apps
     'salesman.apps.core',
     'salesman.apps.ventas',
-    'django.contrib.databrowse',
 )
 
 FIXTURE_DIRS = ('fixtures',)

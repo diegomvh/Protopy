@@ -282,8 +282,10 @@ form.search input.searchbutton {
 /* main column */
 #main {
 	float: right;
-	margin: 0; padding: 0;
-	width: 545px;	
+	margin: 0;
+	padding: 0;
+	min-height: 440px;
+	width: 545px;
 }
 #main h1 {
 	margin: 10px 0;

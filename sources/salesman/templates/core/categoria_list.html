@@ -3,11 +3,12 @@
 
 
 	{% block table_heading %}
-		<th>Nombre</th>
+		<th>Nombre</th><th>Productos</th>
 	{% endblock %}
 
 	{% block item_iteration_row %}
-		<td>{{ item.nombre }}</td>
+		<td>{{ item }}</td>
+		<td>{{ item.producto_set.count }}</td>
   	{% endblock %}
   	
  

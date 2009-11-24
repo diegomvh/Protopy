@@ -122,7 +122,7 @@ function RemoteDeserializer(object_list) {
             data[Model._meta.pk.attname] = client_object[Model._meta.pk.attname];
         } catch (e if isinstance(e, Model.DoesNotExist)) {}
         var m2m_data = {};
-        debugger;
+        
         // Handle each field
         for each (var [field_name, field_value] in items(d["fields"])) {
             //Esto esta copiado por el tema de unicode

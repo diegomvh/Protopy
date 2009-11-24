@@ -1,20 +1,11 @@
 {% extends "listado.html" %}
-	{#
-nombre = models.CharField(max_length = 50)
-    descripcion = models.CharField(max_length = 500)
-    categoria = models.ForeignKey(Categoria, blank = True)
-    provisto_por = models.ManyToManyField(Proveedor)
-    precio_uniatario = models.DecimalField(default = 0.0, max_digits = 5, decimal_places = 3)
-#}
 
 	{% block table_heading %}
-		<th>Nombre</th><th>Descripcion</th><th>Categoria</th><th>Proveedor</th><th>Precio</th>
+		<th>Nombre</th><th>Proveedor</th><th>Precio</th>
 	{% endblock %}
 
 	{% block item_iteration_row %}
 		<td>{{ item.nombre }}</td>
-		<td>{{ item.descripcion }}</td>
-		<td>{{ item.categoria }}</td>
 		<td>{% if not item.provisto_por.count %}
 				<i>Sin proveedor</i>
 			{% else %}
@@ -23,7 +14,7 @@ nombre = models.CharField(max_length = 50)
 				{% endfor %} 
 			{% endif %}
 			</td>
-		<td>${{ item.precio_uniatario }}</td>
+		<td>U$S {{ item.precio|stringformat:"0.2f" }}</td>
   	{% endblock %}
   	
  

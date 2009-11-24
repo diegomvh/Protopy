@@ -1,0 +1,11 @@
+<h1>Novedades</h1>
+{% for producto in novedades %}
+	<p>
+		<a href="/catalogo/categoria/{{ producto.categoria.id }}/" name="{{categoria}}">{{producto.categoria}}</a>
+			<img src="{{MEDIA_URL}}{{producto.imagen}}" alt="{{producto}}" class="float-left" width="100"/>
+			<h4>{{producto}}</h4>
+	</p>
+	<p class="comments align-right clear">
+		<a href="/pedido/agregar/{{producto.id}}/">Comprar</a>
+	</p>
+{% endfor %}

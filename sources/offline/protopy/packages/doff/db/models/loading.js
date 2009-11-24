@@ -86,7 +86,8 @@ var AppCache = type('AppCache', [ object ], {
         // added at the end). This avoids unstable ordering on the admin app
         // list page, for example.
         var apps = [[v, k] for each ([k, v] in this.app_store.items())];
-        apps.sort();
+
+        apps.sort(function (ap1, ap2) { return ap1[0] > ap2[0]; });
         return [elt[1] for each (elt in apps)];
     },
 

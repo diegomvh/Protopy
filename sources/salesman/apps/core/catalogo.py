@@ -22,4 +22,3 @@ def buscar_productos(request):
             categorias.add(producto.categoria)
         return render_to_response('productos.html', {'categorias': categorias}, context_instance=RequestContext(request))
     return redirect('/')
-	    

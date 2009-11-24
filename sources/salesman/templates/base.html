@@ -1,6 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-{% load productos %}
 {% load offline_support %}
 <head>
 	<meta name="Description" content="Underground Store." />
@@ -23,17 +22,17 @@
 			<!-- tabs -->
 			<ul id="tabs" >
 				<li><a href="/"><span>Inicio</span></a></li>
-				<li><a href="/pedido/"><span>Pedido</span></a></li>
+				<li><a href="/catalogo/"><span>Catalogo</span></a></li>
 				{% if user.is_authenticated and not user.is_staff %}
-				<li><a href="/off/agentes/"><span>Desconectar Cliente</span></a></li>
+				<li><a href="#"><span>Desconectar Cliente</span></a></li>
 				{% endif %}
 				{% if user.is_authenticated and user.is_staff %}
-				<li><a href="/off/agentes/"><span>Desconectar Agente</span></a></li>
+				<li><a href="#"><span>Pedidos</span></a></li>
+				<li><a href="/administrar/"><span>Administrar</span></a></li>
+				<li><a href="/off/agentes/"><span>Desconectar</span></a></li>
 				{% endif %}
-				<li><a href="#"><span>Clientes</span></a></li>
-				<li><a href="#"><span>Contactos</span></a></li>
-			</ul>
-											
+				<li><a href="#"><span>Contacto</span></a></li>
+			</ul>									
 		</div>
 		
 		<div id="header-logo">			
@@ -45,17 +44,11 @@
 			</form>
 		</div>
 		
-		<div id="sidebar" >							
-			
-			{% catalogo %}
+		<div id="sidebar" >
+		{% block sidebar %}
 			
 			{% if user.is_authenticated %}
-			<h1>{{ user.username }} <a class="blue align-right" href="/logout/">Salir</a></h1>
-			<div class="left-box">
-				<p>
-					<h2>{{ user.last_name }}, {{ user.first_name }}</h2>
-				</p>
-			</div>
+			<h1>{%if user.is_staff %}Vendedor {% endif %}{{ user.username }} <a class="blue align-right" href="/logout/">Salir</a></h1>
 			{% else %}
 			<h1>Usuario</h1>
 			<div class="left-box">
@@ -66,7 +59,7 @@
 				</p>
 				<p>
 					<label>Clave</label>
-					<input type="text" name="password"/>
+					<input type="password" name="password"/>
               	</p>
               	<p class="align-center">
                 	<input name="login" value="Ingresar" type="submit" />
@@ -75,11 +68,20 @@
 			</div>
 			{% endif %}
 			
+			{% if pedido %}
+			<h1>Pedido en curso</h1>
+			<div class="left-box">
+				<p>{{pedido.productos}} productos, U$S {{pedido.subtotal}}</p>
+				<h3 class="align-center"><a href="/pedido/modificar/" class="blue">Editar</a>&nbsp;&nbsp;&nbsp;<a href="#" class="blue">Finalizar</a></h3>
+			</div>
+			{% endif %}
+					
+			{% comment %}
 			<h1>Enlaces</h1>
 			<div class="left-box">
 				<ul class="sidemenu">
 					<li>
-						<a href="/core/pais">País</a>
+						<a href="/core/pais">Pais</a>
 						<a href="/core/pais/add">+</a>
 					</li>
 					<li>
@@ -96,7 +98,7 @@
                     </li>					
 				</ul>	
 			</div>
-				
+			
 			
 			<h1>Documentacion del Proyecto</h1>
 			<div class="left-box">
@@ -106,7 +108,6 @@
 				<p class="align-right">- Dr. Maxwell Maltz</p>
 			</div>	
 			
-			{% comment %}
 			<h1>Support Styleshout</h1>
 			<div class="left-box">
 				<p>If you are interested in supporting my work and would like to contribute, you are
@@ -114,7 +115,8 @@
 				<a href="http://www.styleshout.com/">donate link</a> on my website - it will 
 				be a great help and will surely be appreciated.</p>
 			</div>		
-		  {% endcomment %}		
+		  {% endcomment %}
+		{% endblock %}
 		</div>		
 		
 							

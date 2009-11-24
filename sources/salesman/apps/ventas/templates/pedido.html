@@ -1,4 +1,11 @@
 {% extends "base.html" %}
+{% load productos %}
+
+{% block sidebar %}
+	{{ block.super }}
+	{% categorias %}
+{% endblock %}
+
 {% block main %}
 	<h1>Pedido de Compra</h1>
 	{% if producto %}
@@ -34,14 +41,14 @@
 		{% endfor %}
 		<tfoot>
 			<tr>
-				<th class="align-right" colspan="4">subtotal</th>
+				<th class="align-right" colspan="4">subtotal U$S</th>
 				<th class="align-right">{{ pedido.subtotal|stringformat:"0.2f" }}</th>
 			</tr>
 		</tfoot>
 	</table>
 	<p class="comments align-right clear">
         <input type="submit" class="button" value="Actualizar"/>
-        <input type="submit" class="button strong" value="Finalizar Pedido"/>
+        <input type="submit" class="button strong" value="Finalizar"/>
     </p>
 	</form>
 	{% else %}

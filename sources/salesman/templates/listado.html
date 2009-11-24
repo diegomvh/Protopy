@@ -1,117 +1,27 @@
-{% extends "base.html" %}
-
-{% block extra_style %}
-	table.item-list {
-		background: #FFF;
-		width: 100%;
-		font-size: 13px;
-		border: 1px solid #999;
-	
-	}
-	
-	table.item-list th {
-		border: 1px solid #acd;
-	
-	}
-	
-	table.item-list td.actions {
-		width: 100px;
-	}
-	
-	table.item-list tr.data:hover {
-		background: #dec;
-		border: 1px solid #dec;
-	}
-	
-	table.item-list td.actions {
-	
-	}
-	
-	table.item-list td.actions edit {
-		{{ MEDIA_URL }}/icons/cross.png
-	}
-	
-	table.item-list td.actions delete {
-		{{ MEDIA_URL }}/icons/highlighter.png
-	}
-	
-	.rounded_link {
-		background-color: #ccc;
-		-moz-border-radius: 25px;
-		-webkit-border-radius: 25px;
-		border: 1px solid #000;
-		padding: 10px;
-		text-decoration: none;
-		color: #000;
-		font-weight: bolder;
-	}
-	
-
-{% endblock %}
+{% extends "administrar.html" %}
 
 {% block main %}
-<h2>{{ listing_title }}</h2>
-
+<h1>{{ titulo }}</h1>
 <table class="item-list">
+<thead>
 	<tr>
-	{% block table_heading %}
-	<th>Sample TH</th>
-	<th>Sample TH</th>
-	{% endblock %}
-	<th>Acciones</th>
+		{% block table_heading %}
+		{% endblock %}
+		<th>Acciones</th>
 	</tr>
-	
+</thead>
+<tbody>
 	{% for item in object_list %}
-		<tr class='data'>
+	<tr class="{% cycle '' 'altrow' %}">
 		{% block item_iteration_row %}
 		  	<!-- Put your code here -->
 	  	{% endblock %}
-		<td class="actions">
-			<a class="edit" href="{{ item.get_absolute_url }}/edit">Editar</a>
-			<a class="delete" href="{{ item.get_absolute_url }}/delete">Eliminar</a>
+		<td>
+			<a class="edit" href="/administrar{{ item.get_absolute_url }}/editar/">Editar</a>
+			<a class="delete" href="/administrar{{ item.get_absolute_url }}/eliminar/">Eliminar</a>
 		</td>  	
-	  	</tr>
+	</tr>
   	{% endfor %}
-  	
+</tbody>
 </table>
-
-{% comment %}
-<div id="list-controls">
-	<span style="margin-top: 20px; display: block;">
-		<a href="add" class="rounded_link">Crear nuevo</a>
-	</span>
-</div>
-{% endcomment %}
-<script>
-	
-	/*
-	(function (){
-		require('event');
-		require('sys');
-		var win = sys.window;
-		event.connect(win, 'load', function () {
-			$$('.delete').map(function (link) {
-				event.connect(link, 'click', function (evt){
-					event.stopEvent( evt );
-					var result = confirm("Desea eliminar el elemento?");
-					if (result) {
-						win.location = link.href;
-					}
-				});
-			});
-			
-		})
-	})();
-	*/
-</script>
 {% endblock %} 
-
-{% block sidebar %}
-
-<ul>
-                <li>
-                    <h2>Acciones</h2>
-                    <p><strong><a href="add">Crear Nuevo</a></strong></p>
-                </li>
-</ul>
-{% endblock  %}
