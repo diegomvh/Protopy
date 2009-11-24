@@ -18,7 +18,7 @@ var Project = type('Project', object, {
 
         // Inicio del handler para las url
         require('doff.core.handler', 'LocalHandler');
-        this.handler = new LocalHandler(this.settings);
+        this.handler = new LocalHandler();
 
         // Conecto el adaptador al manejador
         event.connect(sys.window, 'send', this.handler, 'receive');
@@ -54,11 +54,12 @@ var Project = type('Project', object, {
 
     load_toolbar: function() {
         require('doff.core.exceptions');
+        require('doff.conf.settings', 'settings');
         require('doff.utils.toolbar', 'ToolBar');
 
         this.toolbar = new ToolBar();
 
-        for each (var toolbar_path in this.settings.TOOLBAR_CLASSES) {
+        for each (var toolbar_path in settings.TOOLBAR_CLASSES) {
             var dot = toolbar_path.lastIndexOf('.');
             if (dot == -1)
                 throw new exceptions.ImproperlyConfigured('%s isn\'t a toolbar module'.subs(toolbar_path));
@@ -97,36 +98,13 @@ var Project = type('Project', object, {
         event.connect(window, 'load', this, 'onLoad');
     },
 
-    get settings() {
-        if (this._settings)
-            return this._settings;
-        var self = this;
-        var global_settings = require('doff.conf.settings');
-        var url_settings = sys.module_url(this.package, 'settings.js');
-        new ajax.Request(url_settings, {
-            method: 'GET',
-            asynchronous : false,
-            onSuccess: function(transport) {
-                var code = '(' + transport.responseText + ');';
-                var project_settings = eval(code);
-                self._settings = extend(global_settings, project_settings);
-            },
-            onException: function(obj, exception) {
-                throw exception;
-            },
-            onFailure: function(transport) {
-                throw new Exception("No settings");
-            }
-        });
-        return this._settings;
-    },
-
     get_permission: function() {
+    	require('doff.conf.settings', 'settings');
         if (sys.gears.hasPermission)
             return true;
-        var site_name = this.settings.PROJECT_NAME;
-        var icon = this.settings.PROJECT_IMAGE;
-        var msg = this.settings.PROJECT_DESCRIPTION
+        var site_name = settings.PROJECT_NAME;
+        var icon = settings.PROJECT_IMAGE;
+        var msg = settings.PROJECT_DESCRIPTION
             + 'This site would like to use Google Gears to enable fast, '
             + 'as-you-type searching of its documents.';
 
@@ -222,12 +200,7 @@ function get_project(package, offline_support){
     return project;
 }
 
-function get_settings() {
-    return get_project().settings;
-}
-
 publish({
     get_project: get_project,
-    new_project: get_project,
-    get_settings: get_settings
+    new_project: get_project
 });
