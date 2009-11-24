@@ -349,6 +349,9 @@ La aplicación ``offline`` posee estos modelos:
 
     Modelos
 
+.. raw:: latex
+	
+	\newpage
 
 Protocolo de Sincronización
 ===========================
@@ -375,7 +378,7 @@ menor cantidad de caracteres enviados [WikiJSONRPC09]_.
     http://en.wikipedia.org/wiki/JSON-RPC
  
 Se implementó en la URL ``/sync`` de la calse ``RemoteSite`` un manejador de 
-llamadas JSONRPC. Por simplicidad y consitencia con el decorador ``expose`` 
+llamadas JSONRPC. Por simplicidad y consistencia con el decorador ``expose`` 
 se creó el decorador ``jsonrpc``. Por ejemplo, una método expuesto en el 
 sitio remoto se implementa de la siguiente manera:
 
@@ -530,30 +533,36 @@ Problemas de Sincronización
 
 Cuando un cliente desconectado genera instancias de clases relacionadas, los 
 identificadores (campos ``id``) son establecidos por la base de datos del cliente.
-Este problema se da cuando, por ejmplo, se tiene una clase ``Pedido`` relacionada
+Este problema se da cuando, por ejemplo, se tiene una clase ``Pedido`` relacionada
 con ``ItemPedido``, cuando el cliente crea pedidos con items, las instancias
 tiene ``status`` en ``"C"`` (creado) y el valor ``server_pk`` en ``NULL``.
 Si bien la relación tiene sentido en el contexto del cliente, durante la ejecución
 de ``push()``, el servidor no puede resolver las relaciones debido a que ignora
-los cambios ``id`` del cliente. Cuando esto ocurre, ``push()`` informa que no pudo
-realizar la sincronización de la totalidad de los modelos levantando la bandera
-``chunked``.
+los cambios ``id`` del cliente. El cliente se evalúa si ha ocurrido esta situación
+verificando si la cantidad de modelos devueltos es diferente a la cantidad de modelos
+enviados, bautizando a esta situación *por partes* o ``chunked``. Debido a que el
+método ``push()`` actualiza los campos ``server_pk`` de las instancias que pudo
+crear en el servidor, una nueva invocación de ``push()`` solo enviará las entidades
+no sincronizadas. Se deben realizar tantas invocaciones como niveles de relaciones
+se tengan sin resolver. Es importante aclarar que la cantidad de invocaciones no
+crece con la cantidad de instancias sino con las profundidad de relaciones.
 
-Para resolver esta situación ``push()`` acutaliza con los valores de los campos
-que se pudieron crear en el servidor. Esto hace que se puedan resolver las relaciones
-inmediatas a las calses creadas.
 
 
-Para ilustrar el problema, se realizará el siguiente ejemmplo:
+El siguiente gráfico ejemplifica el cambio de las entidades en el cliente 
+cuando ocurre la sincronización por partes:
 
 .. figure:: ../_dot/update_rationale.pdf
     
-    Resolución de referencias en el cliente ante un ``push()`` que devuelve
-    ``chunked``.  
+    Resolución de referencias en el cliente *por partes*.
+
+.. raw:: latex
+
+    \newpage
 
 Otro problema que puede ocurrir durante la sincronización es que el cliente
-no posea la versión más actual del estado del mdelo. Este caso se detecta en 
-el servidor mediante compración de fachas de los ``sync_log`` enviado en
+no posea la versión más actual del estado del modelo. Este caso se detecta en 
+el servidor mediante comparación de fachas de los ``sync_log`` enviado en
 el ``push()`` (análisis de las fechas de la lista ``received["sync_log"]``).
 Esto ocurre cuando se realizan cambios en el servidor desde la última sinronización
 del cliente.
@@ -579,9 +588,9 @@ es también un método del ``SyncHandler``. Su algoritmo es el siguiente:
 
 Cuando una entidad es eliminada en el cliente y se ejecuta ``push()`` 
 la bandera ``active`` toma le valor ``false``. Cuando el programador considere
-oportuno deberá ejecutar ``purge()``, otro método añadido al ``SyncHandler``.
-Éste se encarga de eliminar las entidades con la bandera ``active`` desactivada y
-que no posean relaciones de entidades activas.
+oportuna la eliminación de las entidades inactivas, el ``SyncHandler`` posee
+un método ``purge()`` (este método solo elimina una entidad si no posee relaciones
+o todos los campos relacionados poseen su bandera ``active`` en ``false``).
     
 El campo ``status`` es el que determina que modelos deben ser sincronizados. La 
 ejecución de los métodos mencionados genera cambios de estado, el siguiente diagrama
@@ -591,9 +600,6 @@ ejemplifica este hecho:
 
     Estados de sincronización de los modelos en el cliente.
 
-.. raw:: latex
-    
-    \pagebreak
 
 Resolución de Conflictos
 ========================
