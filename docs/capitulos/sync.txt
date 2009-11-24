@@ -1,17 +1,17 @@
-
+﻿
 
 #########################
 Sincronización de Datos
 #########################
 
-Por simplcidad, en este capítulo, se establece la siguiente terminología:
+Por simplicidad, en este capítulo, se establece la siguiente terminología:
 Cuando se hable de *el cliente* se está refiriendo al proyecto desconectado,
 *el servidor* es el proyecto en línea.
 
-La sincronziación de datos permite que las entidades definidas en el servidor
+La sincronización de datos permite que las entidades definidas en el servidor
 se repliquen en el cliente y que las creadas y modificadas por el cliente
-se transfieran a la aplicación en linea, permitiendo así que se porpaguen
-a el resto de los clientes posteriormente.
+se transfieran a la aplicación en linea, permitiendo así que se propaguen
+a el resto de los proyectos desconectados.
 
 Sin embargo diversas situaciones en las cuales se pueden presentar conflictos entre
 las versiones de de una misma entidad:
@@ -51,22 +51,21 @@ Transporte de Datos
 ===================
 
 El primer aspecto a considerar es el transporte de datos. Las bases de datos
-relacionales utilizan el lenguaje SQL como estándar para la definicón de su
+relacionales utilizan el lenguaje SQL como estándar para la definición de su
 estructura y manipulación de datos. Django provee un ORM que encapsula el
 acceso al RDBMS y brinda una capa de abstracción en el lenguaje Python. Doff realiza
 lo propio en el lenguaje JavaScript, apoyándose en las extensiones del 
 provistas por Protopy. Gracias al trabajo del sitio remoto, mediante
-el registro de modelos, se obtiene consistencia entre las definciones de alto
+el registro de modelos, se obtiene consistencia entre las definiciones de alto
 nivel del servidor con las del cliente, por lo cual se optó por realizar el
-transporte utilizando los mecanimos de alto nivel disponibles en Django implenetando
-el soporte necesario en Doff.
+transporte utilizando los mecanismos de alto nivel disponibles en Django implementando el soporte necesario en Doff.
 
 Django provee un módulo llamado ``serializers`` que brinda un conjunto de
 serializadores (*marshalling*) de instancias de ``QuerySet``. Un serializador
-se encarga de *aplanar* las intancias en texto con algún formato. Los formatos
+se encarga de *aplanar* las instancias en texto con algún formato. Los formatos
 de salida provistos por Django son: XML, JSON y Python. Cuando un serializador
 trabaja sobre un ``QuerySet`` almacena información sobre el modelo para poder
-luego recuperar las instancias medinate un des-serializador. 
+luego recuperar las instancias mediante un des-serializador. 
 
 Se optó por el serializador basado en JSON, debido a que presenta ventajas a la 
 hora de depuración aunque teniendo como penalización el tiempo de procesamiento sobre
@@ -105,7 +104,7 @@ se puede serializar en JSON de la siguiente forma:
     from core.models import Provincia # Importanción de modelos
     # Importación del módulo de serialización
     >>> from django.core import serializers
-    # Obtención de la calse de serialización en JSON
+    # Obtención de la clase de serialización en JSON
     >>> SerializadorCls = serializers.get_serializer('json')
     # Creación de una instancia del serializador
     >>> serializador = SerializadorCls()
@@ -158,12 +157,9 @@ y simple de transporte de datos, se deben tener en cuenta que en el caso
 de contar con relaciones en los modelos, los datos serializados deben ser
 enviados en orden para no violar la integridad diferencial, provocando
 una falla en el método ``save()`` en la deserialización. Desde el 
-punto de las relaciones, los modelos conforman una gerarquía de árbol con
-múltiples raices. Gracias a la metainformación que brindan las definciones
-de alto nivel, el orden de presedencia fue calculado de manera sencilla.
-
-.. note:: Documentar remote.py, serializadores 2 y 2 Read Only 
-
+punto de las relaciones, los modelos conforman una jerarquía de árbol con
+múltiples raíces. Gracias a la meta-información que brindan las definiciones
+de alto nivel, el orden de presenciara fue calculado de manera sencilla.
 
 Versionado de Modelos
 =====================
@@ -178,16 +174,16 @@ las instancias se planteó un escenario hipotético que se describe a continuaci
 
     Existe un proyecto en linea, que cuneta con un sitio remoto publicado. Existe
     uno o más instancias del proyecto creado a partir del sitio remoto. Los clientes
-    poseen conexión ocacional, durante la cual realizan la tarea de sincronización
+    poseen conexión ocasional, durante la cual realizan la tarea de sincronización
     en la cual envían y reciben los cambios del sitio remoto.
     Ante un conflicto de datos insalvable de manera automática mediante las 
     clases de Middleware de sincronización, se puede definir que política
     adoptar: prevalencia de los datos del servidor, prevalencia de los datos
-    del cliente, intervensión del usuario u  otra política. 
+    del cliente, intervención del usuario u  otra política. 
 
-Los camibos en las instancias ocurren ante los eventos de creación, modificación
+Los cambios en las instancias ocurren ante los eventos de creación, modificación
 y eliminación. Sin embargo, esto eventos se producen tanto en la aplicación del
-cliente como en la aplicación en línea, por lo que se realiza un anális por 
+cliente como en la aplicación en línea, por lo que se realiza un análisis por 
 separado de cada una de estas situaciones:
 
  * Creación de una entidad
@@ -198,7 +194,7 @@ separado de cada una de estas situaciones:
     * En el servidor
     
         Se debe crear un registro de que la entidad ha sido creada.
-        El cliente debe copiar la nueva intancia en la próxima sincronización.
+        El cliente debe copiar la nueva instancia en la próxima sincronización.
     
     * En el cliente
     
@@ -215,7 +211,7 @@ separado de cada una de estas situaciones:
     * En el servidor
         
         Se debe crear un registro de que la entidad ha sido modificada.
-        El cliente debe actualizar la intancia en la próxima sincronización.
+        El cliente debe actualizar la instancia en la próxima sincronización.
     
     * En el cliente
         
@@ -267,7 +263,7 @@ relaciones genéricas.
 Información de Sincronización en el Cliente
 *******************************************
 
-La información sobre sicronización en el cliente se basó en parte en los campos
+La información sobre sincronización en el cliente se basó en parte en los campos
 que propone Junction, agregándoselos a cada entidad, pero se modeló la
 sincronización como entidad por separado.
 
@@ -312,7 +308,7 @@ Los datos que se agregaron a cada modelo del cliente fueron:
             * ``"M"`` (modified)
             
                 La entidad sincronizada ha sido modificada en el cliente.
-                Ante una sincronización se acutaliza la referencia de ``sync_log``
+                Ante una sincronización se actualiza la referencia de ``sync_log``
                 y se vuelve al estado de sincronizado (``"S"``).
                 
             
@@ -341,8 +337,8 @@ Con el objeto de registrar los cambios sobre entidades en el servidor, se
 decidió crear una entidad denominada ``SyncData``. Una instancia de esta entidad
 se crea ante los eventos de guardado (modificación) y eliminación de las entidades.
 
-De esta manera solo las entidades que forman parte del proyecto desoncetado
-son "vigiladas" por cambios, registrandose ante éstos la fecha.
+De esta manera solo las entidades que forman parte del proyecto desconcertado
+son "vigiladas" por cambios, registrándose ante éstos la fecha.
 Cada vez que se registra un modelo a un sitio remoto internamente también
 se registran manejadores de eventos ante las señales de guardado, ``post_save`` 
 y eliminación, ``post_delete``.
@@ -357,19 +353,19 @@ La aplicación ``offline`` posee estos modelos:
 Protocolo de Sincronización
 ===========================
 
-El proceso de sincronización entre ORMs conlleva la transferecia de datos
-con una *estuctura* y en un *orden* para garantizar la integridad referencial de la
+El proceso de sincronización entre ORMs conlleva la transferencia de datos
+con una *estructura* y en un *orden* para garantizar la integridad referencial de la
 bases de datos subyacentes. Por ejemplo, no se puede crear una entidad débil sin 
 antes crear la entidad a la cual referencia en este proceso.
 
 Para realizar esta tarea se eligió JSONRPC en vez de HTTP puro como mecanismo de 
 comunicación entre el cliente y el servidor.
-Esta desición se tomó debido a que la codificación de parámetoros que
+Esta decisión se tomó debido a que la codificación de parámetros que
 ofrece HTTP, ``application/x-www-form-urlencoded`` y ``multipart/form-data`` [W3CFormEncoding09]_, 
 está orientada al pasaje de texto sin estructura.
 
 JSONRPC es un prtocolo de llamado a procedimiento remoto muy similar a XMLRPC, 
-pero que utiliza  JSON para codificación de de los mensajes, contribuyendo a una fácil lecutra de 
+pero que utiliza  JSON para codificación de de los mensajes, contribuyendo a una fácil lectura de 
 la información enviada por parte del programador durante la depuración y generalmente una
 menor cantidad de caracteres enviados [WikiJSONRPC09]_. 
  
@@ -504,8 +500,13 @@ o Bazaar [BazaarDocs09]_ se crearon dos métodos: ``pull`` y ``push`` en el serv
     se define en un entorno procedural. No confundir la definición de método con
     *remoting* de objetos o RMI.
 
+El siguiente gráfico muestra los argumentos enviados en el método ``push()``.
 
-Ámbas operaciones tienen caracter atómico, se ejecutan dentro de una transacción
+.. figure:: ../_dot/push_return.pdf
+    
+    Argumentos de ``push()``
+
+Ambas operaciones tienen carácter atómico, se ejecutan dentro de una transacción
 de la base de datos.
 
 En cuanto al cliente, se implementó una aplicación ``doff.contrib.offline``, que
@@ -528,7 +529,7 @@ Problemas de Sincronización
 ===========================
 
 Cuando un cliente desconectado genera instancias de clases relacionadas, los 
-idetficadores (campos ``id``) son establecidos por la base de datos del cliente.
+identificadores (campos ``id``) son establecidos por la base de datos del cliente.
 Este problema se da cuando, por ejmplo, se tiene una clase ``Pedido`` relacionada
 con ``ItemPedido``, cuando el cliente crea pedidos con items, las instancias
 tiene ``status`` en ``"C"`` (creado) y el valor ``server_pk`` en ``NULL``.
@@ -566,69 +567,33 @@ es también un método del ``SyncHandler``. Su algoritmo es el siguiente:
     #. Ejecuta ``push()`` si hay cambios a ser enviados (determinado de acuerdo
        al valor del campo ``status`` de cada modelo)
         
-        #. Si ``chunked`` es falso, la acutalización ha sido completa y finaliza
+        #. Si ``chunked`` es falso, la actualización ha sido completa y finaliza
            actualizando el estado y relación con ``SyncLog`` de
            los modelos intervinientes.
            
-        #. En caso contrario, acutaliza los ``server_pk`` y vuelve a enviar
+        #. En caso contrario, actualiza los ``server_pk`` y vuelve a enviar
            los modelos que no se han podido crear, debido a que eran débiles y
            tenían su ``server_ok`` en ``NULL``. Eventualmente ``chunked`` pasa
-           al valor ``false`` y la acutalización es exitosa.
+           al valor ``false`` y la actualización es exitosa.
            
 
-
-Se definieron dos métodos:
-
-    * ``push()``
+Cuando una entidad es eliminada en el cliente y se ejecuta ``push()`` 
+la bandera ``active`` toma le valor ``false``. Cuando el programador considere
+oportuno deberá ejecutar ``purge()``, otro método añadido al ``SyncHandler``.
+Éste se encarga de eliminar las entidades con la bandera ``active`` desactivada y
+que no posean relaciones de entidades activas.
     
-        Esta operación envía los cambios del cliente al servidor.
-        
-        #. Busca en el cliente la última sincronización (última instancia de ``SyncLog``)
-           si existe (en el caso de tratarse de la sincronización inicial se envía ``null``).
-           
-        #. Crea la instancia de instancia de ``SyncLog`` actual.
-           
-        #. Reliza una llamada a ``begin_syncrhonization()`` con la instancia de ``SyncLog``
-           recuperada en **1** como parámetro.
-           
-        #. El servidor responde con los modelos afectados, el orden y la fecha
-           del servidor.
-        
-        #. Por cada modelo afectado se recuperan las instancias mediante 
-           la invocación de métodos del ``RemoteManager`` (los serializadores
-           realizan el *marshlling* de los ``QuerySets``).
-           El ``RemoteManager`` se encarga de filtrar los modelos modificados
-           a partir de la fecha del último ``SyncLog`` y agregar los nuevos.
-           Cada modelo es deserializado y guardado en la base de datos del cliente
-           creando la referencia al ``SyncLog`` actual y estableciendo el campo
-           ``status`` en ``"S"``.
-           
-        #. Se almacena en el ``SyncLog`` actual la fecha del servidor.
-        
-    * ``pull()``
-    
-        #. El clinete envía 
-    
-        Esta operación trae los cambios del servidor al cliente.
-
-.. Esto lo sacamos porque no va mas la arquitectura y el gráfico es confuso        
-
-..
-    En el siguiente diagrama se muestran las entidades que tienen entran en juego
-    en la sincronización.
-    
-    
-    .. figure:: ../_svg/esquema_sync_simple.pdf
-        
-        Esquema de sincronización en el que inteviene el módulo ``synchronization``
-        y el sitio remoto publicando los ``RemoteManager`` mediante JSONRPC.
-    
-    Durante la sincronización ocurren cambios sobre el atributo ``status`` de las 
-    instancias del cliente.
+El campo ``status`` es el que determina que modelos deben ser sincronizados. La 
+ejecución de los métodos mencionados genera cambios de estado, el siguiente diagrama
+ejemplifica este hecho:
 
 .. figure:: ../_dot/estados_sincronziacion_cliente.pdf
 
-    Estados de sincronización de los modelos en el cliente
+    Estados de sincronización de los modelos en el cliente.
+
+.. raw:: latex
+    
+    \pagebreak
 
 Resolución de Conflictos
 ========================
@@ -700,11 +665,11 @@ los conflictos:
           
 Este tipo de Middlewares es opcional.
 
-Considreaciones Sobre Sincronización
+Consideraciones Sobre Sincronización
 =====================================
 
-Doff provee un mecanismo básico de sincronziación adecuado para peuqueñas aplicaciones
+Doff provee un mecanismo básico de sincronización adecuado para pequeñas aplicaciones
 que permite al programador contar con las herramientas para transporte, comunicación RPC
 y control de cambios. Debido a que no existe una política universal aplicable a
-todas las aplicaciones, y debido a que Doff se trata de un framework extendible, 
-se pueden implmentar mecanismos más sofisticados en base a las herramientas expuestas.
+todas las aplicaciones, y debido a que Doff se trata de un framework extensible, 
+se pueden implementar mecanismos más sofisticados en base a las herramientas expuestas.
