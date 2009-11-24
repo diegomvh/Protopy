@@ -104,38 +104,6 @@ var RemoteModel = type('RemoteModel', [ models.Model ], {
 
         // Actually delete the objects.
         mark_or_delete_objects(seen_objs);
-    },
-
-    push: function() {
-
-        // First, try an UPDATE. If that doesn't update anything, do an INSERT.
-        var server_pk_val = this.server_pk;
-        var server_pk_set = server_pk_val != null;
-        var record_exists = true;
-        var remotes = this.__class__.remotes;
-        var meta = this._meta;
-        if (server_pk_set) {
-            // Determine whether a record with the primary key already exists.
-            var obj = remotes.filter({'pk': server_pk_val});
-            if (bool(obj)) {
-                // It does already exist, so do an UPDATE.
-                var values = serializer.serialize(this);
-                remotes.update(values);
-            } else {
-                record_exists = false;
-            }
-        }
-        if (!server_pk_set || !record_exists) {
-            var values = serializer.serialize(this);
-
-            var update_pk = bool(meta.has_auto_field && !server_pk_set);
-            // Create a new record.
-            var result = remotes.insert(values);
-
-            if (update_pk) {
-                this[meta.pk.attname] = result;
-            }
-        }
     }
 });
 

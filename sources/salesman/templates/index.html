@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load productos %}
+
+{% block sidebar %}
+	{{ block.super }}
+	<h1>Cita del D&iacute;a</h1>
+	<div class="left-box">
+		<p>"No podemos resolver los problemas usando el mismo tipo de pensamiento que usamos cuando se crearon."</p>
+		<p class="align-right">- Albert Einstein</p>
+	</div>	
+{% endblock %}
+
+{% block main %}
+	<h1>Nuevas sucursales</h1>
+		<p>Señores clientes tenemos el agrado de comunicarles que a partir del
+		<strong>15 de Septiembre de 2009</strong> se encuentran a su
+		disponibilidad dos nuevas sucursales en la provincia de 
+		<strong><a href="http://www.chubut.gov.ar/">Chubut</a></strong> y 
+		<strong><a href="http://www.santacruz.gov.ar/">Santa Cruz</a></strong>; 
+		con esta importante incorporación la empresa expande sus
+		fronteras comerciales al cono sur, brindando como siempre un mejor
+		servicio y atención personalizada.</p>
+	<h3>Frase</h3>
+	<blockquote>
+		<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy 
+		nibh euismod tincidunt ut laoreet dolore magna aliquam erat....</p>
+	</blockquote>
+	
+	<h3>Code</h3>				
+			<p>
+			<code>
+			code-sample { <br/>
+			font-weight: bold;<br/>
+			font-style: italic;<br/>				
+			}
+			</code></p>	
+				
+	<h3>Example Lists</h3>
+				
+			<ol>
+				<li>example of</li>
+				<li>ordered list</li>								
+			</ol>	
+							
+			<ul>
+				<li>example of</li>
+				<li>unordered list</li>								
+			</ul>
+{% endblock %}
