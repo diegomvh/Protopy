@@ -11,79 +11,27 @@ Conclusiones
 Durante el desarrollo de la presente tesina se realizó un análisis sobre las
 tecnologías disponibles para el desarrollo de aplicaciones web destacandas
 el aporte de los frameworks orientados a aplicaciones de contenidos, como Ruby On Rails o 
-Django. Los lenguajes dinámicos de alto nivel, a pesar de el overhead que introducen,
+Django. Los lenguajes dinámicos de alto nivel, a pesar de el sobrecarga que introducen,
 facilitan la creación de frameworks simples, como es el caso de Django.
 
 Si bien no se trató especificamente en la presente tesina, la aparción de HTML5,
 (estándar en el cual la funcionalidad de Gears queda compredida) reduce la brecha
-entre las aplicaciones de escritorio y las aplicaciones web. ES5, o JavaScript 2.0,
-reforzará la 
+entre las aplicaciones de escritorio y las aplicaciones web. Con la próxima aparición
+de JavaScript 2 (EcmaScript5) y HTML5, las aplicaciones web *de escritorio* 
+poserran nativamente la capacidad de ejecutrse de manera desconectada.
 
-   
+El desarrollo de este tipo de aplicaciones requerirá que los profecionales 
+dedicados al desarrollo de sistemas de información dominen los estádares como
+XHTML, EcmaScript, HTTP y sepan utilizarlos para su provecho.
+
+
 
 El trabajo fue realizado integramente con Software Libre y el producto
-también consituye un framework bajo el mismo tipo de licencia.
+también consituye un sub-framework bajo el mismo tipo de licencia. Gracias a 
+esta el proyecto asgura su mejora continua.
 
 
 
-
-La solución propuesta se basó integramente en Open Source. Se utilizaron los
-siguientes productos:
-    
-    * Python
-        
-        Lenguaje de programación.
-    
-    * Django
-        
-        Framework de aplicaciones web escrito en Python.
-        
-    * Aspen
-        
-        Servidor Web basado en WSGI
-    
-    * Mozilla Firefox
-    
-        * Firebug
-        
-            Plugin de depuración.
-        
-    * Mercurial
-        
-        Sistema de control de versiones basado en Python.
-    
-    * Sphinx
-    
-        Sistema de generación de documentación basado en REST (REStrcutred Text).
-        Sistema de documentación actual del lenguaje Python y varios proyectos
-        importantes como Matplotlib.
-        
-        Se utilizó la salida a LaTeX y el comando ``pdflatex`` para generar la
-        salida en PDF.
-    
-    * Eclipse 
-    
-        Entorno de desarrollo integrado escrito en Java/SWT multiplataforma.
-        Posee complementos para varios lenguajes como Java, C/C++, PHP, Ruby, 
-        etc. 
-        
-        * MercurialEclipse
-            
-            Plugin para control de versiones mediante Mercurial
-        
-        * Pydev
-            
-            Plugin para proyectos basados en Python, con resaltado de sintaxis,
-            autocompleción, indicación de errores, etc.
-    
-    * Kate
-        
-        Editor de texto basado en el entorno KDE con resaltado de sintaxis.
-
-
-Cosas que hacer notar:
-    Que exista el yield y asignación de arreglos
-    
 
 
 
