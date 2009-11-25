@@ -15,7 +15,7 @@ var FirebugHandler = type('FirebugHandler', [ logging.Handler ], {
             this.functions[logging.DEBUG]= window.console.debug;
             this.trace = window.console.trace;
         } else {
-            alert('Firebug is not installed, please install from: ')
+            //alert('Firebug is not installed, please install from: ')
             this.functions[logging.CRITICAL] = function(){};
             this.functions[logging.ERROR]= function(){};
             this.functions[logging.WARN]= function(){};

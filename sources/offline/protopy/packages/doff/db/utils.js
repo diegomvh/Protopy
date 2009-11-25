@@ -3,7 +3,7 @@ var models = require('doff.db.models.base');
 require('doff.conf.settings', 'settings');
 
 function syncdb(callback) {
-	callback('Create Data Base', {'name': settings.DATABASE_NAME});
+	callback('syncdb', {'message': 'Create data base ' + settings.DATABASE_NAME, 'name': settings.DATABASE_NAME});
     var cursor = connection.cursor();
     
     // Get a list of already installed *models* so that references work right.
