@@ -1,6 +1,4 @@
 require('doff.utils.toolbar', 'Panel');
-require('doff.core.project', 'get_project');
-require('doff.conf.settings', 'settings');
 require('ajax');
 require('event');
 require('sys');
@@ -69,6 +67,8 @@ var installed_template =
 
 var Status = type('Status', [ Panel ], {
     __init__: function() {
+		require('doff.conf.settings', 'settings');
+		require('doff.core.project', 'get_project');
         this.project = get_project();
 		this.config = settings;
 
@@ -82,11 +82,6 @@ var Status = type('Status', [ Panel ], {
         
         this.hgon = event.subscribe('go_online', getattr(this, 'go_online'));
         this.hgoff = event.subscribe('go_offline', getattr(this, 'go_offline'));
-        /*this.hpi = event.subscribe('post_install', ensure_data_first_synchronization);
-        this.hpi = event.subscribe('pre_install', ensure_data_first_synchronization);
-        this.hpi = event.subscribe('pre_uninstall', ensure_data_first_synchronization);
-        this.hpi = event.subscribe('post_uninstall', ensure_data_first_synchronization);*/
-        
     },
 
     go_online: function(status) {
@@ -103,26 +98,21 @@ var Status = type('Status', [ Panel ], {
         }
     },
 
+    go_install: function(status, details) {
+    	print(status, details);
+    },
+    
     install: function(e) {
         e.target.remove();
         $('status-content').insert('<div class="doff-progress-container"><div id="doff-status-store-progress"/></div>');
-        /*var c = len(this.project.managed_stores);
-        for (var i = 0; i < c; i++)
-            event.connect(this.project.managed_stores[i], 'onSyncProgress', function(event) {
-                var cantidad = c;
-                var indice = i;
-                var valor = ((100 / cantidad) * indice) + Math.ceil((event.filesComplete / event.filesTotal) * ( 100 / cantidad ));
-                print(valor);
-                $('doff-status-store-progress').style.width = valor + "%";
-            });*/
-        this.project.install();
+        this.project.install(getattr(this, 'go_install'));
     },
 
     get_template: function() {
         if (this.project.is_installed)
             return installed_template;
         else
-            return uninstalled_template.subs(settings);
+            return uninstalled_template.subs(this.config);
     },
 
     _display: function() {

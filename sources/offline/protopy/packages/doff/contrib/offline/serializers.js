@@ -128,7 +128,6 @@ function build_for_model(Model, d) {
 	        try {
 	        	field_value = [field.rel.to._default_manager.get({'server_pk': f})[Model._meta.pk.attname] for each (f in field_value)]
 	        } catch (e if isinstance(e, Model.DoesNotExist)) {
-	        	debugger;
 	        	throw new ServerPkDoesNotExist({'field': field});
 	        }
 	        m2m_data[field.name] = [m2m_convert(string(pk)) for each (pk in field_value)];
@@ -138,7 +137,6 @@ function build_for_model(Model, d) {
 	        	try {
 	            	field_value = field.rel.to._default_manager.get({'server_pk': field_value})[Model._meta.pk.attname];
 		        } catch (e if isinstance(e, Model.DoesNotExist)) {
-		        	debugger;
 		        	throw new ServerPkDoesNotExist({'field': field});
 		        }
 	            data[field.attname] = field.rel.to._meta.get_field(field.rel.field_name).to_javascript(field_value);

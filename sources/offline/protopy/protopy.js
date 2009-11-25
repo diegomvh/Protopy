@@ -28,7 +28,8 @@
         __extend__(false, this, object);
     }
 
-    /* Administrador de modulos, encargado de la creacion, almacenamiento y otras tareas referidas a los modulos
+    /* 
+     * Administrador de modulos, encargado de la creacion, almacenamiento y otras tareas referidas a los modulos
      */
     var ModuleManager = {
         modules: {},
@@ -373,12 +374,21 @@
     /******************** exception ***********************/
     /* Modulo: exception, clases o tipos de excepciones que preovee protopy */ 
     var Exception = type('Exception', [ object ], {
-        __init__: function(message) {
+        __init__: function(value) {
             var arg = new Arguments(arguments);
             this.args = arg.args;
             this.kwargs = arg.kwargs;
             this.name = this.__name__;
-            this.message = message || '';
+            if (!isundefined(value)) {
+            	if (isinstance(value, String))
+            		this.message = value;
+            	if (isinstance(value, Error))
+            		this.message = value.message;
+            } else this.message = '';
+            if (this.kwargs['inspect']) {
+	            this.caller_function = this.__init__.caller.caller;
+	            this.caller_arguments = this.caller_function.arguments;
+    		}
         },
         __str__: function() { return this.__name__ + ': ' + this.message; }
     });
@@ -1000,12 +1010,12 @@
 
     function get_context_from_sequence_selector( selector, roots, includeRoot, flat ) {
         var context, 
-            tag, 
-            contextType = "", 
-            result = [], 
-            tResult = [], 
-            root, 
-            rootCount, 
+            tag,
+            contextType = "",
+            result = [],
+            tResult = [],
+            root,
+            rootCount,
             rootsLength;
             
         reg.id.lastIndex = reg.typeSelector.lastIndex = reg.classRE.lastIndex = 0;

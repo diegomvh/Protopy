@@ -1,11 +1,11 @@
 {
     'loggers': {
         'root': {
-            'level': 'DEBUG',
+            'level': 'ERROR',
             'handlers': 'firebug'
         },
         'doff.db.backends.gears.base': {
-            'level':'DEBUG',
+            'level':'ERROR',
             'handlers':'firebug',
             'propagate': true
         }
