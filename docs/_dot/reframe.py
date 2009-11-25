@@ -30,6 +30,8 @@ def reframe_fname(name):
         ancho, alto = img.size
         if alto > ancho and float(alto)/ancho > 1.1: # Relación máxima 1/4
             nuevo_ancho = alto
+        elif float(alto)/ancho < 1.2 and ancho/100 <= 7:
+            nuevo_ancho = 2* ancho
         else:
             # No se necesita redimencionar
             raise NoNeedReframeException()
