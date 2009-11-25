@@ -96,23 +96,15 @@ var DatabaseWrapper = type('DatabaseWrapper', BaseDatabaseWrapper, {
 var GearsCursorWrapper = type('GearsCursorWrapper', [ database.Cursor ], {
     execute: function(query, params) {
         params = params || [];
-        try {
-            query = this.convert_query(query, params.length);
-            
-            logger.debug('Query: %s\nParams: %s', query, params, {});
-            super(database.Cursor, this).execute(query, params);
-        }
-        catch(e) {
-            throw new Error(e.message);
-        }
+        query = this.convert_query(query, params.length);
+        logger.debug('Query: %s\nParams: %s', query, params, {});
+        super(database.Cursor, this).execute(query, params);
     },
 
     executemany: function(query, param_list) {
-        try {
-            var query = this.convert_query(query, param_list[0].length);
-            for each (var params in param_list)
-                super(database.Cursor, this).executemany(query, params);
-        } catch (e) {}
+        var query = this.convert_query(query, param_list[0].length);
+        for each (var params in param_list)
+        	super(database.Cursor, this).executemany(query, params);
         return null;
     },
 

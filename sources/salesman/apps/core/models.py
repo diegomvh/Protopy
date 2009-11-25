@@ -3,7 +3,6 @@
 Modelo de prueba
 '''
 from django.db import models
-from django.contrib.auth.models import User
 
 # Some useful things
 mod_name = __name__.split('.')[-2]
@@ -30,11 +29,11 @@ class Ciudad(models.Model):
     
     get_absolute_url = abs_url
 
-class Cliente(User):
+class Cliente(models.Model):
+    cuit = models.PositiveIntegerField(primary_key = True)
     razon_social = models.CharField(max_length = 50)
-    direccion = models.TextField()
+    direccion = models.CharField(max_length = 200)
     ciudad = models.ForeignKey(Ciudad)
-    cuit = models.CharField(max_length = 11)
     
     get_absolute_url = abs_url
     

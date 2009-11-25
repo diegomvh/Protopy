@@ -1,22 +1,12 @@
 from django.db import models
 from offline.sites import RemoteSite
 from offline.remotes import RemoteModelProxy
-from salesman.apps.core.models import *
-from salesman.apps.ventas.models import *
-
-class RemoteCliente(RemoteModelProxy):
-    class Meta:
-        model = Cliente
-        fields = ['username', 'first_name', 'last_name', 'email', 'razon_social', 'cuit', 'direccion', 'ciudad']
-        
-    def save(self, cliente):
-        #TODO: Crear el usuario 
-        cliente.save()
-        return cliente
+from salesman.apps.core.models import Ciudad, Cliente, Categoria, Producto
+from salesman.apps.ventas.models import Pedido, ItemPedido
 
 agentes_site = RemoteSite("agentes")
 agentes_site.register(Ciudad)
-agentes_site.register(RemoteCliente)
+agentes_site.register(Cliente)
 agentes_site.register(Categoria)
 agentes_site.register(Producto)
 agentes_site.register(Pedido)

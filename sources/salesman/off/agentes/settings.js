@@ -4,7 +4,10 @@
 {
     DEBUG: true,
     TEMPLATE_DEBUG: this.DEBUG,
-
+    
+    // Data for status tab
+    PROJECT_NAME: 'Vendedor Viajante',
+    
     //Database
     DATABASE_ENGINE: 'gears',
     DATABASE_NAME: 'agentes_sqlite.db',

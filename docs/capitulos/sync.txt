@@ -261,15 +261,17 @@ Información de Sincronización en el Cliente
 *******************************************
 
 La información sobre sincronización en el cliente se basó en parte en los campos
-que propone Junction, agregándoselos a cada entidad, pero se modeló la
-sincronización como entidad separada.
+que propone Junction. Para agregar la mentainformación a cada entidad se opto
+por un enfoque basado en herencia esto es, todo modelo "sincronizable" debe
+heredar de ``RemoteModel`` o ``RemoteReadOnlyModel`` en ``doff.contrib.offline.models``.
+Por otro lado la informacion propia de la accion de sincronizar los modelos se
+encapsulo por separado en el modelos ``SyncLog`` tambien parte de la aplicación
+``doff.contrib.offline``.
 
-Se creó la aplicación genérica ``doff.contrib.offline``, donde se definió 
-el modelo ``SyncLog``.
 Cada vez que el cliente realiza una sincronización con el servidor, se 
-almacena la fecha sobre una instancia de esta entidad,
-de manera que durante la sincronización siguiente, 
-sólo se trabaje con los modelos afectados en el intervalo de tiempo transcurrido.
+almacena la fecha en una instancia de ``SyncLog``, de manera que durante la
+sincronización siguiente, solo se trabaje con los modelos afectados en el
+intervalo de tiempo transcurrido.
 
 Los datos que se agregaron a cada modelo del cliente fueron:
 

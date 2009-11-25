@@ -7,7 +7,6 @@ var Project = type('Project', object, {
     NET_CHECK: 5,
     availability_url: null,
     do_net_checking: true,
-    managed_store: null,
 
     onLoad: function() {
         // Creo el adaptador para el DOM y hago que tome el control de sys.window, sys.document y sys.history
@@ -81,14 +80,23 @@ var Project = type('Project', object, {
         this.toolbar.show();
     },
 
-    create_store: function() {
-        var localserver = sys.gears.create('beta.localserver');
-        this.managed_store = localserver.createManagedStore(this.package + '_manifest');
+    create_store: function(callback) {
+    	callback = callback || function() {};
+    	var localserver = sys.gears.create('beta.localserver');
+    	
+    	callback('Create Store', {'name': this.package + '_manifest', 'manifest': this.offline_support + '/manifest.json' });
+    	this.managed_store = localserver.createManagedStore(this.package + '_manifest');
         this.managed_store.manifestUrl = this.offline_support + '/manifest.json';
+        
+        this.managed_store.oncomplete = function(details) { callback('Store Complete', details); };
+ 	   	this.managed_store.onerror = function(error) { callback('Store Error', error); };
+ 	   	this.managed_store.onprogress = function(details) { callback('Store Progress', details); };
+ 	   	
         this.managed_store.checkForUpdate();
     },
 
-    remove_store: function() {
+    remove_store: function(callback) {
+    	callback = callback || function() {};
         var localserver = sys.gears.create('beta.localserver');
         localserver.removeManagedStore(this.package + '_manifest');
         this.managed_store = null;
@@ -121,26 +129,29 @@ var Project = type('Project', object, {
         }
     },
 
-    install: function() {
+    install: function(callback) {
+    	
         if (!sys.gears.installed) sys.gears.install();
         if (!this.get_permission()) return;
         
-        event.publish('pre_install', [this]);
-        if (this.managed_store == null)
-            this.create_store();
+        callback = callback || function() {};
+        event.publish('pre_install', [callback]);
+        
+        this.create_store(callback);
         
         require('doff.db.utils','syncdb');
-        syncdb();
-        event.publish('post_install', [this]);
+        syncdb(callback);
+        //event.publish('post_install', [callback]);
     },
 
-    uninstall: function() {
-    	event.publish('pre_uninstall', [this]);
+    uninstall: function(callback) {
+    	callback = callback || function() {};
+    	event.publish('pre_uninstall', [callback]);
         require('doff.db.utils','removedb');
-        removedb();
+        removedb(callback);
 
-        this.remove_store();
-        event.publish('post_uninstall', [this]);
+        this.remove_store(callback);
+        event.publish('post_uninstall', [callback]);
     },
 
     /***************************************************************************
