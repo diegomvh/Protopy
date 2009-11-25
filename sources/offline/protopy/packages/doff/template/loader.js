@@ -1,10 +1,9 @@
 require('doff.core.exceptions', 'ImproperlyConfigured'),
 require('doff.template.base', 'Template', 'Context', 'TemplateDoesNotExist', 'add_to_builtins');
-require('doff.core.project', 'get_settings');
+require('doff.conf.settings', 'settings');
 var logging = require('logging.base');
 
 var logger = logging.get_logger(__name__);
-var settings = get_settings();
 
 /* defo:translate
  * Busca un template para cada uno de los cargadores de template definididos en settings

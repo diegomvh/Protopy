@@ -1,5 +1,5 @@
 require('doff.core.exceptions', 'ImproperlyConfiguredException');
-require('doff.core.project', 'get_settings');
+require('doff.conf.settings', 'settings');
 
 var SyncMiddleware = type('SyncMiddleware', [ object ], {
     /**

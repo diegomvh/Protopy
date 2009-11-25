@@ -1772,7 +1772,7 @@
                 throw new KeyError(key);
             return val;
         },
-        popitem: function() {
+        popitem: function(key) {
             var val = this.unset(key);
             if (isundefined(val))
                 throw new KeyError(key);

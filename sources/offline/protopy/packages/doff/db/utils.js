@@ -1,9 +1,8 @@
 require('doff.db.base', 'connection');
 var models = require('doff.db.models.base');
-require('doff.core.project', 'get_settings');
+require('doff.conf.settings', 'settings');
 
 function syncdb(callback) {
-    var settings = get_settings();
     var cursor = connection.cursor();
     
     // Get a list of already installed *models* so that references work right.

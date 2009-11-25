@@ -5,7 +5,6 @@ from salesman.apps.core.models import *
 from salesman.apps.ventas.models import *
 
 class RemoteCliente(RemoteModelProxy):
-    password = models.CharField(max_length = 50)
     class Meta:
         model = Cliente
         fields = ['username', 'first_name', 'last_name', 'email', 'razon_social', 'cuit', 'direccion', 'ciudad']

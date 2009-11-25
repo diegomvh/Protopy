@@ -1,6 +1,5 @@
-require('doff.core.project', 'get_settings', 'get_project');
-var settings = get_settings();
-var project = get_project();
+require('doff.core.project', 'get_project');
+require('doff.conf.settings', 'settings');
 
 function offline(request) {
     return {'offline': true};

@@ -1,5 +1,6 @@
 require('doff.utils.toolbar', 'Panel');
 require('doff.core.project', 'get_project');
+require('doff.conf.settings', 'settings');
 require('ajax');
 require('event');
 require('sys');
@@ -69,7 +70,7 @@ var installed_template =
 var Status = type('Status', [ Panel ], {
     __init__: function() {
         this.project = get_project();
-        this.config = this.project.settings;
+		this.config = settings;
 
         super(Panel, this).__init__('status', 'Offline Support', 'Install offline access for ' + this.config['PROJECT_NAME']);
         this.icon = sys.module_url('doff.utils', 'resources/protopy.png');
@@ -121,7 +122,7 @@ var Status = type('Status', [ Panel ], {
         if (this.project.is_installed)
             return installed_template;
         else
-            return uninstalled_template.subs(this.config);
+            return uninstalled_template.subs(settings);
     },
 
     _display: function() {

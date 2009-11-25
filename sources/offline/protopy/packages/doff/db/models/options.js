@@ -1,13 +1,11 @@
 /* "doff.db.models.options" */
-require('doff.core.project', 'get_settings');
 require('doff.db.models.related', 'RelatedObject');
 require('doff.db.models.fields.related', 'ManyToManyRel');
 require('doff.db.models.fields.base', 'AutoField', 'FieldDoesNotExist');
 require('doff.db.models.fields.proxy', 'OrderWrt');
 require('doff.db.models.loading', 'get_models', 'app_cache_ready');
 require('doff.utils.datastructures', 'SortedDict');
-
-var settings = get_settings();
+require('doff.conf.settings', 'settings');
 
 // Calculate the verbose_name by converting from InitialCaps to "lowercase with spaces".
 var get_verbose_name = function(class_name) { 

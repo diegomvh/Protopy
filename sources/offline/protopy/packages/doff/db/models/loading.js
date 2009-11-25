@@ -1,9 +1,7 @@
 /* "doff.db.models.loading, Utilities for loading models and the modules that contain them." */
-require('doff.core.project', 'get_settings');
+require('doff.conf.settings', 'settings');
 require('doff.core.exceptions', 'ImproperlyConfigured');
 require('doff.utils.datastructures', 'SortedDict');
-
-var settings = get_settings();
 
 /*
  * A cache that stores installed applications and their models. Used to

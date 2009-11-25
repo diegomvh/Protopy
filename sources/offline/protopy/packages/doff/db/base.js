@@ -1,7 +1,5 @@
-require('doff.core.project', 'get_settings');
 require('event');
-
-var settings = get_settings();
+require('doff.conf.settings', 'settings')
 
 var _load_path = 'doff.db.backends.';
 var backend = require('%s%s.base'.subs(_load_path, settings.DATABASE_ENGINE));

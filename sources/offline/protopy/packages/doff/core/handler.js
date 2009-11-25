@@ -3,10 +3,11 @@ require('event');
 require('doff.core.exceptions');
 require('doff.core.urlresolvers');
 require('doff.utils.http');
+require('doff.conf.settings', 'settings');
 
 var LocalHandler = type('LocalHandler', [ object ], {
     response_fixes: [],
-    __init__: function(settings) {
+    __init__: function() {
         this.settings = settings;
         this.load_middleware();
         //Crear el resolver

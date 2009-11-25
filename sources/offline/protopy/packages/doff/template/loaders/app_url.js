@@ -1,10 +1,8 @@
 /* 'Wrapper for loading templates from "template" directories in INSTALLED_APPS packages.' */
 require('doff.template.base', 'TemplateDoesNotExist');
 require('doff.core.exceptions', 'ImproperlyConfigured');
-require('doff.core.project', 'get_settings');
 require('ajax');
-
-var settings = get_settings();
+require('doff.conf.settings', 'settings');
 
 // It won't change, so convert it to a tuple to save memory.
 var app_template_dirs = [];

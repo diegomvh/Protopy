@@ -76,11 +76,10 @@ class RemoteBaseSite(object):
     __metaclass__ = RemoteSiteBase
 
     def root(self, request, url):
-        from django.conf import settings
         for pattern in self._urls:
             try:
                 sub_match = pattern.resolve(url)
-            except Resolver404, e:
+            except Resolver404:
                 pass
             else:
                 if sub_match:
@@ -172,7 +171,6 @@ class RemoteSite(RemoteBaseSite):
     media_url = property(_get_media_url, doc = "Media url")
     
     def _get_media_root(self):
-        from django.conf import settings
         if not settings.MEDIA_ROOT:
             raise Exception("MEDIA_ROOT not definded!")
         return os.path.abspath(settings.MEDIA_ROOT)
@@ -333,6 +331,28 @@ class RemoteSite(RemoteBaseSite):
     @jsonrpc
     def echo(self, value):
         return value
+
+    @jsonrpc
+    def user(self, user_name = None):
+        #TODO Controlar el error si no esta el middleware
+        from offline.middleware import threadlocals
+        user = threadlocals.get_current_user()
+        data = {
+                'class': 'AnonymousUser',
+                'username': user.username,
+                'is_staff': user.is_staff,
+                'is_active': user.is_active,
+                'is_superuser': user.is_superuser
+                }
+        if not user.is_anonymous():
+            data.update({
+                'class': 'User',
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'email': user.email,
+                'password': user.password,
+                })
+        return data
 
     #===========================================================================
     # Synchronization

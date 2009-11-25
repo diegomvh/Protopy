@@ -29,7 +29,11 @@
 				{% if user.is_authenticated and user.is_staff %}
 				<li><a href="#"><span>Pedidos</span></a></li>
 				<li><a href="/administrar/"><span>Administrar</span></a></li>
-				<li><a href="/off/agentes/"><span>Desconectar</span></a></li>
+				{% if offline %} 
+					<li><a href="/"><span>Conectar</span></a></li>
+				{% else %}
+					<li><a href="/off/agentes/"><span>Desconectar</span></a></li>
+				{% endif %}
 				{% endif %}
 				<li><a href="#"><span>Contacto</span></a></li>
 			</ul>									

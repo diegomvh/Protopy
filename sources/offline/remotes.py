@@ -44,7 +44,7 @@ class RemoteManagerBase(object):
         self.remote = remote
         try:
             self.model_manager = getattr(remote._meta, 'manager')
-        except AttributeError, e:
+        except AttributeError:
             self.model_manager = getattr(remote._meta.model, '_default_manager')
 
         rpc = SimpleJSONRPCDispatcher(allow_none=False, encoding=None)
@@ -119,7 +119,7 @@ class RemoteManagerBase(object):
                 obj = self.remote.save(obj)
             else:
                 obj.save()
-            ret.append(getattr(obj.object, o.object._meta.pk.attname))
+            ret.append(getattr(obj.object, obj.object._meta.pk.attname))
         return ret
 
     def update(self, values):

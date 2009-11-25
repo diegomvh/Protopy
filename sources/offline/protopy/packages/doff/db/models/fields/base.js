@@ -1,13 +1,11 @@
 /* 'doff.db.models.fields.base' */
 require('doff.db.base', 'connection');
 require('doff.db.models.query_utils', 'QueryWrapper');
-require('doff.core.project', 'get_settings');
+require('doff.conf.settings', 'settings');
 var forms = require('doff.forms.base');
 require('doff.core.exceptions', 'ValidationError');
 require('functional', 'curry');
 require('copy', 'copy');
-
-var settings = get_settings();
 
 var NOT_PROVIDED = type('NOT_PROVIDED', [ Exception ]);
 

@@ -6,6 +6,7 @@ require('doff.db.models.query', 'delete_objects', 'CollectedObjects');
 require('doff.contrib.offline.serializers', 'RemoteSerializer', 'RemoteDeserializer', 'ChunkedSerialization');
 require('doff.utils.datastructures', 'SortedDict');
 require('doff.core.exceptions', 'ImproperlyConfigured');
+require('doff.conf.settings', 'settings');
 
 function get_model_order(model_lists) {
     var model_adj = new SortedDict();
@@ -35,7 +36,7 @@ function get_related_models(model) {
 }
 
 var SyncHandler = type('SyncHandler', [ object ], {
-    __init__: function(settings) {
+    __init__: function() {
 		var project = get_project();
         this.settings = settings;
         // Esto puede fallar por no estar conectado.

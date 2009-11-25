@@ -1,7 +1,6 @@
 require('doff.core.urlresolvers');
 require('doff.utils.http');
-require('doff.core.project', 'get_settings');
-var settings = get_settings();
+require('doff.conf.settings', 'settings');
 
 var CommonMiddleware = type('CommonMiddleware', [ object ], {
     

@@ -7,30 +7,21 @@ These are referenced from the setting TEMPLATE_CONTEXT_PROCESSORS and used by
 RequestContext.
 */
 
-require('doff.core.project', 'get_settings', 'get_project');
-var settings = get_settings();
-var project = get_project();
+require('doff.core.project', 'get_project');
+require('doff.conf.settings', 'settings');
 
-/*
-def auth(request):
-    """
-    Returns context variables required by apps that use Django's authentication
-    system.
 
-    If there is no 'user' attribute in the request, uses AnonymousUser (from
-    django.contrib.auth).
-    """
-    if hasattr(request, 'user'):
-        user = request.user
-    else:
-        from django.contrib.auth.models import AnonymousUser
-        user = AnonymousUser()
-    return {
-        'user': user,
-        'messages': user.get_and_delete_messages(),
-        'perms': PermWrapper(user),
+function auth(request) {
+    var user;
+	if (hasattr(request, 'user')) {
+        user = request.user;  
+	} else {
+        require('doff.contrib.auth.models', 'AnonymousUser');
+        user = new AnonymousUser();
     }
-*/
+    return { 'user': user };
+}
+
 function debug(request) {
     //Returns context variables helpful for debugging.
     var context_extras = {}
@@ -50,6 +41,7 @@ function request(request) {
 }
 
 publish({
+	auth: auth,
     debug: debug,
     media: media,
     request: request

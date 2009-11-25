@@ -28,7 +28,6 @@ var BaseDatabaseCreation = type('BaseDatabaseCreation', object, {
             field_output = null;
 
         for each (var f in opts.local_fields) {
-
             var col_type = f.db_type();
             if (!col_type)
                 continue;

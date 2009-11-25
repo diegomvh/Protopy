@@ -15,6 +15,7 @@
     ROOT_URLCONF: 'agentes.urls',
 
     INSTALLED_APPS: [
+        'doff.contrib.extradata',
         'doff.contrib.offline',
         'agentes.ventas',
         'agentes.core'

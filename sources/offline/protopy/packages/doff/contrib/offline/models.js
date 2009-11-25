@@ -155,9 +155,9 @@ function ensure_default_remote_manager(cls) {
     }
 };
 
-function ensure_data_first_synchronization(project) {
+function ensure_data_first_synchronization() {
 	require('doff.contrib.offline.handler', 'SyncHandler');
-	var sync = new SyncHandler(project.settings);
+	var sync = new SyncHandler();
 	sync.update();
 }
 

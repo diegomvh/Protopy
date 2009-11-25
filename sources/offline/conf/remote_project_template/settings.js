@@ -19,7 +19,9 @@
 
 
     'INSTALLED_APPS': [ 
-        'doff.contrib.offline'
+        'doff.contrib.extradata',		//For auth and sessions
+        'doff.contrib.offline',
+        
     ],
 
     'TEMPLATE_URLS': [

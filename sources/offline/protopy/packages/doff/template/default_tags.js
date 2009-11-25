@@ -500,8 +500,7 @@ function load(parser, token) {
 
         {% load news.photos %}
 */
-    require('doff.core.project', 'get_settings');
-    var settings = get_settings();
+	require('doff.conf.settings', 'settings');
     var bits = token.split_contents();
     for each (var taglib in bits.slice(1)) {
         if (include(load_cache, taglib)) { 

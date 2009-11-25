@@ -1,9 +1,7 @@
 /* 'doff.template' */
 require('doff.template.context', 'Context', 'ContextPopException');
-require('doff.core.project', 'get_settings');
+require('doff.conf.settings', 'settings');
 require('functional', 'curry');
-
-var settings = get_settings();
 
 var libraries = {};
 var builtins = [];

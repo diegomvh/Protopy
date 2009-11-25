@@ -2,12 +2,6 @@ from django import template
 
 register = template.Library()
 
-#TODO: esto es un context_processor
-def offline():
-    return False
-
-register.simple_tag(offline)
-
 def protopy_js():
     from offline import sites
     assert sites.REMOTE_SITES, "No remote sites defined for this project"

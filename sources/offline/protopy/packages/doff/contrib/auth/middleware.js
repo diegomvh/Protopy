@@ -1,11 +1,4 @@
-
-function get_user(request) {
-    require('doff.contrib.auth.models', 'AnonymousUser');
-    user_name = request.get_cookie('user_name');
-    if (user_name == null)    
-        return new AnonymousUser();
-    return {'name': user_name};
-}
+require('doff.contrib.auth.base', 'get_user');
 
 var _cached_user = null;
 
@@ -13,13 +6,14 @@ var LazyUser = type('LazyUser', [ object ], {
     __get__: function(request, obj_type) {
         if (_cached_user == null) 
             _cached_user = get_user(request);
-        return get_user(request);
+        return _cached_user;
     }
 });
 
 var AuthenticationMiddleware = type('AuthenticationMiddleware', [ object ], {
     process_request: function(request) {
-        var lu = new LazyUser();
+		assert (hasattr(request, 'session'), "The Doff authentication middleware requires session middleware to be installed. Edit your MIDDLEWARE_CLASSES setting to insert 'doff.contrib.session.middleware.SessionMiddleware'.");
+		var lu = new LazyUser();
         request.__defineGetter__('user', function() { return lu.__get__(request, this.constructor); });
         return null;
     }

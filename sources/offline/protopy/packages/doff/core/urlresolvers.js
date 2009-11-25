@@ -28,15 +28,13 @@ function get_callable(lookup_view, can_fail) {
         }
     return lookup_view;
 }
-//TODO: quiza este bueno algo para la memoria :)
-//get_callable = memoize(get_callable, _callable_cache, 1)
+
 var _cached_resolver = null;
 function get_resolver(urlconf) {
     if (_cached_resolver && !urlconf)
         return _cached_resolver;
     if (!urlconf) {
-        require('doff.core.project', 'get_settings');
-        var settings = get_settings();
+    	require('doff.conf.settings', 'settings');
         urlconf = settings.ROOT_URLCONF;
     }
     _cached_resolver = new RegexURLResolver('^/', urlconf);
