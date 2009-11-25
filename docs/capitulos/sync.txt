@@ -600,6 +600,9 @@ ejemplifica este hecho:
 
     Estados de sincronización de los modelos en el cliente.
 
+.. figure:: ../_static/uml_sec_sync.pdf
+    
+    Esquema de errores de sincronización
 
 Resolución de Conflictos
 ========================
@@ -659,15 +662,15 @@ los conflictos:
     
     * ``ClientWinsSyncMiddleware``
     
-        Prevalece la infrmación del cliente
+        Prevalece la información del cliente
     
     * ``ServerWinsSyncMiddleware``
     
-        Prevalece la infrmación del servidor 
+        Prevalece la información del servidor 
 
     * ``ServerWinsSyncMiddleware``
     
-        Solo si se utiliza la herramienta de desarrllador ``toolbar`` de Doff.
+        Solo si se utiliza la herramienta de desarrollador ``toolbar`` de Doff.
           
 Este tipo de Middlewares es opcional.
 

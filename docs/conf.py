@@ -209,8 +209,6 @@ latex_preamble = '\\setcounter{tocdepth}{4}'
 # Documents to append as an appendix to all manuals.
 #latex_appendices = ['apendices/protopy', 'apendices/python', 'apendices/django']
 latex_appendices = [
-		    'apendices/python',
-                    'apendices/django',
                     'apendices/protopy',
                     #'apendices/herraminetas',
                     #'apendices/doff/modelos',
