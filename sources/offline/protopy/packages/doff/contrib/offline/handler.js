@@ -49,12 +49,13 @@ var SyncHandler = type('SyncHandler', [ object ], {
     save_recived: function(received, sync_log) {
         for (var obj in this.deserializer(received)) {
             // TODO: Implementar los middlewares de sync
-            //try {
+            try {
                 obj.object.sync_log = sync_log;
                 obj.save();
-            //} catch ( e if isinstace(e, )) {
+            } catch ( e ) {
+            	debugger;
                 //this.conflict_middleware.
-            //}
+            }
         }
         debugger;
     },
