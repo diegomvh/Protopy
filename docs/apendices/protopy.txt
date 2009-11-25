@@ -719,13 +719,13 @@ simplificar la utilización del objeto ``XMLHttpRequest``.
 
         new Response()
     
-    toQueryParams(string, separator) -> object
+    * toQueryParams(string, separator) -> object
     
     	Convierte una cadena conteniendo una consulta de URL a un objeto de la
     	forma clave = valor. El separador por defecto para estas consultas es el
     	caracter ``&`` aunque otro separador puede ser usado.
     
-    toQueryString(params) -> string
+    * toQueryString(params) -> string
     
     	Realiza el proceso inverso a ``toQueryParams``, conviertiendo un objeto
     	a una consulta de URL.
@@ -741,11 +741,12 @@ simplificar la utilización del objeto ``XMLHttpRequest``.
 		{ numero="1" cadena="Hola mundo"}
     
 dom
+~~~
 
 Este modulo brinda el soporte para el manejo del DOM de una forma simple para
 el usuario.
 
-    query(cssRule) -> [HTMLElement...]
+    * query(cssRule) -> [HTMLElement...]
 
 Extendiendo Javascript
 ----------------------
@@ -754,153 +755,150 @@ Protopy no solo aporta modulos y funciones utiles al desarrollo, sino que
 tambien agrega nueva funcionalidad a los objetos de javascript.
 
 String
+~~~~~~
 
 Estos metodos amplian las herramientas para el manejo de cadenas de texto.
 
-    sub(pattern, replacement[, count = 1]) -> string
+    * sub(pattern, replacement[, count = 1]) -> string
 
         Retorna una cadena donde la primera ocurrencia del patron pasado es reemplazado
         por la cadena o cada uno de los valores retornados por la funcion pasada como
         segundo argumento. El patron puede ser una exprecion regular o una cadena.
     
-    subs(value...) -> string
+    * subs(value...) -> string
 
         Substitulle cada patron encontrado en la cadena por los valores
         correspondientes, si el primer valor es un objeto, se espera un patron del
         tipo clave en la cadena para su reemplazo.
     
-    format(f) -> string
+    * format(f) -> string
 
         Da formato a una cadena de texto, al estilo C.
     
-    inspect(use_double_quotes) -> string
+    * inspect(use_double_quotes) -> string
 
         Retorna una version de debug de la cadena, esta puede ser con comillas simples o
         con comillas dobles.
     
-    truncate([length = 30[, suffix = '...']]) -> string
+    * truncate([length = 30[, suffix = '...']]) -> string
 
         Recorta una cadena recortada en la longitud indicada o 30 caracteres por
         defecto, si se pasa un sufijo este es utilizado para indicar el recorte, sino
         los ''...'' son utilizados.
     
-    strip() -> string
+    * strip() -> string
 
         Quita los espacios en blanco al principio y al final de una cadena.
     
-    striptags() -> string
+    * striptags() -> string
 
         Quita las etiquetas HTML de una cadena.
     
-    stripscripts() -> string
+    * stripscripts() -> string
 
         Quita todos los bloques ''strips'' de una cadena.
     
-    extractscripts() -> [ string... ]
+    * extractscripts() -> [ string... ]
 
         Extrae todos los scripts contenidos en la cadena y los retorna en un arreglo.
     
-    evalscripts() -> [ value... ]
+    * evalscripts() -> [ value... ]
 
         Evalua todos los scripts contenidos en la cadena y retorna un arreglos con los
         resultados de cada evaluacion.
     
-    escapeHTML() -> string
+    * escapeHTML() -> string
 
         Convierte los caracteres especiales del HTML a sus entidades equivalentes.
     
-    unescapeHTML() -> string
+    * unescapeHTML() -> string
 
         Convierte las entidades de caracteres especiales del HTML a sus respectivos
         simbolos.
     
-    succ() -> string
+    * succ() -> string
         
         Convierte un caracter en el caracter siguiente segun la tabla de caracteres
         Unicode.
     
-    times(count[, separator = '']) -> string
+    * times(count[, separator = '']) -> string
 
         Concatena una cadena tantas veces como se indique, si se pasa un separador, este
         es utilizado para intercalar.
     
-    camelize() -> string
+    * camelize() -> string
 
         Convierte una cadena separada por guiones medios (``-'') a una nueva cadena tipo
         ''camello''. Por ejemplo, 'foo-bar' pasa a ser 'fooBar'.
     
-    capitalize() -> string
+    * capitalize() -> string
 
         Pasa a mayuscula la primera letra y el resto de la cadena a minusculas.
     
-    underscore() -> string
+    * underscore() -> string
 
         Convierte una cadena tipo "camello" a una nueva cadena separada por guiones
         bajos ("_").
     
-    dasherize() -> string
+    * dasherize() -> string
 
         Remplaza cada ocurrencia de un guion bajo ("_") por un guion medio ("-").
     
-    startswith(pattern) -> boolean
+    * startswith(pattern) -> boolean
 
         Chequea si la cadena inicia con el patron pasado.
     
-    endswith(pattern) -> boolean
+    * endswith(pattern) -> boolean
 
         Chequea si la cadena termina con el patron pasado.
     
-    blank() -> boolean
+    * blank() -> boolean
 
         Chequea si una cadena esta en blanco, esto es si esta vacia o solo contiene
         espacios en blanco.
 
 Number
+~~~~~~
 
 Estos metodos agregan funcionalidad sobre los objetos numericos.
 
-    format(f, radix) -> string
+    * format(f, radix) -> string
 
         Da formato a un numero en base a una cadena de texto, al estilo C.
 
-Date
-
-    toISO8601() -> string
-        
-        Retorna una representacion de la fecha en ISO8601.
-
 Element
+~~~~~~~
 
 Extencion sobre los elementos del DOM, simplificando trabajos comunes de desarrollo.
 
-    visible() -> Boolean
+    * visible() -> Boolean
 
         Retorna un valor de verdad que determina si el elemento esta visible al
         usuario, verificando el atributo de estilo ``display''.
     
-    toggle() -> HTMLElement
+    * toggle() -> HTMLElement
 
         Alterna la visibilidad del elemento.
     
-    hide() -> HTMLElement
+    * hide() -> HTMLElement
 
         Oculta el elemento al usuario, modificando el atributo de estilo.
     
-    show() -> HTMLElement
+    * show() -> HTMLElement
 
         Muestra el elemento.
     
-    remove() -> HTMLElement
+    * remove() -> HTMLElement
 
         Quita el elemento del documento y lo retorna.
     
-    update(content) -> HTMLElement
+    * update(content) -> HTMLElement
 
         Reemplaza el contendio del elemento con el argumento pasado y terorna el
         elemento.
     
-    insert({ position: content }) -> HTMLElement
-    insert(content) -> HTMLElement
+    * insert({ position: content }) -> HTMLElement
+    * insert(content) -> HTMLElement
 
         Inserta conentido al principio, al final, sobre o debajo del
         elemento, para definir la poscicion de la insercion el argumento se debe pasar
@@ -908,7 +906,7 @@ Extencion sobre los elementos del DOM, simplificando trabajos comunes de desarro
         insertar; si el argumento es contenido a insertar este se inserta al final
         del elemento.
     
-    select(selector) -> HTMLElement
+    * select(selector) -> HTMLElement
 
         Toma un numero arbitrario de selectores CSS y retorna un arreglo con los
         elementos que concuerden con estos y esten dentro del elemento al que se aplica
@@ -930,20 +928,21 @@ Extencion sobre los elementos del DOM, simplificando trabajos comunes de desarro
         setOpacity: function(value)
 
 Forms
+~~~~~
 
 Estos metodos decoran a los elementos del tipo formulario, agregando
 funcionalidad sobre los mismos y sobre los campos que contienen.
 
-    disable() -> HTMLFormElement
+    * disable() -> HTMLFormElement
 
         Deshabilita todos los campos de este formulario para el ingreso de
         valores.
 
-    enable() -> HTMLFormElement
+    * enable() -> HTMLFormElement
 
         Habilita todo campos del formulario para el ingreso de valores.
 
-    serialize() -> object
+    * serialize() -> object
 
         Retorna un objeto conteniendo todos campos del formulario serializados
         con sus respectivos valores.
@@ -954,11 +953,12 @@ funcionalidad sobre los mismos y sobre los campos que contienen.
         Object title=Hola mundo body=Este es un post tags=[1]
 
 Forms.Element
+~~~~~~~~~~~~~
 
 Los metodos que a continuación se presentan decoran a los elementos o campos de
 un formulario, simplificando y agilizando el trabajo con los mismos.
 
-    serialize() -> string
+    * serialize() -> string
 
         Crea una cadena en URL-encoding representando el contenido del
         campo expresado como clave=valor, para su uso en una peticion AJAX por
@@ -968,37 +968,37 @@ un formulario, simplificando y agilizando el trabajo con los mismos.
         Si se requiere es el valor del campo en lugar de la pareja clave=valor, vea
         get_value().
 
-    get_value() -> value
+    * get_value() -> value
 
         Retorna el valor actual del campo. Una cadena de texto es retornada en la
         mayoria de los casos excepto en el caso de un select multiple, en que se retorna
         un arreglo con los valores.
 
-    set_value(value) -> HTMLElement
+    * set_value(value) -> HTMLElement
 
         Establese el valor de un campo.
 
-    clear() -> HTMLElement
+    * clear() -> HTMLElement
 
         Limpia un campo de texto asignando como valor la cadena vacia.
 
-    present() -> boolean
+    * present() -> boolean
 
         Retorna verdadero si el campo de texto tiene un valor asignado, falso en otro
         caso.
 
-    activate() -> HTMLElement
+    * activate() -> HTMLElement
 
         Pone el cursor sobre el campo y selecciona el valor si el campo es del tipo
         texto.
 
-    disable() -> HTMLElement
+    * disable() -> HTMLElement
 
         Deshabilita el campo, impidiendo de este modo que se modifique su valor hasta
         que sea habilitado nuevamente.
         Los campos de un formulario que esten deshabilitados no se serializan.
 
-    HTMLElement.enable() -> HTMLElement
+    * HTMLElement.enable() -> HTMLElement
 
         Habilita un campo, previamente deshabilitado, para el ingreso de valores.
 
@@ -1006,10 +1006,13 @@ Otros modulos
 -------------
 
 gears
+~~~~~
 
 logging
+~~~~~~~
 
 json
+~~~~
 
     >>> require('json')
     >>> toJson = {'numero': 1, 'cadena': 'texto', 'arreglo': [1,2,3,4,5,6], 'objeto': {'clave': 'valor'}, 'logico': true}
@@ -1019,6 +1022,7 @@ json
     Object numero=1 cadena=texto arreglo=[6] objeto=Object
 
 rpc
+~~~
 
 .. code-block:: python
 
