@@ -31,7 +31,7 @@ database.Connection = type('Connection', [ object ], {
             try {
                 this.connection.close();
             } catch(e) {
-                throw new database.DatabaseError(e.message);
+                throw new database.DatabaseError(e);
             }
         }
     },
@@ -41,7 +41,7 @@ database.Connection = type('Connection', [ object ], {
             this.connection.remove();
             this.connection = null;
         } catch(e) {
-            throw new database.DatabaseError(e.message);
+            throw new database.DatabaseError(e);
         }
     },
 
@@ -50,7 +50,7 @@ database.Connection = type('Connection', [ object ], {
             this.connection.execute(query, params);
         }
         catch(e) {
-            throw new Exception(e.message);
+        	throw new database.DatabaseError(e, {'inspect': true});
         }
     },
     
@@ -102,9 +102,9 @@ database.Cursor = type('Cursor', [ object ], {
         params = params || [];
         try {
             this.lastResulSet = this.connection.execute(query, params);
-        }
-        catch(e) {
-            throw new Exception(e.message);
+        } catch(e) {
+        	debugger;
+            throw new database.DatabaseError(e, {'inspect': true});
         }
     },
 
@@ -112,7 +112,10 @@ database.Cursor = type('Cursor', [ object ], {
         try {
             for each (var params in param_list)
                 this.connection.execute(query, params);
-        } catch (e) {}
+        } catch (e) {
+        	debugger;
+        	throw new database.DatabaseError(e, {'inspect': true});
+        }
         return null;
     },
 
@@ -120,7 +123,7 @@ database.Cursor = type('Cursor', [ object ], {
         try {
             return this.next();
         } catch (stop) { 
-            return null 
+            return null;
         };
     },
 
