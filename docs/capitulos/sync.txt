@@ -413,42 +413,70 @@ o Bazaar [BazaarDocs09]_, se crearon los métodos [*]_ ``pull`` y ``push`` en el
         
     * ``push(received)``
     
-        Recibe en ``recevied`` un diccionario con las claves:
+        Recibe en ``received`` un diccionario con las claves:
             
             * ``"deleted"`` 
                 
                 Modelos que han sido eliminados. Es un diccionario,
                 con las siguientes claves:
                     
-                    * ``"models”``
+                    * ``"models"``
                        
-                       Nombres de los modelos en orden que deben ser
+                       Nombres de los modelos, en el orden que deben ser
                        eliminados. Desde las entidades débiles hacia las fuertes.
                     
                     * ``"objects"``
                       
-                      Es un diccionario, dónde las claves son los nombres
-                      de los modelos y lo valores son los objetos serializados.
+                      Es un diccionario, donde las claves son los nombres
+                      de los modelos y los valores son los objetos serializados.
             
             * ``"modified"``
                 
-                Modelos que han sido modificados en el cliente,
-                es un diccionario similar al de la clave  ``"deleted"``.
+                Modelos que han sido modificados en el cliente.
+                Es un diccionario similar al de ``"deleted"``.
                 
             * ``"created"``
                 
-                Modelos que han sido creados en el cliente, es
+                Modelos que han sido creados en el cliente. Es
                 un diccionario similar al de ``"deleted"`` y ``"modified"``.
             
-            * ``"syn_log"``
+            * ``"sync_log"``
                 
-                Diccionario de SyncLogs correpondientes a cada 
-                modelo. Por cada modelo que figure en ``"delted"``, ``"modified"``
+                Diccionario de instancias ``SyncLog`` correspondientes a cada 
+                modelo. Por cada modelo que figure en ``"deleted"``, ``"modified"``
                 o ``"created"``, debe haber un par clave-valor en este diccionario.                   
         
-        Este método recibe una instancia de ``SyncLog`` por cada modelo.
+        El siguiente gráfico muestra los argumentos enviados en el método ``push()``:
+
+        .. figure:: ../_dot/push_return.pdf
+    
+           Argumentos de ``push()``
         
-        El resultado de este método es una lista con el resutlado de la operación:
+        Ambas operaciones tienen carácter atómico, ya que se ejecutan dentro de una transacción
+        de la base de datos.
+
+
+En cuanto al cliente, se implementó una aplicación ``doff.contrib.offline``, que
+se instala por defecto en ``settings.js`` con la ejecución del comando ``start_remotesite``.
+ 
+Dentro del modulo ``doff.contrib.offline.handler`` se creó la clase ``SyncHandler``
+con los métodos ``pull()`` y ``push()``, estos métodos se encargan de realizar
+las llamadas RPC: 
+
+      * ``pull()``
+          
+          Se encarga de obtener la última instancia de ``SyncLog`` e invocar al método
+          ``pull`` del servidor.
+
+          Los resultados de este método son: los objetos recibidos del servidor y la información
+          de sincronización.
+
+	* ``push()``
+	
+        Obtiene, para todos los modelos del proyecto desconectado, las instancias creadas/modificadas/eliminadas con sus
+        correspondientes instancias de ``SyncLog`` y serializarlas. Por último invoca al método ``push`` del servidor.
+
+        El resultado de este método es una lista con los siguientes valores:
         
             * ``need_pull``
             
@@ -459,26 +487,26 @@ o Bazaar [BazaarDocs09]_, se crearon los métodos [*]_ ``pull`` y ``push`` en el
              
             * ``chunked``
             
-                Indica que solo una parte de los modelos enviados pudo ser 
-                persistido en el servidor.
+                Indica que sólo una parte de los modelos enviados pudo ser 
+                persistida en el servidor.
             
             
             * ``deleted``
             
-                Indica que modelos pudireon ser eliminados.
+                Indica qué modelos pudieron ser eliminados.
                 
             * ``modified``
             
-                Indica que modelos pudieron ser modificados
+                Indica qué modelos pudieron ser modificados.
                 
             * ``created``
             
-                Indica que modelos pudieron ser creados
+                Indica qué modelos pudieron ser creados.
                 
             * ``sync_log_data``
             
-                En el caso de que ``need_pull`` sea ``False``, indica la nuvea
-                fecha con la cual se deben acutalizar las referencias a ``SyncLog``
+                En el caso de que ``need_pull`` sea ``False``, indica la nueva
+                fecha con la cual se deben actualizar las referencias a ``SyncLog``
                 de los modelos afectados por el ``push()``.
             
         
@@ -502,29 +530,18 @@ o Bazaar [BazaarDocs09]_, se crearon los métodos [*]_ ``pull`` y ``push`` en el
 
 .. [*] No confundir la definición de método con *remoting* de objetos o RMI.
 
-El siguiente gráfico muestra los argumentos enviados en el método ``push()``.
 
-.. figure:: ../_dot/push_return.pdf
-    
-    Argumentos de ``push()``
 
-Ambas operaciones tienen carácter atómico, se ejecutan dentro de una transacción
-de la base de datos.
-
-En cuanto al cliente, se implementó una aplicación ``doff.contrib.offline``, que
-se instala por defecto en ``settings.js`` con la ejecución del comando ``start_remotesite``.
- 
-Dentro del modulo ``doff.contrib.offline.handler`` se creó la clase ``SyncHandler``
-con los métodos ``pull()`` y ``push()``, estos métodos se encargan de realizar
-las llamadas RPC. Para realizar sincronización basada en
-estos métodos se genera una insancia de la clase y se realiza la operación deseada:
+Para realizar sincronización basada en
+estos métodos se genera una instancia de la clase y se realiza la operación deseada:
 
 .. code-block:: javascript
 
     >>> require('doff.contrib.offline.handler', 'SyncLog');
     >>> var sl = new SyncLog();
-    >>> sl.pull(); // Para recuperar cambios del servidor
-    >>> sl.push(); // Para enviar cambios hacia el servidor
+    >>> var [received, sync_log_data ] = sl.pull(); // Para recuperar cambios del servidor
+    >>> var [need_pull, chunked, created, modified, created, sync_log_data ] = sl.push(); // Para enviar cambios hacia el servidor
+
 
  
 Problemas de Sincronización 
@@ -533,18 +550,21 @@ Problemas de Sincronización
 Cuando un cliente desconectado genera instancias de clases relacionadas, los 
 identificadores (campos ``id``) son establecidos por la base de datos del cliente.
 Este problema se da cuando, por ejemplo, se tiene una clase ``Pedido`` relacionada
-con ``ItemPedido``, cuando el cliente crea pedidos con items, las instancias
+con ``ItemPedido`` y el cliente crea pedidos con ítems. Las instancias
 tiene ``status`` en ``"C"`` (creado) y el valor ``server_pk`` en ``NULL``.
 Si bien la relación tiene sentido en el contexto del cliente, durante la ejecución
-de ``push()``, el servidor no puede resolver las relaciones debido a que ignora
-los cambios ``id`` del cliente. El cliente se evalúa si ha ocurrido esta situación
+de ``push()`` el servidor no puede resolver las relaciones debido a que ignora
+los campos ``id`` del cliente. 
+
+El cliente evalúa si ocurre esta situación
 verificando si la cantidad de modelos devueltos es diferente a la cantidad de modelos
-enviados, bautizando a esta situación *por partes* o ``chunked``. Debido a que el
+enviados. De ser así, se está ante una sincronización *por partes* o ``chunked``.
+Debido a que el
 método ``push()`` actualiza los campos ``server_pk`` de las instancias que pudo
-crear en el servidor, una nueva invocación de ``push()`` solo enviará las entidades
-no sincronizadas. Se deben realizar tantas invocaciones como niveles de relaciones
+crear en el servidor, una nueva invocación de ``push()`` sólo enviará las entidades
+no sincronizadas. Por lo tanto, se deben realizar tantas invocaciones como niveles de relaciones
 se tengan sin resolver. Es importante aclarar que la cantidad de invocaciones no
-crece con la cantidad de instancias sino con las profundidad de relaciones.
+crece con la cantidad de instancias, sino con las profundidad de relaciones.
 
 
 
@@ -561,18 +581,18 @@ cuando ocurre la sincronización por partes:
 
 Otro problema que puede ocurrir durante la sincronización es que el cliente
 no posea la versión más actual del estado del modelo. Este caso se detecta en 
-el servidor mediante comparación de fachas de los ``sync_log`` enviado en
+el servidor mediante comparación de fechas de los ``sync_log`` enviados en
 el ``push()`` (análisis de las fechas de la lista ``received["sync_log"]``).
-Esto ocurre cuando se realizan cambios en el servidor desde la última sinronización
+Ocurre cuando se realizan cambios en el servidor desde la última sinronización
 del cliente.
 
 Para resolver los problemas anteriormente descriptos se creó un nuevo método que
 envuelve las llamadas a ``push()`` y ``pull()``. Se lo denominó ``update()`` y 
 es también un método del ``SyncHandler``. Su algoritmo es el siguiente:
     
-    #. Traer cambios desde el servidor, mediante el llamado a ``pull()``
+    #. Traer cambios desde el servidor, mediante el llamado a ``pull()``.
        
-    #. Ejecuta ``push()`` si hay cambios a ser enviados (determinado de acuerdo
+    #. Ejecutar ``push()`` si hay cambios a ser enviados (determinados de acuerdo
        al valor del campo ``status`` de cada modelo)
         
         #. Si ``chunked`` es falso, la actualización ha sido completa y finaliza
