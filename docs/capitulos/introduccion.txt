@@ -1,5 +1,4 @@
-
-
+﻿
 
 ############
 Introducción 
@@ -120,6 +119,8 @@ Alcance
 *******
 
 .. note:: Debe estar en pasado. Hay que de todos modos re-readactar según marta.
+
+Se seleccionó un framework web en función a características como un mapeador objeto-relacional avanzado, posiblidad de desarrollo sin necesidad de entornos sofisticados (por ejemplo, evitar los frameowkrs web que utilizan XML como formato de configuración)
 
 Tras el estudio de las características se determinará el framework
 a utilizar. Se tendrán en cuenta características tales como como la calidad del

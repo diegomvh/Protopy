@@ -1,4 +1,4 @@
-
+﻿
 
 ###########################
 Aplicación de Demostración
@@ -127,4 +127,7 @@ Las vistas genéricas utilzadas fueron:
         * ``object_id``: Identificador de la instancia a eliminar.
         
         
+La portada de la aplicación se diseño de la siguiente manera:
+
+.. figure:: ../_static/sshot_inicio.png
 
