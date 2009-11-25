@@ -158,8 +158,9 @@ function build_for_model(Model, d) {
 function RemoteDeserializer(object_list) {
     /* Para pasar los datos a objetos de modelo asume que ya estan ordenados al obtener las referencias */
     models.get_apps();
-    var lazy_objects = [];
-    for each (var d in object_list) {
+
+    while (bool(object_list)) {
+    	var d = object_list.shift();
         // Look up the model and starting build a dict of data for it.
         var Model = models.get_model_by_identifier(d["model"]);
         if (Model == null)
@@ -168,7 +169,7 @@ function RemoteDeserializer(object_list) {
         try {
         	var [ data, m2m_data ] = build_for_model(Model, d);
         } catch (e if isinstance(e, ServerPkDoesNotExist)) {
-        	lazy_objects.push(d);
+        	object_list.push(d);
         	continue;
         }
         		
@@ -183,9 +184,6 @@ function RemoteDeserializer(object_list) {
             yield new DeserializedObject(client_object, m2m_data);
         }
     }
-    debugger;
-    if (bool(lazy_objects))
-    	yield RemoteDeserializer(lazy_objects);
 }
 
 publish({

@@ -56,6 +56,7 @@ var SyncHandler = type('SyncHandler', [ object ], {
                 //this.conflict_middleware.
             //}
         }
+        debugger;
     },
 
     save_collected: function(collected, sync_log) {
