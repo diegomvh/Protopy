@@ -6,6 +6,7 @@
 require('doff.core.serializers.javascript', 'Serializer');
 require('doff.core.serializers.base', 'DeserializedObject', 'DeserializationError');
 var models = require('doff.db.models.base');
+require('doff.db.models.fields.base', 'AutoField');
 
 var ServerPkDoesNotExist = type('ServerPkDoesNotExist', Exception);
 var ChunkedSerialization = type('ChunkedSerialization', Exception);
@@ -113,6 +114,12 @@ function build_for_model(Model, d) {
 	} catch (e if isinstance(e, Model.DoesNotExist)) {}
 	var m2m_data = {};
 	
+	// Que pasa si el pk no es un AutoField
+	if (!isinstance(Model._meta.pk, AutoField)) {
+		debugger;
+		data[Model._meta.pk.attname] = Model._meta.pk.to_javascript(data["server_pk"]);
+	}
+	
 	// Handle each field
 	for each (var [field_name, field_value] in items(d["fields"])) {
 	    //Esto esta copiado por el tema de unicode
@@ -120,13 +127,13 @@ function build_for_model(Model, d) {
 	        field_value = string(field_value);
 	
 	    var field = Model._meta.get_field(field_name);
-	
+	    
 	    // Handle M2M relations
 	    if (field.rel && isinstance(field.rel, models.ManyToManyRel)) {
 	        var m2m_convert = getattr(field.rel.to._meta.pk, 'to_javascript');
 	        // Map to client pks
 	        try {
-	        	field_value = [field.rel.to._default_manager.get({'server_pk': f})[Model._meta.pk.attname] for each (f in field_value)]
+	        	field_value = [field.rel.to._default_manager.get({'server_pk': f})[field.rel.to._meta.pk.attname] for each (f in field_value)]
 	        } catch (e if isinstance(e, Model.DoesNotExist)) {
 	        	throw new ServerPkDoesNotExist({'field': field});
 	        }
@@ -135,7 +142,7 @@ function build_for_model(Model, d) {
 	        if (field_value != null) {
 	            // Map to client pk
 	        	try {
-	            	field_value = field.rel.to._default_manager.get({'server_pk': field_value})[Model._meta.pk.attname];
+	            	field_value = field.rel.to._default_manager.get({'server_pk': field_value})[field.rel.to._meta.pk.attname];
 		        } catch (e if isinstance(e, Model.DoesNotExist)) {
 		        	throw new ServerPkDoesNotExist({'field': field});
 		        }
