@@ -4,7 +4,7 @@ require('ajax');
 require('event');
 
 var Logger = type('Logger', [Panel, Handler], {
-    __init__: function() {
+    __init__: function(project) {
         super(Panel, this).__init__('logger', 'Logger');
         this.root = get_logger();
         this.root.add_handler(this);

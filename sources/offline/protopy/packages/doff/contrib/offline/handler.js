@@ -150,7 +150,7 @@ var SyncHandler = type('SyncHandler', [ object ], {
     },
 
     pull: function() {
-        try {
+    	try {
             var last_sync_log = SyncLog.objects.latest('pk');
             var to_send = this.serializer.serialize(last_sync_log);
             var data = this.proxy.pull(to_send);

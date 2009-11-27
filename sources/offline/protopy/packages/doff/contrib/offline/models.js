@@ -54,7 +54,7 @@ var RemoteStatusManager = type('RemoteStatusManager', [ models.Manager ], {
 });
 
 var SyncLog = type('SyncLog', [ models.Model ], {
-    SYNC_STATUS: { "s": "Synced",
+    SYNC_STATUS: { "s": "Synchronized",
                    "c": "Created",
                    "m": "Modified",
                    "d": "Deleted",
@@ -157,8 +157,10 @@ function ensure_default_remote_manager(cls) {
 
 function ensure_data_first_synchronization(callback) {
 	require('doff.contrib.offline.handler', 'SyncHandler');
+	callback('sync', {	'message': 'Create synchronization handler'	});
 	var sync = new SyncHandler();
-	sync.update();
+	callback('sync', {	'message': 'Pulling data from server', 'first': true });
+	sync.update(callback);
 }
 
 var hcp = event.subscribe('class_prepared', ensure_default_remote_manager);

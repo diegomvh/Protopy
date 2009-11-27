@@ -3,7 +3,7 @@ require('ajax');
 require('event');
 
 var DataBaseQuery = type('DataBaseQuery', Panel, {
-    __init__: function() {
+    __init__: function(project) {
         super(Panel, this).__init__('dbquery', 'Query Tool', 'Consultas sobre la base de datos');
         this.current_command_index = 0;
         this.command_history = [];

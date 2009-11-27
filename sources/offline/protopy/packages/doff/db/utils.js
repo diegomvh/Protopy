@@ -3,7 +3,8 @@ var models = require('doff.db.models.base');
 require('doff.conf.settings', 'settings');
 
 function syncdb(callback) {
-	callback('syncdb', {'message': 'Create data base ' + settings.DATABASE_NAME, 'name': settings.DATABASE_NAME});
+	callback('syncdb', {	'message': 'Create data base ' + settings.DATABASE_NAME, 
+							'name': settings.DATABASE_NAME});
     var cursor = connection.cursor();
     
     // Get a list of already installed *models* so that references work right.
@@ -29,13 +30,18 @@ function syncdb(callback) {
                 if (include(seen_models, refto))
                     sql = sql.concat(connection.creation.sql_for_pending_references(refto, pending_references));
             }
-            callback('Create Table', {'model': model, 'app_name': app_name, 'sql': sql});
+            callback('syncdb', {	'message': 'Create table for model ' + string(model._meta),
+            						'model': model,  
+            						'sql': sql});
             sql = sql.concat(connection.creation.sql_for_pending_references(model, pending_references));
             for each (var statement in sql) {
                 try {
                     cursor.execute(statement);
                 } catch (e) { 
-                	callback('Data Base Error', {'model': model, 'app_name': app_name, 'sql': sql, 'error': e });
+                	callback('error', {	'message': 'Error while creating table for model ' + string(model._meta),
+                						'model': model, 
+                						'sql': sql,
+                						'error': e });
                 }
             }
             tables.push(connection.introspection.table_name_converter(model._meta.db_table));
@@ -51,12 +57,17 @@ function syncdb(callback) {
             if (include(created_models, model)) {
                 var sql = connection.creation.sql_for_many_to_many(model);
                 if (bool(sql)) {
-                	callback('Create M2M Table', {'model': model, 'app_name': app_name, 'sql': sql});
+                	callback('syncdb', {'message': 'Create m2m table for model ' + string(model._meta),
+										'model': model,
+										'sql': sql});
                     for each (var statement in sql)
 	                    try {
 	                    	cursor.execute(statement);
 	                    } catch (e) { 
-	                    	callback('Data Base Error', {'model': model, 'app_name': app_name, 'sql': sql, 'error': e });
+	                    	callback('error', {	'message': 'Error while creating m2m table for model ' + string(model._meta),
+				        						'model': model, 
+				        						'sql': sql,
+				        						'error': e });
 	                    }
                 }
             }
@@ -74,12 +85,17 @@ function syncdb(callback) {
             if (include(created_models, model)) {
                 var custom_sql = null //custom_sql_for_model(model);
                 if (bool(custom_sql)) {
-                	callback('Custom SQL', {'model': model, 'app_name': app_name, 'custom_sql': custom_sql});
+                	callback('syncdb', {'message': 'Create custom sql for model ' + string(model._meta),
+										'model': model,  
+										'sql': custom_sql});
                     try {
                         for each (var sql in custom_sql)
                             cursor.execute(sql);
                     } catch (e) {
-                    	callback('Custom SQL Error', {'model': model, 'app_name': app_name, 'custom_sql': custom_sql, 'error': e });
+                    	callback('syncdb', {'message': 'Error while creating custom sql for model ' + string(model._meta),
+											'model': model,  
+											'sql': custom_sql,
+											'error': e });
                     }
                 }
             }
@@ -93,12 +109,17 @@ function syncdb(callback) {
             if (include(created_models, model)) {
                 var index_sql = connection.creation.sql_indexes_for_model(model);
                 if (bool(index_sql)) {
-                	callback('Create Index', {'model': model, 'app_name': app_name, 'index_sql': index_sql});
+                	callback('syncdb', {'message': 'Create index for model ' + string(model._meta),
+										'model': model, 
+										'sql': index_sql});
                     try {
                         for each (var sql in index_sql)
                             cursor.execute(sql);
                     } catch (e) {
-                    	callback('Index Error', {'model': model, 'app_name': app_name, 'index_sql': index_sql, 'error': e });
+                    	callback('syncdb', {'message': 'Error while creating index for model ' + string(model._meta),
+											'model': model,
+											'sql': index_sql,
+											'error': e });
                     }
                 }
             }
@@ -107,7 +128,8 @@ function syncdb(callback) {
 }
 
 function removedb(callback) {
-	callback('Destroy Data Base', {'name': settings.DATABASE_NAME});
+	callback('removedb', {	'message': 'Destroy data base ' + settings.DATABASE_NAME, 
+							'name': settings.DATABASE_NAME});
     require('doff.db.base', 'connection');
     connection.open();
     connection.remove();

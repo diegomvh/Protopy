@@ -38,7 +38,7 @@ var Project = type('Project', object, {
         this.package = package;
         this.offline_support = offline_support;
 
-        // Registro la ruta al proyecto
+        // Registro la ruta al proyecto muy importente, desde este momento se puden requerir archivos del proyecto
         sys.register_path(this.package, this.offline_support + '/js');
 
         // Url para ver si estoy conectado
@@ -50,7 +50,7 @@ var Project = type('Project', object, {
         // Estoy conectado?
         this.network_check();
     },
-
+    
     load_toolbar: function() {
         require('doff.core.exceptions');
         require('doff.conf.settings', 'settings');
@@ -72,7 +72,7 @@ var Project = type('Project', object, {
             if (isundefined(tb_class))
                 throw new exceptions.ImproperlyConfigured('Toolbar module "%s" does not define a "%s" class'.subs(tb_module, tb_classname));
 
-            var tb_instance = new tb_class();
+            var tb_instance = new tb_class(this);
 
             this.toolbar.add(tb_instance);
         }
@@ -84,24 +84,15 @@ var Project = type('Project', object, {
     	callback = callback || function() {};
     	var localserver = sys.gears.create('beta.localserver');
     	
-    	callback('store', {	'message': 'Create store ' + this.package + '_manifest', 
-    						'name': this.package + '_manifest', 
+    	callback('store', {	'message': 'Create store ' + this.package + '_store', 
+    						'name': this.package + '_store', 
     						'manifest': this.offline_support + '/manifest.json' });
-    	this.managed_store = localserver.createManagedStore(this.package + '_manifest');
+    	this.managed_store = localserver.createManagedStore(this.package + '_store');
         this.managed_store.manifestUrl = this.offline_support + '/manifest.json';
         
-        this.managed_store.oncomplete = function(details) { 
-        	callback('store', extends(details, {
-        				'message': 'oncomplete'})); 
-        	};
- 	   	this.managed_store.onerror = function(error) { 
- 	   		callback('store', extends(error, {
-				'message': 'onerror'})); 
- 	   		};
- 	   	this.managed_store.onprogress = function(details) { 
- 	   		callback('store', extends(details, {
-				'message': 'onprogress'}));
- 	   		};
+        this.managed_store.oncomplete = function(details) { callback('complete', details); };
+ 	   	this.managed_store.onerror = function(error) { callback('error', error); };
+ 	   	this.managed_store.onprogress = function(details) { callback('progress', details); };
  	   
         this.managed_store.checkForUpdate();
     },
@@ -109,7 +100,9 @@ var Project = type('Project', object, {
     remove_store: function(callback) {
     	callback = callback || function() {};
         var localserver = sys.gears.create('beta.localserver');
-        localserver.removeManagedStore(this.package + '_manifest');
+        callback('store', {	'message': 'Destroy store ' + this.package + '_store', 
+							'name': this.package + '_store'});
+        localserver.removeManagedStore(this.package + '_store');
         this.managed_store = null;
     },
 
@@ -118,12 +111,11 @@ var Project = type('Project', object, {
     },
 
     get_permission: function() {
-    	require('doff.conf.settings', 'settings');
         if (sys.gears.hasPermission)
             return true;
-        var site_name = settings.PROJECT_NAME;
-        var icon = settings.PROJECT_IMAGE;
-        var msg = settings.PROJECT_DESCRIPTION
+        var site_name = this.settings.PROJECT_NAME;
+        var icon = this.settings.PROJECT_IMAGE;
+        var msg = this.settings.PROJECT_DESCRIPTION
             + 'This site would like to use Google Gears to enable fast, '
             + 'as-you-type searching of its documents.';
 
@@ -140,6 +132,14 @@ var Project = type('Project', object, {
         }
     },
 
+    get settings() {
+    	if (isundefined(this['_settings'])) {
+    			require('doff.conf.settings', 'settings');
+    			this._settings = settings;
+    	}
+    	return this._settings;
+    },
+    
     install: function(callback) {
     	
         if (!sys.gears.installed) sys.gears.install();
