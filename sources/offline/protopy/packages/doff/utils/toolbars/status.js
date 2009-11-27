@@ -35,10 +35,10 @@ var uninstalled_template =
 
     </style>
     <div id="status-content">
-    <h2>%(PROJECT_NAME)s</h2><br>
-    <p>%(PROJECT_DESCRIPTION)s</p><br>
-    <h3>Motor: %(DATABASE_ENGINE)s</h3><br>
-    <h3>Base de Datos: %(DATABASE_NAME)s</h3><br>
+    <h2>%(PROJECT_NAME)s</h2>
+    <p>%(PROJECT_DESCRIPTION)s</p>
+    <h3>Motor: %(DATABASE_ENGINE)s</h3>
+    <h3>Base de Datos: %(DATABASE_NAME)s</h3>
     <img src="%(PROJECT_IMAGE)s" width="100"/>
     <button id="status-button-enable">Enable offline access</button>
     </div>
@@ -99,20 +99,27 @@ var Status = type('Status', [ Panel ], {
     },
 
     go_install: function(status, details) {
-    	print(status, details);
+    	var cadena = status + " ";
+    	if (!isundefined(details['model']))
+    		cadena + "for " + string(details['model']._meta)
+    	this.status.update(cadena);
+    	//print(status, details);
     },
     
     install: function(e) {
         e.target.remove();
-        $('status-content').insert('<div class="doff-progress-container"><div id="doff-status-store-progress"/></div>');
+        $('status-content').insert('<h3 id="doff-progress-status"></h3><div class="doff-progress-container"><div id="doff-progress-bar"/></div></div>');
+        this.status = $('doff-progress-status');
+        this.bar = $('doff-progress-bar');
         this.project.install(getattr(this, 'go_install'));
     },
 
     get_template: function() {
-        if (this.project.is_installed)
+        if (this.project.is_installed) {
             return installed_template;
-        else
-            return uninstalled_template.subs(this.config);
+        } else {
+        	return new Template(uninstalled_template).evaluate(this.config);
+        }
     },
 
     _display: function() {

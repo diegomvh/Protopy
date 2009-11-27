@@ -84,14 +84,25 @@ var Project = type('Project', object, {
     	callback = callback || function() {};
     	var localserver = sys.gears.create('beta.localserver');
     	
-    	callback('Create Store', {'name': this.package + '_manifest', 'manifest': this.offline_support + '/manifest.json' });
+    	callback('store', {	'message': 'Create store ' + this.package + '_manifest', 
+    						'name': this.package + '_manifest', 
+    						'manifest': this.offline_support + '/manifest.json' });
     	this.managed_store = localserver.createManagedStore(this.package + '_manifest');
         this.managed_store.manifestUrl = this.offline_support + '/manifest.json';
         
-        this.managed_store.oncomplete = function(details) { callback('Store Complete', details); };
- 	   	this.managed_store.onerror = function(error) { callback('Store Error', error); };
- 	   	this.managed_store.onprogress = function(details) { callback('Store Progress', details); };
- 	   	
+        this.managed_store.oncomplete = function(details) { 
+        	callback('store', extends(details, {
+        				'message': 'oncomplete'})); 
+        	};
+ 	   	this.managed_store.onerror = function(error) { 
+ 	   		callback('store', extends(error, {
+				'message': 'onerror'})); 
+ 	   		};
+ 	   	this.managed_store.onprogress = function(details) { 
+ 	   		callback('store', extends(details, {
+				'message': 'onprogress'}));
+ 	   		};
+ 	   
         this.managed_store.checkForUpdate();
     },
 
@@ -141,7 +152,7 @@ var Project = type('Project', object, {
         
         require('doff.db.utils','syncdb');
         syncdb(callback);
-        //event.publish('post_install', [callback]);
+        event.publish('post_install', [callback]);
     },
 
     uninstall: function(callback) {
