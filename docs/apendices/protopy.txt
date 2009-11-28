@@ -323,9 +323,9 @@ en el mismo.
         construcción, en una instancia posterior los objeto ``Template`` son evaluados y retornan una cadena de texto.  
 
     .. code-block:: javascript
-        :linenos:
+       :linenos:
 
-        // creamos un Template
+        // Se crea un Template
        var myTemplate = new Template('El show televisivo #{title} fue creado por #{author}.');
 
        // los datos para dar formato al template
@@ -335,7 +335,7 @@ en el mismo.
            network: 'FOX'
        };
 
-       // evaluamos el template
+       // Se evalúa el template
        >>> myTemplate.evaluate(show);
        "The TV show The Simpsons was created by Matt Groening.
 
