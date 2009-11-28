@@ -261,17 +261,15 @@ Información de Sincronización en el Cliente
 *******************************************
 
 La información sobre sincronización en el cliente se basó en parte en los campos
-que propone Junction. Para agregar la mentainformación a cada entidad se opto
-por un enfoque basado en herencia esto es, todo modelo "sincronizable" debe
-heredar de ``RemoteModel`` o ``RemoteReadOnlyModel`` en ``doff.contrib.offline.models``.
-Por otro lado la informacion propia de la accion de sincronizar los modelos se
-encapsulo por separado en el modelos ``SyncLog`` tambien parte de la aplicación
-``doff.contrib.offline``.
+que propone Junction, agregándoselos a cada entidad, pero se modeló la
+sincronización como entidad separada.
 
+Se creó la aplicación genérica ``doff.contrib.offline``, donde se definió 
+el modelo ``SyncLog``.
 Cada vez que el cliente realiza una sincronización con el servidor, se 
-almacena la fecha en una instancia de ``SyncLog``, de manera que durante la
-sincronización siguiente, solo se trabaje con los modelos afectados en el
-intervalo de tiempo transcurrido.
+almacena la fecha sobre una instancia de esta entidad,
+de manera que durante la sincronización siguiente, 
+sólo se trabaje con los modelos afectados en el intervalo de tiempo transcurrido.
 
 Los datos que se agregaron a cada modelo del cliente fueron:
 
@@ -607,23 +605,27 @@ es también un método del ``SyncHandler``. Su algoritmo es el siguiente:
            al valor ``false`` y la actualización es exitosa.
            
 
-Cuando una entidad es eliminada en el cliente y se ejecuta ``push()`` 
+Cuando una entidad es eliminada en el cliente y se ejecuta ``push()``,
 la bandera ``active`` toma le valor ``false``. Cuando el programador considere
-oportuna la eliminación de las entidades inactivas, el ``SyncHandler`` posee
-un método ``purge()`` (este método solo elimina una entidad si no posee relaciones
-o todos los campos relacionados poseen su bandera ``active`` en ``false``).
+oportuna la eliminación de las entidades inactivas puede utilizar el método
+``purge()`` de ``SyncHandler``, que sólo elimina una entidad si no posee relaciones
+o todos los campos relacionados poseen su bandera ``active`` en ``false``.
     
-El campo ``status`` es el que determina que modelos deben ser sincronizados. La 
-ejecución de los métodos mencionados genera cambios de estado, el siguiente diagrama
+El campo ``status`` es el que determina qué modelos deben ser sincronizados. 
+
+La ejecución de los métodos mencionados genera cambios de estado. El siguiente diagrama
 ejemplifica este hecho:
 
 .. figure:: ../_dot/estados_sincronziacion_cliente.pdf
 
     Estados de sincronización de los modelos en el cliente.
 
-.. figure:: ../_static/uml_sec_sync.pdf
+..
+    .. note:: Camibar error por problemas
+
+    .. figure:: ../_static/uml_sec_sync.pdf
     
-    Esquema de errores de sincronización
+        Esquema de errores de sincronización
 
 Resolución de Conflictos
 ========================
@@ -632,20 +634,21 @@ Durante la ejecución de ``pull()`` y ``push()`` pueden
 ocurrir conflictos de consistencia (por ejemplo, cuando los datos fueron 
 modificados y/o eliminados en ámbos extremos, o cuando las entidades creadas 
 generan errores de unicidad).
-Para tratar estos problemas, se creó una clase especial de Middlewares, llamados
-Middlwares de sincronización. A diferencia del resto de los Middlewares de Django y
-Doff, existe una solo Middleware de este tipo por proyecto desconectado.
+
+Para tratar estos problemas, se crearon Middlwares de sincronización.
+A diferencia del resto de los Middlewares de Django y
+Doff, existe un solo Middleware de este tipo por proyecto desconectado.
 
 Este Middleware es una clase que debe heredar de ``SyncMiddleware`` y estar 
-referenciado bajo el nombre ``SYNC_MIDDLEWARE_CLASS`` en ``settings.js``.
+reverenciada bajo el nombre ``SYNC_MIDDLEWARE_CLASS`` en ``settings.js``.
 
-Los métodos que brinda este middleware para ser sobrecargados por el programador
+Los métodos de este middleware que el programador puede sobrecargar 
 son los siguientes:
 
     * ``resolve_unique(local_object, remote_object)``
     
         Llamado cuando se genera un error
-        de unicidad en el servidor. Este método es invocado con el objeto
+        de unicidad en el servidor. Este método es invocado con los objetos
         local y remoto en conflicto.
          
     * ``resolve_localDeleteRemoteModified(local_object, remote_object)``
@@ -670,12 +673,18 @@ son los siguientes:
         
     * ``before_pull(data)``
         
-        Llamado previo a la ejecución de ``push()``, con los datos serializados
+        Llamado previo a la ejecución de ``pull()``, con los datos serializados
         como argumentos.
+
+    * ``after_push(data)``
+        
+        Llamado posteriormente a la ejecución de ``push()``, con los datos serializados
+        como argumentos.
+
         
     * ``after_pull(data)``
         
-        Llamado posteriormente a la ejecución de ``push()``, con los datos serializados
+        Llamado posteriormente a la ejecución de ``pull()``, con los datos serializados
         como argumentos.
 
 Se ofrecen al programador las siguientes clases con comportamiento por defecto para resolver
@@ -683,23 +692,19 @@ los conflictos:
     
     * ``ClientWinsSyncMiddleware``
     
-        Prevalece la información del cliente
+        Prevalece la información del cliente.
     
     * ``ServerWinsSyncMiddleware``
     
-        Prevalece la información del servidor 
-
-    * ``ServerWinsSyncMiddleware``
-    
-        Solo si se utiliza la herramienta de desarrollador ``toolbar`` de Doff.
+        Prevalece la información del servidor. 
           
-Este tipo de Middlewares es opcional.
+Este tipo de middlewares es opcional.
 
 Consideraciones Sobre Sincronización
 =====================================
 
-Doff provee un mecanismo básico de sincronización adecuado para pequeñas aplicaciones
+Doff provee un mecanismo básico de sincronización adecuado para pequeñas aplicaciones,
 que permite al programador contar con las herramientas para transporte, comunicación RPC
-y control de cambios. Debido a que no existe una política universal aplicable a
-todas las aplicaciones, y debido a que Doff se trata de un framework extensible, 
+y control de cambios. Debido a que no existe una política universal para todas las aplicaciones, 
+y como Doff se trata de un framework extensible, 
 se pueden implementar mecanismos más sofisticados en base a las herramientas expuestas.
