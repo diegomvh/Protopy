@@ -124,6 +124,9 @@ Las vistas genéricas utilzadas fueron:
 Estas vistas fueron fueron implementadas en **Doff** debido que hasta el momento no se 
 habían contemplado.
         
+<<<<<<< local
+        
+=======
 Plantilla de la aplicación
 --------------------------
 
