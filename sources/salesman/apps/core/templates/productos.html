@@ -13,17 +13,23 @@
 	<h1>{{categoria}}</h1>
 		{% for producto in categoria.producto_set.all %}
 			<p>
+				{% if user.is_authenticated %}
 				<a href="/pedido/agregar/{{producto.id}}/">
+				{% endif %}
 					<img src="{{MEDIA_URL}}{{producto.imagen}}" alt="{{producto}}" class="float-left" />
 					<h3>{{producto}}</h3>
+				{% if user.is_authenticated %}
 				</a>
-				{{producto.descripcion}}
+				{% endif %}
+				<span>{{producto.descripcion}}</span>
 				<h4>U$S {{producto.precio}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="blue">(iva iclu&iacute;do)</span></h4>
 			</p>
 			<p class="comments align-right clear">
+				{% if user.is_authenticated %}
 				<a href="/pedido/agregar/{{producto.id}}/">Comprar</a> :
-				<a href="index.html">Preguntas</a> :
-				<a href="index.html">Detalles</a>
+				{% endif %}
+				<span class="blue">Preguntas</span> :
+				<span class="blue">Detalles</span>
 			</p>
 		{% endfor %}
 	{% endfor %}

@@ -20,6 +20,7 @@
 			<a href="/administrar/clientes/">listar</a> : 
 			<a href="/administrar/cliente/agregar/">agregar</a>
 		</li>
+		{% if not offline %}
 		<li>
 			Productos :
 			<a href="/administrar/productos/">listar</a> : 
@@ -30,6 +31,7 @@
             <a href="/administrar/categorias/">listar</a> :
             <a href="/administrar/categoria/agregar/">agregar</a>
         </li>
+        {% endif %}
 	</ul>	
 </div>
 {% endblock  %}

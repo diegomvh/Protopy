@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
-from django.shortcuts import redirect
+from django.http import HttpResponseRedirect
 
 def login(request):
     username = request.POST['username']
@@ -8,10 +8,10 @@ def login(request):
     if user is not None:
         if user.is_active:
             django_login(request, user)
-    return redirect('/')
+    return HttpResponseRedirect('/')
         
         
 def logout(request):
     request.session.clear()
     django_logout(request)
-    return redirect('/')
+    return HttpResponseRedirect('/')

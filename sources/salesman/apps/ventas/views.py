@@ -1,5 +1,5 @@
 from django.http import HttpResponseRedirect, Http404
-from django.shortcuts import get_object_or_404, render_to_response, redirect
+from django.shortcuts import get_object_or_404, render_to_response
 from salesman.apps.ventas.models import Pedido
 from salesman.apps.core.models import Producto, Cliente
 from django.template.context import RequestContext
@@ -70,7 +70,7 @@ def modificar_pedido(request):
     if request.REQUEST.has_key('accion') and request.REQUEST['accion'] == 'Finalizar':
         terminar_pedido(sp, request.user)
         del request.session['pedido']
-        return redirect('/pedidos/')
+        return HttpResponseRedirect('/pedidos/')
     
     request.session['pedido'] = sp
     return ver_pedido(request)
@@ -83,3 +83,11 @@ def ver_pedido(request, producto = None):
     if request.user.is_staff:
         clientes = Cliente.objects.all()
     return render_to_response('pedido.html', {'pedido': pedido, 'clientes': clientes, 'producto': producto}, context_instance = RequestContext(request))
+
+def ver_pedidos(request):
+    if not request.user.is_authenticated():
+        raise Http404()
+    from django.views.generic.list_detail import object_list
+    queryset = request.user.pedido_set.all()
+    return object_list(request, queryset = queryset)
+    
