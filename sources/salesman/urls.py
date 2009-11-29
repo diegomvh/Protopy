@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.db.models.loading import get_app, get_models
 from salesman.off.remote_agentes import agentes_site
 from django.conf import settings
+from salesman.apps.ventas.models import Pedido
 
 # Autodiscover para la admin
 admin.autodiscover()
@@ -24,10 +25,12 @@ urlpatterns = patterns('',
     (r'^catalogo/categoria/(?P<categoria>\d+)/$', 'salesman.apps.core.catalogo.productos_por_categoria'),
     (r'^catalogo/buscar/$', 'salesman.apps.core.catalogo.buscar_productos'),
     (r'^administrar/', include('salesman.apps.core.urls')),
+    (r'^ventas/', include('salesman.apps.ventas.urls')),
     (r'^pedido/agregar/(?P<producto>\d+)/$', 'salesman.apps.ventas.views.agregar_producto'),
     (r'^pedido/modificar/$', 'salesman.apps.ventas.views.modificar_pedido'),
-    (r'^core/', include('salesman.apps.core.urls')),
-    (r'^ventas/', include('salesman.apps.ventas.urls')),
+    (r'^pedidos/$', 'django.views.generic.list_detail.object_list',{
+            'queryset': Pedido.objects.all()
+    }),
     (r'^%s/(.*)' % agentes_site.urlregex, agentes_site.root ),
 )
 

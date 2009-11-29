@@ -1,5 +1,5 @@
 // Top level offline url-to-view mapping.
-require('doff.conf.urls', '*');
+require('doff.conf.urls', 'patterns', 'include');
 
 var urlpatterns = patterns('',
     ['^/?$', 'doff.views.generic.simple.direct_to_template', {'template': 'index.html'} ],
@@ -11,7 +11,7 @@ var urlpatterns = patterns('',
     ['^pedido/agregar/(\\d+)/$', 'agentes.ventas.views.agregar_producto'],
     ['^pedido/modificar/$', 'agentes.ventas.views.modificar_pedido'],
     ['^ventas', include('agentes.ventas.urls')]
-)
+);
 
 // Don't touch this line
 publish({ 

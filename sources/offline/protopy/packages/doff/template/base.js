@@ -80,8 +80,9 @@ var NodeList = type('NodeList', [ object ], {
     render: function(context) {
         var bits = [];
         for each (var node in this.nodes) {
-            if (isinstance(node, Node))
-                bits.push(this.render_node(node, context));
+            //if (!isundefined(node) && isinstance(node, Node)) el isundefined(node) es porque se presentan nodos undefined, hay que ver de donde salen para sacar esta linea
+        	if (isinstance(node, Node))
+        		bits.push(this.render_node(node, context));
             else
                 bits.push(node);
         }
@@ -484,8 +485,10 @@ var Library = type('Library', [ object ], {
             throw new InvalidTemplateLibrary("Unsupported arguments to Library.filter: (%s, %s)".subs(name, filter_func));
         }
     },
-    inclusion_tag: function(file_name, context_class, takes_context) {
-    	context_class = context_class || Context;
+    inclusion_tag: function(file_name) {
+    	var arg = new Arguments(arguments, {context_class: Context, takes_context: false});
+    	var takes_context = arg.kwargs.takes_context;
+    	var context_class = arg.kwargs.context_class;
     	function dec(func) {
     		var params = func.toString().match(/^[\s\(]*function[^(]*\(([^\)]*)\)/)[1].replace(/\s+/g, '').split(',');
             params = params.length == 1 && !params[0] ? [] : params;

@@ -1,9 +1,46 @@
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, render_to_response, redirect
 from salesman.apps.ventas.models import Pedido
-from salesman.apps.core.models import Producto
+from salesman.apps.core.models import Producto, Cliente
 from django.template.context import RequestContext
+
+def terminar_pedido(sp, user):
     
+    pedido = Pedido()
+    pedido.vendedor = user
+    pedido.cliente = sp['cliente']
+    pedido.save()
+    
+    for id, item in sp['items'].iteritems():
+        pedido.agregar_producto(item['producto'], item['cantidad'])
+
+def armar_pedido(pedido, data, user):
+    if user.is_staff and data.has_key('cliente'):
+        cliente = get_object_or_404(Cliente, cuit = int(data['cliente']))
+        pedido['cliente'] = cliente
+    
+    subtotal = 0.0
+    productos = 0 
+    items = []
+    for id, item in pedido['items'].iteritems():
+        try:
+            cantidad = int(data['cantidad_%s' % id])
+        except ValueError:
+            continue
+        if data.has_key('quitar_%s' % id) or cantidad < 0:
+            continue
+        else:
+            item['cantidad'] = cantidad
+            item['importe'] = cantidad * item['producto'].precio
+            productos += cantidad
+            subtotal += float(item['importe'])
+        items.append(item)
+
+    pedido['productos'] = productos
+    pedido['items'] = dict(map(lambda item: (item['producto'].id, item), items))
+    pedido['subtotal'] = subtotal
+    return pedido
+
 def agregar_producto(request, producto):
     if 'pedido' not in request.session:
         cliente = None
@@ -22,40 +59,27 @@ def agregar_producto(request, producto):
     pedido['subtotal'] += float(pedido['items'][producto.id]['importe'])
     pedido['productos'] += 1
     request.session['pedido'] = pedido
-    return render_to_response('pedido.html', {'pedido': pedido, 'producto': producto}, context_instance = RequestContext(request))
+    return ver_pedido(request, producto)
 
 def modificar_pedido(request):
     if request.method != 'POST' or 'pedido' not in request.session:
         return ver_pedido(request)
-    pedido = request.session['pedido']
     
-    subtotal = 0.0
-    productos = 0 
-    items = []
-    for id, item in pedido['items'].iteritems():
-        try:
-            cantidad = int(request.REQUEST['cantidad_%s' % id])
-        except ValueError:
-            continue
-        if request.REQUEST.has_key('quitar_%s' % id) or cantidad < 0:
-            continue
-        else:
-            item['cantidad'] = cantidad
-            item['importe'] = cantidad * item['producto'].precio
-            productos += cantidad
-            subtotal += float(item['importe'])
-        items.append(item)
-
-    pedido['productos'] = productos
-    pedido['items'] = dict(map(lambda item: (item['producto'].id, item), items))
-    pedido['subtotal'] = subtotal
+    sp = armar_pedido(request.session['pedido'], request.REQUEST, request.user)
     
-    request.session['pedido'] = pedido
+    if request.REQUEST.has_key('accion') and request.REQUEST['accion'] == 'Finalizar':
+        terminar_pedido(sp, request.user)
+        del request.session['pedido']
+        return redirect('/pedidos/')
+    
+    request.session['pedido'] = sp
     return ver_pedido(request)
 
-def ver_pedido(request):
+def ver_pedido(request, producto = None):
     if 'pedido' not in request.session or len(request.session['pedido']['items']) == 0:
         return render_to_response('pedido.html', {}, context_instance = RequestContext(request))
     pedido = request.session['pedido']
-    return render_to_response('pedido.html', {'pedido': pedido}, context_instance = RequestContext(request))
-
+    clientes = None
+    if request.user.is_staff:
+        clientes = Cliente.objects.all()
+    return render_to_response('pedido.html', {'pedido': pedido, 'clientes': clientes, 'producto': producto}, context_instance = RequestContext(request))

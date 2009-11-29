@@ -83,7 +83,7 @@ urlpatterns = patterns('',
             'model': Producto,
             'template_name': 'forms.html',
             'post_save_redirect': '/administrar/productos/',
-            'extra_context': {'title': 'Editar Producto', 'submit_text': 'Actualizar',}, 
+            'extra_context': {'titulo': 'Editar Producto', 'submit_text': 'Actualizar',}, 
         }),
         
         # producto -> Listar
@@ -112,38 +112,36 @@ urlpatterns = patterns('',
         #---------------------------------------------------------------------------------
         # Proveedores
         #---------------------------------------------------------------------------------
-        (r'^proveedor/$', 'django.views.generic.simple.redirect_to', {'url':'/core/proveedores/'}),
         
         # vendedors -> Edit
-        (r'^proveedor/(?P<object_id>\d{1,5})/edit/$', 'django.views.generic.create_update.update_object',{
+        (r'^proveedor/(?P<object_id>\d{1,5})/editar/$', 'django.views.generic.create_update.update_object',{
             'model': Proveedor,
             'post_save_redirect': '/administrar/proveedores/',
             'template_name': 'forms.html',
-            'extra_context': {'title': 'Editar proveedor', 'submit_text': 'Actualizar',}, 
+            'extra_context': {'titulo': 'Editar Proveedor', 'submit_text': 'Actualizar',}, 
         }),
         
         # proveedor -> Listar
         (r'^proveedores/$', 'django.views.generic.list_detail.object_list',{
-            'queryset': Proveedor.objects.all()
-            }
-        ),
+            'queryset': Proveedor.objects.all(),
+            'extra_context': {'titulo': 'Listado de Proveedores'}, 
+        }),
         
         # proveedor -> Crear
-        (r'^proveedores/add/$', 'django.views.generic.simple.redirect_to', 
-            {'url': '../../proveedor/add/'}),
             
-        (r'^proveedor/add/$', 'django.views.generic.create_update.create_object', {
+        (r'^proveedor/agregar/$', 'django.views.generic.create_update.create_object', {
             'model': Proveedor,
             'template_name': 'forms.html',
             'post_save_redirect': '/administrar/proveedores/',
-                                                                               
+            'extra_context': {'titulo': 'Agregar Proveedor'}, 
         }),
+        
         # proveedor -> Eliminar
-        (r'^proveedor/(?P<object_id>\d{1,5})/delete/$', 'django.views.generic.create_update.delete_object', {
+        (r'^proveedor/(?P<object_id>\d{1,5})/eliminar/$', 'django.views.generic.create_update.delete_object', {
             'model': Proveedor,
             'post_delete_redirect': '/administrar/proveedores/',
             'template_name': 'confirm_delete.html',
-                                                                               
+            'extra_context': {'titulo': 'Eliminar Proveedor'}, 
         }),
         
         #---------------------------------------------------------------------------------

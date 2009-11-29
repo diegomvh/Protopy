@@ -111,10 +111,10 @@ function create_object(request) {
     return new HttpResponse(t.render(c));
 }
 
-function update_object(request) {
+function update_object(request, object_id) {
     var arg = new Arguments(arguments, {
         model:null,
-        object_id:null,
+        //object_id:null,
         slug:null,
         slug_field:'slug',
         template_name:null,
@@ -135,7 +135,7 @@ function update_object(request) {
     //    return redirect_to_login(request.path)
 
     var [model, form_class] = get_model_and_form_class(kwargs['model'], kwargs['form_class']);
-    var obj = lookup_object(model, kwargs['object_id'], kwargs['slug'], kwargs['slug_field']);
+    var obj = lookup_object(model, object_id, kwargs['slug'], kwargs['slug_field']);
     if (request.method == "POST") {
         var form = new form_class({'data': request.POST, 'files': request.FILES, 'instance': obj});
         return redirect(kwargs['post_save_redirect'], obj);
@@ -156,9 +156,11 @@ function update_object(request) {
     return response;
 }
 
-function delete_object(request, model, post_delete_redirect){
+function delete_object(request, object_id){
     var arg = new Arguments(arguments, {
-        object_id : null,
+        //object_id : null,
+    	model: null,
+    	post_delete_redirect: null,
         slug_field : 'slug',
         template_name : null,
         template_loader : loader,
@@ -172,14 +174,14 @@ function delete_object(request, model, post_delete_redirect){
     if (!kwargs['extra_context'])
         kwargs['extra_context'] = {};
 
-    var obj = lookup_object(model, kwargs['object_id'], kwargs['slug'], kwargs['slug_field']);
+    var obj = lookup_object(kwargs['model'], object_id, kwargs['slug'], kwargs['slug_field']);
 
     if (request.method == 'POST') {
         obj.delete();
-        return new HttpResponseRedirect(post_delete_redirect);
+        return new HttpResponseRedirect(kwargs['post_delete_redirect']);
     } else {
         if (!kwargs['template_name']) {
-            kwargs['template_name'] = "%s/%s_confirm_delete.html".subs(model._meta.app_label, model._meta.module_name);
+            kwargs['template_name'] = "%s/%s_confirm_delete.html".subs(kwargs['model']._meta.app_label, kwargs['model']._meta.module_name);
         }
         var t = template_loader.get_template(kwargs['template_name']),
             c = new RequestContext(request, {

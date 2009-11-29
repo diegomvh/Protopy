@@ -10,6 +10,7 @@ class Pedido(models.Model):
     '''
     El numero de pedido se toma de la primary key
     '''
+    vendedor = models.ForeignKey(User)
     cliente = models.ForeignKey(Cliente)
     fecha = models.DateField(auto_now = True)
 

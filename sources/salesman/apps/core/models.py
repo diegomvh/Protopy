@@ -33,16 +33,19 @@ class Cliente(models.Model):
     cuit = models.PositiveIntegerField(primary_key = True)
     razon_social = models.CharField(max_length = 50)
     direccion = models.CharField(max_length = 200)
+    correo = models.EmailField(null= True, blank = True)
     ciudad = models.ForeignKey(Ciudad)
     
     get_absolute_url = abs_url
     
     def __unicode__(self):
-        return u'%s, %s' % (self.razon_social, self.ciudad)
+        return u'%s, %s' % (self.cuit, self.razon_social)
     
 class Proveedor(models.Model):
+    cuit = models.PositiveIntegerField(primary_key = True)
     razon_social = models.CharField(max_length = 50)
     direccion = models.CharField(max_length = 200)
+    ciudad = models.ForeignKey(Ciudad)
     correo = models.EmailField()
     
     get_absolute_url = abs_url

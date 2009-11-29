@@ -27,7 +27,7 @@
 				<li><a href="#"><span>Desconectar Cliente</span></a></li>
 				{% endif %}
 				{% if user.is_authenticated and user.is_staff %}
-				<li><a href="#"><span>Pedidos</span></a></li>
+				<li><a href="/pedidos/"><span>Pedidos</span></a></li>
 				<li><a href="/administrar/"><span>Administrar</span></a></li>
 				{% if offline %} 
 					<li><a href="/"><span>Conectar</span></a></li>
@@ -76,7 +76,7 @@
 			<h1>Pedido en curso</h1>
 			<div class="left-box">
 				<p>{{pedido.productos}} productos, U$S {{pedido.subtotal}}</p>
-				<h3 class="align-center"><a href="/pedido/modificar/" class="blue">Editar</a>&nbsp;&nbsp;&nbsp;<a href="#" class="blue">Finalizar</a></h3>
+				<h3 class="align-center"><a href="/pedido/modificar/" class="blue">Editar</a></h3>
 			</div>
 			{% endif %}
 					

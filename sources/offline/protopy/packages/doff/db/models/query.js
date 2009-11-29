@@ -250,7 +250,7 @@ var QuerySet = type('QuerySet', [ object ], {
         }
     },
 
-    slice: function(start, stop){
+    slice: function(start, stop) {
         return this.__getitem__([start, stop]);
     },
 

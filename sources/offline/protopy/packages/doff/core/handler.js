@@ -71,7 +71,7 @@ var LocalHandler = type('LocalHandler', [ object ], {
         this.send(response);
     },
 
-    get_response: function(request){
+    get_response: function(request) {
         // Apply request middleware
         for each (var middleware_method in this._request_middleware) {
             var response = middleware_method(request);

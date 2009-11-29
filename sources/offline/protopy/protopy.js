@@ -1482,17 +1482,18 @@
     }
 
     function isinstance(obj, types) {
-        if (isundefined(obj) || isundefined(types) || types == null)
-            throw new TypeError('isinstance() arg 2 must be a class, type, or array of classes and types');
+        if (isundefined(obj) || isundefined(types) || types == null) {
+            debugger;
+        	throw new TypeError('isinstance() arg 2 must be a class, type, or array of classes and types');
+        }
         if (type(types) != Array) 
             types = [types];
         var others = [];
         for each (var t in types) {
-            if (type(obj) == t) 
-                return true;
-            if (isundefined(t.__subclasses__))
-                return false;
-            others = others.concat(t.__subclasses__);
+            if (type(obj) == t)
+            	return true;
+            if (!isundefined(t.__subclasses__))
+            	others = others.concat(t.__subclasses__);
         }
         return (others.length != 0)? isinstance(obj, others) : false;
     }

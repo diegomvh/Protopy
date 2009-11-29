@@ -17,9 +17,25 @@
 		<h4>U$S {{producto.precio}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="blue">(iva iclu&iacute;do)</span></h4>
 	</p>
 	{% endif %}
+	{% if pedido.cliente %}
+	<p class="comments align-left clear">Datos del cliente</p>
+	<p>
+		<span class="blue">Razón Social: </span>{{pedido.cliente.razon_social}}<br/>
+		<span class="blue">Cuit: </span>{{pedido.cliente.cuit}}<br/>
+		<span class="blue">Dirección: </span>{{pedido.cliente.direccion}}, {{pedido.cliente.ciudad}}<br/>
+		<span class="blue">Email: </span>{% if pedido.cliente.email %}{{pedido.cliente.email}}{% else %}--{% endif %}
+	</p>
+	{% endif %}
 	{% if pedido %}
 	<p class="comments align-left clear">Estado del pedido</p>
-	<form action="/pedido/modificar/" method="post">		
+	<form action="/pedido/modificar/" method="post">
+	{% if user.is_staff and clientes %}
+	<select name="cliente">
+		{% for cliente in clientes %}
+		<option value="{{cliente.pk}}" {% ifequal cliente.pk pedido.cliente.pk %}selected{% endifequal %}>{{cliente}}</option>
+		{% endfor %}
+	</select>		
+	{% endif %}
 	<table width="100%">
 		<thead>
 			<tr>
@@ -47,8 +63,8 @@
 		</tfoot>
 	</table>
 	<p class="comments align-right clear">
-        <input type="submit" class="button" value="Actualizar"/>
-        <input type="submit" class="button strong" value="Finalizar"/>
+        <input type="submit" class="button" name="accion" value="Actualizar"/>
+        <input type="submit" class="button strong" name="accion" value="Finalizar"/>
     </p>
 	</form>
 	{% else %}
