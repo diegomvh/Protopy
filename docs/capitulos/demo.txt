@@ -120,8 +120,13 @@ Las vistas genéricas utilzadas fueron:
         * ``post_delete_redirect``: URL a la cual se redirige luego de una eliminación exitosa.
         
         * ``object_id``: Identificador de la instancia a eliminar.
+
+Estas vistas fueron fueron implementadas en **Doff** debido que hasta el momento no se 
+habían contemplado.
         
-        
+Plantilla de la aplicación
+--------------------------
+
 La portada de la aplicación en línea se diseño de la siguiente manera:
 
 .. figure:: ../_static/sshot_inicio.png
@@ -131,7 +136,7 @@ La portada de la aplicación en línea se diseño de la siguiente manera:
     \newpage
 
 
-Se utilizó una plantilla *Underground Store* del sitio http://www.styleshout.com/ liberada sobre la licencia Creative Commons [CC2009]_.
+Se utilizó una plantilla *Underground Store* del sitio http://www.styleshout.com/ liberada sobre la licencia Creative Commons [CC2009]_, sobre la cual se definieron varios bloques de plantilla.
 
 .. [CC2009] *Licencia Creative Commons*,
     último acceso Noviembre de 2009,
@@ -156,7 +161,7 @@ Los enlaces de la barra superior permiten acceder a diferentes secciones de la a
 
   * Pedidos
 
-	???
+	Listado de pedidos.
 
   * Administrar
    
@@ -165,3 +170,52 @@ Los enlaces de la barra superior permiten acceder a diferentes secciones de la a
   * Desconectar
 
      Desconectar es un enlace hacia el sitio remoto.
+
+Administración Básica
+=====================
+
+Como paso inicial se habilitó la administración automática de Django en la ULR ``/admin``. Esta aplicación provista por el framework no está disponible de manera desconectada en Doff [*]_, sin embargo se utilizó para depuración. La siguiente captura muestra la fachada de esta aplicación, donde se puede apreciar que se encuentran registrados los modelos antes mencionados.
+
+.. figure:: ../_static/sshot_dj_admin.png
+	
+   Captura de la administración de Django para el proyecto ``salesman``.
+
+.. raw:: latex
+
+    \newpage
+
+.. [*] La migración de la aplicación ``django.contrib.admin`` es una de las
+       líneas futuras de la presente tesina.
+
+En la aplicación, dentro de el enlace “Administrar” se implementó ABM de Ciudades, Productos, Categorías y Proveedores.
+
+.. figure:: ../_static/sshot_administrar.png
+
+    ABM de Ciudades, Clientes, Productos y Proveedores.
+
+.. raw:: latex
+
+    \newpage
+
+Todas las operaciones utilizan vistas genéricas, por lo que funcionan de la misma manera. A continuación se ilustra un
+ejemplo para el listado del modelo Ciudad:
+
+.. figure:: ../_static/sshot_admin_ciudades.png
+
+    Listado de ciudades
+
+.. raw:: latex
+
+    \newpage
+
+Para las altas y modificaciones, la fachada es la siguiente:
+
+.. figure:: ../_static/sshot_admin_ciudade_add.png
+    :figwidth: 40
+
+
+    Agregar una ciudad
+
+.. raw:: latex
+	
+    \newpage
