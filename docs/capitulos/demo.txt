@@ -7,15 +7,15 @@ Aplicación de Demostración
 
 Se diseñó una aplicación denominada ``salesman`` (agente de ventas viajante)
 para ejemplificar el funcionamiento de Protopy y Doff. La aplicación modela
-una empresa dedicada a la venta de productos mediante agentes viajantes.
-Cada viajante tiene asignada una serie de ciudades, donde toma pedidos, 
-y crea clientes. Una vez que un agente vuelve a tener contacto con la aplicación
-web
+una empresa dedicada a la venta de productos electrónicos. Los productos son vendidos Online o a través de agentes viajantes que poseen una copia del catalogo y generan pedidos a partir de estos.
+Los vendedores pueden realizar altas de clientes.
 
-El código fuente del proyecto se ubicó en la carpeta ``sources``, donde también
-se encuentra la aplicación ``offline`` mencionada en los captítulos de Doff y
-Protopy. ``salesman`` se ubicó al mismo nivel que ``offline``, para instalar
-``offline`` en ``salesman`` se aumentó el PYTHONPATH en el módulo ``settings.py``.
+
+Organización del código fuente del proyecto
+-------------------------------------------
+
+El código fuente del proyecto se ubicó en la carpeta ``sources/sakesman``. 
+La aplicación ``offline`` se encuentra en ``source/offline`` mencionada en los capítulos anteriores. De esta manera, para la instanalación, simplemente se agregó el directorio padre de ``salesman`` al PYTHONPATH.
 
 .. code-block:: python
 
@@ -23,16 +23,12 @@ Protopy. ``salesman`` se ubicó al mismo nivel que ``offline``, para instalar
     sys.path.append('..')
     
 
-El parámetro ``OFFLINE_BASE`` es la cadena ``"off"``. El sitio remoto que se creo para
-la demostración fue llamado ``ventas``. El objetivo de esta aplicación es la creación
-desconectada de peidos y la sincronización de estos.
+El parámetro ``OFFLINE_BASE`` es la cadena ``"off"``. El sitio remoto que se creo para la demostración fue llamado ``ventas``. 
 
+Desarrollo de la aplicación
+---------------------------
 
-Modelo
-------
-
-El proyecto se dividió en dos aplicaciones: ``core`` con entidades reusables y
-``ventas`` donde se definieron los pedidos.
+El desarrollo de la aplicación comenzó por la definición del modelo. Este fue dividido en dos aplicaciones: ``core`` donde se situaron entidades comunes y ``ventas`` donde se crearon las propias del sistema de pedidos.
 
 Las entidades definidas en la aplicación ``core`` fueron las siguientes:
     
@@ -62,7 +58,6 @@ Las entidades definidas en la aplicación ``core`` fueron las siguientes:
     
     
         
-
 En la aplicación ``ventas`` cuenta con las entidades:
 
     * Pedidas
@@ -127,7 +122,46 @@ Las vistas genéricas utilzadas fueron:
         * ``object_id``: Identificador de la instancia a eliminar.
         
         
-La portada de la aplicación se diseño de la siguiente manera:
+La portada de la aplicación en línea se diseño de la siguiente manera:
 
 .. figure:: ../_static/sshot_inicio.png
 
+.. raw:: latex
+
+    \newpage
+
+
+Se utilizó una plantilla *Underground Store* del sitio http://www.styleshout.com/ liberada sobre la licencia Creative Commons [CC2009]_.
+
+.. [CC2009] *Licencia Creative Commons*,
+    último acceso Noviembre de 2009,
+    http://es.wikipedia.org/wiki/Creative_Commons
+
+
+Como menú de la aplicación se dispuso de la siguiente manera:
+
+.. figure:: ../_static/sshot_button.png
+	
+    Barra de botones de la aplicación
+
+Los enlaces de la barra superior permiten acceder a diferentes secciones de la aplicación en línea:
+  
+  * Inicio
+
+      Pagina de portada
+
+  * Catálogo
+  
+      Catálogo de productos
+
+  * Pedidos
+
+	???
+
+  * Administrar
+   
+      Permite realizar CRUD sobre Clientes, Ciudades, Productos y Categorías.
+
+  * Desconectar
+
+     Desconectar es un enlace hacia el sitio remoto.
