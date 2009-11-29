@@ -1,54 +1,112 @@
-require('doff.utils.http', 'HttpResponseRedirect');
+require('doff.utils.http', 'HttpResponseRedirect', 'Http404');
 require('doff.utils.shortcuts', 'get_object_or_404', 'render_to_response');
-require('agentes.ventas.forms', 'PedidoConItemsForm', 'PedidoForm');
+require('agentes.ventas.models', 'Pedido');
+require('agentes.core.models', 'Producto', 'Cliente');
+require('doff.template.context', 'RequestContext');
 
-function create_pedido(request, object_id) {
-    var arg = new Arguments(arguments);
-    if (request.method == "POST") {
-        var form = new PedidoForm({data: request.POST});
-        if (form.is_valid()) {
-            var pedido = form.save();
-            var pedido_id = pedido.id;
-            var formset = new PedidoConItemsForm({data: request.POST, instance: pedido});
-            if (formset.is_valid())
-                var instances = formset.save();
-                // Una vez creado por primera vez, se redirecciona al edit
-                if (!object_id)
-                    return new HttpResponseRedirect('../%d/edit/'.subs(pedido_id));
-        } else {
-            var formset = new PedidoConItemsForm();
-        }
-    } else {
-        var form = new PedidoForm();
-        var formset = new PedidoConItemsForm();
-    }
+function terminar_pedido(sp, user) {
+	debugger;
+	var pedido = new Pedido();
+    pedido.cliente = sp['cliente'];
+    pedido.save();
     
-    return render_to_response('ventas/pedido_form.html', {form: form, formset: formset});
+    for (var [id, item] in items(sp['items']))
+        pedido.agregar_producto(item['producto'], item['cantidad']);
 }
 
-function edit_pedido(request, object_id) {
-    var pedido = get_object_or_404(Pedido, { id: object_id});
-    if (request.method == "POST") {
-        var form = new PedidoForm({data: request.POST, instance: pedido});
-        if (form.is_valid())
-            var pedido = form.save();
-        
-        var formset = new PedidoConItemsForm({data: request.POST, instance: pedido});
-        if (formset.is_valid()) {
-            var instances = formset.save();
-            if ('save' in request.POST)
-                return HttpResponseRedirect('../..');
-            else
-                var formset = new PedidoConItemsForm({ instance: pedido });
+function armar_pedido(pedido, data, user) {
+	debugger;
+	if (user.is_staff && data['cliente']) {
+        var cliente = get_object_or_404(Cliente, { cuit: int(data['cliente']) });
+        pedido['cliente'] = cliente;
+	}
+    var subtotal = 0.0;
+    var productos = 0;
+    var items = [];
+    for (var [id, item] in items(pedido['items'])) {
+        var cantidad = int(data['cantidad_%s'.subs(id)]);
+        if (isNaN(cantidad))
+            continue;
+        if (data['quitar_%s'.subs(id)] || cantidad < 0)
+            continue;
+        else {
+            item['cantidad'] = cantidad;
+            item['importe'] = cantidad * item['producto'].precio;
+            productos += cantidad;
+            subtotal += int(item['importe']);
         }
-    } else {
-        var form = new PedidoForm({ instance: pedido });
-        var formset = new PedidoConItemsForm({ instance: pedido });
+        items.push(item);
     }
-    return render_to_response('salesman/pedido_form.html', {form: form, formset: formset});
+
+    pedido['productos'] = productos
+    pedido['items'] = object(new Dict(items.map(function (item) { return [item['producto'].id, item]; })));
+    pedido['subtotal'] = subtotal;
+    return pedido;
+}
+
+function agregar_producto(request, producto) {
+	debugger;
+    if (!request.session.has_key('pedido')) {
+        var cliente = null;
+        if (request.user.is_authenticated() && !request.user.is_staff)
+            cliente = request.user;
+        var pedido = {'cliente': cliente, 'items': {}, 'productos': 0, 'subtotal': 0.0};
+    } else {
+        var pedido = request.session.get('pedido');
+    }
+    
+    var producto = get_object_or_404(Producto, {id: producto});
+    
+    if (!(producto.id in pedido['items']))
+        pedido['items'][producto.id] = {'cantidad': 0, 'producto': producto, 'importe': 0};
+    pedido['items'][producto.id]['cantidad'] += 1;
+    pedido['items'][producto.id]['importe'] = pedido['items'][producto.id]['cantidad'] * producto.precio;
+    pedido['subtotal'] += number(pedido['items'][producto.id]['importe']);
+    pedido['productos'] += 1;
+    request.session.set('pedido', pedido);
+    return ver_pedido(request, producto);
+}
+
+function modificar_pedido(request) {
+	debugger;
+	if (request.method != 'POST' || ! request.session.has_key('pedido'))
+        return ver_pedido(request);
+    
+    var sp = armar_pedido(request.session.get('pedido'), request.REQUEST, request.user);
+    
+    if ('accion' in request.REQUEST && request.REQUEST['accion'] == 'Finalizar') {
+        terminar_pedido(sp, request.user);
+        request.session.unset('pedido');
+        return new HttpResponseRedirect('/pedidos/');
+    }
+    
+    request.session.set('pedido', sp);
+    return ver_pedido(request);
+}
+
+function ver_pedido(request, producto) {
+	debugger;
+    if (!request.session.has_key('pedido') || len(request.session.get('pedido')['items']) == 0)
+        return render_to_response('pedido.html', {}, new RequestContext(request));
+    var pedido = request.session.get('pedido');
+    var clientes = null;
+    if (request.user.is_staff)
+        clientes = Cliente.objects.all();
+    return render_to_response('pedido.html', {'pedido': pedido, 'clientes': clientes, 'producto': producto}, new RequestContext(request));
+}
+
+function ver_pedidos(request) {
+	debugger;
+	if (!request.user.is_authenticated())
+        throw new Http404();
+    require('doff.views.generic.list_detail', 'object_list');
+    var queryset = Pedido.all();
+    return object_list(request, { queryset: queryset });
 }
 
 publish({
-    create_pedido: create_pedido,
-    edit_pedido: edit_pedido
+	agregar_producto: agregar_producto,
+	modificar_pedido: modificar_pedido,
+	ver_pedido: ver_pedido,
+    ver_pedidos: ver_pedidos
 });

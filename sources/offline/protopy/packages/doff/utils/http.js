@@ -98,22 +98,11 @@ var HttpRequest = type ('HttpRequest', [ object ], {
     get method() {
         return this._method;
     },
-
-    set post(value) {
-        this.POST = value;
-    },
-
-    get post() {
-        return this.POST;
-    },
-
-    set get(value) {
-        this.GET = value;
-    },
     
-    get get() {
-        return this.GET;
-    },
+    get REQUEST() {
+    	return extend(this.GET, this.POST);
+    }
+
 });
 
 /* A basic HTTP response, with content and dictionary-accessed headers.*/

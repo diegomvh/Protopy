@@ -64,6 +64,11 @@ function yesno(value, arg) {
 }
 register.filter(yesno);
 
+function stringformat(value) {
+	return value;
+}
+register.filter(stringformat);
+
 publish({
     register: register,
     slugify: slugify

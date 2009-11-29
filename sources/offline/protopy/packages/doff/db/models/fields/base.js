@@ -473,14 +473,8 @@ var DateField = type('DateField', [ Field ], {
             return value;
         if (isinstance(value, Date))
             return value;
-
-        if (ansi_date_re.search(value) != 0)
+        if (value.search(ansi_date_re) != 0)
             throw new ValidationError('Enter a valid date in YYYY-MM-DD format.');
-        // Now that we have the date string in YYYY-MM-DD format, check to make
-        // sure it's a valid date.
-        // We could use time.strptime here and catch errors, but datetime.date
-        // produces much friendlier error messages.
-        map(function(simbol) { return this[simbol]; }, mod);
         var [year, month, day] = value.split('-').map(function(simbol) {return Number(simbol)});
 
         return new Date(year, month, day);

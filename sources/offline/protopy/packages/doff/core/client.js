@@ -164,7 +164,7 @@ var DOMAdapter = type('DOMAdapter', [ object ], {
         var url = this._build_url(form.getAttribute('action'));
         var request = this._build_request(url);
         request.method = form.method;
-        request[form.method] = form.serialize();
+        request[request.method] = form.serialize();
         this._process_request(request);
     },
 
@@ -172,14 +172,14 @@ var DOMAdapter = type('DOMAdapter', [ object ], {
         event.stopEvent(e);
         var url = this._build_url(e.currentTarget.getAttribute('href'));
         var request = this._build_request(url);
-        request.method = 'get';
+        request.method = 'GET';
         this._process_request(request);
     },
 
     _process_from_string: function(s) {
         var url = this._build_url(s);
         var request = this._build_request(url);
-        request.method = 'get';
+        request.method = 'GET';
         this._process_request(request);
     },
 

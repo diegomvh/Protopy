@@ -396,7 +396,7 @@ var EmailField = type('EmailField', RegexField, {
 
     __init__: function() {
         var arg = new Arguments(arguments, {'max_length':null, 'min_length': null});
-        super(RegexField, this).__init__(emali_re, arg);
+        super(RegexField, this).__init__(email_re, arg);
     }
 });
 

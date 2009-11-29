@@ -115,10 +115,8 @@ function build_for_model(Model, d) {
 	var m2m_data = {};
 	
 	// Que pasa si el pk no es un AutoField
-	if (!isinstance(Model._meta.pk, AutoField)) {
-		debugger;
+	if (!isinstance(Model._meta.pk, AutoField))
 		data[Model._meta.pk.attname] = Model._meta.pk.to_javascript(data["server_pk"]);
-	}
 	
 	// Handle each field
 	for each (var [field_name, field_value] in items(d["fields"])) {
