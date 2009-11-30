@@ -275,8 +275,6 @@ Por lo tanto, la combinación de JavaScript y Gears constituye la alternativa
 más promisoria para la implementación de aplicaciones desconectadas escritas en Django
 por lo que se utilizaron para llevar a cabo el desarrollo de la presente tesina.
 
-.. note:: Me suena a que doff es producto de este proyecto, no me gusta :(
-
 Tras el análisis del proyecto *Gears On Rails* [GearsOnRails09]_ que persigue objetivos 
 similares a los de esta tesina, pero basado en el framework Ruby On Rails, se descubrió un proyecto
 denominado Django Offline [DjangoOffline09]_, que divide a Django en componentes
@@ -395,14 +393,17 @@ equivalen a los ``QuerySet``. JazzRecord fue descartado como candidato a ORM
 del cliente en la presente tesina, por la diferencia de filosofía con Django
 (convesión (Rails) vs. definición (Django)).
 
-.. note:: este parrafo mezcla un lado con el otro, (cliente, servidor)
-
 Luego del análisis de los ORM existentes se decidió implementar el ORM de 
 Django (API de base de datos) en JavaScript 1.7 como primera tarea para la 
-desconexión de una aplicación. Con una implementación en JavaScript de la misma API, 
-y gracias a que Python soporta introspección, es posible generar las definciones
-en JavaScript de modelos para el ORM a partir de los módulos ``models`` del proyecto
-Django.
+desconexión de una aplicación. 
+Contar con la misma API de acceso a datos en el cliente y en el servidor, 
+permite mantener la coherencia de definciones de datos en alto nivel y simplificar
+la tarea de mantenimiento. Los modelos definidos en el servidor, dentro de los
+prjectos basados en Django, pueden ser analizados mediante técnicas de metaprogramación
+dispoibles en Python. A partir de esta introspección se 
+puede generar el código JavaScript para la definición del modelo en el
+cliente de manera automática. 
+
 
 Otro elemento importante para lograr una aplicación desconectada, es el manejo
 de los elementos activos (links, formularios y AJAX). 
@@ -426,7 +427,6 @@ Esta inicialización en dos fases se utiliza en el ORM y formularios de Django,
 por lo que se decidió modificar Protoype para que admitiera la orientación
 a objetos de Python.
 
-.. note:: Se descarta prototype sobreviviendo unicamente unas extenciones a los elementos HTMLForm y HTMLElement del DOM
 
 Otro elemento ausente en Prototype [*]_ es un sistema de módulos y paquetes, necesario
 para implementar muchos elementos de Django. Por ello se decidió implementar esta
@@ -440,6 +440,7 @@ la mayoría de las funciones integradas del intérprete de Python [*]_, como ``i
 Esta modificación de librería se bautizó como Protopy y su objetivo es facilitar
 la migración de código Python a JavaScript (en particular en esta tesina, la
 migración del framework y proyectos Django). 
+
 
 En la siguiente figura se muestra la estructura de Protopy y su interacción
 con JavaScript, DOM y el proyecto Django desconectado:

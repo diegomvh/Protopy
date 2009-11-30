@@ -7,8 +7,7 @@ Aplicación de Demostración
 
 Se diseñó una aplicación denominada ``salesman`` (agente de ventas viajante)
 para ejemplificar el funcionamiento de Protopy y Doff. La aplicación modela
-una empresa dedicada a la venta de productos electrónicos. Los productos son vendidos Online o a través de agentes viajantes que poseen una copia del catalogo y generan pedidos a partir de estos.
-Los vendedores pueden realizar altas de clientes.
+una empresa dedicada a la venta de productos electrónicos. Los productos son vendidos Online o a través de agentes viajantes que poseen una copia del catalogo y generan pedidos a partir de estos. Los vendedores, una vez que han ingresado al sistema mediante el sistema de autenticación, pueden realizar la desconexión. Una vez que están desconectados, pueden hacer varios
 
 
 Organización del código fuente del proyecto
@@ -124,9 +123,7 @@ Las vistas genéricas utilzadas fueron:
 Estas vistas fueron fueron implementadas en **Doff** debido que hasta el momento no se 
 habían contemplado.
         
-<<<<<<< local
-        
-=======
+
 Plantilla de la aplicación
 --------------------------
 

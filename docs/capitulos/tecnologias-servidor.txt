@@ -84,7 +84,6 @@ Servlets para el lenguaje Java [RailsQuotes2009]_ [*]_.
 .. Existen otras formas de generar contenido al vuelo y generalmente todas estas se
 .. engloban dentro del termino **HTML dinámico**.
 
-.. note:: Esto se copió en la intro
 
 A continuación se realiza una revisión general de los componentes de un servidor web y, 
 luego, se analizan los lenguajes dinámicos y sus frameworks.
@@ -227,8 +226,6 @@ sesión. Cada petición se trata de manera independiente [DwightErwin1996]_.
 Lenguajes Dinámicos
 ===================
 
-.. note:: Se copio a la intro
-
 A continuación se analizan las características que hacen relevante 
 el estudio de los lenguajes dinámicos como plataforma de desarrollo de aplicaciones
 web dinámicas.
@@ -274,8 +271,6 @@ la ejecución [*]_.
 .. [*] Estas comprobaciones comprenden el chequeo de tipos de datos, la resolución de métodos, etc.
 
 
-.. note:: Hasta acá llegó la revisión del jueves 24 de Septiembre
-
 A diferencia de los lenguajes compilados, en los cuales se requiere disponer de un compilador
 para la plataforma [*]_ y compilar el código, la mayoría de los lenguajes interpretados permiten 
 ser ejecutados en varias plataformas (multiplataforma), ya que sólo es necesario disponer de un
@@ -320,8 +315,6 @@ de compilación explícita.
 Java ha definido algunos elementos importantes en cuanto a la web dinámica, como los applets [*]_ y la especificación J2EE.
 Dos desventajas que presenta este lenguaje son la sintaxis verborrágica y el tipado estático,
 heredados de su predecesor C++ [SeanKellyRecFromAdict2009]_.
-
-.. note:: Poner citas, ver el tema en cuanto a lenguajes dinamicos sobre la jvm
 
 Como contrapartida resulta una alternativa veloz para ciertas tareas, lo que
 motivó el desarrollo de lenguajes dinámicos [TolksdorfJVM2009]_ que hacen uso de la máquina virtual de Java [*]_.
@@ -786,7 +779,6 @@ Debido a su creciente popularidad y a su sencillez, se seleccionó a Django
 como plataforma para la implementación del desarrollo de esta tesina, puesto
 que se buscan tales características en el trabajo a realizar.
 
-.. note:: Correcciones de Marta hasta 06/10/2009
 
 Estructura de un Proyecto
 -------------------------
@@ -1462,7 +1454,16 @@ El conjunto de métodos que no devuleven ``QuerySet`` es:
 		Retorna la instancia más reciente comparando por el campo ``campo``. Debe ser del tipo DateField.
 
 
-.. note:: Poner ejemplo de comportamiento recursivo
+Los managers que retornan ``QuerySet``, se pueden encadenar, por ejemplo:
+
+.. code-block:: python
+
+    >>> # Ejemplo para selección de libros impresos entre el 2000 y 2005 que
+    >>> # no hallan sido de la editorial APress 
+    >>> Book.objects.filter(publish__gte = '1/1/2000', published__lte = '1/1/2006').
+    ...    exclude(publisher = 'APress')
+   
+   
 
 
 
