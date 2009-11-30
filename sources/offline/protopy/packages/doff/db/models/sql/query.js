@@ -1740,7 +1740,7 @@ var BaseQuery = type('BaseQuery', [ object ], {
             }
             var cached_data = opts._join_cache[name];
             var orig_opts = opts;
-            var dupe_col = direct && field.column || field.field.column;
+            var dupe_col = direct ? field.column : field.field.column;
             var dedupe = bool(opts.duplicate_targets[dupe_col]);
             if (bool(dupe_set) || dedupe) {
                 if (dedupe)

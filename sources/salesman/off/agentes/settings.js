@@ -30,6 +30,15 @@
              'doff.utils.toolbars.logger.Logger',
              'doff.contrib.offline.toolbar.Sync'
         ],
+        
+    TEMPLATE_CONTEXT_PROCESSORS: [
+	         'doff.core.context_processors.auth',
+	         'doff.core.context_processors.debug',
+	         'doff.core.context_processors.media',
+	         'doff.core.context_processors.request',
+	         'doff.contrib.offline.context_processors.offline',
+	         'agentes.context_processors.pedido'
+	    ],
 
     TEMPLATE_LOADERS: [
                 'doff.template.loaders.url.load_template_source'

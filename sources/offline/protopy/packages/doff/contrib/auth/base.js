@@ -5,27 +5,38 @@ require('doff.core.project', 'get_project');
 var SESSION_KEY = '_auth_user_id';
 var _proxy = null;
 
-function load_user(user_name) {
-	var proxy = null;
+function load_user(username) {
 	var data = null;
 	require('doff.contrib.auth.models', 'User', 'AnonymousUser');
 	try {
 		if (_proxy == null)
 			_proxy = new ServiceProxy(get_project().offline_support + '/sync', {asynchronous: false});
-		data = _proxy.user(user_name);
+		data = _proxy.user(username);
 	} catch (e) {
 		// Busco localmente
-		var obj = ExtraData.objects.filter({'model': 'User', 'module': 'doff.contrib.auth.models', 'key': user_name});
+		var obj = ExtraData.objects.filter({'name': 'User', 'module': 'doff.contrib.auth.models', 'key': username});
 		data = obj.data;
 	}
+	
 	if (!data || data['class'] == 'AnonymousUser')
 		return new AnonymousUser(data);
 	return new User(data);
 }
 
 function authenticate(username, password) {
-    user = authenticate(username, password);
-    return user;
+	//Validar el usuario contra la app online si esta conectado
+	var data = null;
+	try {
+		if (_proxy == null)
+			_proxy = new ServiceProxy(get_project().offline_support + '/sync', {asynchronous: false});
+		data = _proxy.authenticate(username, password);
+	} catch (e) {
+		// Busco localmente
+		var obj = ExtraData.objects.filter({'name': 'User', 'module': 'doff.contrib.auth.models', 'key': username});
+		data = obj.data;
+	}
+    
+    return data ? new User(data) : null;
 }
 
 function login(request, user) {
@@ -38,7 +49,7 @@ function login(request, user) {
     } else {
         request.session.cycle_key();
     }
-    request.session.set(SESSION_KEY) = user.username
+    request.session.set(SESSION_KEY, user.username);
     if (hasattr(request, 'user'))
         request.user = user;
 }

@@ -95,6 +95,7 @@ var ForNode = type('ForNode', [ Node ], {
     },
 
     render: function(context) {
+    	debugger;
         var nodelist = new NodeList(),
             parentloop = null,
             values = null;

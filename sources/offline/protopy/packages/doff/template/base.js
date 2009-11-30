@@ -432,9 +432,10 @@ var Variable = type('Variable', [ object ], {
         var current = context;
         for each (var bit in this.lookups) {
             try {
-                // Si es un Context uso __getitem__.
                 if (isinstance(current, Context))
                     current = current.__getitem__(bit);
+                else if (type(current) === Object && include(['values', 'items', 'keys'], bit))
+                	current = getattr(new Dict(current), bit)();
                 else
                     current = getattr(current, bit);
             } catch (e) {

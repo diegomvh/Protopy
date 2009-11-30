@@ -4,14 +4,17 @@ require('md5', 'md5');
 var MAX_SESSION_KEY = 73786976294838206464;			// 8 << 63 :P copion!!!
 
 var Session = type('Session', [ Dict ], {
-	__init__: function(session_key) {
-		if (!session_key)
-			session_key = this._get_new_session_key();
-		super(Dict, this).__init__();
+	__init__: function(data) {
+		if (isundefined(data)) {
+			this.session_key = this._get_new_session_key();
+			super(Dict, this).__init__();
+		} else {
+			this.session_key = data.session_key;
+			super(Dict, this).__init__(data.values);
+		}
 		this.modified = false;
 		this.accessed = false;
 		this._session_expiry = null;
-		this.session_key = session_key;
 	},
 	
 	__json__: function() {

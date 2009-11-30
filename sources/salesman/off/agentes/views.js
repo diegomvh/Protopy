@@ -1,14 +1,23 @@
-require('doff.utils.http', '*');
-require('doff.template.loader');
-require('doff.template.context', 'Context');
+var auth = require('doff.contrib.auth.base');
+require('doff.utils.http', 'HttpResponseRedirect');
 
-function index(request){
-
-    var c = new Context();
-    var t = loader.get_template('index.html');
-    return new HttpResponse(t.render(c));
+function login(request) {
+    var username = request.POST['username'];
+    var password = request.POST['password'];
+    var user = auth.authenticate(username=username, password=password);
+    if (user != null)
+        if (user.is_active)
+        	auth.login(request, user);
+    return new HttpResponseRedirect('/');
+} 
+        
+function logout(request) {
+    request.session.clear();
+    auth.logout(request);
+    return new HttpResponseRedirect('/');
 }
 
 publish({ 
-    index: index,
+	login: login,
+	logout: logout
 });

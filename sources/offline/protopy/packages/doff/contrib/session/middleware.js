@@ -1,10 +1,25 @@
 require('doff.conf.settings', 'settings');
 require('doff.contrib.session.models', 'Session');
+require('doff.contrib.extradata.models', 'ExtraData');
+
+var session_cache = null;
 
 var SessionMiddleware = type('SessionMiddleware', [ object ], {
     process_request: function(request) {
         var session_key = request.get_cookie(settings.SESSION_COOKIE_NAME);
-        request.session = new Session(session_key);
+        if (session_cache && session_cache.session_key == session_key) {
+        	// Esta en cache
+        	request.session = session_cache;
+        } else {
+        	try {
+	        	// Esta en la base de datos
+	        	var obj = ExtraData.objects.filter({'name': 'Session', 'module': 'doff.contrib.session.models', 'key': session_key});
+	        	session_cache = new Session(obj.data);
+        	} catch (e) { 
+        		session_cache = new Session();
+        	}
+        }
+        request.session = session_cache;
 	},
 	
     process_response: function(request, response) {

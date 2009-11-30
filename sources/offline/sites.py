@@ -333,7 +333,7 @@ class RemoteSite(RemoteBaseSite):
         return value
 
     @jsonrpc
-    def user(self, user_name = None):
+    def user(self):
         #TODO Controlar el error si no esta el middleware
         from offline.middleware import threadlocals
         user = threadlocals.get_current_user()
@@ -353,6 +353,20 @@ class RemoteSite(RemoteBaseSite):
                 'password': user.password,
                 })
         return data
+    
+    @jsonrpc
+    def authenticate(self, username, password):
+        from django.contrib.auth import authenticate
+        user = authenticate(username=username, password=password)
+        if user is not None and user.is_active:
+            user = {
+                    'class': 'User',
+                    'username': user.username,
+                    'is_staff': user.is_staff,
+                    'is_active': user.is_active,
+                    'is_superuser': user.is_superuser
+                    }
+        return user
 
     #===========================================================================
     # Synchronization
