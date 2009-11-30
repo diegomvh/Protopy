@@ -19,8 +19,11 @@ urlpatterns = patterns('',
     (r'^pedido/agregar/(?P<producto>\d+)/$', 'salesman.apps.ventas.views.agregar_producto'),
     (r'^pedido/modificar/$', 'salesman.apps.ventas.views.modificar_pedido'),
     (r'^pedidos/$', 'salesman.apps.ventas.views.ver_pedidos'),
+    (r'^pedido/(?P<id>\d+)/$', 'salesman.apps.ventas.views.ver_pedido_por_id'),
     (r'^%s/(.*)' % agentes_site.urlregex, agentes_site.root ),
 )
+
+
 
 # static media
 urlpatterns += patterns('django.views.static',

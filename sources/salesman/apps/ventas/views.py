@@ -1,4 +1,4 @@
-from django.http import HttpResponseRedirect, Http404
+from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.shortcuts import get_object_or_404, render_to_response
 from salesman.apps.ventas.models import Pedido
 from salesman.apps.core.models import Producto, Cliente
@@ -91,3 +91,7 @@ def ver_pedidos(request):
     queryset = request.user.pedido_set.all()
     return object_list(request, queryset = queryset)
     
+def ver_pedido_por_id(request, id):
+    pedido = get_object_or_404(Pedido, id = id)
+    return render_to_response('ver_pedido.html', locals(),
+                              context_instance = RequestContext(request))
