@@ -17,14 +17,14 @@ function terminar_pedido(sp, user) {
 function armar_pedido(pedido, data, user) {
 	debugger;
 	if (user.is_staff && data['cliente']) {
-        var cliente = get_object_or_404(Cliente, { cuit: int(data['cliente']) });
+        var cliente = get_object_or_404(Cliente, { cuit: Number(data['cliente']) });
         pedido['cliente'] = cliente;
 	}
     var subtotal = 0.0;
     var productos = 0;
-    var items = [];
-    for (var [id, item] in items(pedido['items'])) {
-        var cantidad = int(data['cantidad_%s'.subs(id)]);
+    var new_items = [];
+    for each (var [id, item] in items(pedido['items'])) {
+        var cantidad = Number(data['cantidad_%s'.subs(id)]);
         if (isNaN(cantidad))
             continue;
         if (data['quitar_%s'.subs(id)] || cantidad < 0)
@@ -33,13 +33,13 @@ function armar_pedido(pedido, data, user) {
             item['cantidad'] = cantidad;
             item['importe'] = cantidad * item['producto'].precio;
             productos += cantidad;
-            subtotal += int(item['importe']);
+            subtotal += Number(item['importe']);
         }
-        items.push(item);
+        new_items.push(item);
     }
 
     pedido['productos'] = productos
-    pedido['items'] = object(new Dict(items.map(function (item) { return [item['producto'].id, item]; })));
+    pedido['items'] = object(new Dict(new_items.map(function (item) { return [item['producto'].id, item]; })));
     pedido['subtotal'] = subtotal;
     return pedido;
 }
@@ -61,7 +61,7 @@ function agregar_producto(request, producto) {
         pedido['items'][producto.id] = {'cantidad': 0, 'producto': producto, 'importe': 0};
     pedido['items'][producto.id]['cantidad'] += 1;
     pedido['items'][producto.id]['importe'] = pedido['items'][producto.id]['cantidad'] * producto.precio;
-    pedido['subtotal'] += number(pedido['items'][producto.id]['importe']);
+    pedido['subtotal'] += Number(pedido['items'][producto.id]['importe']);
     pedido['productos'] += 1;
     request.session.set('pedido', pedido);
     return ver_pedido(request, producto);

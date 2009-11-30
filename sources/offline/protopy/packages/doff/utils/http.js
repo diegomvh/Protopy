@@ -100,7 +100,12 @@ var HttpRequest = type ('HttpRequest', [ object ], {
     },
     
     get REQUEST() {
-    	return extend(this.GET, this.POST);
+    	if (isundefined(this._REQUEST)) {
+    		this._REQUEST = {};
+    		extend(this._REQUEST, this.GET);
+    		extend(this._REQUEST, this.POST);
+    	}
+    	return this._REQUEST;
     }
 
 });

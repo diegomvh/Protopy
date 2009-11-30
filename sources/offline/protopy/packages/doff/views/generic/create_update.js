@@ -70,6 +70,7 @@ function lookup_object(model, object_id, slug, slug_field) {
 }
 
 function create_object(request) {
+	debugger;
     var arg = new Arguments(arguments, {
         model: null, 
         template_name: null,
@@ -103,15 +104,15 @@ function create_object(request) {
 
     var t = kwargs['template_loader'].get_template(kwargs['template_name']);
     var c = new RequestContext(request, {
-        'form': form,
-        'context_procesors': kwargs['context_processors']
-    });
+        'form': form }, 
+        kwargs['context_processors']);
 
     apply_extra_context(kwargs['extra_context'], c);
     return new HttpResponse(t.render(c));
 }
 
 function update_object(request, object_id) {
+	debugger;
     var arg = new Arguments(arguments, {
         model:null,
         //object_id:null,
@@ -121,7 +122,7 @@ function update_object(request, object_id) {
         template_loader:loader,
         extra_context: null,
         post_save_redirect:null,
-        login_required:False,
+        login_required:false,
         context_processors:null,
         template_object_name:'object',
         form_class:null
@@ -145,18 +146,19 @@ function update_object(request, object_id) {
             kwargs['template_name'] = "%s/%s_form.html".subs(model._meta.app_label, model._meta.module_name);
         }
     }
-    var t = template_loader.get_template(kwargs['template_name']);
+    var t = kwargs['template_loader'].get_template(kwargs['template_name']);
     var c = new RequestContext(request, {
             form: form,
             template_object_name: obj,
-            }, context_processors);
+            }, kwargs['context_processors']);
     apply_extra_context(kwargs['extra_context'], c);
     var response = new HttpResponse(t.render(c));
     //populate_xheaders(request, response, model, getattr(obj, obj._meta.pk.attname));
     return response;
 }
 
-function delete_object(request, object_id){
+function delete_object(request, object_id) {
+	debugger;
     var arg = new Arguments(arguments, {
         //object_id : null,
     	model: null,
@@ -183,7 +185,7 @@ function delete_object(request, object_id){
         if (!kwargs['template_name']) {
             kwargs['template_name'] = "%s/%s_confirm_delete.html".subs(kwargs['model']._meta.app_label, kwargs['model']._meta.module_name);
         }
-        var t = template_loader.get_template(kwargs['template_name']),
+        var t = kwargs['template_loader'].get_template(kwargs['template_name']),
             c = new RequestContext(request, {
                         template_object_name: obj },
                         kwargs['context_processors']);

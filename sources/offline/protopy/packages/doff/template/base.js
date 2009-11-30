@@ -431,13 +431,19 @@ var Variable = type('Variable', [ object ], {
     _resolve_lookup: function(context) {
         var current = context;
         for each (var bit in this.lookups) {
-            try {
+        	try {
                 if (isinstance(current, Context))
                     current = current.__getitem__(bit);
-                else if (type(current) === Object && include(['values', 'items', 'keys'], bit))
-                	current = getattr(new Dict(current), bit)();
-                else
-                    current = getattr(current, bit);
+                else {
+                	try {
+                		current = getattr(current, bit);
+                	} catch (e if isinstance(e, AttributeError)) {
+                		if (type(current) === Object && include(['values', 'items', 'keys'], bit))
+                			current = getattr(new Dict(current), bit)();
+                		else
+                			throw e;
+                	}
+                }
             } catch (e) {
                 throw new VariableDoesNotExist("Failed lookup for key [%s] in %s".subs(bit, current))
             }
