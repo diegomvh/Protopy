@@ -11,12 +11,12 @@ var Logger = type('Logger', [Panel, Handler], {
         this.set_level(this.root.level);
         this.set_formatter('<p><span class=%(levelname)s>%(levelname)s</span> %(name)s - %(time)s:<br/>%(message)s</p>');
         this.paused = false;
-        this.icon = sys.module_url('doff.utils', 'resources/logger.png');
+        this.icon = sys.module_url('doff.utils.toolbars', 'templates/icons/logger.png');
         this.height = '30em';
     },
 
     get_template: function() {
-        var file = sys.module_url('doff.utils', 'resources/logger.html');
+        var file = sys.module_url('doff.utils.toolbars', 'templates/logger.html');
         var template = '';
         new ajax.Request(file, {
             method: 'GET',

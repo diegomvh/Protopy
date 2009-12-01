@@ -35,7 +35,7 @@ var Proveedor = {
 
 var Ciudad = {
     __str__: function() {
-        return this.value;
+        return this.nombre;
     },
     get_absolute_url: abs_url
 };

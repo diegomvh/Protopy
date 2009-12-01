@@ -10,11 +10,11 @@ var DataBaseQuery = type('DataBaseQuery', Panel, {
         this.height = '30em';
         //Black magic, the first time init the db
         this.execute_sql = this.init_db;
-        this.icon = sys.module_url('doff.utils', 'resources/dbquery.png');
+        this.icon = sys.module_url('doff.utils.toolbars', 'templates/icons/dbquery.png');
     },
 
     get_template: function() {
-        var file = sys.module_url('doff.utils', 'resources/dbquery.html');
+        var file = sys.module_url('doff.utils.toolbars', 'templates/dbquery.html');
         var template = '';
         new ajax.Request(file, {
             method: 'GET',

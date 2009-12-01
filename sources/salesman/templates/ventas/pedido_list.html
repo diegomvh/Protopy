@@ -9,13 +9,13 @@
 {% block main %}
 <h1>Pedidos de {{ user.last_name }}, {{ user.first_name }}</h1>
 <table class="item-list">
-<thead><tr><th>Número</th><th>Fecha</th><th>Cliente</th><th>Cant. Ítems</th><th></th></tr></thead>
+<thead><tr><th>Número</th><th>Fecha</th><th>Cliente</th><th>Items</th><th></th></tr></thead>
 <tbody>
 	{% for item in object_list %}
 	<tr class="{% cycle '' 'altrow' %}">
 		{% block item_iteration_row %}
 		  	<td>{{ item.pk }}</td><td>{{ item.fecha }}</td><td>{{ item.cliente }}</td><td>{{ item.itempedido_set.count }}</td>
-			<td><a href="/pedido/{{ item.id }}/">Ver</a></td>
+			<td><a href="/pedidos/pedido/{{ item.id }}/">Ver</a></td>
 	  	{% endblock %}  	
 	</tr>
   	{% endfor %}

@@ -42,6 +42,7 @@ var Document = type('Document', [ object ], {
         this.head.id = "doff-head";
         this.body = document.createElement('div');
         this.body.id = "doff-body";
+        
         // Apagando la chache del selector
         sys.selectorCacheOn = false;
         this.html.update('');
@@ -61,9 +62,11 @@ var Document = type('Document', [ object ], {
         this.forms = this.body.select('FORM');
         this.links = this.body.select('A');
     },
+    
     getElementsByClassName: function(name) {
         return this.html.getElementsByClassName(name);
     },
+    
     getElementsByTagName: function(name) {
         if (name == "head")
             return [ this.head ];
@@ -71,20 +74,22 @@ var Document = type('Document', [ object ], {
             return [ this.body ];
         return this.html.getElementsByTagName(name);
     },
+    
     getElementById: function(id){
         return document.getElementById(id);
     }
-
 });
 
 var DOMAdapter = type('DOMAdapter', [ object ], {
     __init__: function() {
         this._handlers = [];
         this._current_url = urls.parse(urls.resolve('/', string(window.location)));
-        //TODO: esta depende de por donde arranque.
-        //this._current_url = this._root_url;
         this.history = new History();
         this.document = new Document();
+        
+        var loading  = '<center><img style="margin-top: 350p	x;" src="lib/packages/doff/utils/resources/loading.gif"/></center>';
+        this.document.update(loading);
+        
         event.connect(this.history, 'onChange', this, '_process_from_history');
     },
 
@@ -135,10 +140,6 @@ var DOMAdapter = type('DOMAdapter', [ object ], {
     },
 
     _build_url: function(url_string) {
-        //urls.relative(location.href, 'http://localhost:8000/trabajo_offline/')
-        //urls.resolve('/', location.href)
-        //"http://localhost:8000/"
-        //urls.resolve('/pepe/', location.href)
         return urls.parse(urls.resolve(url_string, string(this._current_url)));
     },
 
@@ -147,8 +148,6 @@ var DOMAdapter = type('DOMAdapter', [ object ], {
     },
 
     _process_request: function(request) {
-        //Te queres ir?
-        //if (!request.is_valid()) return;
         if (!request.is_same_origin(this._root_url)) {
             window.location = string(request.URL);
             return;

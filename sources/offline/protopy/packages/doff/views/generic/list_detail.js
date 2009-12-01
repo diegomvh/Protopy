@@ -1,11 +1,11 @@
 require('doff.template.loader');
 require('doff.template.context', 'RequestContext');
 require('doff.utils.http', 'Http404', 'HttpResponse');
-//WTF: from django.core.xheaders import populate_xheaders
 require('doff.core.paginator', 'Paginator', 'InvalidPage');
 require('doff.core.exceptions', 'ObjectDoesNotExist');
 
 function object_list(request) {
+	debugger;
     /*
     Generic list of objects.
 
@@ -94,20 +94,19 @@ function object_list(request) {
     }
     for each (var [key, value] in items(kwargs['extra_context'])) {
         if (callable(value))
-            c[key] = value();
+            c.set(key, value());
         else
-            c[key] = value;
+            c.set(key, value);
     }
-    if (!kwargs['template_name']) {
-        var model = queryset.model;
-        var template_name = "%s/%s_list.html".subs(model._meta.app_label, model._meta.module_name);
-    }
-    var t = kwargs['template_loader'].get_template(template_name);
+    if (!kwargs['template_name'])
+        kwargs['template_name'] = "%s/%s_list.html".subs(queryset.model._meta.app_label, queryset.model._meta.module_name);
+
+    var t = kwargs['template_loader'].get_template(kwargs['template_name']);
     return new HttpResponse(t.render(c), { mimetype: kwargs['mimetype'] });
 }
 
 function object_detail(request) {
-
+	debugger;
     /*
     Generic detail of an object.
 
@@ -150,10 +149,10 @@ function object_detail(request) {
         template_object_name: obj,
     }, kwargs['context_processors']);
     for each (var [key, value] in items(kwargs['extra_context'])) {
-        if (callable(value))
-            c[key] = value();
+    	if (callable(value))
+            c.set(key, value());
         else
-            c[key] = value;
+            c.set(key, value);
     }
     var response = new HttpResponse(t.render(c), { mimetype: kwargs['mimetype'] });
     //populate_xheaders(request, response, model, getattr(obj, obj._meta.pk.name))
