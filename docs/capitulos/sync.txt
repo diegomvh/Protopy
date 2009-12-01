@@ -44,7 +44,10 @@ Para implementar la sincronización se abordaron los siguientes ítems:
     
     * Detección de cambios en el cliente
  
-.. note:: Poner intro a lo que sigue
+A continuación se realizará un análisis de los componentes intervinientes en la
+sincronización de datos como el transporte de datos, la codificación y el sistema
+de conunicación (RPC). Además se abordan algunos extras a la presente tesina
+como la resolución de conflictos.
 
 Transporte de Datos
 ===================
@@ -341,17 +344,18 @@ Cada vez que se agrega un modelo a un sitio remoto, internamente también
 se registran manejadores de eventos ante las señales de guardado (``post_save``)
 y eliminación (``post_delete``).
 
-.. note:: Buscar lugar para el gráfico
-
-La aplicación **offline** posee los siguientes modelos:
-
-.. figure:: ../_dot/offline_models.png
-
-    Modelos
-
-.. raw:: latex
-	
-	\newpage
+..
+    .. Buscar lugar para el gráfico
+    
+    La aplicación **offline** posee los siguientes modelos:
+    
+    .. figure:: ../_dot/offline_models.png
+    
+        Modelos
+    
+    .. raw:: latex
+    	
+    	\newpage
 
 Protocolo de Sincronización
 ===========================

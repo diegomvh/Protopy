@@ -204,11 +204,9 @@ En el caso anterior la propiedad ``urlregex`` es ``/off/ventas`` y
 en ese lugar se encuentra el punto de entrada para la ejecución del proyecto 
 desconectado. Al acceder a esta URL el navegador se encuentra con:
 
-.. note:: Faltan numeros de linea
-
-.. code-block:: html
-    :linenoes:    
-
+.. code-block:: guess
+    :linenos:
+    
     <html>
     <head>
         <!-- El sitio remoto publica la librería Protopy, como JavaScript 1.7 -->

@@ -19,7 +19,6 @@ sus dos "padres", *Prototype JavaScript Library* y el lenguaje de programación
 
     | **proto** type + **py** thon = **protopy**
 
-.. note:: me gustaría poner las problemáticas antes de entrar en las características.
 
 Características
 ===============

@@ -18,11 +18,11 @@ Cada uno de estos documentos está escrito en un lenguaje de marcado (o etiqueta
 HTML, que utiliza a su vez dos lenguajes:
 
  * CSS [*]_ para definir el estilo de las páginas de manera consistente.
- * Javascript para definir la interacción en la página.
+ * Javascript para definir la interacción en la página (JavaScript es el único
+   mecanismo estándar para brindar dinamismo a una página web).
 
 .. [*] Cascading Style Sheet
 
-.. note:: Poner como llegamos a decir "dinámica" en el cliente, sino simplemente puede ser web desde la perspectiva del cliente el titulo. 
 
 JavaScript [WikiJavascript09]_ ha tenido durante mucho tiempo la reputación de ser un lenguaje 
 inadecuado para el desarrollo serio. Una de las razones fue que, a pesar 
@@ -297,8 +297,6 @@ Tiene una sintaxis semejante a la de Java y C, pero JavaScript dista mucho de
 ser Java y debe su nombre más a cuestiones de marketing que a principios de diseño. 
 De hecho, fue influenciado por lenguajes como Self, Scheme, Perl, e incluso en
 versiones modernas, por Python.
-
-.. note:: 13/10/2009 Marta's corrections.
 
 Si bien JavaScript es un lenguaje orientado a objetos, carece de clases
 y ocultamiento de información. Existen varias técnicas para lograr encapsulamiento,
