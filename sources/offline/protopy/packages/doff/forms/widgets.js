@@ -392,12 +392,13 @@ var Select = type('Select', Widget, {
     },
 
     render_options: function(choices, selected_choices) {
+    	debugger;
         function render_option(option_value, option_label) {
             var selected_html = include(selected_choices, option_value) && ' selected="selected"' || ''
             return '<option value="%s"%s>%s</option>'.subs(escape(option_value), selected_html, conditional_escape(option_label));
         }
         // Normalize to strings.
-        var selected_choices = new Set([v for (v in selected_choices)]);
+        var selected_choices = new Set(selected_choices);
         var output = [];
         for (var [option_value, option_label] in chain(this.choices, choices)) {
             if (isinstance(option_label, Array)) {

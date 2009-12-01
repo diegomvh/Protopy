@@ -1,7 +1,7 @@
 require('doff.template.base', 'Library');
 require('agentes.core.models', 'Categoria', 'Producto');
 
-register = new Library();
+var register = new Library();
 function categorias() {
     var categorias = Categoria.objects.filter({ super__isnull: true });
     return { "categorias": categorias };

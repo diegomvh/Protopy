@@ -196,8 +196,8 @@ var BaseModelForm = type('BaseModelForm', BaseForm, {
         // not make sense to check data that didn't validate, and since NULL does not 
         // equal NULL in SQL we should not do any unique checking for NULL values.
         var unique_checks = [];
-        for each (check in this.instance._meta.unique_together) {
-            fields_on_form = [field for each (field in check) if (this.cleaned_data[field])];
+        for each (var check in this.instance._meta.unique_together) {
+            var fields_on_form = [field for each (field in check) if (this.cleaned_data[field])];
             if (len(fields_on_form) == len(check))
                 unique_checks.push(check)
         }
@@ -205,9 +205,9 @@ var BaseModelForm = type('BaseModelForm', BaseForm, {
 
         // Gather a list of checks for fields declared as unique and add them to
         // the list of checks. Again, skip empty fields and any that did not validate.
-        for each ([name, field] in items(this.fields)) {
+        for each (var [name, field] in items(this.fields)) {
             try {
-                f = this.instance._meta.get_field_by_name(name)[0];
+                var f = this.instance._meta.get_field_by_name(name)[0];
             } catch (e if e instanceof FieldDoesNotExist) {
                 // This is an extra field that's not on the ModelForm, ignore it
                 continue;

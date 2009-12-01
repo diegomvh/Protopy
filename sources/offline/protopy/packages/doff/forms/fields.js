@@ -450,7 +450,7 @@ var ImageField = type('ImageField', FileField, {
      * PNG, possibly others -- whatever the Python Imaging Library supports).
      */
     clean: function clean(data, initial) {
-        f = super(FileField, this).clean(data, initial);
+        var f = super(FileField, this).clean(data, initial);
         if (!f)
             return null;
         else if (!data && initial)
