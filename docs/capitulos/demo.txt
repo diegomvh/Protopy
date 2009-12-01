@@ -5,16 +5,15 @@ Aplicación de Demostración
 ###########################
 
 
-Se diseñó una aplicación denominada ``salesman`` (agente de ventas viajante)
-para ejemplificar el funcionamiento de Protopy y Doff. La aplicación modela
-una empresa dedicada a la venta de productos electrónicos. Los productos son vendidos Online o a través de agentes viajantes que poseen una copia del catalogo y generan pedidos a partir de estos. Los vendedores, una vez que han ingresado al sistema mediante el sistema de autenticación, pueden realizar la desconexión. Una vez que están desconectados, pueden hacer varios
+El presente capítulo describe la aplicación de prueba que se diseñó para ilustrar las capacidades de **Protopy** y **Doff**. Se trata de una aplicación Django bajo el nombre ``salesman`` (agente de ventas viajante) y modela una empresa dedicada a la venta de productos informáticos. Los usuarios que pertenecen al rol de agentes tienen la capacidad de realizar una desconexión de la proyecto, llevándose una copia del catálogo, la capacidad de generar pedidos, clientes y ciudades.
 
+A continuación se detalla brevemente los aspectos más relevantes de la aplicación.
 
 Organización del código fuente del proyecto
 -------------------------------------------
 
 El código fuente del proyecto se ubicó en la carpeta ``sources/sakesman``. 
-La aplicación ``offline`` se encuentra en ``source/offline`` mencionada en los capítulos anteriores. De esta manera, para la instanalación, simplemente se agregó el directorio padre de ``salesman`` al PYTHONPATH.
+La aplicación ``offline`` se encuentra en ``source/offline`` mencionada en los capítulos anteriores. De esta manera, para la instalación, simplemente se agregó el directorio padre de ``salesman`` al PYTHONPATH.
 
 .. code-block:: python
 
@@ -74,7 +73,7 @@ Vistas
 La mayor parte de las vistas se implementaron mediante vistas genéricas 
 (generic views) provistas por Django [DjangoDocsGenericViews09]_ (en el servidor) 
 y Doff (en el cliente).
-Django prvee varios tipos de vistas genéricas [*]_, de los cuales solo se utilizaron  
+Django provee varios tipos de vistas genéricas [*]_, de los cuales solo se utilizaron  
 las relacionadas con CRUD. 
 
 .. [*] CRUD, consultas, comentarios, redirección, etc.
@@ -124,8 +123,8 @@ Estas vistas fueron fueron implementadas en **Doff** debido que hasta el momento
 habían contemplado.
         
 
-Plantilla de la aplicación
---------------------------
+Plantilla de la aplicación y administración
+-------------------------------------------
 
 La portada de la aplicación en línea se diseño de la siguiente manera:
 
@@ -170,6 +169,8 @@ Los enlaces de la barra superior permiten acceder a diferentes secciones de la a
   * Desconectar
 
      Desconectar es un enlace hacia el sitio remoto.
+
+Este menú solo se muestra completamente cuando el usuario ha ingresado al sistema (*login*). 
 
 Administración Básica
 =====================
@@ -219,3 +220,35 @@ Para las altas y modificaciones, la fachada es la siguiente:
 .. raw:: latex
 	
     \newpage
+
+
+
+Desconexión de la aplicación
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Cuando el usuario desea desconectar la aplicación, utilizando el botón *Desconectar* de la barra de menú, se carga la misma plantilla, pero con una barra adicional provista por **Doff**:
+
+.. figure:: ../_static/sshot_toolbar.png
+	
+    Barra de trabajo desconectado de Doff
+
+Para realizar la instalación del proyecto desconectado se utiliza el primer panel:
+
+.. figure:: ../_static/sshot_toolbar_offline.png
+	
+    Panel de instalación, el botón permite instalar el proyecto.
+
+Debido a que se han implementado las mismas vistas que la aplicación en linea, la aplicación se comporta de la misma manera.
+
+Con objetivos de depuración, se agregaron algunos paneles extras a la barra de herramientas provista por **Doff**, como un panel de consultas a la base de datos:
+
+.. figure:: ../_static/sshot_toolbar_db.png
+
+    Panel de consultas a la base de datos del proyecto desconectado
+
+Otro panel agregado con el objeto de facilitar el depuración es una consola de salida de *logging*:
+
+.. figure:: ../_static/sshot_toolbar_logger.png
+
+
+

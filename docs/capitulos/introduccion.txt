@@ -109,29 +109,17 @@ El objetivo principal del presente trabajo de tesis es aportar una extensión
 a un framework web que permita migrar las aplicaciones de manera simple,
 convergiendo en un único proceso de desarrollo.
 
-.. note:: Recuperar objetivos secundarios de la nota
-
-
-.. Citas copadas http://es.wikiquote.org/wiki/The\_Matrix
+Dentro de los objetivos secundarios se encuentran profundizar el conocimiento sobre un framework de desarrollo de aplicaciones web y la interacción con su comunidad.
 
 *******
 Alcance
 *******
 
-.. note:: Debe estar en pasado. Hay que de todos modos re-readactar según marta.
+Se realizó un estudio sobre los componentes que intervienen en el desarrollo de 
+aplicaciones web: el navegador y el servidor web.
 
-Se seleccionó un framework web en función a características como un mapeador objeto-relacional avanzado, posiblidad de desarrollo sin necesidad de entornos sofisticados (por ejemplo, evitar los frameowkrs web que utilizan XML como formato de configuración)
+Se seleccionó un framework web en función a características como un mapeador objeto-relacional avanzado, posibilidad de desarrollo sin necesidad de entornos sofisticados (por ejemplo, evitar los frameowkrs web que utilizan XML como formato de configuración) y puesta en producción en pocos pasos.
 
-Tras el estudio de las características se determinará el framework
-a utilizar. Se tendrán en cuenta características tales como como la calidad del
-mapeador de objetos, la simplicidad del controlador,
-extensibilidad del sistema de escritura de plantillas y flexibilidad general.
+Se creó una librería de JavaScript para facilitar la migración del código de la aplicación en línea a un navegador, utilizando una versión específica del lenguaje (1.7).
 
-Se realizará un estudio sobre los componentes que intervienen en el desarrollo de 
-aplicaciones web: el navegador y el servidor web. Se abordará un lenguaje de 
-programación y un framework web del lenguaje seleccionado, se 
-desarrollará para este un framework básico. Se formulará un esquema de sincronización
-para pequeñas aplicaciones.
-
-.. Si es un framework es extensible por definición
-
+Se desarrolló una extensión del framework aparejado a una implementación desconectada del framework. Sobre este se diseñó un mecanismo de sincronización simple pero extensible.

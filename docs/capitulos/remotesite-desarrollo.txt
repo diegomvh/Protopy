@@ -546,11 +546,14 @@ de una aplicación, sus managers y los proxies de modelos:
 	
 	Modelos de una aplicación desconectada
 	
-.. note:: el grafico se movió
+.. raw:: latex
+
+    \newpage
 
 Por ejemplo, para una definción de un modelo como sigue:
 
 .. code-block:: python
+    
     
     from django.db import models
     
@@ -568,6 +571,7 @@ Por ejemplo, para una definción de un modelo como sigue:
     
     site = RemoteSite('personas')
     site.register(Persona) # Sin proxy
+
 
 luego de haber ejecutado el comando ``migrate_app``, el código del mixin
 para implementar la funcionalidad de ``__unicode__`` sería:
