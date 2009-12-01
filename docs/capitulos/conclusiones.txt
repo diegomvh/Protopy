@@ -7,11 +7,24 @@ Conclusiones y Líneas Futuras
 Conclusiones
 ************
 
+
+
 Durante el desarrollo de la presente tesina se realizó un análisis sobre las
 tecnologías disponibles para el desarrollo de aplicaciones web destacandas
 el aporte de los frameworks orientados a aplicaciones de contenidos, como Ruby On Rails o 
 Django. Los lenguajes dinámicos de alto nivel, a pesar de el sobrecarga que introducen,
 facilitan la creación de frameworks simples, como es el caso de Django.
+
+Se lograron cumplir los objetivos principales de manera completa:
+    
+    * Extensión de Django (**offline**)
+    
+    * Persitencia de datos en el cliente (**Doff**)
+    
+    * Funcionalidad desconectada (**Protopy** y **Doff**)
+    
+    * Primitivas de sincronización (**Doff**)
+
 
 Si bien no se trató especificamente en la presente tesina, la aparción de HTML5,
 (estándar en el cual la funcionalidad de Gears queda compredida) reduce la brecha
