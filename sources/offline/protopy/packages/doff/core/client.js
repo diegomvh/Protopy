@@ -37,17 +37,15 @@ var History = type('History', [ object ], {
 
 var Document = type('Document', [ object ], {
     __init__: function() {
-        this.html = document.getElementsByTagName('body')[0];
-        this.head = document.createElement('div');
+        this.html = document.getElementsByTagName('html')[0];
+        this.head = document.createElement('head');
         this.head.id = "doff-head";
-        this.body = document.createElement('div');
-        this.body.id = "doff-body";
+        this.body = document.getElementsByTagName('body')[0];
         
         // Apagando la chache del selector
         sys.selectorCacheOn = false;
-        this.html.update('');
-        this.html.insert(this.head);
-        this.html.insert(this.body);
+        this.body.update('');
+        document.getElementsByTagName('html')[0].insert(this.head);
     },
 
     update: function(content) {

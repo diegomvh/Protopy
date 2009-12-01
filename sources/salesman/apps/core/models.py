@@ -6,7 +6,7 @@ from django.db import models
 
 # Some useful things
 mod_name = __name__.split('.')[-2]
-abs_url = lambda inst: '/%s' % '/'.join( [inst._meta.module_name, str(inst.id)])
+abs_url = lambda inst: '/%s' % '/'.join( [inst._meta.module_name, str(inst.pk)])
 
 class Provincia(models.Model):
     nombre = models.CharField(max_length = 140)

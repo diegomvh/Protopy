@@ -43,7 +43,7 @@ urlpatterns = patterns('',
         #---------------------------------------------------------------------------------
         
         # Clientes -> Edit
-        (r'cliente/(?P<object_id>\d{1,5})/editar/$', 'django.views.generic.create_update.update_object',{
+        (r'cliente/(?P<object_id>\d{11})/editar/$', 'django.views.generic.create_update.update_object',{
             'model': Cliente,
             'template_name': 'forms.html',
             'post_save_redirect': '/administrar/clientes/',
@@ -66,7 +66,7 @@ urlpatterns = patterns('',
         }),
         
         # Clientes -> Eliminar
-        (r'cliente/(?P<object_id>\d{1,5})/eliminar/$', 'django.views.generic.create_update.delete_object', {
+        (r'cliente/(?P<object_id>\d{11})/eliminar/$', 'django.views.generic.create_update.delete_object', {
             'model': Cliente,
             'post_delete_redirect': '/administrar/clientes/',
             'template_name': 'confirm_delete.html',

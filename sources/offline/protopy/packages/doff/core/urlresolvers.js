@@ -121,7 +121,8 @@ var RegexURLResolver = type('RegexURLResolver', [ object ], {
                     tried = tried.concat([(pattern.regex.pattern + '   ' + t) for (t in e.kwargs['tried'])]);
                 }
                 if (sub_match) {
-                    return [sub_match[0], sub_match[1], extend(this.default_kwargs, sub_match[2])];
+                	var args = extend({}, this.default_kwargs);
+                    return [sub_match[0], sub_match[1], extend(args, sub_match[2])];
                 }
                 tried.push(pattern.regex.pattern);
             }

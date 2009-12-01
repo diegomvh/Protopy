@@ -34,7 +34,7 @@ var urlpatterns = patterns('doff.views.generic',
         }],
         
         // Clientes -> Edit
-        ['cliente/(\\d{1,5})/editar/$', 'create_update.update_object',{
+        ['cliente/(\\d{11})/editar/$', 'create_update.update_object', {
             'model': Cliente,
             'template_name': 'forms.html',
             'post_save_redirect': '/administrar/clientes/',
@@ -55,7 +55,7 @@ var urlpatterns = patterns('doff.views.generic',
         }],
         
         // Clientes -> Eliminar
-        ['cliente/(\\d{1,5})/eliminar/$', 'create_update.delete_object', {
+        ['cliente/(\\d{11})/eliminar/$', 'create_update.delete_object', {
             'model': Cliente,
             'post_delete_redirect': '/administrar/clientes/',
             'template_name': 'confirm_delete.html',

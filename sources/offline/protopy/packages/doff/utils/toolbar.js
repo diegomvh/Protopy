@@ -135,7 +135,7 @@ var ToolBar = type('Toolbar', object, {
 
     _display: function () {
         document.getElementsByTagName('head')[0].insert(this.stylesheet);
-        document.getElementsByTagName('body')[0].insert(this.content);
+        document.getElementsByTagName('html')[0].insert(this.content);
     }
 
 });
