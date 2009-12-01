@@ -126,6 +126,8 @@ var DOMAdapter = type('DOMAdapter', [ object ], {
         this._handlers.forEach(function(hler) {
             event.disconnect(hler);
         });
+        if (!isundefined(this.load._listeners) && isinstance(this.load._listeners, Array))
+        	delete this.load._listeners;
     },
 
     _path_to_state: function(path) {

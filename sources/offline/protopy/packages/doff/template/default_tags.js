@@ -104,7 +104,7 @@ var ForNode = type('ForNode', [ Node ], {
         context.push();
         try {
             values = this.sequence.resolve(context, true);
-        } catch (e if e instanceof VariableDoesNotExist) {
+        } catch (e if isinstance(e, VariableDoesNotExist)) {
             values = [];
         }
         if (!values) values = [];
@@ -157,13 +157,13 @@ var IfEqualNode = type('IfEqualNode', [ Node ], {
         try {
             val1 = this.var1.resolve(context);
         }
-        catch (e if e instanceof VariableDoesNotExist) {
+        catch (e if isinstance(e, VariableDoesNotExist)) {
             val1 = null;
         }
         try {
             val2 = this.var2.resolve(context);
         }
-        catch (e if e instanceof VariableDoesNotExist) {
+        catch (e if isinstance(e, VariableDoesNotExist)) {
             val2 = null;
         }
         if ((this.negate && val1 != val2) || (!this.negate && val1 == val2))
@@ -203,7 +203,7 @@ var IfNode = type('IfNode', [ Node ], {
                 try {
                     value = bool_expr.resolve(context, true);
                 }
-                catch (e if e instanceof VariableDoesNotExist) {
+                catch (e if isinstance(e, VariableDoesNotExist)) {
                     value = null;
                 }
                 if ((value && !ifnot) || (ifnot && !value))
@@ -217,7 +217,7 @@ var IfNode = type('IfNode', [ Node ], {
                 try {
                     value = bool_expr.resolve(context, true);
                 }
-                catch (e if e instanceof VariableDoesNotExist) {
+                catch (e if isinstance(e, VariableDoesNotExist)) {
                     value = null;
                 }
                 if (!((value && !ifnot) || (ifnot && !value)))
@@ -468,11 +468,11 @@ function do_if(parser, token) {
             var not = null, boolvar = null;
             try {
                 [not, boolvar] = boolpair.split(' ');
-            } catch (e if e instanceof VariableDoesNotExist) {
-                throw new TemplateSyntaxError, "'if' statement improperly formatted";
+            } catch (e if isinstance(e, VariableDoesNotExist)) {
+                throw new TemplateSyntaxError("'if' statement improperly formatted");
             }
             if (not != 'not')
-                throw new TemplateSyntaxError, "Expected 'not' in if statement";
+                throw new TemplateSyntaxError("Expected 'not' in if statement");
             boolvars.push([true, parser.compile_filter(boolvar)]);
         } else {
             boolvars.push([false, parser.compile_filter(boolpair)]);

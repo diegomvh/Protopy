@@ -530,10 +530,10 @@
         connect: function(obj, event, context, method) {
             var a = arguments, args = [], i = 0;
             // if a[0] is a String, obj was ommited
-            args.push(isinstance(a[0], String) ? null : a[i++], a[i++]);
+            args.push((!isundefined(a[0]) && isinstance(a[0], String)) ? null : a[i++], a[i++]);
             // if the arg-after-next is a String or Function, context was NOT omitted
             var a1 = a[i+1];
-            args.push((a1 && isinstance(a1, String)) || callable(a1) ? a[i++] : null, a[i++]);
+            args.push((!isundefined(a1) && isinstance(a1, String)) || callable(a1) ? a[i++] : null, a[i++]);
             // absorb any additional arguments
             for (var l = a.length; i < l; i++) 
             args.push(a[i]);

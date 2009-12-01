@@ -103,7 +103,6 @@ database.Cursor = type('Cursor', [ object ], {
         try {
             this.lastResulSet = this.connection.execute(query, params);
         } catch(e) {
-        	debugger;
             throw new database.DatabaseError(e, {'inspect': true});
         }
     },
@@ -113,7 +112,6 @@ database.Cursor = type('Cursor', [ object ], {
             for each (var params in param_list)
                 this.connection.execute(query, params);
         } catch (e) {
-        	debugger;
         	throw new database.DatabaseError(e, {'inspect': true});
         }
         return null;

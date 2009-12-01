@@ -943,9 +943,12 @@ var ModelChoiceField = type('ModelChoiceField', ChoiceField, {
         if (include(EMPTY_VALUES, value))
             return null;
         try {
+        	debugger;
+        	var data = {};
             var key = this.to_field_name || 'pk';
-            var value = this.queryset.get({key: value});
-        } catch (e if e instanceof this.queryset.model.DoesNotExist) {
+            data[key] = value;
+            var value = this.queryset.get(data);
+        } catch (e if isinstance(e, this.queryset.model.DoesNotExist)) {
             throw new ValidationError(this.error_messages['invalid_choice']);
         }
 	return value;
@@ -980,7 +983,7 @@ var ModelMultipleChoiceField = type('ModelMultipleChoiceField', ModelChoiceField
             try {
                 var obj = this.queryset.get({'pk': val});
                 final_values.push(obj);
-            } catch (e if e instanceof this.queryset.model.DoesNotExist) {
+            } catch (e if isinstance(e, this.queryset.model.DoesNotExist)) {
                 throw new ValidationError(this.error_messages['invalid_choice'].subs(val));
             }
         }

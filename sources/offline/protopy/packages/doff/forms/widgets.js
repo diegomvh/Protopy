@@ -392,7 +392,6 @@ var Select = type('Select', Widget, {
     },
 
     render_options: function(choices, selected_choices) {
-    	debugger;
         function render_option(option_value, option_label) {
             var selected_html = include(selected_choices, option_value) && ' selected="selected"' || ''
             return '<option value="%s"%s>%s</option>'.subs(escape(option_value), selected_html, conditional_escape(option_label));

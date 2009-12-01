@@ -373,7 +373,7 @@ var QuerySet = type('QuerySet', [ object ], {
         delete kwargs['defaults'];
         try {
             return [this.get(kwargs), false];
-        } catch (e if e instanceof this.model.DoesNotExist) {
+        } catch (e if isinstance(e, this.model.DoesNotExist)) {
             try {
                 extend(kwargs, defaults);
                 var obj = new this.model(kwargs);
@@ -385,7 +385,7 @@ var QuerySet = type('QuerySet', [ object ], {
                 transaction.savepoint_rollback(sid);
                 try {
                     return [this.get(kwargs), false];
-                } catch (e if e instanceof this.model.DoesNotExist) {
+                } catch (e if isinstance(e, this.model.DoesNotExist)) {
                     throw e;
                 }
             }

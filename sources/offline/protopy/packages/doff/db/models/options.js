@@ -298,7 +298,6 @@ var Options = type('Options', [ object ], {
         if (!cache)
             cache = this.init_name_map();
         var names = keys(cache);
-        debugger; //Ver el sort
         names.sort();
         // Internal-only names end with "+" (symmetrical m2m related names being the main example). Trim them.
         return [val for each (val in names) if (!val.endswith('+'))];

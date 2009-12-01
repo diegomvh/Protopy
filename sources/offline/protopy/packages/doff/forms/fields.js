@@ -146,8 +146,8 @@ var IntegerField = type('IntegerField', Field, {
         if (include(EMPTY_VALUES, value))
             return null;
         try {
-            value = number(string(value));
-        } catch (e if e instanceof ValueError || e instanceof TypeError) {
+            value = Number(string(value));
+        } catch (e if isinstance(e, [ ValueError, TypeError ])) {
             throw new ValidationError(this.error_messages['invalid']);
         }
         if (this.max_value != null && value > this.max_value)
@@ -219,7 +219,7 @@ var DecimalField = type('DecimalField', Field, {
         try {
             value = new Decimal(value);
             //TODO: Decimal!
-        } catch (e if e instanceof DecimalException) {
+        } catch (e if isinstance(e, DecimalException)) {
             throw new ValidationError(this.error_messages['invalid']);
         }
         var [sign, digittuple, exponent] = value.to_array();
@@ -277,7 +277,7 @@ var DateField = type('DateField', Field, {
         for each (var format in this.input_formats) {
             try {
                 return new datetime.date.apply(time.strptime(value, format).slice(0,3));
-            } catch (e if e instanceof ValueError) { continue; }
+            } catch (e if isinstance(e, ValueError)) { continue; }
         }
         throw new ValidationError(this.error_messages['invalid']);
     }
@@ -308,7 +308,7 @@ var TimeField = type('TimeField', Field, {
         for each (var format in this.input_formats) {
             try {
                 return datetime.time(time.strptime(value, format).slice(3,6));
-            } catch (e if e instanceof ValueError) { continue; }
+            } catch (e if isinstance(e, ValueError)) { continue; }
         }
         throw new ValidationError(this.error_messages['invalid']);
     }
@@ -355,7 +355,7 @@ var DateTimeField = type('DateTimeField', Field, {
         for each (var format in this.input_formats) {
             try {
                 return datetime.datetime(time.strptime(value, format).slice(0, 6));
-            } catch (e if e instanceof ValueError) { continue }
+            } catch (e if isinstance(e, ValueError)) { continue }
         }
         throw new ValidationError(this.error_messages['invalid']);
     }
@@ -429,7 +429,7 @@ var FileField = type('FileField', Field, {
         try {
             var file_name = data.name;
             var file_size = data.size;
-        } catch (e if e instanceof AttributeError) {
+        } catch (e if isinstance(e, AttributeError)) {
             throw new ValidationError(this.error_messages['invalid']);
         }
 
@@ -623,7 +623,7 @@ var TypedChoiceField = type('TypedChoiceField', ChoiceField, {
         // both.
         try {
             value = this.coerce(value);
-        } catch (e if e instanceof ValueError || TypeError || ValidationError) {
+        } catch (e if isinstance(e, [ValueError, TypeError, ValidationError])) {
             throw new ValidationError(this.error_messages['invalid_choice'].subs({'value': value}));
         }
         return value;
@@ -736,14 +736,14 @@ var MultiValueField = type('MultiValueField', Field, {
         for each (var [i, field] in Iterator(this.fields)) {
             try {
                 var field_value = value[i];
-            } catch (e if e instanceof IndexError) {
+            } catch (e if isinstance(e, IndexError)) {
                 var field_value = null;
             }
             if (this.required && include(EMPTY_VALUES, field_value))
                 throw new ValidationError(this.error_messages['required']);
             try {
                 clean_data.push(field.clean(field_value));
-            } catch (e if e instanceof ValidationError) {
+            } catch (e if isinstance(e, ValidationError)) {
                 // Collect all validation errors in a single list, which we'll
                 // throw new at the end of clean(), rather than raising a single
                 // exception for the first error we encounter.

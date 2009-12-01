@@ -77,7 +77,7 @@ var WhereNode = type('WhereNode', [ Node ], {
                 else if (this.negated)
                     empty = false;
                 continue;
-            } catch (e if e instanceof FullResultSet) {
+            } catch (e if isinstance(e, FullResultSet)) {
                 if (this.connector == OR) {
                     if (this.negated) {
                         empty = true;

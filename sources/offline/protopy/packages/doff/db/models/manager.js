@@ -9,7 +9,7 @@ function ensure_default_manager(cls) {
         try {
             var f = cls._meta.get_field('objects');
             throw new ValueError("Model %s must specify a custom Manager, because it has a field named 'objects'".subs(cls.name));
-        } catch (e if e instanceof FieldDoesNotExist) {}
+        } catch (e if isinstance(e, FieldDoesNotExist)) {}
         cls.add_to_class('objects', new Manager());
     }
 };

@@ -616,7 +616,6 @@ var DecimalField = type('DecimalField', [ Field ], {
      * Formats a number into a string with the requisite number of digits and decimal places.
      */
     format_number: function(value) {
-    	debugger;
         var util = require('doff.db.backends.util');
         return util.format_number(value, this.max_digits, this.decimal_places);
     },
