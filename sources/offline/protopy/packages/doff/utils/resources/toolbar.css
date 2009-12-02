@@ -1,7 +1,7 @@
 /* v1.0 | 20080212 */
 
 div#doff-toolbar {
-    font-family: arial, sans-serif;
+    font-family: monospace;
     font-size: 1em;
     padding: 1px;
     width: 90%;
@@ -30,7 +30,9 @@ div#doff-toolbar div.doff-panel {
 	-moz-border-radius-topright: 10px;
 }
 
-div#doff-toolbar div.doff-panel .doff-panel-button {
+div#doff-toolbar div.doff-panel div.doff-panel-buttons {}
+
+div#doff-toolbar div.doff-panel button.doff-panel-button {
 	background: #E3E3E3 none repeat scroll 0 0;
 	border-left:1px solid #BBBBBB;
 	border-right:1px solid #AAAAAA;
@@ -67,7 +69,6 @@ div#doff-toolbar div.doff-panel div.doff-panel-content {
     vertical-align: middle;
 }
 
-
 div#doff-toolbar ul.doff-toolbar-bar {
     background: #EEEEEE;
     border-top: 1px solid #CCCCCC;
@@ -97,4 +98,16 @@ div#doff-toolbar ul.doff-toolbar-bar li.doff-toolbar-item:hover {
 
 div#doff-toolbar ul.doff-toolbar-bar li.doff-toolbar-item:last-child {
     border-right: none;
+}
+
+div#doff-toolbar div.doff-panel .doff-panel-align-right {
+	text-align: right;
+}
+
+div#doff-toolbar div.doff-panel .doff-panel-align-center {
+	text-align: center;
+}
+
+div#doff-toolbar div.doff-panel .doff-panel-align-left {
+	text-align: left;
 }

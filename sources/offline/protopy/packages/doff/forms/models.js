@@ -140,7 +140,7 @@ function fields_for_model(model, fields, exclude, formfield_callback) {
     formfield_callback = formfield_callback || function(f) { return f.formfield(); };
     var field_list = [];
     var opts = model._meta;
-    for each (f in opts.fields.concat(opts.many_to_many)) {
+    for each (var f in opts.fields.concat(opts.many_to_many)) {
         if (!f.editable)
             continue;
         if (bool(fields) && !include(fields, f.name))

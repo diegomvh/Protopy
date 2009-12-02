@@ -1937,15 +1937,24 @@
             if (type(ascii) != String) throw new TypeError('An string is required');
             return ascii.charCodeAt(0);
         },
-        bisect: function(array, element) {
-            var i = 0;
-            for (var length = array.length; i < length; i++) {
-                if (callable(array[i].__cmp__) && array[i].__cmp__(element) > 0)
-                    return i;
-                else if (array[i] > element)
-                    return i;
+        cmp: function(object1, object2) {
+        	if (callable(object1['__cmp__'])) 
+        		return object1.__cmp__(object2);
+        	if (object1 === object2)
+        		return 0;
+        	if (object1 >= object2)
+        		return 1;
+        	if (object1 <= object2)
+        		return -1;
+        	throw new Exception('Not Comparable');
+        },
+        bisect: function(elements, element) {
+            var index = 0;
+            for (var length = elements.length; index < length; index++) {
+                if (cmp(elements[index], element) >= 0)
+                    return index;
             }
-            return i;
+            return index;
         },
         equal: function(object1, object2) {
             if (callable(object1['__eq__'])) return object1.__eq__(object2);
