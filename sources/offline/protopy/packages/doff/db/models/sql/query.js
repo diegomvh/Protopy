@@ -1754,7 +1754,7 @@ var BaseQuery = type('BaseQuery', [ object ], {
                 if (m2m) {
                     // Many-to-many field defined on the current model.
                     if (bool(cached_data)) {
-                        [table1, from_col1, to_col1, table2, from_col2, to_col2, opts, target] = cached_data;
+                        var [table1, from_col1, to_col1, table2, from_col2, to_col2, opts, target] = cached_data;
                     } else {
                         var table1 = field.m2m_db_table();
                         var from_col1 = opts.pk.column;
@@ -1779,13 +1779,13 @@ var BaseQuery = type('BaseQuery', [ object ], {
                 } else if (field.rel) {
                     // One-to-one or many-to-one field
                     if (cached_data) {
-                        [table, from_col, to_col, opts, target] = cached_data;
+                        var [table, from_col, to_col, opts, target] = cached_data;
                     } else {
-                        opts = field.rel.to._meta;
-                        target = field.rel.get_related_field();
-                        table = opts.db_table;
-                        from_col = field.column;
-                        to_col = target.column;
+                        var opts = field.rel.to._meta;
+                        var target = field.rel.get_related_field();
+                        var table = opts.db_table;
+                        var from_col = field.column;
+                        var to_col = target.column;
                         orig_opts._join_cache[name] = [table, from_col, to_col, opts, target];
                     }
                     //join(connection, always_create, exclusions, promote, outer_if_first, nullable, reuse)
@@ -1802,16 +1802,16 @@ var BaseQuery = type('BaseQuery', [ object ], {
                 if (m2m) {
                     // Many-to-many field defined on the target model.
                     if (cached_data) {
-                        [table1, from_col1, to_col1, table2, from_col2, to_col2, opts, target] = cached_data;
+                        var [table1, from_col1, to_col1, table2, from_col2, to_col2, opts, target] = cached_data;
                     } else {
-                        table1 = field.m2m_db_table();
-                        from_col1 = opts.pk.column;
-                        to_col1 = field.m2m_reverse_name();
-                        opts = orig_field.opts;
-                        table2 = opts.db_table;
-                        from_col2 = field.m2m_column_name();
-                        to_col2 = opts.pk.column;
-                        target = opts.pk;
+                        var table1 = field.m2m_db_table();
+                        var from_col1 = opts.pk.column;
+                        var to_col1 = field.m2m_reverse_name();
+                        var opts = orig_field.opts;
+                        var table2 = opts.db_table;
+                        var from_col2 = field.m2m_column_name();
+                        var to_col2 = opts.pk.column;
+                        var target = opts.pk;
                         orig_opts._join_cache[name] = [table1, from_col1, to_col1, table2, from_col2, to_col2, opts, target];
                     }
                     //join(connection, always_create, exclusions, promote, outer_if_first, nullable, reuse)
@@ -1822,14 +1822,14 @@ var BaseQuery = type('BaseQuery', [ object ], {
                 } else {
                     // One-to-many field (ForeignKey defined on the target model)
                     if (cached_data) {
-                        [table, from_col, to_col, opts, target] = cached_data;
+                        var [table, from_col, to_col, opts, target] = cached_data;
                     } else {
                         local_field = opts.get_field_by_name(field.rel.field_name)[0];
-                        opts = orig_field.opts;
-                        table = opts.db_table;
-                        from_col = local_field.column;
-                        to_col = field.column;
-                        target = opts.pk;
+                        var opts = orig_field.opts;
+                        var table = opts.db_table;
+                        var from_col = local_field.column;
+                        var to_col = field.column;
+                        var target = opts.pk;
                         orig_opts._join_cache[name] = [table, from_col, to_col, opts, target];
                     }
                     //join(connection, always_create, exclusions, promote, outer_if_first, nullable, reuse)

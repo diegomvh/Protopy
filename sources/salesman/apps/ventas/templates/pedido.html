@@ -23,7 +23,7 @@
 		<span class="blue">Razón Social: </span>{{pedido.cliente.razon_social}}<br/>
 		<span class="blue">Cuit: </span>{{pedido.cliente.cuit}}<br/>
 		<span class="blue">Dirección: </span>{{pedido.cliente.direccion}}, {{pedido.cliente.ciudad}}<br/>
-		<span class="blue">Email: </span>{% if pedido.cliente.email %}{{pedido.cliente.email}}{% else %}--{% endif %}
+		<span class="blue">Email: </span>{% if pedido.cliente.correo %}{{pedido.cliente.correo}}{% else %}--{% endif %}
 	</p>
 	{% endif %}
 	{% if pedido %}

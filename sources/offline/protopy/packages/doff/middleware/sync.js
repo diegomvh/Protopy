@@ -20,18 +20,22 @@ var SyncMiddleware = type('SyncMiddleware', [ object ], {
         return f(local_object, remote_object);
     },
 
+    // Posiblemente tomar el pk del server y ponerlo en la local
     resolve_unique: function(local_object, remote_object) {
         throw new NotImplementedError();
     },
 
+    // Posiblemente tomar la local y ponerla como sync
     reoslve_LocalDeletedRemoteModified: function(local_object, remote_object) {
         throw new NotImplementedError();
     },
 
+    // Selecciona una de las dos
     resolve_LocalModifiedRemoteModified: function(local_object, remote_object) {
         throw new NotImplementedError();
     },
 
+    
     reoslve_LocalModifiedRemoteDeleted: function(local_object, remote_object) {
         throw new NotImplementedError();
     },

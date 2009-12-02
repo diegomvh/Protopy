@@ -96,11 +96,10 @@ function ver_pedido(request, producto) {
 }
 
 function ver_pedidos(request) {
-	debugger;
 	if (!request.user.is_authenticated())
         throw new Http404();
     require('doff.views.generic.list_detail', 'object_list');
-    var queryset = Pedido.all();
+    var queryset = Pedido.objects.all();
     return object_list(request, { queryset: queryset });
 }
 

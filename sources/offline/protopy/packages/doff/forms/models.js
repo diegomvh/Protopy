@@ -221,7 +221,7 @@ var BaseModelForm = type('BaseModelForm', BaseForm, {
             // object's values for all the unique field.
 
             var lookup_kwargs = {}
-            for each (field_name in unique_check)
+            for each (var field_name in unique_check)
                 lookup_kwargs[field_name] = this.cleaned_data[field_name];
 
             var qs = this.instance.__class__._default_manager.filter(lookup_kwargs);
@@ -238,23 +238,23 @@ var BaseModelForm = type('BaseModelForm', BaseForm, {
 
                 // A unique field
                 if (len(unique_check) == 1) {
-                    field_name = unique_check[0];
-                    field_label = this.fields[field_name].label;
+                    var field_name = unique_check[0];
+                    var field_label = this.fields[field_name].label;
                     // Insert the error into the error dict, very sneaky
                     this._errors[field_name] = new ErrorList(["%(model_name)s with this %(field_label)s already exists.".subs({'model_name': model_name, 'field_label': field_label})]);
                 // unique_together
                 } else {
-                    field_labels = [this.fields[field_name].label for each (field_name in unique_check)];
+                    var field_labels = [this.fields[field_name].label for each (field_name in unique_check)];
                     field_labels = get_text_list(field_labels, 'and');
                     form_errors.push("%(model_name)s with this %(field_label)s already exists.".subs({'model_name': model_name, 'field_label': field_labels}));
                 }
                 // Mark these fields as needing to be removed from cleaned data
                 // later.
-                for each (field_name in unique_check)
+                for each (var field_name in unique_check)
                     bad_fields.add(field_name);
             }
         }
-        for each (field_name in bad_fields)
+        for each (var field_name in bad_fields)
             delete this.cleaned_data[field_name];
         if (bool(form_errors))
             // Raise the unique together errors since they are considered

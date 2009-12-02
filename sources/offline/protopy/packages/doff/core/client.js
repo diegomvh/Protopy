@@ -85,7 +85,6 @@ var DOMAdapter = type('DOMAdapter', [ object ], {
         this.history = new History();
         this.document = new Document();
         
-        var loading  = '<center><img style="margin-top: 350p	x;" src="lib/packages/doff/utils/resources/loading.gif"/></center>';
         this.document.update(loading);
         
         event.connect(this.history, 'onChange', this, '_process_from_history');

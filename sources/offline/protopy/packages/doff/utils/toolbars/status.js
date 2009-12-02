@@ -38,12 +38,11 @@ var uninstalled_template =
 
     </style>
     <div id="info-content">
-    <h2>%(PROJECT_NAME)s</h2>
     <p>%(PROJECT_DESCRIPTION)s</p>
     <h3>Motor: %(DATABASE_ENGINE)s</h3>
     <h3>Base de datos: %(DATABASE_NAME)s</h3>
     <h3>Store: %(PROJECT_NAME)s_store</h3>
-    <img src="%(PROJECT_NAME)s" width="100"/>
+    <img src="%(PROJECT_IMAGE)s" style="border: 0px;" width="150"/>
     </div>
     <div id="status-content">
     	<button class="doff-panel-button" id="status-button-enable">Enable offline access</button>

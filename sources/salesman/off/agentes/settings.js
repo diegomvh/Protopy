@@ -5,8 +5,11 @@
     DEBUG: true,
     TEMPLATE_DEBUG: this.DEBUG,
     
-    // Data for status tab
+    // Data for offline app
     PROJECT_NAME: 'Vendedor Viajante',
+    PROJECT_DESCRIPTION: 'Desconecte la aplicación para poder continuar levantando</br>pedidos sin estar conectado a la red de redes',
+    PROJECT_IMAGE: '/static/offline/protopy.png',
+    LOADING_TEMPLATE: '/static/offline/loading.html',
     
     //Database
     DATABASE_ENGINE: 'gears',

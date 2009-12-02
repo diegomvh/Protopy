@@ -85,11 +85,11 @@ var Aggregate = type('Aggregate', [ object ], {
             quote_func = function(x) {return x;};
 
         if (hasattr(this.col, 'as_sql'))
-            field_name = this.col.as_sql(quote_func);
+            var field_name = this.col.as_sql(quote_func);
         else if (isinstance(this.col, Array))
-            field_name = [quote_func(c) for each (c in this.col)].join('.');
+            var field_name = [quote_func(c) for each (c in this.col)].join('.');
         else
-            field_name = this.col;
+            var field_name = this.col;
 
         var params = {
             'function': this.sql_function,
