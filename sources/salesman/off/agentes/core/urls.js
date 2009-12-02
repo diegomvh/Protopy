@@ -72,21 +72,24 @@ var urlpatterns = patterns('doff.views.generic',
         
         // proveedor -> Listar
         ['^proveedores/$', 'list_detail.object_list',{
-            'queryset': Proveedor.objects.all()
+            'queryset': Proveedor.objects.all(),
+            'extra_context': {'titulo': 'Listado de Proveedores'}
         }],
         
         // proveedor -> Crear
         ['^proveedor/agregar/$', 'create_update.create_object', {
             'model': Proveedor,
             'template_name': 'forms.html',
-            'post_save_redirect': '/administrar/proveedores/'                                                                      
+            'post_save_redirect': '/administrar/proveedores/',
+            'extra_context': {'titulo': 'Agregar Proveedor'}
         }],
         
         // proveedor -> Eliminar
         ['^proveedor/(\\d{1,5})/eliminar/$', 'create_update.delete_object', {
             'model': Proveedor,
             'post_delete_redirect': '/administrar/proveedores/',
-            'template_name': 'confirm_delete.html'                                                                     
+            'template_name': 'confirm_delete.html',
+            'extra_context': {'titulo': 'Eliminar Proveedor'}
         }]
 );
 

@@ -10,7 +10,7 @@ function terminar_pedido(sp, user) {
     pedido.cliente = sp['cliente'];
     pedido.save();
     
-    for (var [id, item] in items(sp['items']))
+    for each (var [id, item] in items(sp['items']))
         pedido.agregar_producto(item['producto'], item['cantidad']);
 }
 

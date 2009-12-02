@@ -67,6 +67,9 @@ def modificar_pedido(request):
     
     sp = armar_pedido(request.session['pedido'], request.REQUEST, request.user)
     
+    print dir(request.POST)
+    print "-" * 40
+    print dir(request.REQUEST)
     if request.REQUEST.has_key('accion') and request.REQUEST['accion'] == 'Finalizar':
         terminar_pedido(sp, request.user)
         del request.session['pedido']

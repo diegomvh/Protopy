@@ -240,20 +240,26 @@ var ForeignRelatedObjectsDescriptor = type('ForeignRelatedObjectsDescriptor', [ 
                 return super(superclass, this).get_query_set().filter(this.core_filters);
             },
 
-            add: function(objs){
+            add: function() {
+            	var arg = new Arguments(arguments);
+            	var objs = arg.args; 
                 for each (var obj in objs) {
                     obj[rel_field.name] = instance;
                     obj.save();
                 }
             },
 
-            create: function(kwargs) {
+            create: function() {
+            	var arg = new Arguments(arguments);
+            	var kwargs = arg.kwargs;
                 var key = rel_field.name;
                 kwargs[key] = instance;
                 return super(superclass, this).create(kwargs);
             },
 
-            get_or_create: function(kwargs) {
+            get_or_create: function() {
+            	var arg = new Arguments(arguments);
+            	var kwargs = arg.kwargs;
                 var key = rel_field.name;
                 kwargs[key] = instance;
                 return super(superclass, this).get_or_create(kwargs);
@@ -264,8 +270,10 @@ var ForeignRelatedObjectsDescriptor = type('ForeignRelatedObjectsDescriptor', [ 
         RelatedManager.prototype.get_or_create.alters_data = true;
 
         if (rel_field.none) {
-            RelatedManager.prototype['remove'] = function remove(objs) {
-                var key = rel_field.rel.get_related_field().attname;
+            RelatedManager.prototype['remove'] = function remove() {
+            	var arg = new Arguments(arguments);
+            	var objs = arg.args;
+            	var key = rel_field.rel.get_related_field().attname;
                 var val = instance[key];
                 for each (var obj in objs) {
                 if (obj[rel_field.attname] == val){
@@ -342,7 +350,9 @@ function create_many_related_manager(superclass, through) {
             this._clear_items(this.target_col_name);
         },
 
-        create: function(kwargs) {
+        create: function() {
+        	var arg = new Arguments(arguments);
+        	var kwargs = arg.kwargs;
             // This check needs to be done here, since we can't later remove this
             // from the method lookup table, as we do with add and remove.
             if (through)
@@ -352,7 +362,9 @@ function create_many_related_manager(superclass, through) {
             return new_obj;
         },
 
-        get_or_create: function(kwargs) {
+        get_or_create: function() {
+        	var arg = new Arguments(arguments);
+        	var kwargs = arg.kwargs;
             var [obj, created] = super(superclass, this).get_or_create(kwargs);
             // We only need to add() if created because if we got an object back
             // from get() then the relationship already exists.

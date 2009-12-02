@@ -5,7 +5,7 @@ require('event');
 var Sync = type('Sync', Panel, {
     __init__: function() {
         super(Panel, this).__init__('sync', 'Sync Tool', 'Sincronizacion de datos');
-
+        this.icon = sys.module_url('doff.contrib.offline', 'resources/icons/sync.png');
     },
 
     get_template: function() {

@@ -85,8 +85,6 @@ var DOMAdapter = type('DOMAdapter', [ object ], {
         this.history = new History();
         this.document = new Document();
         
-        this.document.update(loading);
-        
         event.connect(this.history, 'onChange', this, '_process_from_history');
     },
 
@@ -158,11 +156,24 @@ var DOMAdapter = type('DOMAdapter', [ object ], {
 
     _process_from_forms: function(e) {
         event.stopEvent(e);
+        
         var form = e.currentTarget;
+        
+        //Form data
+        var data = form.serialize();
+        
+        //Submit name
+        var button = e.explicitOriginalTarget;
+        var key = button.name;
+        var value = button.get_value();
+        if (key && value != null && button.type == 'submit')
+        	data[key] = value;
+        	
         var url = this._build_url(form.getAttribute('action'));
         var request = this._build_request(url);
+        
         request.method = form.method;
-        request[request.method] = form.serialize();
+        request[request.method] = data;
         this._process_request(request);
     },
 

@@ -79,9 +79,6 @@ var Status = type('Status', [ Panel ], {
         this.icon = sys.module_url('doff.utils.toolbars', 'templates/icons/protopy.png');
 
         this.project.is_online ? this.go_online() : this.go_offline();
-
-        this.width = '40%';
-        this.height = '20em';
         
         this.hgon = event.subscribe('go_online', getattr(this, 'go_online'));
         this.hgoff = event.subscribe('go_offline', getattr(this, 'go_offline'));

@@ -2447,18 +2447,20 @@
         serialize: function() {
             var elements = array(this.elements);
             var data = elements.reduce(function(result, element) {
-            if (!element.disabled && element.name) {
-                var key = element.name; value = element.get_value();
-                if (value != null && element.type != 'file' && (element.type != 'submit')) {
-                if (key in result) {
-                    // a key is already present; construct an array of values
-                    if (type(result[key]) != Array) 
-                    result[key] = [result[key]];
-                    result[key].push(value);
-                } else result[key] = value;
-                }
-            }
-            return result;
+	            if (!element.disabled && element.name) {
+	                var key = element.name;
+	                var value = element.get_value();
+	                if (value != null && element.type != 'file' && (element.type != 'submit')) {
+		                if (key in result) {
+		                    // a key is already present; construct an array of values
+		                    if (type(result[key]) != Array) 
+		                    	result[key] = [result[key]];
+		                    result[key].push(value);
+		                } else 
+		                	result[key] = value;
+	                }
+	            }
+	            return result;
             }, {});
             return data;
         }

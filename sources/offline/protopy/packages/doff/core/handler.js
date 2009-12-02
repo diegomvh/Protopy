@@ -80,7 +80,6 @@ var LocalHandler = type('LocalHandler', [ object ], {
         }
 
         try {
-        	debugger;
             var [callback, callback_args, callback_kwargs] = this._resolver.resolve(request.path);
 
             // Apply view middleware
