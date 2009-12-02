@@ -105,11 +105,28 @@ aplicación en linea.
 .. construir aplicaciones.
 .. Ya vamos a explicar framework
 
-El objetivo principal del presente trabajo de tesis es aportar una extensión
-a un framework web que permita migrar las aplicaciones de manera simple,
-convergiendo en un único proceso de desarrollo.
+El objetivo principal se definió como:
+    * Extender un framework de aplicaciones web, OpenSource, existente de manera que una aplicación realizada sobre éste, pueda ser ejecutada en el cliente de manera desconectada con un mínimo de modificaciones. Para permitir que la aplicación pueda ejecutarse en el cliente, se implementará:
+          * Persistencia del modelo de datos en el cliente.
+          * Subconjunto de acciones disponibles en modo desconectado.
+          * Primitivas de sincronización entre la aplicación del cliente y la aplicación web que le dio origen.
 
-Dentro de los objetivos secundarios se encuentran profundizar el conocimiento sobre un framework de desarrollo de aplicaciones web y la interacción con su comunidad.
+ 
+
+Y como objetivos secundarios:
+
+    * Enriquecer nuestra experiencia relacionada con el desarrollo de software libre.
+    * Aportar y difundir una extensión a un framework de libre distribución.
+
+.. 
+  El objetivo principal del presente trabajo de tesis es aportar una extensión
+  a un framework web que permita migrar las aplicaciones de manera simple,
+  convergiendo en un único proceso de desarrollo.
+
+
+  Dentro de los objetivos secundarios se encuentran profundizar el conocimiento
+  sobre un framework de desarrollo de aplicaciones web y la interacción con su
+  comunidad.
 
 *******
 Alcance
@@ -123,3 +140,9 @@ Se seleccionó un framework web en función a características como un mapeador 
 Se creó una librería de JavaScript para facilitar la migración del código de la aplicación en línea a un navegador, utilizando una versión específica del lenguaje (1.7).
 
 Se desarrolló una extensión del framework aparejado a una implementación desconectada del framework. Sobre este se diseñó un mecanismo de sincronización simple pero extensible.
+
+
+.. note:: Pegar la nota de tesina, textual objetivos.
+
+.. note:: Poner breve descripción de los capítulos
+

@@ -159,11 +159,11 @@ en el ejemplo anterior */ruta/a/protopy/* es la ruta base.
 
 Otra forma de espesificar la ruta base es mediante la dupla ``base``, ``/valor/``
 en el atributo ``pyconfig`` de la etiqueta ``script``. Este atributo representa el
-punto de entrada a la configuracion de Protopy como se muestra a continuación::
+punto de entrada a la configuracion de Protopy como se muestra a continuación:
 
 .. code-block:: html
 
-    <script ... pyconfig="base:/otra/ruta/,debug:ture" src="/ruta/a/protopy/protopy.js">
+    <script pyconfig="base:/otra/ruta/,debug:ture" src="/ruta/a/protopy/protopy.js">
     </script>
 
 Recursos y Módulos
@@ -1108,18 +1108,53 @@ una petición es creando una instancia del objeto ``ajax.Request``.
     // Carga del módulo
     require('ajax');
     // Request
-    new ajax.Request('una/url', {method: 'GET'});
+    new ajax.Request('una/url', 
+                    {method: 'GET'} // Arreglo asociativo de argumentos
+                    );
 
-.. note:: RESCRIBIR
-.. note:: Hay que redactar un poco mejor lo del arreglo asociativo con sus parámetros opcionales. Está un poco confuso.
+El primer argumento de ``ajax.Request`` es la URL a la cual se realizará la solicitud.
+El resto de los parámetros son opcionales y se reciben como un arreglo asociativo,
+sus nombres son:
+    
+    * ``method`` indica el método HTTP, que puede ser ``"GET"``, ``"POST"``, ``"PUT"``, etc.
+      por defecto es ``"POST"``.
+    
+    * ``parameters`` puede ser bien una cadena o un arreglo asociativo de parámetros
+      para enviar en la petición HTTP.
+    
+    * ``onUninitialized``
 
-El primer argumento de ``Request`` es la URL a la cual se realizará la solicitud. 
-El segundo parámetro es un arreglo asociativo con parámetros opcionales, como
-en este caso el método HTTP ("GET", "POST", "PUT", etc). En caso de no especificarse, el método es ``POST``.
+        Recibe una función que se invoca inmediatamente después de la instancición.
+        La función recibe como argumento la la instacia de la petición en curso.
 
-Por defecto ``Request`` se comporta de manera asincrónica, y se debe agregar
-al arreglo asociativo de opciones la función que se invocará cuando la petición
-se haya completado, como se muestra en el siguiente ejemplo:
+    * ``onLoading``
+
+        Recibe una función que se invoca periodicamente mientras la petición se encuentra en curso.
+        La función recibe como argumento la la instacia de la petición en curso. 
+
+    * ``onLoaded``
+
+        Recibe una función que se invoca cuando el contenido de la respuesta ha sido cargado en su totalidad.
+        La función recibe como argumento la la instacia de la petición en curso. 
+
+    * ``onInteractive``
+
+        Recibe una función que se invoca periodicamente mientras la petición se encuentra en curso, pero no se
+        invoca si se trata del final de la respuesta.
+        La función recibe como argumento la la instacia de la petición en curso.
+
+    * ``onComplete``
+
+        Recibe una función que se invoca cuando se ha procesado la respuesta, trasformandola a un tipo de dato adecuado, 
+        en el caso de existir un ``content-type`` como JSON.
+        La función recibe como argumento la la instacia de la petición en curso.
+
+    * ``onException`` 
+
+        Recibe una función que se invoca cuando se produce algún tipo de error.
+        La función recibe como argumento la la instacia de la petición en curso.    
+ 
+Por ejemplo, utilizando los manejadores de eventos ``onSuccess`` y ``onFailure``:
 
 .. code-block:: javascript
 
@@ -1134,50 +1169,12 @@ se haya completado, como se muestra en el siguiente ejemplo:
             alert('Algo esta mal...'); } 
     }); 
 
-A cada función manejadora se la invoca con un objeto que representa la respuesta obtenida 
-y que está en relación con el evento capturado, como argumento.
 
-Otras funciones manejadoras de evento que se pueden definir son:
+La API de ``Request`` es idéntica a la de Prototype. Se puede revisar su 
+documentación para una eplicación más extensa sobre sus argumentos [PrototypeAJAXDocs09]_.
 
-    * ``onUninitialized``
-
-        Se invoca inmediatamente después de la instancición. 
-
-    * ``onLoading``
-
-        Se invoca periodicamente mientras la petición se encuentra en curso. 
-
-    * ``onLoaded``
-
-        Se invoca cuando el contenido de la respuesta ha sido cargado en su totalidad. 
-
-    * ``onInteractive``
-
-        Se invoca periodicamente mientras la petición se encuentra en curso, pero no se
-        invoca si se trata del final de la respuesta.
-
-    * ``onComplete``
-
-        Se invoca cuando se ha procesado la respuesta, trasformandola a un tipo de dato adecuado, 
-        en el caso de existir un ``content-type`` como JSON.
-
-    * ``onException`` 
-
-        Se invoca cuando se produce algún tipo de error.
-
-
-Todos estos dependen del estado del objeto ``XMLHttpRequest``.
-
-
-.. note:: Y el párrafo siguiente está más confuso. Me parece que deberían explicitar 
-   en forma bien clara cuáles son las opciones y para qué se usan
-
-De igual manera que el resto de las opciones, es posible agregar parámetros a la
-petición, estos pueden ser pasados como un objeto arreglo asociativo o 
-como una cadena clave-valor. Estos parámetros pasan a ser parte de la petición 
-HTTP. 
-
-
+.. [PrototypeAJAXDocs09] *Documentación sobre Prototype*
+    http://api.prototypejs.org/ajax_section.html
 Soporte para JSON
 =================
 

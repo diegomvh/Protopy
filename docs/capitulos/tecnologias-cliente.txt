@@ -674,11 +674,11 @@ de JavaScript comenzaron a brindar mecanismos seguros para JSON.
 .. [SimonWillson24Ways09] http://24ways.org/2005/dont-be-eval
 
 Actualmente algunos navegadores incorporan un intérprete nativo de JSON
-[MozillaMDCJSONNativo09]_ [IEBlogNativeJSON09]_, que ofrece
+[MozillaMDCJSONNative09]_ [IEBlogNativeJSON09]_, que ofrece
 incorpora chequeos de seguridad y un tiempo de respuesta corto. Algunas librerías
 de JavaScript sacan provecho de este intérprete nativo [DaveWardEncosia2009]_.
 
-.. [MozillaMDCNativeJSON09] https://developer.mozilla.org/en/Using_JSON_in_Firefox
+.. [MozillaMDCJSONNative09] https://developer.mozilla.org/en/Using_JSON_in_Firefox
 .. [IEBlogNativeJSON09] http://blogs.msdn.com/ie/archive/2008/09/10/native-json-in-ie8.aspx
 .. [DaveWardEncosia2009] Dave Ward, Improving jQuery’s JSON performance and security, Julio de 2009, http://encosia.com/2009/07/07/improving-jquery-json-performance-and-security/
 

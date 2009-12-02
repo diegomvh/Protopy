@@ -1,8 +1,10 @@
+.. _apendices-doff-modelos
+
 ======================================
 Referencia de la definición de modelos
 ======================================
 
-El :ref:`doff-modelos` se explica lo básico de la definición de modelos.
+.. El :ref:`doff-modelos` se explica lo básico de la definición de modelos.
 Existe un enorme rango de opciones disponibles que no se han cubierto en otro lado.
 Este apéndice explica toda opción disponible en la definición de modelos.
 

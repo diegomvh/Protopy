@@ -46,7 +46,7 @@ Para implementar la sincronización se abordaron los siguientes ítems:
  
 A continuación se realizará un análisis de los componentes intervinientes en la
 sincronización de datos como el transporte de datos, la codificación y el sistema
-de conunicación (RPC). Además se abordan algunos extras a la presente tesina
+de comunicación (RPC). Además se abordan algunos extras a la presente tesina
 como la resolución de conflictos.
 
 Transporte de Datos

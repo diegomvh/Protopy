@@ -326,10 +326,15 @@ Entre ellos, se destaca Scala, que hoy cuenta con frameworks con una concepción
 
 .. [*] Estos lenguajes interpretados utilizan compilación JIT a bytecode de la JVM.
 
-http://www.archive.org/details/SeanKellyRecoveryfromAddiction
-.. [SeanKellyRecFromAdict2009] *Recuperándose de la adicción*, Sean Kelly, Vídeo hospedado en *The Internet Archive*, último acceso Septiembre de 2009, http://www.archive.org/details/SeanKellyRecoveryfromAddiction
 
-.. [TolksdorfJVM2009] *Programming languages for the Java Virtual Machine JVM*, Robert Tolksdorf, último acceso Septiembre de 2009, http://www.is-research.de/info/vmlanguages/
+.. [SeanKellyRecFromAdict2009] *Recuperándose de la adicción*, 
+    Sean Kelly, Vídeo hospedado en *The Internet Archive*, 
+    último acceso Septiembre de 2009, 
+    http://www.archive.org/details/SeanKellyRecoveryfromAddiction
+
+.. [TolksdorfJVM2009] *Programming languages for the Java Virtual Machine JVM*, 
+    Robert Tolksdorf, 
+    último acceso Septiembre de 2009, http://www.is-research.de/info/vmlanguages/
 
 
 PHP
@@ -385,7 +390,7 @@ y MacRuby [MacRuby2009]_.
 .. [IronRuby2009] IronRuby es una implementación de Ruby sobre la plataforma **.Net** http://www.ironruby.net/
 .. [MacRuby2009] MacRuby es una implementación de Ruby sobre **Objective-C** para el sistema Mac OS X, http://www.macruby.org/
 
-La aplicación que popularizo al lenguaje es el framework `"Ruby on Rails" <www.rubyonrails.com>`_. Su
+La aplicación que popularizo al lenguaje es el framework Ruby on Rails [*]_. Su
 versión estable oficial fue liberada en el año 2005 y represento un cambio radical al enfoque complejo de
 *J2EE* [RailsQuotes2009]_.
 
@@ -394,6 +399,7 @@ en el idioma japonés (aunque la situación se ha venido revirtiendo últimament
 la velocidad del intérprete oficial es bastante baja y varía según las plataformas (cuando se la compara con otros
 lenguajes dinámicos similares como Python).
 
+.. [*] http://www.rubyonrails.com
 
 .. _lenguaje-python:
 
@@ -465,25 +471,16 @@ aplicación WSGI.
 .. _servidor-orm:
 
 
-Los motivos por los cuales se seleccionó [*]_ el lenguaje Python para el desarrollo de
-la aplicación, son los que a continuación se enumeran:
-
-	* Popularidad [PythonPyPi2009]_
-		
-	* Performance adecuada en función de las lineas de código escritas [DhananjayNene2009]_
-		- Si bien Perl es más veloz para tareas de tratamiento de texto, su sintaxis es compleja
-	
-	* Filosofía de simplicidad
-		- Sintaxis clara
-		- Zen de Python [PythonOrgZen2009]_
+Los motivos por los cuales se seleccionó el lenguaje Python para el desarrollo de
+la aplicación, fueron su popularidad  [PythonPyPi2009]_, un desempeño adecuado
+en realción a la cantidad de líneas de código escritas [DhananjayNene2009]_ y
+su filosofía de simplicidad  [PythonOrgZen2009]_.
 	
 .. [DhananjayNene2009] *Performance Comparison – C++ / Java / Python / Ruby/ Jython / JRuby / Groovy*, blog de Dhananjay Nene, último acceso, septiembre de 2009, http://blog.dhananjaynene.com/2008/07/performance-comparison-c-java-python-ruby-jython-jruby-groovy/
 
-En el :ref:`apéndice <apendices-python>` se encuentra una referecia detallada del lenguaje.
-
 .. [PythonOrgZen2009] *El zen de Python*, último acceso Septiembre de 2009, http://www.python.org/dev/peps/pep-0020/
 
-.. [*] Por sin no les quedaba duda del fanatismo del defo, by **gisE**!!!
+
 
 ***************
 Frameworks Web
@@ -835,7 +832,7 @@ Módulo settings
 El modulo settings es código fuente y configura globalmente el proyecto.
 Define las aplicaciones instaladas (*INSTALLED_APPS*),
 la base de datos que utilizarán (``DATABASE_*``), el módulo de 
-:ref:`urls inicial <_django-proyecto-urls>` (``ROOT_URLCONF``),
+URLs inicial (``ROOT_URLCONF``),
 la ruta en la cual se encuentran los medios estáticos y
 la URL en donde serán publicados [*]_ (``MEDIA_URL``, ``MEDIA_ROOT``). Otras configuraciones son: idioma, 
 zona horaria, clases de middleware [*]_, ruta a los templates, etc. 
@@ -1276,8 +1273,9 @@ Los modelos en Django poseen un solo campo clave. Si ningún campo es definido c
 clave, con el argumento ``primary_key = True``, se agrega de manera automática un
 campo ``id`` de tipo entero auto incremental [DjangoDocsModelsKey2009]_.
 
-.. [DjangoDocsModelsKey2009] *Definición de claves foráneas*, Documentación de Django 1.0, último acceso
-                             Septiembre 2009, http://docs.djangoproject.com/en/dev/ref/models/instances/#the-pk-property
+.. [DjangoDocsModelsKey2009] *Definición de claves foráneas*, 
+    Documentación de Django 1.0, último acceso
+    Septiembre 2009, http://docs.djangoproject.com/en/dev/ref/models/instances/#the-pk-property
 
 El atributo ``pk`` es un alias del campo ``id`` o del campo que se definió
 como clave primaria.
@@ -1486,19 +1484,22 @@ El ciclo de trabajo normal para la entrada de datos es:
 
 	El usuario
 	
-		1. Carga una página en la cual existe un formulario.
-		2. Completa los campos (pueden existir campos opcionales).
-		3. Envía el formulario, utilizando típicamente un botón del navegador,
-	       el cual se encarga de codificar los datos y enviarlos a la URL indicada en el atributo
-	       ``action`` del tag de definición del formulario.
+        1. Carga una página en la cual existe un formulario.
+		
+        2. Completa los campos (pueden existir campos opcionales).
+		
+        3. Envía el formulario, utilizando típicamente un botón del navegador,
+           el cual se encarga de codificar los datos y enviarlos a la URL indicada en el atributo
+           ``action`` del tag de definición del formulario.
+	       
 	   
-	El servidor
+    El servidor
 	
-		Recibe los datos y los valida. Si los datos son correctos, 
-		generalmente envía una respuesta ``HTTP 300`` indicando que la carga ha sido exitosa.
-		Si la validación es incorrecta devuelve al usuario 
-		el formulario con los datos que hayan sido válidos, y se muestran los mensajes 
-		pertinentes de los errores que hayan ocurrido, volviendo al paso 2 del usuario.
+        Recibe los datos y los valida. Si los datos son correctos, 
+        generalmente envía una respuesta ``HTTP 300`` indicando que la carga ha sido exitosa.
+        Si la validación es incorrecta devuelve al usuario 
+        el formulario con los datos que hayan sido válidos, y se muestran los mensajes 
+        pertinentes de los errores que hayan ocurrido, volviendo al paso 2 del usuario.
 	
 La validación de los formularios puede ser una tarea compleja. Django provee 
 un mecanismo para generar formularios en el módulo ``django.forms`` alivia la tarea.
