@@ -8,7 +8,6 @@ Sistemas Web Desconectados
 ==========================
 
 .. toctree::
-    :maxdepth: 4
    
     capitulos/introduccion
     capitulos/tecnologias-servidor
@@ -21,11 +20,8 @@ Sistemas Web Desconectados
     capitulos/demo
     capitulos/conclusiones
     glosario
-    
+     
 
-.. Este último es de referencia 
-    
-    
 .. highlight:: python
    :linenothreshold: 5
 

@@ -4,6 +4,8 @@ File handling
 import os
 import re
 
+
+
 def abswalk_with_simlinks(path):
     '''
     Python <2.6 version walk(followlinks = True)
@@ -19,17 +21,42 @@ def abswalk_with_simlinks(path):
                 for f in abswalk_with_simlinks( full_dir_path ):
                     yield f
 
+# This should be adapted for non Unix OSs
+ishidden = lambda f: f.startswith('.')
+
+
+def show(f):
+    def wrapped(*largs, **kwargs):
+        print f.func_name, "<-", largs or '', kwargs or ''
+        
+        ret = f(*largs, **kwargs)
+        print " =>", ret
+        return ret
+    return wrapped
+
+@show
+def valid_file_callback(name):
+    # Is it a hidden file?
+    name, dir_ = os.path.split(name)
+    if ishidden(name):
+        return False
+    # Any of those dirs is hidden??
+    if any(map(ishidden, dir_.split(os.path.sep))):
+        return False
+    return True
+
 def excluding_abswalk_with_simlinks(path, exclude = None):
     '''
     Returns an iterator on the path base taking into account a list of 
     @param path: Base path
     @param exclude: May be a list of strings, regular expressions or functions
     '''
+    # TODO: Excludes should be treated more transparently
     if type(exclude) is not list:
         exclude = [exclude, ]
-        
+    
     for p in abswalk_with_simlinks(path):
-        #TODO: Optimizar esto, es una asco
+        
         for e in exclude:
             if issubclass(type(e), basestring):
                 if e == p:
@@ -39,7 +66,8 @@ def excluding_abswalk_with_simlinks(path, exclude = None):
             # Try to identify a Regular Expression
             elif hasattr(e, 'search') and callable(getattr(e, 'search')) and e.search(p):
                 continue
-        yield p
+        if valid_file_callback(p):
+            yield p
 
 def relpath(path, start=os.curdir):
     """Return a relative version of a path"""
@@ -62,12 +90,15 @@ INVALID_TEMPLATE_SUFFIXES = re.compile(r'(:?.*\.svn.*)?(?:~|#)$')
 #valid_templates = lambda name: not INVALID_TEMPLATE_SUFFIXES.search( name )
 SCM_FOLDER_PATTERNS = ('.hg', '.git', '.svn', )
 
+
+
 def valid_templates(name):
     if INVALID_TEMPLATE_SUFFIXES.search(name):
         return False
     if any(map(lambda n: name.count(n) > 0, SCM_FOLDER_PATTERNS)):
         return False
-    return True
+    # Check it the file should be added
+    return valid_file_callback(name)
 
 def _retrieve_templates_from_path(path, template_bases = None, strip_first_slash = True):
     '''
