@@ -59,7 +59,7 @@ class OfflineBaseCommand(BaseCommand):
         from django.conf import settings
         try:
             self._root_urlconf_mod = __import__(settings.ROOT_URLCONF)
-        except Exception, e:
+        except Exception, _e:
             raise CommandError("Error loading ROOT_URLCONF")
     
     def fill_templates(self, path_from, path_to, template_context, **options):
@@ -113,9 +113,38 @@ class OfflineBaseCommand(BaseCommand):
         name_fullpath = [ (name, join(remote_dir, name)) for name in listdir(remote_dir) ]
         return dict(name_fullpath)
         
-class OfflineLabelCommand(LabelCommand, OfflineBaseCommand):
-    def __init__(self, *largs, **kwargs):
-        OfflineBaseCommand.__init__(self, *largs, **kwargs)
-        
+class OfflineSiteCommand(OfflineBaseCommand):
+    
+    
+    def handle(self, *names, **options):
+        if not names:
+            raise CommandError('Enter at least one remote site name')
+
+        output = []
+        for name in names:
+            site = self.get_remotesite(name)
+            cmd_output = self.handle_remotesite(site, **options)
+            if cmd_output:
+                output.append(cmd_output)
+        return '\n'.join(output)
+
+    def get_remotesite(self, name):
+        '''
+        Gets a Remote Site and invokes handle_remotesite
+        '''
+        from django.conf import settings
+        from offline.sites import REMOTE_SITES
+        site = REMOTE_SITES.get(name, False)
+        if not site:
+            site_names = ','.join(REMOTE_SITES.keys())
+            raise CommandError("""
+                Remote site '%(remotesite_name)s' is not registered. Available sites: %(site_names)s
+                If your remote site already exists, check if it's installed in you settings.ROOT_URLCONF
+            """ % locals())
+        return site
+    
+    def handle_remotesite(self, site, **opts):
+        raise NotImplementedError()
+    
     
     
