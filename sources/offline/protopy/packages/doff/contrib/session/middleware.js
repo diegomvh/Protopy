@@ -1,6 +1,5 @@
 require('doff.conf.settings', 'settings');
 require('doff.contrib.session.models', 'Session');
-require('doff.contrib.extradata.models', 'ExtraData');
 
 var session_cache = null;
 
@@ -8,16 +7,11 @@ var SessionMiddleware = type('SessionMiddleware', [ object ], {
     process_request: function(request) {
         var session_key = request.get_cookie(settings.SESSION_COOKIE_NAME);
         if (session_cache && session_cache.session_key == session_key) {
-        	// Esta en cache
         	request.session = session_cache;
         } else {
-        	try {
-	        	// Esta en la base de datos
-	        	var obj = ExtraData.objects.filter({'name': 'Session', 'module': 'doff.contrib.session.models', 'key': session_key});
-	        	session_cache = new Session(obj.data);
-        	} catch (e) { 
-        		session_cache = new Session();
-        	}
+        	session_cache = Session.get({'session_key': session_key });
+        	if (session_cache == null)
+        		session_cache = new Session(session_key);
         }
         request.session = session_cache;
 	},
@@ -33,6 +27,7 @@ var SessionMiddleware = type('SessionMiddleware', [ object ], {
                 var expires_time = new Date(new Date().getTime() + max_age);
                 // Save the session data and refresh the client cookie.
             }
+            request.session.save();
             response.set_cookie(settings.SESSION_COOKIE_NAME,
                 	request.session.session_key, max_age,
                     expires_time,

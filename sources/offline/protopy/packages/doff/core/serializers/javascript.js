@@ -69,7 +69,7 @@ function Deserializer(object_list) {
     models.get_apps();
     for each (var d in object_list) {
         // Look up the model and starting build a dict of data for it.
-        var Model = model.get_model_by_identifier(d["model"]);
+        var Model = models.get_model_by_identifier(d["model"]);
         if (Model == null)
             throw new sbase.DeserializationError("Invalid model identifier: '%s'".subs(model_identifier));
         var data = {};

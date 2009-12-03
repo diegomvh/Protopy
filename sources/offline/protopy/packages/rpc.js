@@ -104,8 +104,6 @@ rpc.ServiceProxy = type('ServiceProxy', [ object ], {
         this.__authPassword = null;
         this.__callbackParamName = 'JSON-response-callback';
         this.__protocol = 'JSON-RPC';
-        json.date.encoding = 'ISO8601'; // ("@timestamp@" || "@ticks@") || "classHinting" || "ASP.NET"
-        json.date.decode = true; //JSON only
         
         //Get the provided options
         if(options instanceof Object){
@@ -126,8 +124,6 @@ rpc.ServiceProxy = type('ServiceProxy', [ object ], {
                 this.__protocol = 'XML-RPC';
             if(options.dateEncoding != undefined)
                 this.__dateEncoding = options.dateEncoding;
-            if(options.decode != undefined)
-                json.date.decode = !!options.decode;
             providedMethodList = options.methods;
         }
         if(this.__isCrossSite){

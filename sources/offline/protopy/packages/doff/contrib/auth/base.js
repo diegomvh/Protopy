@@ -1,29 +1,15 @@
 require('rpc', 'ServiceProxy');
-require('doff.contrib.extradata.models', 'ExtraData');
 require('doff.core.project', 'get_project');
 require('event');
 
-var SESSION_KEY = '_auth_user_id';
-var _proxy = null;
+var SESSION_KEY = '_auth_username';
 
 function load_user(username) {
-	var data = null;
 	require('doff.contrib.auth.models', 'User', 'AnonymousUser');
-	try {
-		if (_proxy == null)
-			_proxy = new ServiceProxy(get_project().offline_support + '/sync', { asynchronous: false });
-		data = _proxy.user();
-	} catch (e) {
-		try {
-			// Busco localmente
-			var obj = ExtraData.objects.get({'name': 'User', 'module': 'doff.contrib.auth.models', 'key': username});
-			data = obj.data;
-		} catch (e if isinstance(e, ExtraData.DoesNotExist)) {}
-	}
-	
-	if (!data || data['class'] == 'AnonymousUser')
+	var user = User.get({'username': username});
+	if (user == null)
 		return new AnonymousUser();
-	return new User(data);
+	return user;
 }
 
 function authenticate(username, password) {
@@ -57,25 +43,23 @@ function logout(request) {
 }
 
 function get_user(request) {
-    var user_name = request.session.get(SESSION_KEY);
-    return load_user(user_name);
-}
-
-function ensure_capture_user(callback) {
-	var proxy = new ServiceProxy(get_project().offline_support + '/sync', { asynchronous: false });
-	var data = proxy.user();
-	if (data && data['class'] != 'AnonymousUser') {
-		var ed = new ExtraData();
-		var user = new User(data);
-		ed.data = user;
-		ed.key = user.username;
-		print(ed);
-		ed.save();
+	require('doff.contrib.auth.models', 'User', 'AnonymousUser');
+	var username = request.session.get(SESSION_KEY, null);
+	if (username == null) {
+		try {
+			var proxy = new ServiceProxy(get_project().offline_support + '/sync', { asynchronous: false });
+			var data = proxy.user();
+			if (data['class'] == 'AnonymousUser')
+				return new AnonymousUser();
+			var user = new User(data);
+			user.save();
+			request.session.set(SESSION_KEY, user.username);
+		} catch (e) { 
+			return new AnonymousUser(); 
+		}
 	}
+	return load_user(username);
 }
-
-//This module is required by middleware, the event is subscribed
-var hcu = event.subscribe('post_install', ensure_capture_user);
 
 publish({
 	get_user: get_user,

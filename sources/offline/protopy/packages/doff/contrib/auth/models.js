@@ -1,3 +1,4 @@
+require('doff.contrib.extradata.models', 'ExtraData');
 require('json', 'stringify');
 
 function check_password(raw_password, enc_password) {
@@ -13,6 +14,16 @@ function check_password(raw_password, enc_password) {
 }
 
 var User = type('User', [ object ], {
+	get: function() {
+		var kwargs = new Arguments(arguments).kwargs;
+		try {
+			var obj = ExtraData.objects.get({'name': 'User', 'module': 'doff.contrib.auth.models', 'key': kwargs['username']});
+			return new User(obj.data);
+		} catch (e) {
+			
+		}
+	}
+}, {
     
 	__init__: function(data) {
 		extend(this, data);
@@ -24,6 +35,13 @@ var User = type('User', [ object ], {
 		for each (var key in keys)
 			data[key] = this[key];
 		return stringify(data);
+	},
+	
+	save: function() {
+		var ed = new ExtraData();
+		ed.data = this;
+		ed.key = this.username;
+		ed.save();
 	},
 	
     is_anonymous: function(){ return false;},

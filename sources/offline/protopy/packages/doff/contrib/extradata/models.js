@@ -36,8 +36,8 @@ var JsonField = type('JsonField', [ TextField ], {
         super(TextField, this).contribute_to_class(cls, name);
         var jd = new JsonFieldDescriptor(this);
         var attr = this.name;
-        cls.prototype.__defineGetter__(attr, function(){ return jd.__get__(this, this.constructor); });
-        cls.prototype.__defineSetter__(attr, function(value){ return jd.__set__(this, this.constructor, value); });
+        cls.prototype.__defineGetter__(attr, function() { return jd.__get__(this, this.constructor); });
+        cls.prototype.__defineSetter__(attr, function(value) { return jd.__set__(this, this.constructor, value); });
     },
     
     get_attname: function() {
@@ -50,7 +50,7 @@ var JsonField = type('JsonField', [ TextField ], {
 });
 
 var ExtraData = type('ExtraData', [ models.Model ], {
-	key: new models.CharField({ 'max_length': 100 }),
+	key: new models.CharField({ 'max_length': 100, 'primary_key': true}),
     module: new models.CharField({ 'max_length': 100, 'null': true, 'blank': true}),
     name: new models.CharField({ 'max_length': 100 }),
     data: new JsonField(),
