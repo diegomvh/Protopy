@@ -52,9 +52,14 @@ function get_user(request) {
 			if (data['class'] == 'AnonymousUser')
 				return new AnonymousUser();
 			var user = new User(data);
-			user.save();
-			request.session.set(SESSION_KEY, user.username);
-		} catch (e) { 
+			try {
+				user.save();
+				request.session.set(SESSION_KEY, user.username);
+			} catch (e) {
+				// No tengo base de datos
+			}
+			return user;
+		} catch (e) {
 			return new AnonymousUser(); 
 		}
 	}
