@@ -5,7 +5,7 @@
 from django.core.management.base import *
 from offline.management.commands import OfflineSiteCommand
 from offline.models import GearsManifest
-
+from django.db.models import ObjectDoesNotExist
 #TODO: Update if changed based on file modification date
 class Command(OfflineSiteCommand):
     help = \
@@ -23,7 +23,11 @@ class Command(OfflineSiteCommand):
         )
     
     def handle_remotesite(self, site, **opts):
-        manifest = GearsManifest.objects.get(remotesite_name = site.name)
+        try:
+            manifest = GearsManifest.objects.get(remotesite_name = site.name)
+        except ObjectDoesNotExist:
+            return "No manifest created. Try manifest_update"
+        
         count = manifest.entries_count()
         if opts.get('count'):
             return "%d" % count
