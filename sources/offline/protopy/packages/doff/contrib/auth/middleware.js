@@ -1,4 +1,5 @@
 require('doff.contrib.auth.base', 'get_user');
+require('event');
 
 var _cached_user = null;
 

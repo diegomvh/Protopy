@@ -143,7 +143,6 @@ var RemoteManagerDescriptor = type('RemoteManagerDescriptor', [ object ], {
 });
 
 // SI este archivo se cargo es porque esta incluido como app, porque del lado del server estan exportando modelos, hago los links para todo el despelote */
-
 function ensure_default_remote_manager(cls) {
     if (!cls._meta['abstract'] && issubclass(cls, RemoteModel)) {
         try {

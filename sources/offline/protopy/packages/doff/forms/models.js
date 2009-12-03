@@ -943,7 +943,6 @@ var ModelChoiceField = type('ModelChoiceField', ChoiceField, {
         if (include(EMPTY_VALUES, value))
             return null;
         try {
-        	debugger;
         	var data = {};
             var key = this.to_field_name || 'pk';
             data[key] = value;

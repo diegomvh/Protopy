@@ -138,7 +138,7 @@
             var code = '(function(){ ' + request.responseText + '});';
             mod = ModuleManager.create(name, file, code);
         }
-        event.publish('onModuleLoaded', [this, mod]);
+        event.publish('module_loaded', [this, mod]);
         switch (arguments.length) {
             case 1:
                     // Returns module
@@ -1482,10 +1482,8 @@
     }
 
     function isinstance(obj, types) {
-        if (isundefined(obj) || isundefined(types) || types == null) {
-            debugger;
+        if (isundefined(obj) || isundefined(types) || types == null)
         	throw new TypeError('isinstance() arg 2 must be a class, type, or array of classes and types');
-        }
         if (type(types) != Array) 
             types = [types];
         var others = [];

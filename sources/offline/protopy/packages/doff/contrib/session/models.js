@@ -1,5 +1,6 @@
 require('doff.conf.settings', 'settings');
 require('md5', 'md5');
+require('json', 'stringify');
 
 var MAX_SESSION_KEY = 73786976294838206464;			// 8 << 63 :P copion!!!
 

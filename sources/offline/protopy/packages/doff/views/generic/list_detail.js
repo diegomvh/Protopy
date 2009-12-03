@@ -5,7 +5,6 @@ require('doff.core.paginator', 'Paginator', 'InvalidPage');
 require('doff.core.exceptions', 'ObjectDoesNotExist');
 
 function object_list(request) {
-	debugger;
     /*
     Generic list of objects.
 
@@ -106,7 +105,6 @@ function object_list(request) {
 }
 
 function object_detail(request) {
-	debugger;
     /*
     Generic detail of an object.
 

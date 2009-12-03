@@ -1,10 +1,5 @@
 <div style="text-align:center; font-family: monospace;">
-    <p><img style="margin-top: 5%;" src="splash.png"/></p>
-    <p><img src="loading.gif"/></p>
-    <p id="protopy-message">Protopy is in the house</p>
+    <p><img style="margin-top: 5%;" src="/static/offline/splash.png"/></p>
+    <p><img src="/static/offline/loading.gif"/></p>
+    <p id="messages">Protopy is in the house</p>
 </div>
-<script type="text/javascript">
-    require('event');
-    var message = $('protopy-message');
-    event.subscribe('module_load', function() { message.update();});
-</script>

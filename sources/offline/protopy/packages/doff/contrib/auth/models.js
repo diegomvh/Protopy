@@ -1,3 +1,5 @@
+require('json', 'stringify');
+
 function check_password(raw_password, enc_password) {
     var [algo, salt, hsh] = enc_password.split('$');
     if (algo == 'md5') {
@@ -16,6 +18,14 @@ var User = type('User', [ object ], {
 		extend(this, data);
 	},
 	
+	__json__: function() {
+		var keys = ["username", "first_name", "last_name", "is_active", "email", "is_superuser", "is_staff", "password" ];
+		var data = {};
+		for each (var key in keys)
+			data[key] = this[key];
+		return stringify(data);
+	},
+	
     is_anonymous: function(){ return false;},
     is_authenticated: function(){ return true;},
     get_full_name: function() { 
@@ -32,9 +42,6 @@ var User = type('User', [ object ], {
 var AnonymousUser = type('AnonymousUser', [ object ], {
     username: '',
     
-    __init__: function(data) {
-		extend(this, data);
-	},
     is_anonymous: function(){ return true;},
     is_authenticated: function(){ return false;}
 });

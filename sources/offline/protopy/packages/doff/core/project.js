@@ -14,7 +14,24 @@ var Project = type('Project', object, {
         sys.window = new DOMAdapter();
         sys.document = sys.window.document;
         sys.history = sys.window.history;
-
+        
+        if (this.settings['LOADING_SPLASH']) {
+        	// Load splash template
+        	var template = null;
+        	new Request(this.settings['LOADING_SPLASH'], {
+                method: 'GET',
+                asynchronous : false,
+                onSuccess: function onSuccess(transport) {
+                    template = (transport.responseText);
+                }});
+        	if (template) {
+        		sys.document.update(template);
+        		var messages = $('messages');
+        		if (messages)
+        			var hm = event.subscribe('module_loaded', function(who, module) { messages.update('<strong>' + module.__name__ + '</strong>');});
+        	}
+        }
+        
         // Inicio del handler para las url
         require('doff.core.handler', 'LocalHandler');
         this.handler = new LocalHandler();
@@ -32,6 +49,8 @@ var Project = type('Project', object, {
         this.load_toolbar();
         this.start_network_thread();
         sys.window.location = '/';
+        if (!isundefined(hm))
+        	event.unsubscribe(hm);
     },
 
     __init__: function(package, offline_support) {
@@ -50,7 +69,7 @@ var Project = type('Project', object, {
         // Estoy conectado?
         this.network_check();
     },
-    
+        
     load_toolbar: function() {
         require('doff.core.exceptions');
         require('doff.conf.settings', 'settings');
@@ -134,8 +153,8 @@ var Project = type('Project', object, {
 
     get settings() {
     	if (isundefined(this['_settings'])) {
-    			require('doff.conf.settings', 'settings');
-    			this._settings = settings;
+    		require('doff.conf.settings', 'settings');
+    		this._settings = settings;
     	}
     	return this._settings;
     },

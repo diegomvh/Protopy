@@ -5,7 +5,6 @@ require('agentes.core.models', 'Producto', 'Cliente');
 require('doff.template.context', 'RequestContext');
 
 function terminar_pedido(sp, user) {
-	debugger;
 	var pedido = new Pedido();
     pedido.cliente = sp['cliente'];
     pedido.save();
@@ -15,7 +14,6 @@ function terminar_pedido(sp, user) {
 }
 
 function armar_pedido(pedido, data, user) {
-	debugger;
 	if (user.is_staff && data['cliente']) {
         var cliente = get_object_or_404(Cliente, { cuit: Number(data['cliente']) });
         pedido['cliente'] = cliente;
@@ -45,7 +43,6 @@ function armar_pedido(pedido, data, user) {
 }
 
 function agregar_producto(request, producto) {
-	debugger;
     if (!request.session.has_key('pedido')) {
         var cliente = null;
         if (request.user.is_authenticated() && !request.user.is_staff)
@@ -68,7 +65,6 @@ function agregar_producto(request, producto) {
 }
 
 function modificar_pedido(request) {
-	debugger;
 	if (request.method != 'POST' || ! request.session.has_key('pedido'))
         return ver_pedido(request);
     
@@ -85,7 +81,6 @@ function modificar_pedido(request) {
 }
 
 function ver_pedido(request, producto) {
-	debugger;
     if (!request.session.has_key('pedido') || len(request.session.get('pedido')['items']) == 0)
         return render_to_response('pedido.html', {}, new RequestContext(request));
     var pedido = request.session.get('pedido');

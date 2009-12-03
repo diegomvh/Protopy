@@ -57,8 +57,7 @@ var ExtraData = type('ExtraData', [ models.Model ], {
     
     Meta: {
 		db_table: 'doff_extra_data',
-		ordering: ['name'],
-		//unique_together: [[ 'name', 'app_label', 'model' ]]
+		ordering: ['name']
     }
 });
 

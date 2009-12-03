@@ -65,7 +65,6 @@ function lookup_object(model, object_id, slug, slug_field) {
 }
 
 function create_object(request) {
-	debugger;
     var arg = new Arguments(arguments, {
         model: null, 
         template_name: null,
@@ -107,7 +106,6 @@ function create_object(request) {
 }
 
 function update_object(request, object_id) {
-	debugger;
     var arg = new Arguments(arguments, {
         model:null,
         //object_id:null,
@@ -157,7 +155,6 @@ function update_object(request, object_id) {
 }
 
 function delete_object(request, object_id) {
-	debugger;
     var arg = new Arguments(arguments, {
         //object_id : null,
     	model: null,
