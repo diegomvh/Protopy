@@ -81,6 +81,7 @@ var SyncHandler = type('SyncHandler', [ object ], {
         }
         if (first) return;
         
+	    debugger;
         var go_ahead = true;
         var collected = [];
         while (go_ahead) {                      // Mientras que continuo

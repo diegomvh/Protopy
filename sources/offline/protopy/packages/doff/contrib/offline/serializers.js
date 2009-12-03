@@ -102,13 +102,14 @@ var RemoteSerializer = type('RemoteSerializer', [ Serializer ], {
 });
 
 function build_for_model(Model, d) {
+	var client_object = null;
 	var data = {	'server_pk': d["server_pk"],
             		'active': d["active"],
             		'status': "s"
     			};
 	try {
 	    // Search if exist instance
-	    var client_object = Model._default_manager.get({'server_pk': data["server_pk"]});
+	    client_object = Model._default_manager.get({'server_pk': data["server_pk"]});
 	    // Si estoy aca es porque la instancia existe, levanto el pk y lo marco
 	    data[Model._meta.pk.attname] = client_object[Model._meta.pk.attname];
 	} catch (e if isinstance(e, Model.DoesNotExist)) {}
@@ -152,7 +153,7 @@ function build_for_model(Model, d) {
 	        data[field.name] = field.to_javascript(field_value);
 	    }
 	}
-	return [ data, m2m_data ];
+	return [ data, m2m_data, client_object ];
 }
 
 /* Quiza un nombre mejor para esto, porque no solo deserializa sino que tambien 
@@ -170,20 +171,24 @@ function RemoteDeserializer(object_list) {
             throw new sbase.DeserializationError("Invalid model identifier: '%s'".subs(model_identifier));
         
         try {
-        	var [ data, m2m_data ] = build_for_model(Model, d);
+        	var [ data, m2m_data, client_object ] = build_for_model(Model, d);
         } catch (e if isinstance(e, ServerPkDoesNotExist)) {
         	object_list.push(d);
         	continue;
         }
         		
-        //TODO: Que pasa cuando no esta activo y no tengo instancia... eso es un error
         if (data['active']) {
-            // Puede ser un objeto nuevo o un update
-            yield new DeserializedObject(new Model(data), m2m_data);
-        } else {
-            // Es un inactive del objeto que ya existe
-            client_object.active = data['active'];
-            client_object.status = data['status'];
+            if (client_object != null) {
+            	// Es un update
+            	yield new DeserializedObject(new Model(data), m2m_data);
+            } else {
+            	// Es un create
+            	yield new DeserializedObject(new Model(data), m2m_data);
+            }
+        } else if (client_object != null) {
+            // Hay que poner en inactiva la instancia
+        	client_object.active = data['active'];
+        	client_object.status = data['status'];
             yield new DeserializedObject(client_object, m2m_data);
         }
     }

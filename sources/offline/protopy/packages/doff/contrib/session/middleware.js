@@ -11,7 +11,7 @@ var SessionMiddleware = type('SessionMiddleware', [ object ], {
         } else {
         	session_cache = Session.get({'session_key': session_key });
         	if (session_cache == null)
-        		session_cache = new Session(session_key);
+        		session_cache = new Session();
         }
         request.session = session_cache;
 	},

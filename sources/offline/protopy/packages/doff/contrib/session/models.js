@@ -159,7 +159,7 @@ var Session = type('Session', [ Dict ], {
     },
     setdefault: function(key, value){
     	this.modified = true;
-    	return super(Dict, this).set(key, value);
+    	return super(Dict, this).setdefault(key, value);
     },
     get: function(key, otherwise) {
     	this.accessed = true;
@@ -167,7 +167,7 @@ var Session = type('Session', [ Dict ], {
     },
     unset: function(key) {
     	this.modified = true;
-    	return super(Dict, this).get(key);
+    	return super(Dict, this).unset(key);
     },
     keys: function() {
     	this.accessed = true;

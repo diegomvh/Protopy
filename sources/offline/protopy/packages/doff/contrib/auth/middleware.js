@@ -1,13 +1,10 @@
-require('doff.contrib.auth.base', 'get_user');
-require('event');
-
-var _cached_user = null;
-
 var LazyUser = type('LazyUser', [ object ], {
     __get__: function(request, obj_type) {
-        if (_cached_user == null) 
-            _cached_user = get_user(request);
-        return _cached_user;
+        if (request._cached_user == null) { 
+        	require('doff.contrib.auth.base', 'get_user');
+        	request._cached_user = get_user(request);
+        }
+        return request._cached_user;
     }
 });
 
