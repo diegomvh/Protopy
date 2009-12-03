@@ -13,39 +13,63 @@ Durante el desarrollo de la presente tesina se realizó un análisis sobre las
 tecnologías disponibles para el desarrollo de aplicaciones web destacando
 el aporte de los frameworks orientados a aplicaciones de contenidos, como Ruby On Rails o Django. Los lenguajes dinámicos de alto nivel, a pesar de la sobrecarga que introducen,
 facilitan la creación de frameworks simples, como es el caso de Django.
-..
-   Se lograron cumplir los objetivos principales de manera completa:
-    
-    * Extensión de Django (**offline**)
-    
-    * Persitencia de datos en el cliente (**Doff**)
-    
-    * Funcionalidad desconectada (**Protopy** y **Doff**)
-    
-    * Primitivas de sincronización (**Doff**)
+
+De los objetivos cumplidos:
+
+    * *Extender un framework de aplicaciones web, OpenSource, existente de manera que una aplicación realizada sobre éste, pueda ser ejecutada en el cliente de manera desconectada con un mínimo de modificaciones*
+       
+           Sobre el framework elegido, la estensión se realizó como una
+           aplicación genérica llamada **offline**, que se trató en el capítulo
+           de intruducción al desarrollo y Sitio Remotos. 
+
+    * *Persistencia del modelo de datos en el cliente*
+       
+          Mediante el plugin Google Gears, se logró persistencia  
+          base de datos en el clinente. El soporte para Google Gears 
+          se trató en el capítulo sobre **Protopy** y **Doff**.
+          En el capítulo sobre Sitio Remoto se trata la migración automática
+          a partir de la introspección de la definición de las defin
+
+    * *Subconjunto de acciones disponibles en modo desconectado*
+          
+         **Doff** provee el sismtema de vistas y Middlewares de Django, por lo que
+         la funcionalidad de la aplicación conectada se puede migrar de manera sencilla.
+         Esto se trató en el capítulo de **Doff** y sobre el Sitio Remoto.
+
+    * *Primitivas de sincronización entre la aplicación del cliente y la aplicación web que le dio origen*
+        
+        Se logró implementar un sistema de sincronización basado en estándares
+        web y de alto nivel, sueprando las expectativas iniciales.
+        El prtocolo de sincronización se trató en el acpítulo Sincronización de Datos.
 
 
-.. note:: expandir esto
+En cuanto a las metas secundarias: 
 
-    * Extender un framework de aplicaciones web, OpenSource, existente de manera que una aplicación realizada sobre éste, pueda ser ejecutada en el cliente de manera desconectada con un mínimo de modificaciones. Para permitir que la aplicación pueda ejecutarse en el cliente, se implementará:
-          * Persistencia del modelo de datos en el cliente.
-          * Subconjunto de acciones disponibles en modo desconectado.
-          * Primitivas de sincronización entre la aplicación del cliente y la aplicación web que le dio origen.
+    * *Enriquecer nuestra experiencia relacionada con el desarrollo de software libre*
+      
+       Los frameworks web que hemos estudiado se distribuyen como OpenSource. Su
+       desarrollo está asistido por software OpenSource: como los sistemas de 
+       de control de versiones como Subversion, Mercurial(utilizado en esta tesis),
+       Git o Bazaar; sistemas de control de proyecto como Trac o Launchpad.
+       Los sistemas de documentación tanto para las APIs del programador como
+       los tutoriales, se basan también en herramientas libres, desde la documentación
+       plana en HTML o Docbook, hasta sistemas más sofisticados como LaTeX o 
+       Sphinx (sistema con el cual se elaboró el presente documento).
+       El uso de estas herramientas fomenta la adopción más plena de la filosofía del
+       software libre por parte de los integrantes.
 
- 
+      
+    * *Aportar y difundir una extensión a un framework de libre distribución*
 
-Y como objetivos secundarios:
+      El trabajo se completó integramente con Software Libre. El lenguaje Python,
+      Django, Gears y el navegador Mozilla. **Doff**, **Protopy** y la aplicación
+      **offline** se distibuyen con la misma licencia y están disponibles en la 
+      URL http://code.google.com/p/protopy, donde se cuenta con una Wiki, un sistema
+      de seguimiento de tareas y correcciones (Issues) y la posiblidad de enlazar
+      con listas de correo (Google Groups).
+      Para la difusión del trabajo se utilizaron las listas de correo de Django (http://django-project.com) y 
+      el popular sitio de noticias Ajaxian (http://www.ajaxian.com).
 
-    * Enriquecer nuestra experiencia relacionada con el desarrollo de software libre.
-    * Aportar y difundir una extensión a un framework de libre distribución.
-
-
-
-El trabajo fue realizado íntegramente con Software Libre y el producto
-también constituye un sub-framework bajo el mismo tipo de licencia. Gracias a 
-ésta el proyecto asegura su mejora continua. 
-
-.. note:: software libre, donde están disponibles
 
 **************
 Líneas Futuras
@@ -59,7 +83,8 @@ XHTML, EcmaScript, HTTP y sepan utilizarlos para su provecho. Además, la
 integración de múltiples servicios web (*mashups*) será una excelente alternativa para conservar compatibilidad 
 con sistemas Web legacy.
 
-.. note:: Intro a las subsecciones, decir que hay montones
+A continuación se detallan algunas lineas futuras puntuales que surgieron del
+estudio y desarrollo de la presente tesina:
 
 Conversión de Código Python en JavaScript
 =========================================
