@@ -24,11 +24,12 @@ ishidden = lambda f: f.startswith('.')
 
 # DEBUG
 def show(f):
+    from pprint import pformat
     def wrapped(*largs, **kwargs):
         print f.func_name, "<-", largs or '', kwargs or ''
         
         ret = f(*largs, **kwargs)
-        print " =>", ret
+        print " =>", pformat(ret)
         return ret
     return wrapped
 
@@ -127,7 +128,7 @@ def retrieve_templates_from_path(path, template_bases = None, strip_first_slash 
         templates = map( lambda f: f[0] == '/' and f[1:] or f, templates)
     return templates
 
-@show
+#@show
 def full_template_list(exclude_apps = None, exclude_callable = None):
     from django.conf import settings
     template_dirs = map(lambda s: s.split(os.sep)[-1], settings.TEMPLATE_DIRS)

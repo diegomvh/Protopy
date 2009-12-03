@@ -301,8 +301,6 @@ class Command(OfflineSiteCommand):
             return True
         if entry_instance.file_size and entry_instance.file_size != size:
             return True
-        
-
     
     def update_manifest(self):
         pass
