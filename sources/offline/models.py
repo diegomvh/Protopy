@@ -47,6 +47,13 @@ class GearsManifest(models.Model):
                       "version": self.version,
                       "entries": entries 
                       })
+        
+    def entries_count(self):
+        '''
+        Returns manifest entries
+        '''
+        if self.id:
+            return self.gearsmanifestentry_set.count()
 
     def __unicode__(self):
         return "<%s for site %s>" % (type(self).__name__, self.remotesite_name or "?")
