@@ -40,7 +40,11 @@ var SyncHandler = type('SyncHandler', [ object ], {
 		var project = get_project();
         this.settings = settings;
         // Esto puede fallar por no estar conectado.
-        this.proxy = new ServiceProxy(project.offline_support + '/sync', {asynchronous: false});
+        try {
+        	this.proxy = new ServiceProxy(project.offline_support + '/sync', {asynchronous: false});
+        } catch (e) {
+        	// No conected
+        }
         this.serializer = new RemoteSerializer();
         this.deserializer = RemoteDeserializer
         this.load_middleware();
