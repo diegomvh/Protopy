@@ -6,11 +6,6 @@ var SyncMiddleware = type('SyncMiddleware', [ object ], {
      * Bajo nivel
      */
     resolve_conflict: function(exception, local_object, remote_object) {
-        // Hacer algo con el 
-        // * UniqueConstraint (DB)
-        // * LDelRMod
-        // * LModRMod
-        // * LModRDel
         var f = getattr(this, 'resolve_%s'.subs( exception.__name__));
         if (!callable(f)) {
             throw new ImproperlyConfiguredException("%s doesnt handle %s properly".subs(

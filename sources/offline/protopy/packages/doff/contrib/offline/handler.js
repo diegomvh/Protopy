@@ -152,8 +152,12 @@ var SyncHandler = type('SyncHandler', [ object ], {
     	try {
             var last_sync_log = SyncLog.objects.latest('pk');
             var to_send = this.serializer.serialize(last_sync_log);
+            
+            this._sync_middleware.before_pull(to_send);
             var data = this.proxy.pull(to_send);
-        } catch (e if isinstance(e, SyncLog.DoesNotExist)) {
+            this._sync_middleware.after_pull(data);
+    	
+    	} catch (e if isinstance(e, SyncLog.DoesNotExist)) {
             var data = this.proxy.pull();
         }
 
@@ -225,7 +229,11 @@ var SyncHandler = type('SyncHandler', [ object ], {
         }
         
         try {
-            var data = this.proxy.push(to_send);
+        	
+        	this._sync_middleware.before_push(to_send);
+        	var data = this.proxy.push(to_send);
+            this._sync_middleware.after_push(data);
+    	
         } catch (e) {
             // TODO: algunas exeptions;
             return [ true, chunked, [], [], [], {}];

@@ -1,11 +1,14 @@
 require('doff.utils.toolbar', 'Panel');
 require('ajax');
 require('event');
+require('doff.contrib.offline.handler');
 
 var Sync = type('Sync', Panel, {
     __init__: function() {
         super(Panel, this).__init__('sync', 'Sync Tool', 'Sincronizacion de datos');
         this.icon = sys.module_url('doff.contrib.offline', 'resources/icons/sync.png');
+        this.handler = new handler.SyncHandler();
+        this.handler._sync_middleware = this;
     },
 
     get_template: function() {
@@ -29,7 +32,61 @@ var Sync = type('Sync', Panel, {
 
     _display: function() {
         super(Panel, this)._display();
+        var self = this;
+        
+        this.output = $('sync-output');
+        this.bt_update = $('sync-update');
+        this.bt_pull = $('sync-pull');
+        this.bt_push = $('sync-push');
+        this.bt_purge = $('sync-purge');
+        
+        event.connect(this.bt_pull, 'click', function(event) {
+        	self.handler.pull();
+        });
+    },
+    
+    // Posiblemente tomar el pk del server y ponerlo en la local
+    resolve_unique: function(local_object, remote_object) {
+        throw new NotImplementedError();
+    },
+
+    // Posiblemente tomar la local y ponerla como sync
+    reoslve_LocalDeletedRemoteModified: function(local_object, remote_object) {
+        throw new NotImplementedError();
+    },
+
+    // Selecciona una de las dos
+    resolve_LocalModifiedRemoteModified: function(local_object, remote_object) {
+        throw new NotImplementedError();
+    },
+
+    
+    reoslve_LocalModifiedRemoteDeleted: function(local_object, remote_object) {
+        throw new NotImplementedError();
+    },
+
+    before_push: function(data) {
+        return data;
+    },
+
+    after_push: function(data) {
+        return data;
+    },
+
+    before_pull: function(data) {
+    	this.output.insert('<p>Pulling data from server...</p>');
+    	this.output.insert('<p>---> SyncLog { date: ' + data['fields']['synced_at'].__json__() + ', id: "' + data['fields']['sync_id'] + '"}</p>');
+    },
+
+    after_pull: function(data) {
+    	this.output.insert('<p>' + len(data['objects']) + ' objects pulled</p>');
+    	this.output.insert('<p><--- SyncLog { date: ' + data['sync_log']['synced_at'] + ', id: "' + data['sync_log']['sync_id'] + '"}</p>');
+    },
+
+    after_merge: function (auto, local_object, remote_object) {
+
     }
+    
 });
 
 publish({
