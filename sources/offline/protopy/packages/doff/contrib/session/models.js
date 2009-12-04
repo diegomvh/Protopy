@@ -199,7 +199,7 @@ var Session = type('Session', [ Dict ], {
     },
     clear: function() {
     	this.modified = true;
-    	return super(Dict, this).clear(key);
+    	return super(Dict, this).clear();
     },
     has_key: function(key) {
     	this.accessed = true;

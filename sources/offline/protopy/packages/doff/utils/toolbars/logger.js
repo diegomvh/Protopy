@@ -35,7 +35,7 @@ var Logger = type('Logger', [Panel, Handler], {
 
     pause: function() {
         this.paused = !this.paused;
-        this.bt_pause.style.backgroundColor = this.paused ? '#CCCCCC' : '#EEEEEE';
+        this.bt_pause.toggleClassName('pressed');
     },
 
     emit: function(record) {

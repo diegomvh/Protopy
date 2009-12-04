@@ -12,6 +12,7 @@ function login(request) {
 } 
         
 function logout(request) {
+	debugger;
     request.session.clear();
     auth.logout(request);
     return new HttpResponseRedirect('/');

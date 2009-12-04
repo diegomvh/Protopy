@@ -32,8 +32,8 @@ div#doff-toolbar div.doff-panel {
 
 div#doff-toolbar div.doff-panel div.doff-panel-buttons {}
 
-div#doff-toolbar div.doff-panel button.doff-panel-button {
-	background: #E3E3E3 none repeat scroll 0 0;
+div#doff-toolbar div.doff-panel button {
+	background-image: url("button.png");
 	border-left:1px solid #BBBBBB;
 	border-right:1px solid #AAAAAA;
     border-bottom:1px solid #AAAAAA;
@@ -42,6 +42,10 @@ div#doff-toolbar div.doff-panel button.doff-panel-button {
 	padding: 3px;
 	text-decoration: none;
 	-moz-border-radius: 5px;	
+}
+
+div#doff-toolbar div.doff-panel button.pressed {
+	background-position: 1px;
 }
 
 div#doff-toolbar div.doff-panel h1.doff-panel-header {

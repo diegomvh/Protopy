@@ -320,8 +320,8 @@
                 return gears_object;
             }
         } else {
-            window.google.gears.install = function (message) {
-                 message = message || 'To enable fast client-side search of this website please install Gears';
+        	window.google.gears.create = window.google.gears.install = function () {
+                 message = 'To enable fast client-side search of this website please install Gears';
                  var url = 'http://gears.google.com/?action=install'
                         + '&message=' + encodeURIComponent(message)
                         + '&return=' + encodeURIComponent(window.location.href);

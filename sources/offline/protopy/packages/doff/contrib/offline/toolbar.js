@@ -2,6 +2,7 @@ require('doff.utils.toolbar', 'Panel');
 require('ajax');
 require('event');
 require('doff.contrib.offline.handler');
+require('doff.contrib.offline.models', 'SyncLog');
 
 var Sync = type('Sync', Panel, {
     __init__: function() {
@@ -9,6 +10,12 @@ var Sync = type('Sync', Panel, {
         this.icon = sys.module_url('doff.contrib.offline', 'resources/icons/sync.png');
         this.handler = new handler.SyncHandler();
         this.handler._sync_middleware = this;
+        try {
+        	this.last_sync_log = SyncLog.objects.latest('pk');
+        } catch (e) {
+        	//No data base
+        	this.last_sync_log = null;
+        }
     },
 
     get_template: function() {
@@ -35,13 +42,25 @@ var Sync = type('Sync', Panel, {
         var self = this;
         
         this.output = $('sync-output');
-        this.bt_update = $('sync-update');
-        this.bt_pull = $('sync-pull');
-        this.bt_push = $('sync-push');
-        this.bt_purge = $('sync-purge');
         
+        this.bt_update = $('sync-update');
+        event.connect(this.bt_update, 'click', function(event) {
+        	self.handler.update();
+        });
+        
+        this.bt_pull = $('sync-pull');
         event.connect(this.bt_pull, 'click', function(event) {
         	self.handler.pull();
+        });
+        
+        this.bt_push = $('sync-push');
+        event.connect(this.bt_push, 'click', function(event) {
+        	self.handler.push();
+        });
+        
+        this.bt_purge = $('sync-purge');
+        event.connect(this.bt_purge, 'click', function(event) {
+        	self.handler.purge();
         });
     },
     

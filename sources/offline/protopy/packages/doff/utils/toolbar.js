@@ -36,8 +36,8 @@ var Panel = type('Panel', object, {
         this.body.insert(this.content);
 
         //Style and other yerbas
-        this.height = '25em';
-        this.width = '300px';
+        this.height = '30em';
+        this.width = '80%';
     },
 
     set icon(value) {
@@ -50,13 +50,13 @@ var Panel = type('Panel', object, {
     
     set height(value) {
     	this.body.setStyle({
-        	minHeight: value
+        	height: value
     	});
     },
 
     set width(value) {
         this.body.setStyle({
-        	minWidth: value
+        	width: value
         });
     },
 
