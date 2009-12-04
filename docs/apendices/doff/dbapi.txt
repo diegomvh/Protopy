@@ -587,8 +587,8 @@ siendo lentas.
 extra()
 ~~~~~~~
 
-A veces, el lenguaje de consulta de Django no puede expresar facilmente
-cláusulas ``WHERE`` complejas.  Para estos casos extremos, Django provee un
+A veces, el lenguaje de consulta de Doff no puede expresar facilmente
+cláusulas ``WHERE`` complejas.  Para estos casos extremos, Doff provee un
 modificador de ``QuerySet`` llamado ``extra()`` -- una forma de inyectar
 cláusulas especificas dentro del SQL generado por un ``QuerySet``.
 
@@ -658,7 +658,7 @@ Los métodos de ``QuerySet`` que se describen a continuación evaluan el
 ``QuerySet`` y devuelven algo *que no es* un ``QuerySet`` -- un objeto, un
 valor, o algo así.
 
-get(\*\*lookup)
+get()
 ~~~~~~~~~~~~~~~
 
 Devuelve el objeto que matchee el parámetro de búsqueda provisto.  El
@@ -673,7 +673,7 @@ atributo de la clase del modelo, por ejemplo::
     >>> Entry.objects.get(id='foo') # levanta Entry.DoesNotExist
 
 La excepción ``DoesNotExist`` hereda de
-``django.core.exceptions.ObjectDoesNotExist``, así que puedes protegerte de
+``doff.core.exceptions.ObjectDoesNotExist``, así que puedes protegerte de
 múltiples excepciones ``DoesNotExist``::
 
     >>> from django.core.exceptions import ObjectDoesNotExist

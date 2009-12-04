@@ -1,12 +1,11 @@
 .. _apendices-doff-modelos
 
-======================================
+######################################
 Referencia de la definición de modelos
-======================================
+######################################
 
-.. El :ref:`doff-modelos` se explica lo básico de la definición de modelos.
-Existe un enorme rango de opciones disponibles que no se han cubierto en otro lado.
-Este apéndice explica toda opción disponible en la definición de modelos.
+El capítulo sobre Doff explica lo básico de la definición de modelos. 
+Este apéndice explica todas las opciones disponible en la definición de modelos.
 
 Campos
 ======
@@ -39,13 +38,12 @@ de la base de datos que define.
 
     Estas limitaciones se pueden manejar sin mayores problemas, dado que el
     nombre del campo no necesariamente tiene que coincidir con el nombre de la
-    columna en la base de datos. Ver :ref:`db_column <apendices-doff-modelos-dbcolumn>`, más abajo.
+    columna en la base de datos. Ver `db_column`, más abajo.
 
     Las palabras reservadas de SQL, como ``join``, ``where``, o ``select``,
     *son* permitidas como nombres de campo, dado que se "escapean" todos los
     nombres de tabla y columna de la base de datos en cada consulta SQL
     subyacente.
-
 
 Cada campo en el modelo debe ser una instancia del tipo de campo apropiado.
 Los tipos de ``Field`` son utilzados para determinar algunas cosas:
@@ -57,8 +55,7 @@ Los tipos de ``Field`` son utilzados para determinar algunas cosas:
     * Los requerimientos mínimos de validación.
 
 A continuación, una lista completa de los campos, ordenados alfabéticamente. Los campos de
-relación (``ForeignKey``, etc.) se tratan en la siguiente sección.
-
+relación (``ForeignKey``, etc.) se tratan en las siguientes secciones.
 
 AutoField
 ---------
@@ -87,9 +84,8 @@ DateField
 ---------
 
 Un campo de fecha. ``DateField`` tiene algunos argumentos opcionales extra,
-como se muestra en la :ref:`Tabla <doff-modelos-datefield-tabla>`.
+como se muestra a continuacion.
 
-.. _doff-modelos-datefield-tabla:
 .. list-table:: Argumentos opcionales extra de DateField
     :widths: 20 80
    
@@ -115,114 +111,12 @@ EmailField
 Un ``CharField`` que chequea que el valor sea una dirección de email válida. No
 acepta ``max_length``; su ``max_length`` se establece automáticamente en 75.
 
-FileField
----------
-.. warning:: No implementado actualmente ver bien la doc.
-
-Un campo de captura de archivos. Tiene un argumento *requerido*, como se ve en
-la :ref:`Tabla <doff-modelos-filefield-tabla>`.
-
-.. _doff-modelos-filefield-tabla:
-.. list-table:: Opciones extra de FileField
-    :widths: 20 80
-   
-    * - **Argumento**
-      - **Descripción**
-    * - ``upload_to``
-      - Una ruta del sistema de archivos local que se agregará a la configuración de ``MEDIA_ROOT``
-        para determinar el resultado de la función de ayuda ``get_<fieldname>_url()``.
-
-Esta ruta puede contener formato ``strftime``, que será reemplazada por la
-fecha y hora de la captura del archivo (de manera que los archivos capturados no
-llenen una ruta dada).
-
-El uso de un ``FileField`` o un ``ImageField`` en un modelo requiere algunos
-pasos:
-
-    1. En el archivo de configuración (settings), es necesario definir
-       ``MEDIA_ROOT`` con la ruta completa al directorio donde quieras que
-       Django almacene los archivos subidos. (Por performance, estos archivos
-       no se almacenan en la base de datos.) Definir ``MEDIA_URL`` con la URL
-       pública base de ese directorio. Asegurarse de que la cuenta del usuario
-       del servidor web tenga permiso de escritura en este directorio.
-
-    2. Agregar el ``FileField`` o ``ImageField`` al modelo, asegurándose de
-       definir la opción ``upload_to`` para decirle a Django a cual
-       subdirectorio de ``MEDIA_ROOT`` debe subir los archivos.
-
-    3. Todo lo que se va a almacenar en la base de datos es la ruta al archivo
-       (relativa a ``MEDIA_ROOT``). Seguramente preferirás usar la facilidad de
-       la función ``get_<fieldname>_url`` provista por Django. Por ejemplo, si
-       tu ``ImageField`` se llama ``mug_shot``, puedes obtener la URL absoluta
-       a tu image en un plantilla con ``{{object.get_mug_shot_url }}``.
-
-Por ejemplo, digamos que tu ``MEDIA_ROOT`` es ``'/home/media'``, y
-``upload_to`` es ``'photos/%Y/%m/%d'``. La parte ``'%Y/%m/%d'`` de
-``upload_to`` es formato strftime; ``'%Y'`` es el año en cuatro dígitos,
-``'%m'`` es el mes en dos digitos, y ``'%d'`` es el día en dos dígitos. Si
-subes un archivo el 15 de enero de 2007, será guardado en
-``/home/media/photos/2007/01/15``.
-
-Si quieres recuperar el nombre en disco del archivo subido, o una URL que se
-refiera a ese archivo, o el tamaño del archivo, puedes usar los métodos
-``get_FIELD_filename()``, ``get_FIELD_url()``, y ``get_FIELD_size()``. Ver
-el Apéndice C para una explicación completa de estos métodos.
-
-.. note::
-
-    Cualquiera sea la forma en que manejes tus archivos subidos, tienes que
-    prestar mucha atención a donde los estás subiendo y que tipo de archivos
-    son, para evitar huecos en la seguridad. *Valida todos los archivos
-    subidos* para asegurarte que esos archivos son lo que piensas que son.
-
-    Por ejemplo, si dejas que cualquiera suba archivos ciegamente, sin
-    validación, a un directorio que está dentro de la raíz de documentos
-    (*document root*) de tu servidor web, alguien podría subir un script CGI o
-    PHP y ejecutarlo visitando su URL en tu sitio. ¡No permitas que pase!
-
-FilePathField
--------------
-
-Un campo cuyas opciones están limitadas a los nombres de archivo en una cierta 
-ruta en el sistema de archivos. Tiene tres argumentos especiales, que se muestran
-en la :ref:`Tabla <doff-modelos-filepathfield-tabla>`.
-
-.. _doff-modelos-filepathfield-tabla:
-.. list-table:: Opciones extra de FilePathField
-    :widths: 20 80
-   
-    * - **Argumento**
-      - **Descripción**
-    * - ``path``
-      - *Requerido*; la ruta absoluta en el sistema de archivos hacia el directorio del cual este
-        ``FilePathField`` debe tomar sus opciones (ej.: ``"/home/images"``).
-    * - ``match``
-      - Opcional; una expresión regular como string, que ``FilePathField`` usará para filtrar los nombres
-        de archivo. Observar que la regex será aplicada al nombre de archivo base, no a la ruta completa (ej.:
-        ``"foo.*\.txt^"``, va a matchear con un archivo llamado ``foo23.txt``, pero no con ``bar.txt`` o
-        ``foo23.gif``).
-    * - ``recursive``
-      - Opcional; ``true`` o ``false``. El valor por omisión es ``false``. Especifica si deben incluirse todos los
-        subdirectorios de ``path``.
-
-Por supuesto, estos argumentos pueden usarse juntos.
-
-El único 'gotcha' potencial es que ``match`` se aplica sobre el nombre de
-archivo base, no la ruta completa. De esta manera, este ejemplo::
-
-    FilePathField({path:"/home/images", match:"foo.*", recursive:true})
-
-va a matchear con ``/home/images/foo.gif`` pero no con
-``/home/images/foo/bar.gif`` porque el  ``match`` se aplica al nombre de
-archivo base (``foo.gif`` y ``bar.gif``).
-
-FloatField
+DecimalField
 ----------
 
 Un numero de punto flotante, representado en JavaScript por una instancia de
-``Number``. Tiene dos argumentos requeridos, que se muestran en la :ref:`Tabla <doff-modelos-floatfield-tabla>`.
+``Number``. Tiene dos argumentos requeridos, que se muestran en la tabla.
 
-.. _doff-modelos-floatfield-tabla:
 .. list-table:: Opciones extra de FloatField
     :widths: 20 80
    
@@ -236,26 +130,12 @@ Un numero de punto flotante, representado en JavaScript por una instancia de
 Por ejemplo, para almacenar números hasta 999 con una resolución de dos
 decimales, hay que usar::
 
-    models.FloatField(..., max_digits=5, decimal_places=2)
+    models.DecimalField(..., max_digits=5, decimal_places=2)
 
 Y para almacenar números hasta aproximadamente mil millones con una resolución
 de diez dígitos decimales, hay que usar::
 
-    models.FloatField(..., max_digits=19, decimal_places=10)
-
-ImageField
-----------
-.. warning:: No este implementado actualmente ver bien la doc.
-
-Similar a ``FileField``, pero valida que el objeto capturado sea una imagen
-válida. Tiene dos argumentos opcionales extra, ``height_field`` y
-``width_field``, que si se utilizan, serán auto-rellenados con la altura y el
-ancho de la imagen cada vez que se guarde una instancia del modelo.
-
-Además de los métodos especiales ``get_FIELD_*`` que están disponibles para
-``FileField``, un ``ImageField`` tiene también los métodos
-``get_FIELD_height()`` y ``get_FIELD_width()``. Éstos están documentados en el
-:ref:`apendices-doff-dbapi`.
+    models.DecimalField(..., max_digits=19, decimal_places=10)
 
 IntegerField
 ------------
@@ -342,15 +222,13 @@ Los valores de string nulo siempre se almacenan como strings vacíos, no como
 ``NULL``. ``null=true`` se debe utilizar solo para campos no-string, como enteros,
 booleanos y fechas. En los dos casos, también es necesario establecer ``blank=true``
 si se desea permitir valores vacíos en los formularios, ya que el parámetro ``null``
-solo afecta el almacenamiento en la base de datos (ver la siguiente sección, titulada :ref:`blank <apendices-doff-modelos-blank>`).
+solo afecta el almacenamiento en la base de datos (ver la siguiente sección, titulada `blank`).
 
 Se debe evitar utilizar ``null`` en campos basados en string como ``CharField`` y
 ``TextField`` salvo que se tenga una excelente razón para hacerlo. Si un campo
 basado en string tiene ``null=true``, eso significa que tiene dos valores
 posibles para "sin datos": ``NULL`` y el string vacío. En la mayoría de los
 casos, esto es redundante; la convención es usar el string vacío, no ``NULL``.
-
-.. _apendices-doff-modelos-blank:
 
 blank
 -----
@@ -413,9 +291,7 @@ o fuera del modelo:
 
 Para cada campo del modelo que tenga establecidas ``choices``, Se agregará
 un método para recuperar el nombre legible por humanos para el valor actual del
-campo. Ver :ref:`apendices-doff-dbapi` para más detalles.
-
-.. _apendices-doff-modelos-dbcolumn:
+campo. Ver el apendice de API de base de datos para más detalles.
 
 db_column
 ---------
@@ -679,7 +555,7 @@ debe trabajar la relación (ver :ref:`Tabla <doff-modelos-foreignkey-tabla>`). T
       - El nombre a utilizar para la relación desde el objeto relacionado de hacia éste objeto. Para más información,
         ver el Apéndice C.
     * - ``to_field``
-      -  El campo en el objeto relacionado con el cual se establece la relación. Por omisión, Django usa la clave primaria del
+      -  El campo en el objeto relacionado con el cual se establece la relación. Por omisión, Doff usa la clave primaria del
          objeto relacionado.
 
 Relaciones Muchos-a-Muchos
@@ -750,16 +626,16 @@ debe trabajar la relación (ver :ref:`Tabla <doff-modelos-manytomanyfield-tabla>
                 friends: new models.ManyToManyField("this")
             });
 
-        Cuando Django procesa este modelo, identifica que tiene un ``ManyToManyField`` sobre sí mismo, y como resultado, no
+        Cuando Doff procesa este modelo, identifica que tiene un ``ManyToManyField`` sobre sí mismo, y como resultado, no
         agrega un atributo ``person_set`` a la clase ``Person``.
         En lugar de eso, se asumen que el ``ManyToManyField`` es simétrico -- esto es, si yo soy tu amigo, entonces tu eres
         mi amigo.
 
         Si no deseas la simetría en las relaciones ``ManyToMany`` con ``self``, establece ``symmetrical`` en ``false``. Esto
-        forzará a Django a agregar el descriptor para la relación inversa, permitiendo que las relaciones ``ManyToMany`` sean
+        forzará a Doff a agregar el descriptor para la relación inversa, permitiendo que las relaciones ``ManyToMany`` sean
         asimétricas.
     * - ``db_table``
-      - El nombre de la tabla a crear para almacenar los datos de la relación muchos-a-muchos. Si no se provee, Django asumirá
+      - El nombre de la tabla a crear para almacenar los datos de la relación muchos-a-muchos. Si no se provee, Doff asumirá
         un nombre por omisión basado en los nombres de las dos tablas a ser vinculadas.
 
 Opciones de los Metadatos del Modelo
@@ -1147,8 +1023,6 @@ primer ``Manager`` esté relativamente sin filtrar. En el último ejemplo, el
 manager ``people`` está definido primero -- por lo cual es el ``Manager`` por
 omisión.
 
-.. _apendices-doff-modelos-metodos:
-
 Métodos de Modelo
 =================
 
@@ -1221,7 +1095,7 @@ Aquí hay un ejemplo:
 Ejecutando SQL personalizado
 ----------------------------
 
-Se pueden escribir escribir sentencias SQL personalizadas en métodos
+Se pueden escribir sentencias SQL personalizadas en métodos
 personalizados de modelo y métodos a nivel de módulo. El objeto
 ``doff.db.base.connection`` representa la conexión actual a la base de datos. Para
 usarla, se invoca a ``connection.cursor()`` para obtener un objeto cursor. Después,
@@ -1240,25 +1114,16 @@ resultantes:
         }
 
 ``connection`` y ``cursor`` implementan en su mayor parte la DB-API estándar.
-Si no estás familiarizado con la DB-API, observa que la sentencia SQL en
-``cursor.execute()`` usa placeholders, ``"%s"``, en lugar de agregar los
-parámetros directamente dentro de la SQL. Si usas esta técnica, la biblioteca
-subyacente de base de datos automáticamente agregará comillas y secuencias de
-escape a tus parámetros según sea necesario.
-
-Una nota final: Si todo lo que quieres hacer es usar una cláusula ``WHERE``
-personalizada, puedes usar los argumentos ``where``, ``tables``, y ``params``
-de la API estándar de búsqueda. Ver Apéndice C.
 
 Sobreescribiendo los Métodos por omisión del Modelo
 ---------------------------------------------------
 
-Como se explica en el :ref:`apendices-doff-dbapi`, cada modelo obtiene algunos métodos
+Como se explica en el apendices sobre consultas, cada modelo obtiene algunos métodos
 automáticamente -- los más notables son ``save()`` y ``delete()``. Estos se pueden
 sobreescribir para alterar el comportamiento.
 
 Un caso de uso clásico de sobreescritura de los métodos incorporados es cuando se
-necesita que suceda algo cuando guardas un objeto, por ejemplo:
+necesita que suceda algo cuando se guarda un objeto, por ejemplo:
 
     .. code-block:: javascript
 
