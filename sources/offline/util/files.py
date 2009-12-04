@@ -1,6 +1,7 @@
 '''
 File handling
 '''
+from pprint import pformat
 import os
 import re
 
@@ -34,11 +35,10 @@ def show(f):
     return wrapped
 
 #@show
-def valid_file_callback(name):
+def valid_file_callback(filename):
     # Is it a hidden file?
-    name, dir_ = os.path.split(name)
+    dir_, name = os.path.split(filename)
     if not name:
-        
         return False
     
     if ishidden(name):
@@ -123,6 +123,7 @@ def retrieve_templates_from_path(path, template_bases = None, strip_first_slash 
         template_files += map(lambda f: join(root, f), files)
 
     templates = filter(valid_templates, template_files)
+    
 
     if strip_first_slash:
         templates = map( lambda f: f[0] == '/' and f[1:] or f, templates)
@@ -143,6 +144,7 @@ def full_template_list(exclude_apps = None, exclude_callable = None):
         from django.template.loaders.app_directories import app_template_dirs
         for path in app_template_dirs:
             template_files += retrieve_templates_from_path(path, template_dirs)
+
 
     return template_files
 
