@@ -1,5 +1,3 @@
-require('datetime', 'datetime');
-
 var CRITICAL = 50;
 var FATAL = CRITICAL;
 var ERROR = 40;
@@ -69,8 +67,8 @@ var LogRecord = type('LogRecord', [ object ], {
         this.filename = kwargs.filename;
         this.module = kwargs.module;
         this.lineno = lineno;
-        this.created = datetime.datetime(ct);
-        this.relative_created = datetime.datetime((this.created - _start_time));
+        this.created = ct;
+        this.relative_created = this.created - _start_time;
     },
 
     __str__: function() {
@@ -91,7 +89,12 @@ var LogRecord = type('LogRecord', [ object ], {
     },
 
     get time() {
-        return datetime.format(this.created, 'yyyy-mm-dd hh:nn:ss');
+        return '%04d-%02d-%02d %02d:%02d:%02d'.subs(this.created.getFullYear(), 
+        		this.created.getUTCMonth() + 1,  // JavaScript reports January as year 0
+        		this.created.getUTCDate(), 
+        		this.created.getUTCHours(), 
+        		this.created.getUTCMinutes(), 
+        		this.created.getUTCSeconds());
     }
 });
 

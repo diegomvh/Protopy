@@ -98,9 +98,15 @@ function ver_pedidos(request) {
     return object_list(request, { queryset: queryset });
 }
 
+function ver_pedido_por_id(request, id) {
+    var pedido = get_object_or_404(Pedido, { id : id });
+    return render_to_response('ver_pedido.html', {'pedido': pedido}, new RequestContext(request));
+}
+
 publish({
 	agregar_producto: agregar_producto,
 	modificar_pedido: modificar_pedido,
 	ver_pedido: ver_pedido,
-    ver_pedidos: ver_pedidos
+    ver_pedidos: ver_pedidos,
+    ver_pedido_por_id: ver_pedido_por_id
 });

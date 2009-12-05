@@ -115,11 +115,8 @@ class RemoteManagerBase(object):
         objs = self.deserializer(values)
         ret = []
         for obj in objs:
-            if hasattr(self.remote, 'save'):
-                obj = self.remote.save(obj)
-            else:
-                obj.save()
-            ret.append(getattr(obj.object, obj.object._meta.pk.attname))
+            obj = self.remote.save(obj)
+            ret.append(getattr(obj, obj._meta.pk.attname))
         return ret
 
     def update(self, values):
@@ -163,15 +160,16 @@ class RemoteModelMetaclass(type):
 class RemoteModelProxy(object):
     __metaclass__ = RemoteModelMetaclass
     
-    def save(self, deserialized_object):
+    @classmethod
+    def save(cls, deserialized_object):
         '''
         Saves on object that comes from the client.
         Override this method to correct alterations you might
         have made to the model structure :)
         @param deserialized_object: A DeserializedObject instance 
         '''
-        obj = deserialized_object.save()
-        return obj.object
+        deserialized_object.save()
+        return deserialized_object.object
 
 #===============================================================================
 # Serializer and Deserializer for RemoteManager

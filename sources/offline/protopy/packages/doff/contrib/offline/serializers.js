@@ -76,6 +76,10 @@ var RemoteSerializer = type('RemoteSerializer', [ Serializer ], {
         this._current = null;
     },
 
+    handle_field: function(obj, field) {
+        this._current[field.name] = field.value_to_string(obj);
+    },
+    
     handle_fk_field: function(obj, field) {
         var related = getattr(obj, field.name);
         if (related != null) {

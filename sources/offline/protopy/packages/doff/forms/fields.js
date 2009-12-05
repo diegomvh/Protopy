@@ -267,6 +267,7 @@ var DateField = type('DateField', Field, {
      * Validates that the input can be converted to a date. Returns a Javascript datetime.date object.
      */
     clean: function clean(value) {
+    	//TODO: Haceme funcionar
         super(Field, this).clean(value);
         if (include(EMPTY_VALUES, value))
             return null;
@@ -300,6 +301,7 @@ var TimeField = type('TimeField', Field, {
      * Validates that the input can be converted to a time. Returns a Javascript datetime.time object.
      */
     clean: function(value) {
+    	//TODO: Haceme funcionar
         super(Field, this).clean(value);
         if (include(EMPTY_VALUES, value))
             return null;
@@ -338,6 +340,7 @@ var DateTimeField = type('DateTimeField', Field, {
      * Validates that the input can be converted to a datetime. Returns a Javascript datetime.datetime object.
      */
     clean: function(value) {
+    	//TODO: haceme funcionar!
         super(Field, this).clean(value);
         if (include(EMPTY_VALUES, value))
             return null;

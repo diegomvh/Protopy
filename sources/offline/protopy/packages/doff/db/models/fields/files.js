@@ -1,17 +1,3 @@
-/*import datetime
-import os
-
-from django.conf import settings
-from django.core.files.base import File, ContentFile
-from django.core.files.storage import default_storage
-from django.core.files.images import ImageFile, get_image_dimensions
-from django.core.files.uploadedfile import UploadedFile
-from django.utils.functional import curry
-from django.db.models import signals
-from django.utils.encoding import force_unicode, smart_str
-from django.utils.translation import ugettext_lazy, ugettext as _
-from django.db.models.loading import cache
-*/
 require('event');
 require('doff.db.models.fields.base', 'Field');
 var forms = require('doff.forms.base');

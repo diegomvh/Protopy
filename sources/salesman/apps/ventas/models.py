@@ -12,7 +12,7 @@ class Pedido(models.Model):
     '''
     vendedor = models.ForeignKey(User)
     cliente = models.ForeignKey(Cliente)
-    fecha = models.DateField(auto_now = True)
+    fecha = models.DateTimeField(auto_now = True)
 
     get_absolute_url = abs_url
     

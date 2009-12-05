@@ -1,4 +1,3 @@
-/* 'doff.db.models.fields.base' */
 require('doff.db.base', 'connection');
 require('doff.db.models.query_utils', 'QueryWrapper');
 require('doff.conf.settings', 'settings');
@@ -272,7 +271,7 @@ var Field = type('Field', [ object ], {
      * This is used by the serialization framework.
      */
     value_to_string: function(object) {
-        return new String(this._get_val_from_obj(object));
+        return string(this._get_val_from_obj(object));
     },
 
     bind: function(fieldmapping, original, bound_field_class) {
@@ -514,13 +513,13 @@ var DateField = type('DateField', [ Field ], {
 
     value_to_string: function(obj) {
         var val = this._get_val_from_obj(obj);
-        if (bool(val)) {
-            var data = '';
-        } else {
-            d = datetime.datetime(val);
-            var data = datetime.format(d, "%Y-%m-%d");
-        }
-        return data;
+        if (!bool(val))
+            return '';
+        if (!isinstance(val, Date))
+        	val = new Date(val);
+        return '%04d-%02d-%02d'.subs(val.getFullYear(), 
+        							 val.getUTCMonth() + 1,  // JavaScript reports January as year 0
+        							 val.getUTCDate());
     },
 
     formfield: function() {
@@ -573,13 +572,16 @@ var DateTimeField = type('DateTimeField', [ DateField ], {
 
     value_to_string: function(obj) {
         var val = this._get_val_from_obj(obj);
-        if (!val) {
-            data = '';
-        } else {
-            d = datetime.datetime(val);
-            data = datetime.toISOTimestamp(d);
-        }
-        return data;
+        if (!bool(val))
+            return '';
+        if (!isinstance(val, Date))
+        	val = new Date(val);
+        return '%04d-%02d-%02d %02d:%02d:%02d'.subs(val.getFullYear(), 
+        											val.getUTCMonth() + 1,  // JavaScript reports January as year 0
+        											val.getUTCDate(), 
+        											val.getUTCHours(), 
+        											val.getUTCMinutes(), 
+        											val.getUTCSeconds());
     },
 
     formfield: function() {
@@ -620,6 +622,10 @@ var DecimalField = type('DecimalField', [ Field ], {
         return util.format_number(value, this.max_digits, this.decimal_places);
     },
 
+    value_to_string: function(object) {
+        return this.format_number(this._get_val_from_obj(object));
+    },
+    
     get_db_prep_value: function(value) {
     	return connection.ops.value_to_db_decimal(this.to_javascript(value), this.max_digits, this.decimal_places);
     },
@@ -676,7 +682,7 @@ var FilePathField = type('FilePathField', [ Field ], {
 
 var FloatField = type('FloatField', [ Field ], {
     empty_strings_allowed: false,
-    //TODO: Implementar max_digits, decimal_places y usarlo para emular el decimafield
+
     get_db_prep_value: function(value) {
         if (!value)
             return null;
@@ -886,13 +892,14 @@ var TimeField = type('TimeField', [ Field ], {
     },
 
     value_to_string: function(obj) {
-        var val = this._get_val_from_obj(obj);
-        if (!val)
-            var data = '';
-        else
-            //TODO pasar a time
-            var data = val.strftime("%H:%M:%S")
-        return data;
+    	var val = this._get_val_from_obj(obj);
+        if (!bool(val))
+            return '';
+        if (!isinstance(val, Date))
+        	val = new Date(val);
+        return '%02d:%02d:%02d'.subs(val.getUTCHours(), 
+        							 val.getUTCMinutes(), 
+        							 val.getUTCSeconds());
     },
 
     formfield: function() {

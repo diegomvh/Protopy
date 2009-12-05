@@ -474,8 +474,8 @@ class RemoteSite(RemoteBaseSite):
             for app_model, remote in remote_created.iteritems():
                 remote_manager = remote._default_manager
                 retorno['created']['pks'][app_model] = remote_manager.insert(received['created']['objects'][app_model])
-        except:
-            raise DataException('Data Error')
+        except Exception, e:
+            raise DataException(str(e))
         
         
         # mas un segundo para no entrar en errores de milis

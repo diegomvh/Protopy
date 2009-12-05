@@ -1,5 +1,3 @@
-require('datetime', 'datetime');
-
 String.prototype.__json__ = function() { 
     return this.inspect(true); 
 }
@@ -14,7 +12,12 @@ Number.prototype.__json__ = function() {
 }
 
 Date.prototype.__json__ = function() {
-	return '"' + datetime.toISOTimestamp(datetime.datetime(this)) + '"';
+	return '"%04d-%02d-%02d %02d:%02d:%02d"'.subs(	this.getFullYear(), 
+			this.getUTCMonth() + 1,  // JavaScript reports January as year 0
+			this.getUTCDate(), 
+			this.getUTCHours(), 
+			this.getUTCMinutes(), 
+			this.getUTCSeconds());
 }
 
 var stringify = function (value) {

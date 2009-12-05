@@ -13,12 +13,13 @@ class RemotePedido(RemoteModelProxy):
         model = Pedido
         manager = Pedido.objects.filter(vendedor = current_user())
         exclude = ['vendedor']
-        
-    def save(self, deserialized_object):
+    
+    @classmethod
+    def save(cls, deserialized_object):
         ''' Asignar el vendedor como el usuario logueado '''
         deserialized_object.object.vendedor = current_user()
-        obj =  RemoteModelProxy.save(self, deserialized_object)
-        return obj.object
+        obj =  RemoteModelProxy.save(deserialized_object)
+        return obj
 
 agentes_site = RemoteSite("agentes")
 agentes_site.register(Ciudad)

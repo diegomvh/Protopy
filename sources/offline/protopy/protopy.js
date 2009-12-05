@@ -2118,7 +2118,7 @@
             if (args[0] && type(args[0]) == Object)
                     str = new Template(str, args[1]).evaluate(args[0]);
             else
-                    str = str.replace(/%(-?\d*|\d*\.\d*)([s,n])/g, function(str, f, t) {
+                    str = str.replace(/%(-?\d*|\d*\.\d*)([s,n,d])/g, function(str, f, t) {
                 if (args.length == 0) return str;
                 var value = (t === 's')? string(args.shift()) : number(args.shift());
                 return value.format(f); 

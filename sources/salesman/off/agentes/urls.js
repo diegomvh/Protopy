@@ -11,7 +11,8 @@ var urlpatterns = patterns('',
     ['^administrar/', include('agentes.core.urls')],
     ['^pedido/agregar/(\\d+)/$', 'agentes.ventas.views.agregar_producto'],
     ['^pedido/modificar/$', 'agentes.ventas.views.modificar_pedido'],
-    ['^pedidos/$', 'agentes.ventas.views.ver_pedidos']
+    ['^pedidos/$', 'agentes.ventas.views.ver_pedidos'],
+    ['^pedidos/pedido/(\\d+)/$', 'agentes.ventas.views.ver_pedido_por_id']
 );
 
 // Don't touch this line

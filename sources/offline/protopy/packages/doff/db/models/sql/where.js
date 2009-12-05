@@ -4,7 +4,6 @@ require('doff.db.models.fields.base', 'Field');
 require('doff.db.base', 'connection');
 require('doff.db.models.sql.datastructures', 'EmptyResultSet', 'FullResultSet');
 require('doff.db.models.query_utils', 'QueryWrapper');
-require('datetime', 'datetime');
 
 var AND = 'AND',
     OR = 'OR';
