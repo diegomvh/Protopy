@@ -275,23 +275,6 @@ rpc.ServiceProxy = type('ServiceProxy', [ object ], {
                     }
                     xml.push('</methodCall>');
                     postData = xml.join('');
-                    
-                    //request = new Document();
-                    //var methodCallEl = document.createElement('methodCall');
-                    //var methodNameEl = document.createElement('methodName');
-                    //methodNameEl.appendChild(document.createTextNode(methodName));
-                    //methodCallEl.appendChild(methodNameEl);
-                    //if(params){
-                    //	var paramsEl = document.createElement('params');
-                    //	for(var i = 0; i < params.length; i++){
-                    //		var paramEl = document.createElement('param');
-                    //		paramEl.appendChild(this.__toXMLRPC(params[i]));
-                    //		paramsEl.appendChild(paramEl);
-                    //	}
-                    //	methodCallEl.appendChild(paramsEl);
-                    //}
-                    //request.appendChild(methodCallEl);
-                    //postData = request.serializeXML();
                 }
                 //Prepare the JSON-RPC request
                 else {
@@ -365,8 +348,11 @@ rpc.ServiceProxy = type('ServiceProxy', [ object ], {
                         response = json.parse(xhr.responseText, this.__isResponseSanitized);
                     
                     //Note that this error must be caught with a try/catch block instead of by passing a onException callback
-                    if(response.error)
-                        throw Error('Unable to call "' + methodName + '". Server responsed with error (code ' + response.error.code + '): ' + response.error.message);
+                    if(response.error) {
+                    	var err = new Error('Unable to call "' + methodName + '". Server responsed with error (code ' + response.error.code + '): ' + response.error.message);
+                        err.code = response.error.code;
+                        throw err;
+                    }
                     
                     return response.result;
                 }
@@ -719,5 +705,8 @@ rpc.pendingRequests = {};
 //Ad hoc cross-site callback functions keyed by request ID; when a cross-site request
 //   is made, a function is created 
 rpc.callbacks = {};
+
+//Generic Error code
+rpc.JsonRpcException = 0;
 
 publish(rpc);

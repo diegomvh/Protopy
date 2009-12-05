@@ -1,4 +1,4 @@
-require('rpc', 'ServiceProxy');
+require('rpc', 'ServiceProxy', 'JsonRpcException');
 require('doff.core.project', 'get_project');
 require('doff.contrib.offline.models', 'SyncLog', 'RemoteModel', 'RemoteReadOnlyModel');
 require('doff.db.models.base', 'get_model_by_identifier', 'get_models', 'ForeignKey');
@@ -13,6 +13,11 @@ var UniqueDataBaseObject = type('UniqueDataBaseObject', [ Exception ]);
 var LocalDeletedRemoteModified = type('LocalDeletedRemoteModified', [ Exception ]);
 var LocalModifiedRemoteModified = type('LocalModifiedRemoteModified', [ Exception ]);
 var LocalModifiedRemoteDeleted = type('LocalModifiedRemoteDeleted', [ Exception ]);
+
+// Server Errors
+var NeedPullException = 1;
+var NoRemoteException = 2;
+var DataException = 3;
 
 function get_model_order(model_lists) {
     var model_adj = new SortedDict();
@@ -64,9 +69,8 @@ var SyncHandler = type('SyncHandler', [ object ], {
     },
 
     validate: function(remote) {
-    	debugger;
     	var Model = remote.__class__;
-		var local = Model.all.get({'pk': remote.object.pk});
+		var local = Model.all.get({'pk': remote.pk});
 		if (local.status == 'd' && remote.active)
 			throw new LocalDeletedRemoteModified({'local': local});
 		if (local.status == 'm' && remote.active)
@@ -80,21 +84,25 @@ var SyncHandler = type('SyncHandler', [ object ], {
         	if (deserialized_object.object.sync_log != null) {
         		try {
         			this.validate(deserialized_object.object);
-        		} catch (e) {
+        		} catch (e if isinstance(e, [LocalDeletedRemoteModified, LocalModifiedRemoteModified, LocalModifiedRemoteDeleted])) {
         			deserialized_object = this._sync_middleware.resolve_conflict(e, e.kwargs['local'], deserialized_object);
-        			if (isinstance(deserialized_object, DeserializedObject))
-        				deserialized_object.object.sync_log = sync_log;
-        			else
-        				deserialized_object.sync_log = sync_log;
         		}
-        	} else
-        		deserialized_object.object.sync_log = sync_log;
-            try {	
+        	}
+    		if (isinstance(deserialized_object, DeserializedObject)) {
+				deserialized_object.object.sync_log = sync_log;
+				deserialized_object.save();
+    		} else {
+				deserialized_object.sync_log = sync_log;
+				deserialized_object.save_base(true);
+    		}
+    		/*
+        	try {	
             	deserialized_object.save();
             } catch (e) {
             	debugger;
             	this._sync_middleware.resolve_conflict(e, e.kwargs['local'], deserialized_object);
             }
+            */
         }
     },
 
@@ -107,7 +115,7 @@ var SyncHandler = type('SyncHandler', [ object ], {
     },
 
     update: function() {
-        var first = SyncLog.objects.count() == 0;
+    	var first = SyncLog.objects.count() == 0;
         var [ received, sync_log_data ] = this.pull();
         if (bool(received)) {
             var sync_log = new SyncLog(sync_log_data);
@@ -116,7 +124,7 @@ var SyncHandler = type('SyncHandler', [ object ], {
         }
         if (first) return;
         
-	    debugger;
+        debugger;
         var go_ahead = true;
         var collected = [];
         while (go_ahead) {                      // Mientras que continuo
@@ -257,18 +265,17 @@ var SyncHandler = type('SyncHandler', [ object ], {
             to_send['created']['models'].push(model_name);
             if (!(model_name in to_send['sync_log'])) {
                 var last_sync_log = model.all.latest('sync_log__id').sync_log;
-                to_send['sync_log'][model_name] = this.serializer.serialize(last_sync_log);
+                to_send['sync_log'][model_name] = last_sync_log ? this.serializer.serialize(last_sync_log) : null;
             }
         }
         
         try {
         	
-        	this._sync_middleware.before_push(to_send);
+        	this._sync_middleware.before_push(chunked, to_send);
         	var data = this.proxy.push(to_send);
             this._sync_middleware.after_push(data);
     	
-        } catch (e) {
-            // TODO: algunas exeptions;
+        } catch (e if e.code == NeedPullException) {
             return [ true, chunked, [], [], [], {}];
         }
 
@@ -301,7 +308,7 @@ var SyncHandler = type('SyncHandler', [ object ], {
             }
             for (i = 0; i < objs_len; i++) {
                 collected_objects['created'][model][i].status = 's';
-                collected_objects['created'][model][i].server_pk = data['created']['pks'][model][i];
+                collected_objects['created'][model][i].server_pk = [model][i]._meta.get_field('server_pk').to_javascript(data['created']['pks'][model][i]);
             }
             created = created.concat(collected_objects['created'][model]);
         }

@@ -63,7 +63,7 @@ var urlpatterns = patterns('doff.views.generic',
         }],
         
         // proveedor -> Edit
-        ['^proveedor/(\\d{1,5})/editar/$', 'create_update.update_object',{
+        ['^proveedor/(\\d{11})/editar/$', 'create_update.update_object',{
             'model': Proveedor,
             'post_save_redirect': '/administrar/proveedores/',
             'template_name': 'forms.html',
@@ -85,7 +85,7 @@ var urlpatterns = patterns('doff.views.generic',
         }],
         
         // proveedor -> Eliminar
-        ['^proveedor/(\\d{1,5})/eliminar/$', 'create_update.delete_object', {
+        ['^proveedor/(\\d{11})/eliminar/$', 'create_update.delete_object', {
             'model': Proveedor,
             'post_delete_redirect': '/administrar/proveedores/',
             'template_name': 'confirm_delete.html',

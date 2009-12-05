@@ -120,6 +120,9 @@ try:
 except ImportError:
     fcntl = None
 
+class JsonRpcException(Exception):
+    code = 0x0
+
 class SimpleJSONRPCDispatcher(SimpleXMLRPCServer.SimpleXMLRPCDispatcher):
     """Mix-in class that dispatches JSON-RPC requests.
     Based on SimpleXMLRPCDispatcher, but overrides
@@ -160,14 +163,11 @@ class SimpleJSONRPCDispatcher(SimpleXMLRPCServer.SimpleXMLRPCDispatcher):
             #response = xmlrpclib.dumps(response, methodresponse=1)
             responseDict['result'] = response
         except Fault, fault:
-            #response = xmlrpclib.dumps(fault)
             responseDict['error'] = repr(response)
+        except JsonRpcException, e:
+            responseDict['error'] = {'message': str(e), 'code': e.code }
         except:
-            # report exception back to server
-            #response = xmlrpclib.dumps(
-            #    xmlrpclib.Fault(1, "%s:%s" % (sys.exc_type, sys.exc_value))
-            #    )
-            responseDict['error'] = "%s:%s" % (sys.exc_type, sys.exc_value)
+            responseDict['error'] = '%s:%s' % (sys.exc_type, sys.exc_value)
 
         return simplejson.dumps(responseDict, cls=DjangoJSONEncoder)
 

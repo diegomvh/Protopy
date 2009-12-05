@@ -101,8 +101,9 @@ blockquote {
 
 /* start - table */
 table {
+	font-size: 100%; /* Raro error con la carga dinamica, con esto se arregla */
 	border-collapse: collapse;
-	margin-top: 5px;		
+	margin-top: 5px;
 }
 tr { background: #fff; }
 tr.altrow { background: #F9F9F9;	}

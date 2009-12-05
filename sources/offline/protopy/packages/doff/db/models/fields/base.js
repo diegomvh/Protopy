@@ -433,14 +433,14 @@ var CharField = type('CharField', [ Field ], {
     },
 
     to_javascript: function(value) {
-        if (type(value) == String)
+        if (isinstance(value, String))
             return value;
-        if (!value)
+        if (value == null)
             if (this.none)
-            return value;
+            	return value;
             else
-            throw new ValidationError("This field cannot be null.");
-        return value;
+            	throw new ValidationError("This field cannot be null.");
+        return string(value);
     },
 
     formfield: function() {

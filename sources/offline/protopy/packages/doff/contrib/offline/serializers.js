@@ -65,9 +65,12 @@ var RemoteSerializer = type('RemoteSerializer', [ Serializer ], {
             "model"  : string(obj._meta),
             "fields" : this._current
         };
+        
         // Si ya esta en el servidor pongo el pk del servidor
         if (obj.server_pk != null)
             values["pk"] = obj.server_pk;
+        else if (!isinstance(obj._meta.pk, AutoField))
+    		values["pk"] = obj._meta.get_field('server_pk').to_javascript(obj._get_pk_val());
         
         this.objects.push(values);
         this._current = null;
@@ -103,13 +106,13 @@ var RemoteSerializer = type('RemoteSerializer', [ Serializer ], {
 
 function build_for_model(Model, d) {
 	var client_object = null;
-	var data = {	'server_pk': d["server_pk"],
-            		'active': d["active"],
+	var data = {	'server_pk': Model._meta.get_field('server_pk').to_javascript(d['server_pk']),
+            		'active': Model._meta.get_field('active').to_javascript(d['active']),
             		'status': "s"
     			};
 	try {
 	    // Search if exist instance
-	    client_object = Model._default_manager.get({'server_pk': data["server_pk"]});
+	    client_object = Model._default_manager.get({'server_pk': data['server_pk']});
 	    // Si estoy aca es porque la instancia existe, levanto el pk y lo marco
 	    data[Model._meta.pk.attname] = client_object[Model._meta.pk.attname];
 	} catch (e if isinstance(e, Model.DoesNotExist)) {}
@@ -117,10 +120,10 @@ function build_for_model(Model, d) {
 	
 	// Que pasa si el pk no es un AutoField
 	if (!isinstance(Model._meta.pk, AutoField))
-		data[Model._meta.pk.attname] = Model._meta.pk.to_javascript(data["server_pk"]);
+		data[Model._meta.pk.attname] = Model._meta.pk.to_javascript(data['server_pk']);
 	
 	// Handle each field
-	for each (var [field_name, field_value] in items(d["fields"])) {
+	for each (var [field_name, field_value] in items(d['fields'])) {
 	    //Esto esta copiado por el tema de unicode
 	    if (isinstance(field_value, String))
 	        field_value = string(field_value);

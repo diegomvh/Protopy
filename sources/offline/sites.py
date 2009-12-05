@@ -15,7 +15,7 @@ from django.db import models
 from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 from django.contrib.admin.sites import AlreadyRegistered
 from django.shortcuts import render_to_response
-from offline.util.jsonrpc import SimpleJSONRPCDispatcher
+from offline.util.jsonrpc import SimpleJSONRPCDispatcher, JsonRpcException
 from django.db.models.loading import get_app, get_model
 from offline.util import random_string, get_project_root, full_template_list
 from offline.models import GearsManifest, SyncData
@@ -31,6 +31,15 @@ __all__ = ('RemoteSite',
            'expose',
            'RemoteModelProxy',
            )
+
+class NeedPullException(JsonRpcException):
+    code = 0x1
+
+class NoRemoteException(JsonRpcException):
+    code = 0x2
+
+class DataException(JsonRpcException):
+    code = 0x3
 
 def expose(url, *args, **kwargs):
     def decorator(func):
@@ -383,6 +392,7 @@ class RemoteSite(RemoteBaseSite):
         # Veamos los modelos
         # TODO: Mejorar esto de meterle mano al SyncData
         models = []
+        #import ipdb; ipdb.set_trace()
         for app in self._registry.values():
             for model in app.keys():
                 # Si no es el primero filtro solo los modelos interesantes
@@ -421,20 +431,23 @@ class RemoteSite(RemoteBaseSite):
         remote_deleted = dict(map(lambda m: (m, self.get_remote(m)), received['deleted']['models']))
         remote_modified = dict(map(lambda m: (m, self.get_remote(m)), received['modified']['models']))
         remote_created = dict(map(lambda m: (m, self.get_remote(m)), received['created']['models']))
-
+        
         # Hay un remote para cada modelo ? 
         if not all(remote_deleted.values() + remote_modified.values() + remote_created.values()):
-            raise Exception('Remote Error')
+            raise NoRemoteException('No Remote for Model')
 
+        #import ipdb; ipdb.set_trace()
         # Por cada cambio que quiero meter, tenes el utimo sync log?
         all_models = set(received['deleted']['models'] + received['modified']['models'] + received['created']['models'])
         for app_model in all_models:
+            if received['sync_log'][app_model] == None:
+                continue
             model = get_model(*app_model.split('.'))
             last_sync = datetime.datetime(*time.strptime(received['sync_log'][app_model]['fields']['synced_at'], '%Y-%m-%d %H:%M:%S')[:6])
             model_type = ContentType.objects.get_for_model(model)
             sd = SyncData.objects.filter(content_type__pk = model_type.id, update_at__gt = last_sync)
             if bool(sd):
-                raise Exception('Need Pull')
+                raise NeedPullException('Need Pull')
 
         # Cada cambio que quiere meter tiene sus objetos correspondientes?
 
@@ -443,21 +456,28 @@ class RemoteSite(RemoteBaseSite):
         retorno['modified'] = {'models': received['modified']['models'], 'pks': {}}
         retorno['created'] = {'models': received['created']['models'], 'pks': {}}
 
-        # Primero los borrados
-        for app_model, remote in remote_deleted.iteritems():
-            remote_manager = remote._default_manager
-            retorno['deleted']['pks'][app_model] = remote_manager.delete(received['deleted']['objects'][app_model])
-
-        # Luego modificados
-        for app_model, remote in remote_modified.iteritems():
-            remote_manager = remote._default_manager
-            retorno['modified']['pks'][app_model] = remote_manager.update(received['modified']['objects'][app_model])
-
-        # Terminando los Creados
-        for app_model, remote in remote_created.iteritems():
-            remote_manager = remote._default_manager
-            retorno['created']['pks'][app_model] = remote_manager.insert(received['created']['objects'][app_model])
-
+        import ipdb
+        try:
+            #ipdb.set_trace()
+            # Primero los borrados
+            for app_model, remote in remote_deleted.iteritems():
+                remote_manager = remote._default_manager
+                retorno['deleted']['pks'][app_model] = remote_manager.delete(received['deleted']['objects'][app_model])
+    
+            #ipdb.set_trace()
+            # Luego modificados
+            for app_model, remote in remote_modified.iteritems():
+                remote_manager = remote._default_manager
+                retorno['modified']['pks'][app_model] = remote_manager.update(received['modified']['objects'][app_model])
+    
+            #ipdb.set_trace()
+            # Terminando los Creados
+            for app_model, remote in remote_created.iteritems():
+                remote_manager = remote._default_manager
+                retorno['created']['pks'][app_model] = remote_manager.insert(received['created']['objects'][app_model])
+        except:
+            raise DataException('Data Error')
+        
         new_sync = datetime.datetime.now()
 
         retorno['sync_log'] = {}

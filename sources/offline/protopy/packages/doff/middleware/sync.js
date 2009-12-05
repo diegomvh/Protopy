@@ -6,7 +6,6 @@ var SyncMiddleware = type('SyncMiddleware', [ object ], {
      * Bajo nivel
      */
     resolve_conflict: function(exception, local_object, deserialized_object) {
-		debugger;
         var f = getattr(this, 'resolve_%s'.subs( exception.__name__));
         if (!callable(f)) {
             throw new ImproperlyConfiguredException("%s doesnt handle %s properly".subs(
@@ -52,22 +51,18 @@ var SyncMiddleware = type('SyncMiddleware', [ object ], {
 var ClientWinsMiddleware = type('ClientWinsMiddleware', [ SyncMiddleware ], {
 
     resolve_UniqueDataBaseObject: function(local_object, deserialized_object) {
-		debugger;
         return local_object;
     },
 
     reoslve_LocalDeletedRemoteModified: function(local_object, deserialized_object) {
-    	debugger;
         return local_object;
     },
 
     resolve_LocalModifiedRemoteModified: function(local_object, deserialized_object) {
-    	debugger;
         return local_object;
     },
 
     reoslve_LocalModifiedRemoteDeleted: function(local_object, deserialized_object) {
-    	debugger;
         return local_object;
     }
 });
@@ -75,22 +70,18 @@ var ClientWinsMiddleware = type('ClientWinsMiddleware', [ SyncMiddleware ], {
 var SeverWinsMiddleware = type('SeverWinsMiddleware', [ SyncMiddleware ], {
 
     resolve_UniqueDataBaseObject: function(local_object, deserialized_object) {
-		debugger;
         return remote_object;
     },
 
     reoslve_LocalDeletedRemoteModified: function(local_object, deserialized_object) {
-    	debugger;
         return remote_object;
     },
 
     resolve_LocalModifiedRemoteModified: function(local_object, deserialized_object) {
-    	debugger;
         return remote_object;
     },
 
     reoslve_LocalModifiedRemoteDeleted: function(local_object, deserialized_object) {
-    	debugger;
         return remote_object;
     }
 });
