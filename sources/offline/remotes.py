@@ -157,9 +157,21 @@ class RemoteModelMetaclass(type):
         new_class.base_fields = fields
 
         return new_class
+    
+
 
 class RemoteModelProxy(object):
     __metaclass__ = RemoteModelMetaclass
+    
+    def save(self, deserialized_object):
+        '''
+        Saves on object that comes from the client.
+        Override this method to correct alterations you might
+        have made to the model structure :)
+        @param deserialized_object: A DeserializedObject instance 
+        '''
+        obj = deserialized_object.save()
+        return obj.object
 
 #===============================================================================
 # Serializer and Deserializer for RemoteManager
