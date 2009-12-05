@@ -47,7 +47,7 @@ function get_user(request) {
 	var username = request.session.get(SESSION_KEY, null);
 	if (username == null) {
 		try {
-			var proxy = new ServiceProxy(get_project().offline_support + '/sync', { asynchronous: false });
+			var proxy = new ServiceProxy(get_project().offline_support + '/jsonrpc/', { asynchronous: false });
 			var data = proxy.user();
 			if (data['class'] == 'AnonymousUser')
 				return new AnonymousUser();

@@ -42,7 +42,9 @@
 	         'doff.contrib.offline.context_processors.offline',
 	         'agentes.context_processors.pedido'
 	    ],
-
+	
+	SYNC_MIDDLEWARE_CLASS: 'doff.middleware.sync.ClientWinsMiddleware',
+	    
     TEMPLATE_LOADERS: [
                 'doff.template.loaders.url.load_template_source'
             ]

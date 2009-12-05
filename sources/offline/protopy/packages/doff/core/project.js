@@ -167,7 +167,7 @@ var Project = type('Project', object, {
         callback = callback || function() {};
         event.publish('pre_install', [callback]);
         
-        this.create_store(callback);
+        //this.create_store(callback);
         
         require('doff.db.utils','syncdb');
         syncdb(callback);

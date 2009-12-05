@@ -7,6 +7,12 @@ require('doff.contrib.offline.serializers', 'RemoteSerializer', 'RemoteDeseriali
 require('doff.utils.datastructures', 'SortedDict');
 require('doff.core.exceptions', 'ImproperlyConfigured');
 require('doff.conf.settings', 'settings');
+require('doff.core.serializers.base', 'DeserializedObject');
+
+var UniqueDataBaseObject = type('UniqueDataBaseObject', [ Exception ]);
+var LocalDeletedRemoteModified = type('LocalDeletedRemoteModified', [ Exception ]);
+var LocalModifiedRemoteModified = type('LocalModifiedRemoteModified', [ Exception ]);
+var LocalModifiedRemoteDeleted = type('LocalModifiedRemoteDeleted', [ Exception ]);
 
 function get_model_order(model_lists) {
     var model_adj = new SortedDict();
@@ -37,41 +43,66 @@ function get_related_models(model) {
 
 var SyncHandler = type('SyncHandler', [ object ], {
     __init__: function() {
-		var project = get_project();
         this.settings = settings;
-        // Esto puede fallar por no estar conectado.
-        try {
-        	this.proxy = new ServiceProxy(project.offline_support + '/sync', {asynchronous: false});
-        } catch (e) {
-        	// No conected
-        }
         this.serializer = new RemoteSerializer();
         this.deserializer = RemoteDeserializer
         this.load_middleware();
+        this._proxy = null;
+    },
+    
+    get proxy() { 
+		if (this._proxy == null) {
+			try {
+				// Esto puede fallar por no estar conectado.
+				var project = get_project();
+				this._proxy = new ServiceProxy(project.offline_support + '/jsonrpc/', {asynchronous: false}); 
+			} catch (e) {
+				this._proxy = null;
+			}
+		}
+    	return this._proxy;	
     },
 
+    validate: function(remote) {
+    	debugger;
+    	var Model = remote.__class__;
+		var local = Model.all.get({'pk': remote.object.pk});
+		if (local.status == 'd' && remote.active)
+			throw new LocalDeletedRemoteModified({'local': local});
+		if (local.status == 'm' && remote.active)
+			throw new LocalModifiedRemoteModified({'local': local});
+		if (local.status == 'm' && !remote.active)
+			throw new LocalModifiedRemoteDeleted({'local': local});
+    },
+    
     save_recived: function(received, sync_log) {
-        for (var obj in this.deserializer(received)) {
-            // TODO: Implementar los middlewares de sync
-            try {
-                obj.object.sync_log = sync_log;
-                obj.save();
-            } catch ( e ) {
-                //this.conflict_middleware.
+        for (var deserialized_object in this.deserializer(received)) {
+        	if (deserialized_object.object.sync_log != null) {
+        		try {
+        			this.validate(deserialized_object.object);
+        		} catch (e) {
+        			deserialized_object = this._sync_middleware.resolve_conflict(e, e.kwargs['local'], deserialized_object);
+        			if (isinstance(deserialized_object, DeserializedObject))
+        				deserialized_object.object.sync_log = sync_log;
+        			else
+        				deserialized_object.sync_log = sync_log;
+        		}
+        	} else
+        		deserialized_object.object.sync_log = sync_log;
+            try {	
+            	deserialized_object.save();
+            } catch (e) {
+            	debugger;
+            	this._sync_middleware.resolve_conflict(e, e.kwargs['local'], deserialized_object);
             }
         }
     },
 
     save_collected: function(collected, sync_log) {
         for each (var obj in collected) {
-            // TODO: Implementar los middlewares de sync
-            //try {
-                if (sync_log != null)
-                    obj.sync_log = sync_log;
-                obj.save_base();
-            //} catch ( e if isinstace(e, )) {
-                //this.conflict_middleware.
-            //}
+            if (sync_log != null)
+                obj.sync_log = sync_log;
+            obj.save_base();
         }
     },
 
@@ -153,17 +184,15 @@ var SyncHandler = type('SyncHandler', [ object ], {
     },
 
     pull: function() {
+    	var to_send = null;
     	try {
             var last_sync_log = SyncLog.objects.latest('pk');
-            var to_send = this.serializer.serialize(last_sync_log);
-            
-            this._sync_middleware.before_pull(to_send);
-            var data = this.proxy.pull(to_send);
-            this._sync_middleware.after_pull(data);
-    	
-    	} catch (e if isinstance(e, SyncLog.DoesNotExist)) {
-            var data = this.proxy.pull();
-        }
+            to_send = this.serializer.serialize(last_sync_log);
+    	} catch (e if isinstance(e, SyncLog.DoesNotExist)) { }
+        
+        this._sync_middleware.before_pull(to_send);
+        var data = this.proxy.pull(to_send);
+        this._sync_middleware.after_pull(data);
 
         return [ data['objects'], data['sync_log']];
     },

@@ -236,7 +236,7 @@ class RemoteSite(RemoteBaseSite):
     def network_check(self, request):
         return HttpResponse()
 
-    @expose(r'^sync/?$')
+    @expose(r'^jsonrpc/?$')
     def jsonrpc_handler(self, request):
         """
         the actual handler:

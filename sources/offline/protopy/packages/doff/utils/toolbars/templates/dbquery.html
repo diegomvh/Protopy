@@ -2,7 +2,7 @@
 
 div#dbquery-output {
     background-color: #FFFFFF;
-    height: 200px;
+    height: 70%;
     overflow: auto;
     width: 100%;
 }
@@ -35,26 +35,22 @@ div#dbquery-output table tbody tr.odd {
 }
 
 div#dbquery-active {
-    margin-top: 4px;
-    text-align: center;
+    height: 10%;
+    text-align: right;
 }
 
 div#dbquery-active textarea {
-    border: 0;
-    overflow: hidden;
+    border-top: 1px solid;
     font-size: 15px;
     width: 100%;
-    height: 13%;
+    height: 100%;
 }
 </style>
 
 <div id="dbquery-output"></div>
 
 <div id="dbquery-active">
-    <textarea id="dbquery-sql" cols=110 rows=2 spellcheck=false></textarea>
-</div>
-
-<div style="text-align: right;">
+    <textarea id="dbquery-sql" cols=90 rows=2 spellcheck=false></textarea>
     <button class="doff-panel-button" id="dbquery-execute">Execute</button>
     <button class="doff-panel-button" id="dbquery-clear">Clear</button>
 </div>

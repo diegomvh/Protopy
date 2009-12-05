@@ -11,11 +11,10 @@ var Sync = type('Sync', Panel, {
         this.handler = new handler.SyncHandler();
         this.handler._sync_middleware = this;
         try {
-        	this.last_sync_log = SyncLog.objects.latest('pk');
-        } catch (e) {
-        	//No data base
-        	this.last_sync_log = null;
-        }
+	    	this.last_sync_log = SyncLog.objects.latest('pk');
+	    } catch (e) {
+	    	this.last_sync_log = null;
+	    }
     },
 
     get_template: function() {
@@ -66,22 +65,22 @@ var Sync = type('Sync', Panel, {
     
     // Posiblemente tomar el pk del server y ponerlo en la local
     resolve_unique: function(local_object, remote_object) {
-        throw new NotImplementedError();
+        debugger;
     },
 
     // Posiblemente tomar la local y ponerla como sync
     reoslve_LocalDeletedRemoteModified: function(local_object, remote_object) {
-        throw new NotImplementedError();
+    	debugger;
     },
 
     // Selecciona una de las dos
     resolve_LocalModifiedRemoteModified: function(local_object, remote_object) {
-        throw new NotImplementedError();
+    	debugger;
     },
 
     
     reoslve_LocalModifiedRemoteDeleted: function(local_object, remote_object) {
-        throw new NotImplementedError();
+    	debugger;
     },
 
     before_push: function(data) {

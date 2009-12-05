@@ -178,13 +178,10 @@ function RemoteDeserializer(object_list) {
         }
         		
         if (data['active']) {
-            if (client_object != null) {
-            	// Es un update
-            	yield new DeserializedObject(new Model(data), m2m_data);
-            } else {
-            	// Es un create
-            	yield new DeserializedObject(new Model(data), m2m_data);
-            }
+        	var new_object = new Model(data);
+            if (client_object != null)
+            	new_object.sync_log = client_object.sync_log;
+            yield new DeserializedObject(new_object, m2m_data);
         } else if (client_object != null) {
             // Hay que poner en inactiva la instancia
         	client_object.active = data['active'];

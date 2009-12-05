@@ -236,7 +236,7 @@ var ForeignRelatedObjectsDescriptor = type('ForeignRelatedObjectsDescriptor', [ 
         superclass = this.related.model._default_manager.constructor;
 
         var RelatedManager = type('RelatedManager', [ superclass ], {
-            get_query_set: function(){
+            get_query_set: function() {
                 return super(superclass, this).get_query_set().filter(this.core_filters);
             },
 
