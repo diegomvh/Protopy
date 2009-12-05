@@ -8,6 +8,8 @@ class RemotePedido(RemoteModelProxy):
         model = Pedido
         exclude = ['vendedor']
 
+    def save(self, ):
+
 agentes_site = RemoteSite("agentes")
 agentes_site.register(Ciudad)
 agentes_site.register(Cliente)

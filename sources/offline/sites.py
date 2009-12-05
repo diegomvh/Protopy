@@ -456,7 +456,6 @@ class RemoteSite(RemoteBaseSite):
         retorno['modified'] = {'models': received['modified']['models'], 'pks': {}}
         retorno['created'] = {'models': received['created']['models'], 'pks': {}}
 
-        import ipdb
         try:
             #ipdb.set_trace()
             # Primero los borrados
@@ -478,10 +477,12 @@ class RemoteSite(RemoteBaseSite):
         except:
             raise DataException('Data Error')
         
-        new_sync = datetime.datetime.now()
+        
+        # mas un segundo para no entrar en errores de milis
+        new_sync = datetime.datetime.now() + datetime.timedelta(seconds = 1)
 
         retorno['sync_log'] = {}
-        retorno['sync_log']['synced_at'] = new_sync.strftime("%Y-%m-%d %H:%M:%S")
+        retorno['sync_log']['synced_at'] = new_sync.strftime("%Y-%m-%d %H:%M:%S") 
         retorno['sync_log']['sync_id'] = random_string(32)
 
         return retorno

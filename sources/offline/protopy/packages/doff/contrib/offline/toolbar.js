@@ -61,6 +61,9 @@ var Sync = type('Sync', Panel, {
         event.connect(this.bt_purge, 'click', function(event) {
         	self.handler.purge();
         });
+        event.connect($('sync-clean'), 'click', function(event) {
+        	self.output.update('');
+        });
     },
     
     // Posiblemente tomar el pk del server y ponerlo en la local

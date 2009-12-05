@@ -131,8 +131,8 @@ var SyncHandler = type('SyncHandler', [ object ], {
             var [ need_pull, chunked, deleted, modified, created, sync_log_data ] = this.push();
             if (need_pull) {                    // Tengo que traer datos del servidor 
                 var [ received, sync_log_data ] = this.pull();
-                /*if (!bool(received))
-                    throw new Exception('Server says pull, and not pulled data'); */
+                if (!bool(received))
+                    throw new Exception('Server says pull, and not pulled data');
                 var sync_log = new SyncLog(sync_log_data);          // Creo el sync log para el pull
                 sync_log.save();
                 this.save_recived(received, sync_log);              // Guardo el pull con su sync log
@@ -308,7 +308,7 @@ var SyncHandler = type('SyncHandler', [ object ], {
             }
             for (i = 0; i < objs_len; i++) {
                 collected_objects['created'][model][i].status = 's';
-                collected_objects['created'][model][i].server_pk = [model][i]._meta.get_field('server_pk').to_javascript(data['created']['pks'][model][i]);
+                collected_objects['created'][model][i].server_pk = collected_objects['created'][model][i]._meta.get_field('server_pk').to_javascript(data['created']['pks'][model][i]);
             }
             created = created.concat(collected_objects['created'][model]);
         }
