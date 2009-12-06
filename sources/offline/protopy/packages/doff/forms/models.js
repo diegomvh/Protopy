@@ -8,12 +8,6 @@ require('doff.forms.widgets', 'Select', 'SelectMultiple', 'HiddenInput', 'Multip
 require('doff.forms.formsets', 'BaseFormSet', 'formset_factory', 'DELETION_FIELD_NAME');
 
 /*
-from django.utils.encoding import smart_unicode, force_unicode
-
-from django.utils.text import get_text_list, capfirst
-
-*/
-/*
  * Saves bound Form ``form``'s cleaned_data into model instance ``instance``.
  * If commit=True, then the changes to ``instance`` will be saved to the database. Returns ``instance``.
  */

@@ -5,18 +5,8 @@ require('itertools', 'chain');
 
 require('doff.conf.settings', 'settings');
 
-//from django.utils.html import escape, conditional_escape
 function conditional_escape(v) { return v; }
 function escape(v) { return v; }
-
-/*
-from django.utils.safestring import mark_safe
-from django.utils import datetime_safe
-from datetime import time
-
-from urlparse import urljoin
-//TODO: crear urlparse e itertools
-*/
 var MEDIA_TYPES = ['css','js'];
 
 var Media = type('Media', [ object ], {

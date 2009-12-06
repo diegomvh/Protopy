@@ -240,10 +240,8 @@ var NowNode = type('NowNode', [ Node ], {
     },
 
     render: function(context) {
-        var datetime = require('datetime', 'datetime');
-        /*from django.utils.dateformat import DateFormat */
-        return datetime.format(new Date(), this.format_string);
-        /*return df.format(this.format_string)*/
+        var date = new Date();
+        return string(date);
     }
 });
 
