@@ -137,18 +137,21 @@ function build_for_model(Model, d) {
 	    // Handle M2M relations
 	    if (field.rel && isinstance(field.rel, models.ManyToManyRel)) {
 	        var m2m_convert = getattr(field.rel.to._meta.pk, 'to_javascript');
-	        // Map to client pks
+	        var server_pk_converter = getattr(Model._meta.get_field('server_pk'), 'to_javascript');
+	        // Map to client pks, populate type of field to type of server_pk
 	        try {
-	        	field_value = [field.rel.to._default_manager.get({'server_pk': f})[field.rel.to._meta.pk.attname] for each (f in field_value)]
+	        	field_value = [field.rel.to._default_manager.get({'server_pk': server_pk_converter(f)})[field.rel.to._meta.pk.attname] 
+	        	                                                                   for each (f in field_value) ]
 	        } catch (e if isinstance(e, Model.DoesNotExist)) {
 	        	throw new ServerPkDoesNotExist({'field': field});
 	        }
 	        m2m_data[field.name] = [m2m_convert(string(pk)) for each (pk in field_value)];
 	    } else if (field.rel && isinstance(field.rel, models.ManyToOneRel)) { // Handle FK fields
 	        if (field_value != null) {
+	        	var server_pk_converter = getattr(Model._meta.get_field('server_pk'), 'to_javascript');
 	            // Map to client pk
 	        	try {
-	            	field_value = field.rel.to._default_manager.get({'server_pk': field_value})[field.rel.to._meta.pk.attname];
+	            	field_value = field.rel.to._default_manager.get({'server_pk': server_pk_converter(field_value)})[field.rel.to._meta.pk.attname];
 		        } catch (e if isinstance(e, Model.DoesNotExist)) {
 		        	throw new ServerPkDoesNotExist({'field': field});
 		        }

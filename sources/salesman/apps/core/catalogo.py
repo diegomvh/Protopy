@@ -3,7 +3,9 @@ from django.shortcuts import get_object_or_404, render_to_response, redirect
 from django.template.context import RequestContext
 
 def productos_por_categoria(request, categoria):
-    supercategoria = get_object_or_404(Categoria, id = categoria, super__isnull = True)
+    supercategoria = get_object_or_404(Categoria, id = categoria)
+    while supercategoria.super != None:
+        supercategoria = supercategoria.super
     def lista_categorias(super):
         subcategorias = super.categoria_set.all()
         resultado = [super]

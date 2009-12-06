@@ -5,7 +5,6 @@ from salesman.apps.core.models import Producto, Cliente
 from django.template.context import RequestContext
 
 def terminar_pedido(sp, user):
-    
     pedido = Pedido()
     pedido.vendedor = user
     pedido.cliente = sp['cliente']

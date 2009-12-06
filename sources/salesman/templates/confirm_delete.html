@@ -13,8 +13,9 @@
 		(function () {
 			require('sys');
 			require('event');
-			event.connect(sys.window, 'load', function (){
-				event.connect($('cancelar'), 'click', function (e){
+			event.connect(sys.window, 'load', function () {
+				event.connect($('cancelar'), 'click', function (e) {
+					debugger;
 					event.stopEvent(e);
 					sys.window.history.back();
 				});
