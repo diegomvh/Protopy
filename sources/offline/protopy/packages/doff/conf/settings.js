@@ -1,12 +1,19 @@
 var global_settings = {
         DEBUG: false,
         TEMPLATE_DEBUG: false,
+        NETWORK_CHECK_URL: '',		//Url for network check, if is '' do not network check
+        NET_CHECK: 5,
 
         // Database connection info.
         DATABASE_ENGINE: 'gears',
         DATABASE_NAME: '',
         DATABASE_OPTIONS: {},
 
+        //Store
+        STORE_ENGINE: 'gears',
+        STORE_NAME: '',
+        MANIFEST_FILE: '',
+        
         //SESSION
         SESSION_COOKIE_NAME: 'doffsessionid',                       // Cookie name. This can be whatever you want.
         SESSION_COOKIE_AGE: 60 * 60 * 24 * 7 * 2,               // Age of cookie, in seconds (default: 2 weeks).
@@ -21,7 +28,7 @@ var global_settings = {
         INSTALLED_APPS: [],
 
         // Location of the template source files.
-        TEMPLATE_URL: '',
+        TEMPLATE_URL: [ '' ],
 
         // List of callables that know how to import templates from various sources.
         TEMPLATE_LOADERS: [
