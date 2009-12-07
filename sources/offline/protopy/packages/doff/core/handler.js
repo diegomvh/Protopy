@@ -22,7 +22,7 @@ var LocalHandler = type('LocalHandler', [ object ], {
         this._view_middleware = [];
         this._response_middleware = [];
         this._exception_middleware = [];
-
+       
         var request_middleware = [];
         for each (var middleware_path in this.settings.MIDDLEWARE_CLASSES) {
             var dot = middleware_path.lastIndexOf('.');
@@ -51,7 +51,7 @@ var LocalHandler = type('LocalHandler', [ object ], {
             if (hasattr(mw_instance, 'process_response'))
                 this._response_middleware.unshift(mw_instance.process_response);
             if (hasattr(mw_instance, 'process_exception'))
-                this._exception_middleware.shift(mw_instance.process_exception);
+                this._exception_middleware.unshift(mw_instance.process_exception);
         }
         // We only assign to this when initialization is complete as it is used
         // as a flag for initialization being complete.

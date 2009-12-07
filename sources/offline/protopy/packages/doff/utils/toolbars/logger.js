@@ -19,17 +19,17 @@ var Logger = type('Logger', [Panel, Handler], {
         var template = '';
         new ajax.Request(file, {
             method: 'GET',
-	    asynchronous : false,
-	    onSuccess: function(transport) {
-		template = transport.responseText;
-	    },
-	    onException: function(obj, exception) {
-		throw exception;
-	    },
-	    onFailure: function(transport) {
-		throw new Exception("No template for logger");
-	    }
-	});
+		    asynchronous : false,
+		    onSuccess: function(transport) {
+				template = transport.responseText;
+		    },
+		    onException: function(obj, exception) {
+		    	throw exception;
+		    },
+		    onFailure: function(transport) {
+		    	throw new Exception("No template for logger");
+		    }
+		});
         return template;
     },
 

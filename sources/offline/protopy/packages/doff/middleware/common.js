@@ -36,8 +36,9 @@ var CommonMiddleware = type('CommonMiddleware', [ object ], {
         return new http.HttpResponsePermanentRedirect(newurl);
     },
 
-    process_response: function(request, response) {
-        return response;
+    process_exception: function(request, exception) {
+        debugger;
+        alert('instalame');
     }
 });
 

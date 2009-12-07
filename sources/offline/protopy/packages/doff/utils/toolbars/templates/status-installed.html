@@ -1,0 +1,73 @@
+<style>
+div#logger-output {
+    background-color: #FFFFFF;
+    height: 80%;
+    overflow: auto;
+}
+
+div#logger-output p {
+	font: normal monospace smaller;
+    margin: 1px;
+    padding: 0.1em;
+}
+
+div#logger-output p span.DEBUG {
+    background-color:#A6C9D7;
+}
+
+div#logger-output p span.INFO {
+    background-color:#A7CC25;
+}
+
+div#logger-output p span.WARN {
+    background-color:#F2E886;
+}
+
+div#logger-output p span.ERROR {
+    background-color:#F58516;
+}
+
+div#logger-output p span.FATAL {
+    background-color:#E32F0B;
+}
+
+div#logger-active {
+    height: 10%;
+    text-align: right;
+}
+
+div#logger-active span {
+    padding: 5px;
+}
+
+div#logger-active span label {
+    display: inline;
+}
+
+div#logger-active span label.debug {
+    background-color: #A6C9D7;
+}
+
+div#logger-active span label.info {
+    background-color: #A7CC25;
+}
+
+div#logger-active span label.warn {
+    background-color: #F2E886;
+}
+
+div#logger-active span label.error {
+    background-color: #F58516;
+}
+
+div#logger-active span label.fatal {
+    background-color: #E32F0B;
+}
+</style>
+
+<div id="logger-output"></div>
+
+<div id="logger-active">
+    <button id="status-shortcut">Create desktop shortcut</button>
+    <button id="status-reset">Reset my offline access</button>
+</div>

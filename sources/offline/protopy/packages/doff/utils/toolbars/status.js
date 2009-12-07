@@ -75,7 +75,7 @@ var Status = type('Status', [ Panel ], {
         this.project = project;
 		this.config = project.settings;
 
-        super(Panel, this).__init__('status', 'Offline Support', 'Install offline access for ' + this.config.PROJECT_NAME);
+        super(Panel, this).__init__('status', 'Offline', 'Install offline access for ' + this.config.PROJECT_NAME);
         this.icon = sys.module_url('doff.utils.toolbars', 'templates/icons/protopy.png');
 
         this.project.is_online ? this.go_online() : this.go_offline();
@@ -119,11 +119,23 @@ var Status = type('Status', [ Panel ], {
     },
 
     get_template: function() {
-        if (this.project.is_installed) {
-            return installed_template;
-        } else {
-        	return new Template(uninstalled_template).evaluate(this.config);
-        }
+    	var file = sys.module_url('doff.utils.toolbars', 'templates/status-uninstalled.html');
+    	//if (this.project.is_installed)
+        var template = '';
+        new ajax.Request(file, {
+            method: 'GET',
+		    asynchronous : false,
+		    onSuccess: function(transport) {
+				template = transport.responseText;
+		    },
+		    onException: function(obj, exception) {
+		    	throw exception;
+		    },
+		    onFailure: function(transport) {
+		    	throw new Exception("No template for logger");
+		    }
+		});
+        return template;
     },
 
     _display: function() {

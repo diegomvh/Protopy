@@ -122,7 +122,7 @@ var ToolBar = type('Toolbar', object, {
     },
 
     hide: function() {
-        this.ul.hide();
+        this.content.hide();
     },
 
     show: function() {
@@ -130,7 +130,7 @@ var ToolBar = type('Toolbar', object, {
         this._display();
             this.displayed = true;
         }
-        this.ul.show();
+        this.content.show();
     },
 
     _display: function () {
