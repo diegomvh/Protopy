@@ -1,5 +1,9 @@
 .. _apendices-doff-modelos
 
+amarillo: falta de ortografia, redaccion, coregir
+rosa: mal separado en silabas
+celeste: poner en negrita
+
 ######################################
 Referencia de la definición de modelos
 ######################################
@@ -117,7 +121,7 @@ DecimalField
 Un numero de punto flotante, representado en JavaScript por una instancia de
 ``Number``. Tiene dos argumentos requeridos, que se muestran en la tabla.
 
-.. list-table:: Opciones extra de FloatField
+.. list-table:: Opciones extra de DecimalField
     :widths: 20 80
    
     * - **Argumento**
@@ -130,12 +134,12 @@ Un numero de punto flotante, representado en JavaScript por una instancia de
 Por ejemplo, para almacenar números hasta 999 con una resolución de dos
 decimales, hay que usar::
 
-    models.DecimalField(..., max_digits=5, decimal_places=2)
+    models.DecimalField({..., max_digits: 5, decimal_places: 2})
 
 Y para almacenar números hasta aproximadamente mil millones con una resolución
 de diez dígitos decimales, hay que usar::
 
-    models.DecimalField(..., max_digits=19, decimal_places=10)
+    models.DecimalField({..., max_digits: 19, decimal_places: 10})
 
 IntegerField
 ------------
@@ -176,7 +180,7 @@ usan en URLs.
 De igual forma que en ``CharField``, puedes especificar ``max_length``. Si
 ``max_length`` no está especificado, el valor por omisión es de 50.
 
-Un ``SlugField`` implica ``db_index=true`` debido a que son los se usan
+Un ``SlugField`` implica ``db_index = true`` debido a que son los se usan
 principalmente para búsquedas en la base de datos.
 
 SmallIntegerField
@@ -219,14 +223,14 @@ Si está en ``true``, se almacenaran valores vacíos como ``NULL`` en la base
 de datos. El valor por omisión es ``false``.
 
 Los valores de string nulo siempre se almacenan como strings vacíos, no como
-``NULL``. ``null=true`` se debe utilizar solo para campos no-string, como enteros,
-booleanos y fechas. En los dos casos, también es necesario establecer ``blank=true``
+``NULL``. ``null = true`` se debe utilizar solo para campos no-string, como enteros,
+booleanos y fechas. En los dos casos, también es necesario establecer ``blank = true``
 si se desea permitir valores vacíos en los formularios, ya que el parámetro ``null``
 solo afecta el almacenamiento en la base de datos (ver la siguiente sección, titulada `blank`).
 
 Se debe evitar utilizar ``null`` en campos basados en string como ``CharField`` y
 ``TextField`` salvo que se tenga una excelente razón para hacerlo. Si un campo
-basado en string tiene ``null=true``, eso significa que tiene dos valores
+basado en string tiene ``null = true``, eso significa que tiene dos valores
 posibles para "sin datos": ``NULL`` y el string vacío. En la mayoría de los
 casos, esto es redundante; la convención es usar el string vacío, no ``NULL``.
 
@@ -238,8 +242,8 @@ omisión es ``false``.
 
 Este es diferente de ``null``. ``null`` solo se relaciona con la
 base de datos, mientras que ``blank`` está relacionado con la validación. Si
-un campo tiene ``blank=true``, la validación permitirá la entrada de un valor vacío.
-Si un campo tiene ``blank=false``, es un campo requerido.
+un campo tiene ``blank = true``, la validación permitirá la entrada de un valor vacío.
+Si un campo tiene ``blank = false``, es un campo requerido.
 
 choices
 -------
@@ -259,7 +263,7 @@ Una lista de opciones se ve así:
             ['SO', 'Sophomore'],
             ['JR', 'Junior'],
             ['SR', 'Senior'],
-            ['GR', 'Graduate'],
+            ['GR', 'Graduate']
         ]
 
 El primer elemento de cada tupla es el valor actual a ser almacenado.
@@ -291,7 +295,7 @@ o fuera del modelo:
 
 Para cada campo del modelo que tenga establecidas ``choices``, Se agregará
 un método para recuperar el nombre legible por humanos para el valor actual del
-campo. Ver el apendice de API de base de datos para más detalles.
+campo. Ver el apendice sobre la API de base de datos para más detalles.
 
 db_column
 ---------
@@ -318,7 +322,7 @@ El valor por omisión del campo.
 editable
 --------
 
-Si es ``false``, el campo no será editable en el  procesamiento de formularios.
+Si es ``false``, el campo no será editable en el procesamiento de formularios.
 El valor por omisión es ``true``.
 
 help_text
@@ -332,17 +336,17 @@ primary_key
 
 Si es ``true``, este campo es la clave primaria del modelo.
 
-Si no se especifica ``primary_key=true`` para ningún campo del modelo, se
+Si no se especifica ``primary_key = true`` para ningún campo del modelo, se
 agregará automáticamente este campo::
 
     id = new models.AutoField('ID', { primary_key: true });
 
-Por lo tanto, no es necesario establecer ``primary_key=true`` en ningún campo,
+Por lo tanto, no es necesario establecer ``primary_key = true`` en ningún campo,
 salvo que se quiera sobreescribir el comportamiento por omisión de la clave
 primaria.
 
-``primary_key=true`` implica ``blank=false``, ``null=false``, y
-``unique=true``. Solo se permite una clave primaria en un objeto.
+``primary_key=true`` implica ``blank = false``, ``null = false``, y
+``unique = true``. Solo se permite una clave primaria en un objeto.
 
 radio_admin
 -----------
@@ -369,7 +373,7 @@ ejemplo:
 
         var Story = type('Story', [ models.Model ] {
             pub_date: new models.DateTimeField(),
-            slug: new models.SlugField({unique_for_date:"pub_date"}),
+            slug: new models.SlugField({unique_for_date: "pub_date"}),
             ...
         });
 
@@ -415,9 +419,10 @@ primer argumento sea una clase del modelo, en este caso hay que usar
 
     .. code-block:: javascript
 
-        poll = new models.ForeignKey(Poll, {verbose_name: "the related poll"})
-        sites = new models.ManyToManyField(Site, {verbose_name: "list of sites"})
-        place = new models.OneToOneField(Place, {verbose_name: "related place"})
+        poll = new models.ForeignKey(Poll, {verbose_name: "the related poll"}),
+        sites = new models.ManyToManyField(Site, {verbose_name: "list of sites"}),
+        place = new models.OneToOneField(Place, {verbose_name: "related place"}),
+        ...
 
 La convención es no capitalizar la primera letra del ``verbose_name`` estas son pasadas a
 mayúscula automáticamente cuando sea necesario.
@@ -454,7 +459,7 @@ Por ejemplo, si un modelo ``Car`` tiene un ``Manufacturer`` -- es decir, un
         });
 
 Para crear una relación *recursiva* -- un objeto que tiene una relación
-muchos-a-uno con él mismo -- ``models.ForeignKey('this')``:
+muchos-a-uno con él mismo -- ``new models.ForeignKey('this')``:
 
     .. code-block:: javascript
 
@@ -485,10 +490,10 @@ un modelo que ha sido requerido de cualquier otro lado.
 Detrás de la escena, ``"_id"`` es agregado al nombre de campo para crear su
 nombre de columna en la base de datos. En el ejemplo anterior, la tabla de la
 base de datos correspondiente al modelo ``Car``, tendrá una columna
-``manufacturer_id``. (Esto puede se puede cambiar explícitamente especificando
-``db_column``; ver más arriba en la sección :ref:`db_column <apendices-doff-modelos-dbcolumn>`.) De todas formas, el
+``manufacturer_id``. (Esto se puede cambiar explícitamente especificando
+``db_column``; ver más arriba. De todas formas, el
 código nunca debe utilizar el nombre de la columna de la base de datos, salvo
-que escribas SQL. Siempre se utilizaran los nombres de campo del modelo.
+que se escriba SQL. Siempre se utilizaran los nombres de campo del modelo.
 
 Se sugiere, pero no es requerido, que el nombre de un campo ``ForeignKey``
 (``manufacturer`` en el ejemplo) sea el nombre del modelo en minúsculas. Igualmente
@@ -502,58 +507,15 @@ se puede poner cualquier nombre. Por ejemplo:
         });
 
 Los campos ``ForeignKey`` reciben algunos argumentos extra para definir como
-debe trabajar la relación (ver :ref:`Tabla <doff-modelos-foreignkey-tabla>`). Todos son opcionales.
+debe trabajar la relación (ver la tabla). Todos son opcionales.
 
-.. warning:: ver esta tabla hay opciones que no estan.
-
-.. _doff-modelos-foreignkey-tabla:
 .. list-table:: Opciones de ForeignKey
     :widths: 20 80
    
     * - **Argumento**
       - **Descripción**
-    * - ``edit_inline``
-      - Si no es ``false``, este objeto relacionado se edita "inline" en la página del objeto relacionado. Esto significa
-        que el objeto no tendrá su propia interfaz de administración. Usa ``models.TABULAR`` o ``models.STACKED``,
-        que designan si los objetos editables inline se muestran como una tabla o como una pila de conjuntos de campos,
-        respectivamente.
-    * - ``limit_choices_to``
-      - Un diccionario para buscar argumentos y valores (ver el Apéndice C) que limita las opciones de administración
-        disponibles para este objeto. Usa esto con funciones del módulo ``datetime`` de Python para limitar las opciones de
-        fecha de los objetos. Por ejemplo::
-
-            limit_choices_to: {'pub_date__lte': datetime.now}
-
-        sólo permite la elección de objetos relacionados con ``pub_date`` anterior a la fecha/hora actual.
-
-        En lugar de un diccionario, esto puede ser un objeto ``Q`` (ver Apéndice C) para consultas más complejas.
-
-        No es compatible con ``edit_inline``.
-    * - ``max_num_in_admin``
-      - Para objetos editados inline, este es el número máximo de objetos relacionados a mostrar en la interfaz de
-        administración.
-        Por lo tanto, si una pizza puede tener como máximo diez ingredientes, ``max_num_in_admin=10`` asegurará que un
-        usuario nunca ingresará más de diez ingredientes.
-
-        Observar que esto no asegura que no se puedan crear más de diez ingredientes relacionados. Simplemente controla
-        la interfaz de administración; no fortalece cosas a nivel de Python API o base de datos.
-    * - ``min_num_in_admin``
-      - La cantidad mínima de objetos relacionados que se muestran en la interfaz de administración. Normalmente,
-        en el momento de la creación se muestran ``num_in_admin`` objetos inline , y en el momento de edición se muestran
-        ``num_extra_on_change`` objetos en blanco además de todos los objetos relacionados preexistentes. De todas formas,
-        nunca se mostrarán menos de ``min_num_in_admin`` objetos relacionados.
-    * - ``num_extra_on_change``
-      - La cantidad de campos en blanco extra de objetos relacionados a mostrar en el momento de realizar cambios.
-    * - ``num_in_admin``
-      - El valor por omisión de la cantidad de objetos inline a mostrar en la página del objeto en el momento de agregar.
-    * - ``raw_id_admin``
-      - Solo muestra un campo para ingresar un entero en lugar de un menú desplegable. Esto es útil cuando se relaciona con
-        un tipo de objeto que tiene demasiadas filas para que sea práctico utilizar una caja de selección.
-        
-        No es utilizado con ``edit_inline``.
     * - ``related_name``
-      - El nombre a utilizar para la relación desde el objeto relacionado de hacia éste objeto. Para más información,
-        ver el Apéndice C.
+      - El nombre a utilizar para la relación desde el objeto relacionado de hacia éste objeto.
     * - ``to_field``
       -  El campo en el objeto relacionado con el cual se establece la relación. Por omisión, Doff usa la clave primaria del
          objeto relacionado.
@@ -598,7 +560,7 @@ No importa cual de los modelos tiene el  ``ManyToManyField``, pero es necesario
 que esté en uno de los modelos -- no en los dos.
 
 Los objetos ``ManyToManyField`` toman algunos argumentos extra para definir como
-debe trabajar la relación (ver :ref:`Tabla <doff-modelos-manytomanyfield-tabla>`). Todos son opcionales.
+debe trabajar la relación (ver la tabla). Todos son opcionales.
 
 .. warning:: ver esta tabla hay opciones que no estan.
 
@@ -611,12 +573,6 @@ debe trabajar la relación (ver :ref:`Tabla <doff-modelos-manytomanyfield-tabla>
     * - ``related_name``
       - El nombre a utilizar para la relación desde el objeto relacionado hacia este objeto. Ver Apéndice C para más
         información..
-    * - ``filter_interface``
-      - Usa una interfaz de "filtro" JavaScript agradable y discreta en lugar de la menos cómoda ``<select multiple>`` en el
-        formulario administrativo de este objeto. El valos debe ser ``models.HORIZONTAL`` o ``models.VERTICAL`` (es decir, la
-        interfaz debe apilarse horizontal o verticalmente).
-    * - ``limit_choices_to``
-      - Ver la descripción en ``ForeignKey``.
     * - ``symmetrical``
       - Solo utilizado en la definición de ``ManyToManyField`` sobre sí mismo. Considera el siguiente modelo:
     
@@ -631,7 +587,7 @@ debe trabajar la relación (ver :ref:`Tabla <doff-modelos-manytomanyfield-tabla>
         En lugar de eso, se asumen que el ``ManyToManyField`` es simétrico -- esto es, si yo soy tu amigo, entonces tu eres
         mi amigo.
 
-        Si no deseas la simetría en las relaciones ``ManyToMany`` con ``self``, establece ``symmetrical`` en ``false``. Esto
+        Si no deseas la simetría en las relaciones ``ManyToMany`` con ``this``, establece ``symmetrical`` en ``false``. Esto
         forzará a Doff a agregar el descriptor para la relación inversa, permitiendo que las relaciones ``ManyToMany`` sean
         asimétricas.
     * - ``db_table``
@@ -713,7 +669,7 @@ Aquí hay un ejemplo:
             }
         });
 
-Ver :ref:`apendices-doff-dbapi` para más información sobre el método ``latest()``.
+Ver el apendice sobre API de base de datos para más información sobre el método ``latest()``.
 
 order_with_respect_to
 ---------------------
@@ -834,7 +790,7 @@ Un ``Manager`` es la interfaz a través de la cual se proveen las operaciones
 de consulta de la base de datos a los modelos. Existe al menos un ``Manager``
 para cada modelo en una aplicación.
 
-La forma en que trabajan los tipos ``Manager`` está documentada en el :ref:`apendices-doff-dbapi`.
+La forma en que trabajan los tipos ``Manager`` está documentada en el apendice de base de datos.
 Esta sección trata específicamente las opciones del modelo que personaliza el
 comportamiento del ``Manager``.
 
@@ -850,7 +806,7 @@ en ese modelo, por ejemplo:
 
     .. code-block:: javascript
 
-        var models = require(doff.db.models.base');
+        var models = require('doff.db.models.base');
 
         var Person = type('Person', [ models.Model ], {
             ...
@@ -879,7 +835,7 @@ Agregando Métodos Extra al Manager
 Agregar métodos extra al ``Manager`` es la forma preferida de agregar
 funcionalidad  a nivel de tabla a los modelos. (Para funcionalidad a nivel de
 registro -- esto es, funciones que actúan sobre una instancia simple de un
-objeto modelo -- se deben usar métodos del modelo (ver :ref:`metodos del modelo <apendices-doff-modelos-metodos>`),
+objeto modelo -- se deben usar métodos del modelo,
 no métodos de ``Manager`` personalizados.)
 
 Un método ``Manager`` personalizado puede retornar cualquier cosa que se necesite.
@@ -986,7 +942,7 @@ sobre él. Por lo tanto, estas sentencias son todas legales::
 
 Este ejemplo también señala otra técnica interesante: usar varios managers en
 el mismo modelo. Se pueden agregar tantas instancias de ``Manager()`` como se requieran.
-Esta es una manera fácil de definir "filters" comunes para tus modelos. Aquí
+Esta es una manera fácil de definir "filters" comunes para los modelos. Aquí
 hay un ejemplo:
 
     .. code-block:: javascript
@@ -1060,9 +1016,8 @@ lugar: el modelo. Por ejemplo, este modelo tiene algunos métodos personalizados
 
 El último método en este ejemplo es un *getter* -- un atributo implementado
 por código personalizado. Los getter son un un truco ingenioso
-agregado en JavaScript 1.6; puedes leer más acerca de ellas en
-.. Diego cambiar este link
-http://www.python.org/download/releases/2.2/descrintro/#property.
+agregado en JavaScript 1.6; se puede leer más acerca de ellos en
+https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Global_Objects/Object.
 
 Existen también un puñado de métodos de modelo que tienen un significado
 "especial" para JavaScript o Protopy. Estos métodos se describen en las secciones
@@ -1072,7 +1027,7 @@ __str__
 -------
 
 ``__str__()`` es un "método mágico" de Protopy que define lo que debe ser
-devuelto si llamas a ``string()`` sobre el objeto. Se usa ``string(obj)`` en varios
+devuelto si se llama a ``string()`` sobre el objeto. Se usa ``string(obj)`` en varios
 lugares, particularmente como el valor mostrado para hacer el render de un
 objeto y como el valor insertado en un plantilla cuando muestra un objeto.
 Por eso, siempre se debe retornar un string agradable y legible por humanos 
@@ -1107,7 +1062,7 @@ resultantes:
 
         my_custom_sql: function() {
             require('doff.db.base', 'connection');
-            var cursor = connection.cursor()
+            var cursor = connection.cursor();
             cursor.execute("SELECT foo FROM bar WHERE baz = %s", [this.baz]);
             row = cursor.fetchone();
             return row;
@@ -1133,7 +1088,7 @@ necesita que suceda algo cuando se guarda un objeto, por ejemplo:
 
             save: function() {
                 do_something();
-                super(models.Model, this).save() // Call the "real" save() method.
+                super(models.Model, this).save(); // Call the "real" save() method.
                 do_something_else();
             }
         });
@@ -1150,6 +1105,6 @@ También se puede evitar el guardado:
                 if (this.name == "Yoko Ono's blog")
                     return; // Yoko shall never have her own blog!
                 else
-                    super(models.Model, this).save() // Call the "real" save() method
+                    super(models.Model, this).save(); // Call the "real" save() method
             }
         });

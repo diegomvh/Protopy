@@ -24,13 +24,13 @@ var Sync = type('Sync', Panel, {
             method: 'GET',
             asynchronous : false,
             onSuccess: function(transport) {
-            template = transport.responseText;
+            	template = transport.responseText;
             },
             onException: function(obj, exception) {
-            throw exception;
+            	throw exception;
             },
             onFailure: function(transport) {
-            throw new Exception("No template for sync");
+            	throw new Exception("No template for sync");
             }
         });
         return template;
