@@ -202,7 +202,7 @@ var Project = type('Project', object, {
     start_network_thread: function(){
         if(!this.do_net_checking)
             return;
-        this.thread = window.setInterval(getattr(this, 'network_check'), this.NET_CHECK * 1000);
+        this.thread = window.setInterval(getattr(this, 'network_check'), this.net_check * 1000);
     },
 
     stop_network_thread: function(){

@@ -52,7 +52,9 @@
 	    ],
 	
 	SYNC_MIDDLEWARE_CLASS: 'doff.middleware.sync.ClientWinsMiddleware',
-	
+	RPC_PROTOCOL: 'JSON-RPC', //default: JSON-RPC or XML-RPC
+    RPC_URL: '/off/agentes/jsonrpc/',
+    
 	TEMPLATE_URL: ['/off/agentes/templates/'],
 	
     TEMPLATE_LOADERS: [

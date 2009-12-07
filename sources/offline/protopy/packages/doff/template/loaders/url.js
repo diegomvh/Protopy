@@ -13,7 +13,6 @@ function get_template_sources(template_name, template_dirs) {
 }
 
 function load_template_source(template_name, template_dirs) {
-	debugger;
 	var tried = [];
 	var template = null;
     for each (var filepath in get_template_sources(template_name, template_dirs)) {

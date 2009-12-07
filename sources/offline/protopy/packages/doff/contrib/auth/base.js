@@ -1,5 +1,5 @@
 require('rpc', 'ServiceProxy');
-require('doff.core.project', 'get_project');
+require('doff.conf.settings', 'settings');
 require('event');
 
 var SESSION_KEY = '_auth_username';
@@ -47,7 +47,7 @@ function get_user(request) {
 	var username = request.session.get(SESSION_KEY, null);
 	if (username == null) {
 		try {
-			var proxy = new ServiceProxy(get_project().offline_support + '/jsonrpc/', { asynchronous: false });
+			var proxy = new ServiceProxy(settings.RPC_URL, { asynchronous: false, protocol: settings.RPC_PROTOCOL });
 			var data = proxy.user();
 			if (data['class'] == 'AnonymousUser')
 				return new AnonymousUser();
