@@ -106,7 +106,13 @@ aplicación en linea.
 .. Ya vamos a explicar framework
 
 El objetivo principal se definió como:
-    * Extender un framework de aplicaciones web, OpenSource, existente de manera que una aplicación realizada sobre éste, pueda ser ejecutada en el cliente de manera desconectada con un mínimo de modificaciones. Para permitir que la aplicación pueda ejecutarse en el cliente, se implementará:
+
+    * Extender un framework de aplicaciones web, OpenSource, existente 
+      de manera que una aplicación realizada sobre éste, pueda ser ejecutada 
+      en el cliente de manera desconectada con un mínimo de modificaciones. 
+      Para permitir que la aplicación pueda ejecutarse en el cliente, se 
+      implementará:
+      
           * Persistencia del modelo de datos en el cliente.
           * Subconjunto de acciones disponibles en modo desconectado.
           * Primitivas de sincronización entre la aplicación del cliente y la aplicación web que le dio origen.

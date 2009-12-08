@@ -58,7 +58,7 @@ frel = lambda f: os.path.relpath(f, CURRENT_PATH)
 
 def remove_twopage_parameter(base = LATEX_OUTPUT, files = '*.cls'):
     re_twoside = re.compile(ur'''
-        twoside
+        twoside,?
     ''',  re.VERBOSE | re.UNICODE)
     
     for fname in file_walk(base, files):

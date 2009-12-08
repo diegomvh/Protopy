@@ -7,12 +7,16 @@ Tecnologías del Servidor
 ########################
 
 Este capítulo tiene como finalidad introducir los conceptos básicos concernientes
-a la *generación dinámica de contenido* en el servidor web (2.1).
+a la generación dinámica de contenido en el servidor web.
 
-A continuación se realiza una revisión general de los componentes de un servidor web y, 
-luego, se analizan los lenguajes dinámicos y sus frameworks.
+Inicialmente se realiza una revisión general de los componentes de un servidor web.
+Luego se realiza un breve análisis sobre los lenguajes dinámicos en el contexto
+de la web y sus pricnipales frameworks.
 
-A continuación se analizan las características que hacen relevante 
+Los frameowrks son conjuntos de componentes de software genéricos y reutilizables
+que simplifican el desarrollo.
+
+Por último se detallan las características que hacen relevante 
 el estudio de los lenguajes dinámicos como plataforma de desarrollo de aplicaciones
 web dinámicas.
 
@@ -27,22 +31,23 @@ información proporcionada por el usuario para buscar registros en una base de
 datos y generar una página HTML personalizada para el cliente.
 
 
-Tradicionalmente, la tecnología utilizada se conoce como CGI,
+Tradicionalmente, la tecnología utilizada se conoce como CGI [*]_,
 estándar que consiste en delegar la generación de contenido a un
 programa. CGI se limita a definir la entrada y salida de éste.
 
+.. [*] Common Gateway Interface
 
 Un enfoque más moderno para la generación de contenido dinámico 
 es la incrustación de secuencias de comandos dentro de 
 las páginas HTML. Estos comandos son leídos y ejecutados en el servidor
 al momento de responder a la solicitud del cliente, 
-como es el caso de los lenguajes PHP o ASP.
+como en el caso de los lenguajes PHP o ASP.
 
 .. tecnologias-servidor-server-modular:
 
 Los servidores web primigenios y monolíticos evolucionaron a una arquitectura
 modular [ApacheMod2009]_ [MicrosoftIIS2009]_, en la cual un módulo brinda soporte para una tarea específica.
-Los módulos más comunes son los de autenticación, bitácora, balance de carga, así como también como 
+Los módulos más comunes son los de autenticación, bitácora, balance de carga, así como también  
 los de generación de contenido.
 
 .. [ApacheMod2009] *Módulos del servidor Apache 2.2*, último acceso, Septiembre de 2009, http://httpd.apache.org/docs/2.2/mod/
@@ -50,7 +55,7 @@ los de generación de contenido.
 
 
 Las nuevas formas de interacción entre un servidor web
-y un programa se desarrolladas con el objeto de satisfacer necesidades más complejas, 
+y un programa se desarrollan con el objeto de satisfacer necesidades más complejas, 
 que no fueron tenidas en cuenta en la genericidad de CGI.
 
 En la plataforma Java, se especificaron los Servlets [SunServlet2009]_, 
@@ -84,9 +89,6 @@ Servlets para el lenguaje Java [RailsQuotes2009]_ [*]_.
 .. Existen otras formas de generar contenido al vuelo y generalmente todas estas se
 .. engloban dentro del termino **HTML dinámico**.
 
-
-A continuación se realiza una revisión general de los componentes de un servidor web y, 
-luego, se analizan los lenguajes dinámicos y sus frameworks.
 
 Servidor Web
 ============
@@ -122,7 +124,7 @@ es a través de una URL, independientemente de su naturaleza.
 CGI
 ===
 
-Common Gateway Interface (CGI) [*]_ surge alrededor del año 1998,
+Common Gateway Interface [*]_ surge alrededor del año 1998,
 como el primer estándar de comunicación o API entre un servidor web y un
 programa de generación de contenidos. 
 
@@ -201,7 +203,7 @@ Las variables de entorno que se intercambian del servidor al CGI son:
         Nombre y versión de la interfaz de comunicación entre servidor y aplicaciones CGI/1.12.
 
 Debido a la popularidad de las aplicaciones CGI, los servidores web incluyen
-generalmente un directorio llamado **cgi-bin** donde se albergan estas
+generalmente un directorio llamado ``cgi-bin`` donde se albergan estas
 aplicaciones.
 
 
@@ -211,7 +213,7 @@ aplicaciones.
 .. texto plano, por lo que puede ser editado en una terminal directamente en el servidor. Otra ventaja
 .. importante de ser texto plano, es que es más sencillo de mantener con alguna herramienta de :term:SCM.
 
-CGI posee dos limitaciones importantes. Una es la sobrecarga producido por la ejecución de un 
+CGI posee dos limitaciones importantes. Una es la sobrecarga producida por la ejecución de un 
 programa y la segunda es que no fue diseñado para mantener información sobre la
 sesión. Cada petición se trata de manera independiente [DwightErwin1996]_.
 
@@ -236,15 +238,16 @@ Los lenguajes de programación de *propósito general* están orientados a resol
 de problema, mientras que los lenguajes de *propósito específico*, o DSL [*]_, están enfocados en resolver un tipo de problema
 de manera más eficaz. Un ejemplo muy popular de DSL es el lenguaje de macros embebido en la planilla de cálculo Microsoft Excel [DavidPollak2006]_.
 
-.. [*] Domain Specific Language
+.. [*] Domain Specific Language.
 
 .. [DavidPollak2006] *Ruby Sig:How To Design A Domain Specific Language*, Google Tech Talk, 2:44, http://video.google.com/videoplay?docid=-8103284744220333344
 
 
-Otra clasificación es la de lenguajes interpretados y lenguajes compilados. Un lenguaje de programación 
+Otra clasificación es la de lenguajes *interpretados* y lenguajes *compilados*. Un lenguaje de programación 
 interpretado es aquel en el cual los programas son ejecutados
 por un intérprete, en lugar de realizarse una traducción a lenguaje máquina (proceso de compilación).
-En teoría cualquier lenguaje de programación podría ser compilado o interpretado. 
+
+.. En teoría cualquier lenguaje de programación podría ser compilado o interpretado. 
 
 En un lenguaje interpretado el código fuente es el ejecutable. En cambio,
 para llegar a ejecutar un programa escrito en un lenguaje compilado
@@ -255,7 +258,7 @@ En esta última etapa también se resuelven los enlaces entre los diferentes mó
 
 Existe un mecanismo intermedio de ejecución, conocido como máquina virtual. En éste existe
 un proceso de compilación del código fuente a un lenguaje intermedio, comúnmente denominado
-*bytecode*. Este bytecode es luego ejecutado sobre un intérprete, al cual se denomina
+bytecode. Este bytecode es luego ejecutado sobre un intérprete, al cual se denomina
 máquina virtual. La traducción del código fuente a *bytecode* puede ser explícita, como en el
 lenguaje Java, o implícita como en Python, donde se mezcla en el intérprete la funcionalidad de 
 compilación a bytecode e interpretación.
@@ -264,7 +267,7 @@ compilación a bytecode e interpretación.
 
     Lenguaje interpretado con máquina virtual.
 
-Los lenguajes de programación interpretados suelen ser de alto nivel y de *tipado dinámico*, es decir
+Los lenguajes de programación interpretados suelen ser de alto nivel y de tipado dinámico, es decir
 que la mayoría de las comprobaciones realizadas en tiempo de compilación son evaluadas durante
 la ejecución [*]_.
 
@@ -276,7 +279,10 @@ para la plataforma [*]_ y compilar el código, la mayoría de los lenguajes inte
 ser ejecutados en varias plataformas (multiplataforma), ya que sólo es necesario disponer de un
 intérprete compilado.
 
-.. [*] *Una plataforma es una combinación de hardware y software usada para ejecutar aplicaciones; en su forma más simple consiste únicamente de un sistema operativo, una arquitectura, o una combinación de ambos. La plataforma más conocida es probablemente Microsoft Windows en una arquitectura x86* [WikiPlataforma2009]_.
+.. [*] *"Una plataforma es una combinación de hardware y software usada para ejecutar aplicaciones; 
+       en su forma más simple consiste únicamente de un sistema operativo, una arquitectura, 
+       o una combinación de ambos. La plataforma más conocida es probablemente Microsoft Windows
+       en una arquitectura x86"* [WikiPlataforma2009]_.
 
 .. [WikiPlataforma2009] *Multiplataforma*, Wikipedia, 2009, último acceso, Agosto de 2009, http://es.wikipedia.org/wiki/Multiplataforma
 
@@ -286,7 +292,7 @@ Cabe destacar que si bien estas características son factibles de implementar so
 esto no resulta sencillo.
 
 
-En base a la clasificación antes mencionada, a continuacion se analizan los lenguajes de programación más 
+En base a la clasificación antes mencionada, a continuación se analizan los lenguajes de programación más 
 populares para el desarrollo de aplicaciones web.
 
 Perl
@@ -322,7 +328,7 @@ Entre ellos, se destaca Scala, que hoy cuenta con frameworks con una concepción
 
 .. sin embargo, todavía no han alcanzado la popularidad de J2EE o ROR.
 
-.. [*] Pequeños programas que se ejecutan en el navegador web
+.. [*] Pequeños programas que se ejecutan en el navegador web.
 
 .. [*] Estos lenguajes interpretados utilizan compilación JIT a bytecode de la JVM.
 
@@ -348,9 +354,11 @@ Toma elementos de Perl, shellscript, C y recientemente de Java.
 Tradicionalmente su ciclo de ejecución consiste en:
 
 	* A partir de la URL de la solicitud del cliente se determina el archivo PHP 
-	    que se encargará de generar la respuesta.
+	  que se encargará de generar la respuesta.
+	  
 	* El servidor activa el módulo encargado de la interpretación de PHP,
-	    con el archivo y la solicitud como entrada.
+	  con el archivo y la solicitud como entrada.
+	  
 	* La salida es devuelta al cliente.
 
 Presenta importantes ventajas sobre CGI, ya que no es necesario confeccionar un programa de usuario y 
@@ -372,12 +380,12 @@ Ruby
 
 Es un lenguaje orientado fuertemente a objetos, multiplataforma, creado en 1995 por 
 Yukihiro "Matz" Matsumoto, en Japón.
-A menudo es comparado con *Smalltak* y se suele decir que Ruby es un lenguaje de objetos puro, 
+A menudo es comparado con Smalltak y se suele decir que Ruby es un lenguaje de objetos puro, 
 ya que todo en él es un objeto. Posee muchas características avanzadas como metaclases, clausuras,
 iteradores, integración natural de expresiones regulares en la sintaxis, etc. Su sintaxis es compacta,
 gracias a la utilización de simbología, parte de la cual fue tomada de Perl.
 
-Existen varios intérpretes de Ruby; el oficial escrito en C. ademas se conocen:
+Existen varios intérpretes de Ruby; el oficial está escrito en C. Además se conocen:
 YARV [YARV2009]_,
 JRuby [JRuby2009]_,
 Rubinius [Rubinius2009]_,
@@ -390,8 +398,8 @@ y MacRuby [MacRuby2009]_.
 .. [IronRuby2009] IronRuby es una implementación de Ruby sobre la plataforma **.Net** http://www.ironruby.net/
 .. [MacRuby2009] MacRuby es una implementación de Ruby sobre **Objective-C** para el sistema Mac OS X, http://www.macruby.org/
 
-La aplicación que popularizo al lenguaje es el framework Ruby on Rails [*]_. Su
-versión estable oficial fue liberada en el año 2005 y represento un cambio radical al enfoque complejo de
+La aplicación que popularizó al lenguaje es el framework Ruby on Rails [*]_. Su
+versión estable oficial fue liberada en el año 2005 y representó un cambio radical al enfoque complejo de
 *J2EE* [RailsQuotes2009]_.
 
 Ruby aún posee baja aceptación debido, quizás, a que la documentación oficial solía estar
@@ -444,7 +452,7 @@ Para satisfacer una solicitud bajo WSGI, se invoca la función de entrada con do
 
 
 En el siguiente ejemplo se mustra una aplicación mínima en WSGI. La función ``app`` es el punto de entrada y
-devuelve la cadena Hello World1.
+devuelve la cadena ``Hello World!``.
 Utiliza la función que recibe como segundo argumento, ``start_response``, para que el cliente determine
 cómo tratar la respuesta (en el ejemplo como texto plano).
 
@@ -467,12 +475,15 @@ aplicación WSGI.
 
     Esquema WSGI.
 
+.. raw:: latex
+
+    \newpage
 
 .. _servidor-orm:
 
 
 Los motivos por los cuales se seleccionó el lenguaje Python para el desarrollo de
-la aplicación, fueron su popularidad  [PythonPyPi2009]_, un desempeño adecuado
+la presente tesina, fueron su popularidad  [PythonPyPi2009]_, un desempeño adecuado
 en realción a la cantidad de líneas de código escritas [DhananjayNene2009]_ y
 su filosofía de simplicidad  [PythonOrgZen2009]_.
 	
@@ -489,7 +500,7 @@ Frameworks Web
 .. _servidor-frameworks:
 
 
-Según la la Wikipedia [WIK001]_ un framework de software es "una abstracción en
+Según la Wikipedia [WIK001]_ un framework de software es "una abstracción en
 la cual un código común, que provee una funcionalidad genérica, puede ser
 personalizado por el programador de manera selectiva para brindar una
 funcionalidad específica". Además, agrega que los frameworks son similares a las bibliotecas
@@ -503,7 +514,7 @@ de una aplicación de usuario:
 
     * Inversión de control
 
-	Tradicionalmente las aplicaciones se escriben las haciendo
+	Tradicionalmente las aplicaciones se escriben haciendo
 	llamadas a las bibliotecas de manera explícita y el flujo de control
 	es definido por el programador. En el caso de una aplicación escrita 
 	sobre un framework, el flujo es definido por éste.
@@ -551,13 +562,13 @@ Patrón Model View Controler en Frameworks Web
 =============================================
 
 Normalmente en el desarrollo de las aplicaciones web, mediante lenguajes
-de etiquetas como PHP o ASP, el diseño de la interfase, la lógica de la
+de etiquetas como PHP o ASP, el diseño de la interfaz, la lógica de la
 aplicación y el acceso a datos suelen estar agrupados en un solo módulo.
 Esto conlleva un mantenimiento dificultoso y una baja interacción entre
 los diseñadores (artistas) y los programadores.
 
 El patrón arquitectural MVC (Modelo Vista Controlador) propone discriminar
-la aplicación en tres capas: la interfase con el usuario (vista) se desacopla 
+la aplicación en tres capas: la interfaz con el usuario (vista) se desacopla 
 de la lógica (controlador) y ésta, a su vez, del acceso a datos (modelo).
 Esta división favorece la reutilización de componentes.
 
@@ -598,24 +609,24 @@ Un framework web MVC suele contar con los siguientes componentes [WIKI002]_:
     * Acceso a datos
 	
 	Los tipos de datos de los lenguajes orientados a objetos difieren del
-	modelo entidad-relacion utilizado para la definición de bases de datos. Un mapeador objeto-relacional
+	modelo entidad-relación utilizado para la definición de bases de datos. Un mapeador objeto-relacional
 	tiene como objetivo acortar esta brecha, permitiendo definir entidades
 	en objetos que luego se transportan a la base de datos, además de la
 	capacidad de CRUD [*]_ y consultas sobre éstos.
 
-.. [*] Create, Retrive, Update, Delete
+
 
     * Seguridad
 
-	Existen diversos aspectos de seguridad que deben ser tenidos en cuenta
-	cuando se implementa una aplicación web, como la validación de entrada,
-	protección de XSS [*]_, etc.
+    	Existen diversos aspectos de seguridad que deben ser tenidos en cuenta
+    	cuando se implementa una aplicación web, como la validación de entrada,
+    	protección de XSS [*]_, etc.
 
-.. [*] Cross Site Scripting
+
 
     * Mapeo de URLs
     
-	Cada URL activa algún componente del controlador. La definición de esta
+	    Cada URL activa algún componente del controlador. La definición de esta
     	asociación (o mapeo) generalmente está centralizada y bien especificada en
     	un framework.
 
@@ -655,18 +666,25 @@ Un framework web MVC suele contar con los siguientes componentes [WIKI002]_:
     	los lenguajes más amigables para los programador como YAML, los archivos INI o
     	código en el lenguaje de implementación.
 
+.. [*] Create, Retrieve, Update, Delete
 
-.. [WIKI002] *Web Framework*, Wikipedia, 2009, http://en.wikipedia.org/wiki/Web_application_framework, última visita Agosto de 2009.
+.. [*] Cross Site Scripting
+
+.. [WIKI002] *Web Framework*, 
+            Wikipedia,
+            última visita Agosto de 2009, 
+            http://en.wikipedia.org/wiki/Web_application_framework, 
+            
 
 
-Mapeador Objeto-Relacional (ORM)
-================================
+Mapeador Objeto-Relacional
+==========================
 
 
 Los lenguajes orientados a objetos utilizan clases, atributos y referencias para
 modelar el dominio de la aplicación, mientras que las bases de datos relacionales 
 lo hacen a través de tablas y relaciones entre ellas. En el paradigma orientado a objetos
-una de las características que se enuncia es la persistencia, sin embargo, 
+una de las características que se enuncia es la persistencia; sin embargo, 
 las implementaciones actuales de persistencias de objetos no brindan la performance
 ni la facilidad de consultas que ofrecen las bases de datos relacionales (RDBMS).
 El lenguaje utilizado para definir y modificar los datos en los RDBMS se conoce como SQL,
@@ -674,16 +692,18 @@ el cual difiere radicalmente de la concepción de los lenguajes orientados a obj
 
 
 Como, generalmente, se utiliza una base de datos relacional para el almacenamiento,
-un ORM libera la carga de la conversión explícita del lenguaje OO a SQL y 
+un mapeador objeto-relacional (ORM) libera la carga de la conversión explícita del lenguaje OO a SQL y 
 logra independizar la estructura de almacenamiento del modelo de dominio.
 
 Un ORM realiza, en principio, tres tipos de conversión del lenguaje OO a SQL:
 
     * Conversión de definición de entidades.
+    
     * Creación, modificación y eliminación de entidades a partir de instancias 
-	de clases del modelo (persistencia).
+	  de clases del modelo (persistencia).
+	  
     * Definición de consultas en lenguaje OO y recuperación de datos en instancias 
-	de clases de modelo.
+	  de clases de modelo.
   
 ..
 	Las primeras aproximaciones al mapeo relacional de objetos surgen de convertir
@@ -723,7 +743,7 @@ genérico como para cubrir un ámbito más amplio de aplicaciones.
 Su código fuente fue liberado bajo la licencia BSD en julio de 2005 (Django Web Framework). 
 El slogan del framework es "Django, El framework para perfeccionistas con fechas límites" [*]_.
 
-.. [*] Del ingles "The Web framework for perfectionists with deadlines"
+.. [*] Del inglés "The Web framework for perfectionists with deadlines".
 
 En junio de 2008 fue anunciada la creación de la Django Software Fundation, que se encarga de su desarrollo y mantenimiento.
 
@@ -733,7 +753,8 @@ Un proyecto está constituido por una o más aplicaciones, las cuales se clasifi
 
     * Aplicaciones de usuario
 	
-	Son aquellas que resuelven algún problema específico (ej: ventas, alquileres, blog, noticias, etc.).
+	Son aquellas que resuelven algún problema específico (Por ejemplo: 
+	ventas, alquileres, blog, noticias, etc.).
     
     * Aplicaciones genéricas
 	
@@ -744,7 +765,7 @@ Un proyecto está constituido por una o más aplicaciones, las cuales se clasifi
 	- *django.contrib.admin* 
 
 	    Provee de manera automática un sitio de administración que permite realizar 
-	    operaciones CRUD sobre el modelo (definido a través del ORM) administrar 
+	    operaciones CRUD sobre el modelo (definido a través del ORM) y administrar 
 	    usuarios y permisos, llevando un registro de todas las acciones realizadas 
 	    sobre cada entidad (sistema de logging o bitácora).
 
@@ -765,7 +786,7 @@ Un proyecto está constituido por una o más aplicaciones, las cuales se clasifi
 	    Provee localización (l10n) e internacionalización (i18n).
 
 La concepción de MVC de Django difiere ligeramente del enfoque tradicional. 
-Se denomina vista al controlador y a la vista, template; resultando en el acrónimo MTV.
+Se denomina vista al controlador y a la vista, plantilla (template); resultando en el acrónimo MTV.
 El controlador de MVC se presenta en Django como conjunto de funciones
 y asociaciones de URLs a ellas.
 Cada función de la vista delega la presentación de los datos al sistema
@@ -784,17 +805,17 @@ Durante la instalación del framework en el sistema del desarrollador, se añade
 a la variable de sistema ``PATH`` [*]_ un comando con el nombre ``django-admin.py``.
 Mediante este comando se crean proyectos y se los administra.
 
-Un proyecto es un paquete Python que contiene 3 módulos:
+Un proyecto es un paquete Python que contiene tres módulos:
 
-    * settings.py
+    * ``settings.py``
     
         Configuración de la base de datos, directorios de plantillas, etc.
         
-    * manage.py
+    * ``manage.py``
     
-        Interfase de consola para la ejecución de comandos.
+        Interfaz de consola para la ejecución de comandos.
         
-    * urls.py
+    * ``urls.py``
     
         Mapeo de URLs en vistas (funciones).
 
@@ -822,7 +843,7 @@ mostraría la siguiente estructura::
         urls.py
 
 
-Se analizan a continuación la función de cada uno de los 3 módulos de un proyecto.
+Se analiza a continuación la función de cada uno de los tres módulos de un proyecto.
 
 .. _django-proyecto-settings:
 
