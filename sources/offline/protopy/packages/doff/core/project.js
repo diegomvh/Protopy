@@ -4,11 +4,16 @@ require('ajax');
 
 var Project = type('Project', object, {
     is_online: null,
-    NET_CHECK: 5,
-    availability_url: null,
-    do_net_checking: true,
 
     onLoad: function() {
+		
+		if (this.settings.NETWORK_CHECK_URL) {
+	    	this.do_net_checking = true;
+	    	this.availability_url = this.settings.NETWORK_CHECK_URL;
+	    	this.net_check = this.settings.NET_CHECK;
+	    	this.start_network_thread();
+	    }
+		
         // Creo el adaptador para el DOM y hago que tome el control de sys.window, sys.document y sys.history
         require('doff.core.client', 'DOMAdapter');
         sys.window = new DOMAdapter();
@@ -47,27 +52,16 @@ var Project = type('Project', object, {
         } catch (except) {}
 
         this.load_toolbar();
-        this.start_network_thread();
         sys.window.location = '/';
         if (!isundefined(hm))
         	event.unsubscribe(hm);
     },
 
-    __init__: function(package, offline_support) {
+    __init__: function(package, project_url) {
         this.package = package;
-        this.offline_support = offline_support;
-
+        this.project_url = project_url;
         // Registro la ruta al proyecto muy importente, desde este momento se puden requerir archivos del proyecto
-        sys.register_path(this.package, this.offline_support + '/js');
-
-        // Url para ver si estoy conectado
-        this.availability_url = this.offline_support + '/network_check';
-
-        // Los templates
-        this.templates_url = this.offline_support + '/templates/';
-
-        // Estoy conectado?
-        this.network_check();
+        sys.register_path(this.package, project_url);
     },
         
     load_toolbar: function() {
@@ -103,11 +97,11 @@ var Project = type('Project', object, {
     	callback = callback || function() {};
     	var localserver = sys.gears.create('beta.localserver');
     	
-    	callback('store', {	'message': 'Create store ' + this.package + '_store', 
-    						'name': this.package + '_store', 
-    						'manifest': this.offline_support + '/manifest.json' });
-    	this.managed_store = localserver.createManagedStore(this.package + '_store');
-        this.managed_store.manifestUrl = this.offline_support + '/manifest.json';
+    	callback('store', {	'message': 'Create store ' + this.settings.STORE_NAME, 
+    						'name': this.settings.STORE_NAME, 
+    						'manifest': this.settings.MANIFEST_FILE });
+    	this.managed_store = localserver.createManagedStore(this.settings.STORE_NAME);
+        this.managed_store.manifestUrl = this.settings.MANIFEST_FILE;
         
         this.managed_store.oncomplete = function(details) { callback('complete', details); };
  	   	this.managed_store.onerror = function(error) { callback('error', error); };
@@ -208,7 +202,7 @@ var Project = type('Project', object, {
     start_network_thread: function(){
         if(!this.do_net_checking)
             return;
-        this.thread = window.setInterval(getattr(this, 'network_check'), this.NET_CHECK * 1000);
+        this.thread = window.setInterval(getattr(this, 'network_check'), this.net_check * 1000);
     },
 
     stop_network_thread: function(){
@@ -233,11 +227,11 @@ var Project = type('Project', object, {
  */
 var project = null;
 
-function get_project(package, offline_support){
+function get_project(package, project_url){
     if (!package && !project) 
         throw new Exception('No project');
     if (!project) 
-        project = new Project(package, offline_support);
+        project = new Project(package, project_url);
     return project;
 }
 

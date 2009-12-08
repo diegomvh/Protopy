@@ -5,7 +5,7 @@ require('doff.contrib.offline.serializers', 'RemoteSerializer');
 require('doff.db.models.fields.base', 'FieldDoesNotExist');
 require('doff.db.models.query', 'CollectedObjects');
 var models = require('doff.db.models.base');
-require('doff.core.project', 'get_project');
+require('doff.conf.settings', 'settings');
 
 var serializer = new RemoteSerializer();
 
@@ -121,8 +121,7 @@ var RemoteReadOnlyModel = type('RemoteReadOnlyModel', [ RemoteModel ], {
 var RemoteManagerDescriptor = type('RemoteManagerDescriptor', [ object ], {
     __init__: function(model) {
         this.model = model;
-        var project = get_project();
-        this.url_data = project.offline_support + '/data/' + string(this.model._meta).replace('.', '/') + '/';
+        this.url_data = settings.RPC_URL + 'data/' + string(this.model._meta).replace('.', '/') + '/';
         this.hgon = event.subscribe('go_online', getattr(this, 'go_online'));
         this.hgoff = event.subscribe('go_offline', getattr(this, 'go_offline')); 
     },
@@ -133,7 +132,7 @@ var RemoteManagerDescriptor = type('RemoteManagerDescriptor', [ object ], {
 
     go_online: function() {
     	if (isundefined(this._proxy))
-    		this._proxy = new ServiceProxy(this.url_data, {asynchronous: false});
+    		this._proxy = new ServiceProxy(this.url_data, {asynchronous: false, protocol: settings.RPC_PROTOCOL});
     	this.proxy = this._proxy;
     },
     

@@ -1,5 +1,5 @@
 require('rpc', 'ServiceProxy', 'JsonRpcException');
-require('doff.core.project', 'get_project');
+require('doff.conf.settings', 'settings');
 require('doff.contrib.offline.models', 'SyncLog', 'RemoteModel', 'RemoteReadOnlyModel');
 require('doff.db.models.base', 'get_model_by_identifier', 'get_models', 'ForeignKey');
 require('doff.db.models.query', 'delete_objects', 'CollectedObjects');
@@ -59,8 +59,7 @@ var SyncHandler = type('SyncHandler', [ object ], {
 		if (this._proxy == null) {
 			try {
 				// Esto puede fallar por no estar conectado.
-				var project = get_project();
-				this._proxy = new ServiceProxy(project.offline_support + '/jsonrpc/', {asynchronous: false}); 
+				this._proxy = new ServiceProxy(settings.RPC_URL, {asynchronous: false, protocol: settings.RPC_PROTOCOL}); 
 			} catch (e) {
 				this._proxy = null;
 			}

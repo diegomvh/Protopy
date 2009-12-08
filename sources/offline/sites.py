@@ -198,7 +198,7 @@ class RemoteSite(RemoteBaseSite):
                 <script type="text/javascript;version=1.7" src="{{ site.lib_url }}/protopy.js"></script>
                 <script type="text/javascript;version=1.7">
                     require('doff.core.project', 'new_project');
-                    var {{ site.name }} = new_project('{{ site.name }}', '{{ site.url }}');
+                    var {{ site.name }} = new_project('{{ site.name }}', '{{ site.js_url }}');
                     {{ site.name }}.bootstrap();
                 </script>
             </head>
@@ -280,7 +280,7 @@ class RemoteSite(RemoteBaseSite):
         response['Content-length'] = str(len(response.content))
         return response
 
-    @expose(r'^data/(?P<app_label>\w+)/(?P<model_name>\w+)/$')
+    @expose(r'^jsonrpc/data/(?P<app_label>\w+)/(?P<model_name>\w+)/$')
     def data(self, request, app_label, model_name):
         response = HttpResponse()
         models = self._registry.get(app_label, None)
