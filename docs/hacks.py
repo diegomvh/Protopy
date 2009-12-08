@@ -13,12 +13,11 @@ try:
 except:
     sys.exit("Latex output dir couldn't be found, sorry")
 
+# Deprecated!
 def remove_fancyhdr_include():
-    
     re_fancy = re.compile(r'''
     \\RequirePackage{fancyhdr}
     ''', re.VERBOSE | re.UNICODE)
-
     sty_file = os.path.join(CURRENT_PATH, '_build', 'latex', 'sphinx.sty')
     f = open(sty_file, 'r')
     content = f.read()
@@ -57,14 +56,14 @@ def file_pattern_replace(orignal, subsitution, filename):
     
 frel = lambda f: os.path.relpath(f, CURRENT_PATH)
 
-def remove_twopage_parameter(base = LATEX_OUTPUT, files = '*.sty'):
+def remove_twopage_parameter(base = LATEX_OUTPUT, files = '*.cls'):
     re_twoside = re.compile(ur'''
         twoside
     ''',  re.VERBOSE | re.UNICODE)
     
     for fname in file_walk(base, files):
         if file_pattern_replace(re_twoside, '', fname):
-            print "Twoside hot pached in %s" % frel(fname)
+            print "Twoside hot pached in %s." % frel(fname)
             
 
 
@@ -77,7 +76,7 @@ def remove_empty_chapters(base = LATEX_OUTPUT, files = '*.tex'):
     
     for fname in file_walk(base, files):
         if file_pattern_replace(re_empty_chap, '', fname):
-            print "Remove empty chapters in %s" % frel(fname)
+            print "Remove empty chapters in %s." % frel(fname)
     
 
     
@@ -94,12 +93,12 @@ def fix_encoding_for_OpenOffice_org(base = LATEX_OUTPUT, files = '*.tex'):
     '''.strip()    
     for fname in file_walk(base, files):
         if file_pattern_replace(re_encoding, replacement, fname):
-            print "Encoing fiexed in %s" % frel(fname)
+            print "Encoding fiexed in %s." % frel(fname)
     
 
 def main(argv = sys.argv):
     print("HACKING SPHINX OUTPUT... (this should take no time)")
-    #remove_twopage_parameter()
+    remove_twopage_parameter()
     fix_encoding_for_OpenOffice_org()
     remove_empty_chapters()
     print("END OF SPHINX OUTPUT HACKING")
