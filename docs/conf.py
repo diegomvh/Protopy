@@ -193,7 +193,6 @@ latex_documents = [
 
 latex_elements = {
   'papersize': 'a4',
-  #'classoptions': ',oneside'
 
 
 }

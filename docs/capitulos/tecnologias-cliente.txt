@@ -6,12 +6,22 @@
 Tecnologías del Cliente
 #######################
 
+Este capítulo tiene como finalidad introducir los componentes y tecnologías
+internientes en la web en el lado del clinete.
+
+Se comienza con un breve análisis de un navegdor web y el protocolo de tranferencia
+de hipertexto HTTP. Luego se describe HTML y CSS y se finaliza el apartado con
+una descripción un poco más detallada sobre JavaScript. 
+
+Por último se detalla el plug-in Google Gears, que añade componentes escenciales
+para el trabajo desconectado de una aplicación web a un navegador.
+
 *********************************************
 Web Dinámica Desde la Perspectiva del Cliente
 *********************************************
 
-Desde la perspectiva del usuario, la Web consiste en una gran cantidad de
-documentos interconectados a nivel mundial llamados *páginas web* a los cuales
+Desde la perspectiva del usuario, la web consiste en una gran cantidad de
+documentos interconectados a nivel mundial, llamados *páginas web*, a los cuales
 se accede mediante un navegador.
 
 Cada uno de estos documentos está escrito en un lenguaje de marcado (o etiquetas), típicamente
@@ -28,7 +38,7 @@ JavaScript [WikiJavascript09]_ ha tenido durante mucho tiempo la reputación de 
 inadecuado para el desarrollo serio. Una de las razones fue que, a pesar 
 de los estándares impuestos por la European Computer Manufacturers Association (ECMA) [*]_ [ECMAScript09]_,
 los desarrolladores de navegadores realizaron sus propias variantes 
-del lenguaje, como Microsoft en el implementación de JScript [MSFTJScript09]_ para su navegador
+del lenguaje, como Microsoft en la implementación de JScript [MSFTJScript09]_ para su navegador
 Internet Explorer (IE). Estos problemas relegaron a JavaScript a tareas prescindibles, como validación de formularios
 en el cliente y efectos visuales simples.
 
@@ -59,8 +69,8 @@ más complejas y compatibles con la gran mayoría de los navegadores del mercado
 
 .. [Firebug09] *Firebug*, Plugin de depuración integral, último acceso Septiembre 2009, http://getfirebug.com/
 
-Google lanzó, en 2007, un plugin para los navegadores populares
-llamado Google Gears que agrega tres componentes:
+Google lanzó, en 2007, un plugin para los navegadores populares,
+llamado Google Gears, que agrega tres componentes:
 
     * Web Server
 
@@ -104,6 +114,11 @@ Una URL tiene el siguiente esquema, donde se pueden diferenciar varios component
 .. figure:: ../_svg/esquema_urls.png
     
     Formato de una URL.
+    
+.. raw:: latex
+
+    \newpage
+        
 
 Los componentes de una URL son:
 
@@ -119,7 +134,7 @@ Los componentes de una URL son:
         anfitrión que ejecuta el servidor web, dando lugar a direcciones del tipo
         *www.google.com*, *www.nasa.gov*, etc.
         
-        El *puerto* es un parámetro de conexión TCP, y suele ser omitido debido
+        El puerto es un parámetro de conexión TCP, y suele ser omitido debido
         a que el esquema suele determinarlo, siendo 80 para HTTP y 443 para HTTPS. 
             
     * Recurso
@@ -170,20 +185,20 @@ el navegador conforma la siguiente consulta::
 
 .. _http_request:
 
-Esto se conoce como una consulta HTTP o **HTTP Request**.
+Esto se conoce como una consulta HTTP o HTTP Request.
 
 En la primer línea se especifica el método HTTP y el nombre del recurso, junto con la
 versión del protocolo que soporta el navegador (o cliente)::
 
     GET /archivos/curso_javascript.html HTTP/1.1
 
-La segunda línea especifica el host al cual se accede. Un mismo servidor web puede estar
+La segunda línea especifica el host al cual se accede. Como un servidor web puede estar
 publicado en varios dominios, mediante esta línea se puede discriminar a cuál se
 intenta acceder al recurso::
 
     Host: students.unp.edu.ar
     
-El siguiente componente del **request** es la línea que identifica al cliente, en
+El siguiente componente del ``request`` es la línea que identifica al cliente, en
 este caso el navegador informa que se trata de Mozilla versión 5::
 
     User-Agent: Mozilla/5.0
@@ -198,11 +213,16 @@ HTML
 
 HTML es un lenguaje de marcado que tiene como objetivo describir un documento
 de hipertexto.
-Un documento HTML se conforma por una serie de **tags** o etiquetas, las que tienen el siguiente formato.
+Un documento HTML se conforma por una serie de tags o etiquetas, las que tienen 
+el siguiente formato:
 
 .. figure:: ../_svg/etiqueta_html.png
     
     Formato de una etiqueta HTML.
+
+.. raw:: latex
+
+    \newpage
  
 Un documento HTML está delimitado por las etiquetas ``html`` y contiene una
 cabecera delimitada por ``head`` y un cuerpo, delimitado por ``body``. Por ejemplo:
@@ -272,7 +292,7 @@ CSS
 ===
 
 CSS es un lenguaje utilizado para definir el estilo de las páginas.
-Una hoja de estilo en cascada o **StyleSheet** determina cómo se va a mostrar un documento 
+Una hoja de estilo en cascada StyleSheet determina cómo se va a mostrar un documento 
 en pantalla, cómo se va a imprimir o, inclusive, cómo se realiza la pronunciación a través de un
 dispositivo de lectura [W3cCSS2009]_.
 
