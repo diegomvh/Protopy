@@ -334,7 +334,7 @@ manera que el operador ``.`` (punto). Por ejemplo:
 
 .. code-block:: javascript
 	
-	// Definción de un 
+	// Definción de un arreglo asociativo
 	>>> var x = {nombre: "Eduardo", apellido: "Expósito", edad: 47, factor: 2.5}
 	>>> x['nombre']
 	"Eduardo"
@@ -342,7 +342,7 @@ manera que el operador ``.`` (punto). Por ejemplo:
 	"Eduardo"
 	
 El arreglo asociativo tiene la particularidad de que en la invocación
-de las funciones miembro (es decir, contenidas como *valor* de alguna asociación),
+de las funciones miembro (es decir, contenidas como valor de alguna asociación),
 la palabra ``this`` apunta a la instancia de arreglo. De esta manera se obtiene
 un comportamiento similar a el tipo ``struct`` de C++, como se ve en el siguiente
 ejemplo: 
@@ -360,7 +360,7 @@ ejemplo:
 
 
 Esta técnica se utiliza en combinación con las clausuras en las librerías
-de JavaScript como Prototype [ProtypeOrgSrc09]_ para lograr encapsulamiento.
+de JavaScript, como Prototype [ProtypeOrgSrc09]_, para lograr encapsulamiento.
 		
 Prototipos
 ----------
@@ -388,7 +388,7 @@ realiza una nueva copia del método por cada instancia.
 
 Para acceder a la estructura de la clase, se utiliza el atributo 
 ``prototype``. Este atributo almacena la estructura de la clase y consiste
-en un arreglo asociativo. Como se ve en siguiente ejemplo:
+en un arreglo asociativo, como se ve en siguiente ejemplo:
 
 .. code-block:: javascript
 
@@ -439,7 +439,7 @@ DOM
 ===
 
 
-Document Object Model [*]_ es una API para documentos XML y HTML. Provee una representación en objetos de 
+DOM (Document Object Model [*]_) es una API para documentos XML y HTML. Provee una representación en objetos de 
 la estructura del documento, que permite modificar tanto el contenido como la representación visual. 
 Su función esencial es conectar al navegador con un lenguaje de programación [MDCDOM09]_.
 
@@ -448,7 +448,7 @@ Su función esencial es conectar al navegador con un lenguaje de programación [
 
 Cada fabricante de navegador web [WIKIDOM09]_ realizó en principio su propia implementación de DOM,
 razón por la cual la W3C emitió una especificación,  
-en octubre de 1998, denominada **DOM.Nivel 1** 
+en octubre de 1998, denominada DOM.Nivel 1 
 en la cual se consideraron las características y manipulación 
 de todos los elementos existentes en los archivos HTML y XML [W3CDomLevels09]_.
 
@@ -458,17 +458,25 @@ de todos los elementos existentes en los archivos HTML y XML [W3CDomLevels09]_.
 .. [W3CDomLevels09]  World Wide Web Consortium, *Niveles de Document Object Model*, último acceso octubre 2009,
                         http://www.w3.org/DOM/DOMTR
 
-En noviembre de 2000 se emitió la especificación del **DOM.Nivel 2**. En ésta
+En noviembre de 2000 se emitió la especificación del DOM.Nivel 2. En ésta
 se incluyó la manipulación de eventos en el navegador, 
 la capacidad de interacción con CSS, y la manipulación de partes del texto en las páginas 
 web.
 
-**DOM.Nivel 3** se emitió en abril de 2004; utiliza DTD (Definición del Tipo de Documento) 
+DOM.Nivel 3 se emitió en abril de 2004; utiliza DTD (Definición del Tipo de Documento) 
 y validación de documentos.
+
+La siguente figura muestra la jerarquía de objetos que provee DOM en el navegador
+para controlar tanto la representación del documento como algunos elementos del
+navegador:
 
 .. figure:: ../_svg/esquema_dom.png
 
     Modelo de objetos de DOM
+
+.. raw:: latex 
+
+    \newpage
 
 DOM define una estructura jerárquica de objetos, donde ``window`` representa
 la ventana o pestaña del navegador. ``window.history`` hace referencia
@@ -566,6 +574,13 @@ inicien una carga del documento (segundo plano). Permite realizar interfaces web
 debido a que las transferencias asincrónicas sólo recuperan del servidor 
 los elementos que requieran ser actualizados.
 
+.. figure:: ../_svg/esquema_ajax.png
+    
+    Compraración entre una aplicación tradicional y una asincrónica. La línea
+    gruesa indica el ciclo de vida de la página en el cliente y las peticiones
+    en el servidor.
+
+
 AJAX es una tecnología asincrónica en el sentido de que los datos adicionales se
 requieren al servidor y se cargan en segundo plano sin interferir con la
 visualización ni el comportamiento de la página.
@@ -582,7 +597,7 @@ transferir cualquier tipo de archivo como código HTML, código JavaScript,
 imágenes, hojas de estilos, JSON, etc.
 
 
-Esta tecnología utiliza 4 elementos [WIKIAJAX09]_:
+Esta tecnología utiliza cuatro elementos [WIKIAJAX09]_:
 
     * XHTML (o HTML) y hojas de estilos en cascada (CSS) para el diseño que
       acompaña a la información.
@@ -618,7 +633,7 @@ Funcionamiento
                 // petición.
                 if (this.readyState == 4) {
                     if (this.status == 200) {
-                        alert("Se a completado la descarga asincrónica");
+                        alert("Se completó la descarga asincrónica");
                     }
                 }
             }
@@ -638,16 +653,11 @@ Funcionamiento
     
     #. Se actualiza la página mediante DOM.
 
-.. figure:: ../_svg/esquema_ajax.png
-	
-	Compraración entre una aplicación tradicional y una asincrónica. La línea
-	gruesa indica el ciclo de vida de la página en el cliente y las peticiones
-	en el servidor.
 
 AJAX presenta ciertas ventajas para realizar aplicaciones interactivas, como mayor
 interactividad, reducción de latencia de las aplicaciones y uniformidad  entre las
 plataformas. Sin embargo presenta algunos detalles a tener en cuenta debido a que,
-al no realizarse recargas del documento, la URL permanece estática. Entre ellas 
+al no realizarse recargas del documento, la URL permanece estática, entre ellos 
 se pueden mencionar: complicaciones en la manipulación del botón *Volver hacia Atrás* 
 del navegador (que requiere a veces ``iframes``), problemas para agregar favoritos 
 y dificultades para la impresión.
@@ -679,7 +689,7 @@ web.
 
 Los desarrolladores descubrieron que formateando los datos como una cadena
 literal para ser luego interpretada por la sentencia ``eval()`` [JSONOrgJS09]_ 
-podían visualizar los datos que eran enviados al cliente en un formato legible
+podían visualizar los datos que eran enviados al cliente en un formato legible,
 de gran ayuda a la hora de realizar depuración.
 
 
@@ -687,7 +697,7 @@ de gran ayuda a la hora de realizar depuración.
 
 La sentencia ``eval()`` es considerada peligrosa 
 [SimonWillson24Ways09]_, 
-debido a que abre la posibilidad de inyectar código de meanera 
+debido a que abre la posibilidad de inyectar código de manera 
 directa sobre el navegador, razón por la cual las librerías
 de JavaScript comenzaron a brindar mecanismos seguros para JSON.
 
@@ -695,7 +705,7 @@ de JavaScript comenzaron a brindar mecanismos seguros para JSON.
 
 Actualmente algunos navegadores incorporan un intérprete nativo de JSON
 [MozillaMDCJSONNative09]_ [IEBlogNativeJSON09]_, que ofrece
-incorpora chequeos de seguridad y un tiempo de respuesta corto. Algunas librerías
+chequeos de seguridad y un tiempo de respuesta corto. Algunas librerías
 de JavaScript sacan provecho de este intérprete nativo [DaveWardEncosia2009]_.
 
 .. [MozillaMDCJSONNative09] https://developer.mozilla.org/en/Using_JSON_in_Firefox
