@@ -1,0 +1,7 @@
+digraph migracion_proyecto {
+
+a -> b;
+b -> c;
+
+
+}
