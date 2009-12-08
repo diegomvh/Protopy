@@ -193,7 +193,7 @@ latex_documents = [
 
 latex_elements = {
   'papersize': 'a4',
-  #'classoptions': ',spanish,oneside'
+  #'classoptions': ',oneside'
 
 
 }
@@ -207,7 +207,54 @@ latex_logo = '_static/nasa_django_logo.png'
 latex_use_parts = False
 
 # Additional stuff for the LaTeX preamble.
-latex_preamble = '\\setcounter{tocdepth}{4}'
+latex_preamble = ur'''
+\setcounter{tocdepth}{4}
+
+% Use this to set the font family for headers and other decor:
+\newcommand{\py@HeaderFamily}{\sffamily\bfseries}
+
+  \fancypagestyle{normal}{
+    \fancyhf{}
+    \fancyfoot[RO,RE]{{\textbf{\textsf{\thepage}}}}
+    
+    
+    %\fancyhead[LE,LO]{{\py@HeaderFamily \@title, \py@release}}
+    
+    \fancyfoot[LO,LE]{{\nouppercase{\rightmark}}}
+    
+    %\fancyfoot[RE]{{\py@HeaderFamily\nouppercase{\leftmark}}}
+    
+    \fancyhead[LE,LO]{{ \textbf{\leftmark} }}
+    \fancyhead[RE,RO]{{ \textit{Defossé, van Haaster} }}
+    \renewcommand{\headrulewidth}{0.4pt}
+    
+    \renewcommand{\footrulewidth}{0.4pt}
+  }
+  % Update the plain style so we get the page number & footer line,
+  % but not a chapter or section title.  This is to keep the first
+  % page of a chapter and the blank page between chapters `clean.'
+  \fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyfoot[RE,RO]{{\thepage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+  }
+
+'''
+
+'''
+\usepackage{fancyhdr}
+
+\lhead{}
+\chead{}
+\rhead{\bfseries The performance of new graduates}
+\lfoot{From: K. Grant}
+\cfoot{To: Dean A. Smith}
+\rfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+'''
 
 # Documents to append as an appendix to all manuals.
 #latex_appendices = ['apendices/protopy', 'apendices/python', 'apendices/django']

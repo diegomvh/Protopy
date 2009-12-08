@@ -16,7 +16,7 @@ SVG_PNG_OUTPUT = $(SVG_FILES:.svg=.png)
 .PHONY: help clean html dirhtml pickle json htmlhelp qthelp latex changes linkcheck doctest
 
 all: svg dot latex
-	python correct_sty_ugly.py
+	# python correct_sty_ugly.py
 	@echo "Correccion"
 	yes R | $(MAKE) -C _build/latex
 
