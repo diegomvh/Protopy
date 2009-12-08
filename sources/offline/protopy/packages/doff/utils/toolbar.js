@@ -75,6 +75,10 @@ var Panel = type('Panel', object, {
     visible: function() {
         return this.body.visible();
     },
+    
+    reload: function() {
+    	this._display();
+    },
 
     toggle: function() {
         if (this.bar.active_panel && this.bar.active_panel !== this && this.bar.active_panel.visible())
@@ -89,7 +93,6 @@ var Panel = type('Panel', object, {
         this.content.update(content);
         this.displayed = true;
     }
-
 });
 
 var ToolBar = type('Toolbar', object, {
@@ -103,15 +106,16 @@ var ToolBar = type('Toolbar', object, {
         this.stylesheet.rel = "stylesheet";
         this.stylesheet.type = "text/css";
         this.stylesheet.href = sys.module_url('doff.utils', 'resources/toolbar.css');
+        this.panels = {};
         this.active_panel = null;
     },
 
     add: function(element) {
-        //Toolbar tab
         if (isinstance(element, Panel)) {
         	var tab = element.tab;
             element.bar = this;
             this.content.insert(element.body);
+            this.panels[element.name] = element;
         } else if (isinstance(element, String)) {
         	var tab = document.createElement('li');
             tab.addClassName('doff-toolbar-item'); 
