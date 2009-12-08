@@ -211,7 +211,7 @@ latex_preamble = ur'''
 \setcounter{tocdepth}{4}
 
 % Use this to set the font family for headers and other decor:
-\newcommand{\py@HeaderFamily}{\sffamily\bfseries}
+%\newcommand{\py@HeaderFamily}{\sffamily\bfseries}
 
   \fancypagestyle{normal}{
     \fancyhf{}
