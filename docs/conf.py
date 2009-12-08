@@ -192,7 +192,10 @@ latex_documents = [
 ]
 
 latex_elements = {
-  'papersize': 'a4'
+  'papersize': 'a4',
+  #'classoptions': ',spanish,oneside'
+
+
 }
 
 # The name of an image file (relative to this directory) to place at the top of
