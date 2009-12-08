@@ -4,10 +4,6 @@
 Introducción 
 ############
 
-    "Yo sólo puedo mostrarte la puerta. Tú eres quien debe atravesarla."
-    
-    -- Morfeo
-
 **********
 Motivación
 **********
@@ -148,7 +144,67 @@ Se creó una librería de JavaScript para facilitar la migración del código de
 Se desarrolló una extensión del framework aparejado a una implementación desconectada del framework. Sobre este se diseñó un mecanismo de sincronización simple pero extensible.
 
 
-.. note:: Pegar la nota de tesina, textual objetivos.
+*************************
+Resumen de los capítulos
+*************************
 
-.. note:: Poner breve descripción de los capítulos
-
+ * Tecnologías del Servidor
+ 
+    En este capítulo se introduce Servidor Web y CGI.
+    Luego se introducen los lenguajes dinámicos y sus frameworks orientados a
+    la generación de conenido web.
+    
+    Finalmente se introduce el framework Django.
+     
+ 
+ * Tecnlogías del Cliente
+ 
+    En este capítulo se analizan los navegadores web, analizando brevemente 
+    HTTP, HTML, CSS y con mayor detalle JavaScript y DOM.
+    
+    Finalmente se realiza una anális sobre AJAX y JSON, y finalmente Google Gears.
+    
+ 
+ * Introducción al Desarrollo
+ 
+    En este capítulo se introducen las alternativas analizadas para la desconexión.
+    Se define una librería de JavaScript, **Protopy** y un framework desconectado,
+    **Doff**.
+    
+     
+ 
+ * Protopy, la Librería de JavaScript
+ 
+    En este capítulo se decribe la implementación de la librería de JavaScript
+    que se utilizó como base para **Doff**. Se explica la evolcución desde librerías
+    como Prototype y Dojo, y las adaptaciones realizadas sobre JavaScript 1.7 
+    para rezliar un acercamiento sintátctico a Python. 
+    
+    
+ 
+ * Doff, el Framework Desconectado
+    
+    En este capítulo se explica la implementación **Doff** sobre la librería
+    **Protopy**. Se estudia el acceso a datos, el sistema de plantillas, 
+    la emulación de HTTP implementada en **Doff**. 
+    
+    
+ 
+ * Sitios Remotos
+ 
+    En este capítulo se estudia el soporte del lado del servidor para la 
+    desconexión de aplicaciones medinate **Doff**, realizado en la aplicación
+    genérica **offline**.
+ 
+ * Sincronización de Datos
+    
+    En este capítulo se describe el mecanismo de sincronización implementado
+    en **Doff** y **offline**.
+ 
+ * Aplicación de Demostración
+ 
+    En este capítulo se describe brevemente la aplicación de demostración y
+    los pasos para instalarla.
+ 
+    
+   

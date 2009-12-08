@@ -713,7 +713,7 @@ de JavaScript sacan provecho de este intérprete nativo [DaveWardEncosia2009]_.
 .. [DaveWardEncosia2009] Dave Ward, Improving jQuery’s JSON performance and security, Julio de 2009, http://encosia.com/2009/07/07/improving-jquery-json-performance-and-security/
 
 JSON es ampliamente utilizado como formato de intercambio de datos en AJAX.
-Un ejemplo de esta ulilización se ve en el siguiente código:
+Un ejemplo de esta utilización se ve en el siguiente código:
 
 .. code-block:: javascript
 
