@@ -93,11 +93,12 @@ qthelp:
 
 latex:
 	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) _build/latex
+	python hacks.py
 	@echo
 	@echo "Build finished; the LaTeX files are in _build/latex."
 	@echo "Run \`make all-pdf' or \`make all-ps' in that directory to" \
 	      "run these through (pdf)latex."
-	@ ./rencode.py _build/latex/SistemasWebDesconectados.tex
+#	@ ./rencode.py _build/latex/SistemasWebDesconectados.tex
 
 changes:
 	$(SPHINXBUILD) -b changes $(ALLSPHINXOPTS) _build/changes

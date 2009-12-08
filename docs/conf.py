@@ -239,22 +239,8 @@ latex_preamble = ur'''
     \renewcommand{\headrulewidth}{0pt}
     \renewcommand{\footrulewidth}{0.4pt}
   }
-
 '''
 
-'''
-\usepackage{fancyhdr}
-
-\lhead{}
-\chead{}
-\rhead{\bfseries The performance of new graduates}
-\lfoot{From: K. Grant}
-\cfoot{To: Dean A. Smith}
-\rfoot{\thepage}
-\renewcommand{\headrulewidth}{0.4pt}
-\renewcommand{\footrulewidth}{0.4pt}
-
-'''
 
 # Documents to append as an appendix to all manuals.
 #latex_appendices = ['apendices/protopy', 'apendices/python', 'apendices/django']
