@@ -2,52 +2,7 @@ require('doff.utils.toolbar', 'Panel');
 require('ajax');
 require('event');
 require('sys');
-
-var uninstalled_template = 
-(<r><![CDATA[
-    <style>
-        div#info-content {
-            font-size: 92%;
-            font-weight: normal;
-            min-height: 200px;
-            padding: 0 165px 0 2em;
-            text-indent: 10px;
-        	border-bottom: 1px solid; 
-        }
-        div#info-content img {
-            position: absolute;
-            right: 8px;
-            top: 7px;
-        }
-
-        div.doff-progress-container {
-            border: 1px solid #ccc; 
-            width: 100%;
-        	height: 12px
-            margin: 2px 5px 2px 0; 
-            padding: 1px; 
-            float: left; 
-            background: white;
-        }
-
-        div#doff-progress-bar {
-            background-color: #ACE97C; 
-        	height:12px;
-            width: 0px;
-        }
-
-    </style>
-    <div id="info-content">
-    <p>%(PROJECT_DESCRIPTION)s</p>
-    <h3>Motor: %(DATABASE_ENGINE)s</h3>
-    <h3>Base de datos: %(DATABASE_NAME)s</h3>
-    <h3>Store: %(PROJECT_NAME)s_store</h3>
-    <img src="%(PROJECT_IMAGE)s" style="border: 0px;" width="150"/>
-    </div>
-    <div id="status-content">
-    	<button class="doff-panel-button" id="status-button-enable">Enable offline access</button>
-    </div>
-]]></r>).toString();
+require('doff.conf.settings', 'settings');
 
 var installed_template = 
 (<r><![CDATA[
@@ -76,6 +31,7 @@ var Status = type('Status', [ Panel ], {
 		this.config = project.settings;
 
         super(Panel, this).__init__('status', 'Offline', 'Install offline access for ' + this.config.PROJECT_NAME);
+        this.width = '40%';
         this.icon = sys.module_url('doff.utils.toolbars', 'templates/icons/protopy.png');
 
         this.project.is_online ? this.go_online() : this.go_offline();
@@ -135,7 +91,7 @@ var Status = type('Status', [ Panel ], {
 		    	throw new Exception("No template for logger");
 		    }
 		});
-        return template;
+        return new Template(template).evaluate(settings);
     },
 
     _display: function() {

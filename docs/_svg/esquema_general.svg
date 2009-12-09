@@ -52,10 +52,10 @@
      inkscape:snap-intersection-line-segments="true"
      inkscape:snap-center="true"
      guidetolerance="7"
-     inkscape:window-width="1432"
-     inkscape:window-height="783"
-     inkscape:window-x="0"
-     inkscape:window-y="38">
+     inkscape:window-width="1280"
+     inkscape:window-height="735"
+     inkscape:window-x="-4"
+     inkscape:window-y="-3">
     <sodipodi:guide
        orientation="0,1"
        position="181.86935,477.01731"
@@ -164,7 +164,7 @@
          y="446.59238"
          x="407.53757"
          id="tspan3403"
-         sodipodi:role="line">buitlins</tspan></text>
+         sodipodi:role="line">builtins</tspan></text>
     <rect
        ry="16.529146"
        rx="16.529146"
