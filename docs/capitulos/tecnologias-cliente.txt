@@ -158,7 +158,7 @@ Los componentes de una URL son:
 
 Un navegador generalmente accede a documentos ubicados en la web mediante el
 protocolo HTTP. Sin embargo, es posible acceder a documentos locales, donde el
-esquema suele ser ``file`` y el anfitrión se encuentra ausente, por ejemplo:
+esquema suele ser ``file`` y el anfitrión se encuentra ausente, por ejemplo::
     
     file:///home/nacho/paginas/pepe.html
 

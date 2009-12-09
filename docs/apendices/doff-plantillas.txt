@@ -1,6 +1,7 @@
-=============================================
+
+#############################################
 Etiquetas de plantilla y filtros predefinidos
-=============================================
+#############################################
 
 En este apéndice se listan la mayoria de las etiquetas y filtros
 utilizados en las plantillas o *templates*.

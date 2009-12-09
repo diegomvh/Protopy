@@ -1,8 +1,7 @@
-.. _apendices-doff-dbapi:
 
-=====================================
+#####################################
 Referencia de la API de base de datos
-=====================================
+#####################################
 
 La API de base de datos es la otra mitad de la API de modelos. Una vez definido
 un modelo, esta API es la que se utiliza en todo momento que se necesite acceder a la base de datos.

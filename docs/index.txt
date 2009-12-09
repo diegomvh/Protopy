@@ -19,7 +19,6 @@ Sistemas Web Desconectados
     capitulos/sync
     capitulos/demo
     capitulos/conclusiones
-    glosario
      
 
 .. highlight:: python
