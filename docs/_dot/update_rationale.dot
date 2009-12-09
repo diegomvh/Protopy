@@ -1,4 +1,6 @@
 digraph update_rationale {
+
+    graph[ page="10,5",size="7.4,4", center=1]
     node [shape=record]
     
     subgraph cluster01 {
