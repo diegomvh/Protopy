@@ -1,4 +1,66 @@
 digraph update_rationale {
-a -> b;
+    node [shape=record]
+    
+    subgraph cluster01 {
+        label = "push()";
+        itempedido [label="{ventas_itempedido|\
+                            server_pk: NULL\n\
+                            sync_log_id: NULL\n\
+                            status: 'C'|\
+                            id: 200\n\
+                            item_pedido_id: 100}",
+                            color="red"]
+                            
+        pedido [label="{ventas_pedido|\
+                            server_pk: NULL\n\
+                            sync_log_id: NULL\n\
+                            status: 'C'|\
+                            id: 100}",
+                            color="red"]
+                            
+        itempedido -> pedido;
+    }
 
+    subgraph cluster02 {
+        label = "push() 2";
+        itempedido1 [label="{ventas_itempedido|\
+                            server_pk: NULL\n\
+                            sync_log_id: NULL\n\
+                            status: 'C'|\
+                            id: 200\n\
+                            item_pedido_id: 100}",
+                            color=red]
+                            
+        pedido1 [label="{ventas_pedido|\
+                            server_pk: NULL\n\
+                            sync_log_id: NULL\n\
+                            status: 'C'|\
+                            id: 100}",
+                            color=green]
+                            
+        itempedido1 -> pedido1;
+    }
+    
+    subgraph cluster03 {
+        label = "push() 3";
+        itempedido2 [label="{ventas_itempedido|\
+                            server_pk: NULL\n\
+                            sync_log_id: NULL\n\
+                            status: 'C'|\
+                            id: 200\n\
+                            item_pedido_id: 100}",
+                            color=green]
+                            
+        pedido2 [label="{ventas_pedido|\
+                            server_pk: NULL\n\
+                            sync_log_id: NULL\n\
+                            status: 'C'|\
+                            id: 100}",
+                            color=green]
+                            
+        itempedido2 -> pedido2;
+    }
+    
+    //"cluster01":itempedido -> "cluster01":pedido;
+    
 }
