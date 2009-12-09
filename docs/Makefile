@@ -15,9 +15,17 @@ SVG_PNG_OUTPUT = $(SVG_FILES:.svg=.png)
 
 .PHONY: help clean html dirhtml pickle json htmlhelp qthelp latex changes linkcheck doctest
 
-all: svg dot latex
+all: svg dot latex pdf
+
+
+pdf:
 	# Esot es feo, pero bueno... hace que compile...
+	touch _build/latex/*.tex
 	yes R | $(MAKE) -C _build/latex
+	
+	#yes R | $(MAKE) -C _build/latex
+	#echo "Compile" 
+	
 
 re-pdf:
 	@rm _build/latex/SistemasWebDesconectados.pdf

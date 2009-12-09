@@ -243,7 +243,8 @@ latex_preamble = ur'''
 
 # Documents to append as an appendix to all manuals.
 #latex_appendices = ['apendices/protopy', 'apendices/python', 'apendices/django']
-latex_appendices = ['x-apendices/protopy', 'x-apendices/doff-modelos', 'x-apendices/doff-dbapi', 'x-apendices/doff-plantillas']
+latex_appendices = ['apendices/protopy', 'apendices/doff-modelos', 
+                    'apendices/doff-dbapi', 'apendices/doff-plantillas']
 
 # If false, no module index is generated.
 #latex_use_modindex = True

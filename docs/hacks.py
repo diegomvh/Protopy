@@ -94,13 +94,70 @@ def fix_encoding_for_OpenOffice_org(base = LATEX_OUTPUT, files = '*.tex'):
     for fname in file_walk(base, files):
         if file_pattern_replace(re_encoding, replacement, fname):
             print "Encoding fiexed in %s." % frel(fname)
+
+def drown_bibliography(target, base = LATEX_OUTPUT,):
+    '''
+    Put thebibliography at the bottom
+    '''
+    re_start = re.compile( ur'''
+        \\begin\{thebibliography\}
+    ''' , re.VERBOSE | re.UNICODE)
     
+    re_stop = re.compile( ur'''
+        \\end\{thebibliography\}
+    ''' , re.VERBOSE | re.UNICODE)
+    
+    
+    #TARGET = '_build/latex/SistemasWebDesconectados.tex'
+    
+    TARGET = os.path.join(base, target)
+    
+    f = open(TARGET)
+    lines = f.readlines()
+    f.close()
+    biblio, rest = [], []
+    
+    gen_lines = ( (n, l) for n, l in enumerate(lines)) 
+    
+    # Shame on me, quick and dirty
+    
+    while not biblio:
+        n, l = gen_lines.next()
+        if re_start.search(l):
+            biblio.append(l)
+            print "Comienzo de biblio en %d" % n
+            break
+        rest.append(l)
+    while True:
+        n, l = gen_lines.next()
+        if re_stop.search(l):
+            biblio.append(l)
+            print "Fin de biblio en %d. Cantidad %d" % (n, len(biblio))
+            break
+        biblio.append(l)
+    while True:
+        try:
+            n, l = gen_lines.next()
+        except StopIteration:
+            break
+        rest.append(l)
+    
+    f = open(TARGET, 'w')
+    f.writelines(rest[:-1])
+    f.writelines(biblio)
+    f.writelines(rest[-1:])
+    f.close()
+
 
 def main(argv = sys.argv):
     print("HACKING SPHINX OUTPUT... (this should take no time)")
+    import conf
+    root, tex_file, title, authors, docclass = conf.latex_documents[0]
+    
     remove_twopage_parameter()
     fix_encoding_for_OpenOffice_org()
     remove_empty_chapters()
+    drown_bibliography(tex_file)
     print("END OF SPHINX OUTPUT HACKING")
 
 if __name__ == "__main__":
