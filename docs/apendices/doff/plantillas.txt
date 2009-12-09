@@ -12,8 +12,7 @@ block
 -----
 
 Define un bloque que puede ser sobreescrito por las plantillas derivadas. Véase
-la sección acerca de herencia de plantillas en el
-:ref:`doff-plantillas-herencia` para más información.
+la sección acerca de herencia de plantillas para más información.
 
 comment
 -------
@@ -71,9 +70,6 @@ Esta etiqueta se puede usar de dos maneras:
       dicha cadena como el nombre de la plantilla padre. Si la variable
       es un objeto de tipo ``Template``, se usará ese mismo objeto como
       plantilla base.
-
-En el :ref:`doff-plantillas` se pueden encontrar muchos ejemplo de uso de esta
-etiqueta.
 
 filter
 ------
@@ -133,8 +129,7 @@ reversed %}``.
 
 Dentro de un bucle, la propia sentencia ``for`` crea una serie de
 variables. A estas variables se puede acceder únicamente dentro del
-bucle. Las distintas variables se explican en la :ref:`Tabla
-<doff-plantillas-for-tabla>`.
+bucle. Las distintas variables se explican en la tabla.
 
 .. _doff-plantillas-for-tabla:
 .. list-table:: Variables accesibles dentro de bucles {% for %}
@@ -328,113 +323,6 @@ Esta etiqueta fue inspirada por la función ``date()`` de PHP(), y
 utiliza el mismo formato que esta (http://php.net/date). Esta versión
 tiene, sin embargo, algunos extras.
 
-La :ref:`Tabla <doff-plantillas-now-tabla>` muestra las cadenas de formato que
-se pueden utilizar.
-
-.. _doff-plantillas-now-tabla:
-.. table:: Cadenas de formato para fechas y horas
-
-    ==============  ========================================  ============================================================================
-    Carác. formato  Descripción                               Ejemplo de salida
-    ==============  ========================================  ============================================================================
-    a               ``'a.m.'`` o ``'p.m.'``. (Obsérvese       ``'a.m.'``
-                    que la salida es ligeramente distinta
-                    de la de PHP, ya que aquí se incluyen
-                    puntos para adecuarse al libro de estilo
-                    de Associated Press).
-    A               ``'AM'`` o ``'PM'``.                      ``'AM'``
-
-    b               El nombre del mes, en forma de            ``'jan'``
-                    abreviatura de tres letras minúsculas.
-
-    d               Día del mes, dos dígitos que incluyen     ``'01'`` a ``'31'``
-                    rellenando con cero por la izquierda si
-                    fuera necesario.
-
-    D               Día de la semana, en forma de             ``'Fri'``
-                    abreviatura de tres letras.
-
-    f               La hora, en formato de 12 horas y         ``'1'``, ``'1:30'``
-                    minutos, omitiendo los minutos
-                    si estos son cero.
-
-    F               El mes, en forma de texto                 ``'January'``
-
-    g               La hora, en formato de 12 horas, sin      ``'1'`` a ``'12'``
-                    rellenar por la izquierda con ceros.
-
-    G               La hora, en formato de 24 horas, sin      ``'0'`` a ``'23'``
-                    rellenar por la izquierda con ceros.
-
-    h               La hora, en formato de 12 horas.          ``'01'`` a ``'12'``
-
-    H               La hora, en formato de 24 horas.          ``'00'`` a ``'23'``
-
-    i               Minutos.                                  ``'00'`` a ``'59'``
-
-    j               El día del mes, sin rellenar por          ``'1'`` a ``'31'``
-                    la izquierda con ceros.
-
-    l               El nombre del día de la semana.           ``'Friday'``
-
-    L               Booleano que indica si el año es          ``True`` o ``False``
-                    bisiesto.
-
-    m               El día del mes, rellenando por            ``'01'`` a ``'12'``
-                    la izquierda con ceros si fuera
-                    necesario.
-
-    M               Nombre del mes, abreviado en forma de     ``'Jan'``
-                    abreviatura de tres letras.
-
-    n               El mes, sin rellenar con ceros            ``'1'`` a ``'12'``
-
-    N               La abreviatura del mes siguiendo          ``'Jan.'``, ``'Feb.'``
-                    el estilo de la Associated Press.         , ``'March'``, ``'May'``
-
-    O               Diferencia con respecto al                ``'+0200'``
-                    tiempo medio de Grennwich (*Greenwich
-                    Mean Time* - GMT)
-
-    P               La hora, en formato de 12 horas, más      ``'1 a.m.'``, ``'1:30 p.m.'``
-                    los minutos, recto si estos son cero      , ``'midnight'``, ``'noon'``
-                    y con la indicación a.m./p.m. Además,     , ``'12:30 p.m.'``
-                    se usarán las cadenas de texto
-                    especiales ``'midnight'`` y ``'noon'``
-                    para la medianoche y el mediodía
-                    respectivamente.
-
-    r               La fecha en formato RFC 822.              ``'Thu, 21 Dec 2000 16:01:07 +0200'``
-
-    s               Los segundos, rellenos con ceros por la   ``'00'`` a ``'59'``
-                    izquierda de ser necesario.
-
-    S               El sufijo inglés para el día del          ``'st'``, ``'nd'``, ``'rd'``
-                    mes (dos caracteres).                     o ``'th'``
-
-    t               Número de días del mes.                   ``28`` a ``31``
-
-    T               Zona horaria                              ``'EST'``, ``'MDT'``
-
-    w               Día de la semana, en forma de dígito.     ``'0'`` (Domingo) a ``'6'`` (Sábado)
-
-    W               Semana del año, siguiente la norma        ``1``, ``23``
-                    ISO-8601, con la semana empezando el
-                    lunes.
-
-    y               Año, con dos dígitos.                     ``'99'``
-
-    Y               Año, con cuatro dígitos.                  ``'1999'``
-
-    z               Día del año                               ``0`` a ``365``
-
-    Z               Desfase de la zona horaria, en            ``-43200`` a ``43200``
-                    segundos. El desplazamiento siempre
-                    es negativo para las zonas al oeste
-                    del meridiano de Greenwich, y positivo
-                    para las zonas que están al este.
-    ==============  ========================================  ============================================================================
-
 He aquí un ejemplo::
 
     It is {% now "jS F Y H:i" %}
@@ -549,9 +437,8 @@ a la etiqueta ``{% templatetag %}`` si nos vemos obligados a representarlos.
 
 Se le pasa un argumento que indica que combinación de símbolos debe
 producir. Los valores posibles del argumento se muestran en la
-:ref:`Tabla <doff-plantillas-templatetag-tabla>`.
+tabla.
 
-.. _doff-plantillas-templatetag-tabla:
 .. table:: Argumentos válidos de templatetag
 
     ==================  =======
@@ -1163,10 +1050,8 @@ Ejemplo::
 
 Dada una serie de textos que se asocian a los
 valores de ``True``, ``False`` y (opcionalmente) ``None``, devuelve
-uno de esos textos según el valor de la entrada. Véase la
-:ref:`Tabla <doff-plantillas-yesno-tabla>`.
+uno de esos textos según el valor de la entrada. Véase la tabla.
 
-.. _doff-plantillas-yesno-tabla:
 .. table:: Ejemplos del filtro yesno
 
     ==========  ======================  ========================================

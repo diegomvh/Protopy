@@ -1,21 +1,20 @@
 ﻿
-
-###############
-Sitios Remotos
-###############
+#######################
+Offline, Sitios Remotos
+#######################
 
 El presente capítulo profundiza sobre el soporte en el servidor para lograr
 la desconexión de proyectos basados en Django. Este soporte se realiza mediante
 la aplicación genérica **offline**. Sus objetivos son brindar las facilidades
-para la "desconexión", es decir, instalar el proyecto Doff en el cliente, y
+para la "desconexión", es decir, instalar el proyecto **Doff** en el cliente, y
 ofrecer un mecanismo básico de sincronización de datos [*]_.
 
 .. [*] La sincronización de datos se aborda en el capítulo siguiente.
 
-Hasta este momento se habló de que un proyecto Doff se compone de un conjunto
+Hasta este momento se habló de que un proyecto **Doff** se compone de un conjunto
 de módulos JavaScript que son publicados estáticamente.
 
-.. Se debe recordar que un proyecto Doff, de la misma manera que un 
+.. Se debe recordar que un proyecto **Doff**, de la misma manera que un 
    proyecto Django, se compone de módulos de modelos, vistas y asociaciones de urls, además de un conjunto de plantillas.
 
 Con el objeto de evaluar una técnica que permita mantener consistencia 
@@ -24,7 +23,7 @@ realizó el siguiente análisis de los módulos que componen al proyecto descone
 
     * Modelos
     
-      Al contar con la misma API de ORM que Django, los modelos del proyecto Doff
+      Al contar con la misma API de ORM que Django, los modelos del proyecto **Doff**
       pueden ser generados a partir del análisis de las definiciones de los
       modelos del proyecto en línea (introspección). Es decir, a través de una vista se puede generar
       la salida en código JavaScript de la definición de los modelos de las
@@ -32,9 +31,9 @@ realizó el siguiente análisis de los módulos que componen al proyecto descone
        
     * Plantillas
     
-      El sistema de plantillas de Doff es muy similar al de Django. Es decir,
+      El sistema de plantillas de **Doff** es muy similar al de Django. Es decir,
       una plantilla utilizada en una aplicación Django se puede utilizar en
-      un proyecto Doff, con lo cual no hace falta ningún tipo de introspección. 
+      un proyecto **Doff**, con lo cual no hace falta ningún tipo de introspección. 
       Como en el caso anterior de los modelos, para lograr consistencia entre los proyectos
       simplemente se deben publicar las plantillas como parte del 
       proyecto.
@@ -50,25 +49,25 @@ programador:
     * Vistas
     
       Las vistas deben ser reescritas en JavaScript adaptando la sintaxis
-      a Doff y Protopy.
+      a **Doff** y **Protopy**.
 
 Se creó una clase en **offline** denominada ``RemoteSite`` (sitio remoto), con el objeto de
 publicar el proyecto desconectado para su instalación en el navegador y de poveer
 las vistas especiales para los modelos y las plantillas antes mencionados.
 
-A continuación se describe, la clase ``RemoteSite`` y la mecánica de migración de proyectos Django a su
+A continuación se describe la clase ``RemoteSite`` y la mecánica de migración de proyectos Django a su
 versión desconectada utilizando los sitios remotos.
  
 La Clase RemoteSite
 ===================
 
 La clase ``RemoteSite`` define un proyecto desconectado. Tiene varias 
-responsabilidades, entre ellas, servir el código JavaScript del framework Doff,
+responsabilidades, entre ellas, servir el código JavaScript del framework **Doff**,
 el del proyecto, publicar las plantillas, generar la definición de los modelos
 mediante introspección y permitir la sincronización. Esta clase se implementó en 
 el módulo ``sites`` de la aplicación **offline**.
 
-Un ``RemoteSite`` representa *una migración* [*]_ del proyecto en línea. Es decir,
+Un ``RemoteSite`` representa una migración [*]_ del proyecto en línea. Es decir,
 para un mismo proyecto en línea, pueden existir una o más migraciones.
 Su implementación está basada en la aplicación administración que brinda Django 
 (``django.contrib.admin``), que provee una clase cuyas instancias son
@@ -100,7 +99,7 @@ y el nombre del sitio remoto. Debido a que el nombre del sitio remoto es único 
 el proyecto, su URL también lo es. 
 
 Para evitar errores en la escritura de la URL al momento de su inclusión, se
-decidió almacenar en un propiedad de la clase llamada ``urlregex``,
+decidió almacenar, en un propiedad de la clase llamada ``urlregex``,
 la expresión regular de publicación [IanBickingPyDecorator09]_ [AdamGomaaPyDecorator09]_.
 Debe ser usada al momento de la publicación del sitio en el módulo ``urls.py``
 del proyecto [*]_ (no se permite la inclusión de sitios remotos en módulos de URLs
@@ -156,8 +155,8 @@ de la constante ``OFFLINE_BASE``:
        ``site_<nombre>.py`` donde se define la instancia del sitio.
     
     #. Por cada sitio remoto, debe existir un subdirectorio de 1, con el nombre
-       del sitio remoto. Este directorio constituye el proyecto Doff de donde
-       se desprende ``settings.js`` y ``urls.js``.
+       del sitio remoto. Este directorio constituye el proyecto **Doff** de donde
+       se desprenden ``settings.js`` y ``urls.js``.
        
 Por ejemplo, en un proyecto denominado ``mi_proyecto``, con un sitio remoto denominado
 ``vendedores``, se tendría la siguiente jerarquía::
@@ -195,7 +194,8 @@ publicado en el módulo de URLs del proyecto, basado en los ejemplos expuestos:
         (r'^$', index,)
         (r'^vendedores/(?P<id>\d)/$', vista_vendedores),
         
-        # En el caso de los sitios remotos, la URL está indicada por el atributo
+        # En el caso de los sitios remotos, la URL está 
+		# indicada por el atributo
         # urlregex
         (r'^%s/(.*)' % mi_sitio.urlregex, mi_sitio.root ),
     )
@@ -209,7 +209,7 @@ desconectado. Al acceder a esta URL el navegador se encuentra con:
     
     <html>
     <head>
-        <!-- El sitio remoto publica la librería Protopy, como JavaScript 1.7 -->
+        <!-- El sitio remoto publica la librería **Protopy**, como JavaScript 1.7 -->
         <script type="text/javascript;version=1.7" 
             src="/off/ventas/lib/protopy.js"></script>
         <!-- Creación de la instancia del proyecto desconectado -->
@@ -229,17 +229,17 @@ desconectado. Al acceder a esta URL el navegador se encuentra con:
         
 
 
-Como se puede observar en el ejemplo anterior, el código del Protopy se encuentra
-en ``lib/protopy.js`` (línea 4 y 5), y como se definió en el capítulo anterior, el código
-de Doff se encuentra en ``lib/packages/``. En la línea 10, se crea una entrada
-en ``sys.path`` de Protopy, definiendo que el paquete ``ventas`` se encuentra en la
+Como se puede observar en el ejemplo anterior, el código de **Protopy** se encuentra
+en ``lib/protopy.js`` (línea 4 y 5), y, como se definió en el capítulo anterior, el código
+de **Doff** se encuentra en ``lib/packages/``. En la línea 10, se crea una entrada
+en ``sys.path`` de **Protopy**, definiendo que el paquete ``ventas`` se encuentra en la
 URL ``/soporte_offline/mi_sitio``. En este caso ``mi_sitio`` es el paquete que define
 al proyecto. Al cargar el módulo ``settings``, mediante ``require("ventas.settings")``, 
 se está realizando una petición a ``/off/ventas/js/settings.js``.
 
 
-Además de las URLs descritas, el sitio remoto publica otras de dónde 
-Doff descarga los módulos y recursos que componen a la aplicación, 
+Además de las URLs descriptas, el sitio remoto publica otras de dónde 
+**Doff** descarga los módulos y recursos que componen a la aplicación, 
 para almacenarlos localmente y poder ejecutar el proyecto cuando el cliente 
 se encuentre sin conexión. Una de estas URLs es ``manifest.json``, en la cual
 se encuentra una lista completa de los archivos que componen al proyecto.
@@ -278,11 +278,13 @@ por cada sitio remoto que se desee crear en el proyecto.
 
 .. note:: Revisar la figura para que concuerde con los pasos
 
+.. note: NOTA DE MARTA, ACA VA LA FIGURA 7.1
+
 Instalación y Configuración de la Aplicación offline 
 ----------------------------------------------------
 
-El primer paso de la migración consiste en la[AdamGomaaPyDecorator09]_ instalación de la
-aplicación genérica ``offline`` en el proyecto. Para esto
+El primer paso de la migración consiste en la instalación de la
+aplicación genérica offline en el proyecto. Para esto
 se la descarga y añade al ``PYTHONPATH``. Luego se la debe agregar a
 ``INSTALLED_APPS`` del proyecto en línea. 
 
@@ -309,14 +311,14 @@ Como segundo paso, es necesario agregar la constante ``OFFLINE_BASE`` al módulo
     OFFLINE_BASE = "off"
 
 La mayor parte de los pasos siguientes se realizan mediante comandos implementados
-en ``offline``. Debido a que se debe describir un proceso donde es necesario 
+en offline. Debido a que se debe describir un proceso donde es necesario 
 discernir la definición de una variable/constante del acceso a su contenido,
 se utilizará la siguiente convención:
     
-    * ``NOMBRE_CONSTANTE``
+    * ``NOMBRE_CONSTANTE``:
       Se refiere al nombre de una constante.
      
-    * ``$(NOMBRE_CONSTANTE)`` o ``$(nombre_variable)``
+    * ``$(NOMBRE_CONSTANTE)`` o ``$(nombre_variable)``:
       Se refiere al contenido de la constante o variable. 
  
 Creación de un Sitio Remoto
@@ -342,16 +344,16 @@ El comando realiza la siguientes acciones:
        en el cual define la instancia de ``RemoteSite`` con el nombre dado. 
     
     #. Crea el directorio ``$(OFFLINE_BASE)/$(nombre_sitio)``, como paquete
-       de Protopy, donde crea el proyecto desconectado, definiendo los módulos
+       de **Protopy**, donde crea el proyecto desconectado, definiendo los módulos
        ``settings.js``, ``urls.js`` y ``logging.js`` (estos módulos son plantillas internas de
-       la aplicación ``offline`` y se rellenan automáticamente con valores 
+       la aplicación offline y se rellenan automáticamente con valores 
        extraídos de ``settings.py`` y de la invocación del comando). 
 
 
        
 
 Por ejemplo, para un sitio remoto llamado ``ventas`` y ``OFFLINE_BASE``
-como ``"off"``, tras la ejecución del comando, se creará un archivo
+como ``off``, tras la ejecución del comando, se creará un archivo
 ``off/remote_ventas.py`` con el siguiente contenido:
        
 .. code-block:: python
@@ -419,7 +421,7 @@ globales al proyecto desconectado).
 Los módulos creados a partir de las plantillas deben ser modificados por el 
 programador, agregando las URLs, las vistas y otras funcionalidades.  
 Si bien esta tarea podría parecer tediosa en principio, el
-grado de similitud entre Protopy con Python y el hecho de que Doff implemente
+grado de similitud entre **Protopy** con Python y el hecho de que **Doff** implemente
 la misma API que Django facilita mucho la tarea.
     
 
@@ -431,7 +433,7 @@ un mecanismo de separación de los datos a los cuales accede el cliente,
 por seguridad y eficiencia. 
 
 Para lograr este objetivo se creó una clase encargada de arbitrar el 
-acceso a los modelos. Este recubrimiento o *proxy* permite definir de dos maneras a 
+acceso a los modelos. Este recubrimiento o proxy permite definir de dos maneras a 
 qué datos accede el cliente: definiendo los campos visibles 
 (columnas de la base de datos) y las instancias visibles, mediante la definición
 de un Manager (a qué filas accede).
@@ -447,16 +449,16 @@ en el sitio remoto. Para esta tarea el ``RemoteSite`` cuenta con el método
 
 El método ``register`` recibe como primer argumento el modelo a publicar y 
 opcionalmente una subclase de ``RemoteModelProxy``. Cuando el método es llamado
-sin la sub-clase, el sitio remoto genera automáticamente un proxy 
+sin la subclase, el sitio remoto genera automáticamente un proxy 
 que publica todos los campos del modelo y todas sus filas.
 
 Por ejemplo, sobre un sitio remoto llamado ``librarian``, con los modelos
-definidos en el capítulo de Doff (autor, libro, editor), el código sería
+definidos en el capítulo de **Doff** (autor, libro, editor), el código sería
 el siguiente:
 
 .. code-block:: python
     
-    # Importación el sitio remoto
+    # Importación del sitio remoto
     from offline.sites import RemoteSite
     # Importación del libro
     from bookstore.core.models import Book, Author  
@@ -473,8 +475,8 @@ modelos ``Book`` y ``Author``.
 
 Para personalizar la definición y acceso a datos de un modelo, se debe 
 crear una subclase de ``RemoteModelProxy``. Dentro de esta subclase se
-pueden definir los campos a publicar mediante ``fields`` (indica los nombres de los campos que se publicaran), 
-y ``exclude`` (indica los nombres de los campos que se excluirán) y el Manager del modelo a utilizar [*]_. Por ejemplo:
+pueden definir los campos a publicar mediante ``fields`` (indica los nombres de los campos que se publicarán), 
+y ``exclude`` (indica los nombres de los campos que se excluirán) y el manager del modelo a utilizar [*]_. Por ejemplo:
 
 .. code-block:: python
 
@@ -487,16 +489,16 @@ y ``exclude`` (indica los nombres de los campos que se excluirán) y el Manager 
         class Meta:
             model = Book # Este campo es opcional
             exclude = ('author', ) # Se excluye el campo autor
-            manager = Book.objects # El managers es el manager por defecto
+            manager = Book.objects # El manager es el manager por defecto
     
     site.register(Book, BookRemote) # Registro
     
 .. [*] Se pueden definir campos que no existen en el modelo que deberán ser provistos
-       por el Manager a la hora de la sincronización.
+       por el manager a la hora de la sincronización.
 
-El Manager permite filtrar las entidades que son accedidas por el cliente.
+El manager permite filtrar las entidades que son accedidas por el cliente.
 Si el cliente es un usuario autenticado en el proyecto, mediante la implementación de un
-Manager que discrimine usuarios autenticados [*]_, se puede limitar la visión
+manager que discrimine usuarios autenticados [*]_, se puede limitar la visión
 de las instancias de un modelo (o filas sobre la base de datos).
 
 .. [*] El usuario se ha autenticado en la aplicación en línea contra las entidades
@@ -524,10 +526,10 @@ del modelo. Por ejemplo, para el modelo de ``Book``:
     })
 
 
-En Django los modelos suelen tener métodos de utilidad, como ``__unicode__`` (
-en el cliente ``__str__``). Estos métodos se deben implementar en un arreglo
+En Django los modelos suelen tener métodos de utilidad, como ``__unicode__`` (en el cliente ``__str__``).
+Estos métodos se deben implementar en un arreglo
 asociativo que se utiliza a modo de mixin. Como se mencionó en el capítulo
-sobre Protopy, la implementación de clases soporta herencia múltiple, cuando
+sobre **Protopy**, la implementación de clases soporta herencia múltiple, cuando
 se requiere la URL con la definición del modelo, se requieren automáticamente
 los mixins definidos.
 
@@ -655,7 +657,7 @@ Creación del Manifiesto
 ------------------------
 
 Como paso final de la migración de un proyecto, se debe generar un listado
-de entradas de recursos (Doff, Protopy, código del proyecto, plantillas y medios
+de entradas de recursos (**Doff**, **Protopy**, código del proyecto, plantillas y medios
 estáticos). Esto se realiza mediante el comando ``manifest_update`` del módulo ``manage.py``. 
 Su sintaxis es la siguiente:
 
@@ -670,7 +672,7 @@ instalado con la capacidad de funcionalidad desconectada.
 Cuando existan modificaciones en el código del sitio remoto se debe volver a 
 ejecutar el comando ``manifest_update``.
 
-El manifiest se publica mediante una vista del sitio remoto. De esta manera, 
+El manifiesto se publica mediante una vista del sitio remoto. De esta manera, 
 cuando el proyecto desconectado detecta conexión, descarga de manera autónoma
 las actualizaciones.
 

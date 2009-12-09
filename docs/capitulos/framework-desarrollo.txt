@@ -1,6 +1,4 @@
 
-
-
 ################################
 Doff, el Framework Desconectado
 ################################
@@ -9,21 +7,21 @@ En capítulos anteriores se mencionó que la creación de un
 framework generalmente surge de la identificación de objetos reusables en
 el desarrollo de software. Posteriormente los objetos identificados constituyen
 componentes que forman parte de una arquitectura. A éstos se accede
-mediante una API específica y se añade o modifica sus funcionalidades mediante 
-configuración o extensión. Esta forma de obtener un framework, implica pasar por
-varias etapas de maduración en el desarrollo, pero requieren de un punto de
-partida esencial y es justamente un proyecto que oriente la identificacion de
+mediante una API específica y se añade o modifica su funcionalidad mediante 
+configuración o extensión. Esta forma de obtener un framework implica pasar por
+varias etapas de maduración en el desarrollo, pero requiere de un punto de
+partida esencial que es justamente un proyecto que oriente la identificacion de
 las partes reusables.
 
 En el desarrollo del framework desconectado de esta tesina, si bien se contaba
 con Django como base, se detectó que muchos aspectos no estaban claramente
 definidos y algunos componentes carecían de sentido en el contexto del navegador.
 Por esta razón se realizaron dos proyectos [*]_ que sirvieron para identificar
-las piezas necesarias del framework y mejorar el enfoque de Protopy, además de
+las piezas necesarias del framework y mejorar el enfoque de **Protopy**, además de
 permitir crear nuevos componentes reusables.
 
-El framework desconectado, de manera similar a Protopy, se denominó Doff en base
-a su padre y a la tarea que cumple, tomando la *d* de Django y *off* de offline
+El framework desconectado, de manera similar a **Protopy**, se denominó **Doff** en base
+a su padre y a la tarea que cumple, tomando la **d** de Django y **off** de offline
 (desconectado). Su nombre significa, por lo tanto, Django Desconectado:
 
     | **d** jango + **off** line = **doff**
@@ -42,7 +40,7 @@ Migración de Componentes Básicos
 -------------------------------
 
 
-Doff se inició como un conjunto de módulos para Protopy. Estos módulos implementaban
+**Doff** se inició como un conjunto de módulos para **Protopy**. Estos módulos implementaban
 diferentes componentes de Django sobre el cliente. Debido a que los módulos de 
 JavaScript son recursos estáticos, se publicaron mediante un servidor de archivos
 muy simple llamado Aspen, que no requería intervención de Django [AspenWebServer09]_.
@@ -69,7 +67,7 @@ servidor.
 
 
 Las pruebas y depuración del proyecto se realizaron sobre Firebug, cargando
-Protopy en un archivo estático y realizando los ``require()`` correspondientes
+**Protopy** en un archivo estático y realizando los ``require()`` correspondientes
 en la consola. Por ejemplo:
 
 .. code-block:: javascript
@@ -91,7 +89,7 @@ El siguiente componente en ser analizado y migrado fue el sistema de plantillas
 (``django.templates``). Si bien la librería de JavaScript Dojo provee un 
 sistema de manejo de plantillas basado en la sintaxis de Django [DojoLibDjangoTmpl09]_, 
 se optó por portar directamente la implementación de Django ya que Dojo no está basado
-en el sistema de módulos de Protopy. Esta funcionalidad se situó en el módulo 
+en el sistema de módulos de **Protopy**. Esta funcionalidad se situó en el módulo 
 ``doff.templates``.
 
 
@@ -100,51 +98,50 @@ en el sistema de módulos de Protopy. Esta funcionalidad se situó en el módulo
     ultimo acceso Septiembre de 2009,
     http://www.dojotoolkit.org/book/dojo-book-0-9/part-5-dojox/dojox-dtl/ 
 
-Definición de Proyecto 
+Definición del Proyecto 
 -----------------------
 
 Luego de haber alcanzado un nivel de funcionalidad básico en ``doff.db.models`` y 
 ``doff.templates`` se definió la interacción básica con Django, mediante
 la cual un proyecto en línea sería capaz de transferirse al cliente. Para
-este fin se creó una aplicación Django llamada ``offline`` cuyo objetivo inicial 
-fue publicar estáticamente el código JavaScript de Protopy y Doff.
+este fin se creó una aplicación Django llamada **offline** cuyo objetivo inicial 
+fue publicar estáticamente el código JavaScript de **Protopy** y **Doff**.
 
 El siguiente paso fue definir un proyecto Django desconectado, es decir, un
-proyecto Doff. Se buscó el mayor grado de similitud posible con Django, donde
+proyecto **Doff**. Se buscó el mayor grado de similitud posible con Django, donde
 un proyecto es un paquete Python (con los módulos ``settings.py``, ``manage.py``
 y ``urls.py``) y cada aplicación un paquete dentro de la proyecto o localizable
 en el ``PYTHONPATH`` (una aplicación cuenta con los módulos ``models.py`` y
 ``views.py``).
 
-En Doff, un proyecto se definió como un paquete Protopy con un módulo ``settings.js``
+En **Doff**, un proyecto se definió como un paquete **Protopy** con un módulo ``settings.js``
 con la configuración del proyecto. El módulo de proyecto Django ``manage.py`` carece de 
-sentido en el navegador, ya que no se cuenta con una interfase de comandos en 
+sentido en el navegador, ya que no se cuenta con una interfaz de comandos en 
 JavaScript, por lo que se implementó la clase ``doff.core.project.Project``.
 Esta clase define una serie de métodos para interactuar con el proyecto que 
-cumplen algunas de las funciones de el módulo ``manange.py`` y realizar tareas
+cumplen algunas de las funciones del módulo ``manange.py``, y realizar tareas
 necesarias en el ambiente desconectado.
-El módulo ``urls.js`` se reservó para análisis posterior. 
+El módulo ``urls.js`` se reservó para un análisis posterior. 
 
 La clase ``Project`` posee los siguientes métodos:
 
  * ``bootstrap()``
- 	
- 	Se encarga de iniciar el manejo de URLs por parte del proyecto, de mostrar
- 	la página inicial y ceder el control 
-    de la navegación al framework desconectado.
+ 
+	Se encarga de iniciar el manejo de URLs por parte del proyecto, de mostrar la página
+	inicial y ceder el control de la navegación al framework desconectado.
     
     
  * ``install()`` 
  
-   Se encarga de persistir el framework y el proyecto en
-   el almacenamiento local del cliente. También crea la base de datos, tarea que
-   en la aplicación en línea se realiza mediante la invocación de la orden
-   ``manage.py syncdb``.
+	Se encarga de persistir el framework y el proyecto en
+	el almacenamiento local del cliente. También crea la base de datos, tarea que
+	en la aplicación en línea se realiza mediante la invocación de la orden
+	``manage.py syncdb``.
    
  * ``uninstall()``
    
-   Remueve la base de datos, el proyecto y el código del framework
-   del cliente.
+	Remueve la base de datos, el proyecto y el código del framework
+	del cliente.
    
 Un proyecto se crea de la siguiente manera:
 
@@ -158,10 +155,10 @@ Un proyecto se crea de la siguiente manera:
     </script>
     
 El primer argumento es el nombre del proyecto y el segundo es la URL que se 
-agrega al ``sys.path`` de Protopy, definiendo de esta manera un nuevo 
-paquete en Protopy en el ámbito de nombres global. 
+agrega al ``sys.path`` de **Protopy**, definiendo de esta manera un nuevo 
+paquete en **Protopy** en el ámbito de nombres global. 
 
-Las aplicaciones de un proyecto Doff se definieron como paquetes de Protopy que se encuentran
+Las aplicaciones de un proyecto **Doff** se definieron como paquetes de **Protopy** que se encuentran
 dentro del proyecto. Constan de los módulos ``views.js`` y ``models.js``.
 
 Los siguientes apartados tratan sobre las implementaciones de la API del ORM,
@@ -171,10 +168,10 @@ fundamental del ``Project`` que es emular HTTP.
 Modelos
 -------
 
-Doff implementa la misma API que Django de definición y consultas, realizando adaptaciones
-a la sintaxis de JavaScript y a la librería Protopy.
+**Doff** implementa la misma API que Django de definición y consultas, realizando adaptaciones
+a la sintaxis de JavaScript y a la librería **Protopy**.
 
-Cada modelo es representado por un clase de Protopy que extiende de
+Cada modelo es representado por un clase de **Protopy** que extiende de
 ``doff.db.models.base.Model``. 
 
 A continuación se ejemplifica la implementación  en el cliente del módulo 
@@ -243,11 +240,11 @@ para representar este situación.
 
 
 No se define explícitamente una clave primaria en ninguno de estos
-modelos. A no ser que se le indique lo contrario, Doff dará automáticamente a
+modelos. A no ser que se le indique lo contrario, **Doff** dará automáticamente a
 cada modelo un campo de clave primaria entera autoincremental llamado ``id``.
 
 Para activar los modelos en el proyecto, la aplicación que los contiene debe
-estar incluida en la lista de aplicaciones instaladas de Doff. En consonancia
+estar incluida en la lista de aplicaciones instaladas de **Doff**. En consonancia
 con Django, esta configuración se realiza en el módulo ``settings.js``, en
 la variable de configuración ``INSTALLED_APPS``.
 Suponiendo que este archivo se encuentre en ``bookstore/models.js``, el nombre de 
@@ -259,12 +256,12 @@ Cuando el usuario instala el proyecto para la operación desconectada en su nave
 sistema recorre las aplicaciones en ``INSTALLED_APPS`` y genera el SQL para
 cada modelo, creando las tablas en la base de datos. 
 
-Una vez que se crea el modelo, Doff provee automáticamente una API JavaScript
+Una vez que se crea el modelo, **Doff** provee automáticamente una API JavaScript
 de alto nivel, muy similar a la de Django, para trabajar con estos modelos.
 
 Además de implementar la API de consultas, el desarrollador puede realizar
 consultas en SQL sobre la base de datos del cliente mediante las herramientas
-de desarrollador provistas por Doff.
+de desarrollador provistas por **Doff**.
 
 
 Inserción y Modificación de Datos
@@ -276,9 +273,10 @@ inserción de una fila en la base de datos:
 .. code-block:: javascript
 
     >>> require('books.models', 'Publisher');
-    >>> p1 = new Publisher({ name: 'Addison-Wesley', address: '75 Arlington Street',
-    ...     city: 'Boston', state_province: 'MA', country: 'U.S.A.',
-    ...     website: 'http://www.apress.com/'});
+    >>> p1 = new Publisher({ name: 'Addison-Wesley',
+		address: '75 Arlington Street',
+        city: 'Boston', state_province: 'MA', country: 'U.S.A.',
+        website: 'http://www.apress.com/'});
     // Guardado de la instancia
     >>> p1.save();
 
@@ -305,7 +303,7 @@ Las subsecuentes llamadas a ``save()`` guardarán el registro en su lugar, sin
 crear un nuevo registro (es decir, ejecutarán la sentencia SQL ``UPDATE`` en
 lugar de un ``INSERT``).
 
-Por ejemplo
+Por ejemplo:
 
 .. code-block:: javascript
     
@@ -357,7 +355,7 @@ Internamente esto genera una consulta SQL:
 
 
 En la última línea del ejemplo anterior, se ve que en el listado no
-aparece una representación adecuada de la instancia de Editor. Esto
+aparece una representación adecuada de la instancia del editor. Esto
 responde a que en la definición del modelo no se incluyó un método de 
 pasaje a cadena, o ``__str__``. Se puede implementar este método para 
 mejorar la depuración.
@@ -373,7 +371,7 @@ En el caso de requerir una fila o conjunto en particular, se utiliza el método
 
 ``filter()`` toma argumentos del tipo arreglo asociativo que son traducidos en las
 cláusulas SQL ``WHERE`` apropiadas, concatenando con el operador ``AND`` en el 
-caso de tener más de un parámetro. El ejemplo anterior se traduce traducido en la
+caso de tener más de un parámetro. El ejemplo anterior se traduce en la
 siguiente consulta:
 
 .. code-block:: sql
@@ -404,7 +402,7 @@ en la sentencia SQL:
 Existen otros tipos de subargumentos de búsqueda, 
 incluyendo ``icontains`` (``LIKE`` no sensible a diferencias de mayúsculas/minúsculas), 
 ``startswith`` (busca al comienzo), y ``endswith`` (busca al final) y ``range`` (consultas SQL ``BETWEEN``). 
-En el apéndice sobre Doff se describen en detalle todos esos tipos de búsqueda.
+En el apéndice sobre **Doff** se describen en detalle todos esos tipos de búsqueda.
 
 Cuando se requiere obtener un único objeto dada una condición, los
 administradores de consultas brindan el método ``get()``:
@@ -424,7 +422,9 @@ orden determinado por algún campo. Para esto se dispone del método
 campo nombre se debe hacer:
 
     >>> Publisher.objects.order_by("name")
-    [<Publisher: Addison-Wesley>, <Publisher: Apress Publishing>, <Publisher: O'Reilly>]
+    [<Publisher: Addison-Wesley>,
+	<Publisher: Apress Publishing>,
+	<Publisher: O'Reilly>]
 
 El ejemplo anterior es similar a la invocación de ``all()``, pero la consulta SQL
 incluye un parámetro extra: 
@@ -443,7 +443,9 @@ un guión, el ordenamiento es inverso, por ejemplo:
 .. code-block:: javascript
 
     >>> Publisher.objects.order_by("-name")
-    [<Publisher: O'Reilly>, <Publisher: Apress Publishing>, <Publisher: Addison-Wesley>]
+    [<Publisher: O'Reilly>,
+	<Publisher: Apress Publishing>,
+	<Publisher: Addison-Wesley>]
 
 
 Cuando el ordenamiento es frecuente, puede incluirse por defecto en la
@@ -466,7 +468,9 @@ encadenar, como se muestra a continuación:
 .. code-block:: javascript
 
     >>> Publisher.objects.filter(country="U.S.A.").order_by("-name")
-    [<Publisher: O'Reilly>, <Publisher: Apress Publishing>, <Publisher: Addison-Wesley>]
+    [<Publisher: O'Reilly>,
+	<Publisher: Apress Publishing>,
+	<Publisher: Addison-Wesley>]
 
 
 Cuando se requiere acceder a un registro en particular, se puede usar la siguiente
@@ -492,7 +496,7 @@ por ejemplo:
 
 .. code-block:: javascript
     
-    // Retrna a partir del primero
+    // Retorna a partir del primero
     >>> Publisher.objects.all().slice(1)
     [<Publisher: Apress Publishing>, <Publisher: O'Reilly>]
     // Retorna entre las posiciones 1 y 3
@@ -535,7 +539,7 @@ que se traduce en el siguiente SQL:
     WHERE name = 'Adison-Wesley';  
     
 
-Los QuerySet pueden recibir también el método ``delete()`` y esto se traduce
+Los ``QuerySet`` pueden recibir también el método ``delete()`` y esto se traduce
 en la eliminación de todas las filas afectadas por el ``QuerySet``. Por 
 ejemplo:
 
@@ -555,7 +559,7 @@ que se traduce en el siguiente SQL:
 Plantillas
 ----------
 
-Doff brinda soporte al sistema de plantillas de Django. Las plantillas escritas 
+**Doff** brinda soporte al sistema de plantillas de Django. Las plantillas escritas 
 para una aplicación en línea son reutilizables sin modificaciones en la aplicación
 desconectada.
 
@@ -565,15 +569,15 @@ ejecuta de manera desconectada, el navegador sólo realiza una carga de document
 y la navegación se basa en manipulaciones de DOM. 
 Cada vez que se carga una página, en realidad se suprime la anterior y se anexa
 la nueva en los elementos ``fake-body`` y ``fake-header``. Este trabajo
-es realizado por Doff, con ayuda del paquete ``dom`` de Protopy.
+es realizado por **Doff**, con ayuda del paquete ``dom`` de **Protopy**.
 
 A continuación se realiza un breve análisis de la API de plantillas y 
-su utilización en Doff.
+su utilización en **Doff**.
 
 Creación
 ========
 
-Doff implementa la clase ``Template`` para crear plantillas, que 
+**Doff** implementa la clase ``Template`` para crear plantillas, que 
 se encuentra en el módulo ``doff.template.base``. El argumento para la
 instanciación del objeto es el texto en crudo de la plantilla. 
 En el siguiente ejemplo ``t`` es un objeto ``Template`` listo para ser procesado:
@@ -600,7 +604,7 @@ Contexto
 ========
 
 Para obtener la salida procesada de una instancia de ``Template``, 
-es necesario proveer un *contexto*. Un contexto es simplemente un
+es necesario proveer un contexto. Un contexto es simplemente un
 conjunto de variables y sus valores asociados.
 Una objeto plantilla usa las variables para rellenar la plantilla evaluando las 
 etiquetas.
@@ -641,10 +645,10 @@ sobre éste muchas veces:
         print(t.render(new Context({'name': name})));
 
 Al igual que en Django el objeto ``Context`` puede contener variables más complejas.
-La forma de inspeccionar estas es con el operador `.` (punto). Usando el
+La forma de inspeccionar éstas es con el operador `.` (punto). Usando el
 punto se puede acceder a objetos, atributos, índices, o métodos de un objeto.
 
-En estos casos cuando el sistema de plantillas encuentra un punto en una variable el orden de
+En estos casos, cuando el sistema de plantillas encuentra un punto en una variable, el orden de
 búsqueda es el siguiente:
 
     * Arreglo asociativo (por ej. ``foo["bar"]``)
@@ -652,7 +656,7 @@ búsqueda es el siguiente:
     * Llamada de método (por ej. ``foo.bar()``)
     * Índice de arreglos (por ej. ``foo[bar]``)
 
-Por ejemplo, ante la siguiente plantilla
+Por ejemplo, ante la siguiente plantilla:
 
 .. code-block:: html
 
@@ -666,7 +670,7 @@ Si en la búqueda como atributo, se encuentra un método, se lo ejecutará y se
 utilizará su salida para el remplazo.
 En el caso de no poder realizar el reemplazo por ninguna de las anteriores, 
 buscará ``elemento`` como índice de arreglos. Tiene sentido cuando lo que se 
-encuentra tras el punto es un numero.
+encuentra tras el punto es un número.
  
 
 Si una variable no existe en el contexto, el
@@ -680,7 +684,7 @@ Cargador de Plantillas
 
 Si bien en los ejemplos anteriores se mostró la API de plantillas con
 cadenas como argumentos, las plantillas puden estar almacenadas en 
-archivos. Para Doff estos son recursos estáticos y existe un sistema
+archivos. Para **Doff** éstos son recursos estáticos y existe un sistema
 para la carga similar al de Django. Para tal fin en el módulo ``settings.js`` se establece
 el valor ``TEMPLATE_URL``.
 
@@ -700,7 +704,7 @@ plantilla:
     function current_datetime(request) {
         // Cargar la vista
         var t = get_template('mytemplate.html');
-        // Rednderización sobre la variable html con el contexto con una
+        // Renderización sobre la variable html con el contexto con una
         // fecha
         html = t.render(new Context({'current_date': new Date()}))
         // Retornar la respuesta en una respuesta http 
@@ -711,10 +715,10 @@ plantilla:
 
 
 En esta vista se utiliza la API para cargar plantillas, a la cual se accede 
-mediante la función `get_template()`.
+mediante la función ``get_template()``.
 
 Existen varios cargadores de plantillas que se pueden habilitar en el archivo de 
-configuración. En el presente trabajo se utiliza sólo el de carga de plantillas
+configuración. En la presente tesina se utiliza sólo el de carga de plantillas
 a través de URLs. Por defecto, ``TEMPLATE_URL`` es una cadena vacía, en cuyo
 caso la búsqueda de la plantilla se realizará en ``templates/`` a partir de donde
 se instanció el proyecto.
@@ -728,7 +732,7 @@ o solicitud asincrónica (AJAX) se realiza un requerimiento al servidor, es deci
 se traduce en una solicitud HTTP.
 
 Cuando la aplicación se encuentra desconectada, es decir, se ha instanciado
-el proyecto, Doff utiliza dos clases para emular HTTP y el comportamiento
+el proyecto, **Doff** utiliza dos clases para emular HTTP y el comportamiento
 predefinido del navegador. Estas clases son: ``DOMAdapter`` y ``LocalHandler``.
 
 ``DOMAdapter`` se encarga de crear un documento falso en el DOM, un historial
@@ -741,7 +745,7 @@ la clase ``Handler``. El equivalente en el proyecto desconectado es ``LocalHandl
 que se encarga de procesar las peticiones que envía el ``DOMAdapter``.
 
 El ``LocalHandler`` se encarga de realizar el pasaje del ``Request`` por los
-diferentes Middlewares, como indica la figura 2.6 del apartado de tecnologías
+diferentes middlewares, como indica la figura 2.6 del capítulo de tecnologías
 del servidor. En este proceso se llama a la vista.
 
 La salida de la vista se envuelve en un objeto ``Response``, equivalente a
@@ -757,7 +761,7 @@ los links y formularios.
     Diagrama de comunicación entre el documento y el sistema de emulación 
     HTTP de ``DOMAapter`` y su comunicación con el ``LocalHandler``.
  
-Con cada entrada en el historial se modifica el enlace (*hash*) de la URL. La instancia
+Con cada entrada en el historial se modifica el enlace (hash) de la URL. La instancia
 de ``History`` captura, durante la instanciación del proyecto desconectado, la URL raíz.
 La navegación en el proyecto desconectado se realiza en base a la URL raíz. 
 Por ejemplo, si la URL en la que se instancia el proyecto es::
@@ -773,16 +777,17 @@ el objeto ``History`` generará la URL:
     http://mi_dominio.com/base_offline/base/#ventas
 
 Los módulos antes mencionados se encuentran conectados entre sí mediante el 
-módulo de eventos ``event`` provisto por Protopy. 
+módulo de eventos ``event`` provisto por **Protopy**. 
 
+.. note: NOTA DE MARTA: MOVER LA FIGURA 6.1 A ESTA POSICION!! CON ESTA LEYENDA "La siguiente figura muestra:"
 
 Debido a que la operación con el DOM se encuentra recubierta en la operación
 desconectada, el código de las plantillas debe ser adaptado para trabajar
-con la API de Doff/Protopy. Se debe:
+con la API de **Doff**/**Protopy**. Se debe:
 
 
     * Utilizar ``sys.window`` en vez de elemento ``window``. Éste apunta
-      a ``window`` cuando el template se procesa con conexión, y a 
+      a ``window`` cuando la plantilla se procesa con conexión, y a 
       ``DOMAdapter`` cuando se encuentra sin conexión.
       
     * Utilizar ``sys.transport`` en vez de ``XMLHttpRequest`` para 
@@ -793,7 +798,7 @@ con la API de Doff/Protopy. Se debe:
     * Utilizar el selector CSS ``$$("selector")`` para la selección de elementos que trabajan
       adecuadamente en el contexto desconectado y en línea. Como es un ``builtin``
       está siempre disponible. Para el caso de la selección por
-      ID se tiene ``$("id")`` (similar a Prototype).
+      ID se tiene ``$("id")`` (similar a Prototype):
       
       .. code-block:: javascript
       
@@ -830,16 +835,16 @@ con la API de Doff/Protopy. Se debe:
         {% if offline %}
             <h1>Estoy Offline!</h1>
         {% else %}
-            <h1>Estoy en linea</h1>
+            <h1>Estoy en línea</h1>
         {% endif %}
       
-Como se ha descripto, Doff modifica el comportamiento de varios módulos de Protopy 
+Como se ha descripto, **Doff** modifica el comportamiento de varios módulos de **Protopy** 
 para lograr consistencia en el entorno desconectado.
 
 Vistas
 ------
 
-Las vistas en Doff son funciones que contienen la lógica de la aplicación. Están
+Las vistas en **Doff** son funciones que contienen la lógica de la aplicación. Están
 asociadas a URLs en el archivo ``urls.js`` (siempre que no se haya modificado
 el ``ROOT_URLCONF``) del proyecto desconectado. Al igual 
 que en Django, la variable que almacena estas asociaciones es ``urlpatterns``.
@@ -902,7 +907,7 @@ Una vista se conforma de manera muy similar a Django:
     publish({
         remove_tag: remove_tag,
         index: index,
-        // ... mas publicaciones
+        // ... más publicaciones
     });
 
 Las vistas reciben el objeto ``HTTPRequest`` como primer argumento, en consonancia
@@ -911,9 +916,9 @@ la creación del ciclo del ``Request`` comienza con
 la captura del evento por parte del ``DOMAdapter``, como se describe en la sección
 anterior.
 
-Las vistas deben devolver un objeto ``HTTPResponse``. Doff implementa algunos
+Las vistas deben devolver un objeto ``HTTPResponse``. **Doff** implementa algunos
 atajos de ``django.shortcuts``, por ejemplo, ``render_to_response(nombre_template,
-contexto)`` para simplificar el prceso de construcción e interpretación de una
+contexto)`` para simplificar el proceso de construcción e interpretación de una
 plantilla y generación de la instancia del ``HTTPResponse``.
 
 Formularios
@@ -923,11 +928,11 @@ Los formularios son casi por excelencia el mecanismo de entrada
 para las operaciones CRUD en los sistemas de información basados en
 la web. 
 
-Doff posee la misma abstracción de objetos que brinda Django para
+**Doff** posee la misma abstracción de objetos que brinda Django para
 facilitar la manipulación y validación de datos mediante instancias
 del tipo ``Form``.
 
-Un formulario en Doff es una clase que extiende de ``Form`` y tiene 
+Un formulario en **Doff** es una clase que extiende de ``Form`` y tiene 
 la responsabilidad de validar la entrada de datos y generar salida HTML. 
 
 Los campos del formulario se definen como atributos de la clase
@@ -967,8 +972,8 @@ ejemplo:
             <form action="" method="POST">
                 <ul>
                     <!-- Si el formulario  fue enviado en el contexto del
-                    template con el nombre "form", se puede invocar el método
-                    que lo muestra como items de una lista -->
+                    template con el nombre "form", se puede invocar al método
+                    que lo muestra como ítems de una lista -->
                     {{ form.as_ul }}
                 </ul>
                 <!-- Botón de enviar -->
@@ -1022,8 +1027,8 @@ Por ejemplo, la siguiente vista hace uso del atributo mencionado:
     
     }
 
-Una instancia de formulario puede estar en uno de dos estados: *bound*
-(vinculado) o *unbound* (no vinculado). Una instancia vinculada se
+Una instancia de formulario puede estar en uno de dos estados: bound
+(vinculado) o unbound (no vinculado). Una instancia vinculada se
 construye con un arreglo asociativo (como en la línea 11 del ejemplo anterior)
 y posee la capacidad de validar y volver a representar los datos con
 los cuales fue construido. Un
@@ -1037,7 +1042,7 @@ Validación de Datos
 Un formulario vinculado, tiene la responsabilidad de validar los datos
 con los cuales ha sido instanciado. 
 
-Para saber si un formulario está vinculado (*bound*) a datos válidos,
+Para saber si un formulario está vinculado (bound) a datos válidos,
 se llama al método ``is_valid()``:
 
 .. code-block:: javascript
@@ -1047,7 +1052,7 @@ se llama al método ``is_valid()``:
         # Hace algo con los datos del formulario
 
 Para acceder a los datos se accede directamente al ``request.POST``, 
-pero de esta manera no se saca provecho de la conversión que realiza Doff,
+pero de esta manera no se saca provecho de la conversión que realiza **Doff**,
 por ejemplo, para el caso de las fechas. En cambio se debería utilizar 
 ``form.clean_data``:
 
@@ -1060,7 +1065,7 @@ por ejemplo, para el caso de las fechas. En cambio se debería utilizar
         
     }
 
-La validación se lleva a cabo llamado al método ``clean()`` de cada campo del
+La validación se lleva a cabo llamando al método ``clean()`` de cada campo del
 formulario. La salida de cada una de esas llamadas completa el arreglo asociativo
 ``cleaned_data``. Finalmente se ejecuta la validación integral del formulario
 llamando al método ``clean()`` del formulario, si existe.
@@ -1100,7 +1105,7 @@ El orden de validación es el siguiente:
     #. ``clean()`` del formulario.
 
 Si en este ciclo no se captura ninguna excepción los datos son válidos. En caso
-contrario. El formulario almacena el mensaje de error y lo muestra adecuadamente
+contrario, el formulario almacena el mensaje de error y lo muestra adecuadamente
 cuando se realiza su representación. 
 
 
@@ -1109,7 +1114,7 @@ Cración de Formularios a Partir de Modelos
 
 La mayoría de las veces los formularios son utilizados para el ingreso
 de datos a los modelos, por lo que la tarea de escribir un formulario
-para cada modelo es muy común. Doff implementa en el módulo ``doff.forms.models``
+para cada modelo es muy común. **Doff** implementa en el módulo ``doff.forms.models``
 un tipo especial de formulario que inspecciona la definición del modelo y 
 genera automáticamente los campos del formulario. De esta manera, 
 cualquier cambio en los campos del modelo se refleja automáticamente 

@@ -144,25 +144,26 @@ o ruta base al archivo ``js``; posteriormente esta ruta más el sufijo ``package
 conforman la ruta donde la librería tomará los módulos cuando sen requeridos. 
 En el ejemplo anterior ``/ruta/a/protopy/`` es la ruta base.
 
-Otra forma de espesificar la ruta base es mediante la dupla ``base``, ``/valor/``
+Otra forma de especificar la ruta base es mediante la dupla ``base = /valor/``
 en el atributo ``pyconfig`` de la etiqueta ``script``. Este atributo representa el
 punto de entrada a la configuracion de **Protopy** como se muestra a continuación:
 
 .. code-block:: html
 
-    <script pyconfig="base:/otra/ruta/,debug:ture" src="/ruta/a/protopy/protopy.js">
+    <script 
+    	pyconfig="base:/otra/ruta/,debug:ture" 
+    	src="/ruta/a/protopy/protopy.js">
     </script>
 
 Recursos y Módulos
 ==================
 
 Como se mencionó en el apartado teórico dedicado a JavaScript, la inclusión
-de código en un documento HTML se realiza mediante la etiqueta ``script`` definiendo
-en el atributo ``src`` la URL del recurso.
-Cuando el navegador encuentra estas etiquetas en el análisis del documento,
-descarga el recurso y lo evalúa en el contexto de elemento ``window``
-(es decir, si en el código se define una variable ``a`` fuera del bloque de una
-función, ésta pasa a ser miembro del objeto ``window``).
+de código en un documento HTML se realiza mediante la etiqueta ``script``, definiendo
+en el atributo ``src`` la URL del recurso. Cuando el navegador encuentra esta
+etiqueta en el análisis del documento, descarga el recurso y lo evalúa en el
+contexto del elemento ``window`` (es decir, si en el código se define una
+variable ``a`` fuera del bloque de una función, ésta pasa a ser miembro del objeto ``window``).
 
 La carga de JavaScript mediante etiquetas de inclusión es práctico para
 proyectos pequeños (donde se utiliza JavaScript para validación, enriquecimiento
@@ -171,21 +172,17 @@ proyectos grandes (en los cuales la cantidad de JavaScript crece).
 
 En **Protopy** se buscó la forma de solucionar este problema analizando la forma
 en la que se resuelve en el lenguaje Python, en donde la modularidad y la creación
-de ámbitos de nombres están íntimamente relacionados. De esta forma desarrollo
-se oriento en pequeñas unidades funcionales llamadas *modulos*. 
+de ámbitos de nombres están íntimamente relacionados. De esta forma el desarrollo
+se orientó en pequeñas unidades funcionales llamadas módulos.
 
-    "Namespaces are one honking great idea -- let's do more of those!"
-
-    -- import this
-
-El enfoque modular no es nuevo en programación y basicamente, la implementación
-de **Protopy**, implica llevar el concepto de "divide y vencerás" ó "análisis
-descendente (Top-Down)" al hambito de JavaScript.
+El enfoque modular no es nuevo en programación y básicamente, la implementación
+de **Protopy** implica llevar el concepto de "divide y vencerás" o "análisis
+descendente (Top-Down)" al ambito de JavaScript.
 
 En vez de cargar los recursos mediante la inclusión de etiquetas, se tomó la idea
 de la carga asincrónica de código donde se utiliza una función de inclusión
 que genera peticiones ``XmlHTTPRequest`` a los recursos y los evalúa cuando se
-completan. Esta idea esta basa en la implementación de Dojo [DojoToolkit09],
+completan. Esta idea está basada en la implementación de Dojo [DojoToolkit09]_,
 pero a diferencia del mismo cada módulo define en si mismo un espacio de nombres.
 
 .. [DojoToolkit09] The Dojo Toolkit,
@@ -193,21 +190,21 @@ pero a diferencia del mismo cada módulo define en si mismo un espacio de nombre
                 útlimo acceso Septiembre 2009,
                 http://www.dojotoolkit.org/
 
-Por ello, se agregó a **Protopy** la función ``require( "nombre_modulo" )``, esta 
+Por ello, se agregó a **Protopy** la función ``require( "nombre_modulo" )``; ésta 
 recibe como parámetro una cadena con el nombre del módulo que se desea obtener
 y posteriormente lo descarga asincrónicamente del servidor retornando al ámbito
 del llamador el módulo evaluado en un contexto aislado. La funcion ``require``
 tiene otros modos de uso detallados en el apendice.
 
 En **Protopy**, un módulo es un recurso JavaScript que publica explícitamente una
-interface. De esta manera la funcionalidad se encuentra encapsulada. Para
+interfaz. De esta manera la funcionalidad se encuentra encapsulada. Para
 publicar un elemento del módulo se utiliza la función
 ``publish({nombre: objeto, nombre: objeto})``.
 
 Durante la evaluación de un módulo se encuentran disponibles las variables 
-``__name__`` y ``__file__``, las cuales permiten al módul conocer su identidad.
+``__name__`` y ``__file__``, las cuales permiten al módulo conocer su identidad.
 
-Los módulos se pueden organizar jerarquicamente en directorios, los cuales se
+Los módulos se pueden organizar jerárquicamente en directorios, los cuales se
 denomina paquetes. El comando ``require("a.b")`` carga el elemento ``b`` del
 paquete ``a``, siendo ``a`` un directorio con un archivo ``b.js`` en el servidor.
 
@@ -216,33 +213,32 @@ per se [*]_ . La única función de ellos es la de establecer una estructura.
 
 .. [*] En Python, un paquete es un directorio que tiene un módulo llamado
     ``__init__.py``, donde se puede definir funcionalidad que es evaluada
-    si se realiza la importación del paquete tal si fuese un módulo (Ej:
-    ``import paquete``)
+    si se realiza la importación del paquete tal como si fuese un módulo (Ej:
+    ``import paquete``).
 
 Carga de Módulos
 ----------------
 
 Cuando se utiliza la función ``require`` la búsqueda de los módulos se realiza
-en la ruta establecida en la carga de **Protopy** (/ruta/a/protopy/ + packages).
+en la ruta establecida en la carga de **Protopy** (``/ruta/a/protopy/`` + ``packages``).
 Por ejemplo, si ``protopy.js`` se encuentra en ``http://dominio.com/media/js/protopy.js`` 
-la invocación ``require("dom")`` cargará el archivo ``dom.js`` desde  
+la invocación ``require("dom")`` cargará el archivo ``dom.js`` desde
 ``http://dominio.com/media/js/packages/dom.js``.
 
 La búsqueda de módulos se puede ampliar más allá de la ruta base. En el módulo
 ``sys`` existe la variable ``paths``, que consiste en un arreglo asociativo
 entre paquetes y rutas. El programador puede añadir entradas a ``sys.path``.
-De forma similar al ejemplo anterior cuando un módulo llamado foo.spam es
+De forma similar al ejemplo anterior cuando un módulo llamado ``foo.spam`` es
 importado, **Protopy** busca en primera instancia en ``sys.path`` si existe una ruta
-asociada al paquete ``foo``, de encontrar la ruta el archivo spam.js es buscado
-en esta, por otra parte si ``sys.path`` no contiene una la ruta archivo
-foo/spam.js es buscado en la ruta base.
+asociada al paquete ``foo``, de encontrar la ruta el archivo ``spam.js`` es buscado
+en ésta; por otra parte si ``sys.path`` no contiene la ruta el archivo
+``foo/spam.js`` es buscado en la ruta base.
 
-El uso del objeto ``sys.path`` permite a los programadores que saben lo
-que están haciendo modificar o reemplazar el camino de búsqueda para los
-módulos.
+El uso del objeto ``sys.path`` permite a los programadores modificar o
+reemplazar el camino de búsqueda para los módulos.
 
-Las formas en que el modulo obtenido es presentado al llamador difiere en
-funcion de los parametros pasados a ``require``. Estas formas son:
+Las formas en que el módulo obtenido es presentado al llamador difiere en
+función de los parametros pasados a ``require``. Estas formas son:
 
 La función ``require`` se puede usar para:
 
@@ -257,7 +253,7 @@ La función ``require`` se puede usar para:
             require('events');  // Events queda en el espacio global
 
 
-    * Obtener un o mas símbolos de un módulo
+    * Obtener uno o mas símbolos de un módulo
 
         .. code-block:: javascript
 
@@ -275,13 +271,12 @@ Una descripción detallada se encuentra en el apéndice dedicado a **Protopy**.
 Publicación de Módulos
 ----------------------
 
-La acción de publicar un modulo implica exponer la funcionalidad que este define.
-En Python no es necesario declarar de manera explícita que símbolos se exponen
+La acción de publicar un módulo implica exponer la funcionalidad que éste define.
+En Python no es necesario declarar de manera explícita qué símbolos se exponen
 en un módulo, ya que todas las definiciones son públicas. Por ejemplo, si
 se define un módulo ``utils.py`` con el siguiente código:
 
 .. code-block:: javascript
-    :linenos:
 
     def promedio(lista_de_enteros):
         return sum(lita_de_enteros) / float(len(lista_de_enteros))
@@ -289,10 +284,10 @@ se define un módulo ``utils.py`` con el siguiente código:
     def cantidad_palabras(linea):
         return len(linea.split())
 
-El programador puede usar las sentencias ``from utils import promedio`` que
+El programador puede usar las sentencias: ``from utils import promedio``, que
 incorpora la función ``promedio`` al ámbito de nombres local,
-``from utils import *`` que incorpora todas las funciones de ``utils`` al ámbito
-de nombres o simplemente ``import utils``, que incorpora el módulo, el cual
+``from utils import *``, que incorpora todas las funciones de ``utils`` al ámbito
+de nombres, o simplemente ``import utils``, que incorpora el módulo el cual
 tiene como miembros en este caso a ``promedio`` y a ``cantidad_palabras``.
 
 En cambio los módulos en **Protopy** se evalúan dentro de una clausura y los 
@@ -301,11 +296,10 @@ llamadores no podrán acceder a sus funciones si no son publicadas.
 La función ``publish`` es la encargada de realizar la tarea de publicar el
 contenido del módulo.
 
-A continuación se presenta una traduccion del ejemplo anterior en Python a
+A continuación se presenta una traducción del ejemplo anterior en Python a
 **Protopy**:
 
 .. code-block:: javascript
-    :linenos:
 
     function promedio(lista_de_enteros) {
         var suma = lista_de_enteros.reduce(function(a, b){ return a + b; });
@@ -326,18 +320,18 @@ funciones ``promedio`` y ``cantidad_palabras`` mediante la invocación a
 ``require('utils', 'promedio', 'cantidad_palabras');``.
 
 Como observación final cabe destacar que una función que se defina en un módulo
- y no se publique es de uso interno a este.
+y no se publique es de uso interno a éste.
 
 Módulos Nativos
 ---------------
 
 Como se mencionó en el capítulo anterior, para desarrollar un buen soporte en el
 navegador es necesaria cierta funcionalidad básica que posee la implementación
-de Python y que seria deseable tener en el cliente al momento de correr el
-framework desconectado. Por esta razón se incorporaron en núcleo de **Protopy**
-módulos y funciones indispensables para el desarrollo, algunos de estos
-se explican a continuación, para una referencia completa de la API puede
-remitirse al apéndice de **Protopy**.
+de Python y que sería deseable tener en el cliente al momento de correr el
+framework desconectado. Por esta razón se incorporaron en el núcleo de **Protopy**
+módulos y funciones indispensables para el desarrollo; algunos de éstos
+se explican a continuación (para una referencia completa de la API puede
+remitirse al apéndice de **Protopy**).
 
     * ``builtin``
 
@@ -356,9 +350,9 @@ remitirse al apéndice de **Protopy**.
             Carga mediante el sistema de paquetes un módulo, incorporándolo al
             ámbito de nombres local o del llamador.
 
-        * ``$("id")`` y ``$$("selector_css")
+        * ``$("id")`` y ``$$("selector_css")``
 
-            Son alias a los elementos del módulo ``dom`` descrito más abajo.
+            Son alias a los elementos del módulo ``dom`` descripto más abajo.
 
         * ``extend``
 
@@ -368,7 +362,7 @@ remitirse al apéndice de **Protopy**.
         * ``isinstance``, ``issubclass``
 
             Estas funciones trabajan sobre las clases y las instancias
-            definiendo la pertenencia o la herencia respectivamente.
+            definiendo la pertenencia y la herencia, respectivamente.
 
         * ``array``
 
@@ -381,18 +375,24 @@ remitirse al apéndice de **Protopy**.
 
         * ``len``
 
-            La función incorporada ``len`` devuelve la longitud de un objeto.
+            Devuelve la longitud de un objeto.
 
                 >>> len([1, 2, 4]);
                 3
 
         * ``cmp``
-
-        * ``zip``
+        	
+        	Devuelve un número que representa la relacion de orden entre los dos
+        	argumentos pasados a la función. Este número puede negativo, positivo
+        	o cero indicando menor precedencia, mayor precedencia o igualdad.
 
     * ``dom``
 
-        En este módulo se publica el selector de elementos del DOM.
+        En este módulo se publican las funciones que trabajan sobre el DOM, el
+        principal objetivo de éstas es simplificar la obtención de elementos
+        para su posterior manipulación.
+        Las formas de selección básicas son por identificador o por atributos de
+        la hoja de estilos.
 
         Por ejemplo sobre el siguiente código HTML:
 
@@ -416,20 +416,20 @@ remitirse al apéndice de **Protopy**.
             // Carga del módulo
             >>> require('dom');
             // Utilizando el selector
-            >>> dom.query('.lkn2');
+            >>> dom.query('.lnk2');
             [a /admin/, a /otros/]
 
-       Se publican los símbolos ``$("id")`` y ``$$("selector")`` que referencian
+       se publican los símbolos ``$("id")`` y ``$$("selector")`` que referencian
        a esta función.
 
     * ``sys``
 
-        Equivalente al módulo Python del mismo nombre. Representa una interface 
-        con el nucleo de **Protopy** y el navegador.
+        Equivalente al módulo Python del mismo nombre. Representa una interfaz 
+        con el núcleo de **Protopy** y el navegador.
 
     * ``event``
 
-        Manejo de eventos, implementación de Listeners y Publisher/Subscriber.
+        Manejo de eventos, implementación de ``Listeners`` y ``Publisher/Subscriber``.
 
     * ``ajax``
 
@@ -439,8 +439,8 @@ remitirse al apéndice de **Protopy**.
 Orientación a Objetos Basada en Clases
 ======================================
 
-En el capítulo dedicado a las tecnologías del cliente se describió en
-el enfoque OO que posee JavaScript. Para lograr migrar muchos componentes
+En el capítulo dedicado a las tecnologías del cliente se describió el
+enfoque OO que posee JavaScript. Para lograr migrar muchos componentes
 de Django a JavaScript, se requiere un sistema de objetos basado en clases.
 Muchos autores cuestionan el intento de imponer un sistema de clases sobre
 un lenguaje que ya posee su técnica para crear objetos, argumentando que no 
@@ -454,21 +454,20 @@ tipos similar al de Python.
 La forma de crear nuevos "tipos de objetos" en **Protopy** es a través de la función
 ``type``. Esta función no fue parte de la biblioteca hasta que no se observó la
 necesidad de otorgar mayor poder al constructor de clases que brindaba
-Prototype. La incorporación de type posibilitó nuevas formas de construir clases, 
+Prototype. La incorporación de ``type`` posibilitó nuevas formas de construir clases, 
 similares a las  que brinda la función homónima de Python, a la cual debe su nombre.
 
 A continuación se presenta un fragmento de código que ejemplifica la creación de
 una clase en **Protopy**.
 
 .. code-block:: javascript
-    :linenos:
 
     // Creación de un diccionario, que hereda del tipo object
     var Dict = type('Dict', object, {
         ...
     });
     // Creación de una clase que hereda de Dict, observar que es una lista ya
-    // se permite herencia múltiple.
+    // que permite herencia múltiple.
     var SortedDict = type('SortedDict', [ Dict ], {
         __init__: function(object) {
             this.keyOrder = (object && isinstance(object, SortedDict))? \
@@ -535,7 +534,7 @@ comporten en función de sus respectivas definiciones:
 
 Como se observa en este ejemplo, para instanciar un nuevo tipo se utiliza el
 operador ``new`` de JavaScript, este operador crea el nuevo objeto e invoca a
-la función `__init__`.
+la función ``__init__``.
 
 En los métodos la palabra reservada ``this`` hace referencia al objeto
 instanciado con ``new``.
@@ -563,17 +562,19 @@ del tipo ``SorteDict`` usando una funcion ``__init__``. Este método es llamado
 por el operador ``new`` inmediatamente después de crear una instancia. Actúa de
 una forma similar a un constructor del lenguaje Java, pero Python y **Protopy**
 permiten también la personalización de la instanciación implementando el método
-``__new__``. El constructor es el conjunto ``__new__`` e ``__init__``.
-
-Los métodos ``__init__`` deben llamar explícitamente al método ``__init__`` de 
-la(s) clase(s) padre(s) de ser necesario.
+``__new__``. El constructor es el conjunto ``__new__`` e ``__init__``:
 
 * ``__new__``.
 
-        Este método permite al desarrollador tomar parte en la construcción del
-        tipo, los parámetros son de una forma similar a Python, el nombre del
-        nuevo tipo, el arreglo con los tipos base y el objeto con atributos
-        y métodos de instancia.
+	Este método permite al desarrollador tomar parte en la construcción de la clase
+	o tipo, los parámetros son similares a Python: el nombre del
+    nuevo tipo, el arreglo con los tipos base y el arreglo asociativo con atributos
+    y métodos de instancia.
+
+* ``__init__``.
+
+	Este método es invocado en la instanciación de la clase y permite al
+	desarrollador inicializar la instancia.
 
 Métodos Especiales
 ------------------
@@ -582,17 +583,16 @@ Métodos Especiales
 serán invocados por funciones especiales de la biblioteca en circunstancias
 particulares.
 
-Algunso de estos métodos son:
+Algunos de estos métodos son:
 
     * ``__str__``
 
-        Este método se utiliza cuando es necesario proveer de una representación
+        Este método se utiliza cuando es necesario proveer una representación
         en texto del objeto. Si bien JavaScript provee para esta tarea el método
         ``toString``, por compatibilidad con Python y consistencia con 
         la filosofía Python, se recomienda utilizar ``__str__``. Ejemplo:
 
         .. code-block:: javascript
-            :linenos:
 
             >>> var Persona = new type('Persona', {
                     // Constructor 
@@ -606,7 +606,7 @@ Algunso de estos métodos son:
 
             // Se crea una instancia con el nombre
             >>> p = new Persona("diego");
-            // Se invoca la representación en cadena por cohersión
+            // Se invoca la representación en cadena
             >>> "" + p
             "Soy la persona de nombre: diego" 
 
@@ -617,11 +617,9 @@ Algunso de estos métodos son:
 
         **Protopy** se vale de versiones modernas de JavaScript para brindar 
         este método, que debe retornar un objeto que implemente el método 
-        ``next()``. 
-        Ejemplo:
+        ``next()``. Ejemplo:
 
         .. code-block:: javascript
-            :linenos:
 
             var Iterable = new type('Iterable', [ object ], {
 
@@ -652,14 +650,13 @@ Algunso de estos métodos son:
 
         Un objeto que implemente este método es comparable con otro, esto le
         confiere al objeto una precedencia sobre otros objetos.
-        Internamente la funcion ``cmp`` llama a este metdo para determinar el
+        Internamente la función ``cmp`` llama a este método para determinar el
         orden de precedencia con otro objeto.
         El valor de retorno del método debe ser un número negativo, positivo
         o cero, indicando menor precedencia, mayor precedencia o la igualdad
         respectivamente.
 
         .. code-block:: javascript
-            :linenos:
 
             var Persona = new type('Iterable', [ object ], {
 
@@ -683,27 +680,27 @@ Algunso de estos métodos son:
             >>> cmp(pablo, nahuel);
             3
 
-    * ``__eq__`` ``__ne__``
+    * ``__eq__`` y ``__ne__``
 
-        Un objeto que implemente alguno de estos este método es igualable con
-        otro, las funciones de **Protopy** ``equal`` o ``nequal`` trabajan sobre
+        Un objeto que implemente alguno de estos métodos es igualable con
+        otro. Las funciones de **Protopy** ``equal`` o ``nequal`` trabajan sobre
         estos métodos.
 
     * ``__len__``
 
         Este método es usado por la función ``len``. Se asume que los objetos
-        que lo implementan son contables o tienen una longitud en funcion de
+        que lo implementan son contables o tienen una longitud en función de
         elementos que contienen.
 
     * ``__copy__`` y ``__deepcopy__``
 
         Los objetos que implementen estos métodos pueden ser copiados de manera
-        superficial o en profundidad respectivamente. El módulo ``copy`` es el
+        superficial o en profundidad, respectivamente. El módulo ``copy`` es el
         encargado de trabajar sobre estos métodos.
 
     * ``__json__`` y ``__html__``
-
-        Son métodos para serialización (o *marshalling*) del objeto en HTML o 
+		
+		Son métodos para serialización (o marshalling) del objeto en HTML o 
         JSON respectivamente.
 
 **Protopy** tiene otros métodos especiales, que generalmente están orientados a
@@ -714,12 +711,12 @@ Herencia
 --------
 
 Como ya se mencionó, el código de un framework no debe ser modificado y su
-utilización esta respaldada en algun mecanimo de extensión, redefinicion o 
-especializcion de componentes. Es en este punto donde proveer de una forma de
+utilización está respaldada en algún mecanimo de extensión, redefinición o 
+especialización de componentes. Es en este punto donde proveer de una forma de
 herencia al constructor de tipos resulta un paso en la dirección correcta.
 Cuando el desarrollador implemente funcionalidad basada en las características
 del framework desconectado, lo hará extendiendo alguna clase. Es por ello que 
-**Protopy** utiliza la herencia del tipo **Prototype chaining**, aunque lo hace de
+**Protopy** utiliza la herencia del tipo "Prototype chaining", aunque lo hace de
 una forma un poco más compleja con el objeto de soportar herencia múltiple.
 
 Para implementar la herencia y en particular la herencia múltiple, el constructor
@@ -731,10 +728,10 @@ que **Protopy** provee una función para determinar la correspondencia entre
 instancias y tipos llamada ``isinstance``.
 
 Otra función importada de Python es ``issubclass``. Bajo algunas
-condiciones resulta útil determinar si un tipo es una sub-clase de otro y para
+condiciones resulta útil determinar si un tipo es una subclase de otro y para
 ello esta función inspecciona la cadena de herencia.
 
-Para acceder a las funciones de tipo base cuando se está redefiniendo un método
+Para acceder a las funciones de tipo base cuando se está redefiniendo un método,
 **Protopy** provee la función ``super``. De manera similar a la de Python, esta función
 determina el tipo de la instancia, y mediante éste accede al método buscado.
 Este comportamiento es el equivalente en JavaScript al de llamar al método 
@@ -774,7 +771,7 @@ El siguiente ejemplo define la clase "Planeta":
 Esta clase tiene un atributo contador (``count``)  que las instancias 
 utilizan para numerarse en la construcción y un método ``reset`` 
 para reiniciar el contador. Dentro de los métodos de clase la
-palabra reservada ``this``, hace referencia a la clase.
+palabra reservada ``this`` hace referencia a la clase.
 
 A continuación se muestra cómo usar dicha clase.
 
@@ -783,7 +780,7 @@ A continuación se muestra cómo usar dicha clase.
     // Se crea una instancia
     >>> p = new Planeta('Tierra')
     window.Planeta name=Tierra count=0 __name__=Planeta
-    // Se pone a cero al conteador mediante el método de clase reset()
+    // Se pone a cero al contador mediante el método de clase reset()
     >>> Planeta.reset()
     // Se crea la estrella Sol
     >>> sol = new Planeta('Sol')
@@ -810,11 +807,11 @@ Python o realizar una adaptación de sintaxis. Ellos son:
         de manera similar a un diccionario de Python (``dict``),
         los diccionarios de **Protopy** permiten mejores formas de trabajar con la
         dupla clave-valor, posibilitando además el uso de objetos como claves en
-        lugar de solo cadenas.
+        lugar de sólo cadenas.
 
     * ``Set``
 
-        Los Sets son listas de objetos en las cuales existe una única instancia
+        Los ``Sets`` son listas de objetos en las cuales existe una única instancia
         de cada elemento como máximo. Permiten realizar operaciones de 
         conjuntos como unión, intersección, diferencia, etc.
         Constituyen una adaptación del tipo ``set`` de Python.
@@ -822,9 +819,9 @@ Python o realizar una adaptación de sintaxis. Ellos son:
     * ``Arguments``
 
         Las funciones en JavaScript pueden recibir opcionalmente cualquier
-        cantidad de argumentos. Los objetos de tipo Arguments de **Protopy** encapsulan y
+        cantidad de argumentos. Los objetos de tipo ``Arguments`` de **Protopy** encapsulan y
         uniforman los argumentos pasados a una función y permiten establecer
-        entre otras cosas valores por defecto. 
+        valores por defecto. 
 
         Este objeto tiene como objetivo brindar empaquetado de argumentos en 
         JavaScript "Pythonico".
@@ -844,28 +841,27 @@ Python o realizar una adaptación de sintaxis. Ellos son:
                 print(arg1, ar.kwargs['arg2'], ar.kwargs['arg3']);
             }
 
-Nuevamente, mas información sobre los objetos incluidos en el núcleo de **Protopy**
+Mas información sobre los objetos incluidos en el núcleo de **Protopy**
 puede ser encontrada en el apéndice.
 
 Manejo de DOM
 =============
 
-Dentro del módulo ``dom`` de **Protopy** se provee un selector CSS que permite
-seleccionar elementos basados en selectores de nivel 3 de CSS [W3CCSelCSS309]_.
+En el módulo ``dom`` de **Protopy** se provee un selector CSS que permite seleccionar elementos basados en selectores de nivel 3 de CSS [W3CCSelCSS309]_. En conjunto con éste selector **Protopy** extiende los elementos del DOM con el objeto de simplificar la manipulación y modificación de los mismos.
 
 Elementos
 ---------
 
 Un selector de elementos del DOM resulta una herramienta útil cuando el dasarrollador debe trabajar manipulando el documento una ves presentado al usuario. **Protopy** incluye una adaptación de la herramienta Peppy [JamesDonaghuePeppyDocs]_ mediante este el árbol DOM pude ser manejado con facilidad. 
 
-Peppy se adapto al enfoque modular de **Protopy** y su principal función ``query`` esta presente como ya se menciono en el modulo ``dom``, aunque por motivos prácticos el modulo ``builtins`` incluye el alias $ y $$ para seleccionar elementos por *identificador* y *estilo* respectivamente; el desarrollador que requiera de consultas mas complejas puede requerir el modulo correspondiente y usar la función ``query`` para tal fin.
+Peppy se adaptó al enfoque modular de **Protopy** y su principal función ``query`` esta presente como ya se mencionó en el módulo ``dom``. Por motivos prácticos el módulo ``builtins`` incluye el alias $ y $$ para seleccionar elementos por identificador y estilo, respectivamente. El desarrollador que requiera de consultas más complejas puede requerir el módulo correspondiente y usar la función ``query`` para tal fin.
 
 .. [JamesDonaghuePeppyDocs] James Donaghue,
     *Documentación de Peppy*,
     último acceso Noviembre 2009,
     http://jamesdonaghue.com/static/peppy/docs/
 
-A continuación de presenta un ejemplo de selección de elementos:
+A continuación se presenta un ejemplo de selección de elementos:
 
 .. code-block:: html
 
@@ -890,17 +886,15 @@ A continuación de presenta un ejemplo de selección de elementos:
 
 Con la idea de extender el atributo ``prototype`` de los ``HTMLElement`` de
 la biblioteca de JavaScript Prototype, se agregaron funciones para modificar e
-incorporar elementos al documento, serialización (o *marshalling*) de formularios 
-y obtención de valores, etc.
+incorporar elementos al documento, serialización (o marshalling) de formularios 
+y obtención de valores.
 
 Eventos
 -------
 
-El sistema de eventos de **Protopy** esta basado en el de Dojo. El manejo de eventos 
-ofrece una buena adaptación al sistema tradicional de eventos del DOM, posibilitando ademas conectar eventos creados por el usuario o funciones entre sí.
+El sistema de eventos de **Protopy** está basado en el de Dojo. El manejo de eventos ofrece una buena adaptación al sistema tradicional de eventos del DOM, posibilitando además conectar eventos creados por el usuario o funciones entre sí.
 
-**Protopy** provee en el modulo ``event`` dos funciones indispensables para trabajar con eventos, ``connect`` y ``disconnect``. La función ``connect`` es la encargada de conectar funciones a los eventos del DOM o a otras funciones, mientras que ``disconnect`` desconecta los eventos previamente establecidos. 
-
+**Protopy** provee en el módulo ``event`` dos funciones indispensables para trabajar con eventos, ``connect`` y ``disconnect``. La función ``connect`` es la encargada de conectar funciones a los eventos del DOM o a otras funciones, mientras que ``disconnect`` desconecta los eventos previamente establecidos. 
 
 .. [W3CCSelCSS309] W3C,
     Documentación de Selectores CSS de nivel 3,
@@ -911,26 +905,17 @@ ofrece una buena adaptación al sistema tradicional de eventos del DOM, posibili
 Agregados a JavaScript
 ======================
 
-JavaScript incorpora una gran cantidad de funciones como metodos de sus tipos
-base para trabajar con
-cadenas de texto, numeros, fechas y otros, con el objetivo de extender estos m
-extender los tipos base incorporando metodos para encapsular en ellos la
-funcionalidad y accederla a traves de sus instancias, basicamente este es el
-caso del tipo String. Por ejemplo:
-
-También se extendieron los tipos de datos propios de JavaScript, como el caso
-de las cadenas (``str`` en Python) agregando métodos de sustitución de patrones,
-conversión de números, manejo de fecha, etc. 
+Con objeto de simplificar el uso de la librería se extendieron los tipos de datos propios de JavaScript, como el caso de las cadenas (``str`` en Python) agregando métodos de sustitución de patrones, conversión de números, manejo de fechas, etc. Muchas de estas extensiones se incorporaron como métodos de los objetos base de JavaScript.  
 
 Envoltura de Google Gears
 =========================
 
 Como se mencionó en el capítulo anterior, para la migración del framework
-a un framework desconectado, son necesarios los componentes ``DataBase`` y
+a un framework desconectado son necesarios los componentes ``DataBase`` y
 ``Local Server``.
 
 Se decidió utilizar la API de Gears que provee estos componentes en el desarrollo
-de **Protopy**. Pero, a fin de mantener la filosofía "Pythonica" de **Protopy** se realizó
+de **Protopy**. Pero, a fin de mantener la filosofía "Pythonica" de **Protopy**, se realizó
 un recubrimiento de esta API, de manera de brindar mayor uniformidad y consistencia
 en las APIs presentadas al programador de aplicaciones desconectables.
 
@@ -954,7 +939,7 @@ de estar disponible, devolviendo una instancia con funcionalidad aumentada.
 
 Si bien no es necesario que el código de aplicación realizado por el programador
 acceda a Gears a través de ``sys.gears``, se recomienda su utilización ya que
-simplifica y uniforma la interfase entre Gears y la aplicación.
+simplifica y uniforma la interfaze entre Gears y la aplicación.
 
 Por otra parte, el desarrollo del framework implicó extender los siguientes componentes de Gears:
 
@@ -981,7 +966,7 @@ el navegador.
 
 Se suele recurrir a la función ``alert()``, que genera una ventana emergente
 y modal, que detiene la ejecución de JavaScript hasta que se pulse el botón de
-aceptación. Se utiliza como punto de ruptura (*breakpoint*) en
+aceptación. Se utiliza como punto de ruptura (breakpoint) en
 el código, pero resulta engorroso debido a que el programador
 debe interactuar activamente en la depuración, cerrando las ventanas tras 
 la llegada a una sentencia ``alert`` y editando el código con cada ciclo de
@@ -997,23 +982,21 @@ la aplicación imprimiendo cadenas y valores de variables,
 sin necesidad de utilizar ``alert``.
 
 **Protopy** agrega un sistema de *logging* sobre las funciones antes mencionadas de
-firebug, que permite la configuración de las salidas, el formateo y la prioridad, de 
-manera similar a *log4j* (popular sistema de depuración de Java).
+Firebug, que permite la configuración de las salidas, el formateo y la prioridad, de 
+manera similar a log4j (popular sistema de depuración de Java).
 Usando este sistema el desarrollador no necesita suprimir las sentencias
 de depuración del producto final, simplemente anula la salida en la configuración.
 
 Una vez configurado el sistema de logging, los módulos que requieran auditar el
-código sólo deben requerir un *logger* (objeto encargado de enrutar mensajes de depuración)
+código sólo deben requerir un ``logger`` (objeto encargado de enrutar mensajes de depuración)
 en su espacio de nombre e invocar a sus funciones.
 
-Los loggers se agrupan jerárquicamente y toman los nombres de los módulos
-en los cuales se ejecutan. La configuración respeta esta jerarquía. Un logger
+Los ``logger`` se agrupan jerárquicamente y toman los nombres de los módulos
+en los cuales se ejecutan. La configuración respeta esta jerarquía. Un ``logger``
 de un submódulo adopta la configuración de su padre a menos que se defina algo
 particular para él.
 
-En este ejemplo se requiere el módulo ``logging`` y posteriormente un logger para
-el módulo con el nombre ``__name__``. 
-
+En este ejemplo se requiere el módulo ``logging`` y posteriormente un ``logger`` para el módulo con el nombre ``__name__``. 
 
 .. code-block:: javascript
 
@@ -1028,8 +1011,8 @@ el módulo con el nombre ``__name__``.
     logger.debug('La query: %s\n Los parámetros: %s', query, params, {});
 
 Suponiendo que el módulo del ejemplo se llama ``doff.db.models.sql`` el siguiente
-archivo de configuración prepara el logger en modo ``DEBUG`` para auditar el
-código en la consola de Firebug y en una URL con distintos formatos.
+archivo de configuración prepara el ``logger`` en modo ``DEBUG`` para auditar el
+código en la consola de Firebug y en una URL con distintos formatos:
 
 .. code-block:: javascript
 
@@ -1079,12 +1062,11 @@ código en la consola de Firebug y en una URL con distintos formatos.
     }
 
 
-Interactuando con el Servidor
+Interacción con el Servidor
 =============================
 
-**Protopy** provee una interface de recubrimiento sobre las peticiones asincrónicas
-(AJAX) con el fin de simplificar la utilización de ``XMLHttpRequest`` y de trabajar
-con varias codificaciones de datos de manera segura (JSON).
+**Protopy** provee una interfaz de recubrimiento sobre las peticiones asincrónicas
+(AJAX) con el fin de simplificar la utilización de ``XMLHttpRequest`` y de trabajar con varias codificaciones de datos de manera segura (JSON).
 
 Esta funcionalidad se encuentra en el módulo ``ajax``. El objeto de
 transporte para AJAX es, por defecto, ``XMLHttpRequest``. La forma de realizar
@@ -1103,43 +1085,42 @@ El primer argumento de ``ajax.Request`` es la URL a la cual se realizará la sol
 El resto de los parámetros son opcionales y se reciben como un arreglo asociativo,
 sus nombres son:
     
-    * ``method`` indica el método HTTP, que puede ser ``"GET"``, ``"POST"``, ``"PUT"``, etc.
+    * ``method`` Indica el método HTTP, que puede ser ``"GET"``, ``"POST"``, ``"PUT"``, etc.
       por defecto es ``"POST"``.
     
-    * ``parameters`` puede ser bien una cadena o un arreglo asociativo de parámetros
-      para enviar en la petición HTTP.
+    * ``parameters`` Puede ser bien una cadena o un arreglo asociativo de parámetros para enviar en la petición HTTP.
     
     * ``onUninitialized``
 
-        Recibe una función que se invoca inmediatamente después de la instancición.
-        La función recibe como argumento la la instacia de la petición en curso.
+        Recibe una función que se invoca inmediatamente después de la instanciación.
+        La función recibe como argumento la instacia de la petición en curso.
 
     * ``onLoading``
 
-        Recibe una función que se invoca periodicamente mientras la petición se encuentra en curso.
-        La función recibe como argumento la la instacia de la petición en curso. 
+        Recibe una función que se invoca periódicamente mientras la petición se encuentra en curso.
+        La función recibe como argumento la instacia de la petición en curso. 
 
     * ``onLoaded``
 
         Recibe una función que se invoca cuando el contenido de la respuesta ha sido cargado en su totalidad.
-        La función recibe como argumento la la instacia de la petición en curso. 
+        La función recibe como argumento la instacia de la petición en curso. 
 
     * ``onInteractive``
 
-        Recibe una función que se invoca periodicamente mientras la petición se encuentra en curso, pero no se
+        Recibe una función que se invoca periódicamente mientras la petición se encuentra en curso, pero no se
         invoca si se trata del final de la respuesta.
         La función recibe como argumento la la instacia de la petición en curso.
 
     * ``onComplete``
 
-        Recibe una función que se invoca cuando se ha procesado la respuesta, trasformandola a un tipo de dato adecuado, 
+        Recibe una función que se invoca cuando se ha procesado la respuesta, trasformándola a un tipo de dato adecuado, 
         en el caso de existir un ``content-type`` como JSON.
-        La función recibe como argumento la la instacia de la petición en curso.
+        La función recibe como argumento la instacia de la petición en curso.
 
     * ``onException`` 
 
         Recibe una función que se invoca cuando se produce algún tipo de error.
-        La función recibe como argumento la la instacia de la petición en curso.    
+        La función recibe como argumento la instacia de la petición en curso.    
  
 Por ejemplo, utilizando los manejadores de eventos ``onSuccess`` y ``onFailure``:
 
@@ -1156,17 +1137,17 @@ Por ejemplo, utilizando los manejadores de eventos ``onSuccess`` y ``onFailure``
             alert('Algo esta mal...'); } 
     }); 
 
-
-La API de ``Request`` es idéntica a la de Prototype. Se puede revisar su 
-documentación para una eplicación más extensa sobre sus argumentos [PrototypeAJAXDocs09]_.
+La API de ``Request`` es similar a la de Prototype. Se puede revisar su 
+documentación para una explicación más extensa sobre sus argumentos [PrototypeAJAXDocs09]_.
 
 .. [PrototypeAJAXDocs09] *Documentación sobre Prototype*
     http://api.prototypejs.org/ajax_section.html
+
 Soporte para JSON
 =================
 
 JSON fue el formato elegido para la transmisión de datos entre el framework
-desconectado en el navegador y su contra parte en el servidor. Estos datos 
+desconectado en el navegador y su contraparte en el servidor. Estos datos 
 comprenden información sobre medios estáticos para el almacenamiento de
 recursos locales, datos de modelos y llamadas a procedimientos remotos.
 
@@ -1175,17 +1156,17 @@ posee la capacidad de serializar los objetos nativos de JavaScript así como
 también las instancias de clases que implementen el método ``__json__``.
 
 No se implementó sobre **Protopy** soporte para serialización XML debido a su 
-complejidad y a que no brindaba ventajas significativas ante JSON para 
+complejidad ya que no brindaba ventajas significativas ante JSON para 
 los objetivos de la presente tesina. Sin embargo se puede implementar esta
 característica en futuras versiones.
 
-RPC (Remote Procedure Call)
-===========================
+RPC
+===
 
 .. JSON-RPC http://json-rpc.org/ 
 .. XML-RPC http://www.xmlrpc.com/
 
-RPC consiste en la ejecución de un procedimiento (función) de manera remota. El cliente envía
+RPC (Remote Procedure Call) consiste en la ejecución de un procedimiento (función) de manera remota. El cliente envía
 el nombre y los argumentos de la función que solicita. El servidor ejecuta la
 función requerida y devuelve los resultados al cliente. Tanto los parámetros
 como los resultados requieren de una codificación preestablecida para ambas partes.
