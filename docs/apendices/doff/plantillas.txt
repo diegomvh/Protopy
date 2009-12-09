@@ -48,12 +48,6 @@ la etiqueta, y luego hay que incluirlo ese nombre en las sucesivas llamadas:
 Se pueden usar cualquier número de valores, separándolos por comas. Asegúrese
 de no poner espacios entre los valores, sólo comas.
 
-debug
------
-.. warning:: No implementado
-Muestra un montón de información para depuración de errores, incluyendo el
-contexto actual y los módulos importados.
-
 extends
 -------
 
