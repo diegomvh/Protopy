@@ -1,7 +1,7 @@
 ﻿
-#######################
-Offline, Sitios Remotos
-#######################
+##########################################
+Offline, la Aplicación para la Desconexión
+##########################################
 
 El presente capítulo profundiza sobre el soporte en el servidor para lograr
 la desconexión de proyectos basados en Django. Este soporte se realiza mediante

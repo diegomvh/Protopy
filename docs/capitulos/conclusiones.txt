@@ -7,43 +7,39 @@ Conclusiones y Líneas Futuras
 Conclusiones
 ************
 
-
-
-Durante el desarrollo de la presente tesina se realizó un análisis sobre las
+Durante el desarrollo de la presente tesina realizamos un análisis sobre las
 tecnologías disponibles para el desarrollo de aplicaciones web destacando
-el aporte de los frameworks orientados a aplicaciones de contenidos, como Ruby On Rails o Django. Los lenguajes dinámicos de alto nivel, a pesar de la sobrecarga que introducen,
+el aporte de los frameworks orientados a aplicaciones de contenidos, como Ruby
+On Rails o Django. Los lenguajes dinámicos de alto nivel, a pesar de la sobrecarga que introducen,
 facilitan la creación de frameworks simples, como es el caso de Django.
 
 De los objetivos cumplidos:
 
     * *Extender un framework de aplicaciones web, OpenSource, existente de manera que una aplicación realizada sobre éste, pueda ser ejecutada en el cliente de manera desconectada con un mínimo de modificaciones*
 	
-		Sobre el framework elegido, la extensión se realizó como una
-        aplicación genérica llamada **offline**, que se trató en el capítulo
-        de Intruducción al Desarrollo y Offline, Sitios Remotos. 
+		Sobre el framework elegido, realizamos la extensión como una
+        aplicación genérica llamada **offline**, que se trató en los capítulos
+        de Introducción al Desarrollo y Offline, la Aplicacion para la Desconexión. 
 
     * *Implementar persistencia del modelo de datos en el cliente*
       
-        Mediante el plugin Google Gears, se logró persistencia  
+        Mediante el plugin Google Gears, logramos persistencia  
         base de datos en el cliente. El soporte para Google Gears 
-        se trató en el capítulo sobre **Protopy** y **Doff**.
-        En el capítulo sobre Offline, Sitios Remotos, se trató la migración automática
+        se trató en los capítulos sobre **Protopy** y **Doff**.
+        En el capítulo sobre Offline, la Aplicacion para la Desconexión, se trató la migración automática
         a partir de la introspección de la definición.
-        
-		.. note: terminar la frase "defin.." NOTA DE MARTA. Frase original:"introspección de la definición de las defin..."
 
     * *Implementar un subconjunto de acciones disponibles en modo desconectado*
         
         **Doff** provee el sistema de vistas y middlewares de Django, por lo que
         la funcionalidad de la aplicación conectada se puede migrar de manera sencilla.
-        Esto se trató en el capítulo de **Doff** y sobre Offline, Sitios Remotos.
+        Esto se trató en los capítulos de **Doff** y Offline, la Aplicacion para la Desconexión.
 
     * *Implementar primitivas de sincronización entre la aplicación del cliente y la aplicación web que le dio origen*
         
-        Se logró implementar un sistema de sincronización basado en estándares
+        Logramos implementar un sistema de sincronización basado en estándares
         web y de alto nivel, superando las expectativas iniciales.
         El protocolo de sincronización se trató en el capítulo Sincronización de Datos.
-
 
 En cuanto a los objetivos secundarios: 
 
@@ -56,22 +52,20 @@ En cuanto a los objetivos secundarios:
        Los sistemas de documentación tanto para las APIs del programador como
        los tutoriales, se basan también en herramientas libres, desde la documentación
        plana en HTML o Docbook, hasta sistemas más sofisticados como LaTeX o 
-       Sphinx (sistema con el cual se elaboró el presente documento).
-       El uso de estas herramientas fomenta la adopción más plena de la filosofía del
-       software libre por parte de los integrantes.
-
+       Sphinx (sistema con el cual elaboramos el presente documento).
+       El uso de estas herramientas nos ayudó a la adopción más plena de la filosofía del
+       software libre.
       
     * *Aportar y difundir una extensión a un framework de libre distribución*
 
-      El trabajo se completó integramente con Software Libre: el lenguaje Python,
+      Completamos íntegramente el trabajo con Software Libre: el lenguaje Python,
       Django, Gears y el navegador Mozilla. **Doff**, **Protopy** y la aplicación
       **offline** se distibuyen con la misma licencia y están disponibles en la 
       URL http://code.google.com/p/protopy, donde se cuenta con una Wiki, un sistema
       de seguimiento de tareas y correcciones (Issues) y la posiblidad de enlazar
       con listas de correo (Google Groups).
-      Para la difusión del trabajo se utilizaron las listas de correo de Django (http://django-project.com) y 
+      Para la difusión del trabajo utilizamos las listas de correo de Django (http://django-project.com) y 
       el popular sitio de noticias Ajaxian (http://www.ajaxian.com).
-
 
 **************
 Líneas Futuras
@@ -86,6 +80,7 @@ con sistemas Web Legacy.
 A continuación se detallan algunas líneas futuras puntuales que surgieron del
 estudio y desarrollo de la presente tesina.
 
+
 Conversión de Código Python en JavaScript
 =========================================
 
@@ -97,9 +92,9 @@ Es posible, por lo tanto, generar un compilador de código Python a JavaScript,
 utilizando la API de **Protopy** y **Doff**, permitiendo que los programadores utilicen 
 Python para la totalidad del desarrollo.
 
-
 .. [*] http://code.google.com/intl/es-AR/webtoolkit/
 .. [*] http://pyjs.org/features.html
+
 
 Sitio de Administración
 =======================
@@ -112,7 +107,7 @@ aplicaciones de usuario, interactuando con la aplicación  de autorización y pe
 En base a la implementación de **Protopy** y **Doff** sería posible implementar un 
 sitio de administración similar.
 
- 
+
 Workers con Soporte para Javascript 1.7
 =======================================
 Gears provee un mecanismo de ejecución de código en el cliente de manera
