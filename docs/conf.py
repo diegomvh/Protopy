@@ -245,9 +245,9 @@ latex_preamble = ur'''
 #latex_appendices = ['apendices/protopy', 'apendices/python', 'apendices/django']
 latex_appendices = [
                     'apendices/protopy',
-                    'apendices/doff/modelos',
-                    'apendices/doff/dbapi',
-                    'apendices/doff/plantillas',
+                    'apendices/doff-modelos',
+                    'apendices/doff-dbapi',
+                    'apendices/doff-plantillas',
                     ]
 
 # If false, no module index is generated.
