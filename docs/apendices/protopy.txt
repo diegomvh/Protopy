@@ -1,6 +1,4 @@
-﻿.. _apendices-protopy:
-
-#######
+﻿#######
 Protopy
 #######
 
@@ -124,7 +122,6 @@ en el mismo.
         núcleo que trabajan sobre ellas.
 
         .. code-block:: javascript
-            :linenos:
 
             var Animal = type('Animal', object, {
                 contador: 0,
@@ -275,7 +272,6 @@ en el mismo.
         defecto a las llamadas.
 
     .. code-block:: javascript
-        :linenos:
 
         function unaFuncion(arg1, arg2, arg3) { 
             var todos = new Arguments(arguments);
@@ -347,7 +343,6 @@ en el mismo.
        como claves en lugar de solo cadenas como ocurre en los arreglos asociativos de JavaScript.
 
     .. code-block:: javascript
-        :linenos:
     
         >>> dic = new Dict({'db': 5, 'template': 2, 'core': 9})
         >>> obj = {'un': 'objeto'}
@@ -707,7 +702,7 @@ Timer
 ajax
 ~~~~
 
-Este modulo provee una interface de recubrimiento sobre las peticiones asincrónicas
+Este modulo provee una interfaz de recubrimiento sobre las peticiones asincrónicas
 al servidor o simplemente ``AJAX``, uno de sus principales objetivos es el de encapsular y 
 simplificar la utilización del objeto ``XMLHttpRequest``.
 
@@ -727,11 +722,10 @@ simplificar la utilización del objeto ``XMLHttpRequest``.
     
     * toQueryString(params) -> string
     
-    	Realiza el proceso inverso a ``toQueryParams``, conviertiendo un objeto
+    	Realiza el proceso inverso a ``toQueryParams``, convirtiendo un objeto
     	a una consulta de URL.
     	
     .. code-block:: javascript
-        :linenos:
     
 	    >>> require('ajax')
 		>>> ajax.toQueryString({numero:1, cadena:'Hola mundo', fecha: new Date(), arreglo: [1,2,3,4]})
@@ -751,24 +745,24 @@ el usuario.
 Extendiendo Javascript
 ----------------------
 
-Protopy no solo aporta modulos y funciones utiles al desarrollo, sino que
-tambien agrega nueva funcionalidad a los objetos de javascript.
+Protopy no solo aporta módulos y funciones útiles al desarrollo, sino que
+también agrega nueva funcionalidad a los objetos de JavaScript.
 
 String
 ~~~~~~
 
-Estos metodos amplian las herramientas para el manejo de cadenas de texto.
+Estos métodos amplían las herramientas para el manejo de cadenas de texto.
 
     * sub(pattern, replacement[, count = 1]) -> string
 
         Retorna una cadena donde la primera ocurrencia del patron pasado es reemplazado
-        por la cadena o cada uno de los valores retornados por la funcion pasada como
-        segundo argumento. El patron puede ser una exprecion regular o una cadena.
+        por la cadena o cada uno de los valores retornados por la función pasada como
+        segundo argumento. El patrón puede ser una expresión regular o una cadena.
     
     * subs(value...) -> string
 
-        Substitulle cada patron encontrado en la cadena por los valores
-        correspondientes, si el primer valor es un objeto, se espera un patron del
+        Substituye cada patrón encontrado en la cadena por los valores
+        correspondientes, si el primer valor es un objeto, se espera un patrón del
         tipo clave en la cadena para su reemplazo.
     
     * format(f) -> string
@@ -777,7 +771,7 @@ Estos metodos amplian las herramientas para el manejo de cadenas de texto.
     
     * inspect(use_double_quotes) -> string
 
-        Retorna una version de debug de la cadena, esta puede ser con comillas simples o
+        Retorna una versión de debug de la cadena, esta puede ser con comillas simples o
         con comillas dobles.
     
     * truncate([length = 30[, suffix = '...']]) -> string
@@ -804,8 +798,8 @@ Estos metodos amplian las herramientas para el manejo de cadenas de texto.
     
     * evalscripts() -> [ value... ]
 
-        Evalua todos los scripts contenidos en la cadena y retorna un arreglos con los
-        resultados de cada evaluacion.
+        Evalúa todos los scripts contenidos en la cadena y retorna un arreglos con los
+        resultados de cada evaluación.
     
     * escapeHTML() -> string
 
@@ -814,7 +808,7 @@ Estos metodos amplian las herramientas para el manejo de cadenas de texto.
     * unescapeHTML() -> string
 
         Convierte las entidades de caracteres especiales del HTML a sus respectivos
-        simbolos.
+        símbolos.
     
     * succ() -> string
         
@@ -833,7 +827,7 @@ Estos metodos amplian las herramientas para el manejo de cadenas de texto.
     
     * capitalize() -> string
 
-        Pasa a mayuscula la primera letra y el resto de la cadena a minusculas.
+        Pasa a mayúscula la primera letra y el resto de la cadena a minúsculas.
     
     * underscore() -> string
 
@@ -842,25 +836,25 @@ Estos metodos amplian las herramientas para el manejo de cadenas de texto.
     
     * dasherize() -> string
 
-        Remplaza cada ocurrencia de un guion bajo ("_") por un guion medio ("-").
+        Remplaza cada ocurrencia de un guión bajo ("_") por un guión medio ("-").
     
     * startswith(pattern) -> boolean
 
-        Chequea si la cadena inicia con el patron pasado.
+        Chequea si la cadena inicia con el patrón pasado.
     
     * endswith(pattern) -> boolean
 
-        Chequea si la cadena termina con el patron pasado.
+        Chequea si la cadena termina con el patrón pasado.
     
     * blank() -> boolean
 
-        Chequea si una cadena esta en blanco, esto es si esta vacia o solo contiene
+        Chequea si una cadena esta en blanco, esto es si esta vacía o solo contiene
         espacios en blanco.
 
 Number
 ~~~~~~
 
-Estos metodos agregan funcionalidad sobre los objetos numericos.
+Estos métodos agregan funcionalidad sobre los objetos numéricos.
 
     * format(f, radix) -> string
 
@@ -869,7 +863,7 @@ Estos metodos agregan funcionalidad sobre los objetos numericos.
 Element
 ~~~~~~~
 
-Extencion sobre los elementos del DOM, simplificando trabajos comunes de desarrollo.
+Extensión sobre los elementos del DOM, simplificando trabajos comunes de desarrollo.
 
     * visible() -> Boolean
 
@@ -894,22 +888,22 @@ Extencion sobre los elementos del DOM, simplificando trabajos comunes de desarro
     
     * update(content) -> HTMLElement
 
-        Reemplaza el contendio del elemento con el argumento pasado y terorna el
+        Reemplaza el contenido del elemento con el argumento pasado y retorna el
         elemento.
     
     * insert({ position: content }) -> HTMLElement
     * insert(content) -> HTMLElement
 
-        Inserta conentido al principio, al final, sobre o debajo del
-        elemento, para definir la poscicion de la insercion el argumento se debe pasar
-        en forma de objeto, donde la clave es la pocicion y el valor el contenido a
+        Inserta contenido al principio, al final, sobre o debajo del
+        elemento, para definir la posición de la inserción el argumento se debe pasar
+        en forma de objeto, donde la clave es la posición y el valor el contenido a
         insertar; si el argumento es contenido a insertar este se inserta al final
         del elemento.
     
     * select(selector) -> HTMLElement
 
         Toma un numero arbitrario de selectores CSS y retorna un arreglo con los
-        elementos que concuerden con estos y esten dentro del elemento al que se aplica
+        elementos que concuerden con estos y estén dentro del elemento al que se aplica
         la funcion.
     
         >>> $('PostForm').select('input')
@@ -918,19 +912,11 @@ Extencion sobre los elementos del DOM, simplificando trabajos comunes de desarro
         [div.header, div.breadcrumbs, div.middle, div, div.right, div#clear]
         >>> $('content').select('div.middle')
         [div.middle]
-    
-    .. 
-        Camelcase camelcase HAAAAAAAAA!
-        empty: function()
-        getStyle: function(style)
-        getOpacity: function(element)
-        setStyle: function(styles)
-        setOpacity: function(value)
 
 Forms
 ~~~~~
 
-Estos metodos decoran a los elementos del tipo formulario, agregando
+Estos métodos decoran a los elementos del tipo formulario, agregando
 funcionalidad sobre los mismos y sobre los campos que contienen.
 
     * disable() -> HTMLFormElement
@@ -955,13 +941,13 @@ funcionalidad sobre los mismos y sobre los campos que contienen.
 Forms.Element
 ~~~~~~~~~~~~~
 
-Los metodos que a continuación se presentan decoran a los elementos o campos de
+Los métodos que a continuación se presentan decoran a los elementos o campos de
 un formulario, simplificando y agilizando el trabajo con los mismos.
 
     * serialize() -> string
 
         Crea una cadena en URL-encoding representando el contenido del
-        campo expresado como clave=valor, para su uso en una peticion AJAX por
+        campo expresado como clave=valor, para su uso en una petición AJAX por
         ejemplo.
         Este atributo trabaja sobre un unico campo, si en lugar de esto se requiere
         serializar todo el formulario vea Form.serialize().
@@ -971,7 +957,7 @@ un formulario, simplificando y agilizando el trabajo con los mismos.
     * get_value() -> value
 
         Retorna el valor actual del campo. Una cadena de texto es retornada en la
-        mayoria de los casos excepto en el caso de un select multiple, en que se retorna
+        mayoría de los casos excepto en el caso de un select multiple, en que se retorna
         un arreglo con los valores.
 
     * set_value(value) -> HTMLElement
@@ -1008,21 +994,52 @@ Otros modulos
 gears
 ~~~~~
 
+En este paquete se encuentran las extensiones que Protopy brinda a los objetos Gears.
+La interacción con el plugin de Google se realiza a través del modulo ``sys`` y el objetivo
+de este paquete es tomar parte en la obtención de los objetos incorporando sobre ellos nueva
+funcionalidad, como cursores en el objeto ``database`` o manejo de archivos en el objeto ``desktop``.
+
 logging
 ~~~~~~~
+
+El módulo logging ofrece un sistema de registros (logs) completo y flexible. En su forma
+más simple, los mensajes de registro se envían a la consola de Firebug.
+
+De forma predeterminada, los mensajes de depuración e informativos se suprimen, y la salida
+se envía a una función "nula". Otras opciones de salida incluyen mensajes al servidor HTTP.
+Nuevos filtros pueden seleccionar diferentes rutas basadas en la prioridad del mensaje: DEBUG,
+INFO, WARNING, ERROR, y CRITICAL (Depuración, Informativo, Atención, Error y Crítico respectivamente)
+
+El sistema de registro puede configurarse directamente desde Protopy o puede cargarse la configuración
+desde un archivo editable por el usuario para personalizar el registro sin alterar la aplicación.
 
 json
 ~~~~
 
+El módulo ``json`` tiene como objetivo el paso de objetos JavaScript a cadenas de texto json y viceversa.
+
     >>> require('json')
-    >>> toJson = {'numero': 1, 'cadena': 'texto', 'arreglo': [1,2,3,4,5,6], 'objeto': {'clave': 'valor'}, 'logico': true}
+    >>> toJson = {'numero': 1, 'cadena': 'texto', 
+    	'arreglo': [1,2,3,4,5,6], 'objeto': {'clave': 'valor'}, 
+    	'logico': true}
     >>> toSend = json.stringify(toJson)
-    "{"numero": 1, "cadena": "texto", "arreglo": [1, 2, 3, 4, 5, 6], "objeto": {"clave": "valor"}, "logico": true}"
+    "{"numero": 1, "cadena": "texto", "arreglo": [1, 2, 3, 4, 5, 6],
+    "objeto": {"clave": "valor"}, "logico": true}"
     >>> fromJson = json.parse(toSend)
     Object numero=1 cadena=texto arreglo=[6] objeto=Object
 
 rpc
 ~~~
+
+Este módulo encapsula la lógica de comunicación mediante RPC con el servidor HTTP. La clase principal
+del modulo es ``ServiceProxy`` y mediante configuración de la misma se obtienen varias formas de
+interacción con el servidor, pudiendo ser estas sincrónicas o asincrónicas, con XML o JSON como protocolo
+de transporte.
+
+Se presenta a continuacion un ejemplo de comunicación RPC entre un objeto en Python en el servidor y un
+cliente usando este módulo de Protopy.
+
+La clase publicada en el servidor es:
 
 .. code-block:: python
 
@@ -1053,9 +1070,10 @@ rpc
     server = SimpleXMLRPCServer(("localhost", 8000))
     dispatcher.register_introspection_functions()
     dispatcher.register_instance(MyFuncs())
-    #dispatcher.serve_forever()
 
-.. code-block:: python
+mientras que en el cliente, la forma de utilizar el RPC es como sigue
+
+.. code-block:: javascript
 
     >>> require('rpc')
     >>> funcs = new rpc.ServiceProxy('rpc/test', {asynchronous: false})
@@ -1077,6 +1095,8 @@ rpc
     28
     >>> funcs.pow(2,4)
     16
+
+a continuación se presentan los datos intercambiados entre el cliente y el servidor en formato JSON.
 
     Add
     -----> {"version": "1.1", "method": "add", "id": 1, "params": [24,4]}
