@@ -5,15 +5,11 @@
     DEBUG: true,
     TEMPLATE_DEBUG: this.DEBUG,
 
-    // Data for offline app
-    PROJECT_NAME: 'Vendedor Viajante',
-    PROJECT_DESCRIPTION: 'Desconecte la aplicación para poder continuar levantando</br>pedidos sin estar conectado a la red de redes',
-    PROJECT_IMAGE: '/static/offline/protopy.png',
-    LOADING_SPLASH: '/static/offline/loading.html',
+    PROJECT_NAME: 'Simple Blog',
     
     //Database
     DATABASE_ENGINE: 'gears',
-    DATABASE_NAME: 'agenda_sqlite.db',
+    DATABASE_NAME: 'blog_sqlite.db',
     DATABASE_OPTIONS: {},
     
     //Store
@@ -21,9 +17,9 @@
     STORE_NAME: 'agenda_store',
     MANIFEST_FILE: '/manifest.json',
     
-    MEDIA_URL: '/agenda/media/',
+    MEDIA_URL: '/blog/media/',
 
-    ROOT_URLCONF: 'agenda.urls',
+    ROOT_URLCONF: 'blog.urls',
 
     INSTALLED_APPS: [
         'agenda.apps.contactos',
@@ -42,7 +38,7 @@
 	         'doff.core.context_processors.request'
 	    ],
 	
-	TEMPLATE_URL: [ '/agenda/templates/' ],
+	TEMPLATE_URL: [ '/blog/templates/' ],
 	
     TEMPLATE_LOADERS: [
                 'doff.template.loaders.url.load_template_source'

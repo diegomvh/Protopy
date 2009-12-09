@@ -22,14 +22,14 @@ de la aplicación (framework + aplicación) como para los datos (típicamente un
 RDBMS).
 
 Otro aspecto importante que se tuvo en cuenta, además del intérprete,  el almacenamiento
-local y la base de datos, es que los frameworks web están diseñados para ser 
+local y la base de datos, fue que los frameworks web están diseñados para ser 
 ejecutados en un entorno cliente-servidor. La interacción con una aplicación
 web se realiza generalmente mediante links, formularios y AJAX, y todas estas 
 técnicas se traducen en alguna primitiva HTTP. En ausencia del servidor se debió
 realizar una adaptación de su funcionamiento.
 
 También se analizaron otro tipo de consideraciones, como la seguridad. Transferir 
-los datos de una aplicación en linea a una que se transporta en un navegador puede
+los datos de una aplicación en línea a una que se transporta en un navegador puede
 tener implicancias en la integridad de la información, ya que no es posible 
 lograr un grado de aseguramiento al de un servidor web para una máquina potencialmente 
 desconocida. 
@@ -38,24 +38,25 @@ Además fue importante tener en cuenta que el acceso a los datos en
 una aplicación web está restringido por la propia aplicación. 
 El usuario no tiene acceso a la base de datos,
 sino a la visión que la aplicación le da sobre ésta. Se puede decir que cada
-usuario o grupo tiene asociada una *perspectiva* de los datos.
+usuario o grupo tiene asociada una perspectiva de los datos.
 
 Si se plantea que la transferencia de una aplicación web del servidor al cliente
 implica la copia de su base de datos, un usuario con suficientes conocimientos 
 podría tener acceso a información que de otra manera no tendría 
 (cuentas de usuario, registros de actividad, información económica o financiera,
 etc.).
-Por esto fue importante analizar *qué datos puede ver cada usuario, grupo o rol
-en el sistema*. La aplicación desconectada debería poseer una técnica 
+Por esto fue importante analizar qué datos puede ver cada usuario, grupo o rol
+en el sistema. La aplicación desconectada debería poseer una técnica 
 de encartamiento sobre los datos (lo que podría repercutir en el desempeño) 
 o trabajar con una base de datos reducida.
 
-De lo anterior se puede infirió que no todas las aplicaciones desconectadas
+.. note:: Que es encartamiento
+
+De lo anterior se infiere que no todas las aplicaciones desconectadas
 son idénticas, sino que en función del usuario tendrán más o menos funcionalidad
 y datos asociados. Además, en una aplicación desconectada no se requiere autenticación,
-o al menos, no de la misma manera que en la aplicación en linea, donde
+o al menos, no de la misma manera que en la aplicación en línea, donde
 la autenticación suele encontrarse asegurada mediante SSL. 
-
 
 Otro aspecto considerado fue la posibilidad de sincronizar las instancias
 de aplicaciones desconectadas con la aplicación web original.
@@ -89,9 +90,9 @@ Si bien esta técnica es atractiva gracias a que Python es un lenguaje que ha si
 diseñado para ser embebido, los controles ActiveX no cumplen con las garantías de seguridad
 necesarias para el desarrollo de aplicaciones para la web. 
 Es posible considerar esta solución "cross-browser" gracias a proyectos como
-*Plug-in For Hosting ActiveX Controls* [*]_ pero no es multiplataforma. 
+Plug-in For Hosting ActiveX Controls [*]_ pero no es multiplataforma. 
 
-.. [*] *ActiveX para Mozilla* http://www.iol.ie/~locka/mozilla/plugin.htm.
+.. [*] ActiveX para Mozilla http://www.iol.ie/~locka/mozilla/plugin.htm.
 
 La segunda alternativa es utilizar la tecnología Silverlight de Microsoft, que 
 permite generar aplicaciones para navegadores, mediante la plataforma .NET.
@@ -101,7 +102,6 @@ incluyendo Python [PythonMailistMay07]_ y Ruby  [IronRubyNet09]_.
 En .NET todos los lenguajes compilan a un bytecode llamado Common 
 Language Runtime, para el cual existe un solo intérprete, la propia plataforma
 .NET.
-
 
 IronPython [MichaelFroodIP09]_ es una implementación de Python sobre .NET que en un principio no 
 contaba con la API estándar [PythonDocAPI09]_, sino que permitía utilizar sólo
@@ -133,9 +133,8 @@ IronPython [InforQDjangoIP09]_.
                     ultimo acceso Octubre 2009,
                     http://docs.python.org/modindex.html 
 
-
 Gracias a la posibilidad de acceso a DOM por medio de una aplicación construida con
-Silverlight [MSDNSilverlightDOM09]_ [SwOnCodeSlvlgth09]_ y al  almacenamiento local en el cliente introducido en 
+Silverlight [MSDNSilverlightDOM09]_ [SwOnCodeSlvlgth09]_ y al almacenamiento local en el cliente introducido en 
 Silverlight 2.0 [DinoEspositoSlvlght09]_, esta tecnología brinda las herramientas para
 ejecutar Django en el cliente sin conexión [AshishShettySlvlght09]_.
 
@@ -161,7 +160,7 @@ Además tiene varias limitaciones:
 
  * No existe soporte para IronPython en la IDE VisualStudio
 
- * La implementación de Python no es la estándar, y carece de soporte [IronPythonFAQ2009]_ .
+ * La implementación de Python no es la estándar, y carece de soporte [IronPythonFAQ2009]_.
 
 .. [MSDNSilverlightDOM09] Microsoft Developer Network, 
    Silverlight Programming Models, XAML, and the HTML DOM,
@@ -195,9 +194,9 @@ En la plataforma Mozilla, la integración con Python se puede realizar mediante 
 PyShell [*]_ y también existe una extensión para XUL [*]_, pero al igual que con 
 Silverlight, es una solución engorrosa.
 
-.. [*] *PyXPCOM*, conexión del modelo de objetos multiplataforma de Mozilla con Python, https://developer.mozilla.org/en/PyXPCOM. 
-.. [*] *PyShell*, consola interactiva.
-.. [*] *Luxor, Python for XUL* http://mail.python.org/pipermail/python-announce-list/2003-March/002084.html.
+.. [*] PyXPCOM, conexión del modelo de objetos multiplataforma de Mozilla con Python, https://developer.mozilla.org/en/PyXPCOM. 
+.. [*] PyShell, consola interactiva.
+.. [*] Luxor, Python for XUL http://mail.python.org/pipermail/python-announce-list/2003-March/002084.html.
 
 Luego de evaluar las alternativas actuales de ejecución local de Python,
 se decidió analizar la posibilidad de realizar la aplicación del cliente utilizando
@@ -215,7 +214,7 @@ embargo comparten ciertas características como ser orientados a objetos
 y permitir la definición de clausuras [AtulVarma2009]_.
 A partir de la versión 1.7 y 1.8, JavaScript incluye semántica funcional en los arreglos, 
 generadores e iteradores, getters y setters, características que los acercan 
-aún más  [SteveLeeJs17Py09]_, tal como lo expresa 
+aún más [SteveLeeJs17Py09]_, tal como lo expresa 
 Guyon Morée en la publicación titulada "Javascript Pythonico, es Python
 con llaves [*]_" [GuyonMoreePythonBraces09]_.
 
@@ -253,8 +252,8 @@ de recursos en línea (URLs) para proveerlos a través de un servidor web intern
 cuando el navegador no cuente con conexión.
 
 Además de almacenamiento local, Gears provee una base de datos, satisfaciendo
-las necesidades para la creación de aplicaciones desconectado que se plantearon
-anteriormente. Gears al contrario que Silverlight es de código abierto y en la 
+las necesidades para la creación de aplicaciones desconectadas que se plantearon
+anteriormente. Gears, al contrario que Silverlight, es de código abierto y en la 
 especificación HTML 5 (actualmente en desarrollo) [W3CHTML5OffWebApp09]_ 
 se incluyen varios de los componentes que éste provee [ScottLoganbillHTML5Gears09]_. 
 Es decir, varios de los componentes de Gears serán incluidos nativamente en
@@ -270,19 +269,19 @@ los navegadores que adopten este estándar.
     último acceso Septiembre 2009 (Revision 1.2852),
     http://www.w3.org/TR/html5/desconectado.html#desconectado
 
-
 Por lo tanto, la combinación de JavaScript y Gears constituye la alternativa
 más promisoria para la implementación de aplicaciones desconectadas escritas en Django
 por lo que se utilizaron para llevar a cabo el desarrollo de la presente tesina.
 
-Tras el análisis del proyecto *Gears On Rails* [GearsOnRails09]_ que persigue objetivos 
-similares a los de esta tesina, pero basado en el framework Ruby On Rails, se descubrió un proyecto
-denominado Django Offline [DjangoOffline09]_, que divide a Django en componentes
-y analiza cuáles son necesarios implementar en el modo desconectado:
+Tras el análisis del proyecto Gears On Rails [GearsOnRails09]_ que persigue objetivos 
+similares a los de esta tesina, pero basado en el framework Ruby On Rails, se descubrió
+un documento que plantea un esquema básico para implementar una versión de Django
+deconectado [DjangoOffline09]_, el documento divide al framework en sus componentes
+y analiza cuáles son necesarios implementar:
 
     * API de modelos: no
 
-        Los modelos se definen únicamente en el servidor se utiliza la definición
+        Los modelos se definen únicamente en el servidor y se utiliza la definición
         para el cliente. Los modelos, en su estructura, deben estar sincronizados.
 
     * Soporte para base de datos: sí
@@ -306,8 +305,7 @@ partes transportables de manera automatizada al cliente:
 
     * Vistas: no
 
-
-El enfoque del proyecto Django Offline no contempla los recaudos de seguridad
+El enfoque del documento no contempla los recaudos de seguridad
 que se deben tener en cuenta al momento de transferir la base de datos al cliente, 
 ni especifica cómo tratar el manejo de elementos activos (links, formularios, AJAX).
 Sin embargo, pone de manifiesto que no se necesita reimplementar la totalidad del framework
@@ -320,7 +318,7 @@ Análisis de Migración de Componentes
 El primer componente del framework que se analizó fue el ORM, el cual
 debe ser migrado a JavaScript para conservar la semántica de acceso a datos
 de las aplicaciones escritas en Django. Se analizaron los ORM existentes en
-JavaScript que trabajen sobre Gears. 
+JavaScript que trabajan sobre Gears. 
 
 Uriel Katz implementó Gears ORM, que luego reimplementó bajo el nombre 
 de JStORM [UrielKatzJStORM09]_, que permite definir la estructura de las tablas
@@ -390,8 +388,8 @@ para definir una tabla es:
 
 Las consultas se relizan mediante ``finders`` [NickCarterJazzModels09]_, que
 equivalen a los ``QuerySet``. JazzRecord fue descartado como candidato a ORM
-del cliente en la presente tesina, por la diferencia de filosofía con Django
-(convesión (Rails) vs. definición (Django)).
+del cliente en la presente tesina por la diferencia de filosofía con Django
+(convención (Rails) vs. definición (Django)).
 
 Luego del análisis de los ORM existentes se decidió implementar el ORM de 
 Django (API de base de datos) en JavaScript 1.7 como primera tarea para la 
@@ -399,15 +397,14 @@ desconexión de una aplicación.
 Contar con la misma API de acceso a datos en el cliente y en el servidor, 
 permite mantener la coherencia de definciones de datos en alto nivel y simplificar
 la tarea de mantenimiento. Los modelos definidos en el servidor, dentro de los
-prjectos basados en Django, pueden ser analizados mediante técnicas de metaprogramación
-dispoibles en Python. A partir de esta introspección se 
+proyectos basados en Django, pueden ser analizados mediante técnicas de metaprogramación
+dispoinibles en Python. A partir de esta introspección se 
 puede generar el código JavaScript para la definición del modelo en el
-cliente de manera automática. 
-
+cliente de manera automática.
 
 Otro elemento importante para lograr una aplicación desconectada, es el manejo
 de los elementos activos (links, formularios y AJAX). 
-DOM permite capturar los eventos ``click``, que se genera cuando
+DOM permite capturar los eventos ``click``, que se generan cuando
 se activa un enlace, y ``submit``, cuando se envía un formulario.
 Para AJAX se puede realizar un enmascaramiento del elemento ``XMLHttpRequest``.
 
@@ -424,32 +421,30 @@ las diferencias entre Python y JavaScript. La construcción de clases en Python 
 realiza en dos fases (creación de instancia ``__new__`` e inicialización ``__init__``), 
 mecanismo que en Prototype no existe (Prototype toma la orientación a objetos de Ruby).
 Esta inicialización en dos fases se utiliza en el ORM y formularios de Django,
-por lo que se decidió modificar Protoype para que admitiera la orientación
+por lo que se decidió como primera medida modificar Prototype para que admitiera la orientación
 a objetos de Python.
 
-
-Otro elemento ausente en Prototype [*]_ es un sistema de módulos y paquetes, necesario
-para implementar muchos elementos de Django. Por ello se decidió implementar esta
-característica y además se agregaron
-la mayoría de las funciones integradas del intérprete de Python [*]_, como ``isinstance``,
-``issubclass``, ``map``, ``int``, ``bool``, etc.
+Otro elemento ausente en Prototype es un sistema de módulos y paquetes [*]_, necesario
+para implementar muchos elementos de Django. Por ello se decidió en una instancia
+posterior descartar Prototype e implementar las característica necesarias en una
+nueva librería, agregando además la mayoría de las funciones integradas del intérprete de
+Python [*]_, como ``isinstance``, ``issubclass``, ``map``, ``int``, ``bool``, etc.
 
 .. [*] También ausente en JavaScript.
-.. [*] Conocidos como *buitins*.
+.. [*] Conocidos como builtins.
 
-Esta modificación de librería se bautizó como Protopy y su objetivo es facilitar
+Esta nueva librería se bautizó como **Protopy** y su objetivo es facilitar
 la migración de código Python a JavaScript (en particular en esta tesina, la
-migración del framework y proyectos Django). 
+migración del framework y proyectos Django).
 
-
-En la siguiente figura se muestra la estructura de Protopy y su interacción
+En la siguiente figura se muestra la estructura de **Protopy** y su interacción
 con JavaScript, DOM y el proyecto Django desconectado:
 
 .. figure:: ../_svg/esquema_general.png
 
-    **Protopy**, Librería desarrollada en JavaScript para soporte de Python sobre JavaScript 1.7
+    **Protopy**, librería desarrollada en JavaScript para soporte de Python sobre JavaScript 1.7
 
-En los siguientes capítulos se detalla el desarrollo de esta librería y a la migración de Django sobre Protopy.
+En los siguientes capítulos se detalla el desarrollo de esta librería y la migración de Django sobre **Protopy**.
 
 .. [GearsOnRails09] *Gears On Rails*,
         GoogleCode,

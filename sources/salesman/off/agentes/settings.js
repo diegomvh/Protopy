@@ -10,7 +10,7 @@
     
     // Data for offline app
     PROJECT_NAME: 'Vendedor Viajante',
-    PROJECT_DESCRIPTION: 'Desconecte la aplicación para poder continuar levantando</br>pedidos sin estar conectado a la red de redes',
+    PROJECT_DESCRIPTION: 'Desconecte la aplicación para poder usarla sin estar conectado a la red.',
     PROJECT_IMAGE: '/static/offline/protopy.png',
     LOADING_SPLASH: '/static/offline/loading.html',
     

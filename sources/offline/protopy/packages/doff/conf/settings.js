@@ -77,7 +77,8 @@ var global_settings = {
 };
 
 var Settings = type ('Settings', [ object ], {
-    __init__: function(settings_module) {
+    __init__: function(settings_module, file) {
+		this.SETTINGS_FILE = file;
         for (var setting in global_settings)
             if (setting == setting.toUpperCase())
                 this[setting] = global_settings[setting];
@@ -114,7 +115,7 @@ var settings = (function() {
     });
 	if (project_settings == null)
 		new Exception("No settings");
-	return new Settings (project_settings);
+	return new Settings (project_settings, url_settings);
 })();
 
 publish({

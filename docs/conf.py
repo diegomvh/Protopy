@@ -246,8 +246,8 @@ latex_preamble = ur'''
 latex_appendices = [
                     'apendices/protopy',
                     #'apendices/herraminetas',
-                    #'apendices/doff/modelos',
-                    #'apendices/doff/dbapi',
+                    'apendices/doff/modelos',
+                    'apendices/doff/dbapi',
                     #'apendices/doff/plantillas',
                     ]
 

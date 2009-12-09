@@ -1,6 +1,4 @@
 ﻿
-.. _capitulos-protopy:
-
 ###################################
 Protopy, la Librería de JavaScript
 ###################################
@@ -13,7 +11,7 @@ necesario implementar esta capa intermedia entre JavaScript y Django "desconecta
 Uno de los objetivos más relevante es emular la API estándar de Python.
 
 La biblioteca se basó en el código fuente de Prototype, sobre la cual se fue agregando
-y sustituyendo código. El resultado de esta modificación se denomino Protopy en honor a 
+y sustituyendo código. El resultado de esta modificación se denomino **Protopy** en honor a 
 sus dos "padres", *Prototype JavaScript Library* y el lenguaje de programación
 *Python*:
 
@@ -27,27 +25,24 @@ Algunas de las características más relevantes de Protopy son:
 
 * Modularización y ámbito de nombres.
 
-    Un framework con funciones minimas, como una API de base de datos y un motor
-    de plantillas, requiere de varias lineas de código para su implementación.
-    Es por esto que resulta deseable que existan formas de organizar y obtener
-    código en el cliente; liberando así al desarrollador de estas tareas
-    tediosas y permitiendole enfocarse en la funcionalidad.
-
     Un framework con funciones mínimas, como una API de base de datos y un motor
-    de plantillas, requiere una cantidad considerable de código. Django por ejemplo
-    consta de alrededor de 43000 líneas [*]_.
+    de plantillas, requiere de varias líneas de código para su implementación.
+    Django por ejemplo consta de alrededor de 43000 líneas [*]_. Es por esto
+    que resulta deseable que existan formas de organizar y obtener
+    código en el cliente, liberando así al desarrollador de estas tareas
+    tediosas y permitiéndole enfocarse en la funcionalidad.
+
     En particular, para migrar un framework implementado sobre Python, el sistema
     de paquetes es muy importante. En Python los módulos definen ámbitos de nombres
     de los cuales se pueden importar selectivamente sólo los símbolos usados, sin
     contaminar el ámbito local.
 
-    Protopy implementa un sistema de ámbitos de nombres similar al de Python, 
+    **Protopy** implementa un sistema de ámbitos de nombres similar al de Python, 
     integrado con el sistema de paquetes. Cada módulo posee un ámbito de nombres
     aislado. La publicación de símbolos de un paquete (funciones, constantes, 
     clases) es explícito a diferencia de Python.
 
-
-* Orientación a Objetos "Pythonica"
+* Orientación a objetos "Pythonica"
 
     En JavaScript, cada prototipo almacena la estructura estática de la "clase"
     y en el constructor se inicializa la instancia. En Python, la creación 
@@ -57,44 +52,41 @@ Algunas de las características más relevantes de Protopy son:
     (que sirve como factory). Es necesario para adaptar el código
     Python a JavaScript, definir los tipos base ``object`` y ``type`` debido
     a que piezas claves de Django como el ORM y el sistema de formularios
-    basan su funcionamiento en estos builtins. Por ello en Protopy se implementaron
+    basan su funcionamiento en estos builtins. Por ello en **Protopy** se implementó
     un sistema de tipos o clases similar al de Python.
 
     En Python también se pueden definir métodos especiales en las clases, que permiten
-    sobrecarga de operadores (``+`` mediante ``__add__``,
-    ``==`` mediante ``__eq__``,
-    ``&`` y ``^`` mediante ``__and__`` y ``__or__``,
-    los paréntesis de invocación ``()`` mediante ``__call__``, etc). Algunos de
-    éstos se pueden emular en JavaScript y Protopy brinda facilidades para esto.
+    sobrecarga de operadores (``+`` mediante ``__add__``, ``==`` mediante ``__eq__``,
+    ``&`` y ``^`` mediante ``__and__`` y ``__or__``, los paréntesis de
+    invocación ``()`` mediante ``__call__``, etc). Algunos de
+    éstos se pueden emular en JavaScript y **Protopy** brinda facilidades para esto.
 
-
-* Tipos de datos y ``builtins``
+* Tipos de datos y builtins
 
     Existen ciertos tipos que no existen en JavaScript con la misma funcionalidad
     que en Python. Un caso puntual son los ``Object`` o arreglos asociativos 
-    comparados con el tipo de datos ``dict``. En Protopy se implementaron
+    comparados con el tipo de datos ``dict``. En **Protopy** se implementaron
     los tipos de datos más comunes provistos por Python (por ejemplo, ``Dict`` y
     ``Set``).
 
-    En Python el conjunto de funciones, tipos disponibles en el ámbito de nombres global
-    se conoce como ``builtins``. Forman parte de este conjunto,
-    ``int``, ``bool``, ``str``, ``list``, ``tuple``, ``map``, ``filter``, 
-    ``abs``, ``all``, etc. La mayoría de estos símbolos fueron portados a Protopy 
-    y también publicados en el ámbito global.
+    En Python el conjunto de funciones, tipos disponibles en el ámbito de nombres global,
+    se conoce como builtins. Forman parte de este conjunto, ``int``, ``bool``,
+    ``str``, ``list``, ``tuple``, ``map``, ``filter``, ``abs``, ``all``, etc.
+    La mayoría de estos símbolos fueron portados a **Protopy** y también
+    publicados en el ámbito global.
 
 * Selección de elementos mediante CSS
 
     DOM permite realizar búsquedas de elementos dentro de un documento de 
     tres maneras: mediante un identificador, mediante un nombre de etiqueta, o
-     mediante el acceso jerárquico tipo árbol (estas técnicas se pueden combinar).
+    mediante el acceso jerárquico tipo árbol (estas técnicas se pueden combinar).
 
     Los selectores CSS simplifican la tarea de seleccionar un conjunto de 
     elementos que cumplen con cierta condición. Utilizan la sintaxis de
     las hojas de estilo en cascada para determinar los elementos que
     están siendo seleccionados.
 
-    Por ejemplo
-    con la API de DOM la selección de los elementos del tipo ``link``, que
+    Por ejemplo con la API de DOM la selección de los elementos del tipo ``link``, que
     posean un atributo ``href`` se realiza de la siguiente manera:
 
     .. code-block:: javascript
@@ -108,58 +100,53 @@ Algunas de las características más relevantes de Protopy son:
 
         var links = $$('a[href]');
 
-    Las librerías YUI, Prototype, jQuery, Dojo y Ext JS entre otras poseen este
+    Las librerías YUI, Prototype, jQuery, Dojo y Ext JS, entre otras, poseen este
     tipo de selector. Su utilización libera al desarrollador de incompatibilidades 
     o implementaciones pobres de DOM, a la hora de interactuar con los elementos
-    del documento. 
+    del documento.
 
     Peppy es una librería de JavaScript que implementa un selector CSS que 
-    fue incorporado dentro del núcleo de Protopy como selector de elementos
+    fue incorporado dentro del núcleo de **Protopy** como selector de elementos
     del DOM. Las funciones se implentaron en ``$("id")`` para recuperar elementos
     por identificador y ``$$("selector_css")`` para recuperar un conjunto basado
-    en un criterio CSS.   
+    en un criterio CSS.
 
 .. [*] Métrica obtenida del comando 
     ``wc -l $(find django -iname "*.py" | grep -v contrib | grep -v backends)``
 
-* Compatibilidad de Protopy
+* Compatibilidad de **Protopy**
 
     JavaScript 1.7 sólo se encuentra disponible sobre la plataforma Mozilla
-    (Firefox 3.0+), de modo que se eliminaron  
-    gran parte de los arreglos de compatibilidad presentes originalmente en Prototype
-    y se portó a la nueva sintaxis muchas partes del código original.
+    (Firefox 3.0+), por esta razón **Protopy** es únicamente compatible con Firefox en la actualidad.  
 
-    Por esta razón Protopy es únicamente compatible con Firefox actualmente.  
-
-
-En la siguiente figura se ilustran los diferentes componentes de Protopy:
+En la siguiente figura se ilustran los diferentes componentes de **Protopy**:
 
 .. figure:: ../_svg/esquema_protopy.png
 
-    Composición de Protopy
-
-.. _protopy-modulos:
-
+    Composición de **Protopy**
 
 Utilización
 ===========
 
-La librería Protopy consiste en un único recurso JavaScript llamado
+La librería **Protopy** consiste en un único recurso JavaScript llamado
 ``protopy.js``. Su inclusión debe realizarse en la cabecera del documento, 
 de la siguiente manera:
 
 .. code-block:: html
 
-    <script type="text/javascript;version=1.7" src="/ruta/a/protopy/protopy.js"></script>
+    <script 
+    	type="text/javascript;version=1.7" 
+    	src="/ruta/a/protopy/protopy.js">
+    </script>
 
-De esta inclusión Protopy toma por defecto del atributo ``src`` la ruta absoluta
-o **ruta base** al archivo js, posteriormente esta ruta más el sufijo *packages*
-conforman la ruta donde la librería tomara los módulos cuando sen requeridos,
-en el ejemplo anterior */ruta/a/protopy/* es la ruta base.
+De esta inclusión **Protopy** toma por defecto del atributo ``src`` la ruta absoluta
+o ruta base al archivo ``js``; posteriormente esta ruta más el sufijo ``packages``
+conforman la ruta donde la librería tomará los módulos cuando sen requeridos. 
+En el ejemplo anterior ``/ruta/a/protopy/`` es la ruta base.
 
 Otra forma de espesificar la ruta base es mediante la dupla ``base``, ``/valor/``
 en el atributo ``pyconfig`` de la etiqueta ``script``. Este atributo representa el
-punto de entrada a la configuracion de Protopy como se muestra a continuación:
+punto de entrada a la configuracion de **Protopy** como se muestra a continuación:
 
 .. code-block:: html
 
@@ -182,7 +169,7 @@ proyectos pequeños (donde se utiliza JavaScript para validación, enriquecimien
 de formularios, accesibilidad) pero resulta limitado y poco mantenible en
 proyectos grandes (en los cuales la cantidad de JavaScript crece).
 
-En Protopy se buscó la forma de solucionar este problema analizando la forma
+En **Protopy** se buscó la forma de solucionar este problema analizando la forma
 en la que se resuelve en el lenguaje Python, en donde la modularidad y la creación
 de ámbitos de nombres están íntimamente relacionados. De esta forma desarrollo
 se oriento en pequeñas unidades funcionales llamadas *modulos*. 
@@ -192,7 +179,7 @@ se oriento en pequeñas unidades funcionales llamadas *modulos*.
     -- import this
 
 El enfoque modular no es nuevo en programación y basicamente, la implementación
-de Protopy, implica llevar el concepto de "divide y vencerás" ó "análisis
+de **Protopy**, implica llevar el concepto de "divide y vencerás" ó "análisis
 descendente (Top-Down)" al hambito de JavaScript.
 
 En vez de cargar los recursos mediante la inclusión de etiquetas, se tomó la idea
@@ -206,13 +193,13 @@ pero a diferencia del mismo cada módulo define en si mismo un espacio de nombre
                 útlimo acceso Septiembre 2009,
                 http://www.dojotoolkit.org/
 
-Por ello, se agregó a Protopy la función ``require( "nombre_modulo" )``, esta 
+Por ello, se agregó a **Protopy** la función ``require( "nombre_modulo" )``, esta 
 recibe como parámetro una cadena con el nombre del módulo que se desea obtener
 y posteriormente lo descarga asincrónicamente del servidor retornando al ámbito
 del llamador el módulo evaluado en un contexto aislado. La funcion ``require``
 tiene otros modos de uso detallados en el apendice.
 
-En Protopy, un módulo es un recurso JavaScript que publica explícitamente una
+En **Protopy**, un módulo es un recurso JavaScript que publica explícitamente una
 interface. De esta manera la funcionalidad se encuentra encapsulada. Para
 publicar un elemento del módulo se utiliza la función
 ``publish({nombre: objeto, nombre: objeto})``.
@@ -236,7 +223,7 @@ Carga de Módulos
 ----------------
 
 Cuando se utiliza la función ``require`` la búsqueda de los módulos se realiza
-en la ruta establecida en la carga de Protopy (/ruta/a/protopy/ + packages).
+en la ruta establecida en la carga de **Protopy** (/ruta/a/protopy/ + packages).
 Por ejemplo, si ``protopy.js`` se encuentra en ``http://dominio.com/media/js/protopy.js`` 
 la invocación ``require("dom")`` cargará el archivo ``dom.js`` desde  
 ``http://dominio.com/media/js/packages/dom.js``.
@@ -245,7 +232,7 @@ La búsqueda de módulos se puede ampliar más allá de la ruta base. En el mód
 ``sys`` existe la variable ``paths``, que consiste en un arreglo asociativo
 entre paquetes y rutas. El programador puede añadir entradas a ``sys.path``.
 De forma similar al ejemplo anterior cuando un módulo llamado foo.spam es
-importado, Protopy busca en primera instancia en ``sys.path`` si existe una ruta
+importado, **Protopy** busca en primera instancia en ``sys.path`` si existe una ruta
 asociada al paquete ``foo``, de encontrar la ruta el archivo spam.js es buscado
 en esta, por otra parte si ``sys.path`` no contiene una la ruta archivo
 foo/spam.js es buscado en la ruta base.
@@ -283,7 +270,7 @@ La función ``require`` se puede usar para:
 
             require('events', '*');
 
-Una descripción detallada se encuentra en el apéndice dedicado a Protopy.
+Una descripción detallada se encuentra en el apéndice dedicado a **Protopy**.
 
 Publicación de Módulos
 ----------------------
@@ -308,14 +295,14 @@ incorpora la función ``promedio`` al ámbito de nombres local,
 de nombres o simplemente ``import utils``, que incorpora el módulo, el cual
 tiene como miembros en este caso a ``promedio`` y a ``cantidad_palabras``.
 
-En cambio los módulos en Protopy se evalúan dentro de una clausura y los 
+En cambio los módulos en **Protopy** se evalúan dentro de una clausura y los 
 llamadores no podrán acceder a sus funciones si no son publicadas.
 
 La función ``publish`` es la encargada de realizar la tarea de publicar el
 contenido del módulo.
 
 A continuación se presenta una traduccion del ejemplo anterior en Python a
-Protopy:
+**Protopy**:
 
 .. code-block:: javascript
     :linenos:
@@ -347,21 +334,21 @@ Módulos Nativos
 Como se mencionó en el capítulo anterior, para desarrollar un buen soporte en el
 navegador es necesaria cierta funcionalidad básica que posee la implementación
 de Python y que seria deseable tener en el cliente al momento de correr el
-framework desconectado. Por esta razón se incorporaron en núcleo de Protopy
+framework desconectado. Por esta razón se incorporaron en núcleo de **Protopy**
 módulos y funciones indispensables para el desarrollo, algunos de estos
 se explican a continuación, para una referencia completa de la API puede
-remitirse al apéndice de Protopy.
+remitirse al apéndice de **Protopy**.
 
     * ``builtin``
 
         Este módulo cuenta con los tipos y funciones disponibles en el ámbito
-        global ni bien se inicia Protopy. Provee funcionalidad básica y algunos
+        global ni bien se inicia **Protopy**. Provee funcionalidad básica y algunos
         de los símbolos que expone son:
 
         * ``publish()``
 
             Publica el contenido de un módulo, recibe como argumento una
-            arreglo asociativo. Como ya se mencionó, en Protopy el contenido
+            arreglo asociativo. Como ya se mencionó, en **Protopy** el contenido
             de los módulos es privado por defecto.
 
         * ``require(modulo, [simbolo])``
@@ -438,7 +425,7 @@ remitirse al apéndice de Protopy.
     * ``sys``
 
         Equivalente al módulo Python del mismo nombre. Representa una interface 
-        con el nucleo de Protopy y el navegador.
+        con el nucleo de **Protopy** y el navegador.
 
     * ``event``
 
@@ -461,17 +448,17 @@ tiene sentido emular un paradigma dentro de otro.
 
 Habiendo analizado la situación, se llegó a la conclusión que tanto para la
 presente tesina como para acercar a los programadores que utilizan Django al
-lenguaje JavaScript/Protopy era necesario proveer en Protopy un sistema de
+lenguaje JavaScript/Protopy era necesario proveer en **Protopy** un sistema de
 tipos similar al de Python.
 
-La forma de crear nuevos "tipos de objetos" en Protopy es a través de la función
+La forma de crear nuevos "tipos de objetos" en **Protopy** es a través de la función
 ``type``. Esta función no fue parte de la biblioteca hasta que no se observó la
 necesidad de otorgar mayor poder al constructor de clases que brindaba
 Prototype. La incorporación de type posibilitó nuevas formas de construir clases, 
 similares a las  que brinda la función homónima de Python, a la cual debe su nombre.
 
 A continuación se presenta un fragmento de código que ejemplifica la creación de
-una clase en Protopy.
+una clase en **Protopy**.
 
 .. code-block:: javascript
     :linenos:
@@ -556,7 +543,7 @@ instanciado con ``new``.
 Internamente ``type`` utiliza al objeto ``prototype`` para la construcción,
 con lo cual el operador ``instanceof`` presenta un comportamiento coherente.
 Pese a esto se recomienda usar la función ``isinstance`` disponible como
-``builtin`` en Protopy, ya que ésta permite navegar por la cadena de herencia,
+``builtin`` en **Protopy**, ya que ésta permite navegar por la cadena de herencia,
 como se muestra en el siguente ejemplo:
 
 .. code-block:: javascript
@@ -571,10 +558,10 @@ como se muestra en el siguente ejemplo:
 Inicialización
 --------------
 
-En el ejemplo de creación de una clase en Protopy se muestra la inicialización
+En el ejemplo de creación de una clase en **Protopy** se muestra la inicialización
 del tipo ``SorteDict`` usando una funcion ``__init__``. Este método es llamado
 por el operador ``new`` inmediatamente después de crear una instancia. Actúa de
-una forma similar a un constructor del lenguaje Java, pero Python y Protopy
+una forma similar a un constructor del lenguaje Java, pero Python y **Protopy**
 permiten también la personalización de la instanciación implementando el método
 ``__new__``. El constructor es el conjunto ``__new__`` e ``__init__``.
 
@@ -591,7 +578,7 @@ la(s) clase(s) padre(s) de ser necesario.
 Métodos Especiales
 ------------------
 
-Protopy soporta la definición de algunos métodos especiales para los objetos, que 
+**Protopy** soporta la definición de algunos métodos especiales para los objetos, que 
 serán invocados por funciones especiales de la biblioteca en circunstancias
 particulares.
 
@@ -628,7 +615,7 @@ Algunso de estos métodos son:
         Este método se utiliza cuando se requiere un iterador de la instancia
         sobre la cual es invocado.
 
-        Protopy se vale de versiones modernas de JavaScript para brindar 
+        **Protopy** se vale de versiones modernas de JavaScript para brindar 
         este método, que debe retornar un objeto que implemente el método 
         ``next()``. 
         Ejemplo:
@@ -699,7 +686,7 @@ Algunso de estos métodos son:
     * ``__eq__`` ``__ne__``
 
         Un objeto que implemente alguno de estos este método es igualable con
-        otro, las funciones de Protopy ``equal`` o ``nequal`` trabajan sobre
+        otro, las funciones de **Protopy** ``equal`` o ``nequal`` trabajan sobre
         estos métodos.
 
     * ``__len__``
@@ -719,9 +706,9 @@ Algunso de estos métodos son:
         Son métodos para serialización (o *marshalling*) del objeto en HTML o 
         JSON respectivamente.
 
-Protopy tiene otros métodos especiales, que generalmente están orientados a
+**Protopy** tiene otros métodos especiales, que generalmente están orientados a
 emular algún comportamiento de Python en JavaScript. Una descripción detallada se 
-encuentra en el apéndice dedicado a Protopy.
+encuentra en el apéndice dedicado a **Protopy**.
 
 Herencia
 --------
@@ -732,7 +719,7 @@ especializcion de componentes. Es en este punto donde proveer de una forma de
 herencia al constructor de tipos resulta un paso en la dirección correcta.
 Cuando el desarrollador implemente funcionalidad basada en las características
 del framework desconectado, lo hará extendiendo alguna clase. Es por ello que 
-Protopy utiliza la herencia del tipo **Prototype chaining**, aunque lo hace de
+**Protopy** utiliza la herencia del tipo **Prototype chaining**, aunque lo hace de
 una forma un poco más compleja con el objeto de soportar herencia múltiple.
 
 Para implementar la herencia y en particular la herencia múltiple, el constructor
@@ -740,7 +727,7 @@ de tipos recibe una lista de los tipos base e internamente crea un
 objeto que agrega de derecha a izquierda todos los métodos de las bases.
 Posteriormente crea el tipo requerido tomando como base el objeto generado. Es
 en este punto donde se pierde el poder del operador ``instanceof`` y es por eso
-que Protopy provee una función para determinar la correspondencia entre
+que **Protopy** provee una función para determinar la correspondencia entre
 instancias y tipos llamada ``isinstance``.
 
 Otra función importada de Python es ``issubclass``. Bajo algunas
@@ -748,19 +735,19 @@ condiciones resulta útil determinar si un tipo es una sub-clase de otro y para
 ello esta función inspecciona la cadena de herencia.
 
 Para acceder a las funciones de tipo base cuando se está redefiniendo un método
-Protopy provee la función ``super``. De manera similar a la de Python, esta función
+**Protopy** provee la función ``super``. De manera similar a la de Python, esta función
 determina el tipo de la instancia, y mediante éste accede al método buscado.
 Este comportamiento es el equivalente en JavaScript al de llamar al método 
 del tipo base con la función ``Function.apply`` o ``Function.call``.
 
-Se debe destacar que de no especificar por lo menos un tipo base, Protopy
+Se debe destacar que de no especificar por lo menos un tipo base, **Protopy**
 establece por defecto a ``object``, encargado de proveer los principales
 métodos (``__init__``, ``__str__``).
 
 Métodos y Atributos de Clase
 ----------------------------
 
-Protopy contempla la definición de métodos y atributos de clase. Esta tarea se
+**Protopy** contempla la definición de métodos y atributos de clase. Esta tarea se
 realiza agregando el conjunto de atributos y métodos de clase como un arreglo
 asociativo opcional que se antepone al que define la estructura de los de
 instancia.
@@ -814,14 +801,14 @@ A continuación se muestra cómo usar dicha clase.
 Objetos Nativos
 ---------------
 
-Los objetos nativos de Protopy tienen como objetivo emular tipos de datos de
+Los objetos nativos de **Protopy** tienen como objetivo emular tipos de datos de
 Python o realizar una adaptación de sintaxis. Ellos son:
 
     * ``Dict``
 
         Si bien un arreglo asociativo nativo de JavaScript se comporta
         de manera similar a un diccionario de Python (``dict``),
-        los diccionarios de Protopy permiten mejores formas de trabajar con la
+        los diccionarios de **Protopy** permiten mejores formas de trabajar con la
         dupla clave-valor, posibilitando además el uso de objetos como claves en
         lugar de solo cadenas.
 
@@ -835,7 +822,7 @@ Python o realizar una adaptación de sintaxis. Ellos son:
     * ``Arguments``
 
         Las funciones en JavaScript pueden recibir opcionalmente cualquier
-        cantidad de argumentos. Los objetos de tipo Arguments de Protopy encapsulan y
+        cantidad de argumentos. Los objetos de tipo Arguments de **Protopy** encapsulan y
         uniforman los argumentos pasados a una función y permiten establecer
         entre otras cosas valores por defecto. 
 
@@ -857,21 +844,21 @@ Python o realizar una adaptación de sintaxis. Ellos son:
                 print(arg1, ar.kwargs['arg2'], ar.kwargs['arg3']);
             }
 
-Nuevamente, mas información sobre los objetos incluidos en el núcleo de Protopy
+Nuevamente, mas información sobre los objetos incluidos en el núcleo de **Protopy**
 puede ser encontrada en el apéndice.
 
 Manejo de DOM
 =============
 
-Dentro del módulo ``dom`` de Protopy se provee un selector CSS que permite
+Dentro del módulo ``dom`` de **Protopy** se provee un selector CSS que permite
 seleccionar elementos basados en selectores de nivel 3 de CSS [W3CCSelCSS309]_.
 
 Elementos
 ---------
 
-Un selector de elementos del DOM resulta una herramienta útil cuando el dasarrollador debe trabajar manipulando el documento una ves presentado al usuario. Protopy incluye una adaptación de la herramienta Peppy [JamesDonaghuePeppyDocs]_ mediante este el árbol DOM pude ser manejado con facilidad. 
+Un selector de elementos del DOM resulta una herramienta útil cuando el dasarrollador debe trabajar manipulando el documento una ves presentado al usuario. **Protopy** incluye una adaptación de la herramienta Peppy [JamesDonaghuePeppyDocs]_ mediante este el árbol DOM pude ser manejado con facilidad. 
 
-Peppy se adapto al enfoque modular de Protopy y su principal función ``query`` esta presente como ya se menciono en el modulo ``dom``, aunque por motivos prácticos el modulo ``builtins`` incluye el alias $ y $$ para seleccionar elementos por *identificador* y *estilo* respectivamente; el desarrollador que requiera de consultas mas complejas puede requerir el modulo correspondiente y usar la función ``query`` para tal fin.
+Peppy se adapto al enfoque modular de **Protopy** y su principal función ``query`` esta presente como ya se menciono en el modulo ``dom``, aunque por motivos prácticos el modulo ``builtins`` incluye el alias $ y $$ para seleccionar elementos por *identificador* y *estilo* respectivamente; el desarrollador que requiera de consultas mas complejas puede requerir el modulo correspondiente y usar la función ``query`` para tal fin.
 
 .. [JamesDonaghuePeppyDocs] James Donaghue,
     *Documentación de Peppy*,
@@ -909,10 +896,10 @@ y obtención de valores, etc.
 Eventos
 -------
 
-El sistema de eventos de Protopy esta basado en el de Dojo. El manejo de eventos 
+El sistema de eventos de **Protopy** esta basado en el de Dojo. El manejo de eventos 
 ofrece una buena adaptación al sistema tradicional de eventos del DOM, posibilitando ademas conectar eventos creados por el usuario o funciones entre sí.
 
-Protopy provee en el modulo ``event`` dos funciones indispensables para trabajar con eventos, ``connect`` y ``disconnect``. La función ``connect`` es la encargada de conectar funciones a los eventos del DOM o a otras funciones, mientras que ``disconnect`` desconecta los eventos previamente establecidos. 
+**Protopy** provee en el modulo ``event`` dos funciones indispensables para trabajar con eventos, ``connect`` y ``disconnect``. La función ``connect`` es la encargada de conectar funciones a los eventos del DOM o a otras funciones, mientras que ``disconnect`` desconecta los eventos previamente establecidos. 
 
 
 .. [W3CCSelCSS309] W3C,
@@ -943,11 +930,11 @@ a un framework desconectado, son necesarios los componentes ``DataBase`` y
 ``Local Server``.
 
 Se decidió utilizar la API de Gears que provee estos componentes en el desarrollo
-de Protopy. Pero, a fin de mantener la filosofía "Pythonica" de Protopy se realizó
+de **Protopy**. Pero, a fin de mantener la filosofía "Pythonica" de **Protopy** se realizó
 un recubrimiento de esta API, de manera de brindar mayor uniformidad y consistencia
 en las APIs presentadas al programador de aplicaciones desconectables.
 
-Cabe destacar que Protopy no depende de Gears para su funcionamiento. Durante
+Cabe destacar que **Protopy** no depende de Gears para su funcionamiento. Durante
 la inicialización de la librería se detecta si el navegador tiene disponible
 la API de Gears. Si el desarrollador requiere almacenamiento persistente deberá
 asegurarse de que Gears esté instalado.
@@ -981,7 +968,7 @@ Por otra parte, el desarrollo del framework implicó extender los siguientes com
     * ``database``
 
         Sobre el objeto ``DataBase`` se agregó funcionalidad para uniformar el acceso a
-        la base de datos por los módulos de Protopy y encapsular los ``ResulSet``
+        la base de datos por los módulos de **Protopy** y encapsular los ``ResulSet``
         en cursores a los que se incorporó iteradores, registro de funciones
         para tipos de datos, etc.
 
@@ -1009,7 +996,7 @@ puede utilizar las funciones ``console.log``, ``consoel.info`` y ``console.warn`
 la aplicación imprimiendo cadenas y valores de variables,
 sin necesidad de utilizar ``alert``.
 
-Protopy agrega un sistema de *logging* sobre las funciones antes mencionadas de
+**Protopy** agrega un sistema de *logging* sobre las funciones antes mencionadas de
 firebug, que permite la configuración de las salidas, el formateo y la prioridad, de 
 manera similar a *log4j* (popular sistema de depuración de Java).
 Usando este sistema el desarrollador no necesita suprimir las sentencias
@@ -1095,7 +1082,7 @@ código en la consola de Firebug y en una URL con distintos formatos.
 Interactuando con el Servidor
 =============================
 
-Protopy provee una interface de recubrimiento sobre las peticiones asincrónicas
+**Protopy** provee una interface de recubrimiento sobre las peticiones asincrónicas
 (AJAX) con el fin de simplificar la utilización de ``XMLHttpRequest`` y de trabajar
 con varias codificaciones de datos de manera segura (JSON).
 
@@ -1183,11 +1170,11 @@ desconectado en el navegador y su contra parte en el servidor. Estos datos
 comprenden información sobre medios estáticos para el almacenamiento de
 recursos locales, datos de modelos y llamadas a procedimientos remotos.
 
-El manejo de JSON en Protopy se realizó en el módulo ``json``. Este módulo
+El manejo de JSON en **Protopy** se realizó en el módulo ``json``. Este módulo
 posee la capacidad de serializar los objetos nativos de JavaScript así como 
 también las instancias de clases que implementen el método ``__json__``.
 
-No se implementó sobre Protopy soporte para serialización XML debido a su 
+No se implementó sobre **Protopy** soporte para serialización XML debido a su 
 complejidad y a que no brindaba ventajas significativas ante JSON para 
 los objetivos de la presente tesina. Sin embargo se puede implementar esta
 característica en futuras versiones.
@@ -1215,6 +1202,6 @@ el servidor, así como también los tipos de datos que transporta.
 
 XML-RPC es un estándar que utiliza XML como lenguaje de comunicación y HTTP 
 como protocolo de transporte. Es considerado el más simple de los mecanismos 
-para publicación de servicios web y se incorporó a la librería Protopy como
+para publicación de servicios web y se incorporó a la librería **Protopy** como
 mecanismo para comunicación entre el framework desconectado y la aplicación
 en línea.
