@@ -1,7 +1,35 @@
 digraph migracion_proyecto {
-
-a -> b;
-b -> c;
+    
+    node [shape=record]
+    // graph [fontsize=30 labelloc="t" label="" splines=true overlap=false rankdir = "LR"];
+    
+    paso_1 [label="Creación de proyecto Django", color=blue]
+    paso_2 [label="Creación de una aplicación\n dentro del proyecto",
+            color=blue]
+    paso_3 [label="Agregar la aplicación offline"] // Paso 1 
+    paso_4 [label="Agregar OFFLINE_BASE\na settings.py"] // Paso 2
+    paso_5 [label="Creación de un sitio remoto"] // Paso 3
+    paso_6 [label="Migrar aplicación"]
+    paso_7 [label="Publicación de modelos"]
+    paso_8 [label="Escribir vistas Doff"] 
+    //paso_9 [label="Modificar plantillas"]
+    //paso_10 [label="Publicar sitio remoto"]
+    paso_11 [label="Creación del manifiesto"]
+    
+    paso_1 -> paso_2 [color=blue];
+    paso_2 -> paso_2 [color=blue];
+    paso_2 -> paso_3;
+    paso_3 -> paso_4;
+    paso_4 -> paso_5;
+    paso_5 -> paso_6;
+    paso_6 -> paso_7;
+    paso_7 -> paso_8;
+    //paso_8 -> paso_9;
+    //paso_9 -> paso_10;
+    paso_8 -> paso_11;
+    
+    
+    {rank=same; paso_1; paso_5; paso_11; }
 
 
 }
