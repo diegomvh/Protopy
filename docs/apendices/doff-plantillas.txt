@@ -118,7 +118,6 @@ hacer:
     {% endfor %}
     </ul>
 
-
 También se puede iterar la lista en orden inverso usando 
 ``{% for obj in list reversed %}``.
 
@@ -129,30 +128,26 @@ descritos son propiedades de la variable ``forloop``, es decir,
 se para el nombre ``counter``, el acceso se realiza a través de 
 ``forloop.counter``.
 
-
-
-.. _doff-plantillas-for-tabla:
-
 .. list-table:: Variables accesibles dentro de bucles {% for %}
     :widths: 20 80
    
     * - **Variable**
       - **Descripción**
-    * - ``counter``
+    * - ``forloop.counter``
       - El número de vuelta o iteración actual (usando un índice basado en 1).
-    * - ``counter0``
+    * - ``forloop.counter0``
       - El número de vuelta o iteración actual (usando un índice basado en 0).
-    * - ``revcounter``
+    * - ``forloop.revcounter``
       - El número de vuelta o iteración contando desde el fin del bucle  (usando
-        un índice basado en 1).
-    * - ``revcounter0``
+un índice basado en 1).
+    * - ``forloop.revcounter0``
       - El número de vuelta o iteración contando desde el fin del bucle  (usando
-        un índice basado en 0).
-    * - ``first``
+un índice basado en 0).
+    * - ``forloop.first``
       - ``true`` si es la primera iteración.
-    * - ``last``
+    * - ``forloop.last``
       - ``true`` si es la última iteración.
-    * - ``parentloop``
+    * - ``forloop.parentloop``
       - Para bucles anidados, es una referencia al bucle externo.
 
 if

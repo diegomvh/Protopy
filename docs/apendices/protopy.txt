@@ -15,7 +15,6 @@ módulos. Básicamente un modulo en un archivo con código JavaScript que reside
 en el servidor y posteriormente es obtenido y ejecutado en el cliente.
 
 .. code-block:: javascript
-    :linenos:
 
     //Archivo: tests/module.js
     require('event');
@@ -319,7 +318,6 @@ en el mismo.
         construcción, en una instancia posterior los objeto ``Template`` son evaluados y retornan una cadena de texto.  
 
     .. code-block:: javascript
-       :linenos:
 
         // Se crea un Template
        var myTemplate = new Template('El show televisivo #{title} fue creado por #{author}.');
@@ -369,7 +367,6 @@ en el mismo.
         este objeto soporta intersecciones, uniones, restas, etc.
 
     .. code-block:: javascript
-        :linenos:
 
         >>> set = new Set([1,2,3,4,5,6,7,8,9,3,6,1,4,7])
         >>> len(set)

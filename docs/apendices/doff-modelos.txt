@@ -1,9 +1,3 @@
-.. _apendices-doff-modelos
-
-amarillo: falta de ortografia, redaccion, coregir
-rosa: mal separado en silabas
-celeste: poner en negrita
-
 ######################################
 Referencia de la definición de modelos
 ######################################

@@ -22,8 +22,7 @@
     ROOT_URLCONF: 'blog.urls',
 
     INSTALLED_APPS: [
-        'agenda.apps.contactos',
-        'agenda.apps.tareas'
+        'agenda.apps.post'
     ],
 
     TOOLBAR_CLASSES: [
