@@ -1,5 +1,49 @@
 digraph push_return {
-    // 
+    
+    // Conf
+    node [shape=record]
+    //graph [ rankdir = "LR", overlap = false ];
+    
+    // Nodos y flechas
+    
+    push [label="<cre>creted|<mod>modified|<del>deleted|<sync>sync_log_data"]
+    
+    cre_nod [label="<mod>model|<dump>objects"]
+    
+    cre_nod_dump [label="DUMP JSON"]
+    cre_nod_mod [label="'app1.model1'\l'app2.model2'"]
+    
+    cre_nod:dump -> cre_nod_dump; 
+    cre_nod:mod -> cre_nod_mod;
+    
+        
+    mod_nod [label="<mod>model|<dump>objects"]
+    mod_nod_dump [label="DUMP JSON"]
+    mod_nod_mod [label="'app1.model1'\l'app2.model2'"]
+    
+    mod_nod:dump -> mod_nod_dump; 
+    mod_nod:mod -> mod_nod_mod;
+    
+    
+    del_nod [label="<mod>model|<dump>objects"]
+    
+    del_nod_dump [label="DUMP JSON"]
+    del_nod_mod [label="'app1.model1'\l'app2.model2'"]
+    
+    del_nod:dump -> del_nod_dump; 
+    del_nod:mod -> del_nod_mod;
+    
+    syn_nod [label="'app1.model1':\ldate|'app2.model2':\ldate"];
+    
+    {rank=same; cre_nod; mod_nod; del_nod}
+    
+    push:cre -> cre_nod;
+    push:mod -> mod_nod;
+    push:del -> del_nod;
+    
+    
+    push:sync -> syn_nod;
+     
     
 
 }
