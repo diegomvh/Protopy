@@ -118,34 +118,41 @@ hacer:
     {% endfor %}
     </ul>
 
-También se puede iterar la lista en orden inverso usando ``{% for obj in list
-reversed %}``.
+
+También se puede iterar la lista en orden inverso usando 
+``{% for obj in list reversed %}``.
 
 Dentro de un bucle, la propia sentencia ``for`` crea una serie de
 variables. A estas variables se puede acceder únicamente dentro del
-bucle. Las distintas variables se explican en la tabla.
+bucle. Las distintas variables se explican en la tabla. Los nombres
+descritos son propiedades de la variable ``forloop``, es decir, 
+se para el nombre ``counter``, el acceso se realiza a través de 
+``forloop.counter``.
+
+
 
 .. _doff-plantillas-for-tabla:
+
 .. list-table:: Variables accesibles dentro de bucles {% for %}
     :widths: 20 80
    
     * - **Variable**
       - **Descripción**
-    * - ``forloop.counter``
+    * - ``counter``
       - El número de vuelta o iteración actual (usando un índice basado en 1).
-    * - ``forloop.counter0``
+    * - ``counter0``
       - El número de vuelta o iteración actual (usando un índice basado en 0).
-    * - ``forloop.revcounter``
+    * - ``revcounter``
       - El número de vuelta o iteración contando desde el fin del bucle  (usando
-un índice basado en 1).
-    * - ``forloop.revcounter0``
+        un índice basado en 1).
+    * - ``revcounter0``
       - El número de vuelta o iteración contando desde el fin del bucle  (usando
-un índice basado en 0).
-    * - ``forloop.first``
+        un índice basado en 0).
+    * - ``first``
       - ``true`` si es la primera iteración.
-    * - ``forloop.last``
+    * - ``last``
       - ``true`` si es la última iteración.
-    * - ``forloop.parentloop``
+    * - ``parentloop``
       - Para bucles anidados, es una referencia al bucle externo.
 
 if

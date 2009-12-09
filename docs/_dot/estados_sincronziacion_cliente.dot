@@ -1,4 +1,25 @@
 digraph estados_sincronziacion_cliente {
-    estados_sicnronizacion_cliente;
 
+    // Nodos
+    server_crea [label="Existente en el servidor",style=dotted]
+    client_crea [label="Creación"];
+    client_sync [label="Sincronizado"]
+    client_mod [label="Modificado"]
+    client_del [label="Borrado"]
+    client_sync_del [label="Sincronizado\lactive=false"]
+    client_dest [label="Eliminiación local"]
+    
+    
+    // Flechas
+    server_crea -> client_sync [label="pull()", color=blue];
+    client_crea -> client_sync [label="push()", color=green];
+    client_sync -> client_sync [label="pull()", color=blue];
+    client_sync -> client_mod [label="save()"]; 
+    client_mod -> client_sync [label="push()", color="blue"];
+    client_mod -> client_mod [label="save()"];
+    client_sync -> client_del [label="delete()"]
+    client_del -> client_sync_del [label="pull()", color=blue];
+    client_sync_del -> client_dest [label="purge()", color=red];
+    {rank=same; server_crea; client_crea; client_dest}
+    {rank=same; client_sync; client_sync_del}        
 }

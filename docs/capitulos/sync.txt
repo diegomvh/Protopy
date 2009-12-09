@@ -629,7 +629,11 @@ ejemplifica este hecho:
 .. figure:: ../_dot/estados_sincronziacion_cliente.pdf
 
     Estados de sincronización de los modelos en el cliente.
+    
+.. raw:: latex
 
+    \newpage
+        
 ..
     .. note:: Camibar error por problemas
 
