@@ -217,13 +217,10 @@ latex_preamble = ur'''
     \fancyhf{}
     % Footer
     \fancyfoot[RO,RE]{{\textbf{\textsf{\thepage}}}}
-    %\fancyfoot[LO,LE]{{\nouppercase{\rightmark} \textcolor{red}{Preliminar}}}
-    \fancyfoot[RE]{{\py@HeaderFamily\nouppercase{\leftmark}}}
-    
-    \fancyfoot[LE]{{Versi\'on Preliminar}}
+    \fancyfoot[LO,LE]{{\sffamily\bfseries\textbf{\rightmark} - \textcolor{red}{Preliminar}}}
     
     % Header
-    \fancyhead[LE,LO]{{ \textbf{\leftmark}  }}
+    \fancyhead[LE,LO]{{\sffamily\bfseries\textbf{\leftmark}}}
     \fancyhead[RE,RO]{{ \textit{Defossé, van Haaster} }}
     
     \renewcommand{\headrulewidth}{0.4pt}
