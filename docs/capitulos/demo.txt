@@ -1,0 +1,272 @@
+﻿
+
+###########################
+Aplicación de Demostración
+###########################
+
+
+El presente capítulo describe la aplicación de prueba que se diseñó para ilustrar las capacidades de **Protopy** y **Doff**. Se trata de una aplicación Django **salesman** (agente de ventas viajante) y ejemplifica una empresa dedicada a la venta de productos informáticos que cuenta con viajantes que recorren el país. Los usuarios registrados como viajantes poseen la capacidad de realizar una desconexión del proyecto, llevándose una copia del catálogo, y de generar pedidos, clientes y ciudades.
+
+A continuación se detallan brevemente los aspectos más relevantes de la aplicación.
+
+Organización del Código Fuente del Proyecto
+-------------------------------------------
+
+El código fuente del proyecto se ubicó en la carpeta ``sources/salesman`` y, como se mencionó en capítulos anteriores, la aplicación **offline** se encuentra en ``source/offline``. Debido a esto, bastó con agregar el directorio padre de **salesman** al PYTHONPATH, para completar la instalación.
+
+.. code-block:: python
+
+    # Se agrega el directorio padre como repositorio de paquetes Python
+    sys.path.append('..')
+    
+
+El parámetro ``OFFLINE_BASE`` es la cadena ``"off"``. El sitio remoto que se creó para la demostración se denominó ``agentes``. 
+
+Desarrollo de la Aplicación
+---------------------------
+
+El desarrollo de la aplicación comenzó por la definición del modelo. Éste se dividió en dos aplicaciones: ``core``, donde se situaron las entidades comunes, y ``ventas``, donde se crearon las propias del subsistema de pedidos.
+
+La siguiente figura muestra el diagrama de la base de datos esta aplicación:
+ 
+.. figure:: ../_dot/django_models.png
+    
+    Diagrama de Base de Datos de Salesman (generado con ``graph_models``)
+
+.. note:: Poner recuadros de cada aplicación y el nombre
+
+.. raw:: latex
+
+    \newpage
+
+
+Administración Básica
+=====================
+
+Como paso inicial se habilitó la administración automática de Django en la ULR ``/admin``. Esta aplicación provista por el framework no está disponible de manera desconectada en **Doff** [*]_; sin embargo se utilizó para depuración. La siguiente figura muestra la fachada de esta aplicación, donde se puede apreciar que se encuentran registrados los modelos antes mencionados.
+
+.. figure:: ../_static/sshot_dj_admin.png
+	
+   Captura de la administración de Django para el proyecto **salesman**.
+
+.. raw:: latex
+
+    \newpage
+
+.. [*] La migración de la aplicación ``django.contrib.admin`` es una de las
+       líneas futuras de la presente tesina.
+
+
+
+Vistas
+======
+
+La mayor parte de las vistas se implementaron mediante vistas genéricas 
+(generic views) provistas por Django en el servidor [DjangoDocsGenericViews09]_, 
+y por **Doff** en el cliente. Se escogieron por su simplicidad y genericidad a la hora de realizar operaciones CRUD [*]_.
+Django posee varios tipos de vistas genéricas, de las cuales sólo se utilizaron las siguientes:
+
+ 
+    * ``django.views.generic.simple.direct_to_template``
+    
+        Recibe como argumento el ``template_name`` con el nombre del una plantilla y la devuelve procesada.
+        
+    * ``django.views.generic.create_update.create_object``
+        
+        Crea una entidad en la base de datos. Recibe los argumentos:
+            
+            * ``form_class`` o ``model``: un ``ModelForm`` o ``Model`` sobre el cual se realiza la creación.
+        
+            * ``post_save_redirect``: la URL a la cual el cliente es redirigido
+              tras la creación exitosa de la entidad. Por defecto es  ``object.get_absolute_url()``.
+      
+            * ``template_name``: nombre la plantilla que se usa para generar la salida.
+            
+            * ``extra_context``: elementos extra para generar la plantilla.
+    
+        
+    * ``django.views.generic.create_update.update_object``
+        
+        Los parámetros de esta vista son iguales a los de ``create_object`` agregando a:
+        
+        * ``object_id``: identificador del objeto a editar.
+        
+    * ``django.views.generic.create_update.delete_object``
+    
+        * ``model``: modelo al cual pertenece la instancia a ser eliminada.
+        
+        * ``post_delete_redirect``: URL a la cual se redirige luego de una eliminación exitosa.
+        
+        * ``object_id``: identificador de la instancia a eliminar.
+
+Estas vistas se incorporaron en **Doff** cuando se desarrolló la aplicación de demostración.
+
+.. [*] CRUD, consultas, comentarios, redirección, etc.
+
+.. [DjangoDocsGenericViews09] Vistas Genéricas,
+    Documentación de Django,
+    último acceso Noviembre de 2009,
+    http://docs.djangoproject.com/en/dev/ref/generic-views/
+        
+
+Interfaz de la Aplicación
+--------------------------
+
+Se utilizó la plantilla Underground Store del sitio http://www.styleshout.com/, liberada bajo la licencia Creative Commons [CC2009]_, sobre la cual se definieron varios bloques.
+
+.. [CC2009] *Licencia Creative Commons*,
+    último acceso Noviembre de 2009,
+    http://es.wikipedia.org/wiki/Creative_Commons
+
+La siguiente figura muestra la portada de la aplicación en línea:
+
+.. figure:: ../_static/sshot_inicio.png
+.. note: nota de Marta: falta figura 9.x:----------------
+.. raw:: latex
+
+    \newpage
+
+
+
+
+Una vez que el usuario se ha autenticado como viajante visualiza la siguiente  la siguiente barra de de menú :
+
+.. figure:: ../_static/sshot_button.png
+	
+    Barra de menú de la aplicación
+
+Los botones de esta barra le permiten acceder a las diferentes secciones de la aplicación en línea:
+  
+  * Inicio
+
+      Va a la página de portada.
+
+  * Catálogo
+  
+      Para navegar por los productos y generar pedidos.
+
+  * Pedidos
+
+	Para listar los pedidos.
+
+  * Administrar
+   
+      Para realizar operaciones CRUD sobre Clientes, Ciudades, Productos y Categorías.
+
+  * Desconectar
+
+     Para desconectar. Es un enlace hacia el sitio remoto.
+
+
+Dentro del botón *Administrar* se implementó el ABM de Ciudades, Productos, Categorías y Proveedores.
+
+.. figure:: ../_static/sshot_administrar.png
+
+    ABM de Ciudades, Clientes, Productos y Proveedores.
+
+.. raw:: latex
+
+    \newpage
+
+Todas las operaciones utilizan vistas genéricas, por lo que funcionan de la misma manera. A continuación se ilustra un
+ejemplo para el listado del modelo Ciudad:
+
+.. figure:: ../_static/sshot_admin_ciudades.png
+
+    Listado de ciudades
+
+.. raw:: latex
+
+    \newpage
+
+Para las altas y modificaciones, la fachada es la siguiente:
+
+.. figure:: ../_static/sshot_admin_ciudade_add.png
+    :figwidth: 40
+
+
+    Agregar una ciudad
+
+.. raw:: latex
+	
+    \newpage
+
+
+
+Desconexión de la Aplicación
+----------------------------
+
+Cuando el usuario viajante desea desconectar la aplicación, utiliza el botón *Desconectar* de la barra de menú. Como resultado de esto se carga la misma plantilla, pero con una barra adicional provista por **Doff**:
+
+.. figure:: ../_static/sshot_toolbar.png
+	
+    Barra de trabajo desconectado de **Doff**
+
+.. raw:: latex
+
+    \newpage
+
+Para instalar el proyecto desconectado debe utilizar el botón *Offline Support* de la barra adicional. Aparece el panel de instalación en el cual debe persionar el botón *Enable Offline Access*:
+
+.. figure:: ../_static/sshot_toolbar_offline.png
+	
+    Panel de instalación, el botón permite instalar el proyecto.
+
+.. raw:: latex
+
+    \newpage
+
+Debido a que se han implementado las mismas vistas que la aplicación en línea, la aplicación desconectada se muestra muestra de la misma manera y con un comportamiento similar.
+
+Con el objetivo de facilitar la depuración, se agregaron algunos botones a la barra adicional provista por **Doff**: 
+
+* *Query Tool* para realizar consultas a la base de datos:
+
+.. figure:: ../_static/sshot_toolbar_db.png
+
+    Panel de consultas a la base de datos del proyecto desconectado
+
+.. raw:: latex
+
+    \newpage
+
+* *Logger* para visualizar la salida de depuración:
+
+.. figure:: ../_static/sshot_toolbar_logger.png
+    :align: center
+    
+    Logger
+
+.. raw:: latex
+
+    \newpage
+
+* *Sync Tool* para realizar la sincronización con la aplicación en línea:
+
+.. figure:: ../_static/sshot_sync.png
+    :align: center
+
+    Panel de sincronización
+
+.. raw:: latex
+
+    \newpage	
+
+
+Ejecución de la Aplicación
+--------------------------
+
+Para ejecutar la aplicación se deben seguir los siguiente pasos:
+
+   #. Descargar Django e instalarlo conforme a las indicaciones del manual oficial (http://docs.djangoproject.com/).
+
+   #. Descargar el código de la presente tesina de su repositorio público en Internet: http://code.google.com/p/protopy. Se recomienda usar la versión almacenada en el repositorio Mercurial, en vez de la ubicada en Downloads.
+
+   #. Una vez en la carpeta ``sources/salesman`` invocar:
+
+      .. code-block:: bash
+
+          $ python manage.py runserver
+
+A partir de este momento se encuentra en línea el proyecto, en la dirección local http://localhost:8000.
+
