@@ -235,11 +235,16 @@ latex_preamble = ur'''
     \renewcommand{\headrulewidth}{0pt}
     \renewcommand{\footrulewidth}{0.4pt}
   }
-  
+  \exhyphenpenalty=10000\hyphenpenalty=10000
+
+
+
 '''  
+
+#
 # Desactivar hyphenation (separacion en sílabas)
 # http://tug.ctan.org/tex-archive/macros/latex/contrib/hyphenat/
-latex_preamble = '%s\\usepackage[none]{hyphenat}' % latex_preamble  
+#latex_preamble = '%s\\usepackage[none]{hyphenat}' % latex_preamble  
 
 
 
