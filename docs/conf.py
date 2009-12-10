@@ -207,6 +207,7 @@ latex_use_parts = False
 
 # Additional stuff for the LaTeX preamble.
 latex_preamble = ur'''
+
 \setcounter{tocdepth}{4}
 
 % Use this to set the font family for headers and other decor:
@@ -214,19 +215,18 @@ latex_preamble = ur'''
 
   \fancypagestyle{normal}{
     \fancyhf{}
+    % Footer
     \fancyfoot[RO,RE]{{\textbf{\textsf{\thepage}}}}
+    %\fancyfoot[LO,LE]{{\nouppercase{\rightmark} \textcolor{red}{Preliminar}}}
+    \fancyfoot[RE]{{\py@HeaderFamily\nouppercase{\leftmark}}}
     
+    \fancyfoot[LE]{{Versi\'on Preliminar}}
     
-    %\fancyhead[LE,LO]{{\py@HeaderFamily \@title, \py@release}}
-    
-    \fancyfoot[LO,LE]{{\nouppercase{\rightmark}}}
-    
-    %\fancyfoot[RE]{{\py@HeaderFamily\nouppercase{\leftmark}}}
-    
-    \fancyhead[LE,LO]{{ \textbf{\leftmark} }}
+    % Header
+    \fancyhead[LE,LO]{{ \textbf{\leftmark}  }}
     \fancyhead[RE,RO]{{ \textit{Defossé, van Haaster} }}
-    \renewcommand{\headrulewidth}{0.4pt}
     
+    \renewcommand{\headrulewidth}{0.4pt}
     \renewcommand{\footrulewidth}{0.4pt}
   }
   % Update the plain style so we get the page number & footer line,
@@ -238,7 +238,12 @@ latex_preamble = ur'''
     \renewcommand{\headrulewidth}{0pt}
     \renewcommand{\footrulewidth}{0.4pt}
   }
-'''
+  
+'''  
+# Desactivar hyphenation (separacion en sílabas)
+# http://tug.ctan.org/tex-archive/macros/latex/contrib/hyphenat/
+latex_preamble = '%s\\usepackage[none]{hyphenat}' % latex_preamble  
+
 
 
 # Documents to append as an appendix to all manuals.

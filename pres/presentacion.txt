@@ -27,29 +27,17 @@ Objetivos
 Tecnologías Existentes (1)
 ---------------------------
 
-* **AIR** (Adobe Corp.)
-	Basado en la tecnología Flash (Open Source), 
-	lengauje de *scripting* ActionScript 2/3.
 
 * **Silverlight** (.NET Framework, Microsoft)
 	Solución muy interesante, pero **cerrada**.
 	*Promesa* de no cautividad.
 
+* Otras alternativas
+    
+    AIR, JavaFX, XUL
+
 
 Tecnologías Existentes (2)
---------------------------
-
-* **JavaFX** (Sun Microsystems)
-	Applets + Flash = JavaFX, crean lenguaje de *scripting*
-	fuertemente tipado.
-
-* **XUL** (Mozilla Foundation)
-	GUI en XML, código en JavaScript. Buena API para aplicaciones
-	híbridas. Probado [*]_
-
-.. [*] Songbird, Miro, etc.
-
-Tecnologías Existentes (3)
 --------------------------
 
 * **Google Gears**

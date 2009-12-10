@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+#-*- encoding: utf-8 -*-
+# Created: 10/12/2009 by defo
 
 import sys
 import os
@@ -147,7 +149,14 @@ def drown_bibliography(target, base = LATEX_OUTPUT,):
     f.writelines(biblio)
     f.writelines(rest[-1:])
     f.close()
-
+    
+def insert_thanks_page(target, base):
+    '''
+    Mete la página dando las gracias
+    '''
+    THANKS_CMD = '\\makethankspage'
+    
+    
 
 def main(argv = sys.argv):
     print("HACKING SPHINX OUTPUT... (this should take no time)")

@@ -21,9 +21,26 @@
 %
 \renewcommand{\maketitle}{%
   \begin{titlepage}%
-    \let\footnotesize\small
-    \let\footnoterule\relax
-    \rule{\textwidth}{1pt}%
+  
+    %\includegraphics[width=0.05\textwidth]%
+    %    {../../_static/unpsjb.png}
+    %\caption{
+        {\it\scriptsize\py@HeaderFamily 
+        Universidad Nacional de la Patagonia San Juan Bosco - 
+        Facultad de Ingenier\'ia - Sede Trelew
+        }
+    %}
+    
+    
+    % \includegraphics{../../_static/unpsjb.png}
+    
+    %\begin{flushright}
+    %    \let\footnotesize\small
+    %    \let\footnoterule\relax
+    %\end{flushright}
+    
+    \rule{\textwidth}{1pt} \\%
+    
     \ifsphinxpdfoutput
       \begingroup
       % This \def is required to deal with multi-line authors; it
@@ -37,21 +54,37 @@
       \endgroup
     \fi
     \begin{flushright}%
-      \sphinxlogo%
+      {\em\LARGE\py@HeaderFamily Tesina de Grado \par}
+      {\em Licenciatura en Inform\'atica \par}
       {\rm\Huge\py@HeaderFamily \@title \par}%
-      % {\em\LARGE\py@HeaderFamily \py@release\releaseinfo \par}
+      \rule{\textwidth}{3pt}%
       \vfill
-      {\LARGE\py@HeaderFamily \@author \par}
+      
+      \sphinxlogo%
+      
+      % {\em\LARGE\py@HeaderFamily \py@release\releaseinfo \par}
+      
+      \vfill Alumnos:
+      {\py@HeaderFamily \@author \par}
       \vfill\vfill
+      
+      \vfill Tutor:
+      {\py@HeaderFamily Marta Saenz Lopez \par}
+      \vfill\vfill
+      
       {\large
-       \today \par
+       15 de Diciembre de 2009 \par
        \vfill
-       \py@authoraddress \par
-      }%
+       \textcolor{red}{\sc Versi\'on Preliminar}
+      }
+      %
     \end{flushright}%\par
     \@thanks
   \end{titlepage}%
   \cleardoublepage%
+  
+  \pagebreak
+  
   \setcounter{footnote}{0}%
   \let\thanks\relax\let\maketitle\relax
   %\gdef\@thanks{}\gdef\@author{}\gdef\@title{}
@@ -101,3 +134,14 @@
 %
 \renewcommand*\l@section{\@dottedtocline{1}{1.5em}{2.6em}}
 \renewcommand*\l@subsection{\@dottedtocline{2}{4.1em}{3.5em}}
+
+
+%Gracias
+\newcommand{\makethankspage}{%
+    % Asegurar una nueva página
+    \newpage
+    \thispagestyle{plain}
+    \begin{flushright}
+        {\it De Nahuel}
+    \end{flushright}
+}
