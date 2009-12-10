@@ -15,14 +15,30 @@ Objetivos
 	Coste de licenciemiento nulo y libertad
 	
 * Multiplataforma
-	Windows, Linux, Mac y móviles.
+	Windows, Linux, Mac y móviles (dode exista un browser)
 	
 * Adaptación minima de aplicaciones existentes
-	Integración con Frameworks Web.
+	Integración con un Frameworks Web.
 	
 * Fácil utilización
-	Consistencia y reutilzación de componentes
-	de Framework Web consitente
+    Reutilizar los conceptos/patrones del framework
+    para una rápida asimilación de los desarrolladores.
+	
+
+Careencias del Browser
+----------------------
+
+ * Base de datos
+ 
+ * Servidor Web
+ 
+ * Lenguaje de programación
+ 
+ * Concurrencia
+
+ * Conectividad con el entorno del cliente
+
+
 
 Tecnologías Existentes (1)
 ---------------------------
@@ -35,6 +51,8 @@ Tecnologías Existentes (1)
 * Otras alternativas
     
     AIR, JavaFX, XUL, etc.
+
+
 
 
 Tecnologías Existentes (2)
@@ -51,7 +69,7 @@ Tecnologías Existentes (2)
 			
 	Se está incorporando a HTML 5.
 
-..
+.. comment::
 
     Desarrllo App. Web
     ------------------

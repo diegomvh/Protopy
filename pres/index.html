@@ -307,14 +307,14 @@ ul.auto-toc {
 <meta name="defaultView" content="slideshow" />
 <meta name="controlVis" content="hidden" />
 <!-- style sheet links -->
-<script src="ui/small-black/slides.js" type="text/javascript"></script>
-<link rel="stylesheet" href="ui/small-black/slides.css"
+<script src="ui/small-white/slides.js" type="text/javascript"></script>
+<link rel="stylesheet" href="ui/small-white/slides.css"
       type="text/css" media="projection" id="slideProj" />
-<link rel="stylesheet" href="ui/small-black/outline.css"
+<link rel="stylesheet" href="ui/small-white/outline.css"
       type="text/css" media="screen" id="outlineStyle" />
-<link rel="stylesheet" href="ui/small-black/print.css"
+<link rel="stylesheet" href="ui/small-white/print.css"
       type="text/css" media="print" id="slidePrint" />
-<link rel="stylesheet" href="ui/small-black/opera.css"
+<link rel="stylesheet" href="ui/small-white/opera.css"
       type="text/css" media="projection" id="operaFix" />
 
 <style type="text/css">
@@ -373,35 +373,39 @@ ul.auto-toc {
 </li>
 <li><dl class="first docutils">
 <dt>Multiplataforma</dt>
-<dd><p class="first last">Windows, Linux, Mac y móviles.</p>
+<dd><p class="first last">Windows, Linux, Mac y móviles (dode exista un browser)</p>
 </dd>
 </dl>
 </li>
 <li><dl class="first docutils">
 <dt>Adaptación minima de aplicaciones existentes</dt>
-<dd><p class="first last">Integración con Frameworks Web.</p>
+<dd><p class="first last">Integración con un Frameworks Web.</p>
 </dd>
 </dl>
 </li>
 <li><dl class="first docutils">
 <dt>Fácil utilización</dt>
-<dd><p class="first last">Consistencia y reutilzación de componentes
-de Framework Web consitente</p>
+<dd><p class="first last">Reutilizar los conceptos/patrones del framework para una rápida asimilación de los desarrolladores.</p>
 </dd>
 </dl>
 </li>
 </ul>
 </div>
+<div class="slide" id="careencias-del-browser">
+<h1>Careencias del Browser</h1>
+<blockquote>
+<ul class="simple">
+<li>Base de datos</li>
+<li>Servidor Web</li>
+<li>Lenguaje de programación</li>
+<li>Concurrencia</li>
+<li>Conectividad con el entorno del cliente</li>
+</ul>
+</blockquote>
+</div>
 <div class="slide" id="tecnologias-existentes-1">
 <h1>Tecnologías Existentes (1)</h1>
 <ul>
-<li><dl class="first docutils">
-<dt><strong>AIR</strong> (Adobe Corp.)</dt>
-<dd><p class="first last">Basado en la tecnología Flash (Open Source),
-lengauje de <em>scripting</em> ActionScript 2/3.</p>
-</dd>
-</dl>
-</li>
 <li><dl class="first docutils">
 <dt><strong>Silverlight</strong> (.NET Framework, Microsoft)</dt>
 <dd><p class="first last">Solución muy interesante, pero <strong>cerrada</strong>.
@@ -409,39 +413,47 @@ lengauje de <em>scripting</em> ActionScript 2/3.</p>
 </dd>
 </dl>
 </li>
+<li><p class="first">Otras alternativas</p>
+<blockquote>
+<p>AIR, JavaFX, XUL, etc.</p>
+</blockquote>
+</li>
 </ul>
+<!-- Explicación: -->
+<!-- Silverlight -> * lenguaja a CLI (.NET), Silverlight CLI -> "Applet" -->
+<!-- Silverlight -> DB en el Browser e integración con Winblows -->
+<!-- Silverlight -> Animaciones y definicion de GUI en XML -->
+<!-- AIR -> ActionScript (casi JS2), Animación, DB en el Cliente y Desktop -->
+<!-- JavaFX -> Applet++, Nuevo Lenguaje mix de JS y Java (JS con tipado estático) -->
+<!-- XUL -> Mozilla para aplicaciones -->
+<!-- Todos se van por la tangente, no atacan el problema por -->
+<!-- mercado cautivo, si alguien se le ocurre otra, levante la mano. -->
+<!-- JavaScript recibió una mala reputación por sus implementaciones, pero -->
+<!-- hoy en día es el soporte de lo "2.0". Los profesionales -->
+<!-- Google implementó -->
+</div>
+<div class="slide" id="tecnologias-existentes">
+<h1>Tecnologías Existentes</h1>
+<ul>
+<li><p class="first">JavaScript!</p>
+<blockquote>
+<ul class="simple">
+<li>Objetos</li>
+<li>Expresiones Regulares</li>
+<li>Patrones propios (Module, Closures)</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<!-- No reivnetar nada, Google apostó por JavaScript en la implementación de -->
+<!-- Gears. -->
 </div>
 <div class="slide" id="tecnologias-existentes-2">
 <h1>Tecnologías Existentes (2)</h1>
 <ul>
 <li><dl class="first docutils">
-<dt><strong>JavaFX</strong> (Sun Microsystems)</dt>
-<dd><p class="first last">Applets + Flash = JavaFX, crean lenguaje de <em>scripting</em>
-fuertemente tipado.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt><strong>XUL</strong> (Mozilla Foundation)</dt>
-<dd><p class="first last">GUI en XML, código en JavaScript. Buena API para aplicaciones
-híbridas. Probado <a class="footnote-reference" href="#id2" id="id1">[*]</a></p>
-</dd>
-</dl>
-</li>
-</ul>
-<table class="docutils footnote" frame="void" id="id2" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[*]</a></td><td>Songbird, Miro, etc.</td></tr>
-</tbody>
-</table>
-</div>
-<div class="slide" id="tecnologias-existentes-3">
-<h1>Tecnologías Existentes (3)</h1>
-<ul>
-<li><dl class="first docutils">
 <dt><strong>Google Gears</strong></dt>
-<dd><dl class="first docutils">
+<dd><dl class="first last docutils">
 <dt>Añade al navegador 3 coponentes</dt>
 <dd><ul class="first last">
 <li><dl class="first docutils">
@@ -465,176 +477,231 @@ híbridas. Probado <a class="footnote-reference" href="#id2" id="id1">[*]</a></p
 </ul>
 </dd>
 </dl>
-<p class="last">Se está incorporando a HTML 5.</p>
 </dd>
 </dl>
 </li>
 </ul>
+<!-- Si bien estamos en una era "2.0", las implementaciones de JS de -->
+<!-- los browsers se quedaron en el tiempo. La fundación Mozilla -->
+<!-- que tiene como lenguaje plataforma JS implementó métodos no estandard -->
+<!-- como palaeativo a la ausencia de ES5. -->
+<!-- Google creó su compilador de JS para implementar sus aplicaciones web. -->
+<!-- Cuando implementaban Wave para IE, se dieron cuenta que por más esfuerzos -->
+<!-- que haga redmond, nunca va a ser un navegador para "aplicaciones" web. -->
+<!-- Crearon un frame para IE. -->
+<!-- El problema de los estándares no se resume a JavaScript, sino también a -->
+<!-- DOM y HTML5, SVG, etc. Lo que se suele hacer es usar librerías que enmascaran -->
+<!-- la implementaciones defectuosas en una sintaxis más bonita. jQurty, Protype, -->
+<!-- Dojo, Mochikit. -->
+<!-- Hablar de Jhon Reisg, Douglas Crockford, patrones de JavaScript. -->
+<!-- Entonces nos quedamos con SpiderMonkey. -->
 </div>
-<div class="slide" id="desarrllo-app-web">
-<h1>Desarrllo App. Web</h1>
-<blockquote>
-<ol class="arabic simple">
-<li><em>CGI</em> (1993): Programas que reciben cadenas (HTTP) y devuelven cadenas (HTML)</li>
-<li><em>HTML aumentado</em> (1995-1998): Reune código HTML y SQL (PHP, ASP, JSP, etc.)</li>
-</ol>
-</blockquote>
+<div class="slide" id="spidermonkey">
+<h1>SpiderMonkey</h1>
+<ul>
+<li><p class="first">Generador:</p>
+<pre class="literal-block">
+var mi_gen = function (numero) {
+    while (numero)
+        yield numero --;
+}
+for (var x in mi_gen(100))
+    console.log(x)
+</pre>
+</li>
+</ul>
+<dl class="docutils">
+<dt>Utilidad:</dt>
+<dd>Recuperación perezosa de datos</dd>
+</dl>
 </div>
-<div class="slide" id="desarrllo-app-web-2">
-<h1>Desarrllo App. Web (2)</h1>
+<div class="slide" id="id1">
+<h1>SpiderMonkey</h1>
+<ul>
+<li><p class="first">Orientación a objetos:</p>
 <blockquote>
-<ol class="arabic" start="3">
-<li><dl class="first docutils">
-<dt>Servidor de aplicaciones - Primeros Frameowkrs MVC (1998): <strong>J2EE</strong></dt>
-<dd><p class="first last">Modelo (Base de Datos), Vista (HTML), Controlador(URL que activan funciones o
-métodos)</p>
-</dd>
-</dl>
-</li>
-<li><p class="first">Frameowkrs filosofía Rails (2004): Simplificación de MVC, lenguajes de scripting, metaprogramación.</p>
-</li>
-</ol>
+<p><tt class="docutils literal">__noSuchMethod__</tt></p>
+<p><tt class="docutils literal">__defineGetter__</tt></p>
+<p><tt class="docutils literal">__defineSetter__</tt></p>
 </blockquote>
-</div>
-<div class="slide" id="desarrllo-app-web-cliente">
-<h1>Desarrllo App. Web Cliente</h1>
-<blockquote>
-<ol class="arabic">
-<li><dl class="first docutils">
-<dt>JavaScript y DOM.</dt>
-<dd><p class="first last">Mecanismos tradicionales, ante falta de acuerdo en las implemetnacinoes, la W3C especificó estándares.</p>
-</dd>
-</dl>
 </li>
-<li><dl class="first docutils">
-<dt>AJAX</dt>
-<dd><p class="first last">Peticiones asincrónicas que no recargan la página.</p>
-</dd>
-</dl>
+<li><p class="first">Azucar sintáctico:</p>
+<pre class="literal-block">
+var [nombre, apellido] = [&quot;Waldo&quot;, &quot;Roberts&quot;];
+</pre>
 </li>
-</ol>
-</blockquote>
-</div>
-<div class="slide" id="desarrllo-app-web-cliente-2">
-<h1>Desarrllo App. Web Cliente (2)</h1>
-<blockquote>
-<ol class="arabic" start="3">
-<li><dl class="first docutils">
-<dt>Librerías de JavaScript</dt>
-<dd><p class="first last">Mercado de navegadores muy grande, implementaciones defectuosas y bugs: API de abstracción (a.k.a librerías).
-Ej: jQuery, Prototype, Dojo, YUI, MooTools, MochiKit</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt>HTML 5</dt>
-<dd><p class="first last">Aplicaciones Offline soportadas nativamente. Aún en borrador.</p>
-</dd>
-</dl>
-</li>
-</ol>
-</blockquote>
+</ul>
+<!-- Nos vamos al servidor, nuestro objetivo es "desconctar" -->
+<!-- CGI, lean WSGI del doc para ver que es simple ;) -->
 </div>
 <div class="slide" id="django">
 <h1>Django</h1>
-<dl class="docutils">
-<dt>Framework MVC:</dt>
-<dd><ul class="first last simple">
-<li>El <em>modelo</em> se define en el lenguaje Python</li>
-<li>Las <em>vistas</em> son funciones y se asocian con URLs mediante expresiones regulares (<em>controlador</em>)</li>
-<li>Las vistas delegan en los templates la genración de HTML</li>
-</ul>
+<ul>
+<li><p class="first">Reutilización</p>
+</li>
+<li><dl class="first docutils">
+<dt>Simple</dt>
+<dd><p class="first last">Escrito en Python.
+Sin XML/YAML/INI/&lt;ponga su markup aquí&gt;
+Pcas capas M T V.</p>
 </dd>
 </dl>
-</div>
-<div class="slide" id="django-workflow">
-<h1>Django Workflow</h1>
-<blockquote>
-<ul class="simple">
-<li>El requiere una URL: <tt class="docutils literal">/</tt>, <tt class="docutils literal">/ventas</tt>, <tt class="docutils literal">/personal/agente/1/</tt>, etc.</li>
-<li>La U</li>
+</li>
+<li><dl class="first docutils">
+<dt>DRY</dt>
+<dd><p class="first last">Vistar genéricas, ContetType framework.</p>
+</dd>
+</dl>
+</li>
 </ul>
-</blockquote>
+</div>
+<div class="slide" id="django-2">
+<h1>Django (2)</h1>
+<ul>
+<li><dl class="first docutils">
+<dt>Con baterías incluidas</dt>
+<dd><p class="first last">Adminsitración, Geolocalización.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Open Source</dt>
+<dd><p class="first last">Gran comunidad, una fundación, varios diarios utilziandolo.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Extensible</dt>
+<dd><p class="first last">Middlewares (transversalidad).</p>
+</dd>
+</dl>
+</li>
+</ul>
 </div>
 <div class="slide" id="django-proyecto">
 <h1>Django Proyecto</h1>
-<dl class="docutils">
-<dt>Un proyecto django consta de 3 archivos (módulos en Python):</dt>
-<dd><ul class="first last">
-<li><dl class="first docutils">
-<dt><tt class="docutils literal">settings.py</tt></dt>
-<dd><p class="first last">Configuración global: Base de Datos, Directorio de Plantillas, Aplicaciones Instaladas</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt><tt class="docutils literal">manage.py</tt></dt>
-<dd><p class="first last">Recibe como argumentos comandos para manejo del proyecto.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt><tt class="docutils literal">urls.py</tt></dt>
-<dd><p class="first last">Mapeo inicial de URLs en vistas (funciones planas).</p>
-</dd>
-</dl>
-</li>
+<p>Un paquete con:</p>
+<blockquote>
+<ul class="simple">
+<li><tt class="docutils literal">&quot;settins.py&quot;</tt> configuración</li>
+<li><tt class="docutils literal">&quot;urls.py&quot;</tt> mapeo de URLs en funcionalidad</li>
+<li><tt class="docutils literal">&quot;__init__.py&quot;</tt> :) paquete</li>
 </ul>
-</dd>
-</dl>
+</blockquote>
 </div>
 <div class="slide" id="django-aplicacion">
 <h1>Django Aplicación</h1>
-<dl class="docutils">
-<dt>Una aplicación en Django es un paquete que consta de 3 módulos</dt>
-<dd><ul class="first last">
-<li><dl class="first docutils">
-<dt><tt class="docutils literal">views.py</tt></dt>
-<dd><p class="first last">Definición de las funciones que manejan las URLs, las funciones
-reciben un <tt class="docutils literal">HTTPRequest</tt> y datos de la URL y devuelven <tt class="docutils literal">HTTPResponse</tt></p>
-</dd>
-</dl>
+<p>Un paquete dentro del proyecto con:</p>
+<blockquote>
+<ul class="simple">
+<li><tt class="docutils literal">&quot;models.py&quot;</tt> deficicón en Python de la estrcutra de la DB.</li>
+<li><tt class="docutils literal">&quot;views.py&quot;</tt> funciones que atienden en URLs. <strong>REGEX!</strong></li>
+<li><tt class="docutils literal">&quot;urls.py&quot;</tt> (opcional, para modularidad)</li>
+</ul>
+</blockquote>
+</div>
+<div class="slide" id="django-templates">
+<h1>Django Templates</h1>
+<p>Los templates son archivos de texto que se rellenan con
+las salidas de las vistas:</p>
+<blockquote>
+<ul>
+<li><p class="first">Poca lógica</p>
+<blockquote>
+<p><tt class="docutils literal">for</tt>, <tt class="docutils literal">if</tt>, formateo</p>
+</blockquote>
 </li>
-<li><dl class="first docutils">
-<dt><tt class="docutils literal">models.py</tt></dt>
-<dd><p class="first last">Definción de las entidades de la base de datos mediante una API de ORM.</p>
-</dd>
-</dl>
+<li><p class="first">Modularidad</p>
+<blockquote>
+<p>Herencia e inclusión</p>
+</blockquote>
 </li>
-<li><p class="first"><tt class="docutils literal">urls.py</tt></p>
+<li><p class="first">Template Tags</p>
+<blockquote>
+<p>Funcionalidad extra en funciones planas</p>
+</blockquote>
 </li>
 </ul>
-</dd>
-</dl>
+</blockquote>
 </div>
-<div class="slide" id="por-que-javascript">
-<h1>Por que JavaScript</h1>
+<div class="slide" id="ciclo-del-request">
+<h1>Ciclo del Request</h1>
+<blockquote>
+Gráfico</blockquote>
+<!-- Como implementamos este grandioso framework en el cliente?? -->
+<!-- No tenemos Python... -->
+<!-- Ventaja: Si cambia DOM con HTML5, solo hace falta adaptar Protopy, las -->
+<!-- aplicaciones deberían seguir corriendo :) -->
 </div>
-<div class="slide" id="componentes-conceptuales">
-<h1>Componentes conceptuales</h1>
+<div class="slide" id="protopy">
+<h1>Protopy</h1>
+<p>Python on JavaScript 1.7</p>
+<blockquote>
+<ul>
+<li><p class="first">Módulos:</p>
+<pre class="literal-block">
+require('pepe.x')
+</pre>
+</li>
+</ul>
+</blockquote>
+<!-- Hacer un comentario sobre el ciclo de trabajo normal con javascript y -->
+<!-- html, y como los módulos y la función require camba este enfoque. -->
+<!-- Cada módulo define su propio espacio de nombres. -->
+<!-- Cada módulo publica una interfaz. -->
 </div>
-<div class="slide" id="aplicaccion-final">
-<h1>Aplicaccion Final</h1>
+<div class="slide" id="protopy-oo">
+<h1>Protopy OO</h1>
+<blockquote>
+<ul class="simple">
+<li>OO Pythonico</li>
+<li>API de DOM, Eventos, API pythonica.</li>
+<li>Gears</li>
+</ul>
+</blockquote>
+</div>
+<div class="slide" id="protopy-estructura">
+<h1>Protopy Estructura</h1>
+<blockquote>
+Gráfico</blockquote>
+</div>
+<div class="slide" id="doff">
+<h1>Doff</h1>
+<p>Django on Protopy -&gt; <strong>Djano Offline</strong> :)</p>
+<blockquote>
+<ul class="simple">
+<li>DB API</li>
+<li>Templates</li>
+<li>Proyecto desconectado</li>
+</ul>
+</blockquote>
+</div>
+<div class="slide" id="doff-estructura">
+<h1>Doff Estructura</h1>
+<p>Gráfico</p>
+</div>
+<div class="slide" id="offline">
+<h1>Offline</h1>
+<p>Soporte en el servidor para aplicación desconectada.</p>
+<blockquote>
+<ul class="simple">
+<li>Instalación</li>
+<li>Seguridad</li>
+<li>Sincronización</li>
+</ul>
+</blockquote>
+<!-- SpiderMonkey -> Getters, Setters, noSuchMethod -->
+<!-- Iteradores, poner un ejemplo (poner ejemplo) -->
 </div>
 <div class="slide" id="demo">
 <h1>Demo</h1>
 </div>
-<div class="slide" id="trabajo-invertido">
-<h1>Trabajo Invertido</h1>
-<p>Estas son algunas métricas del trabajo realizado:</p>
-<blockquote>
-<ul class="simple">
-<li>2700 líneas de código Python en la extensión <tt class="docutils literal">offline</tt></li>
-<li>26400 lineas de código JavaScript</li>
-<li>700 revisiones en HG</li>
-<li>Inumerables búsquedas en <tt class="docutils literal">Google</tt> ;)</li>
-</ul>
-</blockquote>
+<div class="slide" id="lineas-futuras">
+<h1>Lineas Futuras</h1>
 </div>
-<div class="slide" id="the-end">
-<h1>THE END</h1>
-<blockquote>
-<strong>¡¡¡Muchas Gracias!!!</strong></blockquote>
+<div class="slide" id="fin">
+<h1>FIN</h1>
+<p>¡Muchas Gracias!</p>
 </div>
 </div>
 </body>
