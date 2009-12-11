@@ -276,9 +276,6 @@ por cada sitio remoto que se desee crear en el proyecto.
     
     Pasos para la migración de un proyecto   
 
-.. note:: Revisar la figura para que concuerde con los pasos
-
-.. note: NOTA DE MARTA, ACA VA LA FIGURA 7.1
 
 Instalación y Configuración de la Aplicación offline 
 ----------------------------------------------------

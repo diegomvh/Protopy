@@ -221,7 +221,9 @@ latex_preamble = ur'''
     \fancyfoot[LO,LE]{{\sffamily\bfseries\textbf{\rightmark}}}
     % Header
     \fancyhead[LE,LO]{{\sffamily\bfseries\textbf{\leftmark}}}
-    \fancyhead[RE,RO]{{ \textit{Defossé, van Haaster} }}
+    % Se rompe
+    
+    %\fancyhead[RE,RO]{{ \textit{Defossé, van Haaster} }}
     
     \renewcommand{\headrulewidth}{0.4pt}
     \renewcommand{\footrulewidth}{0.4pt}
