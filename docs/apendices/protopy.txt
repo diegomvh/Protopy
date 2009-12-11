@@ -39,7 +39,7 @@ en el servidor y posteriormente es obtenido y ejecutado en el cliente.
         get_texto: get_texto
     });
 
-.. code-block:: javascript
+.. code-block:: python
 
     >>> require('tests.module')
     >>> module.get_texto()
@@ -155,7 +155,9 @@ en él mismo.
                     throw new Exception(this.especie + ' no camina');
                 },
                 reptar: function() {
-                    console.log(this.nombre + ' la ' + this.especie.toLowerCase() + ' esta reptando');
+                    console.log(this.nombre + ' la ' + 
+                    	this.especie.toLowerCase() + 
+                    	' esta reptando');
                 }
             });
 
@@ -163,7 +165,7 @@ en él mismo.
             var ballena = new Acuatico('Ballena');
             var rana = new Anfibio('Rana');
 
-        .. code-block:: javascript
+        .. code-block:: python
 
             >>> doris
             window.Piton especie=Piton orden=0 nombre=Doris __name__=Piton
@@ -190,7 +192,7 @@ en él mismo.
         con el árbol DOM. Si más de un argumento es pasado, la forma de retorno es
         mediante un arreglo, permitiendo así la iteración sobre los mismos.
 
-    .. code-block:: javascript
+    .. code-block:: python
 
         >>> $('content')
         <div id="content">
@@ -205,11 +207,12 @@ en él mismo.
         Recupera elementos del árbol DOM, basando las reglas de selección en los
         atributos de estilo o CSS.
 
-    .. code-block:: javascript
+    .. code-block:: python
 
         >>> $$('div')
-        [div#wrap, div#top, div#content, div.header, div.breadcrumbs, div.middle, div,
-        div.right, div#clear, div#footer, div#toolbar]
+        [div#wrap, div#top, div#content, div.header, 
+        	div.breadcrumbs, div.middle, div,
+        	div.right, div#clear, div#footer, div#toolbar]
         >>> $$('div#toolbar')
         [div#toolbar]
         >>> $$('div#toolbar li')
@@ -219,7 +222,8 @@ en él mismo.
         >>> $$('a:not([href~=google])')
         [a add_post, a add_tag, a removedb, a syncdb]
         >>> $$('a:not([href=google])')
-        [a add_post, a add_tag, a#google www.google.com, a removedb, a syncdb]
+        [a add_post, a add_tag, 
+        	a#google www.google.com, a removedb, a syncdb]
         >>> $$('div:empty')
         [div#logger.panel, div#dbquery.panel, div#clear, div#top]
 
@@ -229,7 +233,7 @@ en él mismo.
         continuación, copiando cada uno de los atributos correspondientes. El objeto
         destino es retornado modificado.
 
-    .. code-block:: javascript
+    .. code-block:: python
 
         >>> a = {perro: 4}
         >>> b = {gato: 4}
@@ -289,28 +293,36 @@ en él mismo.
             print('Argumentos pasados por objeto: %o', todos.kwargs);
         }
 
-        >>> unaFuncion('uno', 2, null, 3, 4, 5, {'nombre': 'Diego', 'apellido': 'van Haaster'})
+    .. code-block:: python
+
+        >>> unaFuncion('uno', 2, null, 3, 4, 5, {'nombre': 'Diego', 
+        	'apellido': 'van Haaster'})
         Argumento 1: uno o uno o uno
         Argumento 2: 2 o 2 o 2
         Argumento 3: null o null o null
         Otros argumentos: 3,4,5
-        Argumentos pasados por objeto: Object nombre=Diego apellido=van Haaster
-        >>> unaFuncion('uno', 2, null, {'nombre': 'Diego', 'apellido': 'van Haaster'})
-
+        Argumentos pasados por objeto: Object nombre=Diego 
+        	apellido=van Haaster
+        >>> unaFuncion('uno', 2, null, {'nombre': 'Diego', 
+        	'apellido': 'van Haaster'})
         Otros argumentos:
-        Argumentos pasados por objeto: Object nombre=Diego apellido=van Haaster
+        Argumentos pasados por objeto: Object nombre=Diego 
+        	apellido=van Haaster
         >>> unaFuncion('uno', 2, null, 3, 2, 3, 4)
-
         Otros argumentos: 3,2,3,4
         Argumentos pasados por objeto: Object
-        >>> otraFuncion('uno', 2, {'nombre': 'Diego', 'apellido': 'van Haaster'})
+        >>> otraFuncion('uno', 2, {'nombre': 'Diego', 
+        	'apellido': 'van Haaster'})
         Argumento 1: uno o uno o uno
         Otros argumentos: 2
-        Argumentos pasados por objeto: Object def1=1 def2=2 nombre=Diego apellido=van Haaster
-        >>> otraFuncion('uno', 2, {'def1': 'Diego', 'apellido': 'van Haaster'})
+        Argumentos pasados por objeto: Object def1=1 def2=2
+        	nombre=Diego apellido=van Haaster
+        >>> otraFuncion('uno', 2, {'def1': 'Diego', 
+        	'apellido': 'van Haaster'})
         Argumento 1: uno o uno o uno
         Otros argumentos: 2
-        Argumentos pasados por objeto: Object def1=Diego def2=2 apellido=van Haaster
+        Argumentos pasados por objeto: Object def1=Diego 
+        	def2=2 apellido=van Haaster
     
     * Template(template, pattern) -> Template
 
@@ -321,7 +333,8 @@ en él mismo.
     .. code-block:: javascript
 
         // Se crea un Template
-       var myTemplate = new Template('El show televisivo #{title} fue creado por #{author}.');
+       var myTemplate = new Template('El show televisivo ' + 
+       		'#{title} fue creado por #{author}.');
 
        // los datos para dar formato al template
        var show = {
@@ -333,7 +346,6 @@ en él mismo.
        // Se evalúa el template
        >>> myTemplate.evaluate(show);
        "The TV show The Simpsons was created by Matt Groening.
-
 
     * Dict(object) -> Dict
         
@@ -355,10 +367,11 @@ en él mismo.
         >>> dic.get(obj)
         10
         >>> dic.items()
-        [["db", 5], ["template", 2], ["core", 9], [Object un=objeto, 10], [[1, 2, 3, 2
-        more...], 50]]
+        [["db", 5], ["template", 2], ["core", 9], 
+        	[Object un=objeto, 10], [[1, 2, 3, 2 more...], 50]]
         >>> dic.keys()
-        ["db", "template", "core", Object un=objeto, [1, 2, 3, 2 more...]]
+        ["db", "template", "core", Object un=objeto, 
+        	[1, 2, 3, 2 more...]]
         >>> dic.values()
         [5, 2, 9, 10, 50]
 
@@ -572,10 +585,12 @@ en él mismo.
         >>> zip([1,2,3,4,5,6], ['a','b','c','d','e','f','g','h'])
         [[1, "a"], [2, "b"], [3, "c"], [4, "d"], [5, "e"], [6, "f"]]
         >>> zip([1,2,3,4,5,6], ['a','b','c','d'])
-        [[1, "a"], [2, "b"], [3, "c"], [4, "d"], [5, undefined], [6, undefined]]
-        >>> zip([1,2,3,4,5,6], ['a','b','c','d','e','f'], [10,11,12,13,14,15,16])
-        [[1, "a", 10], [2, "b", 11], [3, "c", 12], [4, "d", 13], [5, "e", 14], [6, "f",
-        15]]
+        [[1, "a"], [2, "b"], [3, "c"], [4, "d"], 
+        	[5, undefined], [6, undefined]]
+        >>> zip([1,2,3,4,5,6], ['a','b','c','d','e','f'], 
+        	[10,11,12,13,14,15,16])
+        [[1, "a", 10], [2, "b", 11], [3, "c", 12], 
+        	[4, "d", 13], [5, "e", 14], [6, "f", 15]]
 
 sys
 ~~~
@@ -596,8 +611,7 @@ que resultan de utilidad para trabajar con el ambiente.
             * WebKit Si el navegador es AppleWebKit.
             * Geck Si el navegador es Gecko.
             * MobileSafari Si el navegador es Apple Mobile Safari.
-            * features Algunas herramientas que el navegador proveea, por ejemplo:
-                XPath, un selector de css, y otras extensiones.
+            * features Algunas herramientas que el navegador proveea, por ejemplo: XPath, un selector de css, y otras extensiones.
         
     * register_path(module, path)
 
@@ -726,11 +740,12 @@ simplificar la utilización del objeto ``XMLHttpRequest``.
     .. code-block:: javascript
     
 	    >>> require('ajax')
-		>>> ajax.toQueryString({numero:1, cadena:'Hola mundo', fecha: new Date(), arreglo: [1,2,3,4]})
-		"numero=1&cadena=Hola%20mundo&fecha=1258839800956&arreglo=1&arreglo=2&arreglo=3&arreglo=4"
-		>>> var query = ajax.toQueryString({numero:1, cadena:'Hola mundo'})
+		>>> ajax.toQueryString({numero:1, cadena:'Hola', 
+			arreglo: [1,2]})
+		"numero=1&cadena=Hola&arreglo=1&arreglo=2"
+		>>> var query = ajax.toQueryString({numero:1, cadena:'Hola'})
 		>>> ajax.toQueryParams(query)
-		{ numero="1" cadena="Hola mundo"}
+		{ numero="1" cadena="Hola"}
     
 dom
 ~~~
@@ -907,7 +922,8 @@ Extensión sobre los elementos del DOM, simplificando trabajos comunes de desarr
         >>> $('PostForm').select('input')
         [input#id_title, input guardar]
         >>> $('content').select('div')
-        [div.header, div.breadcrumbs, div.middle, div, div.right, div#clear]
+        [div.header, div.breadcrumbs, div.middle, 
+        	div, div.right, div#clear]
         >>> $('content').select('div.middle')
         [div.middle]
 
@@ -1076,16 +1092,20 @@ mientras que en el cliente, la forma de utilizar el RPC es:
     >>> require('rpc')
     >>> funcs = new rpc.ServiceProxy('rpc/test', {asynchronous: false})
     >>> funcs.system.listMethods()
-    ["add", "pow", "system.listMethods", "system.methodHelp", "system.methodSignature"]
+    ["add", "pow", "system.listMethods", 
+    	"system.methodHelp", "system.methodSignature"]
     >>> for each (m in funcs.system.listMethods())
                     print(m + ': ' + funcs.system.methodHelp(m));
     add: add(2,3) => 5
     pow: pow(x, y[, z]) => number
-    system.listMethods: system.listMethods() => ['add', 'subtract', 'multiple']
+    system.listMethods: system.listMethods() => 
+    	['add', 'subtract', 'multiple']
         Returns a list of the methods supported by the server.
-    system.methodHelp: system.methodHelp('add') => "Adds two integers together"
+    system.methodHelp: system.methodHelp('add') => 
+    	"Adds two integers together"
         Returns a string containing documentation for the specified method.
-    system.methodSignature: system.methodSignature('add') => [double, int, int]
+    system.methodSignature: system.methodSignature('add') => 
+    	[double, int, int]
         Returns a list describing the signature of the method. In the above example,
     the add method takes two integers as arguments and returns a double result.
         This server does NOT support system.methodSignature.

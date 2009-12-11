@@ -22,7 +22,8 @@ de la base de datos que define.
         .. code-block:: javascript
 
             var Ejemplo = type('Ejemplo', [ models.Model ], {
-                var = new models.IntegerField() // 'var' es una palabra reservada!
+            	// 'var' es una palabra reservada!
+                var = new models.IntegerField() 
             });
 
         2. Un nombre de campo no puede contener dos o más guiones bajos
@@ -32,7 +33,8 @@ de la base de datos que define.
         .. code-block:: javascript
 
             var Ejemplo = type('Ejemplo', [models.Model], {
-                foo__bar = new models.IntegerField() // 'foo__bar' tiene dos guiones bajos!
+                // 'foo__bar' tiene dos guiones bajos!
+                foo__bar = new models.IntegerField()
             });
 
     Estas limitaciones se pueden manejar sin mayores problemas, dado que el
@@ -90,11 +92,11 @@ como se muestra a continuación:
    
     * - **Argumento**
       - **Descripción**
-    * - ``auto_now``
+    * - auto_now
       - Asigna automáticamente al campo un valor igual al momento en que se salva el objeto. Es útil para las
         marcas de tiempo "última modificación". Observar que *siempre* se usa la fecha actual; no es un
         valor por omisión que se pueda sobreescribir.
-    * - ``auto_now_add``
+    * - auto_now_add
       - Asigna automáticamente al campo un valor igual al momento en que se crea el objeto. Es útil para la
         creación de marcas de tiempo. Observar que *siempre* se usa la fecha actual; no es un valor
         por omisión que se pueda sobreescribir.
@@ -121,9 +123,9 @@ Un número de punto flotante, representado en JavaScript por una instancia de
    
     * - **Argumento**
       - **Descripción**
-    * - ``max_digits``
+    * - max_digits
       - La cantidad máxima de dígitos permitidos en el número.
-    * - ``decimal_places``
+    * - decimal_places
       - La cantidad de posiciones decimales a almacenar con el número.
 
 Por ejemplo, para almacenar números hasta 999 con una resolución de dos
@@ -273,7 +275,8 @@ La lista de opciones puede ser definida también como parte del modelo:
                 ['M', 'Male'],
                 ['F', 'Female']
             ],
-            gender: new models.CharField({ max_length:1, choices:GENDER_CHOICES}),
+            gender: new models.CharField({ max_length:1, 
+            			choices:GENDER_CHOICES}),
             });
 
 o fuera del modelo:
@@ -285,7 +288,8 @@ o fuera del modelo:
                 ['F', 'Female']
             ];
         var Foo = type ('Foo', [models.Model], {
-            gender: new models.CharField({ max_length:1, choices:GENDER_CHOICES}),
+            gender: new models.CharField({ max_length:1, 
+            			choices:GENDER_CHOICES}),
             });
 
 Para cada campo del modelo que tenga establecidas ``choices``, se agregará
@@ -400,7 +404,8 @@ En este ejemplo, el nombre descriptivo es ``"Person's first name"``:
 
     .. code-block:: javascript
 
-        first_name = new models.CharField("Person's first name", { max_length: 30 })
+        first_name = new models.CharField("Person's first name", 
+        	{ max_length: 30 })
 
 En este ejemplo, el nombre descriptivo es ``"first name"``:
 
@@ -414,9 +419,12 @@ primer argumento sea una clase del modelo, en este caso hay que usar
 
     .. code-block:: javascript
 
-        poll = new models.ForeignKey(Poll, {verbose_name: "the related poll"}),
-        sites = new models.ManyToManyField(Site, {verbose_name: "list of sites"}),
-        place = new models.OneToOneField(Place, {verbose_name: "related place"}),
+        poll = new models.ForeignKey(Poll, 
+        		{verbose_name: "the related poll"}),
+        sites = new models.ManyToManyField(Site, 
+        		{verbose_name: "list of sites"}),
+        place = new models.OneToOneField(Place, 
+        		{verbose_name: "related place"}),
         ...
 
 La convención es no capitalizar la primera letra del ``verbose_name`` ya que éstas son pasadas a
@@ -509,9 +517,9 @@ debe trabajar la relación (ver la tabla). Todos son opcionales.
    
     * - **Argumento**
       - **Descripción**
-    * - ``related_name``
+    * - related_name
       - El nombre a utilizar para la relación desde el objeto relacionado de hacia este objeto.
-    * - ``to_field``
+    * - to_field
       -  El campo en el objeto relacionado con el cual se establece la relación. Por omisión, Doff usa la clave primaria del
          objeto relacionado.
 
@@ -563,15 +571,17 @@ debe trabajar la relación (ver la tabla). Todos son opcionales.
    
     * - **Argumento**
       - **Descripción**
-    * - ``related_name``
+    * - related_name
       - El nombre a utilizar para la relación desde el objeto relacionado hacia este objeto. 
-    * - ``symmetrical``
+    * - symmetrical
       - Sólo utilizado en la definición de ``ManyToManyField`` sobre sí mismo. Con el siguiente modelo:
     
         .. code-block:: javascript
 
-            var Person = type('Person', [ models.Model ], {
-                friends: new models.ManyToManyField("this")
+            var Person = type('Person', 
+            		[ models.Model ], {
+                friends: 
+                	new models.ManyToManyField("this")
             });
 
         cuando Doff lo procesa, identifica que tiene un ``ManyToManyField`` sobre sí mismo, y como resultado, no
@@ -581,7 +591,7 @@ debe trabajar la relación (ver la tabla). Todos son opcionales.
         Si no se desea la simetría en las relaciones ``ManyToMany`` con ``this``, se debe establecer ``symmetrical`` en ``false``. Ésto
         forzará a Doff a agregar el descriptor para la relación inversa, permitiendo que las relaciones ``ManyToMany`` sean
         asimétricas.
-    * - ``db_table``
+    * - db_table
       - El nombre de la tabla a crear para almacenar los datos de la relación muchos-a-muchos. Si no se provee, Doff asumirá
         un nombre por omisión basado en los nombres de las dos tablas a ser vinculadas.
 
@@ -852,7 +862,8 @@ atributo extra ``num_responses`` que es el resultado de una consulta agregada:
                     ORDER BY 3 DESC");
                 var result_list = [];
                 for each (var row in cursor.fetchall()) {
-                    var p = new this.model({ id: row[0], question: row[1], poll_date: row[2]});
+                    var p = new this.model({ id: row[0], 
+                    	question: row[1], poll_date: row[2]});
                     p.num_responses = row[3];
                     result_list.append(p);
                 }
@@ -907,7 +918,8 @@ los objetos, y otro que retorna sólo los libros de Roald Dahl:
         // First, define the Manager subclass.
         var DahlBookManager = type('DahlBookManager', [ models.Manager ], {
             get_query_set: function() {
-                return super(Manager, this).get_query_set().filter({ author: 'Roald Dahl' });
+                return super(Manager, this).get_query_set().filter(
+                	{ author: 'Roald Dahl' });
         });
 
         // Then hook it into the Book model explicitly.
@@ -916,7 +928,7 @@ los objetos, y otro que retorna sólo los libros de Roald Dahl:
             author: new models.CharField({ max_length: 50 }),
 
             objects: new models.Manager(), // The default manager.
-            dahl_objects: new DahlBookManager() // The Dahl-specific manager.
+            dahl_objects: new DahlBookManager() // The Dahl-specific manager
         });
 
 Con este modelo de ejemplo, ``Book.objects.all()`` retornará todos los libros
@@ -953,7 +965,8 @@ hay un ejemplo:
         var Person = type('Person', [ models.Model ], {
             first_name: new models.CharField({ max_length: 50 }),
             last_name: new models.CharField({ max_length: 50 }),
-            sex: new models.CharField({ max_length: 1, choices: [['M', 'Male'], ['F', 'Female']] }),
+            sex: new models.CharField({ max_length: 1, choices: 
+            	[['M', 'Male'], ['F', 'Female']] }),
             people: new models.Manager(),
             men: new MaleManager(),
             women: new FemaleManager(),
@@ -979,7 +992,7 @@ pensados para hacer cosas a nivel de tabla, los métodos de modelo deben actuar 
 una instancia particular del modelo.
 
 Es una técnica valiosa para mantener la lógica del negocio en un sólo
-lugar: el modelo. Por ejemplo, este modelo tiene algunos métodos personalizados::
+lugar: el modelo. Por ejemplo, este modelo tiene algunos métodos personalizados:
 
     .. code-block:: javascript
 
@@ -992,7 +1005,8 @@ lugar: el modelo. Por ejemplo, este modelo tiene algunos métodos personalizados
         
             baby_boomer_status: function() {
                 /*Returns the person's baby-boomer status.*/
-                if (Date(1945, 8, 1) <= this.birth_date <= Date(1964, 12, 31))
+                if (Date(1945, 8, 1) <= 
+                	this.birth_date <= Date(1964, 12, 31))
                     return "Baby boomer";
                 if (this.birth_date < Date(1945, 8, 1))
                     return "Pre-boomer";
@@ -1079,7 +1093,8 @@ necesita que suceda algo cuando se guarda un objeto, por ejemplo:
 
             save: function() {
                 do_something();
-                super(models.Model, this).save(); // Call the "real" save() method.
+                // Call the "real" save() method.
+                super(models.Model, this).save();
                 do_something_else();
             }
         });
@@ -1096,6 +1111,7 @@ También se puede evitar el guardado:
                 if (this.name == "Yoko Ono's blog")
                     return; // Yoko shall never have her own blog!
                 else
-                    super(models.Model, this).save(); // Call the "real" save() method
+                	// Call the "real" save() method
+                    super(models.Model, this).save();
             }
         });

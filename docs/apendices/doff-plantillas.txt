@@ -92,7 +92,9 @@ He aquí un ejemplo::
 
     {% firstof var1 var2 var3 %}
 
-Equivale a::
+Equivale a:
+
+.. code-block:: html
 
     {% if var1 %}
         {{ var1 }}
@@ -134,19 +136,19 @@ para el nombre ``counter``, el acceso se realiza a través de
    
     * - **Variable**
       - **Descripción**
-    * - ``forloop.counter``
+    * - forloop.counter
       - El número de vuelta o iteración actual (usando un índice basado en 1).
-    * - ``forloop.counter0``
+    * - forloop.counter0
       - El número de vuelta o iteración actual (usando un índice basado en 0).
-    * - ``forloop.revcounter``
+    * - forloop.revcounter
       - El número de vuelta o iteración contando desde el fin del bucle  (usando un índice basado en 1).
-    * - ``forloop.revcounter0``
+    * - forloop.revcounter0
       - El número de vuelta o iteración contando desde el fin del bucle  (usando un índice basado en 0).
-    * - ``forloop.first``
+    * - forloop.first
       - ``true`` si es la primera iteración.
-    * - ``forloop.last``
+    * - forloop.last
       - ``true`` si es la última iteración.
-    * - ``forloop.parentloop``
+    * - forloop.parentloop
       - Para bucles anidados, es una referencia al bucle externo.
 
 if
@@ -154,7 +156,9 @@ if
 
 La etiqueta ``{% if %}`` evalúa una variable. Si dicha variable se evalúa como
 una expresión "verdadera" (es decir, que el valor exista, no esté vacía y no
-es el valor booleano ``false``), se muestra el contenido del bloque::
+es el valor booleano ``false``), se muestra el contenido del bloque:
+
+.. code-block:: html
 
     {% if athlete_list %}
         Number of athletes: {{ athlete_list|length }}
@@ -171,7 +175,9 @@ caso de que la evaluación de falso.
 
 Las etiquetas ``if`` pueden usar operadores lógicos como
 ``and``, ``or`` y ``not`` para evaluar expresiones más
-complejas::
+complejas:
+
+.. code-block:: html
 
     {% if athlete_list and coach_list %}
         Both athletes and coaches are available.
@@ -203,7 +209,9 @@ el siguiente código es inválido::
     {% if athlete_list and coach_list or cheerleader_list %}
 
 Para combinar operadores ``and`` y ``or``, se pueden usar sentencias
-``if`` anidadas, como en el siguiente ejemplo::
+``if`` anidadas, como en el siguiente ejemplo:
+
+.. code-block:: html
 
     {% if athlete_list %}
         {% if coach_list or cheerleader_list %}
@@ -239,7 +247,9 @@ usos posibles:
            {% endfor %}
 
     2. Se le pasa una o más variables, y se comprueba si esas variables han sido
-       cambiadas::
+       cambiadas:
+       
+       .. code-block:: html
 
            {% for date in days %}
                {% ifchanged date.date %} {{ date.date }} {% endifchanged %}
@@ -340,7 +350,7 @@ Para comprender esta etiqueta, es mejor recurrir a un ejemplo.
 ``people`` es una lista de objetos de tipo ``Person``, y los
 objetos tienen los atributos ``first_name``, ``last_name`` y ``gender``.
 Si se quiere
-mostrar un listado como el siguiente::
+mostrar un listado como el siguiente:
 
     * Male:
         * George Bush
@@ -570,7 +580,9 @@ descendente según la propiedad indicada en el argumento.
 divisibleby
 ------------
 
-Ejemplo::
+Ejemplo:
+
+.. code-block:: html
 
     {% if value|divisibleby:"2" %}
         Even!
@@ -963,7 +975,9 @@ Se asume que las listas están en el formato correcto. Por ejemplo, si
 ``var`` contiene
 ``['States', [['Kansas', [['Lawrence', []], ['Topeka', []]]], ['Illinois',
 []]]]``,
-entonces ``{{ var|unordered_list }}`` retornará::
+entonces ``{{ var|unordered_list }}`` retornará:
+
+.. code-block:: html
 
     <li>States
     <ul>
@@ -1044,21 +1058,21 @@ Ejemplo::
     {{ boolean|yesno:"Yes,No,Perhaps" }}
 
 Dada una serie de textos que se asocian a los
-valores de ``True``, ``False`` y (opcionalmente) ``None``, devuelve
+valores de ``true``, ``false`` y (opcionalmente) ``null``, devuelve
 uno de esos textos según el valor de la entrada. Véase la tabla.
 
-.. table:: Ejemplos del filtro yes no
+.. table:: Ejemplos del filtro yesno
 
     ==========  ======================  ========================================
     Valor       Argumento               Salida
     ==========  ======================  ========================================
-    ``True``    ``"yeah,no,maybe"``     ``yeah``
+    true        "yeah,no,maybe"         yeah
 
-    ``False``   ``"yeah,no,maybe"``     ``no``
+    false       "yeah,no,maybe"         no 
 
-    ``None``    ``"yeah,no,maybe"``     ``maybe``
+    null        "yeah,no,maybe"         maybe
 
-    ``None``    ``"yeah,no"``           ``"no"`` (considera ``None`` como
-                                        ``False`` si no se asigna ningún
-                                        texto a ``None``.
+    null        "yeah,no"               "no" (considera ``null`` como
+                                        ``false`` si no se asigna ningún
+                                        texto a ``null``.
     ==========  ======================  ========================================

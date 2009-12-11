@@ -194,7 +194,6 @@ Un paquete dentro del proyecto con:
     
     - ``"models.py"`` deficicón en Python de la estrcutra de la DB.
     
-    
     - ``"views.py"`` funciones que atienden en URLs. **REGEX!**
     
     - ``"urls.py"`` (opcional, para modularidad)
