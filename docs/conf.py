@@ -217,8 +217,8 @@ latex_preamble = ur'''
     \fancyhf{}
     % Footer
     \fancyfoot[RO,RE]{{\textbf{\textsf{\thepage}}}}
-    \fancyfoot[LO,LE]{{\sffamily\bfseries\textbf{\rightmark} - \textcolor{red}{Preliminar}}}
-    
+    %\fancyfoot[LO,LE]{{\sffamily\bfseries\textbf{\rightmark} - \textcolor{red}{Preliminar}}}
+    \fancyfoot[LO,LE]{{\sffamily\bfseries\textbf{\rightmark}}}
     % Header
     \fancyhead[LE,LO]{{\sffamily\bfseries\textbf{\leftmark}}}
     \fancyhead[RE,RO]{{ \textit{Defossé, van Haaster} }}

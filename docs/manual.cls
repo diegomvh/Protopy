@@ -75,7 +75,7 @@
       {\large
        15 de Diciembre de 2009 \par
        \vfill
-       \textcolor{red}{\sc Versi\'on Preliminar}
+       % \textcolor{red}{\sc Versi\'on Preliminar}
       }
       %
     \end{flushright}%\par
@@ -134,14 +134,3 @@
 %
 \renewcommand*\l@section{\@dottedtocline{1}{1.5em}{2.6em}}
 \renewcommand*\l@subsection{\@dottedtocline{2}{4.1em}{3.5em}}
-
-
-%Gracias
-\newcommand{\makethankspage}{%
-    % Asegurar una nueva página
-    \newpage
-    \thispagestyle{plain}
-    \begin{flushright}
-        {\it De Nahuel}
-    \end{flushright}
-}

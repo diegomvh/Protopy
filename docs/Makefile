@@ -20,8 +20,8 @@ all: svg dot latex pdf
 
 pdf:
 	# Esot es feo, pero bueno... hace que compile...
-	touch _build/latex/*.tex
-	yes R | $(MAKE) -C _build/latex
+	#touch _build/latex/*.tex
+	$(MAKE) -C _build/latex
 	
 	#yes R | $(MAKE) -C _build/latex
 	#echo "Compile" 

@@ -150,11 +150,45 @@ def drown_bibliography(target, base = LATEX_OUTPUT,):
     f.writelines(rest[-1:])
     f.close()
     
-def insert_thanks_page(target, base):
+def insert_thanks_page(target, base = LATEX_OUTPUT, ):
     '''
     Mete la página dando las gracias
     '''
-    THANKS_CMD = '\\makethankspage'
+    # Primero leemos las gracias
+    try:
+        f = open('thanks.tex')
+        thanks = f.readlines()
+        f.close()
+    except Exception, e:
+        print("No se pueden dar las gracias, por %s" % e)
+        return
+        
+    re_chapter = re.compile(r'\maketitle')
+    
+    TARGET = os.path.join(base, target)
+    f = open(TARGET)
+    content, output = f.readlines(), []
+    f.close()
+    
+    n = 0
+    while content:
+        l = content.pop(0)
+        if re_chapter.search(l):
+            print "Encontramos la linea en %d. Inyectando las gracias!!!" % n
+            break
+        output.append(l)
+        n +=1
+    
+    # Reinyectamos Maketitle
+    output.append(l)    
+    output.extend(thanks)
+    output.extend(content)
+    
+    f = open(TARGET, 'w')
+    f.writelines(output)
+    f.close()
+    
+    
     
     
 
@@ -167,6 +201,7 @@ def main(argv = sys.argv):
     fix_encoding_for_OpenOffice_org()
     remove_empty_chapters()
     drown_bibliography(tex_file)
+    insert_thanks_page(tex_file)
     print("END OF SPHINX OUTPUT HACKING")
 
 if __name__ == "__main__":
