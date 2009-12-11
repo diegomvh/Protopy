@@ -195,8 +195,7 @@ publicado en el módulo de URLs del proyecto, basado en los ejemplos expuestos:
         (r'^vendedores/(?P<id>\d)/$', vista_vendedores),
         
         # En el caso de los sitios remotos, la URL está 
-		# indicada por el atributo
-        # urlregex
+		# indicada por el atributo urlregex
         (r'^%s/(.*)' % mi_sitio.urlregex, mi_sitio.root ),
     )
          
@@ -209,16 +208,18 @@ desconectado. Al acceder a esta URL el navegador se encuentra con:
     
     <html>
     <head>
-        <!-- El sitio remoto publica la librería **Protopy**, como JavaScript 1.7 -->
+        <!-- El sitio remoto publica la librería **Protopy**, 
+        	como JavaScript 1.7 -->
         <script type="text/javascript;version=1.7" 
             src="/off/ventas/lib/protopy.js"></script>
         <!-- Creación de la instancia del proyecto desconectado -->
         <script type="text/javascript;version=1.7">
-            <!-- Requerir del módulo de proyectos, la función new_project -->
+            /* Requerir del módulo de proyectos, 
+            	la función new_project */
             require('doff.core.project', 'new_project');
-            <!-- Instanciación  del proyecto --> 
+            /* Instanciación  del proyecto */ 
             var ventas = new_project('ventas', '/off/ventas');
-            <!-- Darle el control del navegador a la instancia del proyecto -->
+            /* Darle el control del navegador a la instancia  del proyecto */
             ventas.bootstrap();
         </script>
     </head>
@@ -227,8 +228,6 @@ desconectado. Al acceder a esta URL el navegador se encuentra con:
     
     </html>
         
-
-
 Como se puede observar en el ejemplo anterior, el código de **Protopy** se encuentra
 en ``lib/protopy.js`` (línea 4 y 5), y, como se definió en el capítulo anterior, el código
 de **Doff** se encuentra en ``lib/packages/``. En la línea 10, se crea una entrada
@@ -276,6 +275,9 @@ por cada sitio remoto que se desee crear en el proyecto.
     
     Pasos para la migración de un proyecto   
 
+.. raw:: latex
+
+    \newpage
 
 Instalación y Configuración de la Aplicación offline 
 ----------------------------------------------------
@@ -284,7 +286,6 @@ El primer paso de la migración consiste en la instalación de la
 aplicación genérica offline en el proyecto. Para esto
 se la descarga y añade al ``PYTHONPATH``. Luego se la debe agregar a
 ``INSTALLED_APPS`` del proyecto en línea. 
-
 
 Una vez realizado este paso quedan habilitados varios comandos para la administración 
 de proyectos desconectados en el módulo ``manage.py``. 
@@ -308,7 +309,7 @@ Como segundo paso, es necesario agregar la constante ``OFFLINE_BASE`` al módulo
     OFFLINE_BASE = "off"
 
 La mayor parte de los pasos siguientes se realizan mediante comandos implementados
-en offline. Debido a que se debe describir un proceso donde es necesario 
+en **offline**. Debido a que se debe describir un proceso donde es necesario 
 discernir la definición de una variable/constante del acceso a su contenido,
 se utilizará la siguiente convención:
     
@@ -320,7 +321,6 @@ se utilizará la siguiente convención:
  
 Creación de un Sitio Remoto
 ---------------------------
-
 
 Este paso se realiza mediante la ejecución del comando ``start_remotesite`` del 
 módulo ``manage.py``. Su sintaxis es la siguiente:
@@ -343,11 +343,8 @@ El comando realiza la siguientes acciones:
     #. Crea el directorio ``$(OFFLINE_BASE)/$(nombre_sitio)``, como paquete
        de **Protopy**, donde crea el proyecto desconectado, definiendo los módulos
        ``settings.js``, ``urls.js`` y ``logging.js`` (estos módulos son plantillas internas de
-       la aplicación offline y se rellenan automáticamente con valores 
+       la aplicación **offline** y se rellenan automáticamente con valores 
        extraídos de ``settings.py`` y de la invocación del comando). 
-
-
-       
 
 Por ejemplo, para un sitio remoto llamado ``ventas`` y ``OFFLINE_BASE``
 como ``off``, tras la ejecución del comando, se creará un archivo
@@ -367,8 +364,6 @@ Y también se crea la siguiente estructura::
             settings.js
             urls.js
             logging.js
-
-    
    
 Migración de una Aplicación
 ---------------------------

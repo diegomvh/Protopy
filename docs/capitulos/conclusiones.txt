@@ -58,14 +58,14 @@ En cuanto a los objetivos secundarios:
       
     * *Aportar y difundir una extensión a un framework de libre distribución*
 
-      Completamos íntegramente el trabajo con Software Libre: el lenguaje Python,
-      Django, Gears y el navegador Mozilla. **Doff**, **Protopy** y la aplicación
-      **offline** se distribuyen con la misma licencia y están disponibles en la 
-      URL http://code.google.com/p/protopy, donde se cuenta con una Wiki, un sistema
-      de seguimiento de tareas y correcciones (Issues) y la posibilidad de enlazar
-      con listas de correo (Google Groups).
-      Para la difusión del trabajo utilizamos las listas de correo de Django (http://django-project.com) y 
-      el popular sitio de noticias Ajaxian (http://www.ajaxian.com).
+       Completamos íntegramente el trabajo con Software Libre: el lenguaje Python,
+       Django, Gears y el navegador Mozilla. **Doff**, **Protopy** y la aplicación
+       **offline** se distribuyen con la misma licencia y están disponibles en la 
+       URL http://code.google.com/p/protopy, donde se cuenta con una Wiki, un sistema
+       de seguimiento de tareas y correcciones (Issues) y la posibilidad de enlazar
+       con listas de correo (Google Groups).
+       Para la difusión del trabajo utilizamos las listas de correo de Django (http://django-project.com) y 
+       el popular sitio de noticias Ajaxian (http://www.ajaxian.com).
 
 **************
 Líneas Futuras

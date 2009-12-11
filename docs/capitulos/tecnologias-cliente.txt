@@ -289,7 +289,7 @@ CSS
 ===
 
 CSS es un lenguaje utilizado para definir el estilo de las páginas.
-Una hoja de estilo en cascada StyleSheet determina cómo se va a mostrar un documento 
+Una hoja de estilo en cascada o StyleSheet determina cómo se va a mostrar un documento 
 en pantalla, cómo se va a imprimir o, inclusive, cómo se realiza la pronunciación a través de un
 dispositivo de lectura [W3cCSS2009]_.
 
@@ -299,8 +299,6 @@ mantener coherencia y consistencia en todo el sitio.
 
 .. [W3cCSS2009] *Guía breve de CSS*, W3C, español, último acceso Agosto 2009,
     http://www.w3c.es/divulgacion/guiasbreves/HojasEstilo
-
-.. _cliente-javascript:
 
 JavaScript
 ==========
@@ -319,7 +317,6 @@ Si bien JavaScript es un lenguaje orientado a objetos, carece de clases
 y ocultamiento de información. Existen varias técnicas para lograr encapsulamiento,
 abstracción, herencia y polimorfismo. Entre las más utilizadas se encuentran el
 arreglo asociativo, el uso de prototipos y las clausuras.
-
 
 Arreglo Asociativo (``Object``)
 -------------------------------
@@ -400,7 +397,6 @@ en un arreglo asociativo, como se ve en siguiente ejemplo:
 	-> 3
 
 Esta técnica permite implementar herencia.
-	
 	
 Clausuras
 ---------

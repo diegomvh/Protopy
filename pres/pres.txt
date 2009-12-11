@@ -2,24 +2,24 @@
 Aplicaciones Web Desconectadas
 ==============================
 
-	:autores: * Defossé, Nahuel 
-			  * van Haaster, Diego Marcos
-	:tutor:	 Sáenz Lopez, Marta
-	:fecha: Noviembre 2009
-	:url: https://hg.protopy.com.ar/protopy
+    :autores: * Defossé, Nahuel 
+              * van Haaster, Diego Marcos
+    :tutor: Sáenz Lopez, Marta
+    :fecha: Noviembre 2009
+    :url: http://code.google.com/p/protopy/
 
 Objetivos
 ---------
 
 * Open Source
-	Coste de licenciemiento nulo y libertad
-	
+    Coste de licenciemiento nulo y libertad
+
 * Multiplataforma
-	Windows, Linux, Mac y móviles (dode exista un browser)
-	
+    Windows, Linux, Mac y móviles (dode exista un browser)
+    
 * Adaptación minima de aplicaciones existentes
-	Integración con un Frameworks Web.
-	
+    Integración con un Frameworks Web.
+    
 * Fácil utilización
     Reutilizar los conceptos/patrones del framework para una rápida asimilación de los desarrolladores.
 	

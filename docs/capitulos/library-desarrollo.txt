@@ -1084,10 +1084,15 @@ El primer argumento de ``ajax.Request`` es la URL a la cual se realizará la sol
 El resto de los parámetros son opcionales y se reciben como un arreglo asociativo,
 sus nombres son:
     
-    * ``method`` Indica el método HTTP, que puede ser ``"GET"``, ``"POST"``, ``"PUT"``, etc.,
-      por defecto es ``"POST"``.
+    * ``method`` 
     
-    * ``parameters`` Puede ser bien una cadena o un arreglo asociativo de parámetros para enviar en la petición HTTP.
+    	Indica el método HTTP, que puede ser ``"GET"``, ``"POST"``, ``"PUT"``, etc., 
+    	por defecto es ``"POST"``.
+    
+    * ``parameters`` 
+    
+    	Puede ser bien una cadena o un arreglo asociativo de parámetros para
+    	enviar en la petición HTTP.
     
     * ``onUninitialized``
 

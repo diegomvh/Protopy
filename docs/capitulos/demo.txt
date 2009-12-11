@@ -119,13 +119,12 @@ Se utilizó la plantilla Underground Store del sitio http://www.styleshout.com/,
 La siguiente figura muestra la portada de la aplicación en línea:
 
 .. figure:: ../_static/sshot_inicio.png
-.. note: nota de Marta: falta figura 9.x:----------------
+
+	Portada de la aplicación **salesman**.
+
 .. raw:: latex
 
     \newpage
-
-
-
 
 Una vez que el usuario se ha autenticado como viajante visualiza la siguiente  la siguiente barra de de menú :
 
@@ -137,23 +136,23 @@ Los botones de esta barra le permiten acceder a las diferentes secciones de la a
   
   * Inicio
 
-      Va a la página de portada.
+        Va a la página de portada.
 
   * Catálogo
   
-      Para navegar por los productos y generar pedidos.
+        Para navegar por los productos y generar pedidos.
 
   * Pedidos
-
-	Para listar los pedidos.
+  
+        Para listar los pedidos.
 
   * Administrar
    
-      Para realizar operaciones CRUD sobre Clientes, Ciudades, Productos y Categorías.
+        Para realizar operaciones CRUD sobre Clientes, Ciudades, Productos y Categorías.
 
   * Desconectar
 
-     Para desconectar. Es un enlace hacia el sitio remoto.
+        Para desconectar. Es un enlace hacia el sitio remoto.
 
 
 Dentro del botón *Administrar* se implementó el ABM de Ciudades, Productos, Categorías y Proveedores.

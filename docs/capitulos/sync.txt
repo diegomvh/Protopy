@@ -455,10 +455,8 @@ o Bazaar [BazaarDocs09]_, se crearon los métodos [*]_ ``pull`` y ``push`` en el
         .. figure:: ../_dot/push_return.pdf
     
            Argumentos de ``push()``
-        
-        Ambas operaciones tienen carácter atómico, ya que se ejecutan dentro de una transacción
-        de la base de datos.
 
+Ambas operaciones tienen carácter atómico, ya que se ejecutan dentro de una transacción de la base de datos.
 
 En cuanto al cliente, se implementó una aplicación ``doff.contrib.offline``, que
 se instala por defecto en ``settings.js`` con la ejecución del comando ``start_remotesite``.
@@ -467,13 +465,13 @@ Dentro del modulo ``doff.contrib.offline.handler`` se creó la clase ``SyncHandl
 con los métodos ``pull()`` y ``push()``, estos métodos se encargan de realizar
 las llamadas RPC: 
 
-      * ``pull()``
-          
-          Se encarga de obtener la última instancia de ``SyncLog`` e invocar al método
-          ``pull`` del servidor.
+	* ``pull()``
+      
+		Se encarga de obtener la última instancia de ``SyncLog`` e invocar al método
+      	``pull`` del servidor.
 
-          Los resultados de este método son: los objetos recibidos del servidor y la información
-          de sincronización.
+      	Los resultados de este método son: los objetos recibidos del servidor y la información
+      	de sincronización.
 
 	* ``push()``
 	
@@ -543,14 +541,16 @@ estos métodos se genera una instancia de la clase y se realiza la operación de
 
     >>> require('doff.contrib.offline.handler', 'SyncLog');
     >>> var sl = new SyncLog();
+    // Para recuperar cambios del servidor
     >>> var [received, 
-		sync_log_data ] = sl.pull(); // Para recuperar cambios del servidor
+		sync_log_data ] = sl.pull();	
+	// Para enviar cambios hacia el servidor
     >>> var [need_pull, 
 		chunked, 
 		created, 
 		modified, 
 		created, 
-		sync_log_data ] = sl.push(); // Para enviar cambios hacia el servidor
+		sync_log_data ] = sl.push();
 
 
  

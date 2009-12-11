@@ -239,7 +239,6 @@ de manera más eficaz. Un ejemplo muy popular de DSL es el lenguaje de macros em
 
 .. [DavidPollak2006] *Ruby Sig:How To Design A Domain Specific Language*, Google Tech Talk, 2:44, http://video.google.com/videoplay?docid=-8103284744220333344
 
-
 Otra clasificación es la de lenguajes *interpretados* y lenguajes *compilados*. Un lenguaje de programación 
 interpretado es aquel en el cual los programas son ejecutados
 por un intérprete, en lugar de realizarse una traducción a lenguaje máquina (proceso de compilación).
@@ -256,7 +255,7 @@ En esta última etapa también se resuelven los enlaces entre los diferentes mó
 Existe un mecanismo intermedio de ejecución, conocido como máquina virtual. En éste existe
 un proceso de compilación del código fuente a un lenguaje intermedio, comúnmente denominado
 bytecode. Este bytecode es luego ejecutado sobre un intérprete, al cual se denomina
-máquina virtual. La traducción del código fuente a *bytecode* puede ser explícita, como en el
+máquina virtual. La traducción del código fuente a bytecode puede ser explícita, como en el
 lenguaje Java, o implícita como en Python, donde se mezcla en el intérprete la funcionalidad de 
 compilación a bytecode e interpretación.
 
@@ -269,7 +268,6 @@ que la mayoría de las comprobaciones realizadas en tiempo de compilación son e
 la ejecución [*]_.
 
 .. [*] Estas comprobaciones comprenden el chequeo de tipos de datos, la resolución de métodos, etc.
-
 
 A diferencia de los lenguajes compilados, en los cuales se requiere disponer de un compilador
 para la plataforma [*]_ y compilar el código, la mayoría de los lenguajes interpretados permiten 
@@ -687,11 +685,9 @@ Un ORM realiza, en principio, tres tipos de conversión del lenguaje OO a SQL:
 
     * Conversión de definición de entidades.
     
-    * Creación, modificación y eliminación de entidades a partir de instancias 
-	  de clases del modelo (persistencia).
+    * Creación, modificación y eliminación de entidades a partir de instancias de clases del modelo (persistencia).
 	  
-    * Definición de consultas en lenguaje OO y recuperación de datos en instancias 
-	  de clases de modelo.
+    * Definición de consultas en lenguaje OO y recuperación de datos en instancias de clases de modelo.
   
 ..
 	Las primeras aproximaciones al mapeo relacional de objetos surgen de convertir
@@ -750,26 +746,26 @@ Un proyecto está constituido por una o más aplicaciones, las cuales se clasifi
 	sindicación, etc. Algunas aplicaciones genéricas se distribuyen con Django, de
 	las cuales resulta interesante destacar:
 	
-	- *django.contrib.admin* 
+	- ``django.contrib.admin``
 
 	    Provee de manera automática un sitio de administración que permite realizar 
 	    operaciones CRUD sobre el modelo (definido a través del ORM) y administrar 
 	    usuarios y permisos, llevando un registro de todas las acciones realizadas 
 	    sobre cada entidad (sistema de logging o bitácora).
 
-	- *django.contirb.comments*
+	- ``django.contirb.comments``
 
 	    Es un sistema de comentarios genérico que permite comentar diversas entidades del modelo.
 
-	- *django.contrib.syndication*
+	- ``django.contrib.syndication``
 	
 	    Consiste en herramientas para sindicar contenido vía RSS y/o Atom.
 
-	- *django.contrib.gis*
+	- ``django.contrib.gis``
 	
 	    Es un sistema de información geográfico.
 
-	- *django.contrib.localflavour*	
+	- ``django.contrib.localflavour``	
 	
 	    Provee localización (l10n) e internacionalización (i18n).
 
@@ -785,12 +781,11 @@ Debido a su creciente popularidad y a su sencillez, se seleccionó a Django
 como plataforma para la implementación del desarrollo de esta tesina, puesto
 que se buscan tales características en el trabajo a realizar.
 
-
 Estructura de un Proyecto
 -------------------------
 
 Durante la instalación del framework en el sistema del desarrollador, se añade
-a la variable de sistema ``PATH`` [*]_ un comando con el nombre ``django-admin.py``.
+a la variable de sistema ``PATH`` un comando con el nombre ``django-admin.py``.
 Mediante este comando se crean proyectos y se los administra.
 
 Un proyecto es un paquete Python que contiene tres módulos:
@@ -1458,7 +1453,7 @@ El conjunto de métodos que no devuelven ``QuerySet`` es:
     	
     * ``latest(campo = None)``
     
-		Retorna la instancia más reciente comparando por el campo ``campo``. Debe ser del tipo DateField.
+		Retorna la instancia más reciente comparando por el campo ``campo``. Debe ser del tipo ``DateField``.
 
 Los managers que retornan ``QuerySet``, se pueden encadenar, por ejemplo:
 
@@ -1466,8 +1461,8 @@ Los managers que retornan ``QuerySet``, se pueden encadenar, por ejemplo:
 
     >>> # Ejemplo para selección de libros impresos entre el 2000 y 2005 que
     >>> # no sean de la editorial APress 
-    >>> Book.objects.filter(publish__gte = '1/1/2000', published__lte = '1/1/2006').
-    ...    exclude(publisher = 'APress')
+    >>> Book.objects.filter(publish__gte = '1/1/2000', 
+    		published__lte = '1/1/2006').exclude(publisher = 'APress')
 
 Formularios
 -----------
@@ -1508,11 +1503,9 @@ El ciclo de trabajo normal para la entrada de datos es:
 La validación de los formularios puede ser una tarea compleja. Django provee 
 un mecanismo para generar formularios en el módulo ``django.forms`` que alivia la tarea.
 
-En la siguiente figura se muestra el diagrama de clases del paquete ``django.forms``.
-
+En la siguiente figura se muestra el diagrama de clases del paquete ``django.forms``:
 
 .. figure:: ../_svg/esquema_django_forms.png
 
 	Diagrama de clases de un formulario en Django
-	
 	
