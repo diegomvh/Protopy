@@ -42,6 +42,7 @@ sources/offline_demo/static/devkit/*
 sources/offline_demo/static/*.zip
 sources/offline_demo/static/*.txt
 *.dot
+*.info
 
 docs/sphinx-ref/*
 
