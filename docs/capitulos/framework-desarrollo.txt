@@ -1,4 +1,4 @@
-﻿
+
 ################################
 Doff, el Framework Desconectado
 ################################
@@ -779,8 +779,6 @@ el objeto ``History`` generará la URL:
 Los módulos antes mencionados se encuentran conectados entre sí mediante el 
 módulo de eventos ``event`` provisto por **Protopy**. 
 
-.. note: NOTA DE MARTA: MOVER LA FIGURA 6.1 A ESTA POSICION!! CON ESTA LEYENDA "La siguiente figura muestra:"
-
 Debido a que la operación con el DOM se encuentra recubierta en la operación
 desconectada, el código de las plantillas debe ser adaptado para trabajar
 con la API de **Doff**/**Protopy**. Se debe:
@@ -789,55 +787,54 @@ con la API de **Doff**/**Protopy**. Se debe:
     * Utilizar ``sys.window`` en vez de elemento ``window``. Éste apunta
       a ``window`` cuando la plantilla se procesa con conexión, y a 
       ``DOMAdapter`` cuando se encuentra sin conexión.
-      
+
     * Utilizar ``sys.transport`` en vez de ``XMLHttpRequest`` para 
       que las llamadas asincrónicas sean correctamente enrutadas. Éste apunta
       a ``XMLHttpRequest`` cuando la aplicación se encuentra en línea y a una
       emulación que trabaja con el ``LocalHandler`` en modo desconectado.
-    
+
     * Utilizar el selector CSS ``$$("selector")`` para la selección de elementos que trabajan
       adecuadamente en el contexto desconectado y en línea. Como es un ``builtin``
       está siempre disponible. Para el caso de la selección por
       ID se tiene ``$("id")`` (similar a Prototype):
-      
+
       .. code-block:: javascript
-      
+
         var mi_boton = $('mi_boton'); // en vez de
                        // sys.window.document.getElementById('mi_boton');
-                       
+
         var mis_links = $$('a.mis_links');
-       
+
     * Utilizar ``event.connect( nombre_evento, emisor, receptor, [método])``
       en vez de ``addListener`` sobre los ``HTMLElements`` u otros
       elementos del DOM. Por ejemplo:
-      
+
       .. code-block:: javascript
-        
+
         require('event');
         event.connect('click', $('boton'), function() {
             alert("Clickeaste mi boton");
         });
-            
+
       Una operación muy común es ejecutar algo ante el evento de carga de página. 
       Esto se realiza de la siguiente manera:
-      
+
       .. code-block:: javascript
-      
+
         require('event');
         event.connect('load', sys.window, miFuncionListener);
-      
-    
+
     * Evaluar el valor del contexto ``offline`` si existiese parte del template 
       que sólo debe mostrarse en un estado de la aplicación:
-      
+
       .. code-block:: html
-        
+
         {% if offline %}
             <h1>Estoy Offline!</h1>
         {% else %}
             <h1>Estoy en línea</h1>
         {% endif %}
-      
+
 Como se ha descripto, **Doff** modifica el comportamiento de varios módulos de **Protopy** 
 para lograr consistencia en el entorno desconectado.
 
@@ -851,18 +848,16 @@ que en Django, la variable que almacena estas asociaciones es ``urlpatterns``.
 En el mapeo se pueden hacer inclusiones de módulos de URLs definidos en las 
 aplicaciones. 
 
-
-
 Un módulo de URLs se conforma de la siguiente manera:
 
 .. code-block:: javascript
     :linenos:
-    
+
     require('doff.conf.urls', '*');
     // El proyecto se llama Blog y la aplicación Post, por lo que las vistas
     // se encuentran en el submódulo blog.post.views
     require('blog.post.views');
-    
+
     // Definición de los patrones
     var urlpatterns = patterns('',
         // Asociación por el nombre completo de la vista
@@ -873,7 +868,7 @@ Un módulo de URLs se conforma de la siguiente manera:
         ['^add_post/$', views.add_post],
         ['^remove_post/([A-Za-z0-9-]+)/$', views.remove_post]
     );
-    
+
     // Lo único que se publica es la variable urlpatterns
     publish({ 
         urlpatterns: urlpatterns 
@@ -895,15 +890,15 @@ Una vista se conforma de manera muy similar a Django:
         tag.delete();
         return redirect('/');
     }
-    
+
     function index(request){
         return render_to_response('mi_template.html', {
             titulo: "Bienvenido a la aplicación desconectada"
         });
     }   
-    
+
     // ... más vistas
-    
+
     publish({
         remove_tag: remove_tag,
         index: index,

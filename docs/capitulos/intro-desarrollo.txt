@@ -1,4 +1,4 @@
-﻿
+
 ##########################
 Introducción al Desarrollo
 ##########################
@@ -45,10 +45,8 @@ podría tener acceso a información que de otra manera no tendría
 etc.).
 Por esto fue importante analizar qué datos puede ver cada usuario, grupo o rol
 en el sistema. La aplicación desconectada debería poseer una técnica 
-de encartamiento sobre los datos (lo que podría repercutir en el desempeño) 
+de enmascaramiento sobre los datos (lo que podría repercutir en el desempeño) 
 o trabajar con una base de datos reducida.
-
-.. note:: Que es encartamiento
 
 De lo anterior se infiere que no todas las aplicaciones desconectadas
 son idénticas, sino que en función del usuario tendrán más o menos funcionalidad

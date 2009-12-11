@@ -1,4 +1,4 @@
-﻿
+
 
 ###########################
 Aplicación de Demostración
@@ -28,12 +28,10 @@ Desarrollo de la Aplicación
 El desarrollo de la aplicación comenzó por la definición del modelo. Éste se dividió en dos aplicaciones: ``core``, donde se situaron las entidades comunes, y ``ventas``, donde se crearon las propias del subsistema de pedidos.
 
 La siguiente figura muestra el diagrama de la base de datos esta aplicación:
- 
-.. figure:: ../_dot/django_models.png
-    
-    Diagrama de Base de Datos de Salesman (generado con ``graph_models``)
 
-.. note:: Poner recuadros de cada aplicación y el nombre
+.. figure:: ../_dot/django_models.png
+
+    Diagrama de Base de Datos de Salesman (generado con ``graph_models``)
 
 .. raw:: latex
 
@@ -46,7 +44,7 @@ Administración Básica
 Como paso inicial se habilitó la administración automática de Django en la ULR ``/admin``. Esta aplicación provista por el framework no está disponible de manera desconectada en **Doff** [*]_; sin embargo se utilizó para depuración. La siguiente figura muestra la fachada de esta aplicación, donde se puede apreciar que se encuentran registrados los modelos antes mencionados.
 
 .. figure:: ../_static/sshot_dj_admin.png
-	
+
    Captura de la administración de Django para el proyecto **salesman**.
 
 .. raw:: latex
