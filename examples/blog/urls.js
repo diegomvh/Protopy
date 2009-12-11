@@ -5,26 +5,26 @@ require('blog.apps.post.models', 'Post');
 var urlpatterns = patterns('',
     ['^$', 'doff.views.generic.simple.direct_to_template', {'template': 'index.html'} ],
  
-    ['post/(\\d{1,5})/edit/$', 'create_update.update_object', {
+    ['post/(\\d{1,5})/edit/$', 'doff.views.generic.create_update.update_object', {
         'model': Post,
         'post_save_redirect': '/posts/',
         'template_name': 'forms.html',
         'extra_context': {'titulo': 'Editar Post', 'submit_text': 'Actualizar'} 
     }],
     
-    ['posts/$', 'list_detail.object_list',{
+    ['posts/$', 'doff.views.generic.list_detail.object_list',{
         'queryset': Post.objects.all(),
         'extra_context': {'titulo': 'Listado de Posts'}
     }],
     
-    ['post/add/$', 'create_update.create_object', {
+    ['post/add/$', 'doff.views.generic.create_update.create_object', {
         'model': Post,
         'post_save_redirect': '/posts/',
         'template_name': 'forms.html',
         'extra_context': {'titulo': 'Agregar Post'}                                                                       
     }],
     
-    ['post/(\\d{1,5})/del/$', 'create_update.delete_object', {
+    ['post/(\\d{1,5})/del/$', 'doff.views.generic.create_update.delete_object', {
         'model': Post,
         'post_delete_redirect': '/posts/',
         'template_name': 'confirm_delete.html',

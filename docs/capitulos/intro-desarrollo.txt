@@ -168,7 +168,7 @@ Además tiene varias limitaciones:
 .. [IronPythonFAQ2009] Sitio oficial de IronPython,
                         *Diferencias entre IronPython y CPython*,
                         último acceso Septiembre 2009,
-                         http://ironpython.codeplex.com/Wiki/View.aspx?title=IPy2.0.xCPyDifferences&referringTitle=Home
+                        http://ironpython.codeplex.com/Wiki/View.aspx?title=IPy2.0.xCPyDifferences&referringTitle=Home
 
 .. [SwOnCodeSlvlgth09] Switch On The Code,
         *Silverlight Tutorial - Interaction With The DOM*,

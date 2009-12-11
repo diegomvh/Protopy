@@ -17,9 +17,9 @@ De los objetivos cumplidos:
 
     * *Extender un framework de aplicaciones web, OpenSource, existente de manera que una aplicación realizada sobre éste, pueda ser ejecutada en el cliente de manera desconectada con un mínimo de modificaciones*
 	
-		Sobre el framework elegido, realizamos la extensión como una
-        aplicación genérica llamada **offline**, que se trató en los capítulos
-        de Introducción al Desarrollo y Offline, la Aplicación para la Desconexión. 
+		Sobre el framework elegido, realizamos la extensión como una aplicación
+		genérica llamada **offline**, que se trató en los capítulos de
+		Introducción al Desarrollo y Offline, la Aplicación para la Desconexión. 
 
     * *Implementar persistencia del modelo de datos en el cliente*
       

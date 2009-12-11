@@ -111,7 +111,7 @@ Un ``CharField`` que chequea que el valor sea una dirección de e-mail válida. 
 acepta ``max_length``; su ``max_length`` se establece automáticamente en 75.
 
 DecimalField
-----------
+------------
 
 Un número de punto flotante, representado en JavaScript por una instancia de
 ``Number``. Tiene dos argumentos requeridos, que se muestran en la tabla.

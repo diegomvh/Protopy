@@ -139,11 +139,9 @@ para el nombre ``counter``, el acceso se realiza a través de
     * - ``forloop.counter0``
       - El número de vuelta o iteración actual (usando un índice basado en 0).
     * - ``forloop.revcounter``
-      - El número de vuelta o iteración contando desde el fin del bucle  (usando
-un índice basado en 1).
+      - El número de vuelta o iteración contando desde el fin del bucle  (usando un índice basado en 1).
     * - ``forloop.revcounter0``
-      - El número de vuelta o iteración contando desde el fin del bucle  (usando
-un índice basado en 0).
+      - El número de vuelta o iteración contando desde el fin del bucle  (usando un índice basado en 0).
     * - ``forloop.first``
       - ``true`` si es la primera iteración.
     * - ``forloop.last``
@@ -462,8 +460,9 @@ Por ejemplo:
 
 .. code-block:: html
 
-    <img src="bar.gif" height="10" width="{% widthratio this_value max_value 100
-%}" />
+    <img src="bar.gif" 
+    	 height="10" 
+    	 width="{% widthratio this_value max_value 100 %}" />
 
 Si ``this_value`` vale 175 y ``max_value`` es 200, la imagen resultante
 tendrá un ancho de 88 pixels (porque 175/200 = 0.875 y 0.875 * 100 = 87.5,

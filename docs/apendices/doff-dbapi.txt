@@ -63,7 +63,7 @@ Para crear un objeto y grabarlo todo en un paso se usa el método ``create`` de
 el tipo ``Manager``, que se describe más adelante.
 
 Qué Pasa cuando se Graba?
------------------------
+-------------------------
 
 Cuando se graba un objeto, se realizan los siguientes pasos:
 
@@ -403,7 +403,7 @@ secciones que siguen. Algunos de estos métodos reciben argumentos de patrones
 de búsqueda, los cuales se discuten en detalle más adelante.
 
 filter({ lookups })
-~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 
 Retorna un nuevo ``QuerySet`` conteniendo objetos que son iguales a los
 parámetros de búsqueda provistos.
@@ -446,7 +446,7 @@ resultados duplicados cuando un ``QuerySet`` es evaluado. Esos son los casos en
 los que se usaría ``distinct()``.
 
 values(campos, ...)
-~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 
 Retorna un ``QuerySet`` especial que evalúa a una lista de diccionarios en
 lugar de objetos instancia de modelo. Cada uno de esos diccionarios representa
@@ -783,7 +783,7 @@ aparecerá en el diccionario resultante.  Si se pasa una lista vacía a
 ``in_bulk()``, se obtendrá un diccionario vacío.
 
 latest(field_name)
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
 
 Devuelve el último objeto de la tabla, ordenados por fecha, utilizando el campo
 que se provea en el argumento ``field_name`` como fecha.  Este ejemplo devuelve
@@ -825,6 +825,7 @@ exact
 Realiza una búsqueda por coincidencias exactas::
 
     >>> Entry.objects.get({ headline__exact: "Man bites dog" })
+
 Busca objetos que tengan en el campo headline la frase exacta
 "Man bites dog".
 
@@ -1162,7 +1163,7 @@ todos los objetos de relaciones uno-a-muchos de la instancia::
     print(e.blog)  # No va a la base de datos; usa la versión cacheada.
 
 Relaciones de Clave Foránea "Inversas"
----------------------------------------
+--------------------------------------
 
 Las relaciones de clave foránea son automáticamente simétricas -- se infiere
 una relación inversa de la presencia de un campo ``ForeignKey`` que apunte a
@@ -1319,7 +1320,7 @@ consultas son idénticas::
     Entry.objects.filter({ blog: 5 }) # Query using id directly
 
 Borrando Objetos
-=================
+================
 
 El métodos para borrar es ``delete()``. Este método inmediatamente borra
 el objeto y no tiene ningún valor de retorno::
@@ -1384,7 +1385,7 @@ cada instancia de ``Person`` tendrá un método ``get_gender_display``::
     'Male'
 
 get_next_by_FOO({ kwargs }) y get_previous_by_FOO({ kwargs })
------------------------------------------------------------
+-------------------------------------------------------------
 
 Por cada campo ``DateField`` y ``DateTimeField`` que no tenga ``null = true``,
 el objeto tendrá dos métodos ``get_next_by_FOO()`` y ``get_previous_by_FOO()``,

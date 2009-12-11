@@ -564,17 +564,16 @@ una forma similar a un constructor del lenguaje Java, pero Python y **Protopy**
 permiten también la personalización de la instanciación implementando el método
 ``__new__``. El constructor es el conjunto ``__new__`` e ``__init__``:
 
-* ``__new__``.
-
-	Este método permite al desarrollador tomar parte en la construcción de la clase
-	o tipo. Los parámetros son similares a Python: el nombre del
-    nuevo tipo, el arreglo con los tipos base y el arreglo asociativo con atributos
-    y métodos de instancia.
-
-* ``__init__``.
-
-	Este método es invocado en la instanciación de la clase y permite al
-	desarrollador inicializar la instancia.
+	* ``__new__``
+	
+		Este método permite al desarrollador tomar parte en la construcción de la clase
+		o tipo. Los parámetros son similares a Python: el nombre del nuevo tipo, el
+		arreglo con los tipos base y el arreglo asociativo con atributos y métodos de instancia.
+	
+	* ``__init__``
+	
+		Este método es invocado en la instanciación de la clase y permite al
+		desarrollador inicializar la instancia.
 
 Métodos Especiales
 ------------------
@@ -700,8 +699,8 @@ Algunos de estos métodos son:
 
     * ``__json__`` y ``__html__``
 		
-		Son métodos para serialización (o marshalling) del objeto en HTML o 
-        JSON, respectivamente.
+		Son métodos para serialización (o marshalling) del objeto en HTML o JSON,
+		respectivamente.
 
 **Protopy** tiene otros métodos especiales, que generalmente están orientados a
 emular algún comportamiento de Python en JavaScript. Una descripción detallada se 

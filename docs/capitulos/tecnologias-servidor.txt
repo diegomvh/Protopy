@@ -1,7 +1,4 @@
 ﻿
-
-.. _servidor:
-
 ########################
 Tecnologías del Servidor
 ########################
@@ -608,21 +605,17 @@ Un framework web MVC suele contar con los siguientes componentes [WIKI002]_:
 	
     * Acceso a datos
 	
-	Los tipos de datos de los lenguajes orientados a objetos difieren del
-	modelo entidad-relación utilizado para la definición de bases de datos. Un mapeador objeto-relacional
-	tiene como objetivo acortar esta brecha, permitiendo definir entidades
-	en objetos que luego se transportan a la base de datos, además de la
-	capacidad de CRUD [*]_ y consultas sobre éstos.
-
-
+		Los tipos de datos de los lenguajes orientados a objetos difieren del
+		modelo entidad-relación utilizado para la definición de bases de datos. Un mapeador objeto-relacional
+		tiene como objetivo acortar esta brecha, permitiendo definir entidades
+		en objetos que luego se transportan a la base de datos, además de la
+		capacidad de CRUD [*]_ y consultas sobre éstos.
 
     * Seguridad
 
     	Existen diversos aspectos de seguridad que deben ser tenidos en cuenta
     	cuando se implementa una aplicación web, como la validación de entrada,
     	protección de XSS [*]_, etc.
-
-
 
     * Mapeo de URLs
     
@@ -649,7 +642,6 @@ Un framework web MVC suele contar con los siguientes componentes [WIKI002]_:
     	velocidad.
     	Algunos frameworks hacen uso de algún mecanismo unificado para realizar caché.
     	
-
     * AJAX
     	
     	Hoy en día es común la técnica de incorporar elementos dinámicos que 
@@ -674,12 +666,9 @@ Un framework web MVC suele contar con los siguientes componentes [WIKI002]_:
             Wikipedia,
             última visita Agosto de 2009, 
             http://en.wikipedia.org/wiki/Web_application_framework, 
-            
-
 
 Mapeador Objeto-Relacional
 ==========================
-
 
 Los lenguajes orientados a objetos utilizan clases, atributos y referencias para
 modelar el dominio de la aplicación, mientras que las bases de datos relacionales 
@@ -689,7 +678,6 @@ las implementaciones actuales de persistencias de objetos no brindan la performa
 ni la facilidad de consultas que ofrecen las bases de datos relacionales (RDBMS).
 El lenguaje utilizado para definir y modificar los datos en los RDBMS se conoce como SQL,
 el cual difiere radicalmente de la concepción de los lenguajes orientados a objetos (OO).
-
 
 Como, generalmente, se utiliza una base de datos relacional para el almacenamiento,
 un mapeador objeto-relacional (ORM) libera la carga de la conversión explícita del lenguaje OO a SQL y 
@@ -1084,9 +1072,6 @@ El siguiente ejemplo integra un fragmento de los módulos ``urls`` y ``views``:
         datos = {'persona':persona, }
         return render_to_response('plantilla.html', datos)
 
-
-.. tecnologias-servidor-django-static:
-
 Contenido Dinámico y Estático
 -----------------------------
 
@@ -1401,13 +1386,10 @@ Los managers están presentes en:
 			Persona.obects.get( nombre = "nahuel" ).vehiculo_set() 
 			# Relación inversa resuelta por Django
 			
-
-
 API de los Managers
-===================
+~~~~~~~~~~~~~~~~~~~
 
-La API provista por los managers consiste en dos grupos de métodos: los que retornan instancias de ``QuerySet`` y
- los que no. 
+La API provista por los managers consiste en dos grupos de métodos: los que retornan instancias de ``QuerySet`` y los que no. 
 
 A continuación se listan los métodos que retornan ``QuerySet``:
 
@@ -1450,8 +1432,6 @@ A continuación se listan los métodos que retornan ``QuerySet``:
     	Permite realizar una consulta de bajo nivel.
 
 .. [*] El doble asterisco (``**``) representa argumentos del tipo ``clave = valor``, mientras que el asterisco simple (``*``), define que son argumentos variables.
-    		
-
 
 El conjunto de métodos que no devuelven ``QuerySet`` es:
 
@@ -1480,7 +1460,6 @@ El conjunto de métodos que no devuelven ``QuerySet`` es:
     
 		Retorna la instancia más reciente comparando por el campo ``campo``. Debe ser del tipo DateField.
 
-
 Los managers que retornan ``QuerySet``, se pueden encadenar, por ejemplo:
 
 .. code-block:: python
@@ -1489,10 +1468,6 @@ Los managers que retornan ``QuerySet``, se pueden encadenar, por ejemplo:
     >>> # no sean de la editorial APress 
     >>> Book.objects.filter(publish__gte = '1/1/2000', published__lte = '1/1/2006').
     ...    exclude(publisher = 'APress')
-   
-   
-
-
 
 Formularios
 -----------

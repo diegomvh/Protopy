@@ -185,7 +185,7 @@ en él mismo.
     * $(id: String) -> HTMLElement
 
         Esta función recibe una cadena de texto y retorna el elemento del documento
-        cuyo ``id'' se corresponda con la cadena. En conjunto con la función $$
+        cuyo ``id`` se corresponda con la cadena. En conjunto con la función $$
         constituyen dos herramientas muy útiles para recuperar elementos e interactuar
         con el árbol DOM. Si más de un argumento es pasado, la forma de retorno es
         mediante un arreglo, permitiendo así la iteración sobre los mismos.
@@ -414,7 +414,7 @@ en él mismo.
     * bool(object)
     
         Determina el valor de verdad de un objeto pasado. Los valores de verdad son:
-         arreglos, arreglos asociativos y cadenas vacías, en conjunto con los valores null y
+        arreglos, arreglos asociativos y cadenas vacías, en conjunto con los valores null y
         undefined son falsos; todos los demás casos son verdaderos.
         En el caso particular de que un objeto defina el método ``__nonzero__`` éste
         es invocado para determinar el valor de verdad.
@@ -820,8 +820,8 @@ Estos métodos amplían las herramientas para el manejo de cadenas de texto.
     
     * camelize() -> string
 
-        Convierte una cadena separada por guiones medios (``-'') a una nueva cadena tipo
-        ''camello''. Por ejemplo, 'foo-bar' pasa a ser 'fooBar'.
+        Convierte una cadena separada por guiones medios ("-") a una nueva cadena tipo
+        "camello". Por ejemplo, ``foo-bar`` pasa a ser ``fooBar``.
     
     * capitalize() -> string
 
@@ -866,7 +866,7 @@ Extensión sobre los elementos del DOM, simplificando trabajos comunes de desarr
     * visible() -> Boolean
 
         Retorna un valor de verdad que determina si el elemento está visible al
-        usuario, verificando el atributo de estilo ``display''.
+        usuario, verificando el atributo de estilo ``display``.
     
     * toggle() -> HTMLElement
 

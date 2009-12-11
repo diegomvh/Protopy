@@ -37,7 +37,7 @@ interacción con un proyecto existente.
 
 
 Migración de Componentes Básicos
--------------------------------
+--------------------------------
 
 
 **Doff** se inició como un conjunto de módulos para **Protopy**. Estos módulos implementaban
@@ -1110,7 +1110,7 @@ cuando se realiza su representación.
 
 
 Creación de Formularios a Partir de Modelos
-==========================================
+===========================================
 
 La mayoría de las veces los formularios son utilizados para el ingreso
 de datos a los modelos, por lo que la tarea de escribir un formulario
