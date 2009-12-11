@@ -40,10 +40,6 @@ div#logger-active span {
     padding: 5px;
 }
 
-div#logger-active span input {
-    vertical-align: middle;
-}
-
 div#logger-active span label {
     display: inline;
 }
@@ -71,7 +67,7 @@ div#logger-active span label.fatal {
 
 <div id="logger-output"></div>
 
-<div id="logger-active">
+<div id="logger-active" class="doff-panel-buttons doff-panel-align-right">
     <span>Root level</span>
     <span class="logger-filter">
         <input type="radio" name="level" id="logger-filter-debug" value="DEBUG"/>
