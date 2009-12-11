@@ -18,5 +18,5 @@ re: clean all
 
 rst2pdf: slides.pdf
 
-slides.pdf: slides.txt slides.style
+slides.pdf: slides.txt slides.style background.svg
 	rst2pdf slides.txt -b1 -s slides.style

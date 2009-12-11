@@ -283,7 +283,7 @@ Arquitectura (Doff)
 Doff
 ----
 
-Django on Protopy -> **Djano Offline** :)
+Django on Protopy -> **Django Offline** :)
 
     - API de Modelos
 
@@ -333,3 +333,11 @@ FIN
 ---
 
 ¡Muchas Gracias!
+
+.. header::
+
+    Aplicaciones Web Desconectadas
+
+.. footer::
+
+    Defossé, van Haaster

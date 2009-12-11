@@ -1,7 +1,7 @@
 {"pageSetup": {
     "fontFamily": "Serif",
-    "width": "16cm",
-    "height": "9cm",
+    "width": "20cm",
+    "height": "12cm",
     "margin-top": "3mm",
     "margin-bottom": "0cm",
     "margin-left": "0cm",
@@ -16,7 +16,8 @@
     "cutePage": {
         "frames": [
             ["3%", "3%", "100%", "100%"]
-        ]
+        ],
+        "background" : "background.svg"
     }
 }
 }
