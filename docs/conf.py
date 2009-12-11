@@ -218,7 +218,9 @@ latex_preamble = ur'''
     % Footer
     \fancyfoot[RO,RE]{{\textbf{\textsf{\thepage}}}}
     %\fancyfoot[LO,LE]{{\sffamily\bfseries\textbf{\rightmark} - \textcolor{red}{Preliminar}}}
-    \fancyfoot[LO,LE]{{\sffamily\bfseries\textbf{\rightmark}}}
+    
+    %\fancyfoot[LO,LE]{{\sffamily\bfseries\textbf{\rightmark}}}
+    \fancyfoot[LO,LE]{{\sffamily\bfseries\textit{Defossé, van Haaster}}}
     % Header
     \fancyhead[LE,LO]{{\sffamily\bfseries\textbf{\leftmark}}}
     % Se rompe
@@ -233,7 +235,7 @@ latex_preamble = ur'''
   % page of a chapter and the blank page between chapters `clean.'
   \fancypagestyle{plain}{
     \fancyhf{}
-    \fancyfoot[RE,RO]{{\thepage}}
+    \fancyfoot[RO,RE]{{\textbf{\textsf{\thepage}}}}
     \renewcommand{\headrulewidth}{0pt}
     \renewcommand{\footrulewidth}{0.4pt}
   }

@@ -1,0 +1,4058 @@
+%PDF-1.3
+%“Œ‹ž ReportLab Generated PDF document http://www.reportlab.com
+% 'BasicFonts': class PDFDictionary 
+1 0 obj
+% The standard fonts dictionary
+<< /F1 2 0 R
+ /F2 3 0 R
+ /F3 4 0 R
+ /F4 10 0 R
+ /F5 14 0 R >>
+endobj
+% 'F1': class PDFType1Font 
+2 0 obj
+% Font Helvetica
+<< /BaseFont /Helvetica
+ /Encoding /WinAnsiEncoding
+ /Name /F1
+ /Subtype /Type1
+ /Type /Font >>
+endobj
+% 'F2': class PDFType1Font 
+3 0 obj
+% Font Helvetica-Bold
+<< /BaseFont /Helvetica-Bold
+ /Encoding /WinAnsiEncoding
+ /Name /F2
+ /Subtype /Type1
+ /Type /Font >>
+endobj
+% 'F3': class PDFType1Font 
+4 0 obj
+% Font Times-Roman
+<< /BaseFont /Times-Roman
+ /Encoding /WinAnsiEncoding
+ /Name /F3
+ /Subtype /Type1
+ /Type /Font >>
+endobj
+% 'Annot.NUMBER1': class PDFDictionary 
+5 0 obj
+<< /A << /S /URI
+ /Type /Action
+ /URI (https://code.google.com/p/protopy) >>
+ /Border [ 0
+ 0
+ 0 ]
+ /Rect [ 133.6457
+ 88.81535
+ 452.1496
+ 100.8154 ]
+ /Subtype /Link
+ /Type /Annot >>
+endobj
+% 'Page1': class PDFPage 
+6 0 obj
+% Page dictionary
+<< /Annots [ 5 0 R ]
+ /Contents 62 0 R
+ /MediaBox [ 0
+ 0
+ 453.5433
+ 255.1181 ]
+ /Parent 61 0 R
+ /Resources << /Font 1 0 R
+ /ProcSet [ /PDF
+ /Text
+ /ImageB
+ /ImageC
+ /ImageI ] >>
+ /Rotate 0
+ /Trans <<  >>
+ /Type /Page >>
+endobj
+% 'Page2': class PDFPage 
+7 0 obj
+% Page dictionary
+<< /Contents 63 0 R
+ /MediaBox [ 0
+ 0
+ 453.5433
+ 255.1181 ]
+ /Parent 61 0 R
+ /Resources << /Font 1 0 R
+ /ProcSet [ /PDF
+ /Text
+ /ImageB
+ /ImageC
+ /ImageI ] >>
+ /Rotate 0
+ /Trans <<  >>
+ /Type /Page >>
+endobj
+% 'Page3': class PDFPage 
+8 0 obj
+% Page dictionary
+<< /Contents 64 0 R
+ /MediaBox [ 0
+ 0
+ 453.5433
+ 255.1181 ]
+ /Parent 61 0 R
+ /Resources << /Font 1 0 R
+ /ProcSet [ /PDF
+ /Text
+ /ImageB
+ /ImageC
+ /ImageI ] >>
+ /Rotate 0
+ /Trans <<  >>
+ /Type /Page >>
+endobj
+% 'Page4': class PDFPage 
+9 0 obj
+% Page dictionary
+<< /Contents 65 0 R
+ /MediaBox [ 0
+ 0
+ 453.5433
+ 255.1181 ]
+ /Parent 61 0 R
+ /Resources << /Font 1 0 R
+ /ProcSet [ /PDF
+ /Text
+ /ImageB
+ /ImageC
+ /ImageI ] >>
+ /Rotate 0
+ /Trans <<  >>
+ /Type /Page >>
+endobj
+% 'F4': class PDFType1Font 
+10 0 obj
+% Font Helvetica-Oblique
+<< /BaseFont /Helvetica-Oblique
+ /Encoding /WinAnsiEncoding
+ /Name /F4
+ /Subtype /Type1
+ /Type /Font >>
+endobj
+% 'Page5': class PDFPage 
+11 0 obj
+% Page dictionary
+<< /Contents 66 0 R
+ /MediaBox [ 0
+ 0
+ 453.5433
+ 255.1181 ]
+ /Parent 61 0 R
+ /Resources << /Font 1 0 R
+ /ProcSet [ /PDF
+ /Text
+ /ImageB
+ /ImageC
+ /ImageI ] >>
+ /Rotate 0
+ /Trans <<  >>
+ /Type /Page >>
+endobj
+% 'Page6': class PDFPage 
+12 0 obj
+% Page dictionary
+<< /Contents 67 0 R
+ /MediaBox [ 0
+ 0
+ 453.5433
+ 255.1181 ]
+ /Parent 61 0 R
+ /Resources << /Font 1 0 R
+ /ProcSet [ /PDF
+ /Text
+ /ImageB
+ /ImageC
+ /ImageI ] >>
+ /Rotate 0
+ /Trans <<  >>
+ /Type /Page >>
+endobj
+% 'Page7': class PDFPage 
+13 0 obj
+% Page dictionary
+<< /Contents 68 0 R
+ /MediaBox [ 0
+ 0
+ 453.5433
+ 255.1181 ]
+ /Parent 61 0 R
+ /Resources << /Font 1 0 R
+ /ProcSet [ /PDF
+ /Text
+ /ImageB
+ /ImageC
+ /ImageI ] >>
+ /Rotate 0
+ /Trans <<  >>
+ /Type /Page >>
+endobj
+% 'F5': class PDFType1Font 
+14 0 obj
+% Font Courier
+<< /BaseFont /Courier
+ /Encoding /WinAnsiEncoding
+ /Name /F5
+ /Subtype /Type1
+ /Type /Font >>
+endobj
+% 'Page8': class PDFPage 
+15 0 obj
+% Page dictionary
+<< /Contents 69 0 R
+ /MediaBox [ 0
+ 0
+ 453.5433
+ 255.1181 ]
+ /Parent 61 0 R
+ /Resources << /Font 1 0 R
+ /ProcSet [ /PDF
+ /Text
+ /ImageB
+ /ImageC
+ /ImageI ] >>
+ /Rotate 0
+ /Trans <<  >>
+ /Type /Page >>
+endobj
+% 'Page9': class PDFPage 
+16 0 obj
+% Page dictionary
+<< /Contents 70 0 R
+ /MediaBox [ 0
+ 0
+ 453.5433
+ 255.1181 ]
+ /Parent 61 0 R
+ /Resources << /Font 1 0 R
+ /ProcSet [ /PDF
+ /Text
+ /ImageB
+ /ImageC
+ /ImageI ] >>
+ /Rotate 0
+ /Trans <<  >>
+ /Type /Page >>
+endobj
+% 'Page10': class PDFPage 
+17 0 obj
+% Page dictionary
+<< /Contents 71 0 R
+ /MediaBox [ 0
+ 0
+ 453.5433
+ 255.1181 ]
+ /Parent 61 0 R
+ /Resources << /Font 1 0 R
+ /ProcSet [ /PDF
+ /Text
+ /ImageB
+ /ImageC
+ /ImageI ] >>
+ /Rotate 0
+ /Trans <<  >>
+ /Type /Page >>
+endobj
+% 'Page11': class PDFPage 
+18 0 obj
+% Page dictionary
+<< /Contents 72 0 R
+ /MediaBox [ 0
+ 0
+ 453.5433
+ 255.1181 ]
+ /Parent 61 0 R
+ /Resources << /Font 1 0 R
+ /ProcSet [ /PDF
+ /Text
+ /ImageB
+ /ImageC
+ /ImageI ] >>
+ /Rotate 0
+ /Trans <<  >>
+ /Type /Page >>
+endobj
+% 'Page12': class PDFPage 
+19 0 obj
+% Page dictionary
+<< /Contents 73 0 R
+ /MediaBox [ 0
+ 0
+ 453.5433
+ 255.1181 ]
+ /Parent 61 0 R
+ /Resources << /Font 1 0 R
+ /ProcSet [ /PDF
+ /Text
+ /ImageB
+ /ImageC
+ /ImageI ] >>
+ /Rotate 0
+ /Trans <<  >>
+ /Type /Page >>
+endobj
+% 'Page13': class PDFPage 
+20 0 obj
+% Page dictionary
+<< /Contents 74 0 R
+ /MediaBox [ 0
+ 0
+ 453.5433
+ 255.1181 ]
+ /Parent 61 0 R
+ /Resources << /Font 1 0 R
+ /ProcSet [ /PDF
+ /Text
+ /ImageB
+ /ImageC
+ /ImageI ] >>
+ /Rotate 0
+ /Trans <<  >>
+ /Type /Page >>
+endobj
+% 'Page14': class PDFPage 
+21 0 obj
+% Page dictionary
+<< /Contents 75 0 R
+ /MediaBox [ 0
+ 0
+ 453.5433
+ 255.1181 ]
+ /Parent 61 0 R
+ /Resources << /Font 1 0 R
+ /ProcSet [ /PDF
+ /Text
+ /ImageB
+ /ImageC
+ /ImageI ] >>
+ /Rotate 0
+ /Trans <<  >>
+ /Type /Page >>
+endobj
+% 'Page15': class PDFPage 
+22 0 obj
+% Page dictionary
+<< /Contents 76 0 R
+ /MediaBox [ 0
+ 0
+ 453.5433
+ 255.1181 ]
+ /Parent 61 0 R
+ /Resources << /Font 1 0 R
+ /ProcSet [ /PDF
+ /Text
+ /ImageB
+ /ImageC
+ /ImageI ] >>
+ /Rotate 0
+ /Trans <<  >>
+ /Type /Page >>
+endobj
+% 'Page16': class PDFPage 
+23 0 obj
+% Page dictionary
+<< /Contents 77 0 R
+ /MediaBox [ 0
+ 0
+ 453.5433
+ 255.1181 ]
+ /Parent 61 0 R
+ /Resources << /Font 1 0 R
+ /ProcSet [ /PDF
+ /Text
+ /ImageB
+ /ImageC
+ /ImageI ] >>
+ /Rotate 0
+ /Trans <<  >>
+ /Type /Page >>
+endobj
+% 'Page17': class PDFPage 
+24 0 obj
+% Page dictionary
+<< /Contents 78 0 R
+ /MediaBox [ 0
+ 0
+ 453.5433
+ 255.1181 ]
+ /Parent 61 0 R
+ /Resources << /Font 1 0 R
+ /ProcSet [ /PDF
+ /Text
+ /ImageB
+ /ImageC
+ /ImageI ] >>
+ /Rotate 0
+ /Trans <<  >>
+ /Type /Page >>
+endobj
+% 'Page18': class PDFPage 
+25 0 obj
+% Page dictionary
+<< /Contents 79 0 R
+ /MediaBox [ 0
+ 0
+ 453.5433
+ 255.1181 ]
+ /Parent 61 0 R
+ /Resources << /Font 1 0 R
+ /ProcSet [ /PDF
+ /Text
+ /ImageB
+ /ImageC
+ /ImageI ] >>
+ /Rotate 0
+ /Trans <<  >>
+ /Type /Page >>
+endobj
+% 'Page19': class PDFPage 
+26 0 obj
+% Page dictionary
+<< /Contents 80 0 R
+ /MediaBox [ 0
+ 0
+ 453.5433
+ 255.1181 ]
+ /Parent 61 0 R
+ /Resources << /Font 1 0 R
+ /ProcSet [ /PDF
+ /Text
+ /ImageB
+ /ImageC
+ /ImageI ] >>
+ /Rotate 0
+ /Trans <<  >>
+ /Type /Page >>
+endobj
+% 'Page20': class PDFPage 
+27 0 obj
+% Page dictionary
+<< /Contents 81 0 R
+ /MediaBox [ 0
+ 0
+ 453.5433
+ 255.1181 ]
+ /Parent 61 0 R
+ /Resources << /Font 1 0 R
+ /ProcSet [ /PDF
+ /Text
+ /ImageB
+ /ImageC
+ /ImageI ] >>
+ /Rotate 0
+ /Trans <<  >>
+ /Type /Page >>
+endobj
+% 'Page21': class PDFPage 
+28 0 obj
+% Page dictionary
+<< /Contents 82 0 R
+ /MediaBox [ 0
+ 0
+ 453.5433
+ 255.1181 ]
+ /Parent 61 0 R
+ /Resources << /Font 1 0 R
+ /ProcSet [ /PDF
+ /Text
+ /ImageB
+ /ImageC
+ /ImageI ] >>
+ /Rotate 0
+ /Trans <<  >>
+ /Type /Page >>
+endobj
+% 'Page22': class PDFPage 
+29 0 obj
+% Page dictionary
+<< /Contents 83 0 R
+ /MediaBox [ 0
+ 0
+ 453.5433
+ 255.1181 ]
+ /Parent 61 0 R
+ /Resources << /Font 1 0 R
+ /ProcSet [ /PDF
+ /Text
+ /ImageB
+ /ImageC
+ /ImageI ] >>
+ /Rotate 0
+ /Trans <<  >>
+ /Type /Page >>
+endobj
+% 'Page23': class PDFPage 
+30 0 obj
+% Page dictionary
+<< /Contents 84 0 R
+ /MediaBox [ 0
+ 0
+ 453.5433
+ 255.1181 ]
+ /Parent 61 0 R
+ /Resources << /Font 1 0 R
+ /ProcSet [ /PDF
+ /Text
+ /ImageB
+ /ImageC
+ /ImageI ] >>
+ /Rotate 0
+ /Trans <<  >>
+ /Type /Page >>
+endobj
+% 'Page24': class PDFPage 
+31 0 obj
+% Page dictionary
+<< /Contents 85 0 R
+ /MediaBox [ 0
+ 0
+ 453.5433
+ 255.1181 ]
+ /Parent 61 0 R
+ /Resources << /Font 1 0 R
+ /ProcSet [ /PDF
+ /Text
+ /ImageB
+ /ImageC
+ /ImageI ] >>
+ /Rotate 0
+ /Trans <<  >>
+ /Type /Page >>
+endobj
+% 'Page25': class PDFPage 
+32 0 obj
+% Page dictionary
+<< /Contents 86 0 R
+ /MediaBox [ 0
+ 0
+ 453.5433
+ 255.1181 ]
+ /Parent 61 0 R
+ /Resources << /Font 1 0 R
+ /ProcSet [ /PDF
+ /Text
+ /ImageB
+ /ImageC
+ /ImageI ] >>
+ /Rotate 0
+ /Trans <<  >>
+ /Type /Page >>
+endobj
+% 'Page26': class PDFPage 
+33 0 obj
+% Page dictionary
+<< /Contents 87 0 R
+ /MediaBox [ 0
+ 0
+ 453.5433
+ 255.1181 ]
+ /Parent 61 0 R
+ /Resources << /Font 1 0 R
+ /ProcSet [ /PDF
+ /Text
+ /ImageB
+ /ImageC
+ /ImageI ] >>
+ /Rotate 0
+ /Trans <<  >>
+ /Type /Page >>
+endobj
+% 'R34': class PDFCatalog 
+34 0 obj
+% Document Root
+<< /Outlines 36 0 R
+ /PageMode /UseNone
+ /Pages 61 0 R
+ /Type /Catalog >>
+endobj
+% 'R35': class PDFInfo 
+35 0 obj
+<< /Author ()
+ /CreationDate (D:20091211201044+03'00')
+ /Keywords ()
+ /Producer (ReportLab http://www.reportlab.com)
+ /Subject (\(unspecified\))
+ /Title () >>
+endobj
+% 'R36': class PDFOutlines 
+36 0 obj
+<< /Count 24
+ /First 37 0 R
+ /Last 60 0 R
+ /Type /Outlines >>
+endobj
+% 'Outline.0': class OutlineEntryObject 
+37 0 obj
+<< /Dest [ 6 0 R
+ /XYZ
+ 19.6063
+ 205.2454
+ 0 ]
+ /Next 38 0 R
+ /Parent 36 0 R
+ /Title (Presentaci\363n) >>
+endobj
+% 'Outline.1': class OutlineEntryObject 
+38 0 obj
+<< /Dest [ 7 0 R
+ /XYZ
+ 19.6063
+ 205.2454
+ 0 ]
+ /Next 39 0 R
+ /Parent 36 0 R
+ /Prev 37 0 R
+ /Title (Objetivos Principal) >>
+endobj
+% 'Outline.2': class OutlineEntryObject 
+39 0 obj
+<< /Dest [ 8 0 R
+ /XYZ
+ 19.6063
+ 205.2454
+ 0 ]
+ /Next 40 0 R
+ /Parent 36 0 R
+ /Prev 38 0 R
+ /Title (Objetivos Secundarios) >>
+endobj
+% 'Outline.3': class OutlineEntryObject 
+40 0 obj
+<< /Dest [ 9 0 R
+ /XYZ
+ 19.6063
+ 205.2454
+ 0 ]
+ /Next 41 0 R
+ /Parent 36 0 R
+ /Prev 39 0 R
+ /Title (Carencias del Browser) >>
+endobj
+% 'Outline.4': class OutlineEntryObject 
+41 0 obj
+<< /Dest [ 11 0 R
+ /XYZ
+ 19.6063
+ 205.2454
+ 0 ]
+ /Next 42 0 R
+ /Parent 36 0 R
+ /Prev 40 0 R
+ /Title (Tecnolog\355as Existentes \(1\)) >>
+endobj
+% 'Outline.5': class OutlineEntryObject 
+42 0 obj
+<< /Dest [ 12 0 R
+ /XYZ
+ 19.6063
+ 205.2454
+ 0 ]
+ /Next 43 0 R
+ /Parent 36 0 R
+ /Prev 41 0 R
+ /Title (Tecnolog\355as Existentes) >>
+endobj
+% 'Outline.6': class OutlineEntryObject 
+43 0 obj
+<< /Dest [ 13 0 R
+ /XYZ
+ 19.6063
+ 205.2454
+ 0 ]
+ /Next 44 0 R
+ /Parent 36 0 R
+ /Prev 42 0 R
+ /Title (Tecnolog\355as Existentes \(2\)) >>
+endobj
+% 'Outline.7': class OutlineEntryObject 
+44 0 obj
+<< /Dest [ 15 0 R
+ /XYZ
+ 19.6063
+ 205.2454
+ 0 ]
+ /Next 45 0 R
+ /Parent 36 0 R
+ /Prev 43 0 R
+ /Title (JavaScritp 1.7) >>
+endobj
+% 'Outline.8': class OutlineEntryObject 
+45 0 obj
+<< /Dest [ 16 0 R
+ /XYZ
+ 19.6063
+ 205.2454
+ 0 ]
+ /Next 46 0 R
+ /Parent 36 0 R
+ /Prev 44 0 R
+ /Title (Framework) >>
+endobj
+% 'Outline.9': class OutlineEntryObject 
+46 0 obj
+<< /Dest [ 17 0 R
+ /XYZ
+ 19.6063
+ 205.2454
+ 0 ]
+ /Next 47 0 R
+ /Parent 36 0 R
+ /Prev 45 0 R
+ /Title (Django) >>
+endobj
+% 'Outline.10': class OutlineEntryObject 
+47 0 obj
+<< /Dest [ 18 0 R
+ /XYZ
+ 19.6063
+ 205.2454
+ 0 ]
+ /Next 48 0 R
+ /Parent 36 0 R
+ /Prev 46 0 R
+ /Title (Django \(2\)) >>
+endobj
+% 'Outline.11': class OutlineEntryObject 
+48 0 obj
+<< /Dest [ 19 0 R
+ /XYZ
+ 19.6063
+ 205.2454
+ 0 ]
+ /Next 49 0 R
+ /Parent 36 0 R
+ /Prev 47 0 R
+ /Title (Django \(3\)) >>
+endobj
+% 'Outline.12': class OutlineEntryObject 
+49 0 obj
+<< /Dest [ 20 0 R
+ /XYZ
+ 19.6063
+ 205.2454
+ 0 ]
+ /Next 50 0 R
+ /Parent 36 0 R
+ /Prev 48 0 R
+ /Title (Django \(4\)) >>
+endobj
+% 'Outline.13': class OutlineEntryObject 
+50 0 obj
+<< /Dest [ 22 0 R
+ /XYZ
+ 19.6063
+ 205.2454
+ 0 ]
+ /Next 51 0 R
+ /Parent 36 0 R
+ /Prev 49 0 R
+ /Title (Django \(5\)) >>
+endobj
+% 'Outline.14': class OutlineEntryObject 
+51 0 obj
+<< /Dest [ 23 0 R
+ /XYZ
+ 19.6063
+ 205.2454
+ 0 ]
+ /Next 52 0 R
+ /Parent 36 0 R
+ /Prev 50 0 R
+ /Title (Arquitectura) >>
+endobj
+% 'Outline.15': class OutlineEntryObject 
+52 0 obj
+<< /Dest [ 24 0 R
+ /XYZ
+ 19.6063
+ 205.2454
+ 0 ]
+ /Next 53 0 R
+ /Parent 36 0 R
+ /Prev 51 0 R
+ /Title (Protopy) >>
+endobj
+% 'Outline.16': class OutlineEntryObject 
+53 0 obj
+<< /Dest [ 26 0 R
+ /XYZ
+ 19.6063
+ 205.2454
+ 0 ]
+ /Next 54 0 R
+ /Parent 36 0 R
+ /Prev 52 0 R
+ /Title (Arquitectura \(Doff\)) >>
+endobj
+% 'Outline.17': class OutlineEntryObject 
+54 0 obj
+<< /Dest [ 27 0 R
+ /XYZ
+ 19.6063
+ 205.2454
+ 0 ]
+ /Next 55 0 R
+ /Parent 36 0 R
+ /Prev 53 0 R
+ /Title (Doff) >>
+endobj
+% 'Outline.18': class OutlineEntryObject 
+55 0 obj
+<< /Dest [ 28 0 R
+ /XYZ
+ 19.6063
+ 205.2454
+ 0 ]
+ /Next 56 0 R
+ /Parent 36 0 R
+ /Prev 54 0 R
+ /Title (Arquitectura \(Offline\)) >>
+endobj
+% 'Outline.19': class OutlineEntryObject 
+56 0 obj
+<< /Dest [ 29 0 R
+ /XYZ
+ 19.6063
+ 205.2454
+ 0 ]
+ /Next 57 0 R
+ /Parent 36 0 R
+ /Prev 55 0 R
+ /Title (Offline) >>
+endobj
+% 'Outline.20': class OutlineEntryObject 
+57 0 obj
+<< /Dest [ 30 0 R
+ /XYZ
+ 19.6063
+ 205.2454
+ 0 ]
+ /Next 58 0 R
+ /Parent 36 0 R
+ /Prev 56 0 R
+ /Title (Demo) >>
+endobj
+% 'Outline.21': class OutlineEntryObject 
+58 0 obj
+<< /Dest [ 31 0 R
+ /XYZ
+ 19.6063
+ 205.2454
+ 0 ]
+ /Next 59 0 R
+ /Parent 36 0 R
+ /Prev 57 0 R
+ /Title (Conclusiones) >>
+endobj
+% 'Outline.22': class OutlineEntryObject 
+59 0 obj
+<< /Dest [ 32 0 R
+ /XYZ
+ 19.6063
+ 205.2454
+ 0 ]
+ /Next 60 0 R
+ /Parent 36 0 R
+ /Prev 58 0 R
+ /Title (Lineas Futuras) >>
+endobj
+% 'Outline.23': class OutlineEntryObject 
+60 0 obj
+<< /Dest [ 33 0 R
+ /XYZ
+ 19.6063
+ 205.2454
+ 0 ]
+ /Parent 36 0 R
+ /Prev 59 0 R
+ /Title (FIN) >>
+endobj
+% 'R61': class PDFPages 
+61 0 obj
+% page tree
+<< /Count 26
+ /Kids [ 6 0 R
+ 7 0 R
+ 8 0 R
+ 9 0 R
+ 11 0 R
+ 12 0 R
+ 13 0 R
+ 15 0 R
+ 16 0 R
+ 17 0 R
+ 18 0 R
+ 19 0 R
+ 20 0 R
+ 21 0 R
+ 22 0 R
+ 23 0 R
+ 24 0 R
+ 25 0 R
+ 26 0 R
+ 27 0 R
+ 28 0 R
+ 29 0 R
+ 30 0 R
+ 31 0 R
+ 32 0 R
+ 33 0 R ]
+ /Type /Pages >>
+endobj
+% 'R62': class PDFStream 
+62 0 obj
+% page stream
+<< /Length 2472 >>
+stream
+1 0 0 1 0 0 cm BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 19.6063 184.2454 cm
+q
+BT 1 0 0 1 0 8.435 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Presentaci\363n) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 172.2454 cm
+Q
+q
+1 0 0 1 19.6063 79.24535 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+BT 1 0 0 1 0 5 Tm  T* ET
+q
+1 0 0 1 23 84 cm
+Q
+q
+1 0 0 1 23 48 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 24 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F2 10 Tf 12 TL 33.58937 0 Td (autores:) Tj T* -33.58937 0 Td ET
+Q
+Q
+q
+1 0 0 1 91.03937 36 cm
+Q
+q
+1 0 0 1 91.03937 18 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Defoss\351, Nahuel) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 91.03937 18 cm
+Q
+q
+1 0 0 1 91.03937 21 cm
+Q
+q
+1 0 0 1 91.03937 3 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (van Haaster, Diego Marcos) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 91.03937 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 33 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F2 10 Tf 12 TL 46.93937 0 Td (tutor:) Tj T* -46.93937 0 Td ET
+Q
+Q
+q
+1 0 0 1 91.03937 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Saenz Lopez, Marta) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 18 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F2 10 Tf 12 TL 43.58937 0 Td (fecha:) Tj T* -43.58937 0 Td ET
+Q
+Q
+q
+1 0 0 1 91.03937 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (15 de Diciembre 2009) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 3 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F2 10 Tf 12 TL 56.92937 0 Td (url:) Tj T* -56.92937 0 Td ET
+Q
+Q
+q
+1 0 0 1 91.03937 3 cm
+q
+0 0 .501961 rg
+0 0 .501961 RG
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (https://code.google.com/p/protopy) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 19.6063 79.24535 cm
+Q
+q
+1 0 0 1 19.6063 79.24535 cm
+Q
+q
+1 0 0 1 0 234.6142 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 197.5917 0 Td (Presentaci\363n) Tj T* -197.5917 0 Td ET
+Q
+Q
+q
+1 0 0 1 0 0 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 223.9917 0 Td (1) Tj T* -223.9917 0 Td ET
+Q
+Q
+ 
+endstream
+
+endobj
+% 'R63': class PDFStream 
+63 0 obj
+% page stream
+<< /Length 582 >>
+stream
+1 0 0 1 0 0 cm BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 19.6063 184.2454 cm
+q
+BT 1 0 0 1 0 8.435 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Objetivos Principal) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 166.2454 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL ("Objetivo Principal") Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 166.2454 cm
+Q
+q
+1 0 0 1 0 234.6142 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 185.3717 0 Td (Objetivos Principal) Tj T* -185.3717 0 Td ET
+Q
+Q
+q
+1 0 0 1 0 0 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 223.9917 0 Td (2) Tj T* -223.9917 0 Td ET
+Q
+Q
+ 
+endstream
+
+endobj
+% 'R64': class PDFStream 
+64 0 obj
+% page stream
+<< /Length 2792 >>
+stream
+1 0 0 1 0 0 cm BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 19.6063 184.2454 cm
+q
+BT 1 0 0 1 0 8.435 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Objetivos Secundarios) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 178.2454 cm
+Q
+q
+1 0 0 1 19.6063 148.2454 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F2 10 Tf 12 TL (Open Source) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Coste de licenciemiento nulo y aseguramiento de la continuidad) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 19.6063 148.2454 cm
+Q
+q
+1 0 0 1 19.6063 151.2454 cm
+Q
+q
+1 0 0 1 19.6063 121.2454 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F2 10 Tf 12 TL (Multiplataforma) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Windows, Linux, Mac y m\363viles \(dode exista un browser\)) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 19.6063 121.2454 cm
+Q
+q
+1 0 0 1 19.6063 124.2454 cm
+Q
+q
+1 0 0 1 19.6063 94.24535 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F2 10 Tf 12 TL (Adaptaci\363n m\355nima de aplicaciones existentes) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Integraci\363n con un Frameworks Web) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 19.6063 94.24535 cm
+Q
+q
+1 0 0 1 19.6063 97.24535 cm
+Q
+q
+1 0 0 1 19.6063 55.24535 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 27 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 27 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F2 10 Tf 12 TL (Facilidad de utilizaci\363n) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 27 cm
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 16.82 Tm /F1 10 Tf 12 TL 4.818331 Tw (Reutilizar los conceptos/patrones del framework para una r\341pida asimilaci\363n de los) Tj T* 0 Tw (desarrolladores.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 19.6063 55.24535 cm
+Q
+q
+1 0 0 1 19.6063 55.24535 cm
+Q
+q
+1 0 0 1 0 234.6142 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 176.7517 0 Td (Objetivos Secundarios) Tj T* -176.7517 0 Td ET
+Q
+Q
+q
+1 0 0 1 0 0 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 223.9917 0 Td (3) Tj T* -223.9917 0 Td ET
+Q
+Q
+ 
+endstream
+
+endobj
+% 'R65': class PDFStream 
+65 0 obj
+% page stream
+<< /Length 2317 >>
+stream
+1 0 0 1 0 0 cm BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 19.6063 184.2454 cm
+q
+BT 1 0 0 1 0 8.435 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Carencias del Browser) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 172.2454 cm
+Q
+q
+1 0 0 1 19.6063 88.24535 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+BT 1 0 0 1 0 5 Tm  T* ET
+q
+1 0 0 1 23 81 cm
+Q
+q
+1 0 0 1 23 63 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Base de datos) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 63 cm
+Q
+q
+1 0 0 1 23 66 cm
+Q
+q
+1 0 0 1 23 48 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Servidor web) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 48 cm
+Q
+q
+1 0 0 1 23 51 cm
+Q
+q
+1 0 0 1 23 33 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Lenguaje de programaci\363n \(consistente\)) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 33 cm
+Q
+q
+1 0 0 1 23 36 cm
+Q
+q
+1 0 0 1 23 18 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Concurrencia) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 18 cm
+Q
+q
+1 0 0 1 23 21 cm
+Q
+q
+1 0 0 1 23 3 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Conectividad con el entorno del cliente) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 19.6063 88.24535 cm
+Q
+q
+1 0 0 1 19.6063 88.24535 cm
+Q
+q
+1 0 0 1 0 234.6142 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 176.4817 0 Td (Carencias del Browser) Tj T* -176.4817 0 Td ET
+Q
+Q
+q
+1 0 0 1 0 0 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 223.9917 0 Td (4) Tj T* -223.9917 0 Td ET
+Q
+Q
+ 
+endstream
+
+endobj
+% 'R66': class PDFStream 
+66 0 obj
+% page stream
+<< /Length 1752 >>
+stream
+1 0 0 1 0 0 cm BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 19.6063 184.2454 cm
+q
+BT 1 0 0 1 0 8.435 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Tecnolog\355as Existentes \(1\)) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 178.2454 cm
+Q
+q
+1 0 0 1 19.6063 148.2454 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+q
+BT 1 0 0 1 0 4.82 Tm 12 TL /F2 10 Tf 0 0 0 rg (Silverlight \(.NET Framework, Microsoft\)) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+Q
+q
+1 0 0 1 23 3 cm
+q
+BT 1 0 0 1 0 4.82 Tm 12 TL /F1 10 Tf 0 0 0 rg (Soluci\363n muy interesante, pero ) Tj /F2 10 Tf (cerrada) Tj /F1 10 Tf (. ) Tj /F4 10 Tf (Promesa ) Tj /F1 10 Tf (de no cautividad.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 19.6063 148.2454 cm
+Q
+q
+1 0 0 1 19.6063 151.2454 cm
+Q
+q
+1 0 0 1 19.6063 109.2454 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 27 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 27 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Otras alternativas) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 21 cm
+Q
+q
+1 0 0 1 23 3 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+BT 1 0 0 1 0 5 Tm  T* ET
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (AIR, JavaFX, XUL, etc.) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 19.6063 109.2454 cm
+Q
+q
+1 0 0 1 19.6063 109.2454 cm
+Q
+q
+1 0 0 1 0 234.6142 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 167.5817 0 Td (Tecnolog\355as Existentes \(1\)) Tj T* -167.5817 0 Td ET
+Q
+Q
+q
+1 0 0 1 0 0 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 223.9917 0 Td (5) Tj T* -223.9917 0 Td ET
+Q
+Q
+ 
+endstream
+
+endobj
+% 'R67': class PDFStream 
+67 0 obj
+% page stream
+<< /Length 2574 >>
+stream
+1 0 0 1 0 0 cm BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 19.6063 184.2454 cm
+q
+BT 1 0 0 1 0 8.435 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Tecnolog\355as Existentes) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 178.2454 cm
+Q
+q
+1 0 0 1 19.6063 100.2454 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 63 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 63 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (JavaScript!) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 57 cm
+Q
+q
+1 0 0 1 23 3 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+BT 1 0 0 1 0 5 Tm  T* ET
+q
+1 0 0 1 23 51 cm
+Q
+q
+1 0 0 1 23 33 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Objetos) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 33 cm
+Q
+q
+1 0 0 1 23 36 cm
+Q
+q
+1 0 0 1 23 18 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Expresiones Regulares) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 18 cm
+Q
+q
+1 0 0 1 23 21 cm
+Q
+q
+1 0 0 1 23 3 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Patrones propios \(Module, Closures\)) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 19.6063 100.2454 cm
+Q
+q
+1 0 0 1 19.6063 103.2454 cm
+Q
+q
+1 0 0 1 19.6063 61.24535 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 27 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 27 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Librer\355as:) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 21 cm
+Q
+q
+1 0 0 1 23 3 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+BT 1 0 0 1 0 5 Tm  T* ET
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Prototype Dojo Peppy) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 19.6063 61.24535 cm
+Q
+q
+1 0 0 1 19.6063 61.24535 cm
+Q
+q
+1 0 0 1 0 234.6142 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 175.0817 0 Td (Tecnolog\355as Existentes) Tj T* -175.0817 0 Td ET
+Q
+Q
+q
+1 0 0 1 0 0 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 223.9917 0 Td (6) Tj T* -223.9917 0 Td ET
+Q
+Q
+ 
+endstream
+
+endobj
+% 'R68': class PDFStream 
+68 0 obj
+% page stream
+<< /Length 2550 >>
+stream
+1 0 0 1 0 0 cm BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 19.6063 184.2454 cm
+q
+BT 1 0 0 1 0 8.435 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Tecnolog\355as Existentes \(2\)) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 178.2454 cm
+Q
+q
+1 0 0 1 19.6063 60.24535 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 103 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 103 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F2 10 Tf 12 TL (Google Gears) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 103 cm
+Q
+q
+1 0 0 1 23 87 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F2 10 Tf 12 TL (A\361ade al navegador 3 componentes) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 87 cm
+Q
+q
+1 0 0 1 23 87 cm
+Q
+q
+1 0 0 1 23 57 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F2 10 Tf 12 TL (Local Server) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Un servidor de archivos locales) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 57 cm
+Q
+q
+1 0 0 1 23 60 cm
+Q
+q
+1 0 0 1 23 30 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F2 10 Tf 12 TL (DataBase) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Una base de datos transaccional) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 30 cm
+Q
+q
+1 0 0 1 23 33 cm
+Q
+q
+1 0 0 1 23 3 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F2 10 Tf 12 TL (Worker Pool) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Sistema de Hilos con pasaje de mensajes) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 19.6063 60.24535 cm
+Q
+q
+1 0 0 1 19.6063 60.24535 cm
+Q
+q
+1 0 0 1 0 234.6142 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 167.5817 0 Td (Tecnolog\355as Existentes \(2\)) Tj T* -167.5817 0 Td ET
+Q
+Q
+q
+1 0 0 1 0 0 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 223.9917 0 Td (7) Tj T* -223.9917 0 Td ET
+Q
+Q
+ 
+endstream
+
+endobj
+% 'R69': class PDFStream 
+69 0 obj
+% page stream
+<< /Length 2197 >>
+stream
+1 0 0 1 0 0 cm BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 19.6063 184.2454 cm
+q
+BT 1 0 0 1 0 8.435 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (JavaScritp 1.7) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 178.2454 cm
+Q
+q
+1 0 0 1 19.6063 148.2454 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F2 10 Tf 12 TL (Generador:) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Ej: Recuperaci\363n perezosa de datos.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 19.6063 148.2454 cm
+Q
+q
+1 0 0 1 19.6063 151.2454 cm
+Q
+q
+1 0 0 1 19.6063 121.2454 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F2 10 Tf 12 TL (Orientaci\363n a objetos:) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+Q
+q
+1 0 0 1 23 3 cm
+q
+BT 1 0 0 1 0 4.82 Tm 12 TL /F1 10 Tf 0 0 0 rg (M\351todos \372tiles como ) Tj /F5 10 Tf (__noSuchMethod__) Tj /F1 10 Tf (, ) Tj /F5 10 Tf (__defineGetter__ ) Tj /F1 10 Tf (y ) Tj /F5 10 Tf (__defineSetter__) Tj /F1 10 Tf (.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 19.6063 121.2454 cm
+Q
+q
+1 0 0 1 19.6063 124.2454 cm
+Q
+q
+1 0 0 1 19.6063 94.24535 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F2 10 Tf 12 TL (Azucar sint\341ctico:) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Asignaci\363n m\372ltiple) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 19.6063 94.24535 cm
+Q
+q
+1 0 0 1 19.6063 94.24535 cm
+Q
+q
+1 0 0 1 0 234.6142 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 195.0917 0 Td (JavaScritp 1.7) Tj T* -195.0917 0 Td ET
+Q
+Q
+q
+1 0 0 1 0 0 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 223.9917 0 Td (8) Tj T* -223.9917 0 Td ET
+Q
+Q
+ 
+endstream
+
+endobj
+% 'R70': class PDFStream 
+70 0 obj
+% page stream
+<< /Length 2112 >>
+stream
+1 0 0 1 0 0 cm BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 19.6063 184.2454 cm
+q
+BT 1 0 0 1 0 8.435 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Framework) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 178.2454 cm
+Q
+q
+1 0 0 1 19.6063 160.2454 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Inversi\363n de Control) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 19.6063 160.2454 cm
+Q
+q
+1 0 0 1 19.6063 163.2454 cm
+Q
+q
+1 0 0 1 19.6063 145.2454 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Comportamiento por defecto definido) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 19.6063 145.2454 cm
+Q
+q
+1 0 0 1 19.6063 148.2454 cm
+Q
+q
+1 0 0 1 19.6063 130.2454 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Extensibilidad) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 19.6063 130.2454 cm
+Q
+q
+1 0 0 1 19.6063 133.2454 cm
+Q
+q
+1 0 0 1 19.6063 103.2454 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F2 10 Tf 12 TL (No modificabilidad del c\363digo del framework) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Todo se extiende, nada se edita) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 19.6063 103.2454 cm
+Q
+q
+1 0 0 1 19.6063 103.2454 cm
+Q
+q
+1 0 0 1 0 234.6142 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 201.7717 0 Td (Framework) Tj T* -201.7717 0 Td ET
+Q
+Q
+q
+1 0 0 1 0 0 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 223.9917 0 Td (9) Tj T* -223.9917 0 Td ET
+Q
+Q
+ 
+endstream
+
+endobj
+% 'R71': class PDFStream 
+71 0 obj
+% page stream
+<< /Length 1689 >>
+stream
+1 0 0 1 0 0 cm BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 19.6063 184.2454 cm
+q
+BT 1 0 0 1 0 8.435 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Django) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 166.2454 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Framework web elegido por:) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 166.2454 cm
+Q
+q
+1 0 0 1 19.6063 136.2454 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F2 10 Tf 12 TL (Simple) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+Q
+q
+1 0 0 1 23 3 cm
+q
+BT 1 0 0 1 0 4.82 Tm 12 TL /F1 10 Tf 0 0 0 rg (Escrito en Python Sin XML/YAML/INI/) Tj (<) Tj (ponga su markup aqu\355) Tj (> Pocas capas M T V) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 19.6063 136.2454 cm
+Q
+q
+1 0 0 1 19.6063 139.2454 cm
+Q
+q
+1 0 0 1 19.6063 109.2454 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F2 10 Tf 12 TL (DRY) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (ModelForms, Vistas gen\351ricas, ContentType framework) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 19.6063 109.2454 cm
+Q
+q
+1 0 0 1 19.6063 109.2454 cm
+Q
+q
+1 0 0 1 0 234.6142 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 210.9317 0 Td (Django) Tj T* -210.9317 0 Td ET
+Q
+Q
+q
+1 0 0 1 0 0 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 221.2117 0 Td (10) Tj T* -221.2117 0 Td ET
+Q
+Q
+ 
+endstream
+
+endobj
+% 'R72': class PDFStream 
+72 0 obj
+% page stream
+<< /Length 2074 >>
+stream
+1 0 0 1 0 0 cm BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 19.6063 184.2454 cm
+q
+BT 1 0 0 1 0 8.435 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Django \(2\)) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 178.2454 cm
+Q
+q
+1 0 0 1 19.6063 148.2454 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F2 10 Tf 12 TL (Con bater\355as incluidas) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Administraci\363n, Geolocalizaci\363n) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 19.6063 148.2454 cm
+Q
+q
+1 0 0 1 19.6063 151.2454 cm
+Q
+q
+1 0 0 1 19.6063 121.2454 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F2 10 Tf 12 TL (Open Source) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Gran comunidad, una fundaci\363n, varios diarios utiliz\341ndolo) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 19.6063 121.2454 cm
+Q
+q
+1 0 0 1 19.6063 124.2454 cm
+Q
+q
+1 0 0 1 19.6063 94.24535 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F2 10 Tf 12 TL (Comportamiento transversal) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Middlewares) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 19.6063 94.24535 cm
+Q
+q
+1 0 0 1 19.6063 94.24535 cm
+Q
+q
+1 0 0 1 0 234.6142 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 203.4317 0 Td (Django \(2\)) Tj T* -203.4317 0 Td ET
+Q
+Q
+q
+1 0 0 1 0 0 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 221.2117 0 Td (11) Tj T* -221.2117 0 Td ET
+Q
+Q
+ 
+endstream
+
+endobj
+% 'R73': class PDFStream 
+73 0 obj
+% page stream
+<< /Length 1541 >>
+stream
+1 0 0 1 0 0 cm BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 19.6063 184.2454 cm
+q
+BT 1 0 0 1 0 8.435 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Django \(3\)) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 166.2454 cm
+q
+BT 1 0 0 1 0 4.82 Tm 12 TL /F1 10 Tf 0 0 0 rg (Un ) Tj /F2 10 Tf (proyecto ) Tj /F1 10 Tf (Django es un paquete con los siguientes m\363dulos:) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 160.2454 cm
+Q
+q
+1 0 0 1 19.6063 142.2454 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+BT 1 0 0 1 0 5 Tm  T* ET
+q
+1 0 0 1 23 3 cm
+q
+BT 1 0 0 1 0 4.82 Tm 12 TL /F5 10 Tf 0 0 0 rg ("settings.py" ) Tj /F1 10 Tf (y ) Tj /F5 10 Tf ("urls.py") Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 19.6063 142.2454 cm
+Q
+q
+1 0 0 1 19.6063 124.2454 cm
+q
+BT 1 0 0 1 0 4.82 Tm 12 TL /F1 10 Tf 0 0 0 rg (Una ) Tj /F2 10 Tf (aplicaci\363n ) Tj /F1 10 Tf (es un subpaquete con los siguientes m\363dulos:) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 118.2454 cm
+Q
+q
+1 0 0 1 19.6063 100.2454 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+BT 1 0 0 1 0 5 Tm  T* ET
+q
+1 0 0 1 23 3 cm
+q
+BT 1 0 0 1 0 4.82 Tm 12 TL /F5 10 Tf 0 0 0 rg ("models.py") Tj /F1 10 Tf (, ) Tj /F5 10 Tf ("views.py" ) Tj /F1 10 Tf (y ) Tj /F5 10 Tf ("urls.py" ) Tj /F1 10 Tf (\(opcional\)) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 19.6063 100.2454 cm
+Q
+q
+1 0 0 1 19.6063 100.2454 cm
+Q
+q
+1 0 0 1 0 234.6142 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 203.4317 0 Td (Django \(3\)) Tj T* -203.4317 0 Td ET
+Q
+Q
+q
+1 0 0 1 0 0 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 221.2117 0 Td (12) Tj T* -221.2117 0 Td ET
+Q
+Q
+ 
+endstream
+
+endobj
+% 'R74': class PDFStream 
+74 0 obj
+% page stream
+<< /Length 2174 >>
+stream
+1 0 0 1 0 0 cm BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 19.6063 184.2454 cm
+q
+BT 1 0 0 1 0 8.435 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Django \(4\)) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 166.2454 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Templates:) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 160.2454 cm
+Q
+q
+1 0 0 1 19.6063 51.32409 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+BT 1 0 0 1 0 5 Tm  T* ET
+q
+1 0 0 1 23 105 cm
+Q
+q
+1 0 0 1 23 63 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 27 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 27 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Poca l\363gica) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 21 cm
+Q
+q
+1 0 0 1 23 3 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+BT 1 0 0 1 0 5 Tm  T* ET
+q
+1 0 0 1 23 3 cm
+q
+BT 1 0 0 1 0 4.82 Tm 12 TL /F5 10 Tf 0 0 0 rg (for) Tj /F1 10 Tf (, ) Tj /F5 10 Tf (if) Tj /F1 10 Tf (, formateo) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 63 cm
+Q
+q
+1 0 0 1 23 66 cm
+Q
+q
+1 0 0 1 23 24 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 27 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 27 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Modularidad) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 21 cm
+Q
+q
+1 0 0 1 23 3 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+BT 1 0 0 1 0 5 Tm  T* ET
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Herencia e inclusi\363n) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 24 cm
+Q
+q
+1 0 0 1 23 27 cm
+Q
+q
+1 0 0 1 23 3 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 9 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 9 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Template Tags) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 0 234.6142 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 203.4317 0 Td (Django \(4\)) Tj T* -203.4317 0 Td ET
+Q
+Q
+q
+1 0 0 1 0 0 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 221.2117 0 Td (13) Tj T* -221.2117 0 Td ET
+Q
+Q
+ 
+endstream
+
+endobj
+% 'R75': class PDFStream 
+75 0 obj
+% page stream
+<< /Length 819 >>
+stream
+1 0 0 1 0 0 cm BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 19.6063 175.2454 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+BT 1 0 0 1 0 5 Tm  T* ET
+q
+1 0 0 1 23 3 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+BT 1 0 0 1 6 11 Tm  T* ET
+q
+1 0 0 1 23 3 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+BT 1 0 0 1 0 5 Tm  T* ET
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Funcionalidad extra en funciones planas) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 19.6063 175.2454 cm
+Q
+q
+1 0 0 1 19.6063 175.2454 cm
+Q
+q
+1 0 0 1 0 234.6142 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 203.4317 0 Td (Django \(4\)) Tj T* -203.4317 0 Td ET
+Q
+Q
+q
+1 0 0 1 0 0 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 221.2117 0 Td (14) Tj T* -221.2117 0 Td ET
+Q
+Q
+ 
+endstream
+
+endobj
+% 'R76': class PDFStream 
+76 0 obj
+% page stream
+<< /Length 836 >>
+stream
+1 0 0 1 0 0 cm BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 19.6063 184.2454 cm
+q
+BT 1 0 0 1 0 8.435 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Django \(5\)) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 166.2454 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Ciclo del Request:) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 160.2454 cm
+Q
+q
+1 0 0 1 19.6063 142.2454 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+BT 1 0 0 1 0 5 Tm  T* ET
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Gr\341fico) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 19.6063 142.2454 cm
+Q
+q
+1 0 0 1 19.6063 142.2454 cm
+Q
+q
+1 0 0 1 0 234.6142 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 203.4317 0 Td (Django \(5\)) Tj T* -203.4317 0 Td ET
+Q
+Q
+q
+1 0 0 1 0 0 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 221.2117 0 Td (15) Tj T* -221.2117 0 Td ET
+Q
+Q
+ 
+endstream
+
+endobj
+% 'R77': class PDFStream 
+77 0 obj
+% page stream
+<< /Length 572 >>
+stream
+1 0 0 1 0 0 cm BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 19.6063 184.2454 cm
+q
+BT 1 0 0 1 0 8.435 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Arquitectura) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 166.2454 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Ac\341 va el gr\341fico) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 166.2454 cm
+Q
+q
+1 0 0 1 0 234.6142 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 199.8167 0 Td (Arquitectura) Tj T* -199.8167 0 Td ET
+Q
+Q
+q
+1 0 0 1 0 0 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 221.2117 0 Td (16) Tj T* -221.2117 0 Td ET
+Q
+Q
+ 
+endstream
+
+endobj
+% 'R78': class PDFStream 
+78 0 obj
+% page stream
+<< /Length 2588 >>
+stream
+1 0 0 1 0 0 cm BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 19.6063 184.2454 cm
+q
+BT 1 0 0 1 0 8.435 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Protopy) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 166.2454 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Soporte para implementaci\363n de Django sobre el navegador.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 160.2454 cm
+Q
+q
+1 0 0 1 19.6063 51.32409 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+BT 1 0 0 1 0 5 Tm  T* ET
+q
+1 0 0 1 23 96.92126 cm
+Q
+q
+1 0 0 1 23 78.92126 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Aprovechamiento de JavaScript 1.7) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 78.92126 cm
+Q
+q
+1 0 0 1 23 81.92126 cm
+Q
+q
+1 0 0 1 23 63.92126 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (M\363dulos) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 63.92126 cm
+Q
+q
+1 0 0 1 23 66.92126 cm
+Q
+q
+1 0 0 1 23 48.92126 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+q
+BT 1 0 0 1 0 4.82 Tm 12 TL /F1 10 Tf 0 0 0 rg (OO Pythonica, ) Tj /F5 10 Tf (type) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 48.92126 cm
+Q
+q
+1 0 0 1 23 51.92126 cm
+Q
+q
+1 0 0 1 23 3 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 33.92126 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 33.92126 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Integraci\363n de librer\355as:) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 27.92126 cm
+Q
+q
+1 0 0 1 23 6.92126 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+BT 1 0 0 1 0 5 Tm  T* ET
+q
+1 0 0 1 23 18 cm
+Q
+q
+1 0 0 1 23 0 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (API de DOM de Prototype) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 0 cm
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 0 234.6142 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 209.5417 0 Td (Protopy) Tj T* -209.5417 0 Td ET
+Q
+Q
+q
+1 0 0 1 0 0 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 221.2117 0 Td (17) Tj T* -221.2117 0 Td ET
+Q
+Q
+ 
+endstream
+
+endobj
+% 'R79': class PDFStream 
+79 0 obj
+% page stream
+<< /Length 1876 >>
+stream
+1 0 0 1 0 0 cm BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 19.6063 127.2454 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+BT 1 0 0 1 0 5 Tm  T* ET
+q
+1 0 0 1 23 30 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+BT 1 0 0 1 6 32 Tm  T* ET
+q
+1 0 0 1 23 3 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+BT 1 0 0 1 0 5 Tm  T* ET
+q
+1 0 0 1 23 18 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Eventos \(Dojo\)) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 18 cm
+Q
+q
+1 0 0 1 23 21 cm
+Q
+q
+1 0 0 1 23 3 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (CSS Selector \(Peppy\)) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 30 cm
+Q
+q
+1 0 0 1 23 33 cm
+Q
+q
+1 0 0 1 23 3 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F2 10 Tf 12 TL (Gears) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+Q
+q
+1 0 0 1 23 3 cm
+q
+BT 1 0 0 1 0 4.82 Tm 12 TL /F1 10 Tf 0 0 0 rg (Enmascaramiento en el m\363dulo ) Tj /F5 10 Tf (sys) Tj /F1 10 Tf (, extensi\363n de DB, Desktop.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 19.6063 127.2454 cm
+Q
+q
+1 0 0 1 19.6063 127.2454 cm
+Q
+q
+1 0 0 1 0 234.6142 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 209.5417 0 Td (Protopy) Tj T* -209.5417 0 Td ET
+Q
+Q
+q
+1 0 0 1 0 0 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 221.2117 0 Td (18) Tj T* -221.2117 0 Td ET
+Q
+Q
+ 
+endstream
+
+endobj
+% 'R80': class PDFStream 
+80 0 obj
+% page stream
+<< /Length 745 >>
+stream
+1 0 0 1 0 0 cm BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 19.6063 184.2454 cm
+q
+BT 1 0 0 1 0 8.435 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Arquitectura \(Doff\)) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 172.2454 cm
+Q
+q
+1 0 0 1 19.6063 154.2454 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+BT 1 0 0 1 0 5 Tm  T* ET
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Ahora mostramos Doff) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 19.6063 154.2454 cm
+Q
+q
+1 0 0 1 19.6063 154.2454 cm
+Q
+q
+1 0 0 1 0 234.6142 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 185.9267 0 Td (Arquitectura \(Doff\)) Tj T* -185.9267 0 Td ET
+Q
+Q
+q
+1 0 0 1 0 0 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 221.2117 0 Td (19) Tj T* -221.2117 0 Td ET
+Q
+Q
+ 
+endstream
+
+endobj
+% 'R81': class PDFStream 
+81 0 obj
+% page stream
+<< /Length 2280 >>
+stream
+1 0 0 1 0 0 cm BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 19.6063 184.2454 cm
+q
+BT 1 0 0 1 0 8.435 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Doff) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 166.2454 cm
+q
+BT 1 0 0 1 0 4.82 Tm 12 TL /F1 10 Tf 0 0 0 rg (Django on Protopy -) Tj (> ) Tj /F2 10 Tf (Djano Offline ) Tj /F1 10 Tf (:\)) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 160.2454 cm
+Q
+q
+1 0 0 1 19.6063 79.24535 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+BT 1 0 0 1 0 5 Tm  T* ET
+q
+1 0 0 1 23 78 cm
+Q
+q
+1 0 0 1 23 60 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (API de Modelos) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 60 cm
+Q
+q
+1 0 0 1 23 63 cm
+Q
+q
+1 0 0 1 23 45 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Templates) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 45 cm
+Q
+q
+1 0 0 1 23 48 cm
+Q
+q
+1 0 0 1 23 30 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Proyecto desconectado) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 30 cm
+Q
+q
+1 0 0 1 23 33 cm
+Q
+q
+1 0 0 1 23 3 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F2 10 Tf 12 TL (Aplicaciones adicionales) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Sincronizaci\363n Autenticaci\363n "Sesi\363n") Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 19.6063 79.24535 cm
+Q
+q
+1 0 0 1 19.6063 79.24535 cm
+Q
+q
+1 0 0 1 0 234.6142 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 217.6017 0 Td (Doff) Tj T* -217.6017 0 Td ET
+Q
+Q
+q
+1 0 0 1 0 0 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 221.2117 0 Td (20) Tj T* -221.2117 0 Td ET
+Q
+Q
+ 
+endstream
+
+endobj
+% 'R82': class PDFStream 
+82 0 obj
+% page stream
+<< /Length 596 >>
+stream
+1 0 0 1 0 0 cm BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 19.6063 184.2454 cm
+q
+BT 1 0 0 1 0 8.435 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Arquitectura \(Offline\)) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 166.2454 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Ahora mostramos Offline) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 166.2454 cm
+Q
+q
+1 0 0 1 0 234.6142 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 180.6467 0 Td (Arquitectura \(Offline\)) Tj T* -180.6467 0 Td ET
+Q
+Q
+q
+1 0 0 1 0 0 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 221.2117 0 Td (21) Tj T* -221.2117 0 Td ET
+Q
+Q
+ 
+endstream
+
+endobj
+% 'R83': class PDFStream 
+83 0 obj
+% page stream
+<< /Length 2077 >>
+stream
+1 0 0 1 0 0 cm BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 19.6063 184.2454 cm
+q
+BT 1 0 0 1 0 8.435 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Offline) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 166.2454 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Soporte en el servidor para proyecto desconectado) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 160.2454 cm
+Q
+q
+1 0 0 1 19.6063 91.24535 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+BT 1 0 0 1 0 5 Tm  T* ET
+q
+1 0 0 1 23 66 cm
+Q
+q
+1 0 0 1 23 48 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Comandos de administraci\363n) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 48 cm
+Q
+q
+1 0 0 1 23 51 cm
+Q
+q
+1 0 0 1 23 33 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Instalaci\363n) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 33 cm
+Q
+q
+1 0 0 1 23 36 cm
+Q
+q
+1 0 0 1 23 18 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Seguridad) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 18 cm
+Q
+q
+1 0 0 1 23 21 cm
+Q
+q
+1 0 0 1 23 3 cm
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Sincronizaci\363n) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 19.6063 91.24535 cm
+Q
+q
+1 0 0 1 19.6063 91.24535 cm
+Q
+q
+1 0 0 1 0 234.6142 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 212.3217 0 Td (Offline) Tj T* -212.3217 0 Td ET
+Q
+Q
+q
+1 0 0 1 0 0 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 221.2117 0 Td (22) Tj T* -221.2117 0 Td ET
+Q
+Q
+ 
+endstream
+
+endobj
+% 'R84': class PDFStream 
+84 0 obj
+% page stream
+<< /Length 592 >>
+stream
+1 0 0 1 0 0 cm BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 19.6063 184.2454 cm
+q
+BT 1 0 0 1 0 8.435 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Demo) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 166.2454 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (La aplicaci\363n de demostraci\363n es un agente de ventas.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 166.2454 cm
+Q
+q
+1 0 0 1 0 234.6142 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 213.4367 0 Td (Demo) Tj T* -213.4367 0 Td ET
+Q
+Q
+q
+1 0 0 1 0 0 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 221.2117 0 Td (23) Tj T* -221.2117 0 Td ET
+Q
+Q
+ 
+endstream
+
+endobj
+% 'R85': class PDFStream 
+85 0 obj
+% page stream
+<< /Length 589 >>
+stream
+1 0 0 1 0 0 cm BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 19.6063 184.2454 cm
+q
+BT 1 0 0 1 0 8.435 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Conclusiones) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 166.2454 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Se lograron cumplir todos los objetivos.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 166.2454 cm
+Q
+q
+1 0 0 1 0 234.6142 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 196.7617 0 Td (Conclusiones) Tj T* -196.7617 0 Td ET
+Q
+Q
+q
+1 0 0 1 0 0 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 221.2117 0 Td (24) Tj T* -221.2117 0 Td ET
+Q
+Q
+ 
+endstream
+
+endobj
+% 'R86': class PDFStream 
+86 0 obj
+% page stream
+<< /Length 569 >>
+stream
+1 0 0 1 0 0 cm BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 19.6063 184.2454 cm
+q
+BT 1 0 0 1 0 8.435 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Lineas Futuras) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 166.2454 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (Tomar t\355tulos) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 166.2454 cm
+Q
+q
+1 0 0 1 0 234.6142 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 193.7017 0 Td (Lineas Futuras) Tj T* -193.7017 0 Td ET
+Q
+Q
+q
+1 0 0 1 0 0 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 221.2117 0 Td (25) Tj T* -221.2117 0 Td ET
+Q
+Q
+ 
+endstream
+
+endobj
+% 'R87': class PDFStream 
+87 0 obj
+% page stream
+<< /Length 515 >>
+stream
+1 0 0 1 0 0 cm BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 19.6063 184.2454 cm
+q
+BT 1 0 0 1 0 8.435 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (FIN) Tj T* ET
+Q
+Q
+q
+1 0 0 1 19.6063 166.2454 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL (\241Muchas Gracias!) Tj T* ET
+Q
+Q
+q
+1 0 0 1 0 234.6142 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 218.7167 0 Td (FIN) Tj T* -218.7167 0 Td ET
+Q
+Q
+q
+1 0 0 1 0 0 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4.82 Tm /F1 10 Tf 12 TL 221.2117 0 Td (26) Tj T* -221.2117 0 Td ET
+Q
+Q
+ 
+endstream
+
+endobj
+xref
+0 88
+0000000000 65535 f
+0000000113 00000 n
+0000000259 00000 n
+0000000424 00000 n
+0000000599 00000 n
+0000000780 00000 n
+0000001017 00000 n
+0000001316 00000 n
+0000001595 00000 n
+0000001874 00000 n
+0000002155 00000 n
+0000002335 00000 n
+0000002615 00000 n
+0000002895 00000 n
+0000003177 00000 n
+0000003337 00000 n
+0000003617 00000 n
+0000003898 00000 n
+0000004179 00000 n
+0000004460 00000 n
+0000004741 00000 n
+0000005022 00000 n
+0000005303 00000 n
+0000005584 00000 n
+0000005865 00000 n
+0000006146 00000 n
+0000006427 00000 n
+0000006708 00000 n
+0000006989 00000 n
+0000007270 00000 n
+0000007551 00000 n
+0000007832 00000 n
+0000008113 00000 n
+0000008394 00000 n
+0000008675 00000 n
+0000008813 00000 n
+0000009025 00000 n
+0000009151 00000 n
+0000009325 00000 n
+0000009518 00000 n
+0000009713 00000 n
+0000009908 00000 n
+0000010114 00000 n
+0000010314 00000 n
+0000010520 00000 n
+0000010709 00000 n
+0000010893 00000 n
+0000011075 00000 n
+0000011263 00000 n
+0000011451 00000 n
+0000011639 00000 n
+0000011827 00000 n
+0000012015 00000 n
+0000012198 00000 n
+0000012395 00000 n
+0000012575 00000 n
+0000012775 00000 n
+0000012958 00000 n
+0000013138 00000 n
+0000013326 00000 n
+0000013516 00000 n
+0000013663 00000 n
+0000013993 00000 n
+0000016566 00000 n
+0000017248 00000 n
+0000020141 00000 n
+0000022559 00000 n
+0000024412 00000 n
+0000027087 00000 n
+0000029738 00000 n
+0000032036 00000 n
+0000034249 00000 n
+0000036039 00000 n
+0000038214 00000 n
+0000039856 00000 n
+0000042131 00000 n
+0000043050 00000 n
+0000043986 00000 n
+0000044658 00000 n
+0000047347 00000 n
+0000049324 00000 n
+0000050169 00000 n
+0000052550 00000 n
+0000053246 00000 n
+0000055424 00000 n
+0000056116 00000 n
+0000056805 00000 n
+0000057474 00000 n
+trailer
+<< /ID 
+ % ReportLab generated PDF document -- digest (http://www.reportlab.com) 
+ [(\214:hv+\252\210o\340\313\211\374\207y\325\242) (\214:hv+\252\210o\340\313\211\374\207y\325\242)] 
+
+ /Info 35 0 R
+ /Root 34 0 R
+ /Size 88 >>
+startxref
+58062
+%%EOF
