@@ -13,7 +13,16 @@ Presentación
 
 Objetivos Principal
 -------------------
-"Objetivo Principal"
+"Extender un framework de aplicaciones web existente, OpenSource,
+de manera que una aplicación realizada sobre éste pueda ser ejecutada
+en el cliente de manera desconectada con un mínimo de modificaciones.
+Para permitir que la aplicación pueda ejecutarse en el cliente, se
+implementará":
+    
+    * Persistencia del modelo de datos en el cliente.
+    * Subconjunto de acciones disponibles en modo desconectado.
+    * Primitivas de sincronización entre la aplicación del cliente y la aplicación web que le dio origen".
+    
     
 
 Objetivos Secundarios
@@ -170,85 +179,6 @@ Framework
 
     Todo se extiende, nada se edita
 
-
-Django
-------
-Framework web elegido por:
-
-* Simple
-
-    Escrito en Python
-    Sin XML/YAML/INI/<ponga su markup aquí>
-    Pocas capas M T V
-    No se necesita una **IDE**
-
-* DRY
-
-    ModelForms, Vistas genéricas, ContentType framework
-
-
-Django (2)
-----------
-
-* Con baterías incluidas
-
-    Administración, Geolocalización
-
-* Open Source
-
-    Gran comunidad, una fundación, varios diarios utilizándolo
-
-* Comportamiento transversal
-
-    Middlewares
-
-Django (3)
-----------
-
-Un **proyecto** Django es un paquete con los siguientes módulos:
-
-    ``"settings.py"`` y ``"urls.py"``
-
-Una **aplicación** es un subpaquete con los siguientes módulos:
-
-    ``"models.py"``, ``"views.py"`` y ``"urls.py"`` (opcional)
-
-.. Decir
-
-Django (4)
-----------
-
-Templates:
-
-    * Poca lógica
-
-        ``for``, ``if``, formateo
-
-    * Modularidad
-
-        Herencia e inclusión
-
-    * Template Tags
-
-        Funcionalidad extra en funciones planas
-
-.. Hablar de la herencia
-
-Django (5)
-----------
-
-Figura
-
-.. 
-    .. figure:: test.svg
-
-
-
-
-.. Como implementamos este grandioso framework en el cliente??
-.. No tenemos Python...
-.. Ventaja: Si cambia DOM con HTML5, solo hace falta adaptar Protopy, las
-.. aplicaciones deberían seguir corriendo :)
 
 Arquitectura
 ------------
