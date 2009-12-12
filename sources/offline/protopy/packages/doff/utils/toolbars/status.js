@@ -28,9 +28,7 @@ var installed_template =
 var Status = type('Status', [ Panel ], {
     __init__: function(project) {
         this.project = project;
-		this.config = project.settings;
-
-        super(Panel, this).__init__('status', 'Offline', 'Install offline access for ' + this.config.PROJECT_NAME);
+        super(Panel, this).__init__('status', 'Offline', 'Install offline access for ' + settings.PROJECT_NAME);
         this.width = '40%';
         this.icon = sys.module_url('doff.utils.toolbars', 'templates/icons/protopy.png');
 
@@ -59,18 +57,18 @@ var Status = type('Status', [ Panel ], {
     		// Store actualizando archivos
     		this.bar.setStyle({ 'width': (details.filesComplete * 100) / details.filesTotal+ '%' });
     	} else if (key === 'error') {
-    		// Un error, quiza sea bueno dejarlo en un lugar de errores 
-    		this.status.update(details['message']);
+    		// Un error, quiza sea bueno dejarlo en un lugar de errores
+    		this.status.insert('<p style="color:red;">' + details['message'] + '</p>');
     	} else {
-    		this.status.update(details['message']);
+    		this.status.insert('<p>' + details['message'] + '</p>');
     	}
     },
     
     install: function(e) {
-        e.target.remove();
-        $('status-content').update('<h3 id="doff-progress-status"></h3><div class="doff-progress-container"><div id="doff-progress-bar"/></div></div>');
-        this.status = $('doff-progress-status');
-        this.bar = $('doff-progress-bar');
+    	$('status-progress-container').show();
+        this.status = $('status-messages');
+        this.status.update('');
+        this.bar = $('status-messages');
         this.project.install(getattr(this, 'go_install'));
     },
 
@@ -98,9 +96,9 @@ var Status = type('Status', [ Panel ], {
         super(Panel, this)._display();
 
         if (this.project.is_installed) {
-            event.connect($('status-button-disable'), 'click', this.project, 'uninstall');
+            event.connect($('status-enable'), 'click', this.project, 'uninstall');
         } else {
-            event.connect($('status-button-enable'), 'click', this, 'install');
+            event.connect($('status-enable'), 'click', this, 'install');
         }
     }
 });

@@ -6,37 +6,18 @@ var Project = type('Project', object, {
     is_online: null,
 
     onLoad: function() {
+	
+		// Creo el adaptador para el DOM y hago que tome el control de sys.window, sys.document y sys.history
+	    require('doff.core.client', 'DOMAdapter');
+	    sys.window = new DOMAdapter();
+	    sys.document = sys.window.document;
+	    sys.history = sys.window.history;
+	
+		// If settings do this
+		this.start_network_thread();
+		this.load_splash_screen();
+		this.load_toolbar();
 		
-		if (this.settings.NETWORK_CHECK_URL) {
-	    	this.do_net_checking = true;
-	    	this.availability_url = this.settings.NETWORK_CHECK_URL;
-	    	this.net_check = this.settings.NET_CHECK;
-	    	this.start_network_thread();
-	    }
-		
-        // Creo el adaptador para el DOM y hago que tome el control de sys.window, sys.document y sys.history
-        require('doff.core.client', 'DOMAdapter');
-        sys.window = new DOMAdapter();
-        sys.document = sys.window.document;
-        sys.history = sys.window.history;
-        
-        if (this.settings['LOADING_SPLASH']) {
-        	// Load splash template
-        	var template = null;
-        	new Request(this.settings['LOADING_SPLASH'], {
-                method: 'GET',
-                asynchronous : false,
-                onSuccess: function onSuccess(transport) {
-                    template = (transport.responseText);
-                }});
-        	if (template) {
-        		sys.document.update(template);
-        		var messages = $('messages');
-        		if (messages)
-        			var hm = event.subscribe('module_loaded', function(who, module) { messages.update('<strong>' + module.__name__ + '</strong>');});
-        	}
-        }
-        
         // Inicio del handler para las url
         require('doff.core.handler', 'LocalHandler');
         this.handler = new LocalHandler();
@@ -51,10 +32,7 @@ var Project = type('Project', object, {
             file_config(sys.module_url(this.package, 'logging.js'));
         } catch (except) {}
 
-        this.load_toolbar();
         sys.window.location = '/';
-        if (!isundefined(hm))
-        	event.unsubscribe(hm);
     },
 
     __init__: function(package, project_url) {
@@ -62,35 +40,6 @@ var Project = type('Project', object, {
         this.project_url = project_url;
         // Registro la ruta al proyecto muy importente, desde este momento se puden requerir archivos del proyecto
         sys.register_path(this.package, project_url);
-    },
-        
-    load_toolbar: function() {
-        require('doff.core.exceptions');
-        require('doff.conf.settings', 'settings');
-        require('doff.utils.toolbar', 'ToolBar');
-
-        this.toolbar = new ToolBar();
-
-        for each (var toolbar_path in settings.TOOLBAR_CLASSES) {
-            var dot = toolbar_path.lastIndexOf('.');
-            if (dot == -1)
-                throw new exceptions.ImproperlyConfigured('%s isn\'t a toolbar module'.subs(toolbar_path));
-            var [ tb_module, tb_classname ] = [ toolbar_path.slice(0, dot), toolbar_path.slice(dot + 1)];
-            try {
-                var mod = require(tb_module);
-            } catch (e if isinstance(e, LoadError)) {
-                throw new exceptions.ImproperlyConfigured('Error importing toolbar %s: "%s"'.subs(tb_module, e));
-            }
-            var tb_class = getattr(mod, tb_classname);
-            if (isundefined(tb_class))
-                throw new exceptions.ImproperlyConfigured('Toolbar module "%s" does not define a "%s" class'.subs(tb_module, tb_classname));
-
-            var tb_instance = new tb_class(this);
-
-            this.toolbar.add(tb_instance);
-        }
-
-        this.toolbar.show();
     },
 
     create_store: function(callback) {
@@ -140,7 +89,7 @@ var Project = type('Project', object, {
         try {
             var localserver = sys.gears.create('beta.localserver');
             return localserver.canServeLocally(this.offline_support + '/');
-        } catch (e) { 
+        } catch (e) {
         	return false; 
         }
     },
@@ -165,6 +114,8 @@ var Project = type('Project', object, {
         
         require('doff.db.utils','syncdb');
         syncdb(callback);
+        
+        
         event.publish('post_install', [callback]);
     },
 
@@ -178,6 +129,60 @@ var Project = type('Project', object, {
         event.publish('post_uninstall', [callback]);
     },
 
+    /***************************************************************************
+     * Toolbar
+     */
+    load_toolbar: function() {
+        require('doff.core.exceptions');
+        require('doff.conf.settings', 'settings');
+        require('doff.utils.toolbar', 'ToolBar');
+
+        this.toolbar = new ToolBar();
+
+        for each (var toolbar_path in settings.TOOLBAR_CLASSES) {
+            var dot = toolbar_path.lastIndexOf('.');
+            if (dot == -1)
+                throw new exceptions.ImproperlyConfigured('%s isn\'t a toolbar module'.subs(toolbar_path));
+            var [ tb_module, tb_classname ] = [ toolbar_path.slice(0, dot), toolbar_path.slice(dot + 1)];
+            try {
+                var mod = require(tb_module);
+            } catch (e if isinstance(e, LoadError)) {
+                throw new exceptions.ImproperlyConfigured('Error importing toolbar %s: "%s"'.subs(tb_module, e));
+            }
+            var tb_class = getattr(mod, tb_classname);
+            if (isundefined(tb_class))
+                throw new exceptions.ImproperlyConfigured('Toolbar module "%s" does not define a "%s" class'.subs(tb_module, tb_classname));
+
+            var tb_instance = new tb_class(this);
+            this.toolbar.add(tb_instance);
+        }
+
+        this.toolbar.show();
+    },
+    
+    /***************************************************************************
+     * Splash Screen
+     */
+    load_splash_screen: function() {
+    	if (this.settings.LOADING_SPLASH) {
+    		// Load splash template
+    		var template = null;
+    		new Request(this.settings.LOADING_SPLASH, {
+    			method: 'GET',
+    			asynchronous : false,
+    			onSuccess: function onSuccess(transport) {
+                	template = (transport.responseText);
+            }});
+    		if (template) {
+    			sys.document.update(template);
+    			var messages = $('messages');
+    			if (messages)
+    				var hm = event.subscribe('module_loaded', function(who, module) { messages.update('<strong>' + module.__name__ + '</strong>');});
+    		}
+    	}
+    },
+	
+    
     /***************************************************************************
      * Network Check
      */
@@ -200,9 +205,11 @@ var Project = type('Project', object, {
     },
 
     start_network_thread: function(){
-        if(!this.do_net_checking)
-            return;
-        this.thread = window.setInterval(getattr(this, 'network_check'), this.net_check * 1000);
+    	if (this.settings.NETWORK_CHECK_URL) {
+	    	this.availability_url = this.settings.NETWORK_CHECK_URL;
+	    	this.net_check = this.settings.NET_CHECK;
+	    	this.thread = window.setInterval(getattr(this, 'network_check'), this.net_check * 1000);
+	    }
     },
 
     stop_network_thread: function(){
@@ -214,8 +221,7 @@ var Project = type('Project', object, {
 
     _get_availability_url: function(){
         var url = this.availability_url;
-        // bust the browser's cache to make sure we are really talking to the
-        // server
+        // bust the browser's cache to make sure we are really talking to the server
         url += (url.indexOf("?") == -1)? "?" : "&";
         url += "browserbust=" + new Date().getTime();
         return url;

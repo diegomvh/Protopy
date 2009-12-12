@@ -1,4 +1,4 @@
-﻿
+
 ########################
 Tecnologías del Servidor
 ########################
@@ -617,9 +617,9 @@ Un framework web MVC suele contar con los siguientes componentes [WIKI002]_:
 
     * Mapeo de URLs
     
-	    Cada URL activa algún componente del controlador. La definición de esta
-    	asociación (o mapeo) generalmente está centralizada y bien especificada en
-    	un framework.
+        Cada URL activa algún componente del controlador. La definición de esta
+        asociación (o mapeo) generalmente está centralizada y bien especificada en
+        un framework.
 
     * Sistema de plantillas
     	
@@ -879,22 +879,20 @@ La URL en las asociaciones se define mediante expresiones regulares que soportan
 recuperación de grupos nombrados (una subcadena identificada con un nombre). Los grupos nombrados
 definidos en cada asociación son argumentos de la función vista.
 
-
 La asociación URL-vistas se define  bajo el nombre ``urlpatterns``. 
 Por ejemplo, derivar el tratado de todo lo que comience con la cadena personas 
 al módulo de ``urls`` de la aplicación personas:
 
 .. code-block:: python
 
-	from mi_proyecto.personas.views import ver_personas
-	urlpatterns = patterns('',
-		# Derivación en módulo de aplicación personas
+    from mi_proyecto.personas.views import ver_personas
+    urlpatterns = patterns('',
+        # Derivación en módulo de aplicación personas
         (r'^personas', include('mi_proyecto.personas.urls')),
         
         # Recuperación de datos de la url
         (r'^personas/(?P<persona_id>\d{1,4}})', ver_persona),
     )
-
 
 Sistema de Plantillas
 ---------------------
@@ -923,10 +921,10 @@ Los componentes que puede contener una plantilla son:
       Esto le indica al sistema de plantillas que debe reemplazarla por 
       el contenido de la variable entregada por la vista.
         
-	* La representación de una variable de etiqueta puede ser alterada
-	  mediante un filtro. El cual se define mediante el caracter `|`.
-	  Ej::
-	  
+    * La representación de una variable de etiqueta puede ser alterada
+      mediante un filtro. El cual se define mediante el caracter `|`.
+      Ej::
+      
 	  	{{ fecha|date:"D d M Y" }}
 	  	
 	  Si la variable fecha es un datetime, la salida es 'Wed 09 Jan 2008'.

@@ -14,7 +14,7 @@
     
     //Store
     STORE_ENGINE: 'gears',
-    STORE_NAME: 'agenda_store',
+    STORE_NAME: 'blog_store',
     MANIFEST_FILE: '/manifest.json',
     
     MEDIA_URL: '/blog/media/',

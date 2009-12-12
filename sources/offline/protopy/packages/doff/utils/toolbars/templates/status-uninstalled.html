@@ -2,8 +2,7 @@
 div#status-content {
 	font-family: Arial, Sans-serif;
 	font-size: 100%;
-    height: 50%;
-    padding: 10px 145px 0 5px;
+    height: 82%;
 }
 
 div#status-content img {
@@ -12,17 +11,9 @@ div#status-content img {
     top: 7px;
 }
 
-div#status-installer {
-/*	font-family: Arial, Sans-serif; */
-	font-size: 100%;
-    height: 30%;
-/*    padding: 10px 145px 0 5px */
-}
-
 div#status-messages {
 	background-color: #EEEEEE;
-	width: 100%;
-    height: 80%;
+    height: 30%;
     overflow: auto;
 }
 
@@ -44,23 +35,22 @@ div#status-progress-container div#status-progress-bar {
 </style>
 
 <div id="status-content">
-	<h1>%(PROJECT_DESCRIPTION)s</h1>
-	<hr/>
-	<p>Protopy and Doff will give you access to your application when there is no internet connection.</p>
-	<p>This feature will download your data into this computer. Please make sure you are not using a public or shared computer.</br>
-	<a href="http://code.google.com/p/protopy/" target="_blank">Learn more</a></p>
-	<a href="http://code.google.com/p/protopy/" target="_blank"><img src="/static/offline/protopy.png" style="border: 0px;" width="150"/></a>
-</div>
-
-<div id="status-installer">
-<div id="status-messages">
-	<p>Settings: %(SETTINGS_FILE)s</p>
-	<p>Data Base: %(DATABASE_NAME)s</p>
-	<p>Store: %(STORE_NAME)s</p>
-</div>
-<div id="status-progress-container">
-	<div id="status-progress-bar"/></div>
-</div>
+	<div style="padding: 10px 145px 0px 0px; height: 60%;">
+		<h1>%(PROJECT_DESCRIPTION)s</h1>
+		<hr/>
+		<p>Protopy and Doff will give you access to your application when there is no internet connection.</p>
+		<p>This feature will download your data into this computer. Please make sure you are not using a public or shared computer.</br>
+		<a href="http://code.google.com/p/protopy/" target="_blank">Learn more</a></p>
+		<a href="http://code.google.com/p/protopy/" target="_blank"><img src="/static/offline/protopy.png" style="border: 0px;" width="150"/></a>
+	</div>
+	<div id="status-messages">
+		<p>Settings: %(SETTINGS_FILE)s</p>
+		<p>Data Base: %(DATABASE_NAME)s</p>
+		<p>Store: %(STORE_NAME)s</p>
+	</div>
+	<div id="status-progress-container" style="display: none;">
+		<div id="status-progress-bar" style="width: 0px;"/></div>
+	</div>
 </div>
 
 <div class="doff-panel-buttons doff-panel-align-right">

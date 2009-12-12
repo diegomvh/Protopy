@@ -115,7 +115,7 @@ var ToolBar = type('Toolbar', object, {
         	var tab = element.tab;
             element.bar = this;
             this.content.insert(element.body);
-            this.panels[element.name] = element;
+            this.panels[element.id] = element;
         } else if (isinstance(element, String)) {
         	var tab = document.createElement('li');
             tab.addClassName('doff-toolbar-item'); 

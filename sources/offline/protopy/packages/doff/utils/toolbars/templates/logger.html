@@ -1,7 +1,7 @@
 <style>
 div#logger-output {
     background-color: #FFFFFF;
-    height: 80%;
+    height: 82%;
     overflow: auto;
 }
 
@@ -31,43 +31,39 @@ div#logger-output p span.FATAL {
     background-color:#E32F0B;
 }
 
-div#logger-active {
-    height: 10%;
-    text-align: right;
-}
-
-div#logger-active span {
+div.doff-panel-buttons span {
     padding: 5px;
 }
 
-div#logger-active span label {
+div.doff-panel-buttons span label {
     display: inline;
 }
 
-div#logger-active span label.debug {
+div.doff-panel-buttons span label.debug {
     background-color: #A6C9D7;
 }
 
-div#logger-active span label.info {
+div.doff-panel-buttons span label.info {
     background-color: #A7CC25;
 }
 
-div#logger-active span label.warn {
+div.doff-panel-buttons span label.warn {
     background-color: #F2E886;
 }
 
-div#logger-active span label.error {
+div.doff-panel-buttons span label.error {
     background-color: #F58516;
 }
 
-div#logger-active span label.fatal {
+div.doff-panel-buttons span label.fatal {
     background-color: #E32F0B;
 }
 </style>
 
-<div id="logger-output"></div>
+<div id="logger-output">
+</div>
 
-<div id="logger-active" class="doff-panel-buttons doff-panel-align-right">
+<div class="doff-panel-buttons doff-panel-align-right">
     <span>Root level</span>
     <span class="logger-filter">
         <input type="radio" name="level" id="logger-filter-debug" value="DEBUG"/>

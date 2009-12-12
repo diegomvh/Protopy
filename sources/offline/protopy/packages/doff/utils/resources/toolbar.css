@@ -31,7 +31,7 @@ div#doff-toolbar div.doff-panel {
 }
 
 div#doff-toolbar div.doff-panel div.doff-panel-buttons {
-	
+	padding-top: 3px;
 }
 
 div#doff-toolbar div.doff-panel button {
@@ -40,7 +40,6 @@ div#doff-toolbar div.doff-panel button {
 	border-right:1px solid #AAAAAA;
     border-bottom:1px solid #AAAAAA;
 	border-top:1px solid #BBBBBB;
-    /* margin: 5px; */
 	padding: 3px;
 	text-decoration: none;
 	-moz-border-radius: 5px;	

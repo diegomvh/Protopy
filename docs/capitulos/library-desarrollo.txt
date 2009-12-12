@@ -1,4 +1,4 @@
-﻿
+
 ###################################
 Protopy, la Librería de JavaScript
 ###################################
@@ -1080,9 +1080,9 @@ una petición es creando una instancia del objeto ``ajax.Request``.
                     {method: 'GET'} // Arreglo asociativo de argumentos
                     );
 
-El primer argumento de ``ajax.Request`` es la URL a la cual se realizará la solicitud.
-El resto de los parámetros son opcionales y se reciben como un arreglo asociativo,
-sus nombres son:
+El primer argumento de ``ajax.Request`` es la URL a la cual se realizará la
+solicitud. El resto de los parámetros son opcionales y se reciben como un
+arreglo asociativo, sus nombres son:
     
     * ``method`` 
     
