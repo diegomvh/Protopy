@@ -1,4 +1,4 @@
-﻿
+
 ##########################################
 Offline, la Aplicación para la Desconexión
 ##########################################
@@ -535,9 +535,9 @@ En el siguiente esquema se muestra la interacción entre el sitio remoto, los mo
 de una aplicación, sus managers y los proxies de modelos:
 
 .. figure:: ../_svg/esquema_remotemodelproxy.png
-	
-	Modelos de una aplicación desconectada
-	
+
+    Modelos de una aplicación desconectada
+
 .. raw:: latex
 
     \newpage
@@ -545,7 +545,6 @@ de una aplicación, sus managers y los proxies de modelos:
 Por ejemplo, para una definción de un modelo como sigue:
 
 .. code-block:: python
-    
     
     from django.db import models
     
@@ -563,7 +562,6 @@ Por ejemplo, para una definción de un modelo como sigue:
     
     site = RemoteSite('personas')
     site.register(Persona) # Sin proxy
-
 
 luego de haber ejecutado el comando ``migrate_app``, el código del mixin
 para implementar la funcionalidad de ``__unicode__`` sería:
@@ -644,7 +642,6 @@ En el caso anterior, para acceder al sitio desconectado se debe acceder a la URL
     
 Esta URL genera automáticamente la instancia del proyecto en el cliente.
 
-
 Creación del Manifiesto
 ------------------------
 
@@ -656,7 +653,6 @@ Su sintaxis es la siguiente:
 .. code-block:: bash
 
     $ manage.py manifest_update <nombre_sitio>
-
 
 A partir de este momento el proyecto se puede ejecutar en el cliente y ser 
 instalado con la capacidad de funcionalidad desconectada.
@@ -677,10 +673,8 @@ Un ejemplo de la salida de la vista de un manifiesto es la siguiente:
 
     {   "version": "gcIiKrJeWjljDdvgScuqTcMNvDIPfneu", 
         "betaManifestVersion": 1, 
-        "entries": [{"url": "/off/agentes/"},
-        // Código de /
-        // Doff
-        // Proyecto
-        
+        "entries": [ {"url": 
+        // Punto de entrada a la App
+        // Código de Protopy y Doff
+        // Código del Proyecto
     }
-

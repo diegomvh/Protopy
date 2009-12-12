@@ -283,7 +283,6 @@ Acá va el gráfico
         - Doff
         - Firefox - Gears
 
-
 Protopy
 -------
 
@@ -339,6 +338,7 @@ Django on Protopy -> **Django Offline** :)
         "Sesión"
 
     - Middlewares
+
 Arquitectura (Offline)
 -----------------------
 
@@ -356,6 +356,12 @@ Soporte en el servidor para proyecto desconectado
     - Seguridad
 
     - Sincronización
+
+
+Offline - Sitio Remoto
+----------------------
+
+
 
 Demo
 ----
