@@ -7,6 +7,7 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="809.72968"
@@ -15,7 +16,7 @@
    sodipodi:version="0.32"
    inkscape:version="0.47 r22583"
    version="1.0"
-   sodipodi:docname="esquema_protopy.svg"
+   sodipodi:docname="esquema_protopy_doff.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <defs
      id="defs4">
@@ -47,6 +48,20 @@
        inkscape:vp_y="0 : 1000 : 0"
        inkscape:vp_x="0 : 526.18109 : 1"
        sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3905"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4464"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -55,18 +70,18 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.7"
-     inkscape:cx="549.64854"
-     inkscape:cy="106.09351"
+     inkscape:zoom="0.49497475"
+     inkscape:cx="57.029557"
+     inkscape:cy="131.72267"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1432"
+     inkscape:window-width="1436"
      inkscape:window-height="787"
      inkscape:window-x="0"
      inkscape:window-y="35"
      showguides="false"
-     inkscape:window-maximized="0" />
+     inkscape:window-maximized="1" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -75,7 +90,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -529,5 +544,58 @@
          x="643.73016"
          y="343.14139"
          id="tspan6884">generic</tspan></text>
+    <rect
+       ry="16.529148"
+       rx="16.529146"
+       y="-143.72372"
+       x="45.831741"
+       height="154.66206"
+       width="808.81866"
+       id="rect3891"
+       style="fill:#afc6e9;fill-opacity:1;fill-rule:evenodd;stroke:#003380;stroke-width:0.9105649;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+    <text
+       id="text3893"
+       y="60.85714"
+       x="427.01953"
+       style="font-size:18px;font-style:normal;font-weight:bold;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans;-inkscape-font-specification:Sans"
+       xml:space="preserve"><tspan
+         style="font-weight:normal;-inkscape-font-specification:Bitstream Vera Sans"
+         y="60.85714"
+         x="427.01953"
+         id="tspan3895"
+         sodipodi:role="line">Protopy</tspan></text>
+    <text
+       id="text3893-7"
+       y="-61.066521"
+       x="338.01794"
+       style="font-size:18px;font-style:normal;font-weight:bold;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans;-inkscape-font-specification:Sans"
+       xml:space="preserve"><tspan
+         style="font-weight:normal;-inkscape-font-specification:Bitstream Vera Sans"
+         y="-61.066521"
+         x="338.01794"
+         id="tspan3895-6"
+         sodipodi:role="line">Aplicación Desconectada</tspan></text>
+    <rect
+       style="fill:#afc6e9;fill-opacity:1;fill-rule:evenodd;stroke:#003380;stroke-width:0.9105649;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect4452"
+       width="808.81866"
+       height="154.66206"
+       x="45.831741"
+       y="376.27628"
+       rx="16.529146"
+       ry="16.529148" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#text3893-7"
+       id="use4454" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#text3893-7"
+       id="use4454-8"
+       width="1"
+       height="1"
+       transform="translate(16.368764,504.59352)" />
   </g>
 </svg>

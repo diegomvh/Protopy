@@ -1,23 +1,26 @@
 {"pageSetup": {
     "fontFamily": "Serif",
-    "width": "20cm",
-    "height": "12cm",
-    "margin-top": "3mm",
+    "width": "18cm",
+    "height": "13.5cm",
+    "margin-top": "1.5mm",
     "margin-bottom": "0cm",
     "margin-left": "0cm",
-    "margin-right": "0cm",
+    "margin-right": "1cm",
     "margin-gutter": "0cm",
     "spacing-header": "10mm",
     "spacing-footer": "10mm",
-    "firstTemplate": "cutePage"
+    "firstTemplate": "cutePage",
+    "fontSize": 20
+    
 },
 
 "pageTemplates" : {
     "cutePage": {
         "frames": [
-            ["3%", "3%", "100%", "100%"]
+            ["2%", "2%", "100%", "100%"]
         ],
         "background" : "background.svg"
+        
     }
 }
 }
