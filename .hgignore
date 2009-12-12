@@ -34,7 +34,7 @@ build/*
 *.bak
 chiron/*
 *.swp
-
+pres/*.png
 docs/_dot/*
 
 # Aplicacion de demostracion

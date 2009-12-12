@@ -14,7 +14,7 @@
    id="svg4478"
    version="1.1"
    inkscape:version="0.47 r22583"
-   sodipodi:docname="Documento nuevo 23">
+   sodipodi:docname="esquema.svg">
   <defs
      id="defs4480">
     <inkscape:perspective
@@ -32,17 +32,36 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.49497475"
-     inkscape:cx="543.40289"
-     inkscape:cy="367.60799"
+     inkscape:zoom="0.7520905"
+     inkscape:cx="396.33095"
+     inkscape:cy="359.17913"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1436"
-     inkscape:window-height="787"
+     inkscape:window-height="775"
      inkscape:window-x="0"
-     inkscape:window-y="35"
-     inkscape:window-maximized="1" />
+     inkscape:window-y="47"
+     inkscape:window-maximized="0"
+     showguides="false"
+     inkscape:guide-bbox="true">
+    <sodipodi:guide
+       orientation="1,0"
+       position="680,485.71429"
+       id="guide7500" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="1282.8571,412.85714"
+       id="guide7502" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="992.85714,560"
+       id="guide7504" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="926.30988,645.99255"
+       id="guide7506" />
+  </sodipodi:namedview>
   <metadata
      id="metadata4483">
     <rdf:RDF>
@@ -51,7 +70,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -63,59 +82,75 @@
     <rect
        style="opacity:0.59745765;fill:#2aff2a;fill-opacity:1;stroke:none"
        id="rect4488"
-       width="340"
+       width="602.85712"
        height="128.57143"
-       x="414.28571"
+       x="119.5"
        y="626.64789"
        rx="16.529146"
        ry="16.529148" />
     <rect
        style="opacity:0.59745765;fill:#2aff2a;fill-opacity:1;stroke:none"
        id="rect4490"
-       width="342.85715"
+       width="602.85706"
        height="94.285713"
-       x="408.57141"
-       y="503.79074"
+       x="119.5"
+       y="522.86218"
        rx="16.529146"
        ry="16.529148" />
     <rect
-       style="opacity:0.59745765;fill:#b7c8b7;fill-opacity:1;stroke:none"
+       style="opacity:0.59745764999999995;fill:#b7c8b7;fill-opacity:1;stroke:#333333;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none"
        id="rect4492"
-       width="354.28571"
-       height="260"
-       x="400"
-       y="215.21933"
+       width="602.85712"
+       height="218.36838"
+       x="119.5"
+       y="290.4938"
        rx="16.529146"
        ry="16.529148" />
     <rect
-       style="opacity:0.59745765;fill:#ffe680;fill-opacity:1;stroke:#000000"
+       ry="16.529146"
+       rx="16.529146"
+       y="269.72678"
+       x="139.49997"
+       height="76.551926"
+       width="312.85715"
+       id="rect7510"
+       style="opacity:1;fill:#b7c8b7;fill-opacity:1;stroke:#000000" />
+    <rect
+       style="opacity:0.59745764999999995;fill:#88aa00;fill-opacity:1;stroke:#000000;stroke-width:1"
        id="rect4494"
-       width="187.14285"
+       width="311.42859"
        height="82.85714"
-       x="184.28574"
-       y="446.64789"
+       x="119.50001"
+       y="425.21933"
        rx="16.529146"
        ry="16.529148" />
     <rect
-       style="opacity:0.59745765;fill:#ffe680;fill-opacity:1;stroke:#000000"
+       style="fill:#e3e2db;fill-opacity:1;stroke:#000000;stroke-width:2.29999995;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect7495"
+       width="593.96973"
+       height="698.54181"
+       x="-554.56091"
+       y="233.13699" />
+    <rect
+       style="opacity:0.59745765;fill:#88aa00;fill-opacity:1;stroke:#000000"
        id="rect4496"
        width="468.57144"
        height="91.428574"
-       x="-560"
-       y="395.21933"
+       x="-496.17789"
+       y="401.86746"
        rx="16.529146"
        ry="16.529148" />
     <rect
-       style="opacity:0.59745765;fill:#ffe680;fill-opacity:1;stroke:#000000"
+       style="opacity:0.59745765;fill:#88aa00;fill-opacity:1;stroke:#000000"
        id="rect4498"
        width="462.85715"
        height="97.14286"
-       x="-554.28571"
-       y="506.64789"
+       x="-497.11172"
+       y="509.30713"
        rx="16.529146"
        ry="16.529148" />
     <rect
-       style="opacity:0.59745765;fill:#2aff2a;fill-opacity:1;stroke:none"
+       style="opacity:0.59745764999999995;fill:#2aff2a;fill-opacity:1;stroke:#000000;stroke-opacity:1"
        id="rect4500"
        width="220"
        height="128.57143"
@@ -124,7 +159,7 @@
        rx="16.529146"
        ry="16.529148" />
     <rect
-       style="opacity:0.59745765;fill:#2aff2a;fill-opacity:1;stroke:none"
+       style="opacity:0.59745764999999995;fill:#2aff2a;fill-opacity:1;stroke:#000000;stroke-opacity:1"
        id="rect4502"
        width="202.85715"
        height="120"
@@ -135,20 +170,20 @@
     <rect
        ry="16.529148"
        rx="16.529146"
-       y="800.93359"
-       x="-288.57144"
-       height="120"
-       width="97.14286"
+       y="812.93359"
+       x="-261.314"
+       height="63.088528"
+       width="51.071701"
        id="rect4504"
        style="opacity:0.59745765;fill:#1a1a1a;fill-opacity:1;stroke:none" />
     <rect
-       style="fill:#e3e2db;fill-opacity:1;stroke:#000000"
+       style="fill:#e3e2db;fill-opacity:1;stroke:#000000;stroke-width:0.99999958"
        id="rect4506"
-       width="97.14286"
-       height="120"
-       x="-271.42859"
-       y="815.2193"
-       rx="16.529146"
+       width="51.071697"
+       height="63.088531"
+       x="-252.30136"
+       y="820.44421"
+       rx="16.529148"
        ry="16.529148" />
     <text
        xml:space="preserve"
@@ -173,22 +208,12 @@
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="-467.14285"
-       y="704.36218"
-       id="text4518"><tspan
-         sodipodi:role="line"
-         id="tspan4520"
-         x="-467.14285"
-         y="704.36218">J</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="-464.28571"
+       x="-444.28571"
        y="700.93359"
        id="text4522"><tspan
          sodipodi:role="line"
          id="tspan4524"
-         x="-464.28571"
+         x="-444.28571"
          y="700.93359">JS</tspan></text>
     <text
        id="text4526"
@@ -247,30 +272,39 @@
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="205.71429"
-       y="500.93359"
+       x="140.92856"
+       y="479.50504"
        id="text4546"><tspan
          sodipodi:role="line"
          id="tspan4548"
-         x="205.71429"
-         y="500.93359">Offline</tspan></text>
+         x="140.92856"
+         y="479.50504">Offline</tspan></text>
+    <rect
+       style="opacity:1;fill:#b7c8b7;fill-opacity:1;stroke:#000000"
+       id="rect7508"
+       width="312.85715"
+       height="76.551926"
+       x="129.49997"
+       y="279.72678"
+       rx="16.529146"
+       ry="16.529146" />
     <rect
        ry="16.529146"
        rx="16.529146"
-       y="300.89255"
-       x="104.86601"
-       height="80.087456"
-       width="281.68759"
+       y="289.72678"
+       x="119.49998"
+       height="76.551926"
+       width="312.85715"
        id="rect4552"
-       style="opacity:0.59745765;fill:#b7c8b7;fill-opacity:1;stroke:none" />
+       style="opacity:1;fill:#b7c8b7;fill-opacity:1;stroke:#000000" />
     <text
        id="text4554"
-       y="353.36438"
-       x="125.57845"
+       y="337.36438"
+       x="153.57846"
        style="font-size:38.66299057px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
        xml:space="preserve"><tspan
-         y="353.36438"
-         x="125.57845"
+         y="337.36438"
+         x="153.57846"
          id="tspan4556"
          sodipodi:role="line">Sitio Remoto</tspan></text>
     <rect
@@ -298,17 +332,17 @@
          id="tspan4564">desconectado</tspan></text>
     <path
        style="fill:#2aff2a;fill-opacity:1;stroke:#000000;stroke-width:2.29999995;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m -141.25134,826.94274 c -4.84072,0 -8.73888,3.88138 -8.73888,8.70127 l 0,32.97931 c 0,0.33607 0.0292,0.67743 0.0661,1.00336 -0.04,0.31219 -0.0661,0.62211 -0.0661,0.93757 0,12.04315 29.41291,21.81075 65.698478,21.81075 36.285568,0 65.714993,-9.7676 65.714993,-21.81075 0,-1.12905 -0.261412,-2.23981 -0.759902,-3.32261 l 0,-31.59763 c 0,-4.81989 -3.898151,-8.70127 -8.738872,-8.70127 l -113.175817,0 z"
+       d="m -176.01735,833.24348 c -3.50156,0 -6.32132,2.79778 -6.32132,6.27205 l 0,23.77215 c 0,0.24224 0.0211,0.4883 0.0478,0.72324 -0.0289,0.22503 -0.0478,0.44843 -0.0478,0.67582 0,8.68094 21.276,15.72162 47.52338,15.72162 26.24738,0 47.535328,-7.04068 47.535328,-15.72162 0,-0.81384 -0.189094,-1.6145 -0.54968,-2.39501 l 0,-22.7762 c 0,-3.47427 -2.819751,-6.27205 -6.321315,-6.27205 l -81.866393,0 z"
        id="path4568" />
     <path
        sodipodi:type="arc"
-       style="fill:#2aff2a;fill-opacity:1;stroke:#000000;stroke-width:4.36028051;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:#2aff2a;fill-opacity:1;stroke:#000000;stroke-width:6.03844357;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="path4566"
        sodipodi:cx="-95.714287"
        sodipodi:cy="863.79077"
        sodipodi:rx="124.28571"
        sodipodi:ry="41.42857"
-       d="m 28.571426,863.79077 c 0,22.88037 -55.644609,41.42857 -124.285713,41.42857 C -164.35539,905.21934 -220,886.67114 -220,863.79077 c 0,-22.88037 55.64461,-41.42857 124.285713,-41.42857 68.641104,0 124.285713,18.5482 124.285713,41.42857 z"
-       transform="matrix(0.52862739,0,0,0.52635301,-33.687469,373.7951)" />
+       d="m 28.571426,863.79077 a 124.28571,41.42857 0 1 1 -248.571426,0 124.28571,41.42857 0 1 1 248.571426,0 z"
+       transform="matrix(0.38238575,0,0,0.37940575,-98.210391,506.60561)" />
   </g>
 </svg>

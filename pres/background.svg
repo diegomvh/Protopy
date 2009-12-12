@@ -24,6 +24,13 @@
        inkscape:vp_z="744.09448 : 526.18109 : 1"
        inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
        id="perspective5374" />
+    <inkscape:perspective
+       id="perspective7595"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -33,18 +40,39 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994949"
-     inkscape:cx="292.34901"
-     inkscape:cy="282.94902"
+     inkscape:cx="247.15693"
+     inkscape:cy="298.11185"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     units="cm"
+     units="px"
      inkscape:window-width="1436"
      inkscape:window-height="787"
      inkscape:window-x="0"
      inkscape:window-y="35"
      inkscape:window-maximized="1"
-     showguides="false" />
+     showguides="true"
+     inkscape:guide-bbox="true"
+     guidetolerance="20"
+     objecttolerance="4"
+     gridtolerance="10">
+    <sodipodi:guide
+       orientation="1,0"
+       position="708.62201,172.73609"
+       id="guide7487" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="0,555.5839"
+       id="guide7489" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="343.45187,0"
+       id="guide7491" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="-73.741,425"
+       id="guide7493" />
+  </sodipodi:namedview>
   <metadata
      id="metadata5371">
     <rdf:RDF>
@@ -61,27 +89,34 @@
      inkscape:label="Capa 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-627.16403)">
+     transform="translate(0,-627.16406)">
     <rect
-       style="fill:#c6e9af;fill-opacity:1;stroke:none"
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
        id="rect5378"
-       width="708.11694"
-       height="427.29453"
+       width="708.6665"
+       height="424.99997"
        x="0"
-       y="625.06635" />
+       y="627.3609" />
     <rect
-       y="960.78064"
-       x="-2.98"
-       height="91.580238"
-       width="711.1474"
+       y="1032.3608"
+       x="4.2188475e-14"
+       height="20"
+       width="708.16699"
        id="rect5898"
-       style="fill:#79a146;fill-opacity:1;stroke:none" />
+       style="fill:#afc6e9;fill-opacity:1;stroke:none" />
     <rect
-       style="fill:#ccffaa;fill-opacity:1;stroke:#000000;stroke-opacity:1"
-       id="rect7485"
-       width="743.47229"
-       height="33.434929"
-       x="-19.142441"
-       y="624.05377" />
+       style="fill:#87aade;fill-opacity:1;stroke:none"
+       id="rect7512"
+       width="708.16699"
+       height="8"
+       x="4.2188475e-14"
+       y="1024.3608" />
+    <rect
+       style="fill:#afc6e9;fill-opacity:1;stroke:none"
+       id="rect7608"
+       width="708.16699"
+       height="26.428572"
+       x="0"
+       y="627.3609" />
   </g>
 </svg>

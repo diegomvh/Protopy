@@ -1,14 +1,15 @@
 Presentación
 ------------
 
-    :autores: * Defossé, Nahuel
-              * van Haaster, Diego Marcos
+    :Título: **Aplicaciones Web Desconetadas**
+    
+    :Autores: Defossé Nahuel, van Haaster Diego Marcos
               
-    :tutor:  Saenz Lopez, Marta
+    :Tutor:  Saenz Lopez Marta
     
-    :fecha: 15 de Diciembre 2009
+    :Fecha: 15 de Diciembre 2009
     
-    :url: https://code.google.com/p/protopy
+    :URL: https://code.google.com/p/protopy
 
 Objetivos Principal
 -------------------
@@ -80,17 +81,17 @@ Tecnologías Existentes (1)
 Tecnologías Existentes
 -----------------------
 
-* JavaScript!
+**JavaScript**!
 
     - Objetos
     - Expresiones Regulares
     - Patrones propios (Module, Closures)
 
-* Librerías:
+**Librerías:**
 
-    Prototype
-    Dojo
-    Peppy
+    - Prototype
+    - Dojo
+    - Peppy
 
 .. No reivnetar nada, Google apostó por JavaScript en la implementación de
 .. Gears.
@@ -102,8 +103,10 @@ Tecnologías Existentes
 Tecnologías Existentes (2)
 --------------------------
 
-* **Google Gears**
-        Añade al navegador 3 componentes
+**Google Gears**
+
+    Añade al navegador 3 componentes
+    
                 * Local Server
                         Un servidor de archivos locales
                 * DataBase
@@ -137,13 +140,16 @@ JavaScritp 1.7
 --------------
 
 * Generador:
+    
     Ej: Recuperación perezosa de datos.
 
 * Orientación a objetos:
+    
     Métodos útiles como ``__noSuchMethod__``, ``__defineGetter__``
     y ``__defineSetter__``.
 
 * Azucar sintáctico:
+    
     Asignación múltiple
 
 
@@ -155,21 +161,29 @@ Framework
 ---------
 
 * Inversión de Control
+
 * Comportamiento por defecto definido
+
 * Extensibilidad
+
 * No modificabilidad del código del framework
+
     Todo se extiende, nada se edita
+
 
 Django
 ------
 Framework web elegido por:
 
 * Simple
+
     Escrito en Python
     Sin XML/YAML/INI/<ponga su markup aquí>
     Pocas capas M T V
+    No se necesita una **IDE**
 
 * DRY
+
     ModelForms, Vistas genéricas, ContentType framework
 
 
@@ -177,12 +191,15 @@ Django (2)
 ----------
 
 * Con baterías incluidas
+
     Administración, Geolocalización
 
 * Open Source
+
     Gran comunidad, una fundación, varios diarios utilizándolo
 
 * Comportamiento transversal
+
     Middlewares
 
 Django (3)
@@ -220,9 +237,12 @@ Templates:
 Django (5)
 ----------
 
-Ciclo del Request:
+Figura
 
-    Gráfico
+.. 
+    .. figure:: test.svg
+
+
 
 
 .. Como implementamos este grandioso framework en el cliente??
@@ -329,6 +349,25 @@ Lineas Futuras
 
 Tomar títulos
 
+
+Miscelanea
+----------
+
+Todo el proyecto fue realizado con software **Open Source**:
+    
+    * **Firefox** (Plataforma)
+    * **Firebug** (Depuración, esta tesina no podría haber existido sin Firebug)
+    * **Django** (Framework Web)
+    * **Python** (Lenguaje Server Side, Scripting, Sphinx Hacking, etc.)
+    * **Mercurial** (control de versiones)
+    * **Sphinx** (para crear la documentación), LaTeX
+    * **rst2pdf** para crear *esta* presentación
+
+Este proyecto *es* Open Source y se pubicó en:
+
+    http://code.google.com/p/protopy
+    
+      
 FIN
 ---
 
@@ -340,4 +379,4 @@ FIN
 
 .. footer::
 
-    Defossé, van Haaster
+    Defossé, van Haaster :page:
