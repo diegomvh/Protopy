@@ -11,10 +11,17 @@ Presentación
     
     :URL: https://code.google.com/p/protopy
 
+.. Presentarse, nombres titulo de la tesina
+.. Hace unos años empezamos viendo aplicaciones distribuidas,
+.. posibilidades de Qt en un lado.
+.. El mit dijo de Aplicaciones web desconectadas 
+
 Objetivos Principal
 -------------------
 "Objetivo Principal"
-    
+
+.. OpenSource
+.. Explicar
 
 Objetivos Secundarios
 ---------------------
@@ -31,7 +38,6 @@ Objetivos Secundarios
 * Facilidad de utilización
     Reutilizar los conceptos/patrones del framework para una rápida asimilación de los desarrolladores.
 
-
 Carencias del Browser
 ---------------------
 
@@ -45,14 +51,12 @@ Carencias del Browser
 
  * Conectividad con el entorno del cliente
 
-
 .. JavaScript nació como un juguete de Netscape, despues lo agarró ECMA y hoy es
 .. un estandard. Cada venededor lo implementó como mejor le convenía, captura de mercad
 .. FUD. DOM.
 
 Tecnologías Existentes (1)
 ---------------------------
-
 
 * **Silverlight** (.NET Framework, Microsoft)
         Solución muy interesante, pero **cerrada**.
@@ -93,12 +97,10 @@ Tecnologías Existentes
     - Dojo
     - Peppy
 
-.. No reivnetar nada, Google apostó por JavaScript en la implementación de
-.. Gears.
-
+.. No reivnetar nada, Google apostó por JavaScript en la implementación de Gears.
 .. Bibliotecas de JavaScrit, hablar
-
 .. Google implementó...
+.. Uso de librerias 
 
 Tecnologías Existentes (2)
 --------------------------
@@ -215,6 +217,22 @@ Una **aplicación** es un subpaquete con los siguientes módulos:
 
 .. Decir
 
+Formularios
+-----------
+
+Los formularios son el mecanismo de interacción por excelencia 
+con las aplicaciones web.
+
+Django provee:
+
+    - Generación de formularios a partir de definiciones de 
+      modelos.
+
+    - Validación
+
+    - Método ``save()``
+
+
 Django (4)
 ----------
 
@@ -241,9 +259,6 @@ Figura
 
 .. 
     .. figure:: test.svg
-
-
-
 
 .. Como implementamos este grandioso framework en el cliente??
 .. No tenemos Python...
