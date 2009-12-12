@@ -295,11 +295,11 @@ Soporte para implementación de Django sobre el navegador.
 
     * OO Pythonica, ``type``
 
-    * Integración de librerías:
+    * Tomamos lo mejor de:
 
-        - API de DOM de Prototype
-        - Eventos (Dojo)
-        - CSS Selector (Peppy)
+        - **API de DOM** de Prototype
+        - **Eventos** de Dojo
+        - **CSS Selector** de Peppy
 
     * Gears
         Enmascaramiento en el módulo ``sys``, extensión de DB,
@@ -309,6 +309,8 @@ Soporte para implementación de Django sobre el navegador.
 .. html, y como los módulos y la función require camba este enfoque.
 .. Cada módulo define su propio espacio de nombres.
 .. Cada módulo publica una interfaz.
+
+.. HTML5
 
 Arquitectura (Doff)
 -------------------
@@ -321,16 +323,22 @@ Doff
 Django on Protopy -> **Django Offline** :)
 
     - API de Modelos
+    
+    - Formularios
 
     - Templates
 
     - Proyecto desconectado
 
     - Aplicaciones adicionales
+
         Sincronización
+
         Autenticación
+
         "Sesión"
 
+    - Middlewares
 Arquitectura (Offline)
 -----------------------
 

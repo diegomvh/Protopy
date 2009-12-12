@@ -37,8 +37,9 @@ var CommonMiddleware = type('CommonMiddleware', [ object ], {
     },
 
     process_exception: function(request, exception) {
-        debugger;
-        alert('instalame');
+        require('doff.core.project', 'get_project');
+        var p = get_project();
+        p.toolbar.panels['status'].show();
     }
 });
 
