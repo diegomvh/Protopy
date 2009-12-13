@@ -1,26 +1,27 @@
-{"pageSetup": {
-    "fontFamily": "Serif",
-    "width": "18cm",
-    "height": "13.5cm",
-    "margin-top": "1.5mm",
-    "margin-bottom": "0cm",
-    "margin-left": "0cm",
-    "margin-right": "1cm",
-    "margin-gutter": "0cm",
-    "spacing-header": "10mm",
-    "spacing-footer": "10mm",
-    "firstTemplate": "cutePage",
-    "fontSize": 20
+{
+    "pageSetup": {
+        "fontFamily": "Serif",
+        "width": "18cm",
+        "height": "13.5cm",
+        "margin-top": "1.5mm",
+        "margin-bottom": "0cm",
+        "margin-left": "0cm",
+        "margin-right": "1cm",
+        "margin-gutter": "0cm",
+        "spacing-header": "10mm",
+        "spacing-footer": "10mm",
+        "firstTemplate": "cutePage"
     
-},
+    
+    },
 
-"pageTemplates" : {
-    "cutePage": {
-        "frames": [
+    "pageTemplates" : {
+        "cutePage": {
+            "frames": [
             ["2%", "2%", "100%", "100%"]
-        ],
-        "background" : "background.svg"
-        
+            ],
+        "background" : "background.svg",
+        //"fontSize": 40
+        }
     }
-}
 }
