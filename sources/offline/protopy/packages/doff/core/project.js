@@ -38,20 +38,14 @@ var Project = type('Project', object, {
     __init__: function(package, project_url) {
         this.package = package;
         this.project_url = project_url;
-        // Registro la ruta al proyecto muy importente, desde este momento se puden requerir archivos del proyecto
+        
+        this.base_url = string(window.location);
+        // Registro la ruta al proyecto
+        // desde este momento se puden requerir archivos del proyecto
         sys.register_path(this.package, project_url);
     },
 
-    remove_store: function(callback) {
-    	callback = callback || function() {};
-        var localserver = sys.gears.create('beta.localserver');
-        callback('store', {	'message': 'Destroy store ' + this.package + '_store', 
-							'name': this.package + '_store'});
-        localserver.removeManagedStore(this.package + '_store');
-        this.managed_store = null;
-    },
-
-    bootstrap: function(){
+    bootstrap: function() {
         event.connect(window, 'load', this, 'onLoad');
     },
 
@@ -71,7 +65,7 @@ var Project = type('Project', object, {
     	if (!sys.gears.installed || !sys.gears.hasPermission) return false;
         try {
             var localserver = sys.gears.create('beta.localserver');
-            return localserver.canServeLocally(this.offline_support + '/');
+            return localserver.canServeLocally(this.base_url);
         } catch (e) {
         	return false; 
         }
@@ -88,6 +82,15 @@ var Project = type('Project', object, {
     /***************************************************************************
      * Installer / Uninstaller
      */
+    remove_store: function(callback) {
+    	callback = callback || function() {};
+        var localserver = sys.gears.create('beta.localserver');
+        callback('store', {	'message': 'Destroy store ' + this.package + '_store', 
+							'name': this.package + '_store'});
+        localserver.removeManagedStore(this.package + '_store');
+        this.managed_store = null;
+    },
+    
     create_store: function(callback) {
     	callback = callback || function() {};
     	var localserver = sys.gears.create('beta.localserver');
@@ -129,6 +132,7 @@ var Project = type('Project', object, {
         removedb(callback);
 
         this.remove_store(callback);
+        callback('complete', details);
         event.publish('post_uninstall', [callback]);
     },
 
@@ -168,6 +172,7 @@ var Project = type('Project', object, {
      */
     create_shortcut: function() {
     	// Ver si esto queda en funcion de algo de la configuracion
+    	debugger;
     	var desktop = sys.gears.create('beta.desktop');
     	var icon = new desktop.IconTheme('protopy');
     	var sh = new desktop.Shortcut(this.settings.PROJECT_NAME, string(window.location));
