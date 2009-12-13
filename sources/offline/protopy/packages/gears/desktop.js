@@ -25,7 +25,7 @@ desktop.Icon = type('Icon', [ object ], {
     }
 });
 
-var _themes = ['tux'];
+var _themes = ['tux', 'protopy'];
 
 desktop.IconTheme = type('Icon', [ desktop.Icon ], {
     __init__: function(name) {

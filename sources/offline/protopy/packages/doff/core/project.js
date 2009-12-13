@@ -42,23 +42,6 @@ var Project = type('Project', object, {
         sys.register_path(this.package, project_url);
     },
 
-    create_store: function(callback) {
-    	callback = callback || function() {};
-    	var localserver = sys.gears.create('beta.localserver');
-    	
-    	callback('store', {	'message': 'Create store ' + this.settings.STORE_NAME, 
-    						'name': this.settings.STORE_NAME, 
-    						'manifest': this.settings.MANIFEST_FILE });
-    	this.managed_store = localserver.createManagedStore(this.settings.STORE_NAME);
-        this.managed_store.manifestUrl = this.settings.MANIFEST_FILE;
-        
-        this.managed_store.oncomplete = function(details) { callback('complete', details); };
- 	   	this.managed_store.onerror = function(error) { callback('error', error); };
- 	   	this.managed_store.onprogress = function(details) { callback('progress', details); };
- 	   
-        this.managed_store.checkForUpdate();
-    },
-
     remove_store: function(callback) {
     	callback = callback || function() {};
         var localserver = sys.gears.create('beta.localserver');
@@ -102,6 +85,26 @@ var Project = type('Project', object, {
     	return this._settings;
     },
     
+    /***************************************************************************
+     * Installer / Uninstaller
+     */
+    create_store: function(callback) {
+    	callback = callback || function() {};
+    	var localserver = sys.gears.create('beta.localserver');
+    	
+    	callback('store', {	'message': 'Create store ' + this.settings.STORE_NAME, 
+    						'name': this.settings.STORE_NAME, 
+    						'manifest': this.settings.MANIFEST_FILE });
+    	this.managed_store = localserver.createManagedStore(this.settings.STORE_NAME);
+        this.managed_store.manifestUrl = this.settings.MANIFEST_FILE;
+        
+        this.managed_store.oncomplete = function(details) { callback('complete', details); };
+ 	   	this.managed_store.onerror = function(error) { callback('error', error); };
+ 	   	this.managed_store.onprogress = function(details) { callback('progress', details); };
+ 	   
+        this.managed_store.checkForUpdate();
+    },
+    
     install: function(callback) {
     	
         if (!sys.gears.installed) sys.gears.install();
@@ -110,12 +113,12 @@ var Project = type('Project', object, {
         callback = callback || function() {};
         event.publish('pre_install', [callback]);
         
-        //this.create_store(callback);
+        this.create_store(callback);
         
         require('doff.db.utils','syncdb');
         syncdb(callback);
         
-        
+        this.create_shortcut();
         event.publish('post_install', [callback]);
     },
 
@@ -161,6 +164,19 @@ var Project = type('Project', object, {
     },
     
     /***************************************************************************
+     * Create desktop Icon
+     */
+    create_shortcut: function() {
+    	// Ver si esto queda en funcion de algo de la configuracion
+    	var desktop = sys.gears.create('beta.desktop');
+    	var icon = new desktop.IconTheme('protopy');
+    	var sh = new desktop.Shortcut(this.settings.PROJECT_NAME, string(window.location));
+    	sh.icon = icon;
+    	sh.description = this.settings.PROJECT_DESCRIPTION;
+    	sh.save();
+    },
+    
+    /***************************************************************************
      * Splash Screen
      */
     load_splash_screen: function() {
@@ -181,7 +197,6 @@ var Project = type('Project', object, {
     		}
     	}
     },
-	
     
     /***************************************************************************
      * Network Check

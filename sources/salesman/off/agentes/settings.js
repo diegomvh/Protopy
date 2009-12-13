@@ -22,7 +22,7 @@
     //Store
     STORE_ENGINE: 'gears',
     STORE_NAME: 'agentes_store',
-    MANIFEST_FILE: '',
+    MANIFEST_FILE: '/off/agentes/manifest.json',
     
     MEDIA_URL: '/static/',
 
