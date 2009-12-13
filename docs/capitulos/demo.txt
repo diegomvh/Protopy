@@ -1,5 +1,4 @@
 
-
 ###########################
 Aplicación de Demostración
 ###########################
@@ -203,7 +202,7 @@ Cuando el usuario viajante desea desconectar la aplicación, utiliza el botón *
 
     \newpage
 
-Para instalar el proyecto desconectado debe utilizar el botón *Offline Support* de la barra adicional. Aparece el panel de instalación en el cual debe persionar el botón *Enable Offline Access*:
+Para instalar el proyecto desconectado debe utilizar el botón *Install* de la barra adicional. Aparece el panel de instalación en el cual debe persionar el botón *Enable Offline Access*:
 
 .. figure:: ../_static/sshot_toolbar_offline.png
 	
@@ -240,7 +239,7 @@ Con el objetivo de facilitar la depuración, se agregaron algunos botones a la b
 
 * *Sync Tool* para realizar la sincronización con la aplicación en línea:
 
-.. figure:: ../_static/sshot_sync.png
+.. figure:: ../_static/sshot_toolbar_sync.png
     :align: center
 
     Panel de sincronización

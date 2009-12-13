@@ -63,8 +63,7 @@ div#doff-toolbar div.doff-panel h1.doff-panel-header {
 
 div#doff-toolbar div.doff-panel h1.doff-panel-header img {
     float: right;
-    margin-right: 4px;
-    margin-top: 3px;
+    border: 0px;
 }
 
 div#doff-toolbar div.doff-panel div.doff-panel-content {
