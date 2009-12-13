@@ -1,0 +1,281 @@
+\documentclass{beamer}
+\usepackage{graphicx}
+\setbeamertemplate{navigation symbols}{}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{beamerthemeshadow}
+\begin{document}
+\title{Aplicaciones Web Desconectadas}
+\author{Defossé Nahuel, van Haaster Diego Marcos}
+\date{15 de Diciembre de 2009}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+% \frame{
+%     \frametitle{Contenido de la presetnación}
+%     \tableofcontents
+% }
+
+\section{Introducción}
+\subsection{Contexto}
+
+\frame{
+    \frametitle{¿Qué es Web?}
+    \includegraphics[scale=0.5]{intro.pdf}
+}
+    
+
+\frame{
+    \frametitle{¿Qué es una aplicación Web?}
+    \includegraphics[scale=0.5]{general.pdf}
+}
+
+\frame{
+    
+    \frametitle{¿Qué es una aplicación Web Hoy?}
+    \includegraphics[scale=0.5]{general_con_fw.pdf}
+}
+
+\subsection{Objetivos}
+\frame{
+    \frametitle{Objetivos Principales}
+    \textit{``Extender un framework de aplicaciones web existente, {\bf Open Source},
+              de manera que una aplicación realizada sobre éste pueda ser ejecutada
+              en el cliente de manera desconectada con un mínimo de modificaciones.
+              Para permitir que la aplicación pueda ejecutarse en el cliente, se
+              implementará'':
+        \begin{itemize}
+        \item Persistencia del modelo de datos en el cliente.
+        \pause
+        \item Subconjunto de acciones disponibles en modo desconectado
+        \pause
+        \item Primitivas de sincronización entre la aplicación del cliente y la aplicación web que le dio origen
+        \end{itemize}
+    }
+}
+
+
+\frame{
+    \frametitle{Objetivos Secundarios}
+    \begin{itemize}
+        \item{{\bf Open Source}\\
+                Coste de licenciemiento nulo y aseguramiento de la continuidad
+        }
+        \item{{\bf Multiplataforma}\\
+            Windows, Linux, Mac y móviles (dode exista un browser)
+        }
+        \item{{\bf Adaptación mínima de aplicaciones existentes}\\
+            Integración con un Frameworks Web \par
+            Reutilizar los conceptos/patrones del framework para una rápida asimilación de los desarrolladores.
+        }
+    \end{itemize}
+}
+
+\subsection{Framework Web}
+\begin{frame}
+\frametitle{Framework Web - Django}
+\includegraphics[scale=0.5]{fw_django.pdf}
+\end{frame}
+
+\begin{frame}
+\frametitle{Framework Web - Django - Componentes}
+\includegraphics[scale=0.5]{fw_django_comp.pdf}
+\end{frame}
+
+\subsection{Principales Obstáculos}
+\frame{
+    \frametitle{Carencias de los navegadores}
+    \itemize{
+        \item{\bf Servidor Web}\\
+        Sin servidor, el navegador solo posee la {\bf cache}
+        \item{\bf Base de Datos} \\
+        Un navegador no psee un mecanismo de alamacenamiento
+        \item{\bf Luenguaje de Programación Consistente}\\
+        Cada navegador implementa a su manera {\bf JavaScript} y {\bf DOM}
+        \item{\bf Concurrencia} \\
+        Los eventos son atendidos en el bucle principal
+        \item{{\bf Conectividad con el entorno del cliente}\\
+            Escritorio $\not=$ Espacio de URLs
+        \note{x}{ymak}
+        }
+    }
+}
+
+\subsection{Tecnologías Existentes}
+\frame{
+    \frametitle{Principales alternativas}
+    \itemize{
+        \item {\bf Microsoft Silverlight}\\
+        \item {\bf Sun JavaFX}
+        \item {\bf Adobe AIR}
+        \item {\bf Mozilla XUL}
+    }
+    \pause
+    \\
+    Esteas tecnologías se alejan de los estándares de la Web.
+    % Decir que la web 2.0, desde el punto de vista tecnologico
+    % tiende a integrar serivcios en una plataforma estandar abiertos (HTML, JS + libs, etc.)
+    % Estos NO.
+}
+
+\frame{
+    \frametitle{JavaScript}
+    Un lenguaje de {\it mala} reputación, con:\\
+    \itemize{
+        \item Objetos
+        \item Patrones Porpios
+            \itemize{
+                \item Closures
+                \item Module Pattern
+                }
+        }\\
+    \pause
+    Según {\bf Mozilla} (versión 1.7):\\
+        \itemize{
+            \item Generadores e Iteradores
+            \item Varias ayudas para una mejor programación OO
+            \item Sabor Pythonico :)
+         }
+}
+\frame{
+    \frametitle{Google Gears}
+
+    \itemize{
+        \item Plugin para los navegadores:
+            \itemize{
+                \item {\bf Local Server}
+                \item {\bf Data Base}
+                \item {\bf Worker Pool}
+                \item {\bf Desktop}
+             }
+    }
+    
+}
+\section{Desarrollo}
+\subsection{Propuesta}
+\frame{
+    \frametitle{Gears}
+    \includegraphics[scale=0.5]{fw_django_comp_gears.pdf}
+}
+
+\frame{
+    \frametitle{¿Django Desconectado?}
+    \includegraphics[scale=0.5]{fw_desconectado.pdf}
+}
+
+\subsection{Solución}
+\frame{
+    \frametitle{Doff y Protopy}
+    \includegraphics[scale=0.5]{fw_doff_protopy.pdf}
+}
+
+\frame{
+    \frametitle{Protopy - Libería de JavaScript}
+    \par {
+        {\bf Objetivos:}
+            \itemize{
+                \item Interfase Pythonica para desarrolladores,
+                \item Promover la reutilización de código,
+                \item Control de la página y eventos(DOM) - Trabajo cotidiano del desarollador web de {\it front-ends}
+                \item Soporte de el framework desconectado.
+                \item Interfase con las tecnologías de perstencia y ejecución offline.
+        }
+        }
+}
+\frame{
+    \frametitle{Componentes de Protopy}
+    \begin{itemize}
+        \item {\bf Módulos}
+        \item {\bf Clases}
+        \item {\bf DOM}
+        \item {\bf Eventos}
+        \item {\bf AJAX}
+        
+        % TODO: Poner dibujito
+    \end{itemize}
+
+}
+\frame{
+    \frametitle{Componentes de Protopy}
+    \includegraphics[scale=0.47]{esquema_protopy.pdf}
+}
+
+\frame{
+    \frametitle{Doff - Objetivos}
+    {\bf Objetivos:}
+    \itemize{
+        \item Facilitar el desarollo desconectado
+        \item Reutilización de recursos del proyecto en línea
+        \item Emulación de HTTP
+        \item Control de URLs e historial del navegador
+        \item Persitencia de la aplicación, datos y {\it bootstraping}
+        \item Sincronización
+        }
+    
+}
+    
+
+\frame{
+    \frametitle{Doff - Componente}
+    \begin{itemize}
+        \item {\bf API de Modelos }
+        \item {\bf Templates }
+        \item {\bf Formularios }
+        \item {\bf URLs }
+        \item {\bf Vistas }
+        \item {\bf Proyecto }
+        \item {\bf Aplicaciones adicionales }
+            \itemize{
+                \item Sincronización, Autenticación, Sesión
+            }
+    \end{itemize}
+}
+
+\frame{
+    \frametitle{Estructura de Doff}
+    \includegraphics[scale=0.5]{esquema_doff.pdf}
+}
+\frame{
+    \frametitle{Proyecto Desconectado}
+    \begin{itemize}
+        \item El desarollador debe rescribir las vistas en JavaScript y URL en JavaScript.
+        \item El desarollador puede reutilzar los templates de Django
+        \item El desarollador {\bf debe rescribir} los modelos nuevamente JavaScript
+    \end{itemize}
+}
+
+\frame{
+    \frametitle{Offline - Objetivos}
+
+}
+
+\frame{
+    \frametitle{Offline - RemoteSites}
+    
+}
+\section{Sincronización}
+\frame{
+    \frametitle{Sincronización}
+
+}
+% \begin{frame}
+% \frametitle{Framework}
+% \begin{itemize}
+% \item Inversión de Control
+% 
+% \item Comportamiento por defecto definido
+% 
+% \item Extensibilidad
+% 
+% \item No modificabilidad del código del framework
+% 
+% \end{itemize}
+% \end{frame}
+
+
+
+\end{document}
+
+

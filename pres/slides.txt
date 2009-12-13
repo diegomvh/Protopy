@@ -251,6 +251,12 @@ Arquitectura (Offline)
 
 Ahora mostramos Offline
 
+..
+    .. figure:: vistaso.png
+
+
+
+
 Offline
 -------
 

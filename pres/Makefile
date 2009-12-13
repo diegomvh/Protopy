@@ -3,7 +3,7 @@ RST2S5=$(shell which rst2s5 || which rst2s5.py)
 TARGET=slides.pdf
 IMGS=$(shell cat slides.txt | grep png | sed s/\.\.\ figure\:\:\ //g)
 DEPS = slides.txt slides.style $(IMGS)
-DPI=150
+DPI=30
 #all: $(TARGET)
 #all: rst2pdf
 all: $(TARGET)

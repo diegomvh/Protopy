@@ -20,9 +20,8 @@
             "frames": [
             ["2%", "2%", "100%", "100%"]
             ],
-        "background" : "background.svg"
-        
-        },
-        "fontSize": 40
+        "background" : "background.svg",
+        //"fontSize": 40
+        }
     }
 }
