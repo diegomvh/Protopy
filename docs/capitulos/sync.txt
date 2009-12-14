@@ -1,4 +1,4 @@
-﻿
+
 
 #########################
 Sincronización de Datos
@@ -37,13 +37,13 @@ En esta tesina se optó por implementar una mecánica simple y extendible, que r
 Para implementar la sincronización se abordaron los siguientes ítems:
 
     * Integridad de la sincronización (orden de transferencia de los modelos, transacciones)
-    
+
     * Transporte de datos
-    
+
     * Detección de cambios en instancias en el servidor
-    
+
     * Detección de cambios en el cliente
- 
+
 A continuación se realiza un análisis de los componentes intervinientes en la
 sincronización de datos como el transporte de datos, la codificación y el sistema
 de comunicación (RPC). Además se abordan algunos extras a la presente tesina
@@ -77,31 +77,28 @@ Los serializadores, en Django, son obtenidos a través de un factory de clases c
 
 .. code-block:: python
 
-    
     class Pais(models.Model):
         nombre = models.CharField(max_length = 45)
         simbolo_moneda = models.CharField(max_length = 8, default = '$')
-        
+
         def __unicode__(self):
             return self.nombre
-        
+
         class Meta:
             verbose_name = u"País"
             verbose_name_plural = u"Paises"
-        
+
     class Provincia(models.Model):
         pais = models.ForeignKey(Pais)
         nombre = models.CharField(max_length = 140)
-        
+
         def __unicode__(self):
             return self.nombre
 
 se puede serializar en JSON de la siguiente forma:
 
 .. code-block:: python
-    :linenos:
 
-    
     from core.models import Provincia # Importanción de modelos
     # Importación del módulo de serialización
     >>> from django.core import serializers
@@ -109,12 +106,12 @@ se puede serializar en JSON de la siguiente forma:
     >>> SerializadorCls = serializers.get_serializer('json')
     # Creación de una instancia del serializador
     >>> serializador = SerializadorCls()
-    
+
     # Serialización
     >>> plano = serializador.serialize(Provincia.objects.all())
     # Los datos son texto plano
     >>> plano
-    
+
         '[
             {   "pk": 1, 
                 "model": "core.provincia", 
@@ -132,17 +129,16 @@ se puede serializar en JSON de la siguiente forma:
                 }
             }
          ]'
-         
+
     # Para recuperar los datos, se obtiene una función deserializador
     # que retorna instancias guardables
-    
+
     >>> deserializador_func = serializers.get_desserializer('json')
-    
+
     # Invocación al deserializador sobre el texto serializado
     >>> for obj in deserializador_func(plano):
     ...     # Guardado de la isntancia
     ...     obj.save() 
-    
 
 Como se mencionó anteriormente, los modelos expuestos al cliente se encuentran
 en registrados en el sitio remoto mediante un proxy. El manager definido en
@@ -188,57 +184,57 @@ cliente como en la aplicación en línea, por lo que se realiza un análisis por
 separado de cada una de estas situaciones:
 
  * Creación de una entidad
- 
+
     Ocurre cuando se genera una instancia de alguna entidad del ORM y se 
     invoca el método ``save()``.
- 
+
     * En el servidor
-    
+
         Se debe tener un registro de que la entidad ha sido creada.
         El cliente debe copiar la nueva instancia en la próxima sincronización.
-    
+
     * En el cliente
-    
+
         Se crea la entidad con una clave local del cliente.
         Durante la sincronización, la entidad
         será creada en el proyecto en línea, devolviendo al cliente el identificador
         del servidor.
  
  * Modificación de una entidad
-    
+
     Ocurre cuando se recupera una instancia mediante un manager y se modifican
     sus valores, llamando posteriormente al método ``save()``.
- 
+
     * En el servidor
-        
+
         Se debe tener un registro de que la entidad ha sido modificada.
         El cliente debe actualizar la instancia en la próxima sincronización.
-    
+
     * En el cliente
-        
+
         Si la entidad se creó en el cliente y nunca fue sincronizada, 
         sigue siendo nueva para el servidor. En cambio, si la entidad fue
         sincronizada con el servidor se debe tener un registro de que la 
         entidad ha sido modificada.
-        
+
  
  * Eliminación de una entidad
-    
+
     Ocurre cuando se invoca ``delete()`` sobre una entidad recuperada mediante
     un manager, o cuando se invoca directamente sobre el manager.
-    
+
     * En el servidor
-        
+
         Se elimina la instancia en el servidor, generando un registro de
         la baja.
-    
+
     * En el cliente
-        
+
         La eliminación en un cliente debe provocar una baja lógica en el servidor.
-        
+
 Del breve análisis expuesto se deduce que se debe almacenar información extra
 referente al estado de una instancia. 
-        
+
 Junction [JunctionDocsSync09]_ es un framework de desarrollo de aplicaciones web
 que abordó el problema de sincronización agregando una serie de campos en las
 entidades::
@@ -251,7 +247,7 @@ entidades::
     - id_start    integer
     - id_start_db varchar(40)
     - synced_at   datetime
-    
+
 En el caso de Junction, la información de versionado se almacena tanto en el
 servidor como en el cliente. Aplicar este enfoque sobre un proyecto existente de
 Django no es factible debido a que involucra modificar todas los modelos preexistentes.
@@ -277,49 +273,47 @@ sólo se trabaje con los modelos afectados en el intervalo de tiempo transcurrid
 Los datos que se agregaron a cada modelo del cliente fueron:
 
     * ``server_pk``
-    
+
         Es la clave de la entidad en el servidor, si la entidad se creó en
         el cliente este campo es ``NULL``.
-        
+
     * ``active``
-        
+
         Indica la baja lógica en el servidor. Por defecto toma el valor ``true``.
-        
+
     * ``sync_log``
-        
+
         Referencia la entidad de ``SyncLog`` en la cual la instancia
         fue sincronizada.
-        
+
     * ``status``
-        
+
         Este campo se creó con el objeto de indicar el estado de una entidad
         en el cliente. Sus valores posibles son los siguientes:
-            
+
             * ``"C"`` (created)
-            
+
                 La entidad se creó en el cliente mediante el método ``save()``.
                 Los atributos ``sync_log`` y ``server_pk`` son ``NULL``.
-            
+
             * ``"S"`` (synchronized)
-                
+
                 Indica que la entidad se encuentra sincronizada con el servidor.
                 En este caso, los atributos ``sync_log`` y ``server_pk`` tienen
                 sus valores correspondientes. 
-                
+
             * ``"M"`` (modified)
-            
+
                 La entidad sincronizada ha sido modificada en el cliente.
                 Ante una sincronización se actualiza la referencia de ``sync_log``
                 y se vuelve al estado sincronizado (``"S"``).
-                
-            
+
             * ``"D"`` (deleted)
-                
+
                 Indica que la entidad fue borrada en cliente. Ante una sincronización el
                 servidor pasa al estado sincronizado (``"S"``) y el atributo ``active`` pasa 
                 a ``false``.
-        
-    
+
 
 .. [JunctionDocsSync09] Steve Yen,  
     *TrimPath Junction Syncrhonization*,
@@ -343,19 +337,6 @@ son "vigiladas" para detectar cambios; cuando éstos se producen se registra la 
 Cada vez que se agrega un modelo a un sitio remoto, internamente también
 se registran manejadores de eventos ante las señales de guardado (``post_save``)
 y eliminación (``post_delete``).
-
-..
-    .. Buscar lugar para el gráfico
-    
-    La aplicación **offline** posee los siguientes modelos:
-    
-    .. figure:: ../_dot/offline_models.png
-    
-        Modelos
-    
-    .. raw:: latex
-    	
-    	\newpage
 
 Protocolo de Sincronización
 ===========================
@@ -399,61 +380,59 @@ control de versiones distribuidos como Git [GitDocs09]_, Mercurial [MercurialDoc
 o Bazaar [BazaarDocs09]_, se crearon los métodos [*]_ ``pull`` y ``push`` en el servidor:
 
     * ``pull(sync_log = None)``
-    
+
         Retorna los cambios del servidor en un volcado de datos JSON de los 
         modelos registrados en el sitio remoto.
-        
+
         Recibe opcionalmente un agumento ``sync_log``,
         en el cual el cliente debe enviar la última instancia de la clase ``SyncLog``
         con el objeto de filtrar los cambios realizados sobre los modelos desde
         la última sincronización del cliente. 
-        
+
         En la sincronización inicial, no existen instancias de ``SyncLog`` en el
         cliente para enviar, por lo que este argumento es nulo.  
         En este caso, el método RPC devuelve un volcado completo de los modelos
         registrados.
 
-
-        
     * ``push(received)``
-    
+
         Recibe en ``received`` un diccionario con las claves:
-            
+
             * ``"deleted"`` 
-                
+
                 Modelos que han sido eliminados. Es un diccionario,
                 con las siguientes claves:
-                    
+
                     * ``"models"``
-                       
-                       Nombres de los modelos, en el orden que deben ser
-                       eliminados. Desde las entidades débiles hacia las fuertes.
-                    
+
+                        Nombres de los modelos, en el orden que deben ser
+                        eliminados. Desde las entidades débiles hacia las fuertes.
+
                     * ``"objects"``
-                      
-                      Es un diccionario, donde las claves son los nombres
-                      de los modelos y los valores son los objetos serializados.
-            
+
+                        Es un diccionario, donde las claves son los nombres
+                        de los modelos y los valores son los objetos serializados.
+
             * ``"modified"``
-                
+
                 Modelos que han sido modificados en el cliente.
                 Es un diccionario similar al de ``"deleted"``.
-                
+
             * ``"created"``
-                
+
                 Modelos que han sido creados en el cliente. Es
                 un diccionario similar al de ``"deleted"`` y ``"modified"``.
-            
+
             * ``"sync_log"``
-                
+
                 Diccionario de instancias ``SyncLog`` correspondientes a cada 
                 modelo. Por cada modelo que figure en ``"deleted"``, ``"modified"``
                 o ``"created"``, debe haber un par clave-valor en este diccionario.                   
-        
+
         El siguiente gráfico muestra los argumentos enviados en el método ``push()``:
 
         .. figure:: ../_dot/push_return.pdf
-    
+
            Argumentos de ``push()``
 
 Ambas operaciones tienen carácter atómico, ya que se ejecutan dentro de una transacción de la base de datos.
@@ -466,52 +445,47 @@ con los métodos ``pull()`` y ``push()``, estos métodos se encargan de realizar
 las llamadas RPC: 
 
 	* ``pull()``
-      
-		Se encarga de obtener la última instancia de ``SyncLog`` e invocar al método
-      	``pull`` del servidor.
 
-      	Los resultados de este método son: los objetos recibidos del servidor y la información
-      	de sincronización.
+        Se encarga de obtener la última instancia de ``SyncLog`` e invocar al método ``pull`` del servidor.
 
-	* ``push()``
-	
+        Los resultados de este método son: los objetos recibidos del servidor y la información de sincronización.
+
+    * ``push()``
+
         Obtiene, para todos los modelos del proyecto desconectado, las instancias creadas/modificadas/eliminadas con sus
         correspondientes instancias de ``SyncLog`` y serializarlas. Por último invoca al método ``push`` del servidor.
 
         El resultado de este método es una lista con los siguientes valores:
-        
+
             * ``need_pull``
-            
+
                 Indica que el cliente no cuenta con la última versión de los
                 datos y que debe realizar un nuevo ``pull()`` antes de realizar
                 un ``push()``.
-                
-             
+
             * ``chunked``
-            
+
                 Indica que sólo una parte de los modelos enviados pudo ser 
                 persistida en el servidor.
-            
-            
+
             * ``deleted``
-            
+
                 Indica qué modelos pudieron ser eliminados.
-                
+
             * ``modified``
-            
+
                 Indica qué modelos pudieron ser modificados.
-                
+
             * ``created``
-            
+
                 Indica qué modelos pudieron ser creados.
-                
+
             * ``sync_log_data``
-            
+
                 En el caso de que ``need_pull`` sea ``False``, indica la nueva
                 fecha con la cual se deben actualizar las referencias a ``SyncLog``
                 de los modelos afectados por el ``push()``.
-            
-        
+
 .. [W3CFormEncoding09] Dave Raggett, Arnaud Le Hors, Ian Jacobs,
     *Especificación de codificación de contenidos de formularios en HTML 4.1*,
     ultimo acceso Noviembre de 2009,
@@ -531,7 +505,6 @@ las llamadas RPC:
     http://bazaar-vcs.org/en/
 
 .. [*] No confundir la definición de método con *remoting* de objetos o RMI.
-
 
 
 Para realizar sincronización basada en
@@ -576,8 +549,6 @@ no sincronizadas. Por lo tanto, se deben realizar tantas invocaciones como nivel
 se tengan sin resolver. Es importante aclarar que la cantidad de invocaciones no
 crece con la cantidad de instancias, sino con las profundidad de relaciones.
 
-
-
 El siguiente gráfico ejemplifica el cambio de las entidades en el cliente 
 cuando ocurre la sincronización por partes:
 
@@ -599,28 +570,27 @@ del cliente.
 Para resolver los problemas anteriormente descriptos se creó un nuevo método que
 envuelve las llamadas a ``push()`` y ``pull()``. Se lo denominó ``update()`` y 
 es también un método del ``SyncHandler``. Su algoritmo es el siguiente:
-    
+
     #. Traer cambios desde el servidor, mediante el llamado a ``pull()``.
-       
+
     #. Ejecutar ``push()`` si hay cambios a ser enviados (determinados de acuerdo
        al valor del campo ``status`` de cada modelo):
-        
+
         #. Si ``chunked`` es falso, la actualización ha sido completa y finaliza
            actualizando el estado y relación con ``SyncLog`` de
            los modelos intervinientes.
-           
+
         #. En caso contrario, actualiza los ``server_pk`` y vuelve a enviar
            los modelos que no se han podido crear, debido a que eran débiles y
            tenían su ``server_ok`` en ``NULL``. Eventualmente ``chunked`` pasa
            al valor ``false`` y la actualización es exitosa.
-           
 
 Cuando una entidad es eliminada en el cliente y se ejecuta ``push()``,
 la bandera ``active`` toma le valor ``false``. Cuando el programador considere
 oportuna la eliminación de las entidades inactivas puede utilizar el método
 ``purge()`` de ``SyncHandler``, que sólo elimina una entidad si no posee relaciones
 o todos los campos relacionados poseen su bandera ``active`` en ``false``.
-    
+
 El campo ``status`` es el que determina qué modelos deben ser sincronizados. 
 
 La ejecución de los métodos mencionados genera cambios de estado. El siguiente diagrama
@@ -629,11 +599,11 @@ ejemplifica este hecho:
 .. figure:: ../_dot/estados_sincronziacion_cliente.pdf
 
     Estados de sincronización de los modelos en el cliente.
-    
+
 .. raw:: latex
 
     \newpage
-        
+
 ..
     .. note:: Camibar error por problemas
 
@@ -660,58 +630,57 @@ Los métodos de este middleware que el programador puede sobrecargar
 son los siguientes:
 
     * ``resolve_unique(local_object, remote_object)``
-    
+
         Llamado cuando se genera un error
         de unicidad en el servidor. Este método es invocado con los objetos
         local y remoto en conflicto.
-         
+
     * ``resolve_localDeleteRemoteModified(local_object, remote_object)``
-        
+
         Llamado cuando se ha borrado una instancia localmente, que en el servidor
         se ha modificado. Sus argumentos son el objeto local y el objeto remoto.
-        
+
     * ``resolve_localModifiedRemoteModified(local_object, remote_object)``
-        
+
         Llamado cuando se ha modificado una instancia localmente y que en el servidor
         también ha sido modificada. Sus argumentos son el objeto local y el objeto remoto.
-    
+
     * ``resolve_localModifiedRemoteDeleted(local_object, remote_object)``
-    
+
         Llamado cuando se ha modificado una instancia localmente, que en el servidor
         se ha eliminado. Sus argumentos son el objeto local y el objeto remoto.
-        
+
     * ``before_push(data)``
-        
+
         Llamado previo a la ejecución de ``push()``, con los datos serializados
         como argumentos.
-        
+
     * ``before_pull(data)``
-        
+
         Llamado previo a la ejecución de ``pull()``, con los datos serializados
         como argumentos.
 
     * ``after_push(data)``
-        
+
         Llamado posteriormente a la ejecución de ``push()``, con los datos serializados
         como argumentos.
 
-        
     * ``after_pull(data)``
-        
+
         Llamado posteriormente a la ejecución de ``pull()``, con los datos serializados
         como argumentos.
 
 Se ofrecen al programador las siguientes clases con comportamiento por defecto para resolver
 los conflictos:
-    
+
     * ``ClientWinsSyncMiddleware``
-    
+
         Prevalece la información del cliente.
-    
+
     * ``ServerWinsSyncMiddleware``
-    
+
         Prevalece la información del servidor. 
-          
+
 Este tipo de middlewares es opcional.
 
 Consideraciones Sobre Sincronización
