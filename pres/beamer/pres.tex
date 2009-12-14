@@ -38,40 +38,41 @@
 \end{frame}
 
 \subsection{Objetivos}
-\frame{
-    \frametitle{Objetivos Principales}
+\begin{frame}
+    \frametitle{Objetivos}
     \begin{block}{Objetivo Principal}
     
     ``Extender un framework de aplicaciones web existente, {\bf Open Source},
               de manera que una aplicación realizada sobre éste pueda ser ejecutada
               en el cliente de manera desconectada con un mínimo de modificaciones.
               Para permitir que la aplicación pueda ejecutarse en el cliente, se
-              implementará''
+              implementará:''
         \begin{itemize}
-        \item Persistencia del modelo de datos en el cliente.
+        \item Persistencia del modelo de datos en el cliente
         \item Subconjunto de acciones disponibles en modo desconectado
         \item Primitivas de sincronización entre la aplicación del cliente y la aplicación web que le dio origen
         \end{itemize}
     \end{block}
+\end{frame}
 
-}
 
-
-\frame{
-    \frametitle{Objetivos Secundarios}
+\begin{frame}
+    \frametitle{Objetivos}
+    \begin{block}{Objetivos Secundarios}
     \begin{itemize}
         \item{{\bf Open Source}\\
-                Coste de licenciemiento nulo y aseguramiento de la continuidad
+                Coste de licenciamiento nulo y aseguramiento de la continuidad
         }
         \item{{\bf Multiplataforma}\\
             Windows, Linux, Mac y móviles (donde exista un browser)
         }
         \item{{\bf Adaptación mínima de aplicaciones existentes}\\
             Integración con un Frameworks Web \par
-            Reutilizar los conceptos/patrones del framework para una rápida asimilación de los desarrolladores.
+            Reutilizar los conceptos/patrones del framework para una rápida asimilación de los desarrolladores
         }
     \end{itemize}
-}
+    \end{block}
+\end{frame}
 
 \subsection{Framework Web}
 \begin{frame}
@@ -85,25 +86,25 @@
 \end{frame}
 
 \subsection{Principales Obstáculos}
-\frame{
+\begin{farme}
     \frametitle{Carencias de los navegadores}
     \itemize{
         \item{\bf Servidor Web}\\
-        Sin servidor, el navegador solo posee la {\bf cache}
+            Sin servidor, el navegador sólo posee la {\bf caché}
         \item{\bf Base de Datos} \\
-        Un navegador no posee un mecanismo de almacenamiento
+            Un navegador no posee un mecanismo de almacenamiento
         \item{\bf Lenguaje de Programación Consistente}\\
-        Cada navegador implementa a su manera {\bf JavaScript} y {\bf DOM}
+            Cada navegador implementa a su manera {\bf JavaScript} y {\bf DOM}
         \item{\bf Concurrencia} \\
-        Los eventos son atendidos en el bucle principal
-        \item{{\bf Conectividad con el entorno del cliente}\par
+            Los eventos son atendidos en el bucle principal
+        \item{\bf Conectividad con el entorno del cliente}\\
             Escritorio $\not=$ Espacio de URLs
-        }
+        
     }
-}
+\end{farme}
 
 %\subsection{Tecnologías Existentes}
-\frame{
+\begin{frame}
      \frametitle{Principales alternativas}
      
      
@@ -123,17 +124,15 @@
 
      \end{column}
      \end{columns}
-     
-
 %    \pause
 %    \\
 %    Esteas tecnologías se alejan de los estándares de la Web.
     % Decir que la web 2.0, desde el punto de vista tecnologico
     % tiende a integrar serivcios en una plataforma estandar abiertos (HTML, JS + libs, etc.)
     % Estos NO.
-}
+\end{frame}
 
-\frame{
+\begin{frame}
     \frametitle{JavaScript}
     \par{Un lenguaje con {\it mala} reputación con:}
     \begin{itemize}
@@ -151,15 +150,12 @@
         \includegraphics[scale=0.2]{yui.jpg}\hfill
         \includegraphics[scale=0.5]{DHX_logo.jpg}\hfill
         \includegraphics[scale=0.3]{mootools.png}
-        
-    
     }
-    
-}
+\end{frame}
 
-\frame{
+\begin{frame}
+
     \frametitle{JavaScript - Según Mozilla}
-    
     \begin{columns}[c]
          \begin{column}{5cm}
              \itemize{
@@ -173,64 +169,60 @@
             
     
          \end{column}
-     \end{columns}
-    
-    
-        
-    
+     \end{columns}    
+\end{frame}
 
-}
-
-\frame{
+\begin{frame}
     \frametitle{Google Gears}
     \par{
         Plugin para los navegadores\hfill\includegraphics[scale=0.3]{gears.png}
     }
-    \itemize{
+    \begin{itemize}
         \item{\bf Local Server}
         \item{\bf Data Base}
         \item{\bf Worker Pool}
         \item{\bf Desktop}
-    }
-    
-}
+    \end{itemize}
+\end{frame}
+
 \section{Desarrollo}
 \subsection{Propuesta}
-\frame{
+\begin{frame}
     \frametitle{Gears}
     \includegraphics[scale=0.5]{fw_django_comp_gears.pdf}
-}
+\end{frame}
 
-\frame{
+\begin{frame}
     \frametitle{¿Django Desconectado?}
     \includegraphics[scale=0.5]{fw_desconectado.pdf}
-}
+\end{frame}
 
 \subsection{Solución}
-\frame{
+\begin{frame}
     \frametitle{Doff y Protopy}
     \includegraphics[scale=0.5]{fw_doff_protopy.pdf}
-}
+\end{frame}
+
+
 \subsubsection{Librería de JavaScript}
-\frame{
+\begin{frame}
     \frametitle{Protopy - Librería de JavaScript}
     
             {\bf Objetivos:}\par
                 \begin{itemize}
-                        \item{Interfase Pythonica para desarrolladores}
+                        \item{Interfaz Pythonica para desarrolladores}
                         \item{Promover la reutilización de código}
-                        \item{Control de la página y eventos(DOM) - Trabajo cotidiano
-                        del desarrollador web de {\it front-ends}}
-                        \item{Soporte de el framework desconectado.}
-                        \item{Interfase con las tecnologías de persistencia y ejecución
-                        offline.} 
+                        \item{Control de la página y eventos (DOM) - Trabajo
+                        cotidiano del desarrollador web de {\it front-ends}}
+                        \item{Soporte del framework desconectado}
+                        \item{Interfaz con las tecnologías de persistencia y
+                        ejecución offline} 
                 \end{itemize}     
          
-    
-        
-}
-\frame{
-    \frametitle{Componentes de Protopy}
+\end{frame}    
+      
+\begin{frame}
+    \frametitle{Protopy - Componentes}
         \begin{columns}[c]
          \begin{column}{5cm}
     
@@ -246,33 +238,28 @@
             \includegraphics[scale=0.5]{protopy.png}
          \end{column}
      \end{columns}                       
-    
-    
+\end{frame}
 
-}
-
-\frame{
-    \frametitle{Componentes de Protopy}
+\begin{frame}
+    \frametitle{Protopy - Componentes}
     \includegraphics[scale=0.47]{esquema_protopy.pdf}
-}
+\end{frame}
 
-\frame{
+\begin{frame}
     \frametitle{Doff - Objetivos}
-    {\bf Objetivos:}
-    \itemize{
-        \item Facilitar el desarrollo desconectado
-        \item Reutilización de recursos del proyecto en línea
-        \item Emulación de HTTP
-        \item Control de URLs e historial del navegador
-        \item Persistencia de la aplicación, datos y {\it bootstraping}
-        \item Sincronización
-        }
-    
-}
+    \begin{itemize}
+        \item{Facilitar el desarrollo desconectado}
+        \item{Reutilización de recursos del proyecto en línea}
+        \item{Emulación de HTTP}
+        \item{Control de URLs e historial del navegador}
+        \item{Persistencia de la aplicación, datos y {\it bootstraping}}
+        \item{Sincronización}
+        \end{itemize}
+\end{frame}
     
 
-\frame{
-    \frametitle{Doff - Componente}
+\begin{frame}
+    \frametitle{Doff - Componentes}
     \begin{itemize}
         \item {\bf API de Modelos }
         \item {\bf Templates }
@@ -285,75 +272,74 @@
                 \item Sincronización, Autenticación, Sesión
             }
     \end{itemize}
-}
+\end{frame}
 
-\frame{
-    \frametitle{Estructura de Doff}
+\begin{frame}
+    \frametitle{Doff - Estructura}
     \includegraphics[scale=0.5]{esquema_doff.pdf}
-}
-\frame{
+\end{frame}
+
+\begin{frame}
     \frametitle{Proyecto Desconectado}
     \begin{itemize}
-        \item El desarrollador debe reescribir las vistas en JavaScript y URL en JavaScript.
-        \item El desarrollador puede reutilizar los plantillas de Django
-        \item El desarrollador {\bf debe reescribir} los modelos nuevamente JavaScript
+        \item{El desarrollador debe reescribir las vistas en JavaScript y URL
+        en JavaScript}
+        \item{El desarrollador puede reutilizar las plantillas de Django}
+        \item{El desarrollador \textbf{debe reescribir} los modelos
+            nuevamente en JavaScript}   
     \end{itemize}
-}
+\end{frame}
 
-\frame{
+\begin{farme}
     \frametitle{Offline - Objetivos}
-    \itemize{        
-        \item Automatización de creación de proyectos desconectados
-        \item Servidor estático del código de Protopy y Doff
-        \item Servidor estático del código de cada proyecto
+    \begin{itemize}
+        \item{Automatización de creación de proyectos desconectados}
+        \item{Servidor estático del código de Protopy y Doff}
+        \item{Servidor estático del código de cada proyecto}
+    \end{itemize}
+            
+\end{farme}
 
-    }
-}
+\begin{frame}
 
-\frame{
     \frametitle{Offline - RemoteSites}
     \par{
-        \par{\bf Objetivo}
+        \par{\bf Objetivo:}
         Definición de desconectado en el cliente. Cada sitio remoto es una {\it vista}
-        de el proyecto y se publica en una {\it URL}
+        del proyecto y se publica en una {\it URL}
 
     }
-    \itemize{
-        
-        \item Conversión de modelos de Python a JS mediante {\it introspección}
-        
-        \item Definición de acceso a datos del servidor
-            \itemize{
-                \item Acceso a filas ({\it managers})
-                \item Acceso a columnas ({\it modificación de modelos})
-            }
-        \item Publicación de plantillas
-        
+    \begin{itemize}
+      \item{Conversión de modelos de Python a JS mediante {\it introspección}}
+      \begin{item}Definición de acceso a datos del servidor
+        \begin{itemize}
+          \item {Acceso a filas ({\it managers})}
+          \item {Acceso a columnas ({\it modificación de modelos})}
+        \end{itemize}
+      \end{item}
+      \item{Publicación de plantillas}
+    \end{itemize}
 
-        }
+\end{frame}
 
+\begin{frame}
 
-}
-
-\frame{
     \frametitle{Offline - RemoteSites estructura}
-
     \includegraphics[scale=0.5]{remote_sites.pdf}
     
-    
-}
+\end{frame}
 
 \section{Sincronización}
-\frame{
-    \frametitle{Esquema}
+\begin{frame}
+    \frametitle{Sincronización - Esquema}
     \includegraphics[scale=0.5]{esquema_distribuido.pdf}
-}
+\end{frame}
 
-\frame{
-    \frametitle{Objetivo}
+\begin{frame}
+    \frametitle{Sincronización - Objetivo}
     \par {
-    	Entidades definidas en el servidor se repliquen en el cliente y que las creadas y modificadas por el cliente
-		se transfieran al servidor.
+    	Que las entidades definidas en el servidor se repliquen en el cliente, y
+    	que las creadas y modificadas en el cliente se transfieran al servidor
     }
     \begin{itemize}
         \item Integridad de la sincronización
@@ -361,29 +347,32 @@
 		\item Detección de cambios en instancias en el servidor
 		\item Detección de cambios en el cliente
     \end{itemize}
-}
+\end{frame}
 
-\frame{
-    \frametitle{Primitivas}
+\begin{frame}
+    \frametitle{Sincronización - Primitivas}
     \begin{itemize}
         \item {\bf PUSH}
         \item {\bf PULL}
         \item {\bf UPDATE}
         \item \textit{\bf PURGE}
     \end{itemize}
-}
+\end{frame}
 
-\frame{
-    \frametitle{Conflictos}
+\begin{frame}
+
+
+    \frametitle{Sincronización - Conflictos}
     \begin{itemize}
         \item {\bf PUSH}
         \item {\bf PULL}
         \item {\bf UPDATE}
         \item \textit{\bf PURGE}
     \end{itemize}
-}
+\end{frame}
+
 \section{Conclusiones}
-\frame{
+\begin{frame}
     \frametitle{Conclusiones}
     \begin{itemize}
         \item {\bf Extender un framework}
@@ -392,33 +381,33 @@
         \item {\bf Primitivas de sincronización}
         \item {\bf Desarrollo de software libre} http://code.google.com/p/protopy
     \end{itemize}
-}
+\end{frame}
 
-\frame{
-    \frametitle{Lineas Futuras}
+\begin{frame}
+    \frametitle{Líneas Futuras}
     \begin{itemize}
-        \item {\bf Conversión de Código Python en JavaScript}
-        \item {\bf Sitio de Administración}
-        \item {\bf Workers con Soporte para JavaScript 1.7}
-        \item {\bf Compatibilidad con ES5 y HTML5}
-        \item {\bf Optimizaciones en Base a Permanencia de Estado}
-        \item {\bf Implementación de Storage o Almacenamiento en el Cliente}
-        \item {\bf Compilación de JavaScript}
+        \item{\bf Conversión de Código Python en JavaScript}
+        \item{\bf Sitio de Administración}
+        \item{\bf Workers con Soporte para JavaScript 1.7}
+        \item{\bf Compatibilidad con ES5 y HTML5}
+        \item{\bf Optimizaciones en Base a Permanencia de Estado}
+        \item{\bf Implementación de Storage o Almacenamiento en el Cliente}
+        \item{\bf Compilación de JavaScript}
         \item {\bf Manejo de Migraciones de Esquema}
     \end{itemize}
-}
+\end{frame}
 
-\frame{
+\begin{frame}
     \frametitle{Miscelánea}
     \begin{itemize}
         \item {\bf Firefox} Plataforma
         \item {\bf Firebug} Depuración
         \item {\bf Django} Framework Web
-        \item {\bf Python} Lenguaje Server Side, Scripting, Sphinx Hacking, etc
+        \item {\bf Python} Lenguaje Server Side, Scripting, Sphinx Hacking, etc.
         \item {\bf Mercurial} Control de versiones
         \item {\bf Sphinx} Para crear la documentación, \LaTeX{} y HTML
         \item {\bf \LaTeX{} - beamer} Para crear {\it esta} presentación
     \end{itemize}
-}
+\end{frame}
 
 \end{document}
