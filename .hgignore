@@ -38,6 +38,7 @@ pres/*.png
 docs/_dot/*
 *.nav
 *.snm
+*.gif
 
 
 # Aplicacion de demostracion

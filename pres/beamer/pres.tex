@@ -1,8 +1,8 @@
 \documentclass{beamer}
 \usepackage{graphicx}
-\setbeamertemplate{navigation symbols}{}
-\usepackage[utf8]{inputenc}
 \usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\setbeamertemplate{navigation symbols}{}
 \usepackage{beamerthemeshadow}
 \begin{document}
 \title{Aplicaciones Web Desconectadas}
@@ -21,39 +21,39 @@
 \section{Introducción}
 \subsection{Contexto}
 
-\frame{
+\begin{frame}
     \frametitle{¿Qué es Web?}
     \includegraphics[scale=0.5]{intro.pdf}
-}
+\end{frame}
     
 
-\frame{
+\begin{frame}
     \frametitle{¿Qué es una aplicación Web?}
     \includegraphics[scale=0.5]{general.pdf}
-}
+\end{frame}
 
-\frame{
-    
+\begin{frame}
     \frametitle{¿Qué es una aplicación Web Hoy?}
     \includegraphics[scale=0.5]{general_con_fw.pdf}
-}
+\end{frame}
 
 \subsection{Objetivos}
 \frame{
     \frametitle{Objetivos Principales}
-    \textit{``Extender un framework de aplicaciones web existente, {\bf Open Source},
+    \begin{block}{Objetivo Principal}
+    
+    ``Extender un framework de aplicaciones web existente, {\bf Open Source},
               de manera que una aplicación realizada sobre éste pueda ser ejecutada
               en el cliente de manera desconectada con un mínimo de modificaciones.
               Para permitir que la aplicación pueda ejecutarse en el cliente, se
-              implementará'':
+              implementará''
         \begin{itemize}
         \item Persistencia del modelo de datos en el cliente.
-        \pause
         \item Subconjunto de acciones disponibles en modo desconectado
-        \pause
         \item Primitivas de sincronización entre la aplicación del cliente y la aplicación web que le dio origen
         \end{itemize}
-    }
+    \end{block}
+
 }
 
 
@@ -98,7 +98,6 @@
         Los eventos son atendidos en el bucle principal
         \item{{\bf Conectividad con el entorno del cliente}\\
             Escritorio $\not=$ Espacio de URLs
-        \note{x}{ymak}
         }
     }
 }
@@ -141,30 +140,57 @@
           \item Objetos
           \item Patrones Propios (Closures, Module, etc.)
           \item Muchas librerías                    
-     \end{itemize}
+    \end{itemize}
+    \vfill
+    \par{
+        \includegraphics[scale=0.4]{prototype.png}\hfill
+        \includegraphics[scale=0.2]{dojo.png}\hfill  
+        \includegraphics[scale=0.4]{jquery.png}
+    }
+    \par{
+        \includegraphics[scale=0.2]{yui.jpg}\hfill
+        \includegraphics[scale=0.5]{DHX_logo.jpg}\hfill
+        \includegraphics[scale=0.3]{mootools.png}
+        
+    
+    }
+    
 }
 
 \frame{
     \frametitle{JavaScript - Según Mozilla}
-    \begin{itemize}
-        \item Generadores e Iteradores
-        \item Varias ayudas para una mejor programación OO
-        \item Sabor Pythonico :)
-    \end{itemize}
+    
+    \begin{columns}[c]
+         \begin{column}{5cm}
+             \itemize{
+                 \item Generadores e Iteradores
+                 \item Varias ayudas para una mejor programación OO
+                 \item Sabor Pythonico :)
+             }
+         \end{column}
+         \begin{column}{5cm}
+            \includegraphics[scale=1.2]{mozilla.png}
+            
+    
+         \end{column}
+     \end{columns}
+    
+    
+        
+    
 
 }
 
 \frame{
     \frametitle{Google Gears}
-
+    \par{
+        Plugin para los navegadores\hfill\includegraphics[scale=0.3]{gears.png}
+    }
     \itemize{
-        \item Plugin para los navegadores:
-            \itemize{
-                \item {\bf Local Server}
-                \item {\bf Data Base}
-                \item {\bf Worker Pool}
-                \item {\bf Desktop}
-             }
+        \item{\bf Local Server}
+        \item{\bf Data Base}
+        \item{\bf Worker Pool}
+        \item{\bf Desktop}
     }
     
 }
@@ -185,31 +211,43 @@
     \frametitle{Doff y Protopy}
     \includegraphics[scale=0.5]{fw_doff_protopy.pdf}
 }
-%\subsubsection{Libería de JavaScript}
+\subsubsection{Libería de JavaScript}
 \frame{
     \frametitle{Protopy - Libería de JavaScript}
-    \par {
-        {\bf Objetivos:}
-            \itemize{
-                \item Interfase Pythonica para desarrolladores,
-                \item Promover la reutilización de código,
-                \item Control de la página y eventos(DOM) - Trabajo cotidiano del desarollador web de {\it front-ends}
-                \item Soporte de el framework desconectado.
-                \item Interfase con las tecnologías de perstencia y ejecución offline.
-        }
-        }
+    
+            {\bf Objetivos:}\par
+                \begin{itemize}
+                        \item{Interfase Pythonica para desarrolladores}
+                        \item{Promover la reutilización de código}
+                        \item{Control de la página y eventos(DOM) - Trabajo cotidiano
+                        del desarollador web de {\it front-ends}}
+                        \item{Soporte de el framework desconectado.}
+                        \item{Interfase con las tecnologías de perstencia y ejecución
+                        offline.} 
+                \end{itemize}     
+         
+    
+        
 }
 \frame{
     \frametitle{Componentes de Protopy}
-    \begin{itemize}
-        \item {\bf Módulos}
-        \item {\bf Clases}
-        \item {\bf DOM}
-        \item {\bf Eventos}
-        \item {\bf AJAX}
-        
-        % TODO: Poner dibujito
-    \end{itemize}
+        \begin{columns}[c]
+         \begin{column}{5cm}
+    
+            \begin{itemize}
+                \item {\bf Módulos}
+                \item {\bf Clases}
+                \item {\bf DOM}
+                \item {\bf Eventos}
+                \item {\bf AJAX}
+             \end{itemize}
+         \end{column}
+         \begin{column}{5cm}
+            \includegraphics[scale=0.5]{protopy.png}
+         \end{column}
+     \end{columns}                       
+    
+    
 
 }
 
@@ -344,7 +382,7 @@
         \item \textit{\bf PURGE}
     \end{itemize}
 }
-
+\section{Conclusiones}
 \frame{
     \frametitle{Conclusiones}
     \begin{itemize}
@@ -378,8 +416,8 @@
         \item {\bf Django} Framework Web
         \item {\bf Python} Lenguaje Server Side, Scripting, Sphinx Hacking, etc
         \item {\bf Mercurial} Control de versiones
-        \item {\bf Sphinx} Para crear la documentación, LaTeX y HTML
-        \item {\bf LaTeX - beamer} Para crear *esta* presentación
+        \item {\bf Sphinx} Para crear la documentación, \LaTeX{} y HTML
+        \item {\bf \LaTeX{} - beamer} Para crear {\it esta} presentación
     \end{itemize}
 }
 
