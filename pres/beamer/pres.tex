@@ -103,18 +103,32 @@
     }
 }
 
-\subsection{Tecnologías Existentes}
+%\subsection{Tecnologías Existentes}
 \frame{
-    \frametitle{Principales alternativas}
-    \itemize{
-        \item {\bf Microsoft Silverlight}\\
-        \item {\bf Sun JavaFX}
-        \item {\bf Adobe AIR}
-        \item {\bf Mozilla XUL}
-    }
-    \pause
-    \\
-    Esteas tecnologías se alejan de los estándares de la Web.
+     \frametitle{Principales alternativas}
+     
+     
+     \begin{columns}[c]
+     \begin{column}{5cm}
+         \itemize{
+             \item {\bf Microsoft Silverlight}\\
+             \item {\bf Sun JavaFX}
+             \item {\bf Adobe AIR}
+             \item {\bf Mozilla XUL}
+         }
+     \end{column}
+     \begin{column}{5cm}
+        \includegraphics[scale=0.2]{microsoft_silverlight_c.jpg}\\
+        \includegraphics[scale=0.3]{javafx_logo_color_1.jpg}\\
+        \includegraphics[scale=0.16]{adobe_air_realin.png}
+
+     \end{column}
+     \end{columns}
+     
+
+%    \pause
+%    \\
+%    Esteas tecnologías se alejan de los estándares de la Web.
     % Decir que la web 2.0, desde el punto de vista tecnologico
     % tiende a integrar serivcios en una plataforma estandar abiertos (HTML, JS + libs, etc.)
     % Estos NO.
@@ -122,23 +136,24 @@
 
 \frame{
     \frametitle{JavaScript}
-    Un lenguaje de {\it mala} reputación, con:\\
-    \itemize{
-        \item Objetos
-        \item Patrones Porpios
-            \itemize{
-                \item Closures
-                \item Module Pattern
-                }
-        }\\
-    \pause
-    Según {\bf Mozilla} (versión 1.7):\\
-        \itemize{
-            \item Generadores e Iteradores
-            \item Varias ayudas para una mejor programación OO
-            \item Sabor Pythonico :)
-         }
+    \par{Un lenguaje con {\it mala} reputación con:}
+    \begin{itemize}
+          \item Objetos
+          \item Patrones Propios (Closures, Module, etc.)
+          \item Muchas librerías                    
+     \end{itemize}
 }
+
+\frame{
+    \frametitle{JavaScript - Según Mozilla}
+    \begin{itemize}
+        \item Generadores e Iteradores
+        \item Varias ayudas para una mejor programación OO
+        \item Sabor Pythonico :)
+    \end{itemize}
+
+}
+
 \frame{
     \frametitle{Google Gears}
 
@@ -170,7 +185,7 @@
     \frametitle{Doff y Protopy}
     \includegraphics[scale=0.5]{fw_doff_protopy.pdf}
 }
-
+%\subsubsection{Libería de JavaScript}
 \frame{
     \frametitle{Protopy - Libería de JavaScript}
     \par {
@@ -197,6 +212,7 @@
     \end{itemize}
 
 }
+
 \frame{
     \frametitle{Componentes de Protopy}
     \includegraphics[scale=0.47]{esquema_protopy.pdf}
@@ -248,17 +264,35 @@
 
 \frame{
     \frametitle{Offline - Objetivos}
-    \itemize{
-        \item Definición del poryecto en el cliente
+    \itemize{        
         \item Automatización de creación de proyectos desconectados
-        \item Servidor estático
-
+        \item Servidor estático del código de Protopy y Doff
+        \item Servidor estático del código de cada proyecto
 
     }
 }
 
 \frame{
     \frametitle{Offline - RemoteSites}
+    \par{
+        \par{\bf Objetivo}
+        Definición de desconectado en el cliente. Cada sitio remoto es una {\it vista}
+        de el proyecto y se publica en una {\it URL}
+
+    }
+    \itemize{
+        
+        \item Conversión de modelos de Python a JS mediante {\it introspección}
+        
+        \item Definición de acceso a datos del servidor
+            \itemize{
+                \item Acceso a filas ({\it managers})
+                \item Acceso a columnas ({\it modificación de modelos})
+            }
+        \item Publicación de templates
+        
+
+        }
 
 
 }
