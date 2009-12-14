@@ -86,22 +86,21 @@
 \end{frame}
 
 \subsection{Principales Obstáculos}
-\begin{farme}
+\begin{frame}
     \frametitle{Carencias de los navegadores}
-    \itemize{
-        \item{\bf Servidor Web}\\
-            Sin servidor, el navegador sólo posee la {\bf caché}
-        \item{\bf Base de Datos} \\
-            Un navegador no posee un mecanismo de almacenamiento
-        \item{\bf Lenguaje de Programación Consistente}\\
-            Cada navegador implementa a su manera {\bf JavaScript} y {\bf DOM}
-        \item{\bf Concurrencia} \\
-            Los eventos son atendidos en el bucle principal
-        \item{\bf Conectividad con el entorno del cliente}\\
-            Escritorio $\not=$ Espacio de URLs
-        
-    }
-\end{farme}
+    \begin{itemize}
+        \item{{\bf Servidor Web}\\
+            Sin servidor, el navegador sólo posee la {\bf caché}}
+        \item{{\bf Base de Datos} \\
+            Un navegador no posee un mecanismo de almacenamiento}
+        \item{{\bf Lenguaje de Programación Consistente}\\
+            Cada navegador implementa a su manera {\bf JavaScript} y {\bf DOM}}
+        \item{{\bf Concurrencia} \\
+            Los eventos son atendidos en el bucle principal}
+        \item{{\bf Conectividad con el entorno del cliente}\\
+            Escritorio $\not=$ Espacio de URLs}
+    \end{itemize}
+\end{frame}
 
 %\subsection{Tecnologías Existentes}
 \begin{frame}
@@ -175,7 +174,9 @@
 \begin{frame}
     \frametitle{Google Gears}
     \par{
-        Plugin para los navegadores\hfill\includegraphics[scale=0.3]{gears.png}
+        Plugin para los navegadores
+        \hfill
+        \includegraphics[scale=0.3]{gears.png}
     }
     \begin{itemize}
         \item{\bf Local Server}
@@ -204,7 +205,7 @@
 \end{frame}
 
 
-\subsubsection{Librería de JavaScript}
+\subsection{Librería de JavaScript}
 \begin{frame}
     \frametitle{Protopy - Librería de JavaScript}
     
@@ -245,6 +246,7 @@
     \includegraphics[scale=0.47]{esquema_protopy.pdf}
 \end{frame}
 
+\subsection{Framework Desconectados}
 \begin{frame}
     \frametitle{Doff - Objetivos}
     \begin{itemize}
@@ -290,14 +292,15 @@
     \end{itemize}
 \end{frame}
 
-\begin{farme}
+\subsection{Aplicación de desconexión}
+\begin{frame}
     \frametitle{Offline - Objetivos}
     \begin{itemize}
         \item{Automatización de creación de proyectos desconectados}
         \item{Servidor estático del código de Protopy y Doff}
         \item{Servidor estático del código de cada proyecto}
     \end{itemize}
-\end{farme}
+\end{frame}
 
 \begin{frame}
 
@@ -334,6 +337,7 @@
     \includegraphics[scale=0.5]{esquema_distribuido.pdf}
 \end{frame}
 
+\subsection{Objetivo}
 \begin{frame}
     \frametitle{Sincronización - Objetivo}
     \par {
@@ -348,16 +352,25 @@
     \end{itemize}
 \end{frame}
 
+\subsection{Primitivas}
 \begin{frame}
     \frametitle{Sincronización - Primitivas}
-    \begin{itemize}
-        \item {\bf PUSH}
-        \item {\bf PULL}
-        \item {\bf UPDATE}
-        \item \textit{\bf PURGE}
-    \end{itemize}
+    
+
+        \begin{itemize}
+            \item {\bf PUSH}
+            \item {\bf PULL}
+            \item {\bf UPDATE}
+            \item \textit{\bf PURGE}
+        \end{itemize}
+        %\par{\bf ahahahaha}
+        \vfill
+        \includegraphics[scale=0.43]{esquema_sync_client.pdf}
+        \vfill
+    
 \end{frame}
 
+\subsection{Conflictos}
 \begin{frame}
     \frametitle{Sincronización - Conflictos}
     \begin{itemize}
@@ -369,17 +382,20 @@
 \end{frame}
 
 \section{Conclusiones}
+\subsection{Objetivos Cumplidos}
 \begin{frame}
     \frametitle{Conclusiones}
     \begin{itemize}
-        \item {\bf Extender un framework}
-        \item {\bf Persistencia del modelo de datos en el cliente}
-        \item {\bf Acciones disponibles en modo desconectado}
-        \item {\bf Primitivas de sincronización}
-        \item {\bf Desarrollo de software libre} http://code.google.com/p/protopy
+        \item {\bf Extender un framework $\surd$}
+        \item {\bf Persistencia del modelo de datos en el cliente $\surd$}
+        \item {\bf Acciones disponibles en modo desconectado $\surd$}
+        \item {\bf Primitivas de sincronización $\surd$}
+        \item {\bf Desarrollo de software libre $\surd$}
+        http://code.google.com/p/protopy
     \end{itemize}
 \end{frame}
 
+\subsection{Líneas Futuras}
 \begin{frame}
     \frametitle{Líneas Futuras}
     \begin{itemize}
@@ -394,6 +410,7 @@
     \end{itemize}
 \end{frame}
 
+\subsection{Herramientas Open Source}
 \begin{frame}
     \frametitle{Miscelánea}
     \begin{itemize}
@@ -407,4 +424,13 @@
     \end{itemize}
 \end{frame}
 
+\begin{frame}
+    \vfill
+    \begin{center}
+        {\Huge\bf ¡¡¡Muchas Gracias!!!}
+    \end{center}
+        
+    
+    \vfill
+\end{frame}
 \end{document}
