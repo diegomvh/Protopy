@@ -1,4 +1,4 @@
-﻿
+
 #############################
 Conclusiones y Líneas Futuras
 #############################
@@ -16,13 +16,13 @@ facilitan la creación de frameworks simples, como es el caso de Django.
 De los objetivos cumplidos:
 
     * *Extender un framework de aplicaciones web, OpenSource, existente de manera que una aplicación realizada sobre éste, pueda ser ejecutada en el cliente de manera desconectada con un mínimo de modificaciones*
-	
-		Sobre el framework elegido, realizamos la extensión como una aplicación
-		genérica llamada **offline**, que se trató en los capítulos de
-		Introducción al Desarrollo y Offline, la Aplicación para la Desconexión. 
+
+        Sobre el framework elegido, realizamos la extensión como una aplicación
+        genérica llamada **offline**, que se trató en los capítulos de
+        Introducción al Desarrollo y Offline, la Aplicación para la Desconexión. 
 
     * *Implementar persistencia del modelo de datos en el cliente*
-      
+
         Mediante el plugin Google Gears, logramos persistencia  
         base de datos en el cliente. El soporte para Google Gears 
         se trató en los capítulos sobre **Protopy** y **Doff**.
@@ -30,13 +30,13 @@ De los objetivos cumplidos:
         a partir de la introspección de la definición.
 
     * *Implementar un subconjunto de acciones disponibles en modo desconectado*
-        
+
         **Doff** provee el sistema de vistas y middlewares de Django, por lo que
         la funcionalidad de la aplicación conectada se puede migrar de manera sencilla.
         Esto se trató en los capítulos de **Doff** y Offline, la Aplicación para la Desconexión.
 
     * *Implementar primitivas de sincronización entre la aplicación del cliente y la aplicación web que le dio origen*
-        
+
         Logramos implementar un sistema de sincronización basado en estándares
         web y de alto nivel, superando las expectativas iniciales.
         El protocolo de sincronización se trató en el capítulo Sincronización de Datos.
@@ -44,7 +44,7 @@ De los objetivos cumplidos:
 En cuanto a los objetivos secundarios: 
 
     * *Enriquecer nuestra experiencia relacionada con el desarrollo de software libre*
-      
+
        Los frameworks web que hemos estudiado se distribuyen como OpenSource. Su
        desarrollo está asistido por software OpenSource, como los sistemas 
        de control de versiones como Subversion, Mercurial (utilizado en esta tesis),
@@ -55,7 +55,7 @@ En cuanto a los objetivos secundarios:
        Sphinx (sistema con el cual elaboramos el presente documento).
        El uso de estas herramientas nos ayudó a la adopción más plena de la filosofía del
        software libre.
-      
+
     * *Aportar y difundir una extensión a un framework de libre distribución*
 
        Completamos íntegramente el trabajo con Software Libre: el lenguaje Python,
@@ -79,7 +79,6 @@ con sistemas Web Legacy.
 
 A continuación se detallan algunas líneas futuras puntuales que surgieron del
 estudio y desarrollo de la presente tesina.
-
 
 Conversión de Código Python en JavaScript
 =========================================
