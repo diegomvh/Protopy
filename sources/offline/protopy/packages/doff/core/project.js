@@ -132,7 +132,7 @@ var Project = type('Project', object, {
         removedb(callback);
 
         this.remove_store(callback);
-        callback('complete', details);
+        callback('complete', { 'message': 'Project successfuly uninstalled'});
         event.publish('post_uninstall', [callback]);
     },
 
