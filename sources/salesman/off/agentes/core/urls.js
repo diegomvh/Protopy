@@ -5,7 +5,7 @@ var urlpatterns = patterns('doff.views.generic',
         ['^$', 'simple.direct_to_template', {'template': 'administrar.html'}],
         
         // Editar una ciudad
-        ['ciudad/(\\d{1,5})/editar/$', 'create_update.update_object', {
+        ['ciudad/(\\d+)/editar/$', 'create_update.update_object', {
             'model': Ciudad,
             'post_save_redirect': '/administrar/ciudades/',
             'template_name': 'forms.html',
@@ -26,7 +26,7 @@ var urlpatterns = patterns('doff.views.generic',
         }],
         
         // Ciudades -> Eliminar
-        ['ciudad/(\\d{1,5})/eliminar/$', 'create_update.delete_object', {
+        ['ciudad/(\\d+)/eliminar/$', 'create_update.delete_object', {
             'model': Ciudad,
             'post_delete_redirect': '/administrar/ciudades/',
             'template_name': 'confirm_delete.html',
@@ -34,7 +34,7 @@ var urlpatterns = patterns('doff.views.generic',
         }],
         
         // Clientes -> Edit
-        ['cliente/(\\d{1-11})/editar/$', 'create_update.update_object', {
+        ['cliente/(\\d+)/editar/$', 'create_update.update_object', {
             'model': Cliente,
             'template_name': 'forms.html',
             'post_save_redirect': '/administrar/clientes/',
@@ -55,7 +55,7 @@ var urlpatterns = patterns('doff.views.generic',
         }],
         
         // Clientes -> Eliminar
-        ['cliente/(\\d{1-11})/eliminar/$', 'create_update.delete_object', {
+        ['cliente/(\\d+)/eliminar/$', 'create_update.delete_object', {
             'model': Cliente,
             'post_delete_redirect': '/administrar/clientes/',
             'template_name': 'confirm_delete.html',
@@ -63,7 +63,7 @@ var urlpatterns = patterns('doff.views.generic',
         }],
         
         // proveedor -> Edit
-        ['^proveedor/(\\d{1-11})/editar/$', 'create_update.update_object',{
+        ['^proveedor/(\\d+)/editar/$', 'create_update.update_object',{
             'model': Proveedor,
             'post_save_redirect': '/administrar/proveedores/',
             'template_name': 'forms.html',
@@ -85,7 +85,7 @@ var urlpatterns = patterns('doff.views.generic',
         }],
         
         // proveedor -> Eliminar
-        ['^proveedor/(\\d{1-11})/eliminar/$', 'create_update.delete_object', {
+        ['^proveedor/(\\d+)/eliminar/$', 'create_update.delete_object', {
             'model': Proveedor,
             'post_delete_redirect': '/administrar/proveedores/',
             'template_name': 'confirm_delete.html',

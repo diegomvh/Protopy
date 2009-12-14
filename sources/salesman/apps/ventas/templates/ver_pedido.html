@@ -3,22 +3,30 @@
 {% block main %}
 
 <h1>Pedido {{ pedido.id }}, de {{ pedido.cliente.razon_social }}</h1>
+
+<p class="comments align-left clear">Datos del pedido</p>
+<p>
+	<span class="blue">Vendedor: </span>{{ pedido.vendedor }} - {{ pedido.vendedor.last_name }}, {{ pedido.vendedor.first_name }}<br/>
+	<span class="blue">Cliente: </span>{{pedido.cliente.razon_social}}<br/>
+	<span class="blue">Cuit: </span>{{pedido.cliente.cuit}}<br/>
+	<span class="blue">Dirección: </span>{{pedido.cliente.direccion}}, {{pedido.cliente.ciudad}}<br/>
+	<span class="blue">Email: </span>{% if pedido.cliente.correo %}{{pedido.cliente.correo}}{% else %}--{% endif %}
+</p>
+
+<p class="comments align-left clear">Productos</p>
 <table style="width: 100%;">
 	<thead>
 		<tr>
 			<th>Cant.</th><th>Producto</th><th>Precio</th>
-		</tr>
-		
+		</tr>	
 	</thead>
 	{% for item in pedido.itempedido_set.all %}
 	<tr>
 		<td>{{ item.cantidad }}</td>
 		<td>{{ item.producto }}</td>
 		<td>U$U {{ item.precio }}</td>
-		
 	</tr>
 	{% endfor %}
-	
 </table>
 
 {% endblock %}
