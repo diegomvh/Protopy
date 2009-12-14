@@ -172,7 +172,6 @@ var Project = type('Project', object, {
      */
     create_shortcut: function() {
     	// Ver si esto queda en funcion de algo de la configuracion
-    	debugger;
     	var desktop = sys.gears.create('beta.desktop');
     	var icon = new desktop.IconTheme('protopy');
     	var sh = new desktop.Shortcut(this.settings.PROJECT_NAME, string(window.location));

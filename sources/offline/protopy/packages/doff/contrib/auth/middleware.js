@@ -21,6 +21,17 @@ var AuthenticationMiddleware = type('AuthenticationMiddleware', [ object ], {
     }
 });
 
+//Si cargan este middleware es porque usan usuarios
+function ensure_user(callback) {
+	require('doff.contrib.auth.base', 'capture_remote_user');
+	callback('auth', {	'message': 'Create user ' + user.username });
+	var user = capture_remote_user();
+	//TODO: No pude fallar porque la app session tiene que estar instalada
+	user.save();
+}
+
+var heu = event.subscribe('post_install', ensure_user);
+
 publish({
     AuthenticationMiddleware: AuthenticationMiddleware
 });

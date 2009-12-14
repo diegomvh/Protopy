@@ -4,6 +4,18 @@ require('event');
 
 var SESSION_KEY = '_auth_username';
 
+function capture_remote_user() {
+	try {
+		var proxy = new ServiceProxy(settings.RPC_URL, { asynchronous: false, protocol: settings.RPC_PROTOCOL });
+		var data = proxy.user();
+		if (data['class'] == 'AnonymousUser')
+			return new AnonymousUser();
+		return new User(data);
+	} catch (e) {
+		return new AnonymousUser();
+	}
+}
+
 function load_user(username) {
 	require('doff.contrib.auth.models', 'User', 'AnonymousUser');
 	var user = User.get({'username': username});
@@ -46,27 +58,15 @@ function get_user(request) {
 	require('doff.contrib.auth.models', 'User', 'AnonymousUser');
 	var username = request.session.get(SESSION_KEY, null);
 	if (username == null) {
-		try {
-			var proxy = new ServiceProxy(settings.RPC_URL, { asynchronous: false, protocol: settings.RPC_PROTOCOL });
-			var data = proxy.user();
-			if (data['class'] == 'AnonymousUser')
-				return new AnonymousUser();
-			var user = new User(data);
-			try {
-				user.save();
-				request.session.set(SESSION_KEY, user.username);
-			} catch (e) {
-				// No tengo base de datos
-			}
-			return user;
-		} catch (e) {
-			return new AnonymousUser(); 
-		}
+		var user = capture_remote_user();
+		if (!isinstance(user, AnonymousUser))
+			request.session.set(SESSION_KEY, user.username);
 	}
 	return load_user(username);
 }
 
 publish({
+	capture_remote_user: capture_remote_user,
 	get_user: get_user,
 	authenticate: authenticate,
 	login: login,
