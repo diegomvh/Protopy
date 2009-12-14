@@ -86,22 +86,21 @@
 \end{frame}
 
 \subsection{Principales Obstáculos}
-\begin{farme}
+\begin{frame}
     \frametitle{Carencias de los navegadores}
-    \itemize{
-        \item{\bf Servidor Web}\\
-            Sin servidor, el navegador sólo posee la {\bf caché}
-        \item{\bf Base de Datos} \\
-            Un navegador no posee un mecanismo de almacenamiento
-        \item{\bf Lenguaje de Programación Consistente}\\
-            Cada navegador implementa a su manera {\bf JavaScript} y {\bf DOM}
-        \item{\bf Concurrencia} \\
-            Los eventos son atendidos en el bucle principal
-        \item{\bf Conectividad con el entorno del cliente}\\
-            Escritorio $\not=$ Espacio de URLs
-        
-    }
-\end{farme}
+    \begin{itemize}
+        \item{{\bf Servidor Web}\\
+            Sin servidor, el navegador sólo posee la {\bf caché}}
+        \item{{\bf Base de Datos} \\
+            Un navegador no posee un mecanismo de almacenamiento}
+        \item{{\bf Lenguaje de Programación Consistente}\\
+            Cada navegador implementa a su manera {\bf JavaScript} y {\bf DOM}}
+        \item{{\bf Concurrencia} \\
+            Los eventos son atendidos en el bucle principal}
+        \item{{\bf Conectividad con el entorno del cliente}\\
+            Escritorio $\not=$ Espacio de URLs}
+    \end{itemize}
+\end{frame}
 
 %\subsection{Tecnologías Existentes}
 \begin{frame}
@@ -204,7 +203,7 @@
 \end{frame}
 
 
-\subsubsection{Librería de JavaScript}
+\subsection{Librería de JavaScript}
 \begin{frame}
     \frametitle{Protopy - Librería de JavaScript}
     
@@ -245,6 +244,7 @@
     \includegraphics[scale=0.47]{esquema_protopy.pdf}
 \end{frame}
 
+\subsection{Framework Desconectados}
 \begin{frame}
     \frametitle{Doff - Objetivos}
     \begin{itemize}
@@ -290,7 +290,8 @@
     \end{itemize}
 \end{frame}
 
-\begin{farme}
+\subsection{Aplicación de desconexión}
+\begin{frame}
     \frametitle{Offline - Objetivos}
     \begin{itemize}
         \item{Automatización de creación de proyectos desconectados}
@@ -298,7 +299,7 @@
         \item{Servidor estático del código de cada proyecto}
     \end{itemize}
             
-\end{farme}
+\end{frame}
 
 \begin{frame}
 
@@ -335,6 +336,7 @@
     \includegraphics[scale=0.5]{esquema_distribuido.pdf}
 \end{frame}
 
+\subsection{Objetivo}
 \begin{frame}
     \frametitle{Sincronización - Objetivo}
     \par {
@@ -349,16 +351,27 @@
     \end{itemize}
 \end{frame}
 
+\subsection{Primitivas}
 \begin{frame}
     \frametitle{Sincronización - Primitivas}
-    \begin{itemize}
-        \item {\bf PUSH}
-        \item {\bf PULL}
-        \item {\bf UPDATE}
-        \item \textit{\bf PURGE}
-    \end{itemize}
+    \begin{columns}[c]
+         \begin{column}{5cm}
+
+            \begin{itemize}
+                \item {\bf PUSH}
+                \item {\bf PULL}
+                \item {\bf UPDATE}
+                \item \textit{\bf PURGE}
+            \end{itemize}
+         \end{column}
+        \begin{column}{5cm}
+            \par{\bf ahahahaha}
+            
+        \end{column}
+    \end{columns}
 \end{frame}
 
+\subsection{Conflictos}
 \begin{frame}
 
 
@@ -372,6 +385,7 @@
 \end{frame}
 
 \section{Conclusiones}
+\subsection{Objetivos Cumplidos}
 \begin{frame}
     \frametitle{Conclusiones}
     \begin{itemize}
@@ -383,6 +397,7 @@
     \end{itemize}
 \end{frame}
 
+\subsection{Líneas Futuras}
 \begin{frame}
     \frametitle{Líneas Futuras}
     \begin{itemize}
@@ -397,6 +412,7 @@
     \end{itemize}
 \end{frame}
 
+\subsection{Herramientas Open Source}
 \begin{frame}
     \frametitle{Miscelánea}
     \begin{itemize}
