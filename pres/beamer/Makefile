@@ -10,7 +10,9 @@ show_svgs:
 imagenes: ${PDF_FROM_SVG}
 
 %.pdf: %.tex imagenes
-	pdflatex $^
+	yes R | pdflatex $^ || true
+	yes R | pdflatex $^ || true
+	
 
 %.pdf: %.svg
 	inkscape --file=$< -C --export-pdf=$@
