@@ -17,17 +17,17 @@ Sin embargo existen diversas situaciones en las cuales se pueden presentar confl
 las versiones de una misma entidad:
 
     * Cuando una entidad se modifica tanto en el cliente como en el servidor
-    
+
     * Cuando una entidad se modifica en dos clientes
-    
+
     * Cuando dos o más entidades equivalentes se crean en dos clientes
-    
+
     * Cuando se crea una entidad equivalente en el cliente y en el servidor
-    
+
     * Cuando se elimina una entidad en el servidor referenciada en el cliente
-    
+
     * Alguna combinación de los casos anteriores
-    
+
 La forma en que se resuelven estos conflictos debe ser abordada por el programador
 durante el diseño de la aplicación.
 
@@ -368,12 +368,11 @@ se creó el decorador ``jsonrpc``. Por ejemplo, un método expuesto en el
 sitio remoto se implementa de la siguiente manera:
 
 .. code-block:: python
-    
+
     @jsonrpc
     def echo(self, value):
         return value
-    
-    
+
 Una vez establecido el mecanismo de comunicación, fue necesario definir los métodos
 a publicar. Basados en las primitivas de sincronización de los sistemas de 
 control de versiones distribuidos como Git [GitDocs09]_, Mercurial [MercurialDocs09]_

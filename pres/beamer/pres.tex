@@ -273,52 +273,80 @@
 
 \section{Sincronización}
 \frame{
-    \frametitle{Sincronización - Objetivos}
-    \begin{itemize}
-        \item Creación
-        
-    \end{itemize}
-}
-
-
-\frame{
-    \frametitle{Sincronización - Esquema}
+    \frametitle{Esquema}
     \includegraphics[scale=0.5]{esquema_distribuido.pdf}
-
 }
+
 \frame{
-    \frametitle{Sincronización - Primitivas}
+    \frametitle{Objetivo}
+    \par {
+    	Entidades definidas en el servidor se repliquen en el cliente y que las creadas y modificadas por el cliente
+		se transfieran al servidor.
+    }
     \begin{itemize}
-        \item {\bf PUSH}\par
-            Enviar cambios
-            
-        \item {\bf PULL}\par
-            Recibir actualizaciones
-            
-        \item {\bf UPDATE}\par
-            Enviar y recibir, resolver conflictos
-            
-        \item \textit{\bf PURGE}\par
-            Elminar entidades inactivas
+        \item Integridad de la sincronización
+		\item Transporte de datos
+		\item Detección de cambios en instancias en el servidor
+		\item Detección de cambios en el cliente
     \end{itemize}
 }
 
-% \begin{frame}
-% \frametitle{Framework}
-% \begin{itemize}
-% \item Inversión de Control
-% 
-% \item Comportamiento por defecto definido
-% 
-% \item Extensibilidad
-% 
-% \item No modificabilidad del código del framework
-% 
-% \end{itemize}
-% \end{frame}
+\frame{
+    \frametitle{Primitivas}
+    \begin{itemize}
+        \item {\bf PUSH}
+        \item {\bf PULL}
+        \item {\bf UPDATE}
+        \item \textit{\bf PURGE}
+    \end{itemize}
+}
 
+\frame{
+    \frametitle{Conflictos}
+    \begin{itemize}
+        \item {\bf PUSH}
+        \item {\bf PULL}
+        \item {\bf UPDATE}
+        \item \textit{\bf PURGE}
+    \end{itemize}
+}
 
+\frame{
+    \frametitle{Conclusiones}
+    \begin{itemize}
+        \item {\bf Extender un framework}
+        \item {\bf Persistencia del modelo de datos en el cliente}
+        \item {\bf Acciones disponibles en modo desconectado}
+        \item {\bf Primitivas de sincronización}
+        \item {\bf Desarrollo de software libre} http://code.google.com/p/protopy
+    \end{itemize}
+}
+
+\frame{
+    \frametitle{Lineas Futuras}
+    \begin{itemize}
+        \item {\bf Conversión de Código Python en JavaScript}
+        \item {\bf Sitio de Administración}
+        \item {\bf Workers con Soporte para Javascript 1.7}
+        \item {\bf Compatibilidad con ES5 y HTML5}
+        \item {\bf Optimizaciones en Base a Permanencia de Estado}
+        \item {\bf Implementación de Storage o Almacenamiento en el Cliente}
+        \item {\bf Compilación de JavaScript}
+        \item {\bf Manejo de Migraciones de Esquema}
+    \end{itemize}
+}
+
+\frame{
+    \frametitle{Miscelanea}
+    \begin{itemize}
+        \item {\bf Firefox} Plataforma
+        \item {\bf Firebug} Depuración
+        \item {\bf Django} Framework Web
+        \item {\bf Python} Lenguaje Server Side, Scripting, Sphinx Hacking, etc
+        \item {\bf Mercurial} Control de versiones
+        \item {\bf Sphinx} Para crear la documentación, LaTeX y HTML
+        \item {\bf LaTeX - beamer} Para crear *esta* presentación
+    \end{itemize}
+}
 
 \end{document}
-
-
