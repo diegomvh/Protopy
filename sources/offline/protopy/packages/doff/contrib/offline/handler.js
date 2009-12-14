@@ -114,7 +114,6 @@ var SyncHandler = type('SyncHandler', [ object ], {
     },
 
     update: function() {
-    	debugger;
     	var first = SyncLog.objects.count() == 0;
         var [ received, sync_log_data ] = this.pull();
         if (bool(received)) {

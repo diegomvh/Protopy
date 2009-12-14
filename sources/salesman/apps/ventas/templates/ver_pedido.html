@@ -6,7 +6,11 @@
 
 <p class="comments align-left clear">Datos del pedido</p>
 <p>
+	{% if offline %}
+	<span class="blue">Vendedor: </span>{{ user.username }} - {{ user.last_name }}, {{ user.first_name }}<br/>
+	{% else %}
 	<span class="blue">Vendedor: </span>{{ pedido.vendedor }} - {{ pedido.vendedor.last_name }}, {{ pedido.vendedor.first_name }}<br/>
+	{% endif %}
 	<span class="blue">Cliente: </span>{{pedido.cliente.razon_social}}<br/>
 	<span class="blue">Cuit: </span>{{pedido.cliente.cuit}}<br/>
 	<span class="blue">Dirección: </span>{{pedido.cliente.direccion}}, {{pedido.cliente.ciudad}}<br/>

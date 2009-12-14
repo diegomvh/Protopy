@@ -68,24 +68,20 @@ var Sync = type('Sync', Panel, {
     
     // Posiblemente tomar el pk del server y ponerlo en la local
     resolve_unique: function(local_object, remote_object) {
-        debugger;
         return local_object;
     },
 
     // Posiblemente tomar la local y ponerla como sync
     reoslve_LocalDeletedRemoteModified: function(local_object, remote_object) {
-    	debugger;
     	return local_object;
     },
 
     // Selecciona una de las dos
     resolve_LocalModifiedRemoteModified: function(local_object, remote_object) {
-    	debugger;
     	return local_object;
     },
 
     reoslve_LocalModifiedRemoteDeleted: function(local_object, remote_object) {
-    	debugger;
     	return local_object;
     },
 
@@ -106,12 +102,7 @@ var Sync = type('Sync', Panel, {
     after_pull: function(data) {
     	this.output.insert('<p>' + len(data['objects']) + ' objects pulled</p>');
     	this.output.insert('<p><--- SyncLog { date: "' + data['sync_log']['synced_at'] + '", id: "' + data['sync_log']['sync_id'] + '"}</p>');
-    },
-
-    after_merge: function (auto, local_object, remote_object) {
-
-    }
-    
+    }    
 });
 
 publish({

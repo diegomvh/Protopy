@@ -155,7 +155,6 @@ function update_object(request, object_id) {
 }
 
 function delete_object(request, object_id) {
-	debugger;
     var arg = new Arguments(arguments, {
         //object_id : null,
     	model: null,

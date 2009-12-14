@@ -58,7 +58,6 @@ function get_user(request) {
 	require('doff.contrib.auth.models', 'User', 'AnonymousUser');
 	var username = request.session.get(SESSION_KEY, null);
 	if (username == null) {
-		debugger;
 		require('doff.core.project', 'get_project');
         var p = get_project();
 		var user = capture_remote_user();
