@@ -225,13 +225,13 @@
     \frametitle{Protopy - Componentes}
         \begin{columns}[c]
          \begin{column}{5cm}
-    
             \begin{itemize}
                 \item {\bf Módulos}
                 \item {\bf Clases}
-                \item {\bf DOM}
-                \item {\bf Eventos}
-                \item {\bf AJAX}
+                \item {\bf DOM y Eventos}
+                \item {\bf AJAX - RPC - JSON}
+                \item {\bf Gears}
+                \item {\bf Logging}
              \end{itemize}
          \end{column}
          \begin{column}{5cm}
@@ -282,11 +282,11 @@
 \begin{frame}
     \frametitle{Proyecto Desconectado}
     \begin{itemize}
-        \item{El desarrollador debe reescribir las vistas en JavaScript y URL
-        en JavaScript}
-        \item{El desarrollador puede reutilizar las plantillas de Django}
-        \item{El desarrollador \textbf{debe reescribir} los modelos
-            nuevamente en JavaScript}   
+        \item{Proyecto = paquete + configuración}
+        \item{Escribir aplicaciones, modelos, vistas}
+        \item{Escribir el mapeo de urls en vistas}
+        \item{Escribir templates}
+        \item{Crear el manifiesto}
     \end{itemize}
 \end{frame}
 
@@ -297,7 +297,6 @@
         \item{Servidor estático del código de Protopy y Doff}
         \item{Servidor estático del código de cada proyecto}
     \end{itemize}
-            
 \end{farme}
 
 \begin{frame}
@@ -360,8 +359,6 @@
 \end{frame}
 
 \begin{frame}
-
-
     \frametitle{Sincronización - Conflictos}
     \begin{itemize}
         \item {\bf PUSH}
