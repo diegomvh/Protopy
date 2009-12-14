@@ -9,7 +9,7 @@ show_svgs:
 
 imagenes: ${PDF_FROM_SVG}
 
-%.pdf: %.tex
+%.pdf: %.tex imagenes
 	pdflatex $^
 
 %.pdf: %.svg

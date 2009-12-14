@@ -248,18 +248,61 @@
 
 \frame{
     \frametitle{Offline - Objetivos}
+    \itemize{
+        \item Definición del poryecto en el cliente
+        \item Automatización de creación de proyectos desconectados
+        \item Servidor estático
 
+
+    }
 }
 
 \frame{
     \frametitle{Offline - RemoteSites}
-    
-}
-\section{Sincronización}
-\frame{
-    \frametitle{Sincronización}
+
 
 }
+
+\frame{
+    \frametitle{Offline - RemoteSites estructura}
+
+    \includegraphics[scale=0.5]{remote_sites.pdf}
+    
+    
+}
+
+\section{Sincronización}
+\frame{
+    \frametitle{Sincronización - Objetivos}
+    \begin{itemize}
+        \item Creación
+        
+    \end{itemize}
+}
+
+
+\frame{
+    \frametitle{Sincronización - Esquema}
+    \includegraphics[scale=0.5]{esquema_distribuido.pdf}
+
+}
+\frame{
+    \frametitle{Sincronización - Primitivas}
+    \begin{itemize}
+        \item {\bf PUSH}\par
+            Enviar cambios
+            
+        \item {\bf PULL}\par
+            Recibir actualizaciones
+            
+        \item {\bf UPDATE}\par
+            Enviar y recibir, resolver conflictos
+            
+        \item \textit{\bf PURGE}\par
+            Elminar entidades inactivas
+    \end{itemize}
+}
+
 % \begin{frame}
 % \frametitle{Framework}
 % \begin{itemize}

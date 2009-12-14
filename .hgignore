@@ -36,6 +36,9 @@ chiron/*
 *.swp
 pres/*.png
 docs/_dot/*
+*.nav
+*.snm
+
 
 # Aplicacion de demostracion
 sources/offline_demo/static/devkit/*
