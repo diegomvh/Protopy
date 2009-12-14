@@ -10,10 +10,10 @@ muchos elementos que acercan su sintaxis a la de Python, fue
 necesario implementar esta capa intermedia entre JavaScript y Django "desconectado".
 Uno de los objetivos más relevante es emular la API estándar de Python.
 
-La biblioteca se basó en el código fuente de Prototype, sobre la cual se fue agregando
-y sustituyendo código. El resultado de esta modificación se denomino **Protopy** en honor a 
-sus dos "padres", *Prototype JavaScript Library* y el lenguaje de programación
-*Python*:
+La biblioteca se basó inicialmente en el código fuente de *Prototype JavaScript Library*,
+sobre la cual se fue agregando y sustituyendo código. Si bien posteriores modificaciones
+llevaron a descartar la librería **Protopy** debe su nombre a ésta y a su otro “padre”,
+lenguaje de programación *Python*:
 
     | **proto** type + **py** thon = **protopy**
 
