@@ -13,11 +13,6 @@
 \titlepage
 \end{frame}
 
-% \frame{
-%     \frametitle{Contenido de la presetnación}
-%     \tableofcontents
-% }
-
 \section{Introducción}
 \subsection{Contexto}
 
@@ -338,7 +333,7 @@
       \item{Soporte en el cliente para la instalación de un RemoteSite}
       \item{Modelos base para los modelos que se desconecten de {\bf offline}}
       \item{Managers remotos y managers que trabajan con la consistencia}
-      \item{Manjador de Sincronización}
+      \item{Manejador de Sincronización}
       \item{Agrega elementos al contexto de renderización para identificar
             estado}
     \end{itemize}
@@ -352,11 +347,12 @@
 
 \subsection{Objetivo}
 \begin{frame}
-    \frametitle{Sincronización - Objetivo}
+    \frametitle{Objetivo}
     \par {
     	Que las entidades definidas en el servidor se repliquen en el cliente, y
     	que las creadas y modificadas en el cliente se transfieran al servidor
     }
+    \pause
     \begin{itemize}
         \item{Integridad de la sincronización}
 		\item{Transporte de datos}
@@ -367,62 +363,70 @@
             \item{Señales}
           \end{itemize}
 		\end{item}
-
         \begin{item}
           \par{Detección de cambios en el cliente}
           \begin{itemize}
-                \item{status}
-                \item{sync\_log}
-                \item{active}
                 \item{server\_pk}
+                \item{active}
+                \item{sync\_log}
+                \item{status}
           \end{itemize}
         \end{item}
-        
     \end{itemize}
 \end{frame}
 
 \subsection{Primitivas}
 \begin{frame}
-    \frametitle{Sincronización - Primitivas}
-    
-
-        \begin{itemize}
-            \item {\bf PUSH}
-            \item {\bf PULL}
-            \item {\bf UPDATE}
-            \item \textit{\bf PURGE}
+    \frametitle{Primitivas}
+    	\begin{itemize}
+            \item{\bf PULL - Cliente/Servidor}
+            	\begin{itemize}
+                	\item{data}
+                	\item{sync\_log}
+          		\end{itemize}
+            \item{\bf PUSH - Cliente/Servidor}
+            	\begin{itemize}
+                	\item{need\_pull}
+                	\item{chunked}
+                	\item{deleted, modified, created}
+                	\item{sync\_log/s}
+          		\end{itemize}
+            \item{\bf PURGE - Cliente}
+            	\begin{itemize}
+                	\item{active}
+                	\item{status}
+                \end{itemize}
+            \item{\bf UPDATE - Cliente} 
         \end{itemize}
-        %\par{\bf ahahahaha}
-        
-    
 \end{frame}
 
 \begin{frame}
-    \frametitle{Clico de vida de una entidad}
+    \frametitle{Ciclo de vida de una entidad}
     \includegraphics[scale=0.55]{esquema_sync_client.pdf}
 \end{frame}
 
 \subsection{Conflictos}
 \begin{frame}
-    \frametitle{Sincronización - Conflictos}
+    \frametitle{Conflictos}
     \par{
     Se provee un mecanismo básico de resolución de conflictos que 
-    puede ser extendido en función de el dominio de la aplicación.
+    puede ser extendido en función del dominio de la aplicación
     }
-    
     \begin{itemize}
-        \item Los conflictos se resuelven en el cliente
-        \begin{item} 
-        Detección de conflictos en base a atributos agregados por
-        {\bf offline}
+      	\item{Middleware de sincronización}
+        \item{Los conflictos se resuelven en el cliente}
+        \begin{item}
+        \par{
+        	Detección de conflictos en base a atributos agregados por
+        	{\bf offline}
+        }
         \begin{itemize}
-          \item unique
-          \item local modifed remote modified
-          \item local deleted remote modified
-          \item local modified remote deleted
+          \item{Unicidad en la base de datos}
+          \item{Modificación local vs Modificación remota}
+          \item{Eliminación local vs Modificación remota}
+          \item{Modificación local vs Eliminación remota}
         \end{itemize}
-        \end{item}
-        \item{Middleware}        
+        \end{item}        
     \end{itemize}
 \end{frame}
 
@@ -444,13 +448,13 @@
 \begin{frame}
     \frametitle{Líneas Futuras}
     \begin{itemize}
-        \item{\bf Conversión de Código Python en JavaScript}
-        \item{\bf Sitio de Administración}
-        \item{\bf Workers con Soporte para JavaScript 1.7}
-        \item{\bf Compatibilidad con ES5 y HTML5}
-        \item{\bf Optimizaciones en Base a Permanencia de Estado}
-        \item{\bf Implementación de Storage o Almacenamiento en el Cliente}
-        \item{\bf Compilación de JavaScript}
+        \item {\bf Conversión de Código Python en JavaScript}
+        \item {\bf Sitio de Administración}
+        \item {\bf Workers con Soporte para JavaScript 1.7}
+        \item {\bf Compatibilidad con ES5 y HTML5}
+        \item {\bf Optimizaciones en Base a Permanencia de Estado}
+        \item {\bf Implementación de Storage o Almacenamiento en el Cliente}
+        \item {\bf Compilación de JavaScript}
         \item {\bf Manejo de Migraciones de Esquema}
     \end{itemize}
 \end{frame}
@@ -470,27 +474,19 @@
 \end{frame}
 
 \begin{frame}
-    
-    
     \begin{center}
         \vfill
         \includegraphics[scale=0.3]{protopy.png}\par
         {\LARGE\bf http://code.google.com/p/protopy}
         \vfill
-    \end{center}
-        
-    
-    
+    \end{center}    
 \end{frame}
-
 
 \begin{frame}
     \vfill
     \begin{center}
         {\Huge\bf ¡¡¡Muchas Gracias!!!}
     \end{center}
-        
-    
     \vfill
 \end{frame}
 \end{document}
