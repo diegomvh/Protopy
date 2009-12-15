@@ -15,8 +15,11 @@ imagenes: ${PDF_FROM_SVG}
 #	yes R | pdflatex $^ || true
 #	yes R | pdflatex $^ || true
 	pdflatex $^
+	@echo "Done Fisrt Pass"
 	pdflatex $^
+	@echo "Done Second Pass"
 	pdflatex $^
+	@echo "Done Third Pass"
 
 %.pdf: %.svg
 	inkscape --file=$< -C --export-pdf=$@
