@@ -20,30 +20,19 @@
 		con esta importante incorporación la empresa expande sus
 		fronteras comerciales al cono sur, brindando como siempre un mejor
 		servicio y atención personalizada.</p>
-	<h3>Frase</h3>
-	<blockquote>
-		<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy 
-		nibh euismod tincidunt ut laoreet dolore magna aliquam erat....</p>
-	</blockquote>
 	
-	<h3>Code</h3>				
-			<p>
-			<code>
-			code-sample { <br/>
-			font-weight: bold;<br/>
-			font-style: italic;<br/>				
-			}
-			</code></p>	
-				
-	<h3>Example Lists</h3>
-				
-			<ol>
-				<li>example of</li>
-				<li>ordered list</li>								
-			</ol>	
-							
-			<ul>
-				<li>example of</li>
-				<li>unordered list</li>								
-			</ul>
+	<h3>Proverbio indio</h3>
+	<blockquote>
+		<p>La Tierra no es una herencia de nuestros padres, sino un préstamo de nuestros hijos.</p>
+		<p class="align-right">- Wikiquote</p>
+	</blockquote>
+	{% if offline %}
+	<h3>Amigo vendedor</h3>
+		<p>Recuerde antes de desconectarse del sistema en línea</p>
+		<ul>
+			<li>Instalar correctamente Protopy y Doff</li>
+			<li>Sincronizar el catalogo</li>
+			<li>Buen viaje!!!</li>								
+		</ul>
+	{% endif %}
 {% endblock %}

@@ -88,6 +88,8 @@ TEMPLATE_DIRS = (
     'templates',
 )
 
+AUTH_PROFILE_MODULE = 'core.UserProfile'
+
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -110,6 +112,5 @@ except ImportError:
     pass
 else:
     INSTALLED_APPS = INSTALLED_APPS + ('django_extensions', )
-
 
 OFFLINE_BASE = 'off'

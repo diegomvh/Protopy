@@ -3,6 +3,7 @@
 Modelo de prueba
 '''
 from django.db import models
+from django.contrib.auth.models import User
 
 # Some useful things
 mod_name = __name__.split('.')[-2]
@@ -80,3 +81,8 @@ class Producto(models.Model):
     
     def __unicode__(self):
         return self.nombre
+
+class UserProfile(models.Model):
+    user = models.ForeignKey(User, unique=True)
+    cliente = models.ForeignKey(Cliente)
+    

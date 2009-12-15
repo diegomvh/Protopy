@@ -44,7 +44,7 @@ def agregar_producto(request, producto):
     if 'pedido' not in request.session:
         cliente = None
         if request.user.is_authenticated() and not request.user.is_staff:
-            cliente = request.user
+            cliente = request.user.get_profile().cliente
         pedido = {'cliente': cliente, 'items': {}, 'productos': 0, 'subtotal': 0.0}
     else:
         pedido = request.session['pedido']

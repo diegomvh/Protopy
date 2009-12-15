@@ -15,7 +15,7 @@ var Producto = {
 
 var Cliente = {
     __str__: function() {
-        return this.razon_social;
+        return "%s, %s".subs(this.cuit, this.razon_social);
     },
     get_absolute_url: abs_url
 };
