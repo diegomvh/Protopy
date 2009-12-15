@@ -292,6 +292,7 @@
     \end{itemize}
 \end{frame}
 
+
 \subsection{Aplicación de desconexión}
 \begin{frame}
     \frametitle{Offline - Objetivos}
@@ -331,6 +332,18 @@
     
 \end{frame}
 
+\begin{frame}
+    \frametitle{Offline - Aplicación del cliente}
+    \begin{itemize}
+      \item{Soporte en el cliente para la instalación de un RemoteSite}
+      \item{Modelos base para los modelos que se desconecten de {\bf offline}}
+      \item{Managers remotos y managers que trabajan con la consistencia}
+      \item{Manjador de Sincronización}
+      \item{Agrega elementos al contexto de renderización para identificar
+            estado}
+    \end{itemize}
+\end{frame}
+
 \section{Sincronización}
 \begin{frame}
     \frametitle{Sincronización - Esquema}
@@ -345,10 +358,26 @@
     	que las creadas y modificadas en el cliente se transfieran al servidor
     }
     \begin{itemize}
-        \item Integridad de la sincronización
-		\item Transporte de datos
-		\item Detección de cambios en instancias en el servidor
-		\item Detección de cambios en el cliente
+        \item{Integridad de la sincronización}
+		\item{Transporte de datos}
+		\begin{item}
+          \par{Detección de cambios en instancias en el servidor}
+		  \begin{itemize}
+            \item{SyncData aprovechando el ContentType framework}
+            \item{Señales}
+          \end{itemize}
+		\end{item}
+
+        \begin{item}
+          \par{Detección de cambios en el cliente}
+          \begin{itemize}
+                \item{status}
+                \item{sync\_log}
+                \item{active}
+                \item{server\_pk}
+          \end{itemize}
+        \end{item}
+        
     \end{itemize}
 \end{frame}
 
@@ -364,20 +393,36 @@
             \item \textit{\bf PURGE}
         \end{itemize}
         %\par{\bf ahahahaha}
-        \vfill
-        \includegraphics[scale=0.43]{esquema_sync_client.pdf}
-        \vfill
+        
     
+\end{frame}
+
+\begin{frame}
+    \frametitle{Clico de vida de una entidad}
+    \includegraphics[scale=0.55]{esquema_sync_client.pdf}
 \end{frame}
 
 \subsection{Conflictos}
 \begin{frame}
     \frametitle{Sincronización - Conflictos}
+    \par{
+    Se provee un mecanismo básico de resolución de conflictos que 
+    puede ser extendido en función de el dominio de la aplicación.
+    }
+    
     \begin{itemize}
-        \item {\bf PUSH}
-        \item {\bf PULL}
-        \item {\bf UPDATE}
-        \item \textit{\bf PURGE}
+        \item Los conflictos se resuelven en el cliente
+        \begin{item} 
+        Detección de conflictos en base a atributos agregados por
+        {\bf offline}
+        \begin{itemize}
+          \item unique
+          \item local modifed remote modified
+          \item local deleted remote modified
+          \item local modified remote deleted
+        \end{itemize}
+        \end{item}
+        \item{Middleware}        
     \end{itemize}
 \end{frame}
 
@@ -391,7 +436,7 @@
         \item {\bf Acciones disponibles en modo desconectado $\surd$}
         \item {\bf Primitivas de sincronización $\surd$}
         \item {\bf Desarrollo de software libre $\surd$}
-        http://code.google.com/p/protopy
+
     \end{itemize}
 \end{frame}
 
@@ -423,6 +468,21 @@
         \item {\bf \LaTeX{} - beamer} Para crear {\it esta} presentación
     \end{itemize}
 \end{frame}
+
+\begin{frame}
+    
+    
+    \begin{center}
+        \vfill
+        \includegraphics[scale=0.3]{protopy.png}\par
+        {\LARGE\bf http://code.google.com/p/protopy}
+        \vfill
+    \end{center}
+        
+    
+    
+\end{frame}
+
 
 \begin{frame}
     \vfill
