@@ -206,13 +206,11 @@
     
             {\bf Objetivos:}\par
                 \begin{itemize}
-                        \item{Interfaz Pythonica para desarrolladores}
-                        \item{Promover la reutilización de código}
-                        \item{Control de la página y eventos (DOM) - Trabajo
-                        cotidiano del desarrollador web de {\it front-ends}}
                         \item{Soporte del framework desconectado}
-                        \item{Interfaz con las tecnologías de persistencia y
-                        ejecución offline} 
+                        \item{Interfaz Pythonica}
+                        \item{Promover la reutilización de código}
+                        \item{Control de la página y eventos (DOM)}
+                        \item{Interfaz con las tecnologías de persistencia y ejecución offline} 
                 \end{itemize}     
          
 \end{frame}    
@@ -253,7 +251,6 @@
         \item{Sincronización}
         \end{itemize}
 \end{frame}
-    
 
 \begin{frame}
     \frametitle{Doff - Componentes}
@@ -261,9 +258,8 @@
         \item {\bf API de Modelos }
         \item {\bf Templates }
         \item {\bf Formularios }
-        \item {\bf URLs }
-        \item {\bf Vistas }
-        \item {\bf Proyecto }
+        \item {\bf URLs y Vistas }
+        \item {\bf DOMAdapter y LocalHandler }
         \item {\bf Aplicaciones adicionales }
             \itemize{
                 \item Sincronización, Autenticación, Sesión
@@ -347,7 +343,7 @@
 
 \subsection{Objetivo}
 \begin{frame}
-    \frametitle{Objetivo}
+    \frametitle{Sincronización - Objetivo}
     \par {
     	Que las entidades definidas en el servidor se repliquen en el cliente, y
     	que las creadas y modificadas en el cliente se transfieran al servidor
@@ -377,7 +373,7 @@
 
 \subsection{Primitivas}
 \begin{frame}
-    \frametitle{Primitivas}
+    \frametitle{Sincronización - Primitivas}
     	\begin{itemize}
             \item{\bf PULL - Cliente/Servidor}
             	\begin{itemize}
@@ -407,7 +403,7 @@
 
 \subsection{Conflictos}
 \begin{frame}
-    \frametitle{Conflictos}
+    \frametitle{Sincronización - Conflictos}
     \par{
     Se provee un mecanismo básico de resolución de conflictos que 
     puede ser extendido en función del dominio de la aplicación
