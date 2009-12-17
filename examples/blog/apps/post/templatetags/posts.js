@@ -9,7 +9,7 @@ function tags() {
 register.inclusion_tag("tags.html")(tags);
 
 function entries(context) {
-	var posts = Post.objects.order_by('-pk').slice(1, 6);
+    var posts = Post.objects.order_by('-pk').slice(1, 6);
     return { "posts": posts, 'MEDIA_URL': context.get('MEDIA_URL') };
 }
 register.inclusion_tag("entries.html", { takes_context: true })(entries);

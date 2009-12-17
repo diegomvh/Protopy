@@ -1,0 +1,13 @@
+{% extends "list.html" %}
+
+{% block table_heading %}
+    <th>Slug</th>
+    <th>Name</th>
+{% endblock %}
+
+{% block item_iteration_row %}
+    <td>{{ item.slug }}</td>
+    <td>{{ item.name }}</td>
+{% endblock %}
+  	
+ 
