@@ -23,9 +23,9 @@
 			<ul id="tabs" >
 				<li><a href="/"><span>Inicio</span></a></li>
 				<li><a href="/catalogo/"><span>Catalogo</span></a></li>
-				<li><a href="/pedidos/"><span>Pedidos</span></a></li>
 				{% if user.is_authenticated and user.is_staff %}
-				<li><a href="/administrar/"><span>Administrar</span></a></li>
+                <li><a href="/pedidos/"><span>Pedidos</span></a></li>
+                <li><a href="/administrar/"><span>Administrar</span></a></li>
 				{% if not offline %} 
 					<li><a href="/off/agentes/"><span>Desconectar</span></a></li>
 				{% endif %}

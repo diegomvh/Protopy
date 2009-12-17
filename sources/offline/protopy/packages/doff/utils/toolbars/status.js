@@ -8,7 +8,7 @@ var Status = type('Status', [ Panel ], {
     __init__: function(project) {
         this.project = project;
         super(Panel, this).__init__('status', 'Install', 'Install offline access for ' + settings.PROJECT_NAME);
-        this.width = '40%';
+        this.width = '60%';
         
         if (this.project.is_installed) {
         	this.project.is_online ? this.go_online() : this.go_offline();
