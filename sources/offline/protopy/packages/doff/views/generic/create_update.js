@@ -46,7 +46,7 @@ function redirect(post_save_redirect, obj) {
 }
 
 function lookup_object(model, object_id, slug, slug_field) {
-    
+
     var lookup_kwargs = {};
     if (object_id) {
         lookup_kwargs[ '%s__exact'.subs(model._meta.pk.name) ] = object_id;

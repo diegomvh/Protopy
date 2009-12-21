@@ -22,7 +22,7 @@ var LocalHandler = type('LocalHandler', [ object ], {
         this._view_middleware = [];
         this._response_middleware = [];
         this._exception_middleware = [];
-       
+
         var request_middleware = [];
         for each (var middleware_path in this.settings.MIDDLEWARE_CLASSES) {
             var dot = middleware_path.lastIndexOf('.');

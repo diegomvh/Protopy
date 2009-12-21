@@ -880,6 +880,7 @@ var ModelChoiceField = type('ModelChoiceField', ChoiceField, {
     },
 
     __init__: function() {
+        debugger;
         var arg = new Arguments(arguments, {	
             'queryset': null, 'empty_label': "---------", 'cache_choices': false, 'required': true,
             'widget': null, 'label': null, 'initial': null, 'help_text': null, 'to_field_name': null 
@@ -958,7 +959,7 @@ var ModelMultipleChoiceField = type('ModelMultipleChoiceField', ModelChoiceField
     },
 
     __init__: function() {
-        var arg = new Arguments(arguments, {'queryset': null, 'cache_choices': false, 'required': true, 'widget': null, 'label': null, 'initial': null, 'help_text': null });
+        var arg = new Arguments(arguments, {'queryset': null, 'empty_label': null, 'cache_choices': false, 'required': true, 'widget': null, 'label': null, 'initial': null, 'help_text': null });
         var kwargs = arg.kwargs;
         assert(kwargs['queryset'] != null, 'Falta queryset');
         super(ModelChoiceField, this).__init__(arg);

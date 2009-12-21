@@ -76,7 +76,7 @@ var Manager = type('Manager', [ object ], {
         var qs = this.get_query_set();
         return qs.dates.apply(qs, arg.argskwargs);
     },
-    
+
     distinct: function() {
         var arg = new Arguments(arguments);
         var qs = this.get_query_set();

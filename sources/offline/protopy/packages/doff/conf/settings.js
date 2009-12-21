@@ -64,7 +64,10 @@ var global_settings = {
     SYNC_MIDDLEWARE_CLASS: 'doff.middleware.sync.SyncMiddleware',
     RPC_PROTOCOL: 'JSON-RPC', //JSON-RPC or XML-RPC,  default: JSON-RPC
     RPC_URL: '',
-    
+
+    // logging Config file
+    LOGGING_CONFIG_FILE: '',
+
     MIDDLEWARE_CLASSES: [
         'doff.middleware.common.CommonMiddleware',
         'doff.contrib.session.middleware.SessionMiddleware',

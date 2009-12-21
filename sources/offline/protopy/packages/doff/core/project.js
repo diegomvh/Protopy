@@ -6,18 +6,19 @@ var Project = type('Project', object, {
     is_online: null,
 
     onLoad: function() {
-	
-		// Creo el adaptador para el DOM y hago que tome el control de sys.window, sys.document y sys.history
-	    require('doff.core.client', 'DOMAdapter');
-	    sys.window = new DOMAdapter();
-	    sys.document = sys.window.document;
-	    sys.history = sys.window.history;
-	
-		// If settings do this
-		this.start_network_thread();
-		this.load_splash_screen();
-		this.load_toolbar();
-		
+
+        // Creo el adaptador para el DOM y hago que tome el control de sys.window, sys.document y sys.history
+        require('doff.core.client', 'DOMAdapter');
+        sys.window = new DOMAdapter();
+        sys.document = sys.window.document;
+        sys.history = sys.window.history;
+
+        // If settings do this
+        this.start_network_thread();
+        this.load_splash_screen();
+        this.load_toolbar();
+        this.start_logging();
+
         // Inicio del handler para las url
         require('doff.core.handler', 'LocalHandler');
         this.handler = new LocalHandler();
@@ -26,19 +27,13 @@ var Project = type('Project', object, {
         event.connect(sys.window, 'send', this.handler, 'receive');
         event.connect(this.handler, 'send', sys.window, 'receive');
 
-        // Inicio el logging, si no hay hay archivo de configuracion no pasa nada
-        require('logging.config', 'file_config');
-        try {
-            file_config(sys.module_url(this.package, 'logging.js'));
-        } catch (except) {}
-
         sys.window.location = '/';
     },
 
     __init__: function(package, project_url) {
         this.package = package;
         this.project_url = project_url;
-        
+
         this.base_url = string(window.location);
         // Registro la ruta al proyecto
         // desde este momento se puden requerir archivos del proyecto
@@ -78,7 +73,7 @@ var Project = type('Project', object, {
     	}
     	return this._settings;
     },
-    
+
     /***************************************************************************
      * Installer / Uninstaller
      */
@@ -100,34 +95,34 @@ var Project = type('Project', object, {
     						'manifest': this.settings.MANIFEST_FILE });
     	this.managed_store = localserver.createManagedStore(this.settings.STORE_NAME);
         this.managed_store.manifestUrl = this.settings.MANIFEST_FILE;
-        
+
         this.managed_store.oncomplete = function(details) { callback('complete', details); };
- 	   	this.managed_store.onerror = function(error) { callback('error', error); };
- 	   	this.managed_store.onprogress = function(details) { callback('progress', details); };
- 	   
+        this.managed_store.onerror = function(error) { callback('error', error); };
+        this.managed_store.onprogress = function(details) { callback('progress', details); };
+
         this.managed_store.checkForUpdate();
     },
-    
+
     install: function(callback) {
-    	
+
         if (!sys.gears.installed) sys.gears.install();
         if (!this.get_permission()) return;
-        
+
         callback = callback || function() {};
         event.publish('pre_install', [callback]);
-        
+
         this.create_store(callback);
-        
+
         require('doff.db.utils','syncdb');
         syncdb(callback);
-        
+
         this.create_shortcut();
         event.publish('post_install', [callback]);
     },
 
     uninstall: function(callback) {
-    	callback = callback || function() {};
-    	event.publish('pre_uninstall', [callback]);
+        callback = callback || function() {};
+        event.publish('pre_uninstall', [callback]);
         require('doff.db.utils','removedb');
         removedb(callback);
 
@@ -166,7 +161,7 @@ var Project = type('Project', object, {
 
         this.toolbar.show();
     },
-    
+
     /***************************************************************************
      * Create desktop Icon
      */
@@ -179,7 +174,7 @@ var Project = type('Project', object, {
     	sh.description = this.settings.PROJECT_DESCRIPTION;
     	sh.save();
     },
-    
+
     /***************************************************************************
      * Splash Screen
      */
@@ -201,7 +196,18 @@ var Project = type('Project', object, {
     		}
     	}
     },
-    
+
+    /***************************************************************************
+     * Logging system
+     */
+    start_logging: function() {
+        if (this.settings.LOGGING_CONFIG_FILE) {
+            // Inicio el logging, si no hay hay archivo de configuracion no pasa nada
+            require('logging.config', 'file_config');
+            file_config(sys.module_url(this.package, this.settings.LOGGING_CONFIG_FILE));
+        }
+    },
+
     /***************************************************************************
      * Network Check
      */
@@ -224,8 +230,8 @@ var Project = type('Project', object, {
     },
 
     start_network_thread: function(){
-    	if (this.settings.NETWORK_CHECK_URL) {
-	    	this.availability_url = this.settings.NETWORK_CHECK_URL;
+        if (this.settings.NETWORK_CHECK_URL) {
+            this.availability_url = this.settings.NETWORK_CHECK_URL;
 	    	this.net_check = this.settings.NET_CHECK;
 	    	this.thread = window.setInterval(getattr(this, 'network_check'), this.net_check * 1000);
 	    }

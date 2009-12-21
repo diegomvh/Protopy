@@ -3,23 +3,25 @@
 {% block content %}
 <h1>{{ titulo }}</h1>
 <form action="" method="post" class="django-form">
+<fieldset class="module aligned">
 	{% block form_content %}
 			{% for field in form %}
-				<p>
+				<div class="form-row">
 				{% if field.errors %} {{ field.errors }} {% endif %}
 				{{ field.label_tag }} {{ field }}
-				</p>
+				</div>
 			{% endfor %}
 	
 	{% endblock %}
     {% block form_buttons %}
-		<p class="comments align-right clear">
+		<div class="submit-row">
 			{% block button_inputs %}
 				<input id="cancelar" type="button" class="button" value="Cancelar"/>
 				<input type="submit" class="button strong" value="{% if submit_text %} {{submit_text}} {%else%} Agregar {% endif %}"/>
 			{% endblock %}
 		</div>
 	{% endblock%}
+</fieldset>
 </form>
 
 <script type="text/javascript">
@@ -33,9 +35,9 @@
                 event.stopEvent(e);
                 sys.window.history.back();
             });
-            
+
             function get_django_fields() {
-                
+
                 return $$('form *').filter(function (e){
                     var id = e.getAttribute('id');
                     return  (id && id.search(/^id_/) >= 0);
@@ -45,7 +47,6 @@
             if (form_fields) {
                 form_fields[0].focus();
             }
-            // console.log(get_django_fields());
         }
         event.connect(sys.window, 'load', onload);
     })();

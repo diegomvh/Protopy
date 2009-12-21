@@ -7,7 +7,7 @@ Released for free under a Creative Commons Attribution 2.5 License
 body {
 	margin: 0px;
 	padding: 0px;
-	background: #3D5D68 url(images/img01.jpg) repeat-x;
+	background: #cad5db url(images/img01.jpg) repeat-x;
 	font: 13px "Trebuchet MS", Arial, Helvetica, sans-serif;
 	color: #333333;
 }
@@ -17,7 +17,7 @@ h1, h2, h3 {
 	font-weight: normal;
 	font-family: Arial, Helvetica, sans-serif;
 	letter-spacing: -1px;
-	color: #514F42;
+	color: #304663;
 }
 
 p, ol, ul {
@@ -25,7 +25,7 @@ p, ol, ul {
 }
 
 a {
-	color: #669900;
+	color: #304663;
 }
 
 a:hover {
@@ -55,7 +55,7 @@ hr {
 	margin: 0;
 	height: 160px;
 	padding: 40px 0 0 170px;
-	background: url(images/img04.jpg) no-repeat left top;
+	background: url(images/protopy.png) no-repeat left top;
 	text-transform: lowercase;
 	letter-spacing: -2px;
 	font-size: 4em;
@@ -120,7 +120,7 @@ hr {
 /* Page */
 
 #wrapper {
-	background: #EBEAD1 url(images/img02.jpg) repeat-x left bottom;
+	background: #cad5db url(images/img02.jpg) repeat-x left bottom;
 }
 
 #page {
@@ -150,7 +150,7 @@ hr {
 	margin: 0;
 	margin-right: 20px;
 	padding-top: 2px;
-	background: #514F42;
+	background: #304663;
 	line-height: normal;
 	text-transform: uppercase;
 	text-align: center;
@@ -278,80 +278,4 @@ hr {
 
 #next {
 	text-align: right;
-}
-
-/* Footer */
-
-#wrapper2 {
-	background: #422C21;
-}
-
-#footer {
-	width: 940px;
-	margin: 0 auto;
-	padding-top: 20px;
-	padding-bottom: 20px;
-	color: #FFFFFF;
-}
-
-#footer a {
-	font-family: Tahoma, Arial, Helvetica, sans-serif;
-	text-decoration: none;
-	font-size: 11px;
-	color: #FFFFFF;
-}
-
-#footer ul {
-	margin: 0;
-	padding: 0;
-	list-style: none;
-}
-
-#footer li {
-	display: block;
-	float: left;
-	width: 300px;
-	padding-left: 20px;
-}
-
-#footer li.first {
-	padding-left: 0;
-}
-
-#footer li ul {
-	margin: 0;
-	margin-bottom: 30px;
-}
-
-#footer li li {
-	display: list-item;
-	float: none;
-	margin: 0;
-	padding: 2px 0;
-	border-bottom: 1px solid #573D30;
-}
-
-#footer li li a {
-}
-
-#footer h2 {
-	margin-top: 0;
-	color: #FFFFFF;
-}
-
-#legal {
-	clear: both;
-	margin: 0;
-	padding: 10px 0;
-	text-align: center;
-	font-family: Tahoma, Arial, Helvetica, sans-serif;
-	font-size: 10px;
-	color: #525252;
-	background: black;
-}
-
-#legal a {
-	border-bottom: 1px dotted #939393;
-	text-decoration: none;
-	color: #939393;
 }

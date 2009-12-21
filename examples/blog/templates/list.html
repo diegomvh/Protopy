@@ -17,8 +17,8 @@
 		  	<!-- Put your code here -->
 	  	{% endblock %}
 		<td>
-			<a class="edit" href="/administrar{{ item.get_absolute_url }}/editar/">Editar</a>
-			<a class="delete" href="/administrar{{ item.get_absolute_url }}/eliminar/">Eliminar</a>
+			<a class="edit" href="{{ item.get_absolute_url }}/edit/">Editar</a>
+			<a class="delete" href="{{ item.get_absolute_url }}/remove/">Eliminar</a>
 		</td>  	
 	</tr>
   	{% endfor %}

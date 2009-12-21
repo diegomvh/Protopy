@@ -1,12 +1,11 @@
 {% extends "list.html" %}
 
 {% block table_heading %}
-    <th>Nombre</th><th>Productos</th>
+    <th>Title</th><th>Date</th><th>Tags</th>
 {% endblock %}
 
 {% block item_iteration_row %}
-    <td>{{ item }}</td>
-    <td>{{ item.producto_set.count }}</td>
+    <td>{{ item.title }}</td>
+    <td>{{ item.date }}</td>
+    <td>{{ item.tags|join:", " }}</td>
 {% endblock %}
-  	
- 
