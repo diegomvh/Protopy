@@ -213,7 +213,7 @@ var Model = type('Model', [ object ], {
                             if (!val) {
                                 val = field.get_default();
                             }
-                    } else if (rel_obj == null && field.none) {
+                    } else if (rel_obj == null && field['null']) {
                         val = null;
                     }
                 } else {
@@ -412,10 +412,10 @@ var Model = type('Model', [ object ], {
                 try {
                     var sub_obj = this[rel_opts_name];
                 } catch (e if isinstance(e, ObjectDoesNotExist)) {}
-                sub_obj._collect_sub_objects(seen_objs, this.__class__, related.field.None);
+                sub_obj._collect_sub_objects(seen_objs, this.__class__, related.field['null']);
             } else {
                 for each (sub_obj in this[rel_opts_name].all())
-                    sub_obj._collect_sub_objects(seen_objs, this.__class__, related.field.none);
+                    sub_obj._collect_sub_objects(seen_objs, this.__class__, related.field['null']);
             }
         }
         // Handle any ancestors (for the model-inheritance case). We do this by
@@ -437,7 +437,7 @@ var Model = type('Model', [ object ], {
     },
 
     delete: function() {
-        assert (this._get_pk_val(), "%s object can't be deleted because its %s attribute is set to None.".subs(this._meta.object_name, this._meta.pk.attname));
+        assert (this._get_pk_val(), "%s object can't be deleted because its %s attribute is set to null.".subs(this._meta.object_name, this._meta.pk.attname));
 
         // Find all the objects than need to be deleted.
         var seen_objs = new CollectedObjects();

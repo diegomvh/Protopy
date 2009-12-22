@@ -22,7 +22,7 @@ var Field = type('Field', [ object ], {
     __init__: function() {
 
         var arg = new Arguments(arguments, {'verbose_name':null, 'name':null, 'primary_key':false,
-            'max_length':null, 'unique':false, 'blank':false, 'none':false, 'null':false,
+            'max_length':null, 'unique':false, 'blank':false, 'null':false,
             'db_index':false, 'rel':null, 'default':NOT_PROVIDED, 'editable':true,
             'serialize':true, 'unique_for_date':null, 'unique_for_month':null,
             'unique_for_year':null, 'choices':[], 'help_text':'', 'db_column':null,
@@ -36,10 +36,10 @@ var Field = type('Field', [ object ], {
         this.max_length = kwargs['max_length']
         this._unique = kwargs['unique'];
         this.blank = kwargs['blank'];
-        this.none = kwargs['none'] || kwargs['null']; // :) sorry
+        this['null'] = kwargs['null'];
 
         if (this.empty_strings_allowed && connection.features.interprets_empty_strings_as_nulls)
-            this.none = true;
+            this['null'] = true;
         this.rel = kwargs['rel'];
         this.default_value = kwargs['default'];
         this.editable = kwargs['editable'];
@@ -218,7 +218,7 @@ var Field = type('Field', [ object ], {
             return this.default_value();
             return this.default_value;
         }
-        if (!this.empty_strings_allowed || (this.none && !connection.features.interprets_empty_strings_as_nulls))
+        if (!this.empty_strings_allowed || (this['null'] && !connection.features.interprets_empty_strings_as_nulls))
             return null;
         return "";
     },
@@ -384,7 +384,7 @@ var BooleanField = type('BooleanField', [ Field ], {
     __init__: function() {
         var arg = new Arguments(arguments);
         arg.kwargs['blank'] = true;
-        if (bool(arg.kwargs['default_value']) && bool(arg.kwargs['none']));
+        if (bool(arg.kwargs['default_value']) && bool(arg.kwargs['null']));
             arg.kwargs['default_value'] = false;
         super(Field, this).__init__(arg);
     },
@@ -435,7 +435,7 @@ var CharField = type('CharField', [ Field ], {
         if (isinstance(value, String))
             return value;
         if (value == null)
-            if (this.none)
+            if (this['null'])
             	return value;
             else
             	throw new ValidationError("This field cannot be null.");
@@ -490,7 +490,7 @@ var DateField = type('DateField', [ Field ], {
 
     contribute_to_class: function(cls, name) {
         super(Field, this).contribute_to_class(cls, name);
-        if (!this.none) {
+        if (!this['null']) {
             var key = 'get_next_by_%s'.subs(this.name);
             cls.prototype[key] = curry(cls.prototype._get_next_or_previous_by_FIELD, this, true);
             key = 'get_previous_by_%s'.subs(this.name);
@@ -743,7 +743,7 @@ var NullBooleanField = type('NullBooleanField', [ Field ], {
     empty_strings_allowed: false,
     __init__: function() {
         var arg = new Arguments(arguments);
-        arg.kwargs['none'] = true;
+        arg.kwargs['null'] = true;
         super(Field, this).__init__(arg);
     },
 

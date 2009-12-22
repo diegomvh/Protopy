@@ -13,6 +13,7 @@ var Tag = type('Tag', [ models.Model ], {
 
     save: function() {
         this.slug = slugify(this.title);
+        super(models.Model, this).save();
     },
 
     get_absolute_url: get_abs_url
@@ -20,16 +21,12 @@ var Tag = type('Tag', [ models.Model ], {
 
 var Post = type('Post', [ models.Model ], {
 	title: new models.CharField('Title', {max_length: 30}),
-	tags: new models.ManyToManyField(Tag),
+	tags: new models.ManyToManyField(Tag, {'blank': true}),
 	date: new models.DateTimeField('Date', { auto_now: true }),
     body: new models.TextField('Body text'),
 	
 	__str__: function() {
         return this.title;
-    },
-
-    save: function() {
-        debugger;
     },
 
     get_absolute_url: get_abs_url

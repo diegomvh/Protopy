@@ -32,7 +32,7 @@ var BaseDatabaseCreation = type('BaseDatabaseCreation', object, {
             if (!col_type)
                 continue;
             field_output = [qn(f.column), col_type];
-            field_output.push('%sNULL'.subs((!f.none)?'NOT ':''));
+            field_output.push('%sNULL'.subs((!f['null'])?'NOT ':''));
             if (f.primary_key)
                 field_output.push('PRIMARY KEY');
             else if (f.unique)

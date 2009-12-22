@@ -1407,7 +1407,7 @@ var BaseQuery = type('BaseQuery', [ object ], {
             avoid = copy(avoid_set);
             dupe_set = copy(orig_dupe_set);
             table = f.rel.to._meta.db_table;
-            if (nullable || f.none)
+            if (nullable || f['null'])
                 promote = true;
             else
                 promote = false;
@@ -1443,8 +1443,8 @@ var BaseQuery = type('BaseQuery', [ object ], {
                 var next = requested.get(f.name, {});
             else
                 var next = false;
-            if (f.none)
-                new_nullable = f.none;
+            if (f['null'])
+                new_nullable = f['null'];
             else
                 new_nullable = null;
             for (var [dupe_opts, dupe_col] in dupe_set)
@@ -1637,12 +1637,12 @@ var BaseQuery = type('BaseQuery', [ object ], {
                 } else if (!(   lookup_type == 'in' && 
                                 !hasattr(value, 'as_sql') &&
                                 !hasattr(value, '_as_sql') &&
-                                !value) && field.none) {
+                                !value) && field['null']) {
                     // Leaky abstraction artifact: We have to specifically
                     // exclude the "foo__in=[]" case from this handling, because
                     // it's short-circuited in the Where class.
                     var entry = new this.where_class();
-                    entry.add([ new Constraint(alias, col, None), 'isnull', true ], AND);
+                    entry.add([ new Constraint(alias, col, null), 'isnull', true ], AND);
                     entry.negate();
                     this.where.add(entry, AND);
                 }
@@ -1789,7 +1789,7 @@ var BaseQuery = type('BaseQuery', [ object ], {
                         orig_opts._join_cache[name] = [table, from_col, to_col, opts, target];
                     }
                     //join(connection, always_create, exclusions, promote, outer_if_first, nullable, reuse)
-                    alias = this.join([alias, table, from_col, to_col], null, exclusions, null, null, field.none);
+                    alias = this.join([alias, table, from_col, to_col], null, exclusions, null, null, field['null']);
                     joins.push(alias);
                 } else {
                     // Non-relation fields.

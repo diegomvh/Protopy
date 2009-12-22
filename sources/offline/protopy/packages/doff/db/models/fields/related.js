@@ -150,8 +150,8 @@ var SingleRelatedObjectDescriptor = type('SingleRelatedObjectDescriptor', object
         if (!isinstance(instance, instance_type))
             throw new AttributeError("%s must be accessed via instance".subs(this.related.opts.object_name));
 
-        if ((!value) && this.related.field.none == false)
-            throw new ValueError('Cannot assign None: "%s.%s" does not allow null values.'.subs(instance._meta.object_name, this.related.get_accessor_name()));
+        if ((!value) && this.related.field['null'] == false)
+            throw new ValueError('Cannot assign Null: "%s.%s" does not allow null values.'.subs(instance._meta.object_name, this.related.get_accessor_name()));
         else if (value && !(value instanceof this.related.model))
             throw new ValueError('Cannot assign "%r": "%s.%s" must be a "%s" instance.'.subs(value, instance._meta.object_name, this.related.get_accessor_name(), this.related.opts.object_name))
 
@@ -179,7 +179,7 @@ var ReverseSingleRelatedObjectDescriptor = type('ReverseSingleRelatedObjectDescr
         if (!ret) {
             var val = instance[this.field.attname];
             if (!val) {
-            if (this.field.none)
+            if (this.field['null'])
                 return null;
             throw new this.field.rel.to.DoesNotExist(this.field.attname);
             }
@@ -206,8 +206,8 @@ var ReverseSingleRelatedObjectDescriptor = type('ReverseSingleRelatedObjectDescr
         if (!isinstance(instance, instance_type))
             throw new AttributeError("%s must be accessed via instance".subs(this.field.name));
 
-        if (!value && this.field.none == false)
-            throw new ValueError('Cannot assign None: "%s.%s" does not allow null values.'.subs(instance._meta.object_name, this.field.name));
+        if (!value && this.field['null'] == false)
+            throw new ValueError('Cannot assign null: "%s.%s" does not allow null values.'.subs(instance._meta.object_name, this.field.name));
         else if (value && !(value instanceof this.field.rel.to))
             throw new ValueError('Cannot assign "%s": "%s.%s" must be a "%s" instance.'.subs(value, instance._meta.object_name, this.field.name, this.field.rel.to._meta.object_name));
 
@@ -269,7 +269,7 @@ var ForeignRelatedObjectsDescriptor = type('ForeignRelatedObjectsDescriptor', [ 
         RelatedManager.prototype.create.alters_data = true;
         RelatedManager.prototype.get_or_create.alters_data = true;
 
-        if (rel_field.none) {
+        if (rel_field['null']) {
             RelatedManager.prototype['remove'] = function remove() {
             	var arg = new Arguments(arguments);
             	var objs = arg.args;
@@ -311,7 +311,7 @@ var ForeignRelatedObjectsDescriptor = type('ForeignRelatedObjectsDescriptor', [ 
             throw new AttributeError("Manager must be accessed via instance");
 
         var manager = this.__get__(instance, instance_type);
-        if (this.related.field.none)
+        if (this.related.field['null'])
             manager.clear();
         manager.add.apply(manager, value);
     }

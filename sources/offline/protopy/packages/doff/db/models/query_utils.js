@@ -52,7 +52,7 @@ function select_related_descend(field, restricted, requested) {
     //TODO: ver como se resuleve el in
     if (restricted && !(field.name in requested))
         return false;
-    if (!restricted && field.none)
+    if (!restricted && field['null'])
         return false;
     return true;
 }

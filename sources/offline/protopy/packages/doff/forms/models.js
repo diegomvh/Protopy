@@ -39,8 +39,8 @@ function save_instance(form, instance) {
 
     // Wrap up the saving of m2m data as a function.
     function save_m2m() {
-        opts = instance._meta;
-        cleaned_data = form.cleaned_data;
+        var opts = instance._meta;
+        var cleaned_data = form.cleaned_data;
         for each (var f in opts.many_to_many) {
             if (kwargs['fields'] && !include(kwargs['fields'], f.name))
                 continue;

@@ -81,7 +81,8 @@ function create_object(request) {
     if (!kwargs['extra_context'])
         kwargs['extra_context'] = {};
     var [model, form_class] = get_model_and_form_class(kwargs['model'], kwargs['form_class']);
-
+    
+    debugger;
     if (request.method == 'POST') {
         var form = new form_class({'data': request.POST, 'files': request.FILES});
         if (form.is_valid()) {
