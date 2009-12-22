@@ -400,7 +400,7 @@ function create_many_related_manager(superclass, through) {
                 // Add the ones that aren't there already
                 for (var obj_id in (new_ids.difference(existing_ids)))
                     cursor.execute("INSERT INTO %s (%s, %s) VALUES (%%s, %%s)".subs(this.join_table, source_col_name, target_col_name), [this._pk_val, obj_id]);
-                transaction.commit_unless_managed();
+                //transaction.commit_unless_managed();
             }
         },
 
@@ -424,7 +424,7 @@ function create_many_related_manager(superclass, through) {
             // Remove the specified objects from the join table
             var cursor = connection.cursor();
             cursor.execute("DELETE FROM %s WHERE %s = %%s AND %s IN (%s)".subs(this.join_table, source_col_name, target_col_name, '%s'.times(old_ids.elements.length, ', ')), [this._pk_val].concat(old_ids.elements));
-            transaction.commit_unless_managed();
+            //transaction.commit_unless_managed();
             }
         },
 
@@ -432,7 +432,7 @@ function create_many_related_manager(superclass, through) {
             // source_col_name: the PK colname in join_table for the source object
             var cursor = connection.cursor();
             cursor.execute("DELETE FROM %s WHERE %s = %%s".subs(this.join_table, source_col_name), [this._pk_val]);
-            transaction.commit_unless_managed();
+            //transaction.commit_unless_managed();
         }
     });
     ManyRelatedManager.prototype.clear.alters_data = true;

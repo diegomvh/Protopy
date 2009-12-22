@@ -50,10 +50,11 @@ database.Connection = type('Connection', [ object ], {
             this.connection.execute(query, params);
         }
         catch(e) {
-        	throw new database.DatabaseError(e, {'inspect': true});
+            debugger;
+            throw new database.DatabaseError(e, {'inspect': true});
         }
     },
-    
+
     cursor: function() {
         var cur = new this.factory(this.connection);
         return cur;
@@ -103,6 +104,7 @@ database.Cursor = type('Cursor', [ object ], {
         try {
             this.lastResulSet = this.connection.execute(query, params);
         } catch(e) {
+            debugger;
             throw new database.DatabaseError(e, {'inspect': true});
         }
     },
