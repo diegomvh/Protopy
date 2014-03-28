@@ -188,7 +188,7 @@ latex_documents = [
   ('index', 'SistemasWebDesconectados.tex', u'Aplicaciones Web Desconectadas',
    # Orden alfabético: no quiero llevarme crédito :S,
    # jajajajajaj :), si es la historia de mi vida :P el ultimo de la fila toda la primaria :P, pero por suerte el ultimo en pasar a dar leccion ;)
-   u'Defossé, Nahuel; van Haaster, Diego Marcos', 'manual'),
+   u'van Haaster, Diego Marcos', 'Defossé, Nahuel', 'manual'),
 ]
 
 latex_elements = {
